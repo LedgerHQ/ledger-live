@@ -218,7 +218,7 @@ describe("Sui Api", () => {
       expect(senderOp.peer).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
-      expect(senderOp.amount).toEqual(BigInt(-1492885));
+      expect(senderOp.amount).toEqual(BigInt(-5));
       expect(receipientOp.address).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
@@ -226,6 +226,42 @@ describe("Sui Api", () => {
         "0x2c814ceb68d1cb7168207b16754b1cf57e735685c4e5d87c4f50906edcc57c1c",
       );
       expect(receipientOp.amount).toEqual(BigInt(5));
+    });
+  });
+
+  describe("getValidators", () => {
+    it("returns at least a hundred validators with expected fields", async () => {
+      const page = await module.getValidators();
+
+      expect(Array.isArray(page.items)).toBeTruthy();
+      expect(page.items.length).toBeGreaterThanOrEqual(100);
+
+      const v = page.items[0];
+      expect(v).toHaveProperty("address");
+      expect(v).toHaveProperty("name");
+      expect(v).toHaveProperty("description");
+      expect(v).toHaveProperty("url");
+      expect(v).toHaveProperty("logo");
+      expect(v).toHaveProperty("balance");
+      expect(v).toHaveProperty("commissionRate");
+      expect(v).toHaveProperty("apy");
+
+      // values should not be empty
+      expect(typeof v.address).toBe("string");
+      expect(v.address.length).toBeGreaterThan(0);
+      expect(typeof v.name).toBe("string");
+      expect(v.name.length).toBeGreaterThan(0);
+      expect(typeof v.description).toBe("string");
+      expect((v.description as string).length).toBeGreaterThan(0);
+      expect(typeof v.url).toBe("string");
+      expect((v.url as string).length).toBeGreaterThan(0);
+      expect(typeof v.logo).toBe("string");
+      expect((v.logo as string).length).toBeGreaterThan(0);
+      expect(typeof v.balance === "bigint").toBeTruthy();
+      expect(v.balance as bigint).toBeGreaterThanOrEqual(0n);
+      expect(typeof v.commissionRate).toBe("string");
+      expect((v.commissionRate as string).length).toBeGreaterThan(0);
+      expect(typeof v.apy).toBe("number");
     });
   });
 

@@ -48,16 +48,16 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
         {t("transfer.receive.title")}
       </Text>
       <OptionButton
-        onPress={handleGoToCrypto}
-        title={t("transfer.receive.menu.crypto.title")}
-        subtitle={t("transfer.receive.menu.crypto.description")}
-        Icon={Icons.CoinsCrypto}
-      />
-      <OptionButton
         onPress={handleGoToFiat}
         title={t("transfer.receive.menu.fiat.title")}
         subtitle={t("transfer.receive.menu.fiat.description")}
         Icon={Icons.Bank}
+      />
+      <OptionButton
+        onPress={handleGoToCrypto}
+        title={t("transfer.receive.menu.crypto.title")}
+        subtitle={t("transfer.receive.menu.crypto.description")}
+        Icon={Icons.CoinsCrypto}
       />
     </QueuedDrawerGorhom>
   );

@@ -17,6 +17,7 @@ export interface GetAssetsDataParams {
   version: string;
   isStaging?: boolean;
   additionalData?: AssetsAdditionalData[];
+  includeTestNetworks?: boolean;
 }
 
 export interface PageParam {

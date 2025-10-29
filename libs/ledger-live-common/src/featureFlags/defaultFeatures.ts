@@ -33,6 +33,7 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  * Currency Features.
  */
 export const CURRENCY_DEFAULT_FEATURES = {
+  currencyPolkadot: { enabled: true },
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -96,12 +97,15 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyCantonNetworkDevnet: DEFAULT_FEATURE,
+  currencyCantonNetworkTestnet: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
   currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
   currencyWestend: DEFAULT_FEATURE,
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
+  currencyMonad: DEFAULT_FEATURE,
 };
 
 /**
@@ -439,7 +443,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  ptxEarnDrawerApy: {
+  ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
   },

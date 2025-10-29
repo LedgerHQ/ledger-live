@@ -6,11 +6,15 @@ test.use({
   userdata: "skip-onboarding",
 });
 
-test("Discover deeplink hot load @smoke", async ({ page }) => {
-  await test.step("on deeplink trigger", async () => {
-    await sendDeepLink(page, "ledgerlive://discover");
-    await expect.soft(page).toHaveScreenshot("loaded.png", {
-      mask: [page.getByTestId("live-icon-container")],
+test.describe.parallel("Deeplinks - Discover", () => {
+  for (const scheme of ["ledgerlive", "ledgerwallet"]) {
+    test(`[${scheme}] Discover deeplink hot load @smoke`, async ({ page }) => {
+      await test.step("on deeplink trigger", async () => {
+        await sendDeepLink(page, `${scheme}://discover`);
+        await expect.soft(page).toHaveScreenshot("loaded.png", {
+          mask: [page.getByTestId("live-icon-container")],
+        });
+      });
     });
-  });
+  }
 });

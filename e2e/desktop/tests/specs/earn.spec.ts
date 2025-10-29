@@ -58,7 +58,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -70,8 +70,12 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          provider.uiName,
+          account,
+        );
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
+        await verifyProviderUrlPromise;
       },
     );
   });
@@ -88,7 +92,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: [
         {
           type: "TMS",
@@ -181,7 +185,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,

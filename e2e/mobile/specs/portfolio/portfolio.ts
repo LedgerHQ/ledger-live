@@ -8,7 +8,11 @@ async function beforeAllFunction(options: ApplicationOptions) {
   });
   await app.portfolio.waitForPortfolioPageToLoad();
 }
-export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsLinks: string[]) {
+export function runPortfolioTransactionsHistoryTest(
+  currency: CurrencyType,
+  tmsLinks: string[],
+  tags: string[],
+) {
   describe("Portfolio transaction history", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -18,6 +22,7 @@ export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsL
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
     it("Transaction history displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.checkTransactionAllocationSection();
@@ -27,7 +32,7 @@ export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsL
   });
 }
 
-export function runPortfolioChartsAndAssetsTest(tmsLinks: string[]) {
+export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {
   describe("Portfolio charts and assets", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -36,6 +41,7 @@ export function runPortfolioChartsAndAssetsTest(tmsLinks: string[]) {
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
     it("Charts and assets section are displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.checkQuickActionButtonsVisibility();

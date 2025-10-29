@@ -121,14 +121,14 @@ export default class SwapPage {
   @Step("Click on export operations")
   async clickExportOperations() {
     await tapById(this.exportOperationsButton);
-    const filePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const filePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileExists = await FileUtils.waitForFileToExist(filePath, 5000);
     jestExpect(fileExists).toBeTruthy();
   }
 
   @Step("Check contents of exported operations file")
   async checkExportedFileContents(swap: SwapType, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
     jestExpect(fileContents).toContain(provider.name);

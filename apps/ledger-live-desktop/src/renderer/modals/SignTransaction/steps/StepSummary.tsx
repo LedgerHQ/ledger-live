@@ -69,7 +69,7 @@ const StepSummary = (props: StepProps) => {
 
   const { estimatedFees, amount, totalSpent, errors, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
-  const feeTooHigh = warnings.feeTooHigh;
+  const { feeTooHigh, tooManyUtxos } = warnings;
   const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
@@ -97,6 +97,11 @@ const StepSummary = (props: StepProps) => {
       {utxoLag ? (
         <Alert type="warning">
           <Trans i18nKey="send.steps.details.utxoLag" />
+        </Alert>
+      ) : null}
+      {tooManyUtxos ? (
+        <Alert type="warning">
+          <Trans i18nKey={tooManyUtxos.message} />
         </Alert>
       ) : null}
       {transaction.useAllAmount && hasNonEmptySubAccounts ? (
@@ -217,6 +222,7 @@ const StepSummary = (props: StepProps) => {
                 fontSize={4}
                 inline
                 showCode
+                alwaysShowValue
               />
               <Box textAlign="right">
                 <CounterValue
@@ -225,6 +231,7 @@ const StepSummary = (props: StepProps) => {
                   currency={currency}
                   value={amount}
                   alwaysShowSign={false}
+                  alwaysShowValue
                 />
               </Box>
             </Box>

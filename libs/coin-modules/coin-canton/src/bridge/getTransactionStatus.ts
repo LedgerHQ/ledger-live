@@ -4,21 +4,30 @@ import {
   FeeRequired,
   FeeTooHigh,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { Transaction, TransactionStatus } from "../types";
+import {
+  Transaction,
+  TransactionStatus,
+  CantonAccount,
+  TooManyUtxosCritical,
+  TooManyUtxosWarning,
+} from "../types";
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+
+export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
+export const TO_MANY_UTXOS_WARNING_COUNT = 10;
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
-  Account,
+  CantonAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
@@ -35,12 +44,9 @@ export const getTransactionStatus: AccountBridge<
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (!transaction.fee) {
+  if (transaction.fee === null || transaction.fee === undefined) {
     // if the fee is not loaded, we can't do much
     errors.fee = new FeeNotLoaded();
-  } else if (transaction.fee.eq(0)) {
-    // On some chains, 0 fee could still work so this is optional
-    errors.fee = new FeeRequired();
   } else if (totalSpent.gt(account.balance.minus(reserveAmount))) {
     // if the total spent is greater than the balance minus the reserve amount, tx is invalid
     errors.amount = new NotEnoughSpendableBalance("", {
@@ -63,9 +69,6 @@ export const getTransactionStatus: AccountBridge<
 
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
-  } else if (account.freshAddress === transaction.recipient) {
-    // we want to prevent user from sending to themselves (even if it's technically feasible)
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isRecipientValid(transaction.recipient)) {
     // We want to prevent user from sending to an invalid address
     errors.recipient = new InvalidAddress("", {
@@ -78,6 +81,8 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
+  validateUtxoCount(account, transaction, warnings);
+
   return {
     errors,
     warnings,
@@ -86,3 +91,30 @@ export const getTransactionStatus: AccountBridge<
     totalSpent,
   };
 };
+
+function validateUtxoCount(
+  account: CantonAccount,
+  transaction: Transaction,
+  warnings: Record<string, Error>,
+): void {
+  const abandonSeedAddress = getAbandonSeedAddress(account.currency.id);
+  const isAbandonSeedAddress = transaction.recipient?.includes(abandonSeedAddress);
+
+  // UTXO count validation - only validate if recipient is valid and not equal to sender
+  // Skip validation for abandon seed addresses
+  if (
+    account?.cantonResources?.instrumentUtxoCounts &&
+    transaction.recipient &&
+    isRecipientValid(transaction.recipient) &&
+    account.xpub !== transaction.recipient &&
+    !isAbandonSeedAddress
+  ) {
+    const { instrumentUtxoCounts } = account.cantonResources;
+    const instrumentUtxoCount = instrumentUtxoCounts[transaction.tokenId] || 0;
+    if (instrumentUtxoCount > TO_MANY_UTXOS_CRITICAL_COUNT) {
+      warnings.tooManyUtxos = new TooManyUtxosCritical();
+    } else if (instrumentUtxoCount > TO_MANY_UTXOS_WARNING_COUNT) {
+      warnings.tooManyUtxos = new TooManyUtxosWarning("families.canton.tooManyUtxos.warning");
+    }
+  }
+}

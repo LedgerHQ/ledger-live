@@ -6,6 +6,7 @@ import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
@@ -19,6 +20,7 @@ export function useModularDrawerData({
   areCurrenciesFiltered,
 }: UseModularDrawerDataProps) {
   const modularDrawerFeature = useFeature("lldModularDrawer");
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -34,6 +36,7 @@ export function useModularDrawerData({
     useCase,
     areCurrenciesFiltered,
     isStaging,
+    includeTestNetworks: devMode,
   });
 
   const assetsSorted: AssetData[] | undefined = useMemo(() => {

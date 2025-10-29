@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect, useLayoutEffect } from "react";
-import { Flex, Text, Button, Checkbox, IconBox } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Checkbox, IconBox, Alert } from "@ledgerhq/native-ui";
 import LedgerIcon from "~/icons/Ledger";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CantonOnboardAccountParamList } from "../types";
@@ -13,6 +13,7 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
 import type {
   CantonCurrencyBridge,
   CantonOnboardResult,
@@ -20,6 +21,32 @@ import type {
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "@ledgerhq/coin-canton/types";
+import { urls } from "~/utils/urls";
+import { Subscription } from "rxjs";
+import styled from "styled-components/native";
+import { TouchableOpacity, Linking } from "react-native";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import { accountsSelector } from "~/reducers/accounts";
+
+const LinkTouchable = styled(TouchableOpacity).attrs({
+  activeOpacity: 0.5,
+})`
+  flex-direction: row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const LearnMore = (): JSX.Element => {
+  const link = useLocalizedUrl(urls.canton.learnMore);
+  return (
+    <LinkTouchable onPress={() => Linking.openURL(link)}>
+      <Alert.UnderlinedText mr="5px">
+        <Trans i18nKey="common.learnMore" />
+      </Alert.UnderlinedText>
+    </LinkTouchable>
+  );
+};
 
 // Type guard function to distinguish between CantonOnboardProgress and CantonOnboardResult
 function isCantonOnboardResult(
@@ -34,8 +61,6 @@ function isCantonAuthorizeResult(
 ): value is CantonAuthorizeResult {
   return "isApproved" in value;
 }
-import DeviceActionModal from "~/components/DeviceActionModal";
-import { accountsSelector } from "~/reducers/accounts";
 
 type Props = StackNavigatorProps<CantonOnboardAccountParamList, ScreenName.CantonOnboardAccount>;
 
@@ -47,23 +72,69 @@ export default function Accept({ navigation, route }: Props) {
   const [result, setResult] = useState<CantonOnboardResult | null>(null);
   const existingAccounts = useSelector(accountsSelector);
   const [updated, setUpdated] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   // Get the bridge for the currency
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
   const bridge = getCurrencyBridge(cryptoCurrency) as CantonCurrencyBridge;
 
+  const retryOnboard = useCallback(() => {
+    if (!device) return;
+
+    setError(null);
+    setDisabled(true);
+
+    const notUsedAccount = accs.find(account => !account.used);
+    if (!notUsedAccount) return;
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+
+    const sub = bridge
+      .onboardAccount(cryptoCurrency, device.deviceId, notUsedAccount)
+      .pipe(
+        filter(value => isCantonOnboardResult(value) && !!value.partyId),
+        take(1),
+      )
+      .subscribe(
+        result => {
+          setError(null);
+          setDisabled(false);
+          if (isCantonOnboardResult(result)) {
+            setResult(result);
+          }
+        },
+        (e: Error) => {
+          setError(e);
+          setDisabled(false);
+        },
+      );
+    setSubscription(sub);
+  }, [cryptoCurrency, device, accs, bridge, subscription]);
+
   const onPress = useCallback(() => {
     if (!device || !result) return;
 
     setDisabled(true);
-    bridge
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+    const sub = bridge
       .authorizePreapproval(cryptoCurrency, device.deviceId, result.account, result.partyId)
       .pipe(
         filter(value => isCantonAuthorizeResult(value) && value.isApproved),
         take(1),
       )
       .subscribe(() => {
+        const newAccount = accs.find(a => a.freshAddressPath === result.account.freshAddressPath);
+        if (newAccount) {
+          newAccount.id = result.account.id;
+          newAccount.xpub = result.account.xpub;
+        }
+        setError(null);
         dispatch(
           addAccountsAction({
             existingAccounts,
@@ -80,7 +151,18 @@ export default function Accept({ navigation, route }: Props) {
           },
         });
       });
-  }, [cryptoCurrency, device, bridge, result, navigation, dispatch, existingAccounts, accs]);
+    setSubscription(sub);
+  }, [
+    cryptoCurrency,
+    device,
+    bridge,
+    result,
+    navigation,
+    dispatch,
+    existingAccounts,
+    accs,
+    subscription,
+  ]);
 
   const action = useAppDeviceAction();
 
@@ -90,19 +172,28 @@ export default function Accept({ navigation, route }: Props) {
     if (!notUsedAccount) return;
 
     setDisabled(true);
-    bridge
+    const sub = bridge
       .onboardAccount(cryptoCurrency, device.deviceId, notUsedAccount)
       .pipe(
         filter(value => isCantonOnboardResult(value) && !!value.partyId),
         take(1),
       )
-      .subscribe(result => {
-        setDisabled(false);
-        if (isCantonOnboardResult(result)) {
-          setResult(result);
-        }
-      });
-  }, [cryptoCurrency, device, accs, bridge]);
+      .subscribe(
+        result => {
+          setError(null);
+          setDisabled(false);
+          if (isCantonOnboardResult(result)) {
+            setResult(result);
+          }
+        },
+        (e: Error) => {
+          setError(e);
+          setDisabled(false);
+        },
+      );
+    setSubscription(sub);
+    return () => sub.unsubscribe();
+  }, [cryptoCurrency, device, accs, bridge, currency, navigation]);
 
   useLayoutEffect(() => {
     const notUsedAccounts = accs.filter(account => !account.used);
@@ -197,9 +288,19 @@ export default function Accept({ navigation, route }: Props) {
           </Flex>
           <Checkbox checked={true} />
         </Flex>
+        {error && (
+          <Flex flexDirection="column" alignItems="stretch" mt={4} mx={6}>
+            <Alert title={t("canton.onboard.error429")} type="error">
+              <LearnMore />
+            </Alert>
+            <Button type="main" onPress={retryOnboard} disabled={disabled} mt={4}>
+              <Trans i18nKey="common.retry" />
+            </Button>
+          </Flex>
+        )}
       </Flex>
       <Flex px={6}>
-        <Button type={"main"} onPress={onPress} disabled={disabled}>
+        <Button type={"main"} onPress={onPress} disabled={disabled || !result}>
           <Trans i18nKey="common.confirm" />
         </Button>
       </Flex>

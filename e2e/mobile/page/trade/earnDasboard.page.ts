@@ -149,6 +149,7 @@ export default class EarnDashboardPage {
     const earnButton = getWebElementByTestId(this.stakeCryptoAssetsButton, 0, "data-test-id");
     await scrollToWebElement(earnButton);
     await tapWebElementByElement(earnButton);
+    await app.common.flushDetoxSyncQueue();
     await app.stake.verifyChooseAssetPage();
   }
 }

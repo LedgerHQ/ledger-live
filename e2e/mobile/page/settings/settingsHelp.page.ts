@@ -23,7 +23,7 @@ export default class SettingsHelpPage {
 
   @Step("Verify logs are exported")
   async verifyLogsAreExported() {
-    const fileName = "ledgerlive-logs.txt";
+    const fileName = "ledgerwallet-logs.txt";
     const filePath = path.resolve(__dirname, `../../artifacts/${fileName}`);
 
     const fileExists = await FileUtils.waitForFileToExist(filePath);

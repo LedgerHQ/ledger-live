@@ -15,10 +15,10 @@ import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 type DeviceTransactionField = CommonDeviceTransactionField;
 
-const inferDeviceTransactionConfigWalletApi = (
+const inferDeviceTransactionConfigWalletApi = async (
   transaction: EvmTransaction,
   mainAccount: Account,
-): Array<DeviceTransactionField> => {
+): Promise<Array<DeviceTransactionField>> => {
   if (!transaction.data) throw new Error();
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const fields: Array<DeviceTransactionField> = [];
@@ -31,7 +31,7 @@ const inferDeviceTransactionConfigWalletApi = (
     nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
   );
 
-  const token = getCryptoAssetsStore().findTokenByAddressInCurrency(
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
     transaction.recipient,
     mainAccount.currency.id,
   );
@@ -371,7 +371,7 @@ const inferDeviceTransactionConfigWalletApi = (
 /**
  * Method responsible for creating the summary of the screens visible on the nano
  */
-const getDeviceTransactionConfig = ({
+const getDeviceTransactionConfig = async ({
   account,
   parentAccount,
   transaction,
@@ -380,7 +380,7 @@ const getDeviceTransactionConfig = ({
   parentAccount: Account | null | undefined;
   transaction: EvmTransaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> => {
+}): Promise<Array<DeviceTransactionField>> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;
   const fields: Array<DeviceTransactionField> = [];
@@ -392,7 +392,7 @@ const getDeviceTransactionConfig = ({
       // For contract interactions
       if (transaction.data) {
         try {
-          fields.push(...inferDeviceTransactionConfigWalletApi(transaction, mainAccount));
+          fields.push(...(await inferDeviceTransactionConfigWalletApi(transaction, mainAccount)));
         } catch (e) {
           fields.push(
             {

@@ -10,13 +10,13 @@ import {
   type GetAccountShape,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { type Operation } from "@ledgerhq/types-live";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { getAccountBalances, getOperations, getStakesRaw } from "../network";
-import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 /**
  * Get the shape of the account including its operations and balance.
@@ -53,28 +53,28 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   );
 
   const accountBalances = await getAccountBalances(address);
-  const tokensCurrencies = listTokensForCryptoCurrency(currency);
-  const tokensCurrenciesMap = tokensCurrencies.reduce(
-    (acc, token) => {
-      acc[token.contractAddress] = token;
-      return acc;
-    },
-    {} as Record<string, (typeof tokensCurrencies)[0]>,
-  );
   const balance =
     accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ?? BigNumber(0);
-  const subAccountsBalances = accountBalances.filter(
-    ({ coinType }) => tokensCurrenciesMap[coinType],
-  );
+
+  const subAccountsBalances: AccountBalance[] = [];
+  for (const accountBalance of accountBalances) {
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      accountBalance.coinType,
+      currency.id,
+    );
+    if (token) {
+      subAccountsBalances.push(accountBalance);
+    }
+  }
 
   const subAccounts =
     (await buildSubAccounts({
       accountId,
-      initialAccount,
       operations,
       subAccountsBalances,
       syncConfig,
-      tokensCurrenciesMap,
+      currencyId: currency.id,
+      subAccounts: initialAccount?.subAccounts ?? [],
     })) || [];
 
   return {
@@ -102,39 +102,41 @@ export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 async function buildSubAccounts({
   accountId,
-  initialAccount,
   operations,
   subAccountsBalances,
   syncConfig,
-  tokensCurrenciesMap,
+  currencyId,
+  subAccounts,
 }: {
   accountId: string;
-  initialAccount?: SuiAccount | null | undefined;
   operations: Operation[];
   subAccountsBalances: { coinType: string; blockHeight: number; balance: BigNumber }[];
   syncConfig: SyncConfig;
-  tokensCurrenciesMap: Record<string, TokenCurrency>;
+  currencyId: string;
+  subAccounts: TokenAccount[];
 }) {
-  if (Object.keys(tokensCurrenciesMap).length === 0) return undefined;
+  if (subAccountsBalances.length === 0) return undefined;
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
 
-  if (initialAccount?.subAccounts) {
-    for (const existingSubAccount of initialAccount.subAccounts) {
-      if (existingSubAccount.type === "TokenAccount") {
-        const { ticker, id } = existingSubAccount.token;
-        if (!blacklistedTokenIds.includes(id)) {
-          existingAccountTickers.push(ticker);
-          existingAccountByTicker[ticker] = existingSubAccount;
-        }
+  for (const existingSubAccount of subAccounts) {
+    if (existingSubAccount.type === "TokenAccount") {
+      const { ticker, id } = existingSubAccount.token;
+      if (!blacklistedTokenIds.includes(id)) {
+        existingAccountTickers.push(ticker);
+        existingAccountByTicker[ticker] = existingSubAccount;
       }
     }
   }
 
   await promiseAllBatched(3, subAccountsBalances, async accountBalance => {
-    const token = tokensCurrenciesMap[accountBalance.coinType];
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      accountBalance.coinType,
+      currencyId,
+    );
+
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];
       const tokenAccount = await buildSubAccount({

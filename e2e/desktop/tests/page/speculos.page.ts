@@ -4,7 +4,6 @@ import {
   activateLedgerSync,
   expectValidAddressDevice,
   signSendTransaction,
-  signSendNFTTransaction,
   signDelegationTransaction,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
@@ -15,7 +14,7 @@ import {
   providePublicKey,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -33,11 +32,6 @@ export class SpeculosPage extends AppPage {
   @step("Activate Ledger Sync")
   async activateLedgerSync() {
     await activateLedgerSync();
-  }
-
-  @step("Sign Send NFT Transaction")
-  async signSendNFTTransaction(tx: NFTTransaction) {
-    await signSendNFTTransaction(tx);
   }
 
   @step("Sign Send Transaction")

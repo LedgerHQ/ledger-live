@@ -64,7 +64,7 @@ const getSendFields = ({
   return fields;
 };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   parentAccount,
   transaction,
@@ -74,7 +74,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<CosmosTransactionFieldType> {
+}): Promise<Array<CosmosTransactionFieldType>> {
   const { mode, memo, validators } = transaction;
   const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);

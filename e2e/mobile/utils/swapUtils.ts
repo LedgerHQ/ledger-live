@@ -1,4 +1,3 @@
-import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {

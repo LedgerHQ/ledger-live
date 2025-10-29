@@ -2,14 +2,14 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
-import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
+import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
 import Section from "~/screens/OperationDetails/Section";
 import { urls } from "~/utils/urls";
+import { cryptoAssetsHooks } from "~/config/bridge-setup";
 
 interface OperationDetailsPostAccountSectionProps {
   operation: HederaOperation;

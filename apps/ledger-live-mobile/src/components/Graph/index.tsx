@@ -50,6 +50,7 @@ function Graph({
   const color = initialColor || colors.primary.c80;
   const maxY = mapValue(maxBy(data, mapValue)!);
   const minY = mapValue(minBy(data, mapValue)!);
+  const isSameValue = maxY === minY;
   const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
   const curve = d3shape[shape] as d3shape.CurveFactory;
   const x = d3scale
@@ -61,7 +62,14 @@ function Graph({
     .domain([paddedMinY, maxY])
     .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS]);
 
-  const yExtractor = (d: Item) => y(mapValue(d));
+  const yExtractor = (d: Item) =>
+    y(
+      mapValue(
+        isSameValue && (!("countervalue" in d) || typeof d.countervalue === "undefined")
+          ? { ...d, countervalue: 0 }
+          : d,
+      ),
+    );
 
   const area = d3shape
     .area<Item>()
@@ -90,6 +98,7 @@ function Graph({
       <Path d={line ?? undefined} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );
+
   return isInteractive ? (
     <BarInteraction
       width={width}

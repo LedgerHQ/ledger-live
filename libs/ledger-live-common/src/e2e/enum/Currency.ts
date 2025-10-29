@@ -156,13 +156,6 @@ export class Currency {
     AppInfos.BNB_CHAIN,
     [Network.BNB_CHAIN, Network.POLYGON],
   );
-  static readonly BSC_POL = new Currency(
-    "Matic Token",
-    "MATIC",
-    "bsc/bep20/matic_token",
-    AppInfos.BNB_CHAIN,
-    [Network.BNB_CHAIN],
-  );
   static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
     Network.BNB_CHAIN,
     Network.ETHEREUM,

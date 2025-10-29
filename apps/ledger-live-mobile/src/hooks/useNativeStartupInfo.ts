@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { NativeEventEmitter, NativeModules } from "react-native";
 import { DdRum, RumActionType } from "@datadog/mobile-react-native";
+import NetInfo from "@react-native-community/netinfo";
+import { track } from "~/analytics";
 
 const { StartupInfoModule } = NativeModules;
 
@@ -14,12 +16,29 @@ const startupInfoEventEmitter = StartupInfoModule
  * This is useful for tracking application start events in Datadog RUM.
  */
 export default function useNativeStartupInfo() {
+  const enhanceInfoWithNetworkData = async (info: Record<string, string | number>) => {
+    const networkState = await NetInfo.fetch();
+    const linkSpeed =
+      networkState.details && "linkSpeed" in networkState.details
+        ? networkState.details.linkSpeed
+        : undefined;
+
+    const enhancedInfo = {
+      ...info,
+      connectionSpeedInMbps: linkSpeed ?? "N/A",
+      type: networkState.type,
+    };
+
+    DdRum.addAction(RumActionType.CUSTOM, "application_start", info);
+    track("Start duration", enhancedInfo);
+  };
+
   useEffect(() => {
     if (StartupInfoModule && startupInfoEventEmitter) {
       // 1. Get initial startup info (for cold start or external warm start)
       StartupInfoModule.getInitialStartupInfo()
         .then((info: Record<string, string | number>) => {
-          DdRum.addAction(RumActionType.CUSTOM, "application_start", info);
+          enhanceInfoWithNetworkData(info);
         })
         .catch((error: string) => {
           console.error("Failed to get initial startup info:", error);
@@ -29,7 +48,7 @@ export default function useNativeStartupInfo() {
       const subscription = startupInfoEventEmitter.addListener(
         "NativeStartupInfoUpdate",
         (info: Record<string, string | number>) => {
-          DdRum.addAction(RumActionType.CUSTOM, "application_start", info);
+          enhanceInfoWithNetworkData(info);
         },
       );
 

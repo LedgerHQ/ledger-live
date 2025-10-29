@@ -236,7 +236,7 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -284,7 +284,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -330,7 +330,7 @@ test.describe("Send flows", () => {
     test(
       `Check Valid amount input (${transactionInputValid.amount})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: "B2CQA-473",
@@ -375,7 +375,7 @@ test.describe("Send flows", () => {
       test(
         `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -418,7 +418,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -472,7 +472,7 @@ test.describe("Send flows", () => {
     test(
       `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: "B2CQA-2202",

@@ -7,6 +7,66 @@ import {
   hasCryptoCurrencyId,
 } from "../currencies";
 import { getMappedAssets } from "./api";
+
+/**
+ * WORKAROUND: Fallback mappings for currencies not yet available in getMappedAssets()
+ * TODO: Remove these entries once they are properly supported by the mapping service
+ *
+ * Each entry maps a Ledger currency ID to its provider ID.
+ * The provider ID is used to group currencies by their external provider (e.g., CoinGecko).
+ */
+const FALLBACK_CURRENCY_MAPPINGS: Record<string, string> = {
+  // Canton Network - using canton_network as both ledgerId and providerId
+  canton_network: "canton_network",
+  canton_network_devnet: "canton_network_devnet",
+  canton_network_testnet: "canton_network_testnet",
+
+  // Add more fallback mappings here as needed:
+  // "ledger_currency_id": "provider_id",
+};
+
+/**
+ * Creates synthetic MappedAsset entries for currencies that are not yet available
+ * in the mapping service API but need to be supported.
+ */
+const createFallbackMappedAssets = (
+  currencies: CryptoOrTokenCurrency[],
+  existingAssets: MappedAsset[],
+): MappedAsset[] => {
+  const existingLedgerIds = new Set(existingAssets.map(asset => asset.ledgerId.toLowerCase()));
+  const fallbackAssets: MappedAsset[] = [];
+
+  for (const [currencyId, providerId] of Object.entries(FALLBACK_CURRENCY_MAPPINGS)) {
+    // Skip if currency already exists in mapped assets
+    if (existingLedgerIds.has(currencyId.toLowerCase())) {
+      continue;
+    }
+
+    // Find the currency in the list
+    const currency = currencies.find(c => c.id === currencyId);
+    if (currency) {
+      fallbackAssets.push({
+        $type: currency.type === "TokenCurrency" ? "Token" : "Coin",
+        ledgerId: currency.id,
+        providerId: providerId,
+        name: currency.name,
+        ticker: currency.ticker,
+        network: currency.type === "TokenCurrency" ? currency.parentCurrency?.id : undefined,
+        contract: currency.type === "TokenCurrency" ? currency.contractAddress : undefined,
+        status: "active",
+        reason: null,
+        data: {
+          img: "",
+          marketCapRank: null,
+        },
+        ledgerCurrency: currency,
+      });
+    }
+  }
+
+  return fallbackAssets;
+};
+
 export const loadCurrenciesByProvider = async (
   coinsAndTokensSupported: CryptoOrTokenCurrency[],
 ): Promise<GroupedCurrencies> => {
@@ -15,7 +75,11 @@ export const loadCurrenciesByProvider = async (
     getMappedAssets(),
   ]);
 
-  return groupCurrenciesByProvider(assets, sortedCurrenciesSupported);
+  // Merge API assets with fallback assets for currencies not yet in the API
+  const fallbackAssets = createFallbackMappedAssets(sortedCurrenciesSupported, assets);
+  const allAssets = [...assets, ...fallbackAssets];
+
+  return groupCurrenciesByProvider(allAssets, sortedCurrenciesSupported);
 };
 export const groupCurrenciesByProvider = (
   assets: MappedAsset[],

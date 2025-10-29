@@ -38,7 +38,7 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Receive`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
@@ -68,7 +68,6 @@ for (const account of accounts) {
         await app.receive.continue();
         const displayedAddress = await app.receive.getAddressDisplayed();
         await app.receive.expectValidReceiveAddress(displayedAddress);
-
         await app.speculos.expectValidAddressDevice(account.account, displayedAddress);
         await app.receive.expectApproveLabel();
       },
@@ -95,7 +94,7 @@ test.describe("Receive", () => {
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",

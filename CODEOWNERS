@@ -56,6 +56,7 @@ libs/ledger-services/                                    @ledgerhq/coin-integrat
 ### ... cryptoassets ongoing rework => the lib will eventually belong to live-hub (and we lift up to libs folder) ... ###
 libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
 libs/ledgerjs/packages/cryptoassets/src/hooks*           @ledgerhq/live-hub
+libs/ledgerjs/packages/cryptoassets/src/cal-client/      @ledgerhq/live-hub
 
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
@@ -186,18 +187,18 @@ libs/live-signer-evm/                                              @ledgerhq/liv
 
 
 # Recover team
-apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
-apps/ledger-live-desktop/src/renderer/components/RecoverRestore/        @ledgerhq/recover-software
-apps/ledger-live-desktop/src/renderer/components/WebRecoverPlayer/      @ledgerhq/recover-software
-apps/ledger-live-desktop/src/renderer/modals/ProtectDiscover/           @ledgerhq/recover-software
-apps/ledger-live-desktop/src/renderer/screens/recover/                  @ledgerhq/recover-software
-apps/ledger-live-mobile/src/components/RecoverBanner/                   @ledgerhq/recover-software
-apps/ledger-live-mobile/src/components/ServicesWidget/Protect/          @ledgerhq/recover-software
-apps/ledger-live-mobile/src/components/WebRecoverPlayer/                @ledgerhq/recover-software
-apps/ledger-live-mobile/src/screens/Protect/                            @ledgerhq/recover-software
-libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
-apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/      @ledgerhq/recover-software
-
+apps/ledger-live-desktop/src/renderer/components/RecoverBanner/                                @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/components/RecoverRestore/                               @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/components/WebRecoverPlayer/                             @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/modals/ProtectDiscover/                                  @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/screens/recover/                                         @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/RecoverBanner/                                          @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/ServicesWidget/Protect/                                 @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/WebRecoverPlayer/                                       @ledgerhq/recover-software
+apps/ledger-live-mobile/src/screens/Protect/                                                   @ledgerhq/recover-software
+libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                                        @ledgerhq/recover-software
+apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/Manual/SyncOnboardingCompanion @ledgerhq/recover-software
 # Live hub overrides
 
 apps/web-tools/trustchain/                               @ledgerhq/live-hub

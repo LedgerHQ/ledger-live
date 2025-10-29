@@ -5,18 +5,9 @@ describe("utils", () => {
   describe("isRecipientValid", () => {
     it("should return true for valid Canton addresses", () => {
       const validAddresses = [
-        "abc::123",
-        "hello::1",
-        "test123::456",
-        "a::0",
-        "party::999",
-        "user123::42",
-        "canton_1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z::123",
-        "test::123456789",
-        "abc::abc", // letters after ::
-        "test::ABC123", // mixed case letters and numbers
-        "user::a1b2c3", // alphanumeric after ::
-        "contract::XyZ789", // mixed case with numbers
+        "ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8",
+        "ldg-with-dash::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8",
+        "ldg-with-number-1::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8",
       ];
 
       validAddresses.forEach(address => {
@@ -26,6 +17,8 @@ describe("utils", () => {
 
     it("should return false for invalid Canton addresses", () => {
       const invalidAddresses = [
+        "ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e", // too short fingerprint
+        "ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e80", // too long fingerprint
         "", // empty string
         "::123", // no characters before ::
         "abc::", // no characters after ::
@@ -53,26 +46,25 @@ describe("utils", () => {
     });
 
     it("should handle edge cases", () => {
-      expect(isRecipientValid("a::1")).toBe(true); // minimum valid case with number
-      expect(isRecipientValid("a::a")).toBe(true); // minimum valid case with letter
-      expect(isRecipientValid("1::1")).toBe(true); // number before ::
-      expect(isRecipientValid("1::a")).toBe(true); // number before ::, letter after
-      expect(isRecipientValid("_::1")).toBe(true); // underscore before ::
-      expect(isRecipientValid("_::a")).toBe(true); // underscore before ::, letter after
-      expect(isRecipientValid("-::1")).toBe(true); // dash before ::
-      expect(isRecipientValid("-::a")).toBe(true); // dash before ::, letter after
-      expect(isRecipientValid(".::1")).toBe(true); // dot before ::
-      expect(isRecipientValid(".::a")).toBe(true); // dot before ::, letter after
+      const validHex68 = "1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8";
+      expect(isRecipientValid(`a::${validHex68}`)).toBe(true); // single letter prefix
+      expect(isRecipientValid(`1::${validHex68}`)).toBe(true); // single number prefix
+      expect(isRecipientValid(`a-1::${validHex68}`)).toBe(true); // prefix with dash
+
+      // Invalid edge cases (should be false)
+      expect(isRecipientValid("a::1")).toBe(false); // too short hex
+      expect(isRecipientValid("a::a")).toBe(false); // too short hex
+      expect(isRecipientValid("_::1")).toBe(false); // invalid prefix character
+      expect(isRecipientValid(".::1")).toBe(false); // invalid prefix character
     });
 
-    it("should handle addresses with spaces and multiple colons", () => {
-      // These are valid according to our regex but might not be ideal Canton addresses
-      expect(isRecipientValid(" abc::123")).toBe(true); // space before address
-      expect(isRecipientValid(" abc::abc")).toBe(true); // space before address with letters
-      expect(isRecipientValid("abc ::123")).toBe(true); // space before ::
-      expect(isRecipientValid("abc ::abc")).toBe(true); // space before :: with letters
-      expect(isRecipientValid("abc::123::456")).toBe(true); // multiple ::
-      expect(isRecipientValid("abc::abc::def")).toBe(true); // multiple :: with letters
+    it("should reject addresses with spaces and multiple colons", () => {
+      expect(isRecipientValid(" abc::123")).toBe(false); // space before address
+      expect(isRecipientValid(" abc::abc")).toBe(false); // space before address with letters
+      expect(isRecipientValid("abc ::123")).toBe(false); // space before ::
+      expect(isRecipientValid("abc ::abc")).toBe(false); // space before :: with letters
+      expect(isRecipientValid("abc::123::456")).toBe(false); // multiple ::
+      expect(isRecipientValid("abc::abc::def")).toBe(false); // multiple :: with letters
     });
   });
 

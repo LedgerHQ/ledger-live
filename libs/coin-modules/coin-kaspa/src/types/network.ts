@@ -74,7 +74,7 @@ export type ApiResponseTransaction = {
   is_accepted: boolean;
   accepting_block_hash: string;
   accepting_block_blue_score: number;
-  inputs: Input[];
+  inputs: Input[] | null;
   outputs: Output[];
 };
 

@@ -6,14 +6,14 @@ import { APTOS_PRECISION } from "../../constants";
 const nonBreakableSpace = " ";
 
 describe("deviceTransactionConfig", () => {
-  test("coin transfer", () => {
+  test("coin transfer", async () => {
     const account = createFixtureAccount();
     const parentAccount = null;
     const transaction = createFixtureTransaction({
       amount: BigNumber(123).shiftedBy(APTOS_PRECISION),
       fees: BigNumber(456),
     });
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -33,7 +33,7 @@ describe("deviceTransactionConfig", () => {
     ]);
   });
 
-  test("stake", () => {
+  test("stake", async () => {
     const account = createFixtureAccount();
     const parentAccount = null;
     const transaction = createFixtureTransaction({
@@ -42,7 +42,7 @@ describe("deviceTransactionConfig", () => {
       recipient: "delegator id",
       mode: "stake",
     });
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -67,7 +67,7 @@ describe("deviceTransactionConfig", () => {
     ]);
   });
 
-  test("unstake", () => {
+  test("unstake", async () => {
     const account = createFixtureAccount();
     const parentAccount = null;
     const transaction = createFixtureTransaction({
@@ -76,7 +76,7 @@ describe("deviceTransactionConfig", () => {
       recipient: "delegator id",
       mode: "unstake",
     });
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -101,7 +101,7 @@ describe("deviceTransactionConfig", () => {
     ]);
   });
 
-  test("unstake", () => {
+  test("unstake", async () => {
     const account = createFixtureAccount();
     const parentAccount = null;
     const transaction = createFixtureTransaction({
@@ -109,7 +109,7 @@ describe("deviceTransactionConfig", () => {
       fees: BigNumber(456),
       mode: "withdraw",
     });
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,

@@ -6,13 +6,13 @@ import {
   Operation,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import { TokenCurrency, CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import murmurhash from "imurmurhash";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
@@ -217,7 +217,6 @@ export const getSyncHash = (
  * (Incorrect NFT balance & React key dup)
  */
 export const attachOperations = async (
-  accountId: string,
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
@@ -239,9 +238,11 @@ export const attachOperations = async (
     Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
-  const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
+  const makeCoinOpForOrphanChildOp = async (
+    childOp: Operation,
+  ): Promise<OperationWithRequiredChildren> => {
     const type = "NONE";
-    const { accountId } = decodeTokenAccountId(childOp.accountId);
+    const { accountId } = await decodeTokenAccountId(childOp.accountId);
     const id = encodeOperationId(accountId, childOp.hash, type);
 
     return {
@@ -284,6 +285,7 @@ export const attachOperations = async (
     const token = tokenOperation.contract && (await findToken(tokenOperation.contract));
     if (!token || blacklistedTokenIds?.includes(token.id)) continue;
 
+    const { accountId } = await decodeTokenAccountId(tokenOperation.accountId);
     const tokenAccountId = encodeTokenAccountId(accountId, token);
     const operationId = encodeOperationId(tokenAccountId, tokenOperation.hash, tokenOperation.type);
     tokenOperation.id = operationId;
@@ -291,7 +293,7 @@ export const attachOperations = async (
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(tokenOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -306,7 +308,7 @@ export const attachOperations = async (
   for (const nftOperation of nftOperations) {
     let mainOperations = coinOperationsByHash[nftOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(nftOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(nftOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -321,7 +323,7 @@ export const attachOperations = async (
   for (const internalOperation of internalOperations) {
     let mainOperations = coinOperationsByHash[internalOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(internalOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -362,12 +364,12 @@ export const getMessageProperties = async (
 // logic.ts
 export const createSwapHistoryMap = (
   initialAccount: Account | undefined,
-): Map<TokenCurrency, TokenAccount["swapHistory"]> => {
+): Map<string, TokenAccount["swapHistory"]> => {
   if (!initialAccount?.subAccounts) return new Map();
 
-  const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+  const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
   for (const subAccount of initialAccount.subAccounts) {
-    swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
+    swapHistoryMap.set(subAccount.token.id, subAccount.swapHistory);
   }
 
   return swapHistoryMap;

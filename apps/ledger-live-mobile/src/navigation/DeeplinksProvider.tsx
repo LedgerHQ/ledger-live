@@ -41,7 +41,9 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
+import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
+import { AppLoadingManager } from "LLM/features/LaunchScreen";
 
 const themes: {
   [key: string]: Theme;
@@ -57,13 +59,14 @@ function isWalletConnectUrl(url: string) {
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
+    url.startsWith("ledgerwallet://wc") ||
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
 }
 
 function isStorylyLink(url: string) {
-  return url.startsWith("ledgerlive://storyly?");
+  return url.startsWith("ledgerlive://storyly?") || url.startsWith("ledgerwallet://storyly?");
 }
 
 function getProxyURL(url: string, customBuySellUiAppId?: string) {
@@ -109,6 +112,7 @@ const linkingOptions = () => ({
   },
 
   prefixes: [
+    "ledgerwallet://",
     "ledgerlive://",
     "https://ledger.com",
     // FIXME: We will be fixing the universal links in this epic : https://ledgerhq.atlassian.net/browse/LIVE-14732
@@ -187,19 +191,16 @@ const linkingOptions = () => ({
               [ScreenName.PostOnboardingDeeplinkHandler]: "post-onboarding",
             },
           },
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
-               */
-              [ScreenName.ReceiveSelectCrypto]: "receive",
-            },
-          },
           /**
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
+           * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string
+           * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
            */
-          [NavigatorName.Swap]: "swap",
+          [NavigatorName.Swap]: {
+            screens: {
+              [ScreenName.SwapTab]: "swap",
+            },
+          },
 
           [NavigatorName.SendFunds]: {
             screens: {
@@ -341,18 +342,21 @@ export const DeeplinksProvider = ({
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
   const modularDrawer = useFeature("llmModularDrawer");
+
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-  const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
+
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
-  const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
-    () =>
+  const modularDrawerFlowConfigs = getDrawerFlowConfigs(modularDrawer);
+
+  const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
+    return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({
+      {
         ...(hasCompletedOnboarding
           ? {
               ...linkingOptions(),
@@ -365,29 +369,13 @@ export const DeeplinksProvider = ({
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
 
-                      ...(modularDrawer?.enabled
-                        ? {
-                            [NavigatorName.ModularDrawer]: {
-                              screens: {
-                                [ScreenName.ModularDrawerDeepLinkHandler]: "add-account",
-                              },
-                            },
-                          }
-                        : {
-                            // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
-                            [AddAccountNavigatorEntryPoint]: {
-                              screens: {
-                                /**
-                                 * ie: "ledgerlive://add-account" will open the add account flow
-                                 *
-                                 * @params ?currency: string
-                                 * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-                                 *
-                                 */
-                                [ScreenName.AddAccountsSelectCrypto]: "add-account",
-                              },
-                            },
-                          }),
+                      /**
+                       * Modular drawer flows (add-account & receive)
+                       * or classic flows when modular drawer is disabled
+                       */
+                      ...modularDrawerFlowConfigs.modularDrawer,
+                      ...modularDrawerFlowConfigs.classicAddAccount,
+                      ...modularDrawerFlowConfigs.classicReceive,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
@@ -702,21 +690,20 @@ export const DeeplinksProvider = ({
 
           return getStateFromPath(path, config);
         },
-      }) as LinkingOptions<ReactNavigation.RootParamList>,
-    [
-      hasCompletedOnboarding,
-      modularDrawer?.enabled,
-      AddAccountNavigatorEntryPoint,
-      llmAccountListUI?.enabled,
-      AccountsListScreenName,
-      userAcceptedTerms,
-      buySellUiManifestId,
-      dispatch,
-      storylyContext,
-      liveAppProviderInitialized,
-      manifests,
-    ],
-  );
+      } as LinkingOptions<ReactNavigation.RootParamList>
+    );
+  }, [
+    hasCompletedOnboarding,
+    modularDrawerFlowConfigs,
+    llmAccountListUI?.enabled,
+    AccountsListScreenName,
+    userAcceptedTerms,
+    buySellUiManifestId,
+    dispatch,
+    storylyContext,
+    liveAppProviderInitialized,
+    manifests,
+  ]);
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
@@ -738,18 +725,24 @@ export const DeeplinksProvider = ({
   }
 
   return (
-    <NavigationContainer
-      theme={theme}
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        isReadyRef.current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+    <AppLoadingManager
+      isNavigationReady={isReady}
+      onAppReady={() => {
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
       }}
     >
-      {children}
-    </NavigationContainer>
+      <NavigationContainer
+        theme={theme}
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
+        }}
+      >
+        {children}
+      </NavigationContainer>
+    </AppLoadingManager>
   );
 };

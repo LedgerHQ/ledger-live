@@ -3,15 +3,13 @@ import { runStartETHStakingFromEarnDashboardTest } from "./earn";
 
 const testConfig = {
   account: Account.ETH_1,
-  earnButtonId: "3bd9fab1-fb6c-5fc2-a8b6-a1d810365b1e",
   provider: Provider.KILN,
   tmsLinks: ["B2CQA-3678"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runStartETHStakingFromEarnDashboardTest(
   testConfig.account,
-  testConfig.earnButtonId,
   testConfig.provider,
   testConfig.tmsLinks,
   testConfig.tags,

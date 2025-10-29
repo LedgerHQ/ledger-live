@@ -19,16 +19,16 @@ export const NativeElementHelpers = {
     return detoxExpect(element);
   },
 
+  waitForElement(nativeElement: NativeElement, timeout: number = DEFAULT_TIMEOUT) {
+    return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+  },
+
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return waitFor(element(by.id(id)))
-      .toBeVisible()
-      .withTimeout(timeout);
+    return NativeElementHelpers.waitForElement(element(by.id(id)), timeout);
   },
 
   waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return waitFor(element(by.text(text)))
-      .toBeVisible()
-      .withTimeout(timeout);
+    return NativeElementHelpers.waitForElement(element(by.text(text)), timeout);
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
@@ -175,9 +175,7 @@ export const WebElementHelpers = {
   },
 
   getWebElementByCssSelector(selector: string, index = 0): WebElement {
-    const base = web.element(
-      by.web.cssSelector(selector),
-    )
+    const base = web.element(by.web.cssSelector(selector));
     return index > 0 ? base.atIndex(index) : base;
   },
 

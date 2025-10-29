@@ -8,7 +8,7 @@ import {
   TokenCurrency,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { CryptoAssetsStore, Operation } from "@ledgerhq/types-live";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
@@ -529,8 +529,8 @@ describe("EVM Family", () => {
         const swapHistory = createSwapHistoryMap(account);
 
         expect(swapHistory.size).toBe(2);
-        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
-        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+        expect(swapHistory.get(tokenAccount1.token.id)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token.id)).toEqual(tokenAccount2.swapHistory);
       });
       it("should include correct swapHistory for a token account", () => {
         const tokenAccount = {
@@ -551,7 +551,7 @@ describe("EVM Family", () => {
         const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
         const swapHistoryMap = createSwapHistoryMap(account);
-        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+        expect(swapHistoryMap.get(tokenAccount.token.id)).toEqual(tokenAccount.swapHistory);
       });
     });
     describe("getSyncHash", () => {
@@ -651,6 +651,7 @@ describe("EVM Family", () => {
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
+              findTokenById: (_id: string) => undefined,
               findTokenByAddressInCurrency: (address: string, currencyId: string) => {
                 if (address === "0xTokenContract" && currencyId === "ethereum")
                   return { id: "ethereum/erc20/usd__coin" };
@@ -658,6 +659,7 @@ describe("EVM Family", () => {
                   return { id: "ethereum/erc20/usd__coin" };
                 return undefined;
               },
+              getTokensSyncHash: (_: string) => Promise.resolve("0"),
             }) as CryptoAssetsStore,
         );
         const coinOperation = makeOperation({
@@ -719,7 +721,6 @@ describe("EVM Family", () => {
 
         expect(
           await attachOperations(
-            "js:2:ethereum:0xkvn:",
             [coinOperation],
             tokenOperations,
             nftOperations,
@@ -797,15 +798,13 @@ describe("EVM Family", () => {
         ]);
         expect(() =>
           attachOperations(
-            "",
-            // @ts-expect-error purposely ignore readonly ts issue for this
-            coinOperations,
-            tokenOperations,
-            nftOperations,
-            internalOperations,
+            coinOperations as Operation[],
+            tokenOperations as Operation[],
+            nftOperations as Operation[],
+            internalOperations as Operation[],
             {
               blacklistedTokenIds: [],
-              findToken: (contractAddress: string) =>
+              findToken: async (contractAddress: string) =>
                 getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
             },
           ),
@@ -872,7 +871,6 @@ describe("EVM Family", () => {
 
         expect(
           await attachOperations(
-            "",
             [coinOperation],
             tokenOperations,
             nftOperations,

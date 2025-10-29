@@ -73,6 +73,7 @@ setCryptoAssetsStoreGetter(
         }
         return undefined;
       },
+      getTokensSyncHash: (_: string) => Promise.resolve("0"),
     }) as CryptoAssetsStore,
 );
 

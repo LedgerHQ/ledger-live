@@ -185,6 +185,131 @@ describe("scan transactions for multiple addresses", () => {
     ).toBe(true);
   });
 
+  it("Empty input (mining tx)", async () => {
+    jest.spyOn(lib, "getTransactions").mockResolvedValueOnce({
+      nextPageAfter: null,
+      transactions: [
+        {
+          subnetwork_id: "0100000000000000000000000000000000000000",
+          transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+          hash: "d4d1a311fa063e007f93955ca7548f4047055b4bdff89c99919fc48f546c9b54",
+          mass: null,
+          payload:
+            "e5bf3f0e00000000faff041a0000000000002220f027dfb4b0f0a246130699bd0384036fe4e207458cf4d054657ed7c22afd427aac312e302e302f766961627463",
+          block_hash: ["cad9d41ce79ffd1002459c9cc0de6861c9c0cd9cbd4b4ee8d0d5e10c537db063"],
+          block_time: 1759498092403,
+          is_accepted: true,
+          accepting_block_hash: "746bc1544081944841aa4697f5210ea809c61e7b280c59ee05beb43e44383dd6",
+          accepting_block_blue_score: 239058922,
+          accepting_block_time: 1759498092968,
+          inputs: null,
+          outputs: [
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 0,
+              amount: 436535290,
+              script_public_key:
+                "20f027dfb4b0f0a246130699bd0384036fe4e207458cf4d054657ed7c22afd427aac",
+              script_public_key_address:
+                "kaspa:qrcz0ha5krc2y3snq6vm6quyqdh7fcs8gkx0f5z5v4ld0s32l4p850cvk8udv",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 1,
+              amount: 436535290,
+              script_public_key:
+                "20882bfecd3aeee23b8aec89fd8be22dccd038b0a18534bec2cb4f0292b7d6d699ac",
+              script_public_key_address:
+                "kaspa:qzyzhlkd8thwywu2ajylmzlz9hxdqw9s5xznf0kzed8s9y4h6mtfj222rtgcn",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 2,
+              amount: 436535290,
+              script_public_key:
+                "20ec56e7099fea3e9339407486c578d69f417598fd83c6d241f1fa6eae93eec217ac",
+              script_public_key_address:
+                "kaspa:qrk9decfnl4rayeegp6gd3tc6605zavclkpud5jp78axat5namppwt050d57j",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 3,
+              amount: 436535290,
+              script_public_key:
+                "20ec56e7099fea3e9339407486c578d69f417598fd83c6d241f1fa6eae93eec217ac",
+              script_public_key_address:
+                "kaspa:qrk9decfnl4rayeegp6gd3tc6605zavclkpud5jp78axat5namppwt050d57j",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 4,
+              amount: 12341234,
+              script_public_key:
+                "20d809eaac35b196372cd5944a961f33abf853d8909a0d82d845caee78db45ed4fac",
+              script_public_key_address:
+                "kaspa:qrvqn64vxkcevdev6k2y49slxw4ls57cjzdqmqkcgh9wu7xmghk57v4ehla0t",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 5,
+              amount: 436535290,
+              script_public_key:
+                "20f027dfb4b0f0a246130699bd0384036fe4e207458cf4d054657ed7c22afd427aac",
+              script_public_key_address:
+                "kaspa:qrcz0ha5krc2y3snq6vm6quyqdh7fcs8gkx0f5z5v4ld0s32l4p850cvk8udv",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 6,
+              amount: 436535290,
+              script_public_key:
+                "207bbb32e8bbec2351e873181a1a07b2f60e2f048b5302b71177bfb28c0f143da6ac",
+              script_public_key_address:
+                "kaspa:qpamkvhgh0kzx50gwvvp5xs8ktmqutcy3dfs9dc3w7lm9rq0zs76vf959mmrp",
+              script_public_key_type: "pubkey",
+            },
+            {
+              transaction_id: "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+              index: 7,
+              amount: 436636914,
+              script_public_key:
+                "20f027dfb4b0f0a246130699bd0384036fe4e207458cf4d054657ed7c22afd427aac",
+              script_public_key_address:
+                "kaspa:qrcz0ha5krc2y3snq6vm6quyqdh7fcs8gkx0f5z5v4ld0s32l4p850cvk8udv",
+              script_public_key_type: "pubkey",
+            },
+          ],
+        },
+      ],
+    });
+
+    const address = "kaspa:qrvqn64vxkcevdev6k2y49slxw4ls57cjzdqmqkcgh9wu7xmghk57v4ehla0t";
+
+    const result = await scanOperations([address], "", 0);
+    expect(result.length).toBe(1);
+
+    const exampleTx = result.find(
+      res => res.hash === "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
+    );
+    expect(exampleTx).toBeDefined();
+    expect(exampleTx?.fee.eq(BigNumber(0))).toBe(true);
+    expect(exampleTx?.value.eq(BigNumber(12341234))).toBe(true);
+    expect(exampleTx?.type).toBe("IN");
+    expect(exampleTx?.senders.length).toBe(0);
+    expect(exampleTx?.recipients.length).toBe(8);
+    expect(
+      exampleTx?.recipients.includes(
+        "kaspa:qrvqn64vxkcevdev6k2y49slxw4ls57cjzdqmqkcgh9wu7xmghk57v4ehla0t",
+      ),
+    ).toBe(true);
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });

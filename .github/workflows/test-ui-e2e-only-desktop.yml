@@ -50,6 +50,8 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+          - stax
+          - flex
         default: nanoSP
       firmware_version:
         description: "Firmware version to use for selected device"
@@ -59,6 +61,10 @@ on:
 
   workflow_call:
     inputs:
+      ref:
+        description: "The branch which triggered this workflow"
+        required: false
+        type: string
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
@@ -84,13 +90,12 @@ on:
         default: testing
       speculos_device:
         description: "Device to be used"
-        required: false
+        required: true
         type: string
-        default: nanoSP
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -115,7 +120,18 @@ jobs:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup caches
         id: caches
@@ -132,13 +148,6 @@ jobs:
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Retrieving coin apps
         uses: actions/checkout@v4

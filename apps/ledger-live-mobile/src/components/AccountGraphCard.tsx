@@ -32,6 +32,7 @@ import { GraphPlaceholder } from "./Graph/Placeholder";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { getFreshAccountAddress } from "~/utils/address";
 
 const { width } = getWindowDimensions();
 
@@ -315,7 +316,9 @@ const GraphCardHeader = ({
           px={6}
           mt={4}
         >
-          {isToken ? parentAccount.freshAddress : (account as Account).freshAddress}
+          {isToken
+            ? getFreshAccountAddress(parentAccount)
+            : getFreshAccountAddress(account as Account)}
         </Tag>
       </Touchable>
     </Flex>

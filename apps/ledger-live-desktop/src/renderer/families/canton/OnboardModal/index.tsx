@@ -31,6 +31,7 @@ import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import { OnboardingResult, StepId, StepProps } from "./types";
+import { AxiosError } from "axios";
 
 export type Props = {
   t: TFunction;
@@ -60,7 +61,7 @@ const mapDispatchToProps = {
 
 type State = {
   stepId: StepId;
-  error: Error | null;
+  error: AxiosError | null;
   authorizeStatus: AuthorizeStatus;
   onboardingStatus: OnboardStatus;
   isProcessing: boolean;
@@ -229,7 +230,7 @@ class OnboardModal extends PureComponent<Props, State> {
           }
         },
         complete: () => {},
-        error: (error: Error) => {
+        error: (error: AxiosError) => {
           logger.error("[handleOnboardAccount] failed", error);
           this.setState({
             onboardingStatus: OnboardStatus.ERROR,
@@ -271,7 +272,7 @@ class OnboardModal extends PureComponent<Props, State> {
         complete: () => {
           this.transitionTo(StepId.FINISH);
         },
-        error: (error: Error) => {
+        error: (error: AxiosError) => {
           logger.error("[handleAuthorizePreapproval] failed", error);
           this.setState({
             authorizeStatus: AuthorizeStatus.ERROR,
@@ -284,7 +285,7 @@ class OnboardModal extends PureComponent<Props, State> {
 
   render() {
     const { currency, device, editedNames, selectedAccounts, t } = this.props;
-    const { authorizeStatus, isProcessing, onboardingResult, onboardingStatus, stepId } =
+    const { authorizeStatus, isProcessing, onboardingResult, onboardingStatus, stepId, error } =
       this.state;
 
     invariant(device, "device is required"); // TODO: handle device reconnection
@@ -311,6 +312,7 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingResult,
       onboardingStatus,
       authorizeStatus,
+      error,
       onAddAccounts: this.handleAddAccounts,
       onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,

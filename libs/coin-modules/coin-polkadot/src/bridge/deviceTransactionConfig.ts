@@ -18,12 +18,12 @@ const getSendFields = ({
 }: {
   transaction: Transaction;
   status: TransactionStatus;
-}) => {
-  const fields: { type: string; label: string; value: string }[] = [];
+}): Array<DeviceTransactionField> => {
+  const fields: Array<DeviceTransactionField> = [];
   fields.push({
     type: "text",
     label: "Balances",
-    value: transaction && transaction.useAllAmount ? "Transfer" : "Transfer keep alive",
+    value: transaction?.useAllAmount ? "Transfer" : "Transfer keep alive",
   });
   fields.push({
     type: "amount",
@@ -36,7 +36,7 @@ const getSendFields = ({
   return fields;
 };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   parentAccount,
   transaction,
@@ -46,7 +46,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { mode, rewardDestination } = transaction;
   const { amount } = status;
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;

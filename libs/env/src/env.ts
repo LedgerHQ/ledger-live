@@ -467,6 +467,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
+    parser: stringParser,
+    desc: "Ledger regtest Bitcoin explorer API",
+  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
@@ -887,6 +892,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger.com",
     parser: stringParser,
     desc: "Cryptoassets list service url",
+  },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
   },
   FEATURE_FLAGS: {
     def: "{}",

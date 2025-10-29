@@ -22,7 +22,7 @@ const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId | undefine
     case DeviceModelId.europa:
       return <Icons.Flex color="primary.c80" size="M" />;
     case DeviceModelId.apex:
-      return <Icons.Flex color="primary.c80" size="M" />;
+      return <Icons.Apex color="primary.c80" size="M" />;
     default:
       return <Icons.Nano color="primary.c80" size="M" />;
   }

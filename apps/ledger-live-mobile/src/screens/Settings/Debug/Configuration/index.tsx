@@ -17,7 +17,6 @@ import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import HasStaxEuropaRows from "./HasStaxEuropaRows";
 import SkipOnboardingRow from "./SkipOnboardingRow";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
-import RtkConsoleRow from "./RtkConsoleRow";
 
 export default function Configuration() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -47,7 +46,6 @@ export default function Configuration() {
       <HasStaxEuropaRows />
       <MockModeRow />
       <AnalyticsConsoleRow />
-      <RtkConsoleRow />
       <ThemeToggleRow />
       <SkipLock />
     </SettingsNavigationScrollView>

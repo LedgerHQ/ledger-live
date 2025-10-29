@@ -43,6 +43,7 @@ import PreventNativeBack from "../PreventNativeBack";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import ValidateOnDevice from "../ValidateOnDevice";
+import ValidateRawOnDevice from "../ValidateRawOnDevice";
 import {
   AutoRepair,
   LoadingAppInstall,
@@ -389,6 +390,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
+
   if (allowManagerRequested) {
     return renderAllowManager({
       t,
@@ -606,6 +608,20 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
             parentAccount={parentAccount}
             transaction={transaction}
             status={status}
+          />
+        </>
+      );
+    } else if (account && typeof transaction === "string") {
+      // sign raw transaction case
+      return (
+        <>
+          <PreventNativeBack />
+          <SkipLock />
+          <ValidateRawOnDevice
+            device={device}
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
           />
         </>
       );

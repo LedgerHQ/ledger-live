@@ -70,6 +70,7 @@ setSupportedCurrencies([
   "komodo",
   "zencash",
   "bitcoin_testnet",
+  "bitcoin_regtest",
   "ethereum_sepolia",
   "ethereum_holesky",
   "ethereum_hoodi",
@@ -141,6 +142,7 @@ setSupportedCurrencies([
   "canton_network_devnet",
   "canton_network_testnet",
   "kaspa",
+  "monad",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))

@@ -1,26 +1,10 @@
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
+import { Account } from "@ledgerhq/types-live";
 
-export const createMockCantonCurrency = (): CryptoCurrency => {
-  const mockCurrency = {
-    id: "canton_network",
-    name: "Canton",
-    type: "CryptoCurrency",
-    family: "canton",
-    units: [{ name: "Canton", code: "CANTON", magnitude: 38 }],
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    managerAppName: "Canton",
-    coinType: 6767,
-    explorerViews: [],
-  } satisfies CryptoCurrency;
-  return mockCurrency;
-};
+import { createMockAccount, createMockCantonCurrency } from "../../__tests__/testUtils";
+export { createMockAccount, createMockCantonCurrency };
 
 export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
   deviceId: "test-device-id",
@@ -28,37 +12,6 @@ export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
   wired: false,
   ...overrides,
 });
-
-export const createMockAccount = (overrides: Partial<Account> = {}): Account => {
-  const currency = createMockCantonCurrency();
-
-  return {
-    type: "Account",
-    id: "js:2:canton_network:test-address:canton",
-    seedIdentifier: "test-address",
-    derivationMode: "canton",
-    index: 0,
-    freshAddress: "test-address",
-    freshAddressPath: "44'/6767'/0'/0'/0'",
-    used: false,
-    balance: BigNumber(0),
-    spendableBalance: BigNumber(0),
-    creationDate: new Date(),
-    blockHeight: 0,
-    currency,
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    ...overrides,
-  };
-};
 
 export const createMockImportableAccount = (overrides: Partial<Account> = {}): Account => {
   return createMockAccount({
@@ -120,7 +73,7 @@ export const createMockObservable = (values: ObservableValue[], delay: number = 
 export const createMockStepProps = (overrides: Record<string, unknown> = {}) => {
   const currency = createMockCantonCurrency();
   const device = createMockDevice();
-  const creatableAccount = createMockAccount();
+  const creatableAccount = createMockAccount({ used: false });
   const importableAccount = createMockImportableAccount();
 
   return {
@@ -136,6 +89,7 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     onboardingResult: undefined,
     onboardingStatus: OnboardStatus.INIT,
     authorizeStatus: AuthorizeStatus.INIT,
+    error: null,
     onAddAccounts: jest.fn(),
     onAddMore: jest.fn(),
     onAuthorizePreapproval: jest.fn(),
@@ -150,7 +104,7 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
 export const createMockUserProps = (overrides: Record<string, unknown> = {}) => {
   const currency = createMockCantonCurrency();
   const device = createMockDevice();
-  const creatableAccount = createMockAccount();
+  const creatableAccount = createMockAccount({ used: false });
   const importableAccount = createMockImportableAccount();
 
   return {

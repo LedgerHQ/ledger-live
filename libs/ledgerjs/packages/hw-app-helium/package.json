@@ -41,7 +41,7 @@
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "documentation": "14.0.2",
     "jest": "^29.7.0",
     "rimraf": "^4.4.1",

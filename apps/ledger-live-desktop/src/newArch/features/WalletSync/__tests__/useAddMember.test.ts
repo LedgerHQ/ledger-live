@@ -148,8 +148,10 @@ describe("useAddMember", () => {
 });
 
 jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
   const dispatch = jest.fn();
   return {
+    ...actual,
     useDispatch: () => dispatch,
     useSelector: (selector: () => unknown) => selector(),
   };

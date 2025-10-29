@@ -1,5 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { combineReducers, Store } from "redux";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
@@ -13,7 +14,6 @@ import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
-import tools from "./tools";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -32,6 +32,7 @@ const appReducer = combineReducers({
   accounts,
   appstate,
   assetsDataApi: assetsDataApi.reducer,
+  cryptoAssetsApi: cryptoAssetsApi.reducer,
   auth,
   ble,
   countervalues,
@@ -41,7 +42,6 @@ const appReducer = combineReducers({
   largeMover,
   market,
   modularDrawer,
-  tools,
   notifications,
   postOnboarding,
   protect,

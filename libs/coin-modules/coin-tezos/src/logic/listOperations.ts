@@ -105,7 +105,8 @@ function convertOperation(
 
   const senders = sender?.address ? [sender.address] : [];
 
-  const amount = isAPIRevealType(operation) ? 0n : BigInt(operation.amount);
+  const amount =
+    isAPIRevealType(operation) || isAPIDelegationType(operation) ? 0n : BigInt(operation.amount);
 
   const fee =
     BigInt(operation.storageFee ?? 0) +

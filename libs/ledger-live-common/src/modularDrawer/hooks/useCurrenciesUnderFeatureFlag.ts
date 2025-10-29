@@ -70,12 +70,16 @@ export function useCurrenciesUnderFeatureFlag() {
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
   const canton = useFeature("currencyCantonNetwork");
+  const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
+  const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
   const kaspa = useFeature("currencyKaspa");
   const core = useFeature("currencyCore");
   const ethereumHoodi = useFeature("currencyEthereumHoodi");
   const westend = useFeature("currencyWestend");
   const assetHubWestend = useFeature("currencyAssetHubWestend");
   const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
+  const polkadot = useFeature("currencyPolkadot");
+  const monad = useFeature("currencyMonad");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -142,12 +146,16 @@ export function useCurrenciesUnderFeatureFlag() {
       mina,
       babylon,
       canton_network: canton,
+      canton_network_devnet: cantonDevnet,
+      canton_network_testnet: cantonTestnet,
       kaspa,
       core,
       ethereum_hoodi: ethereumHoodi,
       westend,
       assethub_westend: assetHubWestend,
       assethub_polkadot: assetHubPolkadot,
+      polkadot,
+      monad,
     }),
     [
       aptos,
@@ -219,6 +227,8 @@ export function useCurrenciesUnderFeatureFlag() {
       westend,
       assetHubWestend,
       assetHubPolkadot,
+      polkadot,
+      monad,
     ],
   );
 

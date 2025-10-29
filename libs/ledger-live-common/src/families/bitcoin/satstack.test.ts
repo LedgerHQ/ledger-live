@@ -236,6 +236,7 @@ describe("editSatStackConfig", () => {
   setCryptoAssetsStoreForCoinFramework({
     findTokenById: (_: string) => undefined,
     findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+    getTokensSyncHash: (_: string) => Promise.resolve("0"),
   } as CryptoAssetsStore);
   const config = {
     node: { ...mockConfig, tls: false },

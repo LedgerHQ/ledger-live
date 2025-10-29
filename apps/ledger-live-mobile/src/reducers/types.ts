@@ -33,8 +33,8 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { ToolsState } from "./tools";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -141,7 +141,7 @@ export type DynamicContentState = {
   categoriesCards: CategoryContentCard[];
   /** Dynamic content cards displayed in the landing page as sticky CTA */
   landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
-  /** Dynamic content cards for Ledger Live Mobile */
+  /** Dynamic content cards for Ledger Wallet Mobile */
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
@@ -381,6 +381,7 @@ export type State = {
   accounts: AccountsState;
   appstate: AppState;
   assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
@@ -390,7 +391,6 @@ export type State = {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
-  tools: ToolsState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

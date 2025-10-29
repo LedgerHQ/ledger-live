@@ -96,6 +96,7 @@ export const mocks: AppManifest[] = [
       "peercoin",
       "viacoin",
       "bitcoin_testnet",
+      "bitcoin_regtest",
       "ethereum_ropsten/**",
       "ethereum_goerli/**",
       "ethereum_sepolia/**",
@@ -142,13 +143,14 @@ export const mocks: AppManifest[] = [
       "lukso",
       "linea",
       "linea_goerli",
+      "monad",
     ],
     content: {
       shortDescription: {
-        en: "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk.",
+        en: "Try out the Ledger Wallet API to test capabilities of our platform integration solution. Use at your own risk.",
       },
       description: {
-        en: "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk.",
+        en: "Try out the Ledger Wallet API to test capabilities of our platform integration solution. Use at your own risk.",
       },
     },
     permissions: [

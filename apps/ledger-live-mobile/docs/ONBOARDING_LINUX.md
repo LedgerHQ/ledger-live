@@ -43,7 +43,7 @@ To be able to use executable installed from yarn, you will need to modify pour $
 
 ## Code editor
 
-The code editor used by the majority of developers in the Ledger Live team is **Visual Studio Code**.
+The code editor used by the majority of developers in the Ledger Wallet team is **Visual Studio Code**.
 You can install it using this guide : https://code.visualstudio.com/docs/setup/linux
 
 As an alternative, you can install [Webstorm](https://www.jetbrains.com/fr-fr/webstorm/) or [VSCodium](https://vscodium.com/#install).

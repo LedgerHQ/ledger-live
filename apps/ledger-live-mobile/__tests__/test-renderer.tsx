@@ -45,7 +45,7 @@ import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { INITIAL_STATE as TOOLS_INITIAL_STATE } from "~/reducers/tools";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -71,7 +71,7 @@ const INITIAL_STATE: State = {
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
   assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
-  tools: TOOLS_INITIAL_STATE,
+  cryptoAssetsApi: cryptoAssetsApi.reducer(undefined, { type: "INIT" }),
 };
 
 type ExtraOptions = RenderOptions & {
@@ -90,6 +90,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
         assetsDataApi.middleware,
+        cryptoAssetsApi.middleware,
       ),
     preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,

@@ -2,7 +2,8 @@ import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
@@ -15,7 +16,7 @@ enum NFT_CONTRACTS {
 }
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = findTokenById("ethereum/erc20/usd__coin");
+const tokenCurrency = tokensById["ethereum/erc20/usd__coin"];
 if (!tokenCurrency) throw new Error("USDC token not found");
 const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
 const account = makeAccount("0xkvn", currency, [tokenAccount]);
@@ -71,7 +72,7 @@ describe("EVM Family", () => {
     describe("getDeviceTransactionConfig", () => {
       describe("From Live", () => {
         describe("Coin", () => {
-          it("should return the fields for a normal transaction without domain", () => {
+          it("should return the fields for a normal transaction without domain", async () => {
             const transaction: EvmTransaction = {
               ...baseTransaction,
               amount: new BigNumber(100),
@@ -79,7 +80,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -100,7 +101,7 @@ describe("EVM Family", () => {
             ]);
           });
 
-          it("should return the fields for a normal transaction with domain", () => {
+          it("should return the fields for a normal transaction with domain", async () => {
             const transaction: EvmTransaction = {
               ...baseTransaction,
               amount: new BigNumber(100),
@@ -114,7 +115,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -137,7 +138,7 @@ describe("EVM Family", () => {
         });
 
         describe("Tokens", () => {
-          it("should return the fields for a token transfer transaction without domain", () => {
+          it("should return the fields for a token transfer transaction without domain", async () => {
             const transaction: EvmTransaction = {
               ...baseTransaction,
               amount: new BigNumber(100),
@@ -145,7 +146,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: tokenAccount,
                 parentAccount: account,
                 transaction,
@@ -166,7 +167,7 @@ describe("EVM Family", () => {
             ]);
           });
 
-          it("should return the fields for a token transfer transaction with domain", () => {
+          it("should return the fields for a token transfer transaction with domain", async () => {
             const transaction: EvmTransaction = {
               ...baseTransaction,
               amount: new BigNumber(100),
@@ -180,7 +181,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -218,7 +219,7 @@ describe("EVM Family", () => {
             const status = await getTransactionStatus(account, nftTransaction);
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: tokenAccount,
                 parentAccount: account,
                 transaction: nftTransaction,
@@ -270,7 +271,7 @@ describe("EVM Family", () => {
             const status = await getTransactionStatus(account, nftTransaction);
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: tokenAccount,
                 parentAccount: account,
                 transaction: nftTransaction,
@@ -316,7 +317,7 @@ describe("EVM Family", () => {
 
       describe("From Wallet API", () => {
         describe("Coin", () => {
-          it("should return the fields for a normal transaction", () => {
+          it("should return the fields for a normal transaction", async () => {
             const transaction = {
               ...baseTransaction,
               amount: new BigNumber(100),
@@ -324,7 +325,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -347,7 +348,7 @@ describe("EVM Family", () => {
         });
 
         describe("Tokens", () => {
-          it("should return the fields for a token transfer transaction", () => {
+          it("should return the fields for a token transfer transaction", async () => {
             const transaction = {
               ...baseTransaction,
               amount: new BigNumber(0),
@@ -359,7 +360,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -381,7 +382,7 @@ describe("EVM Family", () => {
             ]);
           });
 
-          it("should return the fields for a token allowance transaction", () => {
+          it("should return the fields for a token allowance transaction", async () => {
             const transaction = {
               ...baseTransaction,
               amount: new BigNumber(0),
@@ -393,7 +394,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -416,7 +417,7 @@ describe("EVM Family", () => {
             ]);
           });
 
-          it("should return the fields for an unlimited token allowance transaction", () => {
+          it("should return the fields for an unlimited token allowance transaction", async () => {
             const transaction = {
               ...baseTransaction,
               amount: new BigNumber(0),
@@ -428,7 +429,7 @@ describe("EVM Family", () => {
             };
 
             expect(
-              getDeviceTransactionConfig({
+              await getDeviceTransactionConfig({
                 account: account,
                 parentAccount: undefined,
                 transaction,
@@ -454,7 +455,7 @@ describe("EVM Family", () => {
 
         describe("NFTs", () => {
           describe("ERC721", () => {
-            it("should return the fields for an ERC721 transferFrom transaction", () => {
+            it("should return the fields for an ERC721 transferFrom transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -466,7 +467,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -503,7 +504,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC721 safeTransferFrom transaction", () => {
+            it("should return the fields for an ERC721 safeTransferFrom transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -515,7 +516,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -552,7 +553,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC721 safeTransferFromWithData transaction", () => {
+            it("should return the fields for an ERC721 safeTransferFromWithData transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -564,7 +565,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -601,7 +602,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC721 approve transaction", () => {
+            it("should return the fields for an ERC721 approve transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -613,7 +614,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -650,7 +651,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC721 setApprovalForAll true transaction", () => {
+            it("should return the fields for an ERC721 setApprovalForAll true transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -662,7 +663,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -694,7 +695,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC721 setApprovalForAll false transaction", () => {
+            it("should return the fields for an ERC721 setApprovalForAll false transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -706,7 +707,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -740,7 +741,7 @@ describe("EVM Family", () => {
           });
 
           describe("ERC1155", () => {
-            it("should return the fields for an ERC1155 safeTransferFrom transaction", () => {
+            it("should return the fields for an ERC1155 safeTransferFrom transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -752,7 +753,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -794,7 +795,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC1155 safeBatchTransferFrom transaction", () => {
+            it("should return the fields for an ERC1155 safeBatchTransferFrom transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -806,7 +807,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -843,7 +844,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC1155 setApprovalForAll true transaction", () => {
+            it("should return the fields for an ERC1155 setApprovalForAll true transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -855,7 +856,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -887,7 +888,7 @@ describe("EVM Family", () => {
               ]);
             });
 
-            it("should return the fields for an ERC1155 setApprovalForAll false transaction", () => {
+            it("should return the fields for an ERC1155 setApprovalForAll false transaction", async () => {
               const transaction = {
                 ...baseTransaction,
                 amount: new BigNumber(0),
@@ -899,7 +900,7 @@ describe("EVM Family", () => {
               };
 
               expect(
-                getDeviceTransactionConfig({
+                await getDeviceTransactionConfig({
                   account: accountWithNfts,
                   parentAccount: undefined,
                   transaction,
@@ -933,7 +934,7 @@ describe("EVM Family", () => {
           });
         });
 
-        it("should fallback on other cases without amount", () => {
+        it("should fallback on other cases without amount", async () => {
           const transaction = {
             ...baseTransaction,
             amount: new BigNumber(0),
@@ -942,7 +943,7 @@ describe("EVM Family", () => {
           };
 
           expect(
-            getDeviceTransactionConfig({
+            await getDeviceTransactionConfig({
               account: account,
               parentAccount: undefined,
               transaction,
@@ -968,7 +969,7 @@ describe("EVM Family", () => {
           ]);
         });
 
-        it("should fallback on other cases with amount", () => {
+        it("should fallback on other cases with amount", async () => {
           const transaction = {
             ...baseTransaction,
             amount: new BigNumber(1),
@@ -977,7 +978,7 @@ describe("EVM Family", () => {
           };
 
           expect(
-            getDeviceTransactionConfig({
+            await getDeviceTransactionConfig({
               account: account,
               parentAccount: undefined,
               transaction,
@@ -1014,7 +1015,7 @@ describe("EVM Family", () => {
         const status = await getTransactionStatus(account, coinTransaction);
 
         expect(
-          getDeviceTransactionConfig({
+          await getDeviceTransactionConfig({
             account,
             parentAccount: undefined,
             transaction: coinTransaction,

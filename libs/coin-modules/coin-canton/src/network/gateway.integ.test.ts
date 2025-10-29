@@ -83,12 +83,9 @@ describe("gateway (devnet)", () => {
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
       // WHEN
-      const response = await submitOnboarding(
-        mockCurrency,
-        keyPair.publicKeyHex,
-        prepareResponse,
+      const response = await submitOnboarding(mockCurrency, keyPair.publicKeyHex, prepareResponse, {
         signature,
-      );
+      });
 
       // Save onboarded account for next tests that need a valid party ID
       onboardedAccount = {
@@ -107,6 +104,8 @@ describe("gateway (devnet)", () => {
     testIfPrepared(
       "should not throw when already onboarded",
       async () => {
+        // Add delay to ensure previous operations are complete
+        await new Promise(resolve => setTimeout(resolve, 10000));
         // GIVEN
         const { keyPair } = getOnboardedAccount();
         const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);
@@ -116,7 +115,7 @@ describe("gateway (devnet)", () => {
           mockCurrency,
           keyPair.publicKeyHex,
           prepareResponse!,
-          signature,
+          { signature },
         );
 
         // THEN

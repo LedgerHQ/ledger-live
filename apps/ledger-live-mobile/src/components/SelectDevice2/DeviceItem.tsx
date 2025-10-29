@@ -19,7 +19,7 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
     case DeviceModelId.europa:
       return <Icons.Flex size="M" />;
     case DeviceModelId.apex:
-      return <Icons.Flex size="M" />;
+      return <Icons.Apex size="M" />;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
       return <IconsLegacy.NanoSFoldedMedium size={24} />;

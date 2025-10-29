@@ -57,6 +57,20 @@ export type CryptoAssetsStore = {
    * ```
    */
   findTokenByAddressInCurrency(address: string, currencyId: string): TokenCurrency | undefined;
+
+  /**
+   * Gets a sync hash representing the current state of tokens for a given currency.
+   * This hash can be used to detect changes in the token list for a currency.
+   *
+   * @param currencyId - The ID of the parent currency/blockchain (e.g., "ethereum", "polygon")
+   * @returns A promise that resolves to a string hash representing the current token state
+   * @example
+   * ```typescript
+   * const hash = await store.getTokensSyncHash("ethereum");
+   * console.log(`Ethereum tokens hash: ${hash}`);
+   * ```
+   */
+  getTokensSyncHash(currencyId: string): Promise<string>;
 };
 
 export type CryptoAssetsStoreGetter = () => CryptoAssetsStore;

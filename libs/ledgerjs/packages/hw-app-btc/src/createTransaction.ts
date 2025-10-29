@@ -38,8 +38,10 @@ const defaultsSignTransaction = {
 
 export const getZcashBranchId = (blockHeight: number | null | undefined): Buffer => {
   const branchId = Buffer.alloc(4);
-  if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
+  if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6_1) {
     // NOTE: null and undefined should default to latest version
+    branchId.writeUInt32LE(0x4dec4df0, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
     branchId.writeUInt32LE(0xc8e71055, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
     branchId.writeUInt32LE(0xc2d6d0b4, 0);

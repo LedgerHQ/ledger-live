@@ -86,7 +86,7 @@ export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
       method: "GET",
       url: `${baseUrl}?page=${currentPage}&size=50&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
       headers: {
-        "x-api-key": "",
+        "x-api-key": "Qta8WAFdWOOKa2mNqJAUK7B7qugVE5",
       },
     });
 

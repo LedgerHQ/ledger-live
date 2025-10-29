@@ -8,21 +8,22 @@ import {
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
 } from "../errors";
-import { isTokenAssociateTransaction, isTokenAssociationRequired } from "../logic";
-import type { TokenAssociateProperties, Transaction, TransactionStatus } from "../types";
+import { estimateFees } from "../logic/estimateFees";
 import {
-  calculateAmount,
-  checkAccountTokenAssociationStatus,
+  isTokenAssociateTransaction,
+  isTokenAssociationRequired,
   getCurrencyToUSDRate,
-  getEstimatedFees,
+  checkAccountTokenAssociationStatus,
   safeParseAccountId,
-} from "./utils";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+} from "../logic/utils";
+import type { Transaction, TransactionStatus, TransactionTokenAssociate } from "../types";
+import { calculateAmount } from "./utils";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
@@ -49,14 +50,14 @@ function validateRecipient(account: Account, recipient: string): Error | null {
 
 async function handleTokenAssociateTransaction(
   account: Account,
-  transaction: Extract<Required<Transaction>, { properties: TokenAssociateProperties }>,
+  transaction: TransactionTokenAssociate,
 ): Promise<TransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
   const [usdRate, estimatedFees] = await Promise.all([
     getCurrencyToUSDRate(account.currency),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenAssociate),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenAssociate),
   ]);
 
   const amount = BigNumber(0);
@@ -93,7 +94,7 @@ async function handleTokenTransaction(
   const warnings: Warnings = {};
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenTransfer),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenTransfer),
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
@@ -146,7 +147,7 @@ async function handleCoinTransaction(
   const warnings: Warnings = {};
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.CryptoTransfer),
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
