@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -2292,7 +2296,13 @@
         },
         "retryCta" : "ペアリングを再試行",
         "openSettingsCta" : "Bluetooth設定に移動する",
-        "howToFixPairingIssue" : "ペアリングの問題を解決する方法"
+        "howToFixPairingIssue" : "ペアリングの問題を解決する方法",
+        "forgetDevice" : {
+          "title" : "スマートフォンのBluetooth設定から{{productName}}を削除してください",
+          "description" : "ペアリングの問題を解決するには、スマートフォンのBluetoothリストから{{productName}}を削除し、本アプリに戻ってから再度お試しください。",
+          "learnHowToFixCta" : "詳しい手順を見る",
+          "tryAgainCta" : "ペアリング解除済み。再試行"
+        }
       }
     }
   },
@@ -2504,7 +2514,7 @@
       },
       "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
       "newSeedTitle" : "シークレットリカバリーフレーズ",
-      "newSeedDescription" : "シークレットリカバリーフレーズについて詳しくは、次の動画をご覧ください。",
+      "newSeedDescription" : "シークレットリカバリーフレーズは、お客様の資産を管理するものであり、代替不可能です。お客様のフレーズを知っている人は誰でも、お客様の資産をすべて盗むことができます。紛失された場合、Ledgerでさえも、取り戻すことはできません。",
       "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
@@ -2544,7 +2554,7 @@
       "title" : "{{productName}}で、暗号資産を保護する準備が整いました"
     },
     "newSeed" : {
-      "subtitle" : "どの取引所やウォレットからでも、Ledger Liveに暗号資産を移して、最大限のセキュリティを確保できます。",
+      "subtitle" : "取引所やウォレットから暗号資産をLedgerウォレットへ移すことで、最高水準のセキュリティで保管することができます。",
       "installCTA" : "暗号資産を守る",
       "skipCTA" : "後で"
     }
@@ -3768,6 +3778,10 @@
       "history" : {
         "title" : "スワップ履歴"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
         "contact_support" : "カスタマーサポートに問い合わせる",
@@ -3794,7 +3808,9 @@
         "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
         "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
-        "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+        "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
+        "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -4070,6 +4086,10 @@
       "solanaRawTransaction" : {
         "title" : "ブラインド署名が必要です",
         "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "デバイス上で確認",
+        "description" : "次のステップで、デバイス上で取引数量と受取人をご確認いただけます。"
       },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
@@ -4581,7 +4601,6 @@
     }
   },
   "manager" : {
-    "tabTitle" : "My Ledger",
     "title" : "My Ledger",
     "selectDevice" : {
       "title" : "デバイス",
@@ -6478,6 +6497,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "獲得した報酬",
       "available" : {
         "title" : "利用可能なSUI",
         "description" : "これは、利用可能額です。"
@@ -7869,7 +7889,7 @@
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
     "selectAccount" : "アカウントを選択",
-    "searchPlaceholder" : "検索",
+    "searchPlaceholder" : "名前またはアドレスで検索",
     "emptyAssetList" : "資産が見つかりません",
     "accountCount_one" : "{{count}}アカウント",
     "accountCount_other" : "{{count}}アカウント",
@@ -7968,7 +7988,15 @@
       "authorize" : "許可する",
       "preapprove" : "アカウントを追加しました",
       "validator" : "Ledgerバリデーター",
-      "title" : "資金の自動受け取り"
+      "title" : "資金の自動受け取り",
+      "error429" : "現在、Cantonネットワークの1日のアカウント作成上限に達しています。しばらくしてから、もう一度お試しください。"
+    },
+    "tooManyUtxos" : {
+      "title" : "対応が必要です：UTXOが多すぎます",
+      "description" : "この送金を処理するには、アカウント内に少額のUTXOが多すぎます。累積保有手数料によるUTXOの失効を避け、送金を可能にするため、今すぐ統合してください。",
+      "quickFix" : "簡単な解決策：ご自身に送金してUTXOを統合する。",
+      "warning" : "アカウントに少額のUTXOが多すぎます。ご自身に送金してUTXOを統合してください。",
+      "consolidate" : "統合する"
     }
   }
 }
