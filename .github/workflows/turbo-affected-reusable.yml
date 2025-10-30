@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Checkout head branch
         uses: actions/checkout@v4
-  
+
       - name: Fetch base branch
         run: |
           git fetch origin ${{ inputs.base_branch }}:${{ inputs.base_branch }} --depth=1

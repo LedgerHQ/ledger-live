@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import { GENERIC_ALPACA_CHAINS } from "./constants";
 import * as core from "@actions/core";
 
 /**
@@ -9,7 +10,14 @@ import * as core from "@actions/core";
 
 function main(ref: string) {
   const cmd = `git diff --name-only ${ref}...HEAD`;
+  const patterns = [
+    "live-common\\/src\\/([^/]+)\\/([^/]+)", // live-common/src/<family>/<subfolder>
+    "coin-modules\\/([^/]+)", // coin-modules/<coin>
+    "coin-tester\\/([^/]+)", // coin-tester
+    "coin-tester-modules\\/([^/]+)", // coin-tester-modules/<coin>
+  ];
 
+  const combinedRegex = new RegExp(`(${patterns.join(")|(")})`);
   exec(
     cmd,
     {
@@ -26,18 +34,22 @@ function main(ref: string) {
           stdout
             .split("\n")
             .map(line => {
-              const m = line.match(/(live-common\/src\/([^/]+)\/([^/]+))|(coin-modules\/([^/]+))/);
+              const m = line.match(combinedRegex);
               if (m) {
                 const [first, second, third] = m;
                 if (second === "families") {
                   // in case of coin implementations, we will stop at the coin family level
                   return `${second}/${third}`;
+                } else if (second === "live-common/src/bridge/generic-alpaca") {
+                  // in case of live-common/src, we consider the first src/* folder level to be relevant filter
+                  return GENERIC_ALPACA_CHAINS;
                 } else {
                   // in any other case, we consider the second src/* folder level to be relevant filter
                   return second || first;
                 }
               }
             })
+            .flat()
             .filter(Boolean),
         ),
       ];
