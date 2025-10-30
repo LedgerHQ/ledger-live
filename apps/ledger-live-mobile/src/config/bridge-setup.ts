@@ -5,12 +5,13 @@ import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-dat
 import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { setup } from "@ledgerhq/live-common/bridge/impl";
 import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { StoreType } from "../context/store";
 
 initializeLegacyTokens(addTokens);
 
 export const cryptoAssetsHooks = createCryptoAssetsHooks({});
 
-export function setupCryptoAssetsStore() {
+export function setupCryptoAssetsStore(_store: StoreType) {
   setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
   setup(legacyCryptoAssetsStore);
 }

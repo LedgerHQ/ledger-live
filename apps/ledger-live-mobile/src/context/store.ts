@@ -4,6 +4,7 @@ import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "./rtkQueryApi";
+import { setupCryptoAssetsStore } from "../config/bridge-setup";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
@@ -23,3 +24,5 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
+
+setupCryptoAssetsStore(store);

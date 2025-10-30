@@ -128,7 +128,15 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       store.dispatch(importSettings(settingsData));
-      store.dispatch(importAccountsRaw(accountsData));
+
+      // Handle account import with error recovery for async issues
+      try {
+        store.dispatch(await importAccountsRaw(accountsData));
+      } catch (error) {
+        console.error("Failed to import accounts during initialization:", error);
+        // Continue with app initialization even if account import fails
+        // This prevents blocking deeplink navigation
+      }
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
