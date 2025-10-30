@@ -57,7 +57,7 @@ export default class SpeculosHttpTransport extends Transport {
   } as const;
   private eventStream: AnyReadableStream | null = null;
   // temp type fix until DeviceControllerClient exposes buttonFactory type
-  private buttonClient: ReturnType<DeviceControllerClient["buttonFactory"]>;
+  private buttonClient: ReturnType<DeviceControllerClient["buttonFactory"]> | undefined;
 
   // emits events coming from Speculos automation SSE stream.
   automationEvents: Subject<Record<string, unknown>> = new Subject();
@@ -191,6 +191,13 @@ export default class SpeculosHttpTransport extends Transport {
     return transportInstance;
   }
 
+  private getButtonClient() {
+    if (!this.buttonClient) {
+      this.buttonClient = deviceControllerClientFactory(this.baseUrl).buttonFactory();
+    }
+    return this.buttonClient;
+  }
+
   async button(buttonInput: ButtonKey | SpeculosButton): Promise<void> {
     const resolved: ButtonKey =
       buttonInput === SpeculosButton.LEFT ||
@@ -200,7 +207,7 @@ export default class SpeculosHttpTransport extends Transport {
         : buttonInput;
 
     log("speculos-button", "press-and-release", resolved);
-    return await this.buttonClient.press(resolved);
+    return await this.getButtonClient().press(resolved);
   }
 
   async exchange(apduCommand: Buffer): Promise<Buffer> {
@@ -272,6 +279,7 @@ export default class SpeculosHttpTransport extends Transport {
       // ignore cleanup errors
     } finally {
       this.eventStream = null;
+      this.buttonClient = undefined;
     }
   }
 }

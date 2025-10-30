@@ -2,11 +2,13 @@ import expect from "expect";
 import { Transaction } from "../models/Transaction";
 import { containsSubstringInEvent, getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
-import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
+import { withDeviceController } from "../deviceInteraction/DeviceController";
 
-export async function sendStellar(tx: Transaction) {
+export const sendStellar = withDeviceController(({ getDevice }) => async (tx: Transaction) => {
+  const buttons = getDevice().buttonFactory();
+
   const events = await getSendEvents(tx);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
@@ -17,6 +19,6 @@ export async function sendStellar(tx: Transaction) {
   if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
-    await pressBoth();
+    await buttons.both();
   }
-}
+});

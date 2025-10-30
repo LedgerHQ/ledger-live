@@ -48,7 +48,7 @@ import {
   longPressAndRelease,
   swipeRight,
 } from "./deviceInteraction/TouchDeviceSimulator";
-import { pressBoth, pressRightButton } from "./deviceInteraction/ButtonDeviceSimulator";
+import { withDeviceController } from "./deviceInteraction/DeviceController";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -555,32 +555,35 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
   return response.data.events.map(event => event.text);
 }
 
-export async function pressUntilTextFound(
-  targetText: string,
-  strictMatch: boolean = false,
-): Promise<string[]> {
-  const maxAttempts = 18;
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+export const pressUntilTextFound = withDeviceController(
+  ({ getDevice }) =>
+    async (targetText: string, strictMatch: boolean = false): Promise<string[]> => {
+      const maxAttempts = 18;
+      const speculosApiPort = getEnv("SPECULOS_API_PORT");
+      const buttons = getDevice().buttonFactory();
 
-  for (let attempts = 0; attempts < maxAttempts; attempts++) {
-    const texts = await fetchCurrentScreenTexts(speculosApiPort);
-    if (
-      strictMatch ? texts === targetText : texts.toLowerCase().includes(targetText.toLowerCase())
-    ) {
-      return await fetchAllEvents(speculosApiPort);
-    }
-    if (isTouchDevice()) {
-      await swipeRight();
-    } else {
-      await pressRightButton();
-    }
-    await waitForTimeOut(200);
-  }
+      for (let attempts = 0; attempts < maxAttempts; attempts++) {
+        const texts = await fetchCurrentScreenTexts(speculosApiPort);
+        if (
+          strictMatch
+            ? texts === targetText
+            : texts.toLowerCase().includes(targetText.toLowerCase())
+        ) {
+          return await fetchAllEvents(speculosApiPort);
+        }
+        if (isTouchDevice()) {
+          await swipeRight();
+        } else {
+          await buttons.right();
+        }
+        await waitForTimeOut(200);
+      }
 
-  throw new Error(
-    `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
-  );
-}
+      throw new Error(
+        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+      );
+    },
+);
 
 export function containsSubstringInEvent(targetString: string, events: string[]): boolean {
   const concatenatedEvents = events.join("");
@@ -615,8 +618,10 @@ export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function removeMemberLedgerSync() {
+export const removeMemberLedgerSync = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
   await waitFor(DeviceLabels.CONNECT_WITH);
+
   if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.CONNECT);
     await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
@@ -629,24 +634,26 @@ export async function removeMemberLedgerSync() {
     await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
   } else {
     await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
-    await pressBoth();
+    await buttons.both();
     await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
     await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
-    await pressBoth();
+    await buttons.both();
     await waitFor(DeviceLabels.TURN_ON_SYNC);
     await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await pressBoth();
+    await buttons.both();
   }
-}
+});
 
-export async function activateLedgerSync() {
+export const activateLedgerSync = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
   await waitFor(DeviceLabels.CONNECT_WITH);
+
   if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
   } else {
     await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
-    await pressBoth();
+    await buttons.both();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
@@ -654,11 +661,13 @@ export async function activateLedgerSync() {
   } else {
     await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await pressBoth();
+    await buttons.both();
   }
-}
+});
 
-export async function activateExpertMode() {
+export const activateExpertMode = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
+
   if (isTouchDevice()) {
     await goToSettings();
     const SettingsToggle1Coordinates = { x: 344, y: 136 };
@@ -669,18 +678,22 @@ export async function activateExpertMode() {
     );
   } else {
     await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
-    await pressBoth();
+    await buttons.both();
   }
-}
+});
 
-export async function activateContractData() {
+export const activateContractData = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
+
   await pressUntilTextFound(DeviceLabels.SETTINGS);
-  await pressBoth();
+  await buttons.both();
   await waitFor(DeviceLabels.CONTRACT_DATA);
-  await pressBoth();
-}
+  await buttons.both();
+});
 
-export async function goToSettings() {
+export const goToSettings = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
+
   if (isTouchDevice()) {
     const SettingsCogwheelCoordinates = { x: 400, y: 75 };
     await pressAndRelease(
@@ -690,13 +703,14 @@ export async function goToSettings() {
     );
   } else {
     await pressUntilTextFound(DeviceLabels.SETTINGS);
-    await pressBoth();
+    await buttons.both();
   }
-}
+});
 
-export async function providePublicKey() {
-  await pressRightButton();
-}
+export const providePublicKey = withDeviceController(({ getDevice }) => async () => {
+  const buttons = getDevice().buttonFactory();
+  await buttons.right();
+});
 
 type DeviceLabelsReturn = {
   delegateConfirmLabel: string;
@@ -737,28 +751,31 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
   };
 }
 
-export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
-  if (account.currency === Currency.SUI_USDC) {
-    providePublicKey();
-  }
-  const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
-  await waitFor(receiveVerifyLabel);
-  if (isTouchDevice()) {
-    const events = await pressUntilTextFound(receiveConfirmLabel);
-    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-    expect(isAddressCorrect).toBeTruthy();
-    await pressAndRelease(DeviceLabels.CONFIRM);
-  } else {
-    const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
-      account.currency.speculosApp,
-    );
-    await waitFor(receiveVerifyLabel);
-    const events = await pressUntilTextFound(receiveConfirmLabel);
-    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-    expect(isAddressCorrect).toBeTruthy();
-    await pressBoth();
-  }
-}
+export const expectValidAddressDevice = withDeviceController(
+  ({ getDevice }) =>
+    async (account: Account, addressDisplayed: string) => {
+      const buttons = getDevice().buttonFactory();
+      if (account.currency === Currency.SUI_USDC) {
+        await providePublicKey();
+      }
+      const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
+        account.currency.speculosApp,
+      );
+      await waitFor(receiveVerifyLabel);
+
+      if (isTouchDevice()) {
+        const events = await pressUntilTextFound(receiveConfirmLabel);
+        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+        expect(isAddressCorrect).toBeTruthy();
+        await pressAndRelease(DeviceLabels.CONFIRM);
+      } else {
+        const events = await pressUntilTextFound(receiveConfirmLabel);
+        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+        expect(isAddressCorrect).toBeTruthy();
+        await buttons.both();
+      }
+    },
+);
 
 export async function signSendTransaction(tx: Transaction) {
   const currencyName = tx.accountToDebit.currency;
@@ -873,37 +890,52 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
   return await pressUntilTextFound(delegateConfirmLabel);
 }
 
-export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events =
-    getSpeculosModel() === DeviceModelId.nanoS
-      ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
-      : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-  verifySwapData(swap, events, amount);
-  if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    await pressBoth();
-  }
-}
+export const verifyAmountsAndAcceptSwap = withDeviceController(
+  ({ getDevice }) =>
+    async (swap: Swap, amount: string) => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      const buttons = getDevice().buttonFactory();
+      const events =
+        getSpeculosModel() === DeviceModelId.nanoS
+          ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
+          : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      verifySwapData(swap, events, amount);
 
-export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-  verifySwapData(swap, events, amount);
-  await pressBoth();
-}
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);
 
-export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.REJECT);
-  verifySwapData(swap, events, amount);
-  if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    await pressBoth();
-  }
-}
+export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
+  ({ getDevice }) =>
+    async (swap: Swap, amount: string) => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      const buttons = getDevice().buttonFactory();
+      const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      verifySwapData(swap, events, amount);
+
+      await buttons.both();
+    },
+);
+
+export const verifyAmountsAndRejectSwap = withDeviceController(
+  ({ getDevice }) =>
+    async (swap: Swap, amount: string) => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      const buttons = getDevice().buttonFactory();
+      const events = await pressUntilTextFound(DeviceLabels.REJECT);
+      verifySwapData(swap, events, amount);
+
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);
 
 function verifySwapData(swap: Swap, events: string[], amount: string) {
   const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;

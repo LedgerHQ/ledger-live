@@ -5533,6 +5533,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
+      '@ledgerhq/speculos-device-controller':
+        specifier: 'catalog:'
+        version: 0.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
