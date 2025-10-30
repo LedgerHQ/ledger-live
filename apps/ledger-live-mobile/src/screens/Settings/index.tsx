@@ -128,6 +128,7 @@ export default function Settings({
         desc={t("settings.developer.desc")}
         Icon={IconsLegacy.ToolMedium}
         onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
+        arrowRight
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard
