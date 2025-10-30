@@ -6,7 +6,7 @@ import { StepId } from "./types";
 import { useDispatch } from "react-redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { Body as NewFlowBody } from "./NewFlow/Body";
+import SendWorkflow from "~/newArch/features/Send";
 
 type Props = {
   stepId?: StepId;
@@ -60,7 +60,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
               />
             );
           } else {
-            return <NewFlowBody />;
+            return <SendWorkflow />;
           }
         }}
       />
