@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.97.0-next.1
+
+### Minor Changes
+
+- [#12575](https://github.com/LedgerHQ/ledger-live/pull/12575) [`ab82e4a`](https://github.com/LedgerHQ/ledger-live/commit/ab82e4a70928883c48ee6bc19be5844d5b1d1aab) Thanks [@thesan](https://github.com/thesan)! - feat(llm): rename mobile apps to Ledger Wallet
+
 ## 3.97.0-next.0
 
 ### Minor Changes
