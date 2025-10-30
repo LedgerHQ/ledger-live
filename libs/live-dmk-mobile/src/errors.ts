@@ -6,9 +6,10 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { PeerRemovedPairingError } from "@ledgerhq/device-transport-kit-react-native-ble";
 
-export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
+export const isDmkError = (error: unknown): error is DmkError =>
+  !!error && typeof error === "object" && error !== null && "_tag" in error;
 
-export const isiOSPeerRemovedPairingError = (error: any): boolean => {
+export const isiOSPeerRemovedPairingError = (error: unknown): boolean => {
   return (
     error instanceof OpeningConnectionError &&
     "originalError" in error &&
@@ -31,13 +32,12 @@ export const isPeerRemovedPairingError = (error: unknown): boolean => {
 };
 
 export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean => {
-  if (error) {
+  if (isDmkError(error)) {
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
-      (typeof error === "object" && "_tag" in error && error._tag === "DeviceSessionNotFound")
+      error._tag === "DeviceSessionNotFound"
     );
   }
-
   return false;
 };
