@@ -58,11 +58,11 @@ export async function post<T, U extends object = any>(endPoint: string, body: T)
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
-    log("tron-error", stringify(data.Error as any), {
-      endPoint,
-      body,
-    });
-    throw new Error(stringify(data.Error as any));
+    const error = data.Error as any;
+    const message = stringify(error);
+    const nonEmptyMessage = message === "" ? error.toString() : message;
+    log("tron-error", nonEmptyMessage, { endPoint, body });
+    throw new Error(nonEmptyMessage);
   }
 
   return data;
