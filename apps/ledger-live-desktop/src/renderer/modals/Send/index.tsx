@@ -6,7 +6,7 @@ import { StepId } from "./types";
 import { useDispatch } from "react-redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import SendWorkflow from "~/newArch/features/Send";
+import SendWorkflow from "LLD/features/Send";
 
 type Props = {
   stepId?: StepId;
@@ -50,7 +50,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => {
-          if (!newSendFlow || !newSendFlow.enabled) {
+          if (!newSendFlow?.enabled) {
             return (
               <Body
                 stepId={stepId}
