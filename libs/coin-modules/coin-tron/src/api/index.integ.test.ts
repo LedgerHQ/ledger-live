@@ -18,7 +18,7 @@ const wallet = {
 };
 
 /**
- * Tron testnet: https://api.shasta.trongrid.io
+ * Trons testnet: https://api.shasta.trongrid.io
  * Tron testnet faucet: https://shasta.tronex.io/
  * Create a tesnet account: https://stackoverflow.com/questions/66651807/how-to-create-a-tron-wallet-with-nodejs
  * Testnet faucet: https://shasta.tronex.io/
