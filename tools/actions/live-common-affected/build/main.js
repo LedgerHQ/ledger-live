@@ -19090,7 +19090,9 @@ function main(ref) {
             const m = line.match(combinedRegex);
             if (m) {
               const [first, second, third] = m;
-              if (second === "families") {
+              if (first.startsWith("coin-modules/")) {
+                return first.replace(/^.*coin-/, "");
+              } else if (second === "families") {
                 return `${second}/${third}`;
               } else if (second === "live-common/src/bridge/generic-alpaca") {
                 return GENERIC_ALPACA_CHAINS;
