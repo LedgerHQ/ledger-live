@@ -3,10 +3,6 @@ import { setCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client";
 import { createCryptoAssetsHooks } from "@ledgerhq/cryptoassets/hooks";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-
-initializeLegacyTokens(addTokens);
 
 export const cryptoAssetsHooks = createCryptoAssetsHooks({
   useCALBackend: true,
