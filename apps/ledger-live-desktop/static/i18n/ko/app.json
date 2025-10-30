@@ -97,7 +97,7 @@
     "selectValidatorNoOption" : "'{{accountName}}'와/과 일치하는 검증인이 없습니다",
     "selectNoResults" : "{{query}}와 일치하는 결과를 찾을 수 없습니다",
     "sortBy" : "정렬 기준",
-    "save" : "Ledger Nano S를",
+    "save" : "저장",
     "lock" : "잠금",
     "showMore" : "자세히 표시",
     "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
@@ -172,6 +172,7 @@
       "REDELEGATE" : "재위임됨",
       "UNDELEGATE" : "위임 해제됨",
       "APPROVE" : "승인됨",
+      "PRE_APPROVAL" : "사전 승인",
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
       "UNFREEZE" : "동결 해제",
@@ -463,12 +464,16 @@
       "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
       "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+      "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
       "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
       "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
+      "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1274,7 +1279,7 @@
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "selectionNewSeedTitle" : "비밀 복구 문구",
         "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
-        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이 문구를 분실하는 경우 Ledger가 대신 복구해드립니다.",
+        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 분실 시 Ledger에서도 이를 복구해 드릴 수 없습니다.",
         "selectionNewSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "restoreDescription" : "복구에 사용할 백업 수단을 선택하세요.",
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
@@ -1874,7 +1879,12 @@
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
+      "simpleViewNotice" : {
+        "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
+        "provider" : "장치에서 스왑 상세 정보를 확인한 후 전송하세요."
+      },
       "confirm" : "스왑 트랜잭션을 검증하세요",
+      "confirmSwap" : "장치에서 스왑 거래를 확인하세요",
       "amountSent" : "전송 금액",
       "amountReceived" : "수신 금액",
       "amountReceivedFloat" : "서비스 수수료 부과 전 수신 금액",
@@ -1885,6 +1895,7 @@
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
       "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
+      "changellySimplifiedAcceptTerms" : "트랜잭션 승인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 \n간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, \n이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 직접 문의해야 합니다.",
       "cicAcceptTerms" : "\"CIC를 통해 스왑 서비스 이용 시\" CIC의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. CIC는 AML/KYC 절차를 적용할 수 있으며, 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, CIC <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
@@ -2240,6 +2251,16 @@
     "title" : "수령",
     "successTitle" : "주소가 안전하게 공유되었습니다",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "은행 계좌에서",
+          "description" : "USD 또는 EUR 입금"
+        },
+        "fromCrypto" : {
+          "title" : "암호화폐 주소에서",
+          "description" : "암호화폐 받기"
+        }
+      },
       "chooseAccount" : {
         "title" : "계정",
         "label" : "입금할 계정",
@@ -3429,7 +3450,7 @@
         "validators" : {
           "title" : "검증인",
           "notValidatorsRemoved" : "지명한 주소{{count}}는 더 이상 검증인이 아닙니다. 지명 트랜잭션에서 주소가 자동으로 삭제됩니다.",
-          "maybeChill" : "대신, 지명을 제거하세요"
+          "maybeChill" : "대신, 지명을 삭제하세요"
         },
         "connectDevice" : {
           "title" : "장치"
@@ -4514,11 +4535,11 @@
         "title" : "모의 계좌 생성",
         "description" : "테스트용 모의 계좌를 생성합니다. 이 도구를 사용하면 다양한 통화와 구성으로 테스트 계좌를 만들 수 있습니다.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "맞춤 생성",
+          "desc" : "통화를 선택하고 토큰을 추가합니다"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
+          "title" : "빠른 생성",
           "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
         },
         "currencySelector" : {
@@ -4540,7 +4561,7 @@
         },
         "alerts" : {
           "selectCurrency" : "통화를 1개 이상 선택하세요.",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "confirmErase" : "기존 계정이 지워집니다. 그래도 계속하시겠습니까?",
           "generateError" : "모의 계좌 생성에 실패했습니다. 다시 시도해 주세요."
         }
       },
@@ -4643,7 +4664,7 @@
       "changePassword" : "암호 변경",
       "softResetTitle" : "캐시 삭제",
       "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Live 캐시를 지우세요.",
-      "softReset" : "제거",
+      "softReset" : "삭제",
       "resetThirdPartyData" : "타사 데이터 재설정",
       "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
       "hardResetTitle" : "Ledger Live 리셋",
@@ -4788,7 +4809,7 @@
     "exportLogs" : {
       "title" : "로그 저장",
       "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
-      "btn" : "Ledger Nano S를"
+      "btn" : "저장"
     },
     "troubleshootNetwork" : {
       "title" : "네트워크 문제 해결",
@@ -4876,7 +4897,7 @@
     "desc" : "거래 내역을 저장하려는 계정을 선택하세요",
     "descSuccess" : "거래 내역 CSV 파일이 선택된 폴더에 저장되었습니다",
     "titleSuccess" : "거래 내역이 성공적으로 저장되었습니다",
-    "cta" : "Ledger Nano S를",
+    "cta" : "저장",
     "ctaSuccess" : "완료",
     "noAccounts" : "내보낼 계정 없음",
     "selectedAccounts" : "포함할 계정",
@@ -5693,7 +5714,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "선택 사항",
-      "comment" : "코멘트"
+      "comment" : "코멘트",
+      "addAccount" : {
+        "title" : "Canton 계정 추가",
+        "onboard" : {
+          "title" : "온보딩",
+          "newAccount" : "새 계정",
+          "init" : "계속을 클릭해 새 Canton 계정을 설정합니다",
+          "onboarded" : "온보딩한 계정",
+          "success" : "새 Canton 계정을 생성하여 온보딩했습니다.",
+          "error" : "새로운 계정 온보딩에 실패했습니다. 다시 시도해 주세요.",
+          "status" : {
+            "prepare" : "계정 온보딩 준비 중...",
+            "submit" : "계정 온보딩 중...",
+            "default" : "처리 중..."
+          }
+        },
+        "auth" : {
+          "title" : "승인",
+          "validator" : "승인",
+          "hint" : "이 계정으로 자금을 받으면 자동으로 승인합니다.",
+          "error" : "승인에 실패했습니다. 다시 시도해 주세요.",
+          "validatorLabel" : "Ledger 검증인",
+          "validatorDescription" : "자동 자금 수락"
+        },
+        "finish" : {
+          "title" : "확인"
+        }
+      }
     },
     "stellar" : {
       "memo" : "메모",
@@ -6439,6 +6487,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "이더리움 앱 설정에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Celo 앱 설정에서 컨트랙트 데이터를 활성화하세요"
     },
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
