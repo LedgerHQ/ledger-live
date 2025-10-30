@@ -9,6 +9,7 @@ import {
   Unit,
 } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore, Operation } from "@ledgerhq/types-live";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
@@ -21,7 +22,6 @@ import {
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
-  setCALHash,
 } from "../../logic";
 import {
   deepFreeze,
@@ -47,6 +47,9 @@ const WETH_TOKEN = wethTokenData as unknown as TokenCurrency;
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
+
+jest.mock("@ledgerhq/coin-framework/account/sync");
+const mockedBaseGetSyncHash = jest.mocked(baseGetSyncHash);
 
 mockGetConfig.mockImplementation((currency: { id: string }): any => {
   switch (currency.id) {
@@ -562,49 +565,55 @@ describe("EVM Family", () => {
         oldEnv = getEnv("NFT_CURRENCIES");
       });
 
+      beforeEach(() => {
+        mockedBaseGetSyncHash.mockClear();
+        mockedBaseGetSyncHash.mockResolvedValue("some_random_hash");
+      });
+
       afterEach(() => {
         jest.restoreAllMocks();
         setEnv("NFT_CURRENCIES", oldEnv);
-        setCALHash(currency, "");
       });
 
-      it("should provide a valid hex hash", () => {
-        // mumurhash is always returning a 32bits uint, so a 4 bytes hexa string
-        expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
+      it("should provide a valid hex hash", async () => {
+        const syncHash = await getSyncHash(currency);
+        expect(syncHash).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
       });
 
-      it("should provide a new hash if the CAL hash changed", () => {
-        const initialSyncHash = getSyncHash(currency);
-        setCALHash(currency, "anything");
-        expect(initialSyncHash).not.toEqual(getSyncHash(currency));
+      it("should provide a new hash when the hash from the common getSyncHash change", async () => {
+        const initialSyncHash = await getSyncHash(currency);
+        mockedBaseGetSyncHash.mockClear();
+        mockedBaseGetSyncHash.mockResolvedValueOnce("some_random_hash_2");
+        const secondSyncHash = await getSyncHash(currency);
+        expect(initialSyncHash).not.toEqual(secondSyncHash);
       });
 
-      it("should provide a new hash if nft support is activated or not", () => {
+      it("should provide a new hash if nft support is activated or not", async () => {
         setEnv("NFT_CURRENCIES", []);
-        const hash1 = getSyncHash(currency);
+        const hash1 = await getSyncHash(currency);
         setEnv("NFT_CURRENCIES", [currency.id]);
-        const hash2 = getSyncHash(currency);
+        const hash2 = await getSyncHash(currency);
 
         expect(hash1).not.toEqual(hash2);
       });
 
-      it("should provide a new hash if currency is using a new node config", () => {
-        const hash1 = getSyncHash({
+      it("should provide a new hash if currency is using a new node config", async () => {
+        const hash1 = await getSyncHash({
           ...currency,
           id: "ethereum",
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash2 = getSyncHash({
+        const hash2 = await getSyncHash({
           ...currency,
           id: "matic" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash3 = getSyncHash({
+        const hash3 = await getSyncHash({
           ...currency,
           id: "anything" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash4 = getSyncHash({
+        const hash4 = await getSyncHash({
           ...currency,
           id: "somethingelse" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
@@ -616,20 +625,20 @@ describe("EVM Family", () => {
         expect(hashes).toEqual(Array.from(uniqueSet));
       });
 
-      it("should provide a new hash if currency is using a new explorer config", () => {
-        const hash1 = getSyncHash({
+      it("should provide a new hash if currency is using a new explorer config", async () => {
+        const hash1 = await getSyncHash({
           ...currency,
           id: "ethereum",
         });
-        const hash2 = getSyncHash({
+        const hash2 = await getSyncHash({
           ...currency,
           id: "matic" as CryptoCurrencyId,
         });
-        const hash3 = getSyncHash({
+        const hash3 = await getSyncHash({
           ...currency,
           id: "anything" as CryptoCurrencyId,
         });
-        const hash4 = getSyncHash({
+        const hash4 = await getSyncHash({
           ...currency,
           id: "somethingelse" as CryptoCurrencyId,
         });
@@ -638,10 +647,6 @@ describe("EVM Family", () => {
         const uniqueSet = new Set(hashes);
 
         expect(hashes).toEqual(Array.from(uniqueSet));
-      });
-
-      it("should provide a new hash if a token is added to the blacklistedTokenIds", () => {
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency, [USD_COIN_TOKEN.id]));
       });
     });
 
