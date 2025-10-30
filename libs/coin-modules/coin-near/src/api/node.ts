@@ -126,7 +126,7 @@ export const getGasPrice = async (): Promise<string> => {
   const currencyConfig = getCoinConfig();
 
   const response = await liveNetwork<statsResponseType>({
-    url: `${currencyConfig.infra.API_NEAR_INDEXER}/v1/stats`,
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/stats`,
   });
 
   return response.data.stats[0].gas_price;
@@ -236,7 +236,7 @@ export const getStakingPositions = async (
   const stakingThreshold = getYoctoThreshold();
 
   const delegatedValidators = await liveNetwork<{ deposit: string; validator_id: string }[]>({
-    url: `${currencyConfig.infra.API_NEAR_INDEXER}/v1/kitwallet/staking-deposits/${address}`,
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/kitwallet/staking-deposits/${address}`,
   });
 
   const stakingPositions = await Promise.all(
@@ -342,7 +342,7 @@ async function fetchValidators({ per_page, page }: fetchValidators): Promise<Nea
   const currencyConfig = getCoinConfig();
 
   const delegatedValidators = await liveNetwork<validatorsType>({
-    url: `${currencyConfig.infra.API_NEAR_INDEXER}/v1/validators?per_page=${per_page}&page=${page}`,
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/validators?per_page=${per_page}&page=${page}`,
   });
 
   const validators = delegatedValidators.data.validatorFullData.map(

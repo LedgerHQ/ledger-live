@@ -9,7 +9,7 @@ const fetchTransactions = async (address: string): Promise<NearTransaction[]> =>
   const currencyConfig = getCoinConfig();
 
   const response = await liveNetwork<{ txns: NearTransaction[] }>({
-    url: `${currencyConfig.infra.API_NEAR_INDEXER}/v1/account/${address}/txns-only`,
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/account/${address}/txns-only`,
   });
 
   return response.data.txns || [];
