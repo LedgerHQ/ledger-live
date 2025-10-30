@@ -94,9 +94,6 @@ patchedDependencies:
   react-native-bundle-visualizer@3.1.3:
     hash: fgdd2c4kpymhnfnsaf5bc33xwi
     path: patches/react-native-bundle-visualizer@3.1.3.patch
-  react-native-fast-crypto@2.2.0:
-    hash: bmot5xcuajv3pdpobflt4ufvae
-    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-fast-pbkdf2@0.3.1:
     hash: wbvgqbzrhkn4r62in5uz4ok7im
     path: patches/react-native-fast-pbkdf2@0.3.1.patch
@@ -1270,8 +1267,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-native-fast-crypto:
-        specifier: 2.2.0
-        version: 2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
+        specifier: '3'
+        version: 3.0.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-native-fast-image:
         specifier: 8.6.3
         version: 8.6.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -32148,8 +32145,8 @@ packages:
       prop-types:
         optional: true
 
-  react-native-fast-crypto@2.2.0:
-    resolution: {integrity: sha512-JXQmnXGH3HpJYZrBsR7sL6cO/W3k1pHqTYbwnwTsJ8VUYXIsIEf1T0nMk6Z+XkQNI8RIQOeWJ9AuZLai4onHZg==}
+  react-native-fast-crypto@3.0.0:
+    resolution: {integrity: sha512-30F8C/1+Qkt2z6XEZOzcddS9nHqHifh+wTy3ORvPBzKgSbaFZXPe9XoJATwn+DOsYcAgSSLVK3MRbOYCWsEEcQ==}
     peerDependencies:
       react-native: '>=0.47.0 <1.0.0'
 
@@ -33000,8 +32997,8 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rfc4648@1.5.3:
-    resolution: {integrity: sha512-MjOWxM065+WswwnmNONOT+bD1nXzY9Km6u3kzvnx8F8/HXGZdz3T6e6vZJ8Q/RIMUSp/nxqjH3GwvJDy8ijeQQ==}
+  rfc4648@1.5.4:
+    resolution: {integrity: sha512-rRg/6Lb+IGfJqO05HZkN50UtY7K/JhxJag1kP23+zyMfrvoB0B7RWv06MbOzoc79RgCdNTiUaNsTT1AJZ7Z+cg==}
 
   rfdc@1.3.1:
     resolution: {integrity: sha512-r5a3l5HzYlIC68TpmYKlxWjmOP6wiPJ1vWv2HeLhNsRZMrCkxeqxiHlQ21oXmQ4F3SiryXBHhAD7JZqvOJjFmg==}
@@ -41548,7 +41545,7 @@ snapshots:
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.5.4
+      semver: 7.7.1
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -45867,7 +45864,7 @@ snapshots:
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.5.4
+      semver: 7.7.1
 
   '@npmcli/fs@3.1.1':
     dependencies:
@@ -71467,11 +71464,11 @@ snapshots:
     optionalDependencies:
       prop-types: 15.8.1
 
-  react-native-fast-crypto@2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
+  react-native-fast-crypto@3.0.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
     dependencies:
       buffer: 5.7.1
       react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-      rfc4648: 1.5.3
+      rfc4648: 1.5.4
 
   react-native-fast-image@8.6.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -72833,7 +72830,7 @@ snapshots:
 
   reusify@1.0.4: {}
 
-  rfc4648@1.5.3: {}
+  rfc4648@1.5.4: {}
 
   rfdc@1.3.1: {}
 
