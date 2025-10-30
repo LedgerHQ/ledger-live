@@ -19,7 +19,6 @@ import { analyticsEnabledSelector } from "~/reducers/settings";
 export default function ReceiveProvider(
   props: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveProvider>,
 ) {
-  console.log("[ReceiveProvider]");
   const { manifestId } = props?.route?.params ?? {};
   const localManifest = useLocalLiveAppManifest(manifestId);
   const remoteManifest = useRemoteLiveAppManifest(manifestId);

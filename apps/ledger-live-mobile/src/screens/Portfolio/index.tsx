@@ -62,9 +62,6 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 });
 
 function PortfolioScreen({ navigation }: NavigationProps) {
-  // eslint-disable-next-line no-console
-  console.log("[Portfolio] [PortfolioScreen]");
-
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = useState(false);
