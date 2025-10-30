@@ -14,6 +14,7 @@ const LottieLauncher = ({ onFinish }: { onFinish: () => void }) => {
         style={{ width: size, height: size }}
         loop={false}
         autoPlay
+        speed={2}
         onAnimationFinish={onFinish}
       />
     </View>
