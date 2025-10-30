@@ -3,6 +3,12 @@ name: "[Coin] - Test Coin modules - Scheduled"
 on:
   schedule:
     - cron: "20 9 * * *"
+
+  pull_request:
+    branches-ignore:
+      - "smartling-content-updated**"
+      - "smartling-translation-completed**"
+
   workflow_dispatch:
     inputs:
       ref:
@@ -15,8 +21,44 @@ permissions:
   contents: read
 
 jobs:
+  is-affected:
+    outputs:
+      is-affected: ${{ steps.affected.outputs.is-affected }}
+      paths: ${{ steps.affected.outputs.paths }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+        id: affected
+        with:
+          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+      - name: Force affected on schedule
+        id: set-affected
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "Forcing affected=true (scheduled run)"
+            echo "is-affected=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is-affected=${{ steps.affected.outputs.is-affected }}" >> "$GITHUB_OUTPUT"
+          fi
+
   integ-tests:
     name: "Coin modules integration tests"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     runs-on: ubuntu-22.04
 
     env:
@@ -44,14 +86,28 @@ jobs:
       - name: Build
         run: pnpm build:coin-modules:deps
 
-      - name: Test
+      - name: Test (PR)
+        if: ${{ github.event_name == 'pull_request' }}
         shell: bash
+        env:
+          FILTER: ${{ needs.is-affected.outputs.paths }}
+          VERBOSE_FILE: logs.txt
+        run: |
+          for coin in $FILTER; do
+            pnpm coin:$coin test-integ
+          done
+
+      - name: Test (Scheduled)
+        if: ${{ github.event_name == 'schedule' }}
+        shell: bash
+        env:
+          VERBOSE_FILE: logs.txt
         run: pnpm coin-modules:test-integ
 
   integ-tests-fail:
     name: failure report
     needs: integ-tests
-    if: failure() && github.event_name != 'workflow_dispatch'
+    if: failure() && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref_name == 'develop'))
     runs-on: ubuntu-latest
     steps:
       - name: post to live-repo-health slack channel
@@ -71,10 +127,27 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+      - name: post to coin-integration-private slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[Test] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "❌ *Coin modules integration tests failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
   integ-tests-success:
     name: success report
     needs: integ-tests
-    if: success() && github.event_name != 'workflow_dispatch'
+    if: success() && github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: post to live-repo-health slack channel
