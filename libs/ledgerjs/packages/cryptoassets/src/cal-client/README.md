@@ -55,6 +55,7 @@ const store = configureStore({
 ```
 
 The `cryptoAssetsApi` instance is pre-configured and environment-aware. It automatically uses `getEnv()` to fetch:
+
 - `CAL_SERVICE_URL` - Base URL for the CAL API
 - `LEDGER_CLIENT_VERSION` - Client version for request headers
 
@@ -72,7 +73,7 @@ const InfiniteTokensList = () => {
     loadNext,
     refetch
   } = useTokensData({
-    networkFamily: ["ethereum"],
+    networkFamily: "ethereum",
     pageSize: 100,
     output: ["id", "name", "ticker", "contract_address"],
   });
@@ -98,13 +99,13 @@ import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client";
 
 // Find a specific token by ID
 const { data: token, isLoading } = cryptoAssetsApi.useFindTokenByIdQuery({
-  id: "ethereum/erc20/usdt"
+  id: "ethereum/erc20/usdt",
 });
 
 // Find token by contract address and network
 const { data: token } = cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery({
   contract_address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  network: "ethereum"
+  network: "ethereum",
 });
 
 // Get sync hash for a currency (useful for cache invalidation)
@@ -117,7 +118,7 @@ const { data: hash } = cryptoAssetsApi.useGetTokensSyncHashQuery("ethereum");
 
 - `useTokensData(params)` - Fetch paginated tokens data with infinite scroll support
   - **Parameters:**
-    - `networkFamily?: string[]` - Filter by network families (e.g., ["ethereum", "polygon"])
+    - `networkFamily?: string` - Filter by network families (e.g., "ethereum", "polygon")
     - `pageSize?: number` - Number of items per page (default: 100, options: 10, 100, 1000)
     - `isStaging?: boolean` - Use staging environment
     - `output?: string[]` - Specify output fields (default: all fields)

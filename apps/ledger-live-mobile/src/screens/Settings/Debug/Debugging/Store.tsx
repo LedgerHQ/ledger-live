@@ -120,7 +120,7 @@ export default function Store() {
     const exportState = async () => {
       const base64 = Buffer.from(JSON.stringify(state)).toString("base64");
       const date = new Date().toISOString().split("T")[0];
-      const humanReadableName = `ledger-live-mob-${date}-state`;
+      const humanReadableName = `ledgerwallet-mob-${date}-state`;
 
       const options = {
         failOnCancel: false,

@@ -37,11 +37,14 @@ export function DrawerFooter({ provider }: { provider: string }) {
 
   const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
+      let acceptTermsKey = "DeviceAction.swap.acceptTerms";
+      if (providerName === "Exodus") {
+        acceptTermsKey = "DeviceAction.swap.exodusAcceptTerms";
+      } else if (providerName === "NEAR Intents") {
+        acceptTermsKey = "DeviceAction.swap.nearIntentsAcceptTerms";
+      }
       return {
-        acceptTerms:
-          providerName === "Exodus"
-            ? "DeviceAction.swap.exodusAcceptTerms"
-            : "DeviceAction.swap.acceptTerms",
+        acceptTerms: acceptTermsKey,
         urls: [url],
       };
     }
@@ -68,6 +71,11 @@ export function DrawerFooter({ provider }: { provider: string }) {
         return {
           acceptTerms: "DeviceAction.swap.cicAcceptTerms",
           urls: providerData?.usefulUrls,
+        };
+      case "NEAR Intents":
+        return {
+          acceptTerms: "DeviceAction.swap.nearIntentsAcceptTerms",
+          urls: [url],
         };
       default:
         return {

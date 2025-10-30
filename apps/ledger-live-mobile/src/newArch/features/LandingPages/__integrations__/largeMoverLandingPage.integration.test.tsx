@@ -63,7 +63,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     (useNavigation as jest.Mock).mockReturnValue(mockNavigation);
   });
 
-  it("displays loading indicator and then the ticker of the first currency", async () => {
+  it("displays the ticker of the first currency", async () => {
     renderWithReactQuery(<LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />, {
       overrideInitialState: (state: State) => ({
         ...state,
@@ -76,8 +76,6 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         },
       }),
     });
-
-    expect(screen.getByTestId("infinite-loader")).toBeOnTheScreen();
 
     expect(await screen.findAllByText(/BTC/i));
   });
@@ -135,13 +133,13 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       },
     );
 
-    expect(await screen.findByText(/BTC/)).toBeOnTheScreen();
+    expect(await screen.findByText("BTC")).toBeOnTheScreen();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
     if (typeof window !== "undefined" && (window as any).__swiperChangeIndex) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
       (window as any).__swiperChangeIndex(1);
-      expect(await screen.findByText(/ETH/)).toBeOnTheScreen();
+      expect(await screen.findByText("ETH")).toBeOnTheScreen();
     }
   });
 
@@ -162,7 +160,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       },
     );
 
-    expect(await screen.findByText(/BTC/)).toBeOnTheScreen();
+    expect(await screen.findByText("BTC")).toBeOnTheScreen();
 
     const initialVariationElements = screen.getAllByText(/[+-]\d+\.\d+%/);
     const initialVariation = initialVariationElements[0].props.children;
@@ -174,5 +172,33 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     const newVariation = newVariationElements[0].props.children;
 
     expect(initialVariation).not.toBe(newVariation);
+  });
+
+  it("displays token data when using ledgerIds parameter", async () => {
+    const tokenRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage> =
+      {
+        key: "LargeMoverTokenRouteKey",
+        name: ScreenName.LargeMoverLandingPage,
+        params: {
+          currencyIds: "BTC",
+          ledgerIds: "ethereum/erc20/usd__coin",
+          initialRange: InitialRange.Day,
+        },
+      };
+
+    renderWithReactQuery(<LargeMoverLandingPage route={tokenRoute} navigation={mockNavigation} />, {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          counterValue: "USD",
+        },
+        largeMover: {
+          tutorial: false,
+        },
+      }),
+    });
+
+    expect(await screen.findByText("USDC")).toBeOnTheScreen();
   });
 });

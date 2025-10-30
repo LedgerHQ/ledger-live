@@ -35,3 +35,4 @@ export {
 } from "./helpers";
 export { addPendingOperation } from "./pending";
 export { getReceiveFlowError, checkAccountSupported } from "./support";
+export { getSyncHash } from "./sync";

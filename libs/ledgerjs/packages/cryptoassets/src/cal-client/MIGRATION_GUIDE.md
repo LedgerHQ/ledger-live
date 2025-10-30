@@ -10,7 +10,7 @@ Migrate from `listTokens()` and `listTokensForCryptoCurrency()` to the CAL Clien
 
 ```typescript
 const { data, isLoading, isSuccess, isError, loadNext, error, refetch } = useTokensData({
-  networkFamily?: string[], // Filter by network families (e.g., ["ethereum", "polygon"])
+  networkFamily?: string, // Filter by network families (e.g., "ethereum", "polygon")
   output?: string[], // Specify output fields (e.g., ["id", "name", "ticker", "units", "delisted"])
   limit?: number, // Maximum number of assets to return
   pageSize?: number, // Number of items per page (default: 100, options: 10, 100, 1000)
@@ -109,7 +109,7 @@ import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokens
 
 function EthereumTokens({ networkFamily }) {
   const { data, isLoading, loadNext } = useTokensData({
-    networkFamily: [networkFamily], // e.g., ["ethereum"] or ["polygon"]
+    networkFamily: networkFamily, // e.g., "ethereum" or "polygon"
   });
 
   if (isLoading) return <div>Loading...</div>;
@@ -198,7 +198,7 @@ import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokens
 function TokenDropdown() {
   const { data, isLoading } = useTokensData({
     output: ["id", "name", "ticker"], // Only fetch what you need
-    networkFamily: ["ethereum"],
+    networkFamily: "ethereum",
     pageSize: 100,
   });
 
@@ -236,7 +236,7 @@ For use cases where you only need a subset of tokens (e.g., displaying top token
 const { data, isLoading } = useTokensData({
   limit: 50, // Only fetch first 50 tokens
   pageSize: 50, // Match page size to limit for single request
-  networkFamily: ["ethereum"],
+  networkFamily: "ethereum",
 });
 ```
 
@@ -247,7 +247,7 @@ For testing with staging data:
 ```typescript
 const { data, isLoading, isError } = useTokensData({
   isStaging: true, // Use staging API
-  networkFamily: ["ethereum"],
+  networkFamily: "ethereum",
 });
 ```
 
@@ -266,7 +266,7 @@ The CAL Client is actively evolving and will be enhanced based on real-world usa
 ## Migration Checklist
 
 - [ ] Replace `listTokens()` calls with `useTokensData({})`
-- [ ] Replace `listTokensForCryptoCurrency()` with `useTokensData({ networkFamily: [...] })`
+- [ ] Replace `listTokensForCryptoCurrency()` with `useTokensData({ networkFamily: "..." })`
 - [ ] Update component to handle async loading state
 - [ ] Implement pagination if displaying large lists
 - [ ] Update data access from flat array to `data?.tokens`

@@ -22,7 +22,7 @@ const ALLOWED_DOMAINS = [
 // Allowed protocols for external links
 // Note: OptionMetadata.link only receives ledgerlive:// URLs from earn app
 //       learnMoreLink only receives https://www.ledger.com URLs from earn app
-const ALLOWED_PROTOCOLS = ["https:", "ledgerlive:"];
+const ALLOWED_PROTOCOLS = ["https:", "ledgerwallet:", "ledgerlive:"];
 
 // Valid action types for earn deeplinks
 export enum EarnDeeplinkAction {
@@ -96,7 +96,7 @@ function validateUrl(urlString: string): string {
     }
 
     // Handle internal ledgerlive:// scheme - allow all ledgerlive URLs
-    if (url.protocol === "ledgerlive:") {
+    if (url.protocol === "ledgerlive:" || url.protocol === "ledgerwallet:") {
       return urlString;
     }
 

@@ -105,7 +105,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   nearintents: {
     type: "CEX",
     useInExchangeApp: true,
-    displayName: "Near Intents",
+    displayName: "NEAR Intents",
     termsOfUseUrl: "https://swapkit.dev/terms-of-service/",
     supportUrl: "https://ledgerhelp.swapkit.dev/",
     mainUrl: "https://www.near.org/intents",

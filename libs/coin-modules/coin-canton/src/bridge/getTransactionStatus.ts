@@ -44,12 +44,9 @@ export const getTransactionStatus: AccountBridge<
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (!transaction.fee) {
+  if (transaction.fee === null || transaction.fee === undefined) {
     // if the fee is not loaded, we can't do much
     errors.fee = new FeeNotLoaded();
-  } else if (transaction.fee.eq(0)) {
-    // On some chains, 0 fee could still work so this is optional
-    errors.fee = new FeeRequired();
   } else if (totalSpent.gt(account.balance.minus(reserveAmount))) {
     // if the total spent is greater than the balance minus the reserve amount, tx is invalid
     errors.amount = new NotEnoughSpendableBalance("", {

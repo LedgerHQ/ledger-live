@@ -55,6 +55,7 @@
         "msw",
         "buffer",
         "ws",
+        "@electron/fuses",
         "@reduxjs/toolkit"
       ]
     },

@@ -1,8 +1,8 @@
 {
   "name": "ledger-live-desktop",
-  "productName": "Ledger Live",
-  "description": "Ledger Live - Desktop",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "productName": "Ledger Wallet",
+  "description": "Ledger Wallet - Desktop",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
+    "@electron/fuses": "2.0.0",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",

@@ -12,7 +12,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import {
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+  getSyncHash as baseGetSyncHash,
+} from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
@@ -180,22 +184,17 @@ export const __resetCALHash = (): void => {
  * This can be fixed by simply removing the account
  * and adding it again, now syncing from block 0.
  */
-export const getSyncHash = (
+export const getSyncHash = async (
   currency: CryptoCurrency,
   blacklistedTokenIds: string[] = [],
-): string => {
+): Promise<string> => {
+  const syncHash = await baseGetSyncHash(currency.id, blacklistedTokenIds);
   const isNftSupported = isNFTActive(currency);
 
   const config = getCoinConfig(currency).info;
   const { node = {}, explorer = {} } = config;
 
-  const stringToHash =
-    getCALHash(currency) +
-    blacklistedTokenIds.join("") +
-    isNftSupported +
-    JSON.stringify(node) +
-    JSON.stringify(explorer);
-
+  const stringToHash = syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);
   return `0x${murmurhash(stringToHash).result().toString(16)}`;
 };
 
