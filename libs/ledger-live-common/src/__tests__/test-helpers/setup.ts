@@ -1,5 +1,5 @@
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
 import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import "./environment";

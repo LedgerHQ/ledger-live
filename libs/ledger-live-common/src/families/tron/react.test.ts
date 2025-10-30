@@ -16,10 +16,10 @@ import {
 import {
   __NEXT_REWARD_DATE__,
   __LAST_VOTING_DATE__,
-  mockAccount,
-  mockAccountNoReward,
-  mockAccountNoVote,
-  mockAccountV2,
+  createMockAccount,
+  createMockAccountNoReward,
+  createMockAccountNoVote,
+  createMockAccountV2,
 } from "./data.mock";
 import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
 
@@ -42,6 +42,18 @@ jest.mock("@ledgerhq/coin-tron/logic/utils", () => {
       };
     }),
   };
+});
+
+let mockAccount: Awaited<ReturnType<typeof createMockAccount>>;
+let mockAccountNoReward: Awaited<ReturnType<typeof createMockAccountNoReward>>;
+let mockAccountNoVote: Awaited<ReturnType<typeof createMockAccountNoVote>>;
+let mockAccountV2: Awaited<ReturnType<typeof createMockAccountV2>>;
+
+beforeAll(async () => {
+  mockAccount = await createMockAccount();
+  mockAccountNoReward = await createMockAccountNoReward();
+  mockAccountNoVote = await createMockAccountNoVote();
+  mockAccountV2 = await createMockAccountV2();
 });
 
 test("Tron SuperRepresentatives hook - useTronSuperRepresentatives - Expect super representatives list", async () => {

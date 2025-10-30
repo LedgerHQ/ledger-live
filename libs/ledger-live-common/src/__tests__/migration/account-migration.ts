@@ -258,8 +258,8 @@ const testSyncAccount = async (account: Account) => {
   // if --inputFile we use the addresses from the input file otherwise from addresses.ts
   if (inputAccounts.length) {
     syncedAccounts = await Promise.allSettled(
-      (filteredAddresses as AccountRaw[]).map(rawAccount => {
-        const account = fromAccountRaw(rawAccount);
+      (filteredAddresses as AccountRaw[]).map(async rawAccount => {
+        const account = await fromAccountRaw(rawAccount);
         return testSyncAccount(account);
       }),
     );
