@@ -2,10 +2,11 @@ name: "[Nightly] - Build & Publish - Scheduled"
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: "0 2 * * TUE-SAT"  # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
 jobs:
+
   nightly-release:
     name: Nightly Release
     runs-on: ubuntu-24.04
@@ -18,73 +19,74 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          ref: nightly
-          fetch-depth: 0
+          ref: develop
+          fetch-depth: 1
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Get checked out commit SHA
+        id: get-sha
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: merge develop
-        run: |
-          git merge origin/develop -X theirs
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           install-proto: true
           skip-turbo-cache: "false"
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
-          # Not needed with a .ruby-version file
-          # runs 'bundle install' and caches installed gems automatically
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: desktop-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: mobile-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+
       - name: build libs
         run: pnpm run build:libs
-      - name: versioning
+
+      - name: snapshot versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version
-      - name: commit
-        run: |
-          git add .
-          if [ "$(git status --porcelain --untracked-files=no)" ]; then 
-            git commit -m "chore(nightly): :rocket: nightly release"
-          fi
+        run: pnpm changeset version --snapshot nightly
+
       - name: authenticate with npm
         uses: actions/setup-node@v4
         with:
           registry-url: "https://registry.npmjs.org"
+
       - name: publish nightly
-        run: pnpm changeset publish --no-git-tag
+        run: pnpm changeset publish --tag nightly --no-git-tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
+
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      - name: push changes
-        if: ${{ !cancelled() }}
-        run: |
-          git push origin nightly
+
+      - name: tag nightly ref
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
+        with:
+          ref: ${{ steps.get-sha.outputs.sha }}
+          tagName: nightly
+          token: ${{ steps.generate-token.outputs.token }}
+          overwrite: true
+
       - uses: actions/github-script@v7
         name: trigger nightly build of desktop
-        if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -93,10 +95,13 @@ jobs:
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "nightly-desktop.yml",
+              inputs: {
+                  version_override: "${{ steps.post-desktop-version.outputs.version }}"
+              }
             });
+
       - uses: actions/github-script@v7
         name: trigger nightly build of mobile
-        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -105,6 +110,9 @@ jobs:
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "nightly-mobile.yml",
+              inputs: {
+                  version_override: "${{ steps.post-mobile-version.outputs.version }}"
+              }
             });
 
   nightly-fail:
