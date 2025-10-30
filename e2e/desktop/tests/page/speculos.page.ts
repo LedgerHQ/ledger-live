@@ -50,8 +50,12 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Verify amounts and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
+  async verifyAmountsAndAcceptSwapForDifferentSeed(
+    swap: Swap,
+    amount: string,
+    errorMessage: string | null,
+  ) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
   @step("Verify amounts and reject swap")
