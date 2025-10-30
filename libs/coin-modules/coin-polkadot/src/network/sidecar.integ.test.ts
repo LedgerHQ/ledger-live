@@ -95,11 +95,9 @@ const CURRENCY_CONFIGS = {
 };
 
 describe("sidecar integration test", () => {
-  Object.keys(CURRENCY_CONFIGS).forEach(currencyId => {
-    const { currency, config, testAddress } =
-      CURRENCY_CONFIGS[currencyId as keyof typeof CURRENCY_CONFIGS];
-
-    describe(`${currencyId} tests`, () => {
+  describe.each(Object.entries(CURRENCY_CONFIGS))(
+    "%s tests",
+    (currencyId, { currency, config, testAddress }) => {
       beforeAll(() => {
         coinConfig.setCoinConfig(() => config);
       });
@@ -268,6 +266,6 @@ describe("sidecar integration test", () => {
           });
         });
       });
-    });
-  });
+    },
+  );
 });
