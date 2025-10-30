@@ -1,11 +1,11 @@
 import React from "react";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
-import stax from "~/renderer/images/stax.svg";
-import europa from "~/renderer/images/europa.svg";
+import stax from "~/renderer/images/stax_image_0.webp";
+import europa from "~/renderer/images/europa_image_0.webp";
 import apex from "~/renderer/images/apex.png";
-import nanoX from "~/renderer/images/nanoX.svg";
-import nanoS from "~/renderer/images/nanoS.svg";
-import nanoSP from "~/renderer/images/nanoSP.svg";
+import nanoX from "~/renderer/images/nanoX_image_0.webp";
+import nanoS from "~/renderer/images/nanoS_image_0.webp";
+import nanoSP from "~/renderer/images/nanoSP_image_0.webp";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
