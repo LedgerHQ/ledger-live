@@ -47,7 +47,7 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
       >
         {counterValueFormatter({
           currency: counterValueCurrency.ticker,
-          value: price || 0,
+          value: price,
           locale,
           t,
         })}
