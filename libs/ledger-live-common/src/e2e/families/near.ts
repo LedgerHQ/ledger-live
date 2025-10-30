@@ -12,9 +12,9 @@ import { longPressAndRelease, pressAndRelease } from "../deviceInteraction/Touch
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateNear = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
       const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);

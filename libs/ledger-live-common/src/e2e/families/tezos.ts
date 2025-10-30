@@ -7,9 +7,9 @@ import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateTezos = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       const { delegateConfirmLabel } = getDeviceLabels(
         delegatingAccount.account.currency.speculosApp,

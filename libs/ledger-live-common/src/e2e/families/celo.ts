@@ -7,9 +7,9 @@ import { DeviceLabels } from "../enum/DeviceLabels";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateCelo = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
       const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);

@@ -9,9 +9,9 @@ import { Delegate } from "../models/Delegate";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateSolana = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       await getDelegateEvents(delegatingAccount);
 
@@ -23,21 +23,24 @@ export const delegateSolana = withDeviceController(
     },
 );
 
-export const sendSolana = withDeviceController(({ getDevice }) => async (tx: Transaction) => {
-  const buttons = getDevice().buttonFactory();
+export const sendSolana = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
 
-  const events = await getSendEvents(tx);
-  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-  expect(isAmountCorrect).toBeTruthy();
+      const events = await getSendEvents(tx);
+      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+      expect(isAmountCorrect).toBeTruthy();
 
-  if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
-    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-    expect(isAddressCorrect).toBeTruthy();
-  }
+      if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
+        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+        expect(isAddressCorrect).toBeTruthy();
+      }
 
-  if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    await buttons.both();
-  }
-});
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);

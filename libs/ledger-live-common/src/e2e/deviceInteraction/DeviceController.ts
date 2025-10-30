@@ -5,28 +5,61 @@ import {
   type DeviceControllerClient,
 } from "@ledgerhq/speculos-device-controller";
 
-export const getDeviceController = (): DeviceControllerClient =>
-  deviceControllerClientFactory(`${getSpeculosAddress()}:${getEnv("SPECULOS_API_PORT")}`);
+// temp type until DeviceControllerClient exposes buttonFactory type
+type ButtonKey = "left" | "right" | "both";
+type ButtonsController = {
+  left(): Promise<void>;
+  right(): Promise<void>;
+  both(): Promise<void>;
+  pressSequence(keys: ButtonKey[], delayMs?: number): Promise<void>;
+};
 
-type DeviceCtx = { getDevice: () => DeviceControllerClient };
+type DeviceControllerContext = {
+  getDeviceController: () => DeviceControllerClient;
+  getButtonsController: () => ButtonsController;
+};
+
+const endpointKey = () => `${getSpeculosAddress()}:${getEnv("SPECULOS_API_PORT")}`;
+
+export const getDeviceControllerWithMemo = (() => {
+  let cache: { key: string; client: DeviceControllerClient } | null = null;
+  return () => {
+    const key = endpointKey();
+    if (!cache || cache.key !== key) {
+      cache = { key, client: deviceControllerClientFactory(key) };
+    }
+    return cache.client;
+  };
+})();
+
+export const getButtonsWithMemo = (getController: () => DeviceControllerClient) => {
+  let cache: { ctrl: DeviceControllerClient; buttons: ButtonsController } | null = null;
+  return () => {
+    const ctrl = getController();
+    if (!cache || cache.ctrl !== ctrl) {
+      cache = { ctrl, buttons: ctrl.buttonFactory() };
+    }
+    return cache.buttons;
+  };
+};
 
 /**
- * Wraps a function with access to speculos device controller via a tiny DI context.
+ * Wraps a function with access to speculos-device-controller via a tiny DI context.
  *
  * @description
- * Provide a factory that receives a context exposing `getDevice()`. The factory returns the actual
- * implementation, and the returned wrapper preserves the implementation's call signature. The wrapper
- * can be synchronous or asynchronous.
+ * Pass a factory that receives a context exposing `getDeviceController()` and `getButtonsController()`.
+ * The factory returns the actual implementation. The returned wrapper preserves the implementation’s
+ * parameter and return types.
  *
- * `getDevice()` is lazy: call it inside your implementation when you actually need a {@link DeviceControllerClient}.
+ * Both accessors are lazy, they get or refresh the underlying controller only when called.
  *
- * @param factory - Factory receiving the device context and returning the implementation.
+ * @param factory - Function invoked immediately with the device context, must return the implementation.
  * @returns A function with the same parameters and return type as the implementation returned by `factory`.
  *
  * @example
  * ```ts
- * const accept = withDeviceController(({ getDevice }) => async (timeoutMS: number) => {
- *   const buttons = getDevice().buttonFactory();
+ * const accept = withDeviceController(({ getButtonsController }) => async (timeoutMS: number) => {
+ *   const buttons = getButtonsController();
  *   await waitFor(timeoutMS);
  *   await buttons.both();
  * });
@@ -36,9 +69,12 @@ type DeviceCtx = { getDevice: () => DeviceControllerClient };
  *
  */
 export function withDeviceController<A extends unknown[], R>(
-  factory: (ctx: DeviceCtx) => (...args: A) => R | Promise<R>,
+  factory: (ctx: DeviceControllerContext) => (...args: A) => R | Promise<R>,
 ): (...args: A) => R | Promise<R> {
-  const ctx: DeviceCtx = { getDevice: getDeviceController };
+  const ctx: DeviceControllerContext = {
+    getDeviceController: getDeviceControllerWithMemo,
+    getButtonsController: getButtonsWithMemo(getDeviceControllerWithMemo),
+  };
   const implementation = factory(ctx);
   return (...args: A) => implementation(...args);
 }

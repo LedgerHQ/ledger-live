@@ -6,9 +6,9 @@ import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateMultiversX = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       await getDelegateEvents(delegatingAccount);
 

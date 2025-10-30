@@ -28,9 +28,9 @@ async function sendEvmTouchDevices(tx: Transaction) {
 }
 
 export const sendEvmButtonDevice = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (tx: Transaction) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       validateTransactionData(tx, events);
@@ -38,13 +38,16 @@ export const sendEvmButtonDevice = withDeviceController(
     },
 );
 
-export const sendEvmNanoS = withDeviceController(({ getDevice }) => async (tx: Transaction) => {
-  const buttons = getDevice().buttonFactory();
+export const sendEvmNanoS = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
 
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-  validateTransactionData(tx, events);
-  await buttons.both();
-});
+      const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+      validateTransactionData(tx, events);
+      await buttons.both();
+    },
+);
 
 export async function sendEVM(tx: Transaction) {
   const speculosModel = getSpeculosModel();

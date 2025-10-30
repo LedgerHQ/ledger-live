@@ -556,11 +556,11 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
 }
 
 export const pressUntilTextFound = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (targetText: string, strictMatch: boolean = false): Promise<string[]> => {
       const maxAttempts = 18;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const texts = await fetchCurrentScreenTexts(speculosApiPort);
@@ -618,35 +618,38 @@ export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const removeMemberLedgerSync = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
-  await waitFor(DeviceLabels.CONNECT_WITH);
+export const removeMemberLedgerSync = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      const buttons = getButtonsController();
+      await waitFor(DeviceLabels.CONNECT_WITH);
 
-  if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONNECT);
-    await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
-    await pressAndRelease(DeviceLabels.REMOVE);
-    await waitFor(DeviceLabels.CONFIRM_CHANGE);
-    await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
-    await waitFor(DeviceLabels.TURN_ON_SYNC);
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
-  } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
-    await buttons.both();
-    await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-    await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
-    await buttons.both();
-    await waitFor(DeviceLabels.TURN_ON_SYNC);
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-    await buttons.both();
-  }
-});
+      if (isTouchDevice()) {
+        await pressAndRelease(DeviceLabels.CONNECT);
+        await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+        await pressAndRelease(DeviceLabels.REMOVE);
+        await waitFor(DeviceLabels.CONFIRM_CHANGE);
+        await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
+        await waitFor(DeviceLabels.TURN_ON_SYNC);
+        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+        await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+      } else {
+        await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+        await buttons.both();
+        await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+        await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
+        await buttons.both();
+        await waitFor(DeviceLabels.TURN_ON_SYNC);
+        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+        await buttons.both();
+      }
+    },
+);
 
-export const activateLedgerSync = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
+export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
   await waitFor(DeviceLabels.CONNECT_WITH);
 
   if (isTouchDevice()) {
@@ -665,8 +668,8 @@ export const activateLedgerSync = withDeviceController(({ getDevice }) => async 
   }
 });
 
-export const activateExpertMode = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
+export const activateExpertMode = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
 
   if (isTouchDevice()) {
     await goToSettings();
@@ -682,8 +685,8 @@ export const activateExpertMode = withDeviceController(({ getDevice }) => async 
   }
 });
 
-export const activateContractData = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
+export const activateContractData = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
 
   await pressUntilTextFound(DeviceLabels.SETTINGS);
   await buttons.both();
@@ -691,8 +694,8 @@ export const activateContractData = withDeviceController(({ getDevice }) => asyn
   await buttons.both();
 });
 
-export const goToSettings = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
+export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
 
   if (isTouchDevice()) {
     const SettingsCogwheelCoordinates = { x: 400, y: 75 };
@@ -707,8 +710,8 @@ export const goToSettings = withDeviceController(({ getDevice }) => async () => 
   }
 });
 
-export const providePublicKey = withDeviceController(({ getDevice }) => async () => {
-  const buttons = getDevice().buttonFactory();
+export const providePublicKey = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
   await buttons.right();
 });
 
@@ -752,9 +755,9 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
 }
 
 export const expectValidAddressDevice = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (account: Account, addressDisplayed: string) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
       if (account.currency === Currency.SUI_USDC) {
         await providePublicKey();
       }
@@ -891,10 +894,10 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
 }
 
 export const verifyAmountsAndAcceptSwap = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
+      const buttons = getButtonsController();
       await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-      const buttons = getDevice().buttonFactory();
       const events =
         getSpeculosModel() === DeviceModelId.nanoS
           ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
@@ -910,10 +913,10 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
 );
 
 export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
+      const buttons = getButtonsController();
       await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-      const buttons = getDevice().buttonFactory();
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       verifySwapData(swap, events, amount);
 
@@ -922,10 +925,10 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
 );
 
 export const verifyAmountsAndRejectSwap = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
+      const buttons = getButtonsController();
       await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-      const buttons = getDevice().buttonFactory();
       const events = await pressUntilTextFound(DeviceLabels.REJECT);
       verifySwapData(swap, events, amount);
 

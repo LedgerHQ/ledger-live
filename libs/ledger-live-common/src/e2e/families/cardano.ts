@@ -32,9 +32,9 @@ async function sendCardanoTouchDevices(tx: Transaction) {
 }
 
 export const sendCardanoNanoS = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (_tx: Transaction) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
       await waitFor(DeviceLabels.NEW_ORDINARY);
       await buttons.right();
       await waitFor(DeviceLabels.SEND_TO_ADDRESS);
@@ -49,9 +49,9 @@ export const sendCardanoNanoS = withDeviceController(
 );
 
 export const sendCardanoButtonDevice = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (tx: Transaction) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
       await waitFor(DeviceLabels.NEW_ORDINARY);
       await buttons.both();
       await pressUntilTextFound(DeviceLabels.SEND_TO_ADDRESS_2);
@@ -135,9 +135,9 @@ async function delegateTouchDevicesAction(label: DeviceLabels) {
 }
 
 export const delegateNanoAction = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (label: DeviceLabels, action: ActionType) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
       await waitFor(label);
       if (action === "both") {
         await buttons.both();

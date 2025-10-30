@@ -7,9 +7,9 @@ import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 export const delegateOsmosis = withDeviceController(
-  ({ getDevice }) =>
+  ({ getButtonsController }) =>
     async (delegatingAccount: Delegate) => {
-      const buttons = getDevice().buttonFactory();
+      const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
       const amountInUosmo = (Number(delegatingAccount.amount) * 1_000_000).toString();
