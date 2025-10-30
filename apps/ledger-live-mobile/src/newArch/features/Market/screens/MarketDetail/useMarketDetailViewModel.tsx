@@ -20,7 +20,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
 
-  const { marketParams, dataChart, loadingChart, loading, currency } = useMarketCoinData({
+  const { marketParams, dataChart, loadingChart, loading, currency, refetch } = useMarketCoinData({
     currencyId,
   });
 
@@ -28,7 +28,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { triggerMarketPushNotificationModal } = useNotifications();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const { starredMarketCoins, refresh } = useMarket();
+  const { starredMarketCoins, updateMarketParams } = useMarket();
 
   const isStarred = starredMarketCoins.includes(currencyId);
 
@@ -92,8 +92,9 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     dataChart,
     loadingChart,
     loading,
-    refresh,
+    updateMarketParams,
     toggleStar,
+    refetch,
   };
 }
 
