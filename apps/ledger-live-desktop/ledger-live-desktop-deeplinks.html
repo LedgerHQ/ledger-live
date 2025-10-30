@@ -520,6 +520,20 @@
                     ]
                 },
                 {
+                    section: "Market",
+                    title: "Market Detail Page",
+                    url: "ledgerlive://market/:currencyId",
+                    description: "Opens the market detail page for a specific cryptocurrency.",
+                    parameters: [
+                        { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
+                    ],
+                    examples: [
+                        "ledgerlive://market/bitcoin",
+                        "ledgerlive://market/ethereum",
+                        "ledgerlive://market/solana"
+                    ]
+                },
+                {
                     section: "Settings",
                     title: "Settings Pages",
                     url: "ledgerwallet://settings/",

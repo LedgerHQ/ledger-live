@@ -62,6 +62,11 @@ describe("DeepLinks Tests", () => {
     await app.swap.expectSwapPage();
   });
 
+  it("should open Market Detail page for Bitcoin", async () => {
+    await app.market.openViaDeeplink("bitcoin");
+    await app.market.expectMarketDetailPage();
+  });
+
   it("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
