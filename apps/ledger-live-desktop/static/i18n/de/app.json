@@ -41,7 +41,7 @@
       },
       "banner" : {
         "title" : "Live-Apps-Katalog entdecken",
-        "description" : "Wir arbeiten hart daran, Ihnen Zugang zur Welt von DeFi, NFTs und mehr zu verschaffen, sicher, direkt in Ledger Live!"
+        "description" : "Wir arbeiten hart daran, dir Zugang zur Welt von DeFi, NFTs und mehr zu verschaffen, sicher, direkt in Ledger Live!"
       },
       "twitterBanner" : {
         "description" : "Sag uns, welchen Service du dir als nächstes in Ledger Live wünschst – unter folgendem Hashtag:",
@@ -172,6 +172,7 @@
       "REDELEGATE" : "Erneut delegiert",
       "UNDELEGATE" : "Nicht delegiert",
       "APPROVE" : "Genehmigt",
+      "PRE_APPROVAL" : "Vorabgenehmigung",
       "VOTE" : "Abgestimmt",
       "FREEZE" : "Eingefroren",
       "UNFREEZE" : "Einfrieren aufgehoben",
@@ -463,12 +464,16 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
       "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -651,7 +656,7 @@
       "steps" : {
         "landing" : {
           "header" : "Starte deinen eigenen Full Node: Nicht vertrauen, überprüfen!",
-          "description" : "Ein Bitcoin-Knoten (Full Node) ist ein Computer, der alle Transaktionen und Blöcke validiert. Er ermöglicht es Ihnen, Bitcoin ohne die Notwendigkeit vertrauenswürdiger Dritter zu nutzen und gleichzeitig zum Bitcoin-Netzwerk beizutragen.",
+          "description" : "Ein Bitcoin-Knoten (Full Node) ist ein Computer, der alle Transaktionen und Blöcke validiert. Er ermöglicht es dir, Bitcoin ohne die Notwendigkeit vertrauenswürdiger Dritter zu nutzen und gleichzeitig zum Bitcoin-Netzwerk beizutragen.",
           "list" : {
             "item1" : "Bitcoin Core auf einem Gerät mit ausreichenden Ressourcen einrichten.",
             "item2" : "Warte, bis dein Knoten vollständig synchronisiert ist.",
@@ -1540,7 +1545,7 @@
       },
       "earn" : {
         "title" : "Staken",
-        "description" : "Prämien für deine Kryptos erhalten"
+        "description" : "Rewards für deine Kryptos erhalten"
       }
     },
     "recoverBanner" : {
@@ -1874,7 +1879,12 @@
         "default" : "Vor dem Senden der Swapping-Details musst du diese auf deinem Gerät verifizieren. Die Adressen musst du nicht verifizieren, da diese sicher ausgetauscht werden.",
         "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
+        "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest."
+      },
       "confirm" : "Swap-Transaktion bestätigen",
+      "confirmSwap" : "Swap-Vorgang auf dem Gerät bestätigen",
       "amountSent" : "Zu sendender Betrag",
       "amountReceived" : "Zu erhaltender Betrag",
       "amountReceivedFloat" : "Zu erhaltender Betrag vor Servicegebühren",
@@ -1885,6 +1895,7 @@
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
       "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
       "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
+      "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "cicAcceptTerms" : "„Mit CIC swappen“ stimmst du den <0>Nutzungsbedingungen</0> von CIC sowie der <1>AML-/KYC-Richtlinie</1> zu. CIC ist zur Anwendung von AML-/KYC-Verfahren berechtigt, die in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall musst du dich mit dem <2>Kundenservice</2> von CIC in Verbindung setzen."
     },
     "swap2" : {
@@ -2240,6 +2251,16 @@
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Von einem Bankkonto",
+          "description" : "USD oder EUR einzahlen"
+        },
+        "fromCrypto" : {
+          "title" : "Von einer Kryptoadresse",
+          "description" : "Krypto empfangen"
+        }
+      },
       "chooseAccount" : {
         "title" : "Konto",
         "label" : "Zu belastendes Konto",
@@ -2271,7 +2292,7 @@
         },
         "cosmos" : {
           "title" : "Vermehre deine ATOM. Stake mit Ledger Validator.",
-          "description" : "ATOM mit dem bewährten Ledger-Validator staken: Ihre Coins gehören stets Ihnen, dank der kompromisslosen Sicherheit von Ledger."
+          "description" : "ATOM mit dem bewährten Ledger-Validator staken: Deine Coins gehören stets dir, dank der kompromisslosen Sicherheit von Ledger."
         },
         "osmo" : {
           "title" : "OSMO vermehren. Mit Ledger by Figment staken.",
@@ -4425,7 +4446,7 @@
       },
       "operations" : {
         "title" : "Historie der Kontobewegungen",
-        "desc" : "Speichern Sie eine CSV-Datei mit Ihren Kontobewegungen auf Ihrem Computer."
+        "desc" : "Speichere eine CSV-Datei mit deinen Kontobewegungen auf deinem Computer."
       },
       "modal" : {
         "button" : "Fertig",
@@ -4438,13 +4459,13 @@
     },
     "display" : {
       "language" : "Sprache",
-      "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
+      "languageDesc" : "Stelle die in Ledger Live angezeigte Sprache ein.",
       "theme" : "Design",
       "themeDesc" : "Design auswählen.",
       "counterValue" : "Bevorzugte Währung",
-      "counterValueDesc" : "Wählen Sie die Währung, die neben Ihrem Saldo und den Aktionen angezeigt wird.",
+      "counterValueDesc" : "Wähle die Währung, die neben deinem Saldo und den Aktionen angezeigt wird.",
       "region" : "Region",
-      "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
+      "regionDesc" : "Wähle deine Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
       "stock" : "Regionaler Marktindikator",
       "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
       "walletSync" : "Ledger Sync",
@@ -4511,37 +4532,37 @@
         }
       },
       "mockAccounts" : {
-        "title" : "Generate mock accounts",
-        "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+        "title" : "Pseudokonten generieren",
+        "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "Benutzerdefinierte Generierung",
+          "desc" : "Währungen auswählen und Token hinzufügen"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
-          "desc" : "Generate 10 random accounts with random currencies"
+          "title" : "Schnellgenerierung",
+          "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
         },
         "currencySelector" : {
-          "placeholder" : "Choose currencies...",
-          "searchPlaceholder" : "Search",
-          "noCurrenciesFound" : "No currencies found",
-          "noCurrenciesAvailable" : "No currencies available",
-          "selectedCount" : "{{count}} currency selected",
-          "selectedCount_other" : "{{count}} currencies selected"
+          "placeholder" : "Währungen auswählen…",
+          "searchPlaceholder" : "Suche",
+          "noCurrenciesFound" : "Keine Währungen gefunden",
+          "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+          "selectedCount" : "{{count}} Währung ausgewählt",
+          "selectedCount_other" : "{{count}} Währungen ausgewählt"
         },
         "tokenIds" : {
-          "label" : "Token IDs (optional)",
+          "label" : "Token-IDs (optional)",
           "placeholder" : "token1, token2, token3"
         },
         "buttons" : {
-          "generateAccounts" : "Generate {{count}} account",
-          "generateAccounts_other" : "Generate {{count}} accounts",
-          "generateAccountsQuick" : "Generate {{count}} accounts"
+          "generateAccounts" : "{{count}} Konto generieren",
+          "generateAccounts_other" : "{{count}} Konten generieren",
+          "generateAccountsQuick" : "{{count}} Konten generieren"
         },
         "alerts" : {
-          "selectCurrency" : "Please select at least one currency",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
-          "generateError" : "Failed to generate mock accounts. Please try again."
+          "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+          "confirmErase" : "Bestehende Konten werden gelöscht. Vorgang fortsetzen?",
+          "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
         }
       },
       "debugWalletSync" : {
@@ -4581,11 +4602,11 @@
       "mockAppUpdate" : "Mock-App-Update",
       "mockAppUpdateDesc" : "Zeigt das verfügbare App-Update unter „My Ledger“ an. Dieselbe App-Version wird erneut installiert.",
       "catalogUrl" : "Anbieter Katalog-Apps festlegen",
-      "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
+      "catalogUrlDesc" : "Gebe die benutzerdefinierte URL deines Kataloganbieters ein",
       "customCALRef" : "Benutzerdefinierte CAL-Referenz",
       "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
-      "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "enablePlatformDevToolsDesc" : "Aktiviere das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "customLockScreenTester" : "Tester für den individuellen Sperrbildschirm",
       "customLockScreenTesterDesc" : "Individuellen Sperrbildschirm auf unterstützten Geräten testen",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
@@ -4626,35 +4647,35 @@
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
       "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
       "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
-      "openOnboardingAppInstallDebugDesc" : "Öffnen Sie einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
+      "openOnboardingAppInstallDebugDesc" : "Öffne einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
     "currencies" : {
-      "selectPlaceholder" : "Krypto-Vermögenswert auswählen",
-      "desc" : "Wählen Sie einen Krypto-Vermögenswert, um dessen Einstellungen zu bearbeiten.",
+      "selectPlaceholder" : "Krypto-Asset auswählen",
+      "desc" : "Wähle ein Krypto-Asset, um dessen Einstellungen zu bearbeiten.",
       "placeholder" : "Keine Einstellungen für diesen Vermögenswert",
       "confirmationsNb" : "Anzahl der Bestätigungen",
       "confirmationsNbDesc" : "Legen Sie die Anzahl der Netzwerkbestätigungen für eine Transaktion fest, die als bestätigt markiert werden soll."
     },
     "profile" : {
       "password" : "Passwort-Sperre",
-      "passwordDesc" : "Legen Sie ein Passwort fest, um die Ledger Live-Daten auf Ihrem Computer zu schützen, einschließlich Kontonamen, Kontoständen, Transaktionen und öffentliche Adressen.",
+      "passwordDesc" : "Lege ein Passwort fest, um die Ledger Live-Daten auf deinem Computer zu schützen, einschließlich Kontonamen, Kontoständen, Transaktionen und öffentliche Adressen.",
       "passwordAutoLock" : "Auto-Sperre",
       "passwordAutoLockDesc" : "Sperren Sie Ledger Live automatisch bei Inaktivität.",
       "changePassword" : "Passwort ändern",
       "softResetTitle" : "Cache löschen",
       "softResetDesc" : "Löschen Sie den Ledger Live-Cache, um eine erneute Synchronisierung mit der Blockchain zu erzwingen.",
-      "softReset" : "Leeren",
+      "softReset" : "Löschen",
       "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
       "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
       "hardResetTitle" : "Ledger Live zurücksetzen",
-      "hardResetDesc" : "Löschen Sie alle auf Ihrem Computer gespeicherten Ledger Live-Daten, einschließlich Ihrer Konten, Transaktionshistorien und Einstellungen.",
+      "hardResetDesc" : "Lösche alle auf deinem Computer gespeicherten Ledger Live-Daten, einschließlich deiner Konten, Transaktionshistorien und Einstellungen.",
       "hardReset" : "Zurücksetzen",
       "analytics" : "Analysen",
       "analyticsDesc" : "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzererfahrung zu helfen. Dazu gehören Klicks, Seitenbesuche, Weiterleitungen, Aktionen (Senden, Empfangen, Sperren usw.), Scrollen am Ende der Seite, (De-)Installieren und App-Version, Anzahl der Konten, Krypto-Vermögenswerte und Aktionen, Sitzungsdauer, der Ledger-Gerätetyp und die Firmware.",
       "reportErrors" : "Fehlerberichte",
       "reportErrorsDesc" : "Berichte automatisch versenden, um Ledger bei der Verbesserung seiner Produkte zu unterstützen.",
       "launchOnboarding" : "Gerät einrichten",
-      "launchOnboardingDesc" : "Richten Sie ein neues Gerät ein oder stellen Sie ein vorhandenes Gerät wieder her. Konten und Einstellungen werden beibehalten."
+      "launchOnboardingDesc" : "Richte ein neues Gerät ein oder stelle ein vorhandenes Gerät wieder her. Konten und Einstellungen werden beibehalten."
     },
     "help" : {
       "version" : "Version",
@@ -4662,18 +4683,18 @@
       "termsBtn" : "Lesen",
       "faq" : "Ledger Support",
       "chatbot" : "Ledger-Chatbot",
-      "faqDesc" : "Falls Sie ein Problem haben, nutzen Sie Ledger Live mit Ihrer Hardware-Wallet.",
+      "faqDesc" : "Falls ein Problem auftritt, nutze Ledger Live mit deiner Hardware-Wallet.",
       "terms" : "Nutzungsbedingungen",
-      "termsDesc" : "Durch die Nutzung von Ledger Live wird davon ausgegangen, dass Sie unsere Nutzungsbedingungen akzeptiert haben.",
+      "termsDesc" : "Durch die Nutzung von Ledger Live wird davon ausgegangen, dass du unsere Nutzungsbedingungen akzeptiert hast.",
       "privacy" : "Datenschutzrichtlinie",
-      "privacyDesc" : "In unseren Datenschutzrichtlinien erfahren Sie, welche persönlichen Daten wir erfassen, warum wir das tun und wie wir sie verwenden."
+      "privacyDesc" : "In unseren Datenschutzrichtlinien erfährst du, welche persönlichen Daten wir erfassen, warum wir das tun und wie wir sie verwenden."
     },
     "experimental" : {
-      "disclaimer" : "Dies sind experimentelle Funktionen, die wir für unsere technisch versierte Community zum Testen bereitstellen. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "disclaimer" : "Dies sind experimentelle Funktionen, die wir für unsere technisch versierte Community zum Testen bereitstellen. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass du sie aktivierst, erklärst du dich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
       "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
       "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
       "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
-      "providerCTA" : "Gehen Sie zu Einstellungen",
+      "providerCTA" : "Gehe zu Einstellungen",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
@@ -4685,7 +4706,7 @@
         },
         "managerDevMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
+          "description" : "Zeige Entwickler- und Testnet-Apps in My Ledger an."
         },
         "listAppsV2" : {
           "title" : "Experimentelle Apps-Liste für My Ledger",
@@ -4693,7 +4714,7 @@
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
-          "description" : "Suchen Sie nach Konten mit fehlerhaften Ableitungspfaden. Bitte senden Sie potenziell gefundene Vermögenswerte an ein reguläres Konto."
+          "description" : "Suche nach Konten mit fehlerhaften Ableitungspfaden. Bitte sende potenziell gefundene Assets an ein reguläres Konto."
         },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
@@ -4701,11 +4722,11 @@
         },
         "keychainObservableRange" : {
           "title" : "Benutzerdefiniertes Lückenlimit",
-          "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
+          "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn du diesen Wert über den Standardwert (20) erhöhst, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen deiner Konten beeinträchtigen."
         },
         "forceProvider" : {
           "title" : "Anbieter in My Ledger",
-          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf deinem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -4735,15 +4756,15 @@
         },
         "vaultSigner" : {
           "title" : "Vault-Unterzeichner",
-          "description" : "Verwenden Sie Ledger Vault als Unterzeichner mit Ihrem Operator-API-Token"
+          "description" : "Verwende Ledger Vault als Signierer mit deinen Operator-API-Token"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Benutzerdefinierte Grenze für Prioritätsgebühren",
-          "description" : "Passen Sie den Prozentsatz unserer voraussichtlichen Mindestprioritätsgebühr für eine erweiterte EIP1559-Transaktion an."
+          "description" : "Passe den Prozentsatz unserer voraussichtlichen Mindestprioritätsgebühr für eine erweiterte EIP1559-Transaktion an."
         },
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Benutzerdefinierten Faktor für Mindestgebühr eingeben",
-          "description" : "Passen Sie den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
+          "description" : "Passe den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
         },
         "enableNetworkLogs" : {
           "title" : "Netzwerklogs aktivieren",
@@ -4753,8 +4774,8 @@
     },
     "hardResetModal" : {
       "title" : "Ledger Live zurücksetzen",
-      "desc" : "Setzen Sie Ledger Live zurück, um alle Einstellungen und Konten auf Ihrem Computer zu löschen. Sie können dann Ihr Passwort wählen und Ihre Konten wieder mit Ihrem Ledger-Gerät hinzufügen. Die privaten Schlüssel, die Zugang zu Ihren Krypto-Vermögenswerten geben, bleiben sicher auf Ihrem Ledger-Gerät und werden durch Ihren Wiederherstellungssatz gesichert.",
-      "warning" : "Das Zurücksetzen von Ledger Live löscht Ihren Swap-Transaktionsverlauf für alle Ihre Konten."
+      "desc" : "Setze Ledger Live zurück, um alle Einstellungen und Konten auf deinem Computer zu löschen. Du kannst dann dein Passwort wählen und deine Konten wieder mit deinem Ledger-Gerät hinzufügen. Die privaten Schlüssel, die Zugang zu deinen Krypto-Assets geben, bleiben sicher auf deinem Ledger-Gerät und werden durch deine Wiederherstellungsphrase gesichert.",
+      "warning" : "Das Zurücksetzen von Ledger Live löscht den Swap-Transaktionsverlauf für alle deine Konten."
     },
     "softResetModal" : {
       "title" : "Cache löschen",
@@ -4776,11 +4797,11 @@
     },
     "openUserDataDirectory" : {
       "title" : "Benutzerdaten anzeigen",
-      "desc" : "Zeigen Sie die auf Ihrem Computer gespeicherten Benutzerdaten an, einschließlich Ihrer Konten, Caches und Einstellungen.",
+      "desc" : "Zeige die auf deinem Computer gespeicherten Benutzerdaten an, einschließlich deiner Konten, Caches und Einstellungen.",
       "btn" : "Anzeigen"
     },
     "repairDevice" : {
-      "title" : "Reparieren Sie Ihr Ledger-Gerät",
+      "title" : "Repariere dein Ledger-Gerät",
       "descSettings" : "Verwenden Sie dies, um Ihr Ledger-Gerät wiederherzustellen, wenn es während eines Firmware-Updates gesperrt wurde.",
       "desc" : "Ledger Nano S-Benutzer wählen bitte den auf Ihrem Gerät angezeigten Status. Nano X- und Blue-Benutzer schauen bitte im Hilfe-Center nach.",
       "button" : "Reparieren"
@@ -4792,7 +4813,7 @@
     },
     "troubleshootNetwork" : {
       "title" : "Fehlersuche im Netzwerk",
-      "desc" : "Führen Sie eine Checkliste aus, um die Netzwerkbedingungen für die Fehlersuche zu bewerten.",
+      "desc" : "Führe eine Checkliste aus, um die Netzwerkbedingungen für die Fehlersuche zu bewerten.",
       "btn" : "Fehlersuche"
     },
     "accounts" : {
@@ -4802,13 +4823,13 @@
       },
       "tokenBlacklist" : {
         "title" : "Ausgeblendete Token",
-        "desc" : "Sie können Token ausblenden, indem Sie zum übergeordneten Konto gehen, dann mit der rechten Maustaste auf das Token klicken und „Token ausblenden“ wählen.",
+        "desc" : "Du kannst Token ausblenden, indem du zum übergeordneten Konto gehst, dann mit der rechten Maustaste auf das Token klicken und „Token ausblenden“ wählen.",
         "count" : "1 Token",
         "count_other" : "{{count}} Token"
       },
       "fullNode" : {
         "title" : "Bitcoin Full Node verbinden",
-        "desc" : "Richten Sie Ihren Bitcoin-Knoten (Full Node) ein, um Transaktionen zu synchronisieren und zu senden, ohne die Explorer von Ledger zu verwenden."
+        "desc" : "Richte deinen Bitcoin-Knoten (Full Node) ein, um Transaktionen zu synchronisieren und zu senden, ohne Ledgers Explorer zu verwenden."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Token-Transaktionen ausblenden, wenn der Wert 0 ist",
@@ -4989,7 +5010,7 @@
         "continueCTA" : "Weiter",
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
         "description" : "Wenn Ihre {{device}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
-        "alert" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde"
+        "alert" : "Verwende nur eine Wiederherstellungsphrase, die dein Gerät angezeigt hat, wenn es eingerichtet wurde"
       }
     },
     "alerts" : {
@@ -5007,13 +5028,13 @@
     "screens" : {
       "welcome" : {
         "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
-        "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
+        "description" : "Verwalte, kaufe und vermehre deine Kryptos & NFTs mit Ledger Live.",
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Ledger-Gerät kaufen",
-        "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
-        "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
-        "and" : "Hinzu kommt:",
+        "byTapping" : "Indem du auf \"Erste Schritte\" tippst, erklärst du dich einverstanden mit unseren ",
+        "termsAndConditions" : "AGBs",
+        "and" : "Außerdem gilt unsere ",
         "privacyPolicy" : "Datenschutzrichtlinie",
         "steps" : {
           "0" : {
@@ -5156,7 +5177,7 @@
           },
           "pinCode" : {
             "title" : "PIN-Code",
-            "paragraph" : "Ihr PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu Ihrem privaten Schlüssel und Ihrer Nano. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+            "paragraph" : "Dein PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu deinem privaten Schlüssel und deiner Nano. Dein PIN-Code muss 4 bis 8 Ziffern lang sein.",
             "disclaimer" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
             "buttons" : {
               "next" : "PIN-Code einrichten",
@@ -5239,7 +5260,7 @@
             },
             "warning" : {
               "title" : "Verwenden Sie keinen Wiederherstellungssatz, den Sie nicht selbst erstellt haben.",
-              "desc" : "Der PIN-Code und die Wiederherstellungsphrase Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
+              "desc" : "Der PIN-Code und die Wiederherstellungsphrase deiner Ledger-Hardware-Wallet sollten von dir und nur von dir erstellt werden. Falls du ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten hast, verwende das Produkt bitte nicht und kontaktiere unseren Kundendienst.",
               "supportLink" : "Kundensupport kontaktieren"
             }
           },
@@ -5279,19 +5300,19 @@
           },
           "recoveryHowTo" : {
             "grabRecovery" : {
-              "title" : "Schnappen Sie sich Ihre Wiederherstellungsphrase"
+              "title" : "Nimm deine Wiederherstellungsphrase"
             },
             "selectLength" : {
-              "title" : "Wählen Sie die Länge der Wiederherstellungsphrase",
-              "descr" : "Ihre Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Sie müssen alle Wörter eingeben, um auf Ihre Kryptos zuzugreifen."
+              "title" : "Wähle die Länge der Wiederherstellungsphrase",
+              "descr" : "Deine Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Du musst alle Wörter eingeben, um auf deine Kryptos zuzugreifen."
             },
             "enterWord" : {
               "title" : "Wort 1 eingeben ...",
-              "descr" : "Geben Sie die ersten Buchstaben von Wort #1 ein, indem Sie mit der rechten oder linken Taste auswählen. Drücken Sie beide Tasten, um jeden Buchstaben zu bestätigen."
+              "descr" : "Gib die ersten Buchstaben von Wort #1 ein, indem du mit der rechten oder linken Taste auswählst. Drücke beide Tasten, um jeden Buchstaben zu bestätigen."
             },
             "validateWord" : {
-              "title" : "Bestätigen Sie Wort 1 ...",
-              "descr" : "Wählen Sie Wort 1 aus den Vorschlägen. Drücken Sie zum Bestätigen beide Tasten."
+              "title" : "Bestätige Wort 1 ...",
+              "descr" : "Wähle Wort 1 aus den Vorschlägen. Drücke zum Bestätigen beide Tasten."
             },
             "andNext" : {
               "title" : "Wiederholen Sie dies für alle Wörter!"
@@ -5412,11 +5433,11 @@
           "results" : {
             "success" : {
               "title" : "Glückwunsch!",
-              "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt."
+              "text" : "Deine Kryptos sind immer in der Blockchain gespeichert. Deine Hardware-Wallet enthält nur deinen privaten Schlüssel, der dir Zugriff auf deine Kryptos gibt."
             },
             "fail" : {
               "title" : "Falsch!",
-              "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt."
+              "text" : "Deine Kryptos sind immer in der Blockchain gespeichert. Deine Hardware-Wallet enthält nur deinen privaten Schlüssel, der dir Zugriff auf deine Kryptos gibt."
             }
           }
         },
@@ -5580,7 +5601,7 @@
           "cta2" : "Zurückgehen"
         },
         "repair" : {
-          "title" : "Reparieren Sie Ihren Nano S",
+          "title" : "Repariere deinen Nano S",
           "desc" : "Wie lautet die Meldung, die auf Ihrem Gerät angezeigt wird?",
           "mcuOutdated" : "MCU firmware is outdated",
           "mcuNotGenuine" : "Keine MCU-Original-Firmware",
@@ -5658,7 +5679,7 @@
   "Terms" : {
     "title" : "Nutzungsbedingungen",
     "description" : "Bitte nehmen Sie sich etwas Zeit, um unsere Nutzungsbedingungen und Datenschutzrichtlinien zu lesen",
-    "termsLabel" : "Allgemeine Geschäftsbedingungen",
+    "termsLabel" : "AGBs",
     "privacyLabel" : "Datenschutzrichtlinie",
     "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
     "cta" : "Zur Ledger-App",
@@ -5693,7 +5714,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "addAccount" : {
+        "title" : "Canton-Konto hinzufügen",
+        "onboard" : {
+          "title" : "Einrichtung",
+          "newAccount" : "Neues Konto",
+          "init" : "Klicke auf „Continue“ (Weiter), um dein neues Canton-Konto einzurichten",
+          "onboarded" : "Eingerichtete Konten",
+          "success" : "Dein neues Canton-Konto wurde erstellt und eingerichtet.",
+          "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "status" : {
+            "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
+            "submit" : "Konto wird eingerichtet …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "auth" : {
+          "title" : "Autorisierung",
+          "validator" : "Autorisieren",
+          "hint" : "Eingehende Zahlungen auf dieses Konto automatisch akzeptieren.",
+          "error" : "Autorisierung fehlgeschlagen. Bitte versuche es noch einmal.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automatisierte Zahlungsannahme"
+        },
+        "finish" : {
+          "title" : "Bestätigung"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -6440,6 +6488,9 @@
     "EthAppPleaseEnableContractData" : {
       "title" : "Bitte aktiviere die Blindsignatur oder die Vertragsdaten in den Einstellungen der Ethereum-App"
     },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Bitte Vertragsdaten in den Einstellungen der Celo-App aktivieren"
+    },
     "InvalidXRPTag" : {
       "title" : "Ungültiges XRP-Ziel-Tag"
     },
@@ -7028,7 +7079,7 @@
         "loadingPicture" : "Lade Daten...",
         "voila" : "Voilà!",
         "imageLoaded" : "Bild geladen auf {{productName}}",
-        "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
+        "confirmPicture" : "Gefällt dir, was du siehst?\nBehalte es!",
         "confirmRestorePicture" : "Tippe auf „Keep“ (Behalten), um\ndein Sperrbildschirm-Bild zu bestätigen",
         "doThisLater" : "Vielleicht später"
       }
@@ -7110,7 +7161,7 @@
         "2" : "Dein Portfolio",
         "3" : "Deine personenbezogenen Daten"
       },
-      "managePreferences" : "Voreinstellungen verwalten",
+      "managePreferences" : "Einstellungen verwalten",
       "refuse" : "Alle ablehnen",
       "accept" : "Alle annehmen",
       "analyticsData" : {
