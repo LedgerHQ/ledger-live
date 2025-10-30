@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { StyleProp, StyleSheet, View, ViewProps, ViewStyle } from "react-native";
 import { Edge, EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useExperimental } from "~/experimental";
 
 type Props = {
   children: ReactNode;
@@ -30,14 +31,18 @@ export default function SafeAreaViewFixed({
   ...rest
 }: Props) {
   const insets = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
   const computedPaddingBottom = computePaddingBottom(edges, useDetoxInsets, insets);
   const defaultEdges = isDefaultEdges(edges);
+
+  // When experimental header is enabled, don't add top padding as the header handles positioning
+  const shouldApplyTopPadding = (defaultEdges || edges?.includes("top")) && !hasExperimentalHeader;
 
   return (
     <View
       style={StyleSheet.compose(
         {
-          paddingTop: defaultEdges || edges?.includes("top") ? insets.top : undefined,
+          paddingTop: shouldApplyTopPadding ? insets.top : undefined,
           paddingBottom: computedPaddingBottom,
           paddingLeft: defaultEdges || edges?.includes("left") ? insets.left : undefined,
           paddingRight: defaultEdges || edges?.includes("right") ? insets.right : undefined,

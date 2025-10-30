@@ -1,12 +1,15 @@
 import React, { useContext } from "react";
-import { SafeAreaView, type SafeAreaViewProps } from "react-native-safe-area-context";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
-function WalletTabSafeAreaView({ children, ...extraProps }: SafeAreaViewProps) {
+function WalletTabSafeAreaView({
+  children,
+  ...extraProps
+}: React.ComponentProps<typeof SafeAreaViewFixed>) {
   const { headerHeight } = useContext(WalletTabNavigatorScrollContext);
   return (
-    <SafeAreaView style={{ flex: 1 }} {...extraProps}>
+    <SafeAreaViewFixed style={{ flex: 1 }} {...extraProps}>
       <Animated.View
         style={{
           width: "100%",
@@ -15,7 +18,7 @@ function WalletTabSafeAreaView({ children, ...extraProps }: SafeAreaViewProps) {
         }}
       />
       {children}
-    </SafeAreaView>
+    </SafeAreaViewFixed>
   );
 }
 

@@ -1,7 +1,6 @@
 import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { Platform, RefreshControl, ViewToken } from "react-native";
-import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
@@ -124,7 +123,6 @@ function View({
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
-      paddingBottom: TAB_BAR_SAFE_HEIGHT,
     },
     data: marketData,
     renderItem: ({ item, index }: { item: CurrencyData; index: number }) => (

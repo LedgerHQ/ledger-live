@@ -23,6 +23,7 @@ import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
 
 export const HEIGHT = 30;
+export const PADDING = 8;
 
 function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
@@ -55,7 +56,12 @@ function ExperimentalHeader() {
   // Animated style updating the height depending on the opening animation state
   const heightStyle = useAnimatedStyle(
     () => ({
-      height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolation.CLAMP),
+      height: interpolate(
+        openState.value,
+        [0, 1],
+        [0, HEIGHT + top + PADDING],
+        Extrapolation.CLAMP,
+      ),
     }),
     [openState, top],
   );
@@ -105,7 +111,7 @@ function ExperimentalHeader() {
         {isExperimental && (
           <>
             <ExperimentalIcon size={16} color={colors.live} />
-            <LText bold style={styles.label} onPress={onPressExperimental}>
+            <LText bold style={styles.label} onPress={onPressExperimental} py={4}>
               <Trans i18nKey="settings.experimental.title" />
             </LText>
           </>

@@ -12,6 +12,7 @@ import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+import { useExperimental } from "~/experimental";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -118,6 +119,7 @@ function WalletTabNavigatorTabBar({ state, descriptors, navigation }: MaterialTo
     [headerHeight, scrollY],
   );
   const insets = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
 
   return (
     <>
@@ -126,7 +128,7 @@ function WalletTabNavigatorTabBar({ state, descriptors, navigation }: MaterialTo
       />
       <AnimatedFlex
         style={{
-          top: insets.top,
+          top: hasExperimentalHeader ? 0 : insets.top,
           zIndex: 1,
           position: "absolute",
           transform: [{ translateY }],
@@ -144,7 +146,7 @@ function WalletTabNavigatorTabBar({ state, descriptors, navigation }: MaterialTo
             opacity,
           }}
         />
-        <Flex px={6} py={2} justifyContent={"flex-end"}>
+        <Flex px={6} py={4} justifyContent={"flex-end"}>
           <Flex flexDirection={"row"}>
             {state.routes.map((route, index) => (
               <MemoTab
