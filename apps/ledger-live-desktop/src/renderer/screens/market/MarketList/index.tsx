@@ -4,7 +4,10 @@ import { TFunction } from "i18next";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import {
+  MarketCurrencyData,
+  MarketListRequestParams,
+} from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SortTableCell } from "../components/SortTableCell";
 import { TableCell, TableRow, listItemHeight } from "../components/Table";
@@ -19,7 +22,7 @@ type MarketListProps = {
   marketParams: MarketListRequestParams;
   itemCount: number;
   locale: string;
-  marketData: CurrencyData[];
+  marketData: MarketCurrencyData[];
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
   toggleSortBy: () => void;

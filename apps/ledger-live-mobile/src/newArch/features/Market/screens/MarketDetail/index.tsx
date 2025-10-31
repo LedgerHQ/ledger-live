@@ -18,7 +18,7 @@ import { MarketQuickActions } from "~/components/MarketQuickActions";
 import BackButton from "./components/BackButton";
 import { Item } from "~/components/Graph/types";
 import {
-  CurrencyData,
+  MarketCurrencyData,
   MarketCoinDataChart,
   KeysPriceChange,
   MarketCurrencyChartDataRequestParams,
@@ -38,7 +38,7 @@ interface ViewProps {
   allAccounts: AccountLike[];
   range: string;
   dataChart?: MarketCoinDataChart;
-  currency?: CurrencyData;
+  currency?: MarketCurrencyData;
 }
 
 function View({
