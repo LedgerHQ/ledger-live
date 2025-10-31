@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { StyleProp, StyleSheet, View, ViewProps, ViewStyle } from "react-native";
+import React, { ReactNode, useState, useCallback, useMemo } from "react";
+import { StyleProp, StyleSheet, View, ViewProps, ViewStyle, LayoutChangeEvent } from "react-native";
 import { Edge, EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useExperimental } from "~/experimental";
 
@@ -34,22 +34,45 @@ export default function SafeAreaViewFixed({
   const hasExperimentalHeader = useExperimental();
   const computedPaddingBottom = computePaddingBottom(edges, useDetoxInsets, insets);
   const defaultEdges = isDefaultEdges(edges);
+  const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
 
   // When experimental header is enabled, don't add top padding as the header handles positioning
   const shouldApplyTopPadding = (defaultEdges || edges?.includes("top")) && !hasExperimentalHeader;
+
+  const paddingTop = shouldApplyTopPadding ? insets.top : 0;
+  const paddingBottom = computedPaddingBottom || 0;
+  const paddingLeft = defaultEdges || edges?.includes("left") ? insets.left : 0;
+  const paddingRight = defaultEdges || edges?.includes("right") ? insets.right : 0;
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { height } = event.nativeEvent.layout;
+      if (isFlex && height > 0 && !measuredHeight) {
+        setMeasuredHeight(height);
+      }
+    },
+    [isFlex, measuredHeight],
+  );
+
+  // Calculate the max height to prevent overflow while allowing flex to work normally
+  const calculatedMaxHeight = useMemo(() => {
+    return isFlex && measuredHeight ? measuredHeight - paddingTop - paddingBottom : undefined;
+  }, [isFlex, measuredHeight, paddingTop, paddingBottom]);
 
   return (
     <View
       style={StyleSheet.compose(
         {
-          paddingTop: shouldApplyTopPadding ? insets.top : undefined,
-          paddingBottom: computedPaddingBottom,
-          paddingLeft: defaultEdges || edges?.includes("left") ? insets.left : undefined,
-          paddingRight: defaultEdges || edges?.includes("right") ? insets.right : undefined,
+          paddingTop: paddingTop || undefined,
+          paddingBottom: paddingBottom || undefined,
+          paddingLeft: paddingLeft || undefined,
+          paddingRight: paddingRight || undefined,
+          maxHeight: calculatedMaxHeight,
           flex: isFlex ? 1 : 0,
         },
         style,
       )}
+      onLayout={isFlex ? handleLayout : undefined}
       {...rest}
     >
       {children}
