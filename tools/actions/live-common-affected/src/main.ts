@@ -37,7 +37,9 @@ function main(ref: string) {
               const m = line.match(combinedRegex);
               if (m) {
                 const [first, second, third] = m;
-                if (second === "families") {
+                if (first.startsWith("coin-modules/")) {
+                  return first.replace(/^.*coin-/, "");
+                } else if (second === "families") {
                   // in case of coin implementations, we will stop at the coin family level
                   return `${second}/${third}`;
                 } else if (second === "live-common/src/bridge/generic-alpaca") {
