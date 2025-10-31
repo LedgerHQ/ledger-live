@@ -9,6 +9,9 @@ import {
   DeviceSessionStateType,
   DeviceStatus,
   DiscoveredDevice,
+  SendApduEmptyResponseError,
+  DeviceDisconnectedBeforeSendingApdu,
+  DeviceDisconnectedWhileSendingError,
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceManagementKitHIDTransport,
@@ -18,6 +21,7 @@ import {
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { DisconnectedDevice } from "@ledgerhq/errors";
 
 function createMockDMK(): DeviceManagementKit {
   // const baseDMK = new DeviceManagementKitBuilder().build();
@@ -327,6 +331,7 @@ describe("DeviceManagementKitHIDTransport", () => {
   describe("close", () => {
     it("should just resolve", async () => {
       const mockDMK = createMockDMK();
+      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
       const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
       await transport.close();
     });
@@ -336,31 +341,36 @@ describe("DeviceManagementKitHIDTransport", () => {
     beforeEach(() => {
       vi.resetAllMocks();
     });
+
     it("should throw an error if no active session", async () => {
       // given
-      const dmk = getDeviceManagementKit();
-      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
+      const mockDMK = createMockDMK();
+      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
-      try {
-        // when
-        await transport.exchange(Buffer.from([]));
-      } catch (e) {
-        // then
-        expect(e).toEqual(new Error("No active session found"));
-      }
+      const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
+
+      // when
+      const result = transport.exchange(Buffer.from([]));
+
+      // then
+      let caughtError;
+      await result.catch(e => {
+        caughtError = e;
+      });
+      expect(caughtError).toEqual(new DisconnectedDevice());
     });
 
     it("should call dmk sendApdu and return response", async () => {
       // given
-      const dmk = getDeviceManagementKit();
-      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
+      const mockDMK = createMockDMK();
+      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+
+      const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+      const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-        sessionId: "session",
-        transport: transport,
+        transport,
       });
-      vi.spyOn(dmk, "sendApdu").mockResolvedValue({
+      vi.mocked(mockDMK.sendApdu).mockResolvedValue({
         data: Uint8Array.from([0x42, 0x21, 0x34, 0x44, 0x54, 0x67, 0x89]),
         statusCode: Uint8Array.from([0x90, 0x00]),
       });
@@ -372,7 +382,7 @@ describe("DeviceManagementKitHIDTransport", () => {
       });
 
       // then
-      expect(dmk.sendApdu).toHaveBeenCalledWith({
+      expect(mockSendApdu).toHaveBeenCalledWith({
         sessionId: "session",
         apdu: Uint8Array.from([0x43, 0x89, 0x04, 0x30, 0x44]),
         abortTimeout: abortTimeoutMs,
@@ -382,22 +392,52 @@ describe("DeviceManagementKitHIDTransport", () => {
 
     it("should return an error if dmk sendApdu throws", async () => {
       // given
-      const dmk = getDeviceManagementKit();
-      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
+      const mockDMK = createMockDMK();
+      vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+      const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+      const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-        sessionId: "session",
-        transport: transport,
+        transport,
       });
-      vi.spyOn(dmk, "sendApdu").mockRejectedValue(new Error("SendApdu error"));
+      mockSendApdu.mockRejectedValue(new Error("SendApdu error"));
 
-      try {
+      // when
+      const result = transport.exchange(Buffer.from([0x43, 0x89, 0x04, 0x30, 0x44]));
+
+      // then
+      let caughtError;
+      await result.catch(e => {
+        caughtError = e;
+      });
+      expect(caughtError).toEqual(new Error("SendApdu error"));
+    });
+
+    [
+      new SendApduEmptyResponseError(),
+      new DeviceDisconnectedWhileSendingError(),
+      new DeviceDisconnectedBeforeSendingApdu(),
+    ].forEach(error => {
+      it(`should remap ${error.constructor.name} to DisconnectedDevice`, async () => {
+        // given
+        const mockDMK = createMockDMK();
+        vi.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+        const mockSendApdu = vi.mocked(mockDMK.sendApdu);
+        const transport = new DeviceManagementKitHIDTransport(mockDMK, "session");
+        vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+          transport,
+        });
+        mockSendApdu.mockRejectedValue(error);
+
         // when
-        await transport.exchange(Buffer.from([0x43, 0x89, 0x04, 0x30, 0x44]));
-      } catch (e) {
+        const result = transport.exchange(Buffer.from([0x43, 0x89, 0x04, 0x30, 0x44]));
+
         // then
-        expect(e).toEqual(new Error("SendApdu error"));
-      }
+        let caughtError;
+        await result.catch(e => {
+          caughtError = e;
+        });
+        expect(caughtError).toEqual(new DisconnectedDevice());
+      });
     });
   });
 
