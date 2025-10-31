@@ -12,7 +12,7 @@ const testConfig = {
   tmsLinks: ["B2CQA-3468"],
   provider: Provider.COINBASE,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runNavigateToBuyFromAccountPageTest(

@@ -5,7 +5,7 @@ const noAccountFromTestConfig = {
   account2: Account.ETH_1,
   testTitle: "from Account not present to Account present",
   tmsLinks: ["B2CQA-3353"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runSwapWithoutAccountTest(
