@@ -26,6 +26,7 @@ import {
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowItem.styled";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface ViewProps {
   loading: boolean;
@@ -40,6 +41,7 @@ interface ViewProps {
   dataChart?: MarketCoinDataChart;
   currency?: MarketCurrencyData;
   refetch: () => void;
+  ledgerCurrency?: CryptoOrTokenCurrency;
 }
 
 function View({
@@ -53,10 +55,11 @@ function View({
   accounts,
   counterCurrency,
   allAccounts,
+  ledgerCurrency,
   range,
   updateMarketParams,
 }: ViewProps) {
-  const { name, image, internalCurrency, price } = currency || {};
+  const { name, image, price } = currency || {};
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refetch });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
@@ -138,10 +141,10 @@ function View({
           refreshChart={updateMarketParams}
           chartData={dataChart}
           range={range}
-          currency={internalCurrency}
+          currency={ledgerCurrency}
         />
 
-        {internalCurrency && <MarketQuickActions currency={internalCurrency} accounts={accounts} />}
+        {ledgerCurrency && <MarketQuickActions currency={ledgerCurrency} accounts={accounts} />}
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>
