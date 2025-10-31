@@ -725,7 +725,7 @@ describe("EVM Family", () => {
           ],
           undefined,
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
@@ -796,7 +796,7 @@ describe("EVM Family", () => {
         );
 
         findTokenByAddressInCurrency.mockImplementation(
-          async (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          (address: string, _currencyId: string): TokenCurrency | undefined => {
             if (address === tokenOperations[0].contract) {
               return tokenCurrencies[0];
             }
@@ -820,7 +820,7 @@ describe("EVM Family", () => {
           ],
           undefined,
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
@@ -873,7 +873,7 @@ describe("EVM Family", () => {
 
         findTokenByAddressInCurrency.mockClear();
         findTokenByAddressInCurrency.mockImplementation(
-          async (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          (address: string, _currencyId: string): TokenCurrency | undefined => {
             if (address === tokenOperations[3].contract) {
               return tokenCurrencies[1];
             }
@@ -896,7 +896,7 @@ describe("EVM Family", () => {
           ],
           undefined,
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
@@ -940,7 +940,7 @@ describe("EVM Family", () => {
 
         findTokenByAddressInCurrency.mockClear();
         findTokenByAddressInCurrency.mockImplementation(
-          async (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          (address: string, _currencyId: string): TokenCurrency | undefined => {
             if (address === tokenOperations[0].contract) {
               return tokenCurrencies[0];
             } else if (address === tokenOperations[1].contract) {
@@ -967,7 +967,7 @@ describe("EVM Family", () => {
           ],
           undefined,
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
@@ -997,7 +997,7 @@ describe("EVM Family", () => {
         );
 
         findTokenByAddressInCurrency.mockImplementation(
-          async (_address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          (_address: string, _currencyId: string): TokenCurrency | undefined => {
             return undefined;
           },
         );
@@ -1017,7 +1017,7 @@ describe("EVM Family", () => {
           ],
           undefined,
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
@@ -1051,7 +1051,7 @@ describe("EVM Family", () => {
           [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
           [tokenCurrencies[0].id],
           swapHistoryMap,
-          (contractAddress: string) =>
+          async (contractAddress: string) =>
             getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
