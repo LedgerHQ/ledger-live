@@ -85,6 +85,7 @@ export function OperationsList({
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
         onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
           !completed ? (
