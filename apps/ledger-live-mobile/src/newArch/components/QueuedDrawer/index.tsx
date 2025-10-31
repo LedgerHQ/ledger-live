@@ -185,7 +185,7 @@ const QueuedDrawerNative = ({
       visible={isVisible}
       onShow={onShow}
       onRequestClose={onRequestClose}
-      statusBarTranslucent={Platform.OS === "android"}
+      statusBarTranslucent={false}
     >
       <View
         style={{
