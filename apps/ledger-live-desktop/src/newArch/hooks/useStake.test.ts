@@ -43,7 +43,11 @@ const rawTron: AccountRaw = {
 };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setCryptoAssetsStore({
+  findTokenById: (_: string) => undefined,
+  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
+} as CryptoAssetsStore);
 
 const mockEthereumAccount = fromAccountRaw(raw);
 const mockTronAccount = fromAccountRaw(rawTron);
