@@ -44,6 +44,8 @@ const mockedFindTokenByAddressInCurrency = jest.fn();
 setCryptoAssetsStore({
   findTokenByAddressInCurrency: (address: string, currencyId: string) =>
     mockedFindTokenByAddressInCurrency(address, currencyId),
+  findTokenById: (_: string) => undefined,
+  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
 } as unknown as CryptoAssetsStore);
 
 describe("getAccountShape", () => {

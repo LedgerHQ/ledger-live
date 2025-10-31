@@ -14,6 +14,7 @@ import {
 setCryptoAssetsStore({
   findTokenById: (_: string) => undefined,
   findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
 } as unknown as CryptoAssetsStore);
 
 // Mock account factory using fromAccountRaw for proper Account structure
