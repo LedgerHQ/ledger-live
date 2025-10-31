@@ -64,6 +64,7 @@ describe("useEntryPoint", () => {
                 manager: false,
                 accounts: true,
                 settings: true,
+                postOnboarding: true,
               },
             },
           },

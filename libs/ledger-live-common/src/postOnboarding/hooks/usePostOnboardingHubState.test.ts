@@ -4,7 +4,11 @@
 import { useFeatureFlags } from "../../featureFlags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
-import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";
+import {
+  getPostOnboardingAction,
+  mockedFeatureIdToTest,
+  mockedFeatureParamIdToTest,
+} from "../mock";
 import { renderHook } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -19,10 +23,16 @@ jest.mock("../reducer");
 
 const mockedUseFeatureFlags = jest.mocked(useFeatureFlags);
 
-const mockedGetFeatureWithMockFeatureEnabled = enabled => ({
+const mockedGetFeatureWithMockFeatureEnabled = (enabled, paramEnabled = true) => ({
   isFeature: () => true,
   getFeature: id => {
-    if (id === mockedFeatureIdToTest) return { enabled };
+    if (id === mockedFeatureIdToTest)
+      return {
+        enabled,
+        params: {
+          [mockedFeatureParamIdToTest]: paramEnabled,
+        },
+      };
     return { enabled: true };
   },
   overrideFeature: () => {},
@@ -121,6 +131,23 @@ describe("usePostOnboardingHubState", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
     mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(false));
+
+    const {
+      result: {
+        current: { actionsState, lastActionCompleted },
+      },
+    } = renderHook(() => usePostOnboardingHubState());
+
+    expect(actionsState.find(action => action.featureFlagId === mockedFeatureIdToTest)).toBe(
+      undefined,
+    );
+    expect(lastActionCompleted).toBe(null);
+  });
+
+  it("should not return actions that have a disabled feature param flag ", () => {
+    const state = stateAllCompleted;
+    mockedHubStateSelector.mockReturnValue(state);
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true, false));
 
     const {
       result: {
