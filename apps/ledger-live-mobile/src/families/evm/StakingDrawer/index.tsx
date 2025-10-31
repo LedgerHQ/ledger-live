@@ -1,10 +1,9 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
-import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DimensionValue, LayoutChangeEvent, Linking, TouchableOpacity } from "react-native";
+import { Linking, Pressable, View } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -88,34 +87,18 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
     [has32Eth, filteredProviders, selected],
   );
 
-  // UPGRADE-RN77:
-  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
-  // is not maintained and its animation dependency too. The internal animation is flaky and not
-  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
-  const sharedHeight = useSharedValue<DimensionValue>(0);
-  const animatedStyle = useAnimatedStyle(
-    () => ({
-      height: sharedHeight.value,
-      rowGap: 24,
-      display: "flex",
-      paddingTop: insets.top,
-      paddingBottom: insets.bottom + 24,
-    }),
-    [sharedHeight, insets.top, insets.bottom],
-  );
-  const onLayout = useCallback(
-    (_: LayoutChangeEvent) => {
-      if (!Number.isNaN(sharedHeight.value) && sharedHeight.value === 0) {
-        sharedHeight.value = "100%";
-      }
-    },
-    [sharedHeight],
-  );
-
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
-      <Animated.View style={animatedStyle} onLayout={onLayout}>
+      <View
+        style={{
+          rowGap: 16,
+          paddingBottom: insets.bottom + 24,
+          display: "flex",
+          height: "100%",
+          flexDirection: "column",
+        }}
+      >
         <Flex rowGap={16} alignItems="center">
           <Text
             variant="h3Inter"
@@ -150,7 +133,7 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
         <ScrollListContainer
           alwaysBounceVertical={false}
           directionalLockEnabled
-          flex={1}
+          flexShrink={1}
           indicatorStyle={themeName === "dark" ? "white" : "default"}
         >
           <EvmStakingDrawerBody
@@ -160,8 +143,11 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
             providers={listProvidersSorted}
           />
         </ScrollListContainer>
-        <Box backgroundColor={colors.background.drawer} bottom={0} left={0} right={0}>
-          <TouchableOpacity
+        <Box backgroundColor={colors.background.drawer} bottom={0} left={0} right={0} mb={16}>
+          <Pressable
+            accessible={true}
+            pointerEvents="box-only"
+            hitSlop={16}
             style={{
               alignItems: "center",
               backgroundColor: colors.primary.c20,
@@ -203,9 +189,9 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
             <Flex flexShrink={0} alignItems="center" justifyContent="center">
               <Icons.ExternalLink size="S" color={colors.neutral.c80} />
             </Flex>
-          </TouchableOpacity>
+          </Pressable>
         </Box>
-      </Animated.View>
+      </View>
     </QueuedDrawer>
   );
 }
