@@ -1,11 +1,10 @@
 import React from "react";
-import { AnimatedInput } from "..";
-import { type InputProps as BaseInputType } from "../BaseInput/index";
+import BaseInput, { type InputProps as BaseInputType } from "../BaseInput/index";
 import { useTheme } from "styled-components/native";
 import { StyleProp, ViewStyle, TextInput } from "react-native";
 
-import { useAnimatedInputFocus } from "../AnimatedInput/useAnimatedInputFocus";
-import { getInputStatus, inputStatusColors } from "../AnimatedInput/inputTextColor";
+import { useAnimatedInputFocus } from "./useAnimatedInputFocus";
+import { getInputStatus, inputStatusColors } from "./inputTextColor";
 import { SelectComponent } from "./Select";
 
 export interface AnimatedInputProps extends BaseInputType {
@@ -41,7 +40,7 @@ const AnimatedInputSelect = (
   const inputStatus = getInputStatus({ focused, hasError: !!error, hasValue: !!value });
 
   return (
-    <AnimatedInput
+    <BaseInput
       value={value}
       ref={ref}
       onFocus={onFocus}
