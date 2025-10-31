@@ -11,7 +11,7 @@ import {
   isAvailableOnSwap,
   isDataStale,
 } from "../utils";
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
 describe("Market utils", () => {
   describe("isDataStale", () => {
@@ -82,7 +82,7 @@ describe("Market utils", () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => true,
         );
         expect(isAvailable).toBeTruthy();
@@ -95,7 +95,7 @@ describe("Market utils", () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -106,7 +106,7 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => true,
         );
         expect(isAvailable).toBeTruthy();
@@ -117,7 +117,7 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -138,7 +138,7 @@ describe("Market utils", () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
@@ -151,7 +151,7 @@ describe("Market utils", () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["ltc"]),
         );
         expect(isAvailable).toBeFalsy();
@@ -162,7 +162,7 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
@@ -173,7 +173,7 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeFalsy();

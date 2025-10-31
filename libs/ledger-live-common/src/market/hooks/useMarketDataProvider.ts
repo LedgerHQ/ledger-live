@@ -18,7 +18,7 @@ import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers
 import {
   MarketCurrencyRequestParams,
   MarketListRequestParams,
-  CurrencyData,
+  MarketCurrencyData,
   HashMapBody,
   MarketItemResponse,
   MarketListRequestResult,
@@ -118,7 +118,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
 function combineMarketData(
   results: UseQueryResult<
     {
-      formattedData: CurrencyData[];
+      formattedData: MarketCurrencyData[];
       page: number;
     },
     Error

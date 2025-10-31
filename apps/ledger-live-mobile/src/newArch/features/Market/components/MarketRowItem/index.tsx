@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useLocale } from "~/context/Locale";
@@ -10,7 +10,7 @@ import { StyledIconContainer } from "./MarketRowItem.styled";
 
 type Props = {
   index: number;
-  item: CurrencyData;
+  item: MarketCurrencyData;
   counterCurrency?: string;
   range?: string;
 };
