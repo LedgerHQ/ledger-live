@@ -39,6 +39,7 @@ jobs:
           ]
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 20
     outputs:
       linux: ${{ steps.status.outputs.Linux }}
       win: ${{ steps.status.outputs.Windows }}
@@ -100,6 +101,7 @@ jobs:
     name: "Build Desktop > Report"
     needs: build-desktop-app
     runs-on: ubuntu-22.04
+    timeout-minutes: 1
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && needs.build-desktop-app.outputs.linux == 'success' && needs.build-desktop-app.outputs.win == 'success' && needs.build-desktop-app.outputs.mac == 'success' }}
     steps:
       - uses: actions/checkout@v4
