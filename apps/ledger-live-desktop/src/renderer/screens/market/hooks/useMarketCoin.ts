@@ -13,6 +13,8 @@ import { setMarketOptions } from "~/renderer/actions/market";
 import { marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
@@ -38,7 +40,22 @@ export const useMarketCoin = () => {
     id: currencyId,
   });
 
-  const { id, internalCurrency } = currency || {};
+  const { data: assetData } = assetsDataApi.useGetAssetDataQuery(
+    {
+      currencyIds: currency?.ledgerIds,
+      product: "lld",
+      version: __APP_VERSION__,
+      isStaging: false,
+      includeTestNetworks: false,
+    },
+    {
+      skip: !currency,
+    },
+  );
+
+  const { id } = currency || {};
+
+  const ledgerCurrency = assetData && selectCurrency(assetData);
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =
     useMarketActions({
@@ -46,8 +63,8 @@ export const useMarketCoin = () => {
       page: Page.MarketCoin,
     });
 
-  const color = internalCurrency
-    ? getCurrencyColor(internalCurrency, colors.background.main)
+  const color = ledgerCurrency
+    ? getCurrencyColor(ledgerCurrency, colors.background.main)
     : colors.primary.c80;
 
   const toggleStar = useCallback(() => {

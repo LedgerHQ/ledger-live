@@ -11,13 +11,15 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
+import { isAvailableOnBuy, isAvailableOnStake, isAvailableOnSwap } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 
 export enum Page {
   Market = "Page Market",
@@ -43,7 +45,17 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
-  const internalCurrency = currency?.internalCurrency;
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+
+  const isCurrencySupported =
+    currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(lrId)) || false;
+  const { getLedgerCurrency } = useLazyLedgerCurrency(
+    {
+      product: "lld",
+      version: __APP_VERSION__,
+    },
+    currency,
+  );
 
   const onAccountSelected = useCallback(
     (account: Account) => {
@@ -63,22 +75,25 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     "market",
   );
 
-  const openAddAccounts = useCallback(() => {
-    if (internalCurrency) openAddAccountFlow(internalCurrency, true, onAccountSelected);
-  }, [internalCurrency, onAccountSelected, openAddAccountFlow]);
+  const openAddAccounts = useCallback(async () => {
+    const ledgerCurrency = await getLedgerCurrency();
+    if (ledgerCurrency) openAddAccountFlow(ledgerCurrency, true, onAccountSelected);
+  }, [getLedgerCurrency, onAccountSelected, openAddAccountFlow]);
 
   const onBuy = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource(page);
       // PTX smart routing redirect to live app or to native implementation
 
+      const ledgerCurrency = await getLedgerCurrency();
+
       history.push({
         pathname: "/exchange",
-        state: internalCurrency
+        state: ledgerCurrency
           ? {
-              currency: internalCurrency?.id,
+              currency: ledgerCurrency?.id,
               mode: "buy", // buy or sell
             }
           : {
@@ -88,14 +103,17 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
             },
       });
     },
-    [currency, history, internalCurrency, page],
+    [currency, history, getLedgerCurrency, page],
   );
 
   const onSwap = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (internalCurrency?.id) {
-        e.preventDefault();
-        e.stopPropagation();
+    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const ledgerCurrency = await getLedgerCurrency();
+
+      if (ledgerCurrency?.id) {
         track("button_clicked2", {
           button: "swap",
           currency: currency?.ticker,
@@ -104,7 +122,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         });
         setTrackingSource(page);
 
-        const currencyId = internalCurrency?.id;
+        const currencyId = ledgerCurrency?.id;
 
         const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
           Boolean,
@@ -115,7 +133,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         history.push({
           pathname: "/swap",
           state: {
-            defaultCurrency: internalCurrency,
+            defaultCurrency: ledgerCurrency,
             defaultAccount,
             defaultAmountFrom: "0",
             defaultParentAccount:
@@ -128,7 +146,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       }
     },
     [
-      internalCurrency,
+      getLedgerCurrency,
       currency?.ticker,
       page,
       swapDefaultTrack,
@@ -139,40 +157,42 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onStake = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
 
+      const ledgerCurrency = await getLedgerCurrency();
+
       track("button_clicked2", {
         button: "stake",
-        currency: internalCurrency ? internalCurrency.ticker : currency?.ticker,
+        currency: ledgerCurrency ? ledgerCurrency.ticker : currency?.ticker,
         page,
         ...stakeDefaultTrack,
       });
       setTrackingSource(page);
       startStakeFlow({
-        currencies: internalCurrency ? [internalCurrency.id] : undefined,
+        currencies: ledgerCurrency ? [ledgerCurrency.id] : undefined,
         source: page,
         returnTo: history.location.pathname,
       });
     },
-    [internalCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
+    [getLedgerCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
   );
 
   const availableOnBuy = useMemo(
-    () => isAvailableOnBuy(currency, isCurrencyAvailable),
-    [currency, isCurrencyAvailable],
+    () => isCurrencySupported && isAvailableOnBuy(currency, isCurrencyAvailable),
+    [currency, isCurrencyAvailable, isCurrencySupported],
   );
   const availableOnSwap = useMemo(
-    () => isAvailableOnSwap(currency, currenciesForSwapAllSet),
-    [currency, currenciesForSwapAllSet],
+    () => isCurrencySupported && isAvailableOnSwap(currency, currenciesForSwapAllSet),
+    [currency, currenciesForSwapAllSet, isCurrencySupported],
   );
 
   const { getCanStakeCurrency } = useStake();
 
   const availableOnStake = useMemo(
-    () => !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id),
-    [internalCurrency, getCanStakeCurrency],
+    () => isCurrencySupported && isAvailableOnStake(currency, getCanStakeCurrency),
+    [currency, getCanStakeCurrency, isCurrencySupported],
   );
 
   return {
