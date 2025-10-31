@@ -11,6 +11,7 @@ import { ScreenName } from "~/const";
 import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 
 type Navigation =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
@@ -69,12 +70,30 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     }
   }, [forceSelectDevice, hasUSB, bleDevices?.length, lastConnectedDevice, onResult]);
 
+  const { scannedDevices } = useBleDevicesScanning(!forceSelectDevice);
+
   useEffect(() => {
     // If the bluetooth requirements are met, the device is selected
-    if (bluetoothRequirementsState === "all_respected" && lastConnectedDevice) {
-      onResult(lastConnectedDevice);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (
+      bluetoothRequirementsState === "all_respected" &&
+      lastConnectedDevice &&
+      scannedDevices.length === 1 &&
+      scannedDevices[0].deviceId === lastConnectedDevice.deviceId
+    ) {
+      timeoutId = setTimeout(() => {
+        onResult(lastConnectedDevice);
+      }, 500);
     }
-  }, [bluetoothRequirementsState, lastConnectedDevice, onResult]);
+    return timeoutId ? () => clearTimeout(timeoutId) : undefined;
+  }, [
+    bluetoothRequirementsState,
+    forceSelectDevice,
+    lastConnectedDevice,
+    onResult,
+    scannedDevices,
+    scannedDevices.length,
+  ]);
 
   // If the user tries to close the drawer displaying issues on BLE requirements,
   // this cancels the requirements checking and does not do anything in order to stop the
