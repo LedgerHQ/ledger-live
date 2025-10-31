@@ -11,23 +11,17 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DisconnectedDevice, HwTransportError } from "@ledgerhq/errors";
 import Transport, { type Observer as TransportObserver } from "@ledgerhq/hw-transport";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { LocalTracer } from "@ledgerhq/logs";
+import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { BehaviorSubject, Subscription, firstValueFrom, pairwise, startWith } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
-type DMKTransport = Transport & {
-  sessionId: string;
-  dmk: DeviceManagementKit;
-  listenToDisconnect: () => Subscription;
-  disconnect: (id?: string) => Promise<void> | void;
-};
-
-const activeDeviceSessionSubject = new BehaviorSubject<{
-  sessionId: string;
-  transport: DMKTransport;
+export const activeDeviceSessionSubject = new BehaviorSubject<{
+  transport: DeviceManagementKitHIDTransport;
 } | null>(null);
+
+activeDeviceSessionSubject.subscribe();
 
 export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitHIDTransport" });
 
@@ -43,32 +37,36 @@ export class DeviceManagementKitHIDTransport extends Transport {
     this.listenToDisconnect();
   }
 
-  static async open(deviceId: string, timeoutMs?: number) {
+  static async open(
+    deviceId: string,
+    timeoutMs?: number,
+    _context?: TraceContext,
+    dmk: DeviceManagementKit = getDeviceManagementKit(),
+  ) {
     const activeDeviceSession = activeDeviceSessionSubject.value;
-    const dmk = getDeviceManagementKit();
 
     tracer.trace(`[open] called with deviceId: ${deviceId} and timeoutMs: ${timeoutMs}`);
 
     try {
       if (activeDeviceSession) {
         tracer.trace("[open] checking existing session", {
-          sessionId: activeDeviceSession.sessionId,
+          sessionId: activeDeviceSession.transport.sessionId,
         });
         const deviceSessionState = await firstValueFrom(
-          activeDeviceSession.transport.dmk.getDeviceSessionState({
-            sessionId: activeDeviceSession.sessionId,
+          dmk.getDeviceSessionState({
+            sessionId: activeDeviceSession.transport.sessionId,
           }),
         );
 
         const connectedDevice = dmk.getConnectedDevice({
-          sessionId: activeDeviceSession.sessionId,
+          sessionId: activeDeviceSession.transport.sessionId,
         });
         if (
           connectedDevice.type === "USB" &&
           deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
         ) {
           tracer.trace("[open] reusing existing session", {
-            sessionId: activeDeviceSession.sessionId,
+            sessionId: activeDeviceSession.transport.sessionId,
           });
           return activeDeviceSession.transport;
         }
@@ -93,7 +91,6 @@ export class DeviceManagementKitHIDTransport extends Transport {
       });
       const transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
       activeDeviceSessionSubject.next({
-        sessionId,
         transport,
       });
       return transport;
@@ -103,9 +100,11 @@ export class DeviceManagementKitHIDTransport extends Transport {
     }
   }
 
-  static listen(observer: TransportObserver<DescriptorEvent<string>, HwTransportError>) {
-    const dmk = getDeviceManagementKit();
-
+  static listen(
+    observer: TransportObserver<DescriptorEvent<string>, HwTransportError>,
+    _context?: TraceContext,
+    dmk: DeviceManagementKit = getDeviceManagementKit(),
+  ) {
     let availableSubscription: Subscription | undefined = undefined;
 
     availableSubscription = dmk
@@ -158,7 +157,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
   }
 
   async exchange(apdu: Buffer, { abortTimeoutMs }: { abortTimeoutMs?: number } = {}) {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const activeSessionId = activeDeviceSessionSubject.value?.transport.sessionId;
     if (!activeSessionId) {
       throw new DisconnectedDevice();
     }
@@ -218,11 +217,5 @@ export class DeviceManagementKitHIDTransport extends Transport {
       },
     });
     return subscription;
-  }
-
-  disconnect() {
-    this.dmk.disconnect({ sessionId: this.sessionId }).catch(error => {
-      this.tracer.trace("[DMKTransport] [disconnect] error", { error });
-    });
   }
 }
