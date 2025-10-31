@@ -25,6 +25,7 @@ jobs:
     outputs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
+      coins: ${{ steps.affected.outputs.coins }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +91,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         env:
-          FILTER: ${{ needs.is-affected.outputs.paths }}
+          FILTER: ${{ needs.is-affected.outputs.coins }}
           VERBOSE_FILE: logs.txt
         run: |
           for coin in $FILTER; do
