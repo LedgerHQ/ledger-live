@@ -48,6 +48,7 @@ import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig"
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
+import { ModalSystemPrimer } from "~/newArch/components/ModalSystemPrimer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
@@ -342,6 +343,7 @@ export default class Root extends Component {
                       <LocaleProvider>
                         <PlatformAppProviderWrapper>
                           <SafeAreaProvider>
+                            <ModalSystemPrimer />
                             <StorylyProvider>
                               <StylesProvider>
                                 <StyledStatusBar />
