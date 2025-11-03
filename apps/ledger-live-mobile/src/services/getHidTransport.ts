@@ -7,7 +7,6 @@ import type {
 } from "@ledgerhq/hw-transport";
 import { HwTransportError } from "@ledgerhq/errors";
 import { TraceContext } from "@ledgerhq/logs";
-import { SchedulerLike } from "rxjs";
 
 /**
  * Temporary interface while DeviceManagementKitTransport and legacy hid transport
@@ -22,7 +21,6 @@ interface CommonTransportConstructor {
     deviceOrId: DeviceObj & string,
     timeoutMs?: number,
     context?: TraceContext,
-    options?: { rxjsScheduler?: SchedulerLike },
   ) => Promise<HIDTransport | DeviceManagementKitHIDTransport>;
   disconnect?: () => Promise<void>;
 }
