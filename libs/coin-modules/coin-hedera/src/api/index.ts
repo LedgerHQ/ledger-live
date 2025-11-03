@@ -1,7 +1,5 @@
 import type {
   Api,
-  Block,
-  BlockInfo,
   CraftedTransaction,
   Cursor,
   Operation,
@@ -20,6 +18,8 @@ import {
   craftTransaction,
   estimateFees as logicEstimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   listOperations as logicListOperations,
   getAssetFromToken,
   getTokenFromAsset,
@@ -69,6 +69,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       };
     },
     getBalance: address => getBalance(currency, address),
+    getBlock: height => getBlock(height),
+    getBlockInfo: height => getBlockInfo(height),
     lastBlock,
     listOperations: async (address, pagination) => {
       const mirrorTokens = await apiClient.getAccountTokens(address);
@@ -136,12 +138,6 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
-    },
-    getBlock: async (_height): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo: async (_height): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
     },
     getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
       throw new Error("getStakes is not supported");

@@ -239,6 +239,34 @@ async function estimateContractCallGas(
   return new BigNumber(res.data.result);
 }
 
+async function getTransactionsByTimestampRange(
+  startTimestamp: string,
+  endTimestamp: string,
+): Promise<HederaMirrorTransaction[]> {
+  const transactions: HederaMirrorTransaction[] = [];
+  const params = new URLSearchParams({
+    limit: "100",
+    order: "desc",
+  });
+
+  params.append("timestamp", `gte:${startTimestamp}`);
+  params.append("timestamp", `lt:${endTimestamp}`);
+
+  let nextPath: string | null = `/api/v1/transactions?${params.toString()}`;
+
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
+    const newTransactions = res.data.transactions;
+    transactions.push(...newTransactions);
+    nextPath = res.data.links.next;
+  }
+
+  return transactions;
+}
+
 export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
@@ -250,4 +278,5 @@ export const apiClient = {
   findTransactionByContractCall,
   getERC20Balance,
   estimateContractCallGas,
+  getTransactionsByTimestampRange,
 };

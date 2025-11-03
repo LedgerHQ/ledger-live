@@ -400,3 +400,124 @@ describe("estimateContractCallGas", () => {
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("getTransactionsByTimestampRange", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should include correct query params with timestamp range", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({ transactions: [], links: { next: null } }),
+    );
+
+    await apiClient.getTransactionsByTimestampRange("1000.000000000", "2000.000000000");
+
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    expect(requestUrl).toContain("timestamp=gte%3A1000.000000000");
+    expect(requestUrl).toContain("timestamp=lt%3A2000.000000000");
+    expect(requestUrl).toContain("limit=100");
+    expect(requestUrl).toContain("order=desc");
+  });
+
+  it("should return empty array when no transactions found", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({ transactions: [], links: { next: null } }),
+    );
+
+    const result = await apiClient.getTransactionsByTimestampRange(
+      "1000.000000000",
+      "2000.000000000",
+    );
+
+    expect(result).toEqual([]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return all transactions when only one page is needed", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({
+        transactions: [
+          { consensus_timestamp: "1500.123456789" },
+          { consensus_timestamp: "1750.987654321" },
+        ],
+        links: { next: null },
+      }),
+    );
+
+    const result = await apiClient.getTransactionsByTimestampRange(
+      "1000.000000000",
+      "2000.000000000",
+    );
+
+    expect(result).toHaveLength(2);
+    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1500.123456789", "1750.987654321"]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep fetching all pages when links.next is present", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1100.000000000" }],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1200.000000000" }],
+          links: { next: "/next-2" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1300.000000000" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getTransactionsByTimestampRange(
+      "1000.000000000",
+      "2000.000000000",
+    );
+
+    expect(result).toHaveLength(3);
+    expect(result.map(tx => tx.consensus_timestamp)).toEqual([
+      "1100.000000000",
+      "1200.000000000",
+      "1300.000000000",
+    ]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it("should handle empty pages and continue fetching", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1100.000000000" }],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [],
+          links: { next: "/next-2" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1300.000000000" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getTransactionsByTimestampRange(
+      "1000.000000000",
+      "2000.000000000",
+    );
+
+    expect(result).toHaveLength(2);
+    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+});
