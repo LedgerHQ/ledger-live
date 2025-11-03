@@ -22,6 +22,7 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
+import buildSignRawOperation from "../signRawOperation";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
@@ -77,9 +78,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     receive,
     sync,
     signOperation: buildSignOperation(signerContext),
-    signRawOperation: () => {
-      throw new Error("signRawOperation is not supported");
-    },
+    signRawOperation: buildSignRawOperation(signerContext),
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
