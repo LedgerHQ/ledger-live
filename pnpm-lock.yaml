@@ -62641,7 +62641,7 @@ snapshots:
       node-fetch: 2.7.0
       object-hash: 3.0.0
       proto3-json-serializer: 2.0.2
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       retry-request: 7.0.2
       uuid: 9.0.1
     transitivePeerDependencies:
@@ -67489,7 +67489,7 @@ snapshots:
       ansi-escapes: 5.0.0
       cli-cursor: 4.0.0
       slice-ansi: 5.0.0
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
       wrap-ansi: 8.1.0
 
   logform@2.6.0:
@@ -71167,7 +71167,7 @@ snapshots:
 
   proto3-json-serializer@2.0.2:
     dependencies:
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
 
   protobufjs-cli@1.1.2(protobufjs@7.2.5):
     dependencies:
@@ -71287,8 +71287,8 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
-      long: 5.3.1
+      '@types/node': 22.10.10
+      long: 5.2.3
 
   protocols@2.0.1: {}
 
@@ -74412,7 +74412,7 @@ snapshots:
   string-length@5.0.1:
     dependencies:
       char-regex: 2.0.1
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
 
   string-natural-compare@3.0.1: {}
 
@@ -74439,7 +74439,7 @@ snapshots:
     dependencies:
       eastasianwidth: 0.2.0
       emoji-regex: 9.2.2
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
 
   string-width@7.2.0:
     dependencies:
@@ -78345,7 +78345,7 @@ snapshots:
     dependencies:
       ansi-styles: 6.2.1
       string-width: 5.1.2
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
 
   wrappy@1.0.2: {}
 
