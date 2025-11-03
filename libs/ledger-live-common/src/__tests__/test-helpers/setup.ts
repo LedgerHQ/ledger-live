@@ -1,5 +1,5 @@
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import "./environment";
 import BigNumber from "bignumber.js";
 
@@ -14,8 +14,5 @@ expect.extend({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (_: string) => undefined,
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-} as CryptoAssetsStore);
+// Use legacyCryptoAssetsStore for integration tests so tokens can be found
+setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);
