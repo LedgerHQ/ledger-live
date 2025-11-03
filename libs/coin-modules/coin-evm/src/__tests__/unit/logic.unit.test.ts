@@ -656,8 +656,8 @@ describe("EVM Family", () => {
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
-              findTokenById: (_id: string) => undefined,
-              findTokenByAddressInCurrency: (address: string, currencyId: string) => {
+              findTokenById: async (_id: string) => undefined,
+              findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
                 if (address === "0xTokenContract" && currencyId === "ethereum")
                   return { id: "ethereum/erc20/usd__coin" };
                 if (address === "0xOtherTokenContract" && currencyId === "ethereum")

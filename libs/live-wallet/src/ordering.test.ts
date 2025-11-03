@@ -1,6 +1,7 @@
 // TODO rewrite the test
 
 import type { AccountRaw } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
@@ -89,8 +90,8 @@ const raws: AccountRaw[] = [
 ];
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({
-  findTokenById: () => undefined,
-  findTokenByAddressInCurrency: () => undefined,
+  findTokenById: async (): Promise<TokenCurrency | undefined> => undefined,
+  findTokenByAddressInCurrency: async (): Promise<TokenCurrency | undefined> => undefined,
   getTokensSyncHash: () => Promise.resolve("0"),
 } as CryptoAssetsStore);
 

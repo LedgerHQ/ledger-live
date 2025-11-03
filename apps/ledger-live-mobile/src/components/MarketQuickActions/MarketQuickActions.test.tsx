@@ -2,7 +2,6 @@ import React from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { findTokenById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
 import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -10,17 +9,24 @@ import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
 import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
 import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 initializeLegacyTokens(addTokens);
 
 const Stack = createStackNavigator();
 
-const usdcCurrency = findTokenById("ethereum/erc20/usd__coin");
-if (!usdcCurrency) throw new Error("USDC token not found");
+let usdcCurrency: TokenCurrency;
 const moneroCurrency = getCryptoCurrencyById("monero");
 const kaspaCurrency = getCryptoCurrencyById("kaspa");
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
+
+beforeAll(async () => {
+  const usdc = await legacyCryptoAssetsStore.findTokenById("ethereum/erc20/usd__coin");
+  if (!usdc) throw new Error("USDC token not found");
+  usdcCurrency = usdc;
+});
 
 const bitcoinAccount = genAccount("bitcoin-account", { currency: bitcoinCurrency });
 const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });
