@@ -108,8 +108,25 @@ const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
   );
 };
 
+const UpdateAccountAddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
+  const memo = operation.extra.memo;
+
+  if (!memo) {
+    return null;
+  }
+
+  return (
+    <Cell>
+      <Box color="palette.text.shade80" ff="Inter" fontSize={3}>
+        {memo}
+      </Box>
+    </Cell>
+  );
+};
+
 const addressCell = {
   ASSOCIATE_TOKEN: AddressCell,
+  UPDATE_ACCOUNT: UpdateAccountAddressCell,
 } satisfies Partial<Record<OperationType, unknown>>;
 
 export default {

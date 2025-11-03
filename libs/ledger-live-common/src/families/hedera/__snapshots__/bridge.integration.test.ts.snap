@@ -9,6 +9,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.1040977",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": null,
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -63,6 +64,11 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.7305122",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": {
+        "delegated": "226095",
+        "nodeId": 0,
+        "pendingReward": "0",
+      },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -84,6 +90,11 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.7560245",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": {
+        "delegated": "80189",
+        "nodeId": 1,
+        "pendingReward": "0",
+      },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -105,6 +116,11 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.7578015",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": {
+        "delegated": "99836954",
+        "nodeId": 5,
+        "pendingReward": "0",
+      },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -126,6 +142,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.8313485",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": null,
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -158,6 +175,11 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.10096785",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": {
+        "delegated": "100000000",
+        "nodeId": 7,
+        "pendingReward": "95886",
+      },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -179,6 +201,11 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddress": "0.0.10096815",
     "freshAddressPath": "44/3030",
     "hederaResources": {
+      "delegation": {
+        "delegated": "0",
+        "nodeId": 9,
+        "pendingReward": "0",
+      },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
     },
@@ -1734,14 +1761,14 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "fee": "414180",
       "hasFailed": false,
       "hash": "SX6QjkXKRGbFG1tWq31I0rv1Aof4r9iRXxLlxd_tO6YNuER_6CCmvW_s47FtPVhl",
-      "id": "js:2:hedera:0.0.7305122:hederaBip44-SX6QjkXKRGbFG1tWq31I0rv1Aof4r9iRXxLlxd_tO6YNuER_6CCmvW_s47FtPVhl-OUT",
+      "id": "js:2:hedera:0.0.7305122:hederaBip44-SX6QjkXKRGbFG1tWq31I0rv1Aof4r9iRXxLlxd_tO6YNuER_6CCmvW_s47FtPVhl-UPDATE_ACCOUNT",
       "recipients": [
         "0.0.25",
       ],
       "senders": [
         "0.0.7305122",
       ],
-      "type": "OUT",
+      "type": "UPDATE_ACCOUNT",
       "value": "414180",
     },
     {
@@ -1803,14 +1830,14 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "fee": "415339",
       "hasFailed": false,
       "hash": "ZPCrj02WZwh_depYNheXuCLRpq6gDHfxeskEvIr-PCZzoM9WdUUSswRqRf-bZZfS",
-      "id": "js:2:hedera:0.0.7305122:hederaBip44-ZPCrj02WZwh_depYNheXuCLRpq6gDHfxeskEvIr-PCZzoM9WdUUSswRqRf-bZZfS-OUT",
+      "id": "js:2:hedera:0.0.7305122:hederaBip44-ZPCrj02WZwh_depYNheXuCLRpq6gDHfxeskEvIr-PCZzoM9WdUUSswRqRf-bZZfS-UPDATE_ACCOUNT",
       "recipients": [
         "0.0.23",
       ],
       "senders": [
         "0.0.7305122",
       ],
-      "type": "OUT",
+      "type": "UPDATE_ACCOUNT",
       "value": "415339",
     },
     {

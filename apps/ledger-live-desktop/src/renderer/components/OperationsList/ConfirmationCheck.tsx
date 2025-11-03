@@ -127,6 +127,7 @@ const iconsComponent = {
   BURN: IconTrash,
   ASSOCIATE_TOKEN: IconPlus,
   CONTRACT_CALL: IconSend,
+  UPDATE_ACCOUNT: IconPlus,
 };
 class ConfirmationCheck extends PureComponent<{
   marketColor: string;

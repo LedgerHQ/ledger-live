@@ -10,7 +10,7 @@ import {
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 
 describe("buildOptimisticOperation", () => {
-  test("builds optimistic operation for token association", async () => {
+  it("builds optimistic operation for token association", async () => {
     const mockedAccount = getMockedAccount();
     const mockedToken = getMockedHTSTokenCurrency();
     const mockedTransaction = getMockedTransaction({
@@ -39,7 +39,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.recipients).toContain("0.0.1234");
   });
 
-  test("builds optimistic operation for coin", async () => {
+  it("builds optimistic operation for coin", async () => {
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
       amount: new BigNumber(123),
@@ -63,7 +63,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.recipients).toContain("0.0.5678");
   });
 
-  test("builds optimistic operation for HTS token", async () => {
+  it("builds optimistic operation for HTS token", async () => {
     const mockedAccount = getMockedAccount();
     const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
@@ -95,7 +95,7 @@ describe("buildOptimisticOperation", () => {
     expect(subOp.recipients).toContain("0.0.9999");
   });
 
-  test("builds optimistic operation for ERC20 token", async () => {
+  it("builds optimistic operation for ERC20 token", async () => {
     const mockedTokenCurrency = getMockedERC20TokenCurrency();
     const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const parentAccount = getMockedAccount({ subAccounts: [tokenAccount] });
@@ -135,5 +135,160 @@ describe("buildOptimisticOperation", () => {
     expect(subOp.fee).toEqual(estimatedFee.tinybars);
     expect(subOp.accountId).toBe(tokenAccount.id);
     expect(subOp.recipients).toContain("0.0.9999");
+  });
+
+  it("builds optimistic operation for delegate transaction", async () => {
+    const mockedAccount = getMockedAccount();
+    const stakingNodeId = 5;
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      amount: new BigNumber(0),
+      recipient: "",
+      properties: {
+        stakingNodeId,
+      },
+    });
+
+    const estimatedFee = await estimateFees({
+      currency: mockedAccount.currency,
+      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+    });
+
+    const op = await buildOptimisticOperation({
+      account: mockedAccount,
+      transaction: mockedTransaction,
+    });
+
+    expect(op.type).toBe("UPDATE_ACCOUNT");
+    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.senders).toContain(mockedAccount.freshAddress);
+    expect(op.extra).toEqual({
+      memo: null,
+      targetStakingNodeId: stakingNodeId,
+      previousStakingNodeId: null,
+    });
+  });
+
+  it("builds optimistic operation for redelegate transaction", async () => {
+    const previousNodeId = 3;
+    const newNodeId = 10;
+    const mockedAccount = getMockedAccount({
+      hederaResources: {
+        isAutoTokenAssociationEnabled: false,
+        maxAutomaticTokenAssociations: 0,
+        delegation: {
+          nodeId: previousNodeId,
+          delegated: new BigNumber(1000000),
+          pendingReward: new BigNumber(500),
+        },
+      },
+    });
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+      amount: new BigNumber(0),
+      recipient: "",
+      properties: {
+        stakingNodeId: newNodeId,
+      },
+      memo: "Redelegating to better validator",
+    });
+
+    const estimatedFee = await estimateFees({
+      currency: mockedAccount.currency,
+      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+    });
+
+    const op = await buildOptimisticOperation({
+      account: mockedAccount,
+      transaction: mockedTransaction,
+    });
+
+    expect(op.type).toBe("UPDATE_ACCOUNT");
+    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.extra).toEqual({
+      memo: "Redelegating to better validator",
+      targetStakingNodeId: newNodeId,
+      previousStakingNodeId: previousNodeId,
+    });
+  });
+
+  it("builds optimistic operation for undelegate transaction", async () => {
+    const previousNodeId = 5;
+    const mockedAccount = getMockedAccount({
+      hederaResources: {
+        isAutoTokenAssociationEnabled: false,
+        maxAutomaticTokenAssociations: 0,
+        delegation: {
+          nodeId: previousNodeId,
+          delegated: new BigNumber(2000000),
+          pendingReward: new BigNumber(1000),
+        },
+      },
+    });
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      amount: new BigNumber(0),
+      recipient: "",
+      properties: {
+        stakingNodeId: null,
+      },
+    });
+
+    const estimatedFee = await estimateFees({
+      currency: mockedAccount.currency,
+      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+    });
+
+    const op = await buildOptimisticOperation({
+      account: mockedAccount,
+      transaction: mockedTransaction,
+    });
+
+    expect(op.type).toBe("UPDATE_ACCOUNT");
+    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.extra).toEqual({
+      memo: null,
+      targetStakingNodeId: null,
+      previousStakingNodeId: previousNodeId,
+    });
+  });
+
+  it("builds optimistic operation for claim rewards transaction", async () => {
+    const stakingNodeId = 8;
+    const mockedAccount = getMockedAccount({
+      hederaResources: {
+        isAutoTokenAssociationEnabled: false,
+        maxAutomaticTokenAssociations: 0,
+        delegation: {
+          nodeId: stakingNodeId,
+          delegated: new BigNumber(5000000),
+          pendingReward: new BigNumber(2500),
+        },
+      },
+    });
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      amount: new BigNumber(0),
+      recipient: "",
+      memo: "Claiming staking rewards",
+    });
+
+    const estimatedFee = await estimateFees({
+      currency: mockedAccount.currency,
+      operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+    });
+
+    const op = await buildOptimisticOperation({
+      account: mockedAccount,
+      transaction: mockedTransaction,
+    });
+
+    expect(op.type).toBe("OUT");
+    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.extra).toEqual({
+      memo: "Claiming staking rewards",
+    });
   });
 });

@@ -13,7 +13,7 @@ export type EstimateFeesParams =
       operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
     }
   | {
-      operationType: typeof HEDERA_OPERATION_TYPES.ContractCall;
+      operationType: HEDERA_OPERATION_TYPES.ContractCall;
       txIntent: TransactionIntent;
     };
 

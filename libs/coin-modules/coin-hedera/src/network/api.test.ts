@@ -267,6 +267,7 @@ describe("findTransactionByContractCall", () => {
     const mockedResults: HederaMirrorTransaction = {
       transfers: [],
       token_transfers: [],
+      staking_reward_transfers: [],
       charged_tx_fee: 100,
       transaction_id: "xxxxxxxxxxxxxx",
       transaction_hash: "xxxxxxxxxxxxx",
@@ -300,6 +301,7 @@ describe("findTransactionByContractCall", () => {
           {
             transfers: [],
             token_transfers: [],
+            staking_reward_transfers: [],
             charged_tx_fee: 100,
             transaction_hash: "xxxxxxxxxxxxx",
             consensus_timestamp: "xxxxxxxxxxxxx",
@@ -310,6 +312,7 @@ describe("findTransactionByContractCall", () => {
           {
             transfers: [],
             token_transfers: [],
+            staking_reward_transfers: [],
             charged_tx_fee: 100,
             transaction_hash: "xxxxxxxxxxxxx",
             consensus_timestamp: "xxxxxxxxxxxxx",
@@ -317,7 +320,7 @@ describe("findTransactionByContractCall", () => {
             entity_id: "0.0.1111",
             name: "CONTRACTCALL",
           },
-        ],
+        ] satisfies Partial<HederaMirrorTransaction>[],
       }),
     );
 
@@ -518,6 +521,60 @@ describe("getTransactionsByTimestampRange", () => {
 
     expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("getNodes", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should return all nodes if only one page is needed", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({
+        nodes: [
+          { node_id: 0, node_account_id: "0.0.3" },
+          { node_id: 1, node_account_id: "0.0.4" },
+        ],
+        links: { next: null },
+      }),
+    );
+
+    const result = await apiClient.getNodes();
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+    expect(result.map(n => n.node_id)).toEqual([0, 1]);
+    expect(requestUrl).toContain("/api/v1/network/nodes");
+    expect(requestUrl).toContain("limit=100");
+    expect(requestUrl).toContain("order=desc");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep fetching if links.next is present and new nodes are returned", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 0, node_account_id: "0.0.3" }],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 1, node_account_id: "0.0.4" }],
+          links: { next: "/next-2" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getNodes();
+
+    expect(result.map(n => n.node_id)).toEqual([0, 1, 2]);
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
   });
 });

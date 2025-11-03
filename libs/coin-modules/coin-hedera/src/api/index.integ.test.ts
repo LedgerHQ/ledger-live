@@ -422,7 +422,7 @@ describe("createApi", () => {
       const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
       const blockHeights = ops.map(o => o.tx.block.height);
 
-      expect(blockHeights).toHaveLength(4);
+      expect(blockHeights).toHaveLength(6);
       expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
     });
 

@@ -12,10 +12,12 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { InvalidAddress } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import {
+  HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
@@ -23,13 +25,18 @@ import {
 import { apiClient } from "../network/api";
 import type {
   HederaAccount,
+  HederaMemo,
   HederaOperationExtra,
+  HederaTxData,
+  HederaValidator,
   Transaction,
+  TransactionStaking,
   TransactionStatus,
   TransactionTokenAssociate,
 } from "../types";
 import { rpcClient } from "../network/rpc";
 import { HederaRecipientInvalidChecksum } from "../errors";
+import { getCurrentHederaPreloadData } from "../preload-data";
 
 export const serializeSignature = (signature: Uint8Array) => {
   return Buffer.from(signature).toString("base64");
@@ -88,6 +95,14 @@ export const mapIntentToSDKOperation = (txIntent: TransactionIntent) => {
     return HEDERA_OPERATION_TYPES.ContractCall;
   }
 
+  if (
+    txIntent.type === HEDERA_TRANSACTION_MODES.Delegate ||
+    txIntent.type === HEDERA_TRANSACTION_MODES.Undelegate ||
+    txIntent.type === HEDERA_TRANSACTION_MODES.Redelegate
+  ) {
+    return HEDERA_OPERATION_TYPES.CryptoUpdate;
+  }
+
   return HEDERA_OPERATION_TYPES.CryptoTransfer;
 };
 
@@ -122,8 +137,10 @@ export const getTransactionExplorer = (
   );
 };
 
-export const isTokenAssociateTransaction = (tx: Transaction): tx is TransactionTokenAssociate => {
-  return tx.mode === HEDERA_TRANSACTION_MODES.TokenAssociate;
+export const isTokenAssociateTransaction = (
+  tx: Transaction | null | undefined,
+): tx is TransactionTokenAssociate => {
+  return tx?.mode === HEDERA_TRANSACTION_MODES.TokenAssociate;
 };
 
 export const isAutoTokenAssociationEnabled = (account: AccountLike) => {
@@ -212,6 +229,15 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
   seconds(30),
 );
 
+export const getChecksum = (accountId: string): string | null => {
+  try {
+    const entityId = EntityIdHelper.fromString(accountId);
+    return entityId.checksum ?? null;
+  } catch {
+    return null;
+  }
+};
+
 export const safeParseAccountId = (
   address: string,
 ): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
@@ -220,7 +246,7 @@ export const safeParseAccountId = (
 
   try {
     const accountId = AccountId.fromString(address);
-    const checksum = EntityIdHelper.fromString(address).checksum ?? null;
+    const checksum = getChecksum(address);
 
     if (checksum) {
       const client = rpcClient.getInstance();
@@ -338,4 +364,106 @@ export const fromEVMAddress = (evmAddress: string, shard = 0, realm = 0): string
   } catch {
     return null;
   }
+};
+
+export const extractCompanyFromNodeDescription = (description: string): string => {
+  return description
+    .split("|")[0]
+    .replace(/hosted by/i, "")
+    .replace(/hosted for/i, "")
+    .trim();
+};
+
+export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
+  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+
+  // sort validators by active stake in ASC order, with Ledger node first if it exists
+  return [...validators].sort((a, b) => {
+    if (typeof ledgerNodeId === "number") {
+      if (a.nodeId === ledgerNodeId) return -1;
+      if (b.nodeId === ledgerNodeId) return 1;
+    }
+
+    return a.activeStake.toNumber() - b.activeStake.toNumber();
+  });
+};
+
+export const filterValidatorBySearchTerm = (
+  validator: HederaValidator,
+  search: string,
+): boolean => {
+  const lowercaseSearch = search.toLowerCase();
+  const addressWithChecksum = validator.addressChecksum
+    ? `${validator.address}-${validator.addressChecksum}`
+    : validator.address;
+
+  return (
+    validator.nodeId.toString().includes(lowercaseSearch) ||
+    validator.name.toLowerCase().includes(lowercaseSearch) ||
+    addressWithChecksum.toLowerCase().includes(lowercaseSearch)
+  );
+};
+
+export const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null => {
+  const { delegation } = account.hederaResources ?? {};
+
+  if (!delegation) {
+    return null;
+  }
+
+  const validators = getCurrentHederaPreloadData(account.currency);
+  const validator = validators.validators.find(v => v.nodeId === delegation.nodeId) ?? null;
+
+  return validator;
+};
+
+export const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
+  if (validators.length === 0) return null;
+  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+  const ledgerValidator = validators.find(v => v.nodeId === ledgerNodeId);
+
+  if (ledgerValidator) {
+    return ledgerValidator;
+  }
+
+  const lowestActiveStakeValidator = validators.reduce(
+    (prev, current) => (current.activeStake.lt(prev.activeStake) ? current : prev),
+    validators[0],
+  );
+
+  return lowestActiveStakeValidator;
+};
+
+export const getDelegationStatus = (
+  validator: HederaValidator | null,
+): HEDERA_DELEGATION_STATUS => {
+  if (!validator?.address) {
+    return HEDERA_DELEGATION_STATUS.Inactive;
+  }
+
+  if (validator.overstaked) {
+    return HEDERA_DELEGATION_STATUS.Overstaked;
+  }
+
+  return HEDERA_DELEGATION_STATUS.Active;
+};
+
+export const isStakingTransaction = (
+  tx: Transaction | null | undefined,
+): tx is TransactionStaking => {
+  if (!tx) return false;
+
+  return (
+    tx.mode === HEDERA_TRANSACTION_MODES.Delegate ||
+    tx.mode === HEDERA_TRANSACTION_MODES.Undelegate ||
+    tx.mode === HEDERA_TRANSACTION_MODES.Redelegate ||
+    tx.mode === HEDERA_TRANSACTION_MODES.ClaimRewards
+  );
+};
+
+export const hasSpecificIntentData = <Type extends "staking" | "erc20">(
+  txIntent: TransactionIntent<HederaMemo, HederaTxData>,
+  expectedType: Type,
+): txIntent is Extract<TransactionIntent<HederaMemo, HederaTxData>, { data: { type: Type } }> => {
+  return "data" in txIntent && txIntent.data.type === expectedType;
 };

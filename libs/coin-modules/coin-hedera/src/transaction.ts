@@ -40,6 +40,27 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     };
   }
 
+  if (
+    tr.mode === HEDERA_TRANSACTION_MODES.Delegate ||
+    tr.mode === HEDERA_TRANSACTION_MODES.Undelegate ||
+    tr.mode === HEDERA_TRANSACTION_MODES.Redelegate
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonHedera,
+      mode: tr.mode,
+      properties: tr.properties,
+    };
+  }
+
+  if (tr.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
+    return {
+      ...commonGeneric,
+      ...commonHedera,
+      mode: tr.mode,
+    };
+  }
+
   return {
     ...commonGeneric,
     ...commonHedera,
@@ -64,6 +85,27 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
       assetReference: t.assetReference,
       assetOwner: t.assetOwner,
       properties: t.properties,
+    };
+  }
+
+  if (
+    t.mode === HEDERA_TRANSACTION_MODES.Delegate ||
+    t.mode === HEDERA_TRANSACTION_MODES.Undelegate ||
+    t.mode === HEDERA_TRANSACTION_MODES.Redelegate
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonHedera,
+      mode: t.mode,
+      properties: t.properties,
+    };
+  }
+
+  if (t.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
+    return {
+      ...commonGeneric,
+      ...commonHedera,
+      mode: t.mode,
     };
   }
 
