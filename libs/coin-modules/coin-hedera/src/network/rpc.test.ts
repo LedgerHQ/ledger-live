@@ -2,6 +2,7 @@ import { Client, Transaction, TransactionResponse } from "@hashgraph/sdk";
 import { rpcClient } from "./rpc";
 
 const mockClient = {
+  close: jest.fn(),
   setMaxNodesPerTransaction: jest.fn().mockReturnThis(),
   setNetwork: jest.fn().mockReturnThis(),
 } as unknown as Client;

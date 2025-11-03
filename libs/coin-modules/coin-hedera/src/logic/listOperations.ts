@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Operation } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -9,6 +9,11 @@ import { apiClient } from "../network/api";
 import { parseTransfers } from "../network/utils";
 import type { HederaMirrorToken, HederaMirrorTransaction, HederaOperationExtra } from "../types";
 import { base64ToUrlSafeBase64, getMemoFromBase64, getSyntheticBlock } from "./utils";
+
+const txNameToCustomOperationType: Record<string, OperationType> = {
+  TOKENASSOCIATE: "ASSOCIATE_TOKEN",
+  CONTRACTCALL: "CONTRACT_CALL",
+};
 
 function getCommonOperationData(
   rawTx: HederaMirrorTransaction,
@@ -26,6 +31,7 @@ function getCommonOperationData(
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
     consensusTimestamp: rawTx.consensus_timestamp,
+    transactionId: rawTx.transaction_id,
     ...(memo && { memo }),
   };
 
@@ -134,14 +140,12 @@ function processTransfers({
   const { type, value, senders, recipients } = parseTransfers(transfers, address);
   const { hash, fee, timestamp, blockHeight, blockHash, hasFailed } = commonData;
   const extra = { ...commonData.extra };
-  let operationType = type;
+  const operationType = txNameToCustomOperationType[rawTx.name] ?? type;
 
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
   // this value is used by custom OperationDetails components in Hedera family
   // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail
-  if (rawTx.name === "TOKENASSOCIATE") {
-    operationType = "ASSOCIATE_TOKEN";
-
+  if (operationType === "ASSOCIATE_TOKEN") {
     const relatedMirrorToken = mirrorTokens.find(t => {
       return t.created_timestamp === rawTx.consensus_timestamp;
     });
