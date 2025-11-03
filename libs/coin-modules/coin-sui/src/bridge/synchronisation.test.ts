@@ -41,10 +41,10 @@ jest.mock("../network", () => {
 
 const mockedFindTokenByAddressInCurrency = jest.fn();
 setCryptoAssetsStore({
-  findTokenByAddressInCurrency: (address: string, currencyId: string) =>
+  findTokenByAddressInCurrency: async (address: string, currencyId: string) =>
     mockedFindTokenByAddressInCurrency(address, currencyId),
-  findTokenById: (_: string) => undefined,
-  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
+  findTokenById: async () => undefined,
+  getTokensSyncHash: async () => "0",
 } as unknown as CryptoAssetsStore);
 
 describe("getAccountShape", () => {

@@ -1,6 +1,9 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { listFiatCurrencies, getFiatCurrencyByTicker, hasFiatCurrencyTicker } from "./fiats";
-import { listTokens, findTokenByAddressInCurrency } from "./tokens";
+import { listTokens } from "./tokens";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { addTokens } from "./legacy/legacy-utils";
+import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
 import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
@@ -13,8 +16,6 @@ import {
   registerCryptoCurrency,
   cryptocurrenciesById,
 } from "./currencies";
-import { initializeLegacyTokens } from "./legacy/legacy-data";
-import { addTokens } from "./legacy/legacy-utils";
 
 initializeLegacyTokens(addTokens);
 
@@ -187,21 +188,30 @@ test("tokens are correct", () => {
   }
 });
 
-test("findTokenByAddressInCurrency", () => {
+test("findTokenByAddressInCurrency", async () => {
   expect(
-    findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "bsc"),
+    await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0x111111111117dC0aa78b770fA6A738034120C302",
+      "bsc",
+    ),
   ).toMatchObject({
     id: "bsc/bep20/1inch_token",
   });
   expect(
-    findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "ethereum"),
+    await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0x111111111117dC0aa78b770fA6A738034120C302",
+      "ethereum",
+    ),
   ).toMatchObject({
     id: "ethereum/erc20/1inch_token",
   });
-  expect(findTokenByAddressInCurrency("0x0", "bsc")).toBe(undefined);
-  expect(findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "tron")).toBe(
-    undefined,
-  );
+  expect(await legacyCryptoAssetsStore.findTokenByAddressInCurrency("0x0", "bsc")).toBe(undefined);
+  expect(
+    await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0x111111111117dC0aa78b770fA6A738034120C302",
+      "tron",
+    ),
+  ).toBe(undefined);
 });
 
 test("fiats list is sorted by ticker", () => {

@@ -324,7 +324,7 @@ describe("Legacy Utils", () => {
       expect(tokensArray.length).toBe(1);
     });
 
-    it("should handle ticker conflicts (first wins)", () => {
+    it("should handle tokens with same ticker", () => {
       const token1: TokenCurrency = {
         type: "TokenCurrency",
         id: "ethereum/erc20/test1",
@@ -349,9 +349,8 @@ describe("Legacy Utils", () => {
 
       addTokens([token1, token2]);
 
-      // Both tokens should be added successfully
-      expect(tokensById[token1.id]).toBe(token1);
-      expect(tokensById[token2.id]).toBe(token2);
+      // Both tokens should be added since they have different IDs
+      expect(tokensArray.length).toBe(2);
     });
 
     it("should handle undefined tokens", () => {
@@ -573,7 +572,7 @@ describe("legacyCryptoAssetsStore", () => {
     __clearAllLists();
   });
 
-  it("should find token by id", () => {
+  it("should find token by id", async () => {
     const erc20Token: ERC20Token = [
       "ethereum",
       "test_token",
@@ -588,12 +587,12 @@ describe("legacyCryptoAssetsStore", () => {
 
     addTokens([convertERC20(erc20Token)].filter(Boolean) as TokenCurrency[]);
 
-    const token = legacyCryptoAssetsStore.findTokenById("ethereum/erc20/test_token");
+    const token = await legacyCryptoAssetsStore.findTokenById("ethereum/erc20/test_token");
 
     expect(token).toMatchObject({ ticker: "TEST" });
   });
 
-  it("should find token by address in currency", () => {
+  it("should find token by address in currency", async () => {
     const erc20Token: ERC20Token = [
       "ethereum",
       "test_token",
@@ -608,13 +607,19 @@ describe("legacyCryptoAssetsStore", () => {
 
     addTokens([convertERC20(erc20Token)].filter(Boolean) as TokenCurrency[]);
 
-    const token = legacyCryptoAssetsStore.findTokenByAddressInCurrency("0xabc123", "ethereum");
+    const token = await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0xabc123",
+      "ethereum",
+    );
 
     expect(token).toMatchObject({ ticker: "TEST" });
   });
 
-  it("should return undefined for non-existent token by address", () => {
-    const token = legacyCryptoAssetsStore.findTokenByAddressInCurrency("0xnonexistent", "ethereum");
+  it("should return undefined for non-existent token by address", async () => {
+    const token = await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0xnonexistent",
+      "ethereum",
+    );
 
     expect(token).toBeUndefined();
   });

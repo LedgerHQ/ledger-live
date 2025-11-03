@@ -813,7 +813,7 @@ describe("getAccountShape", () => {
 
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -1447,7 +1447,7 @@ describe("getSubAccounts", () => {
       getBalances: mockGetBalances,
     }));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -2069,7 +2069,7 @@ describe("getStake", () => {
 
     const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
