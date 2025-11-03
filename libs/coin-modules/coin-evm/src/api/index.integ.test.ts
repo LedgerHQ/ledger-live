@@ -215,6 +215,7 @@ describe.each([
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -232,6 +233,7 @@ describe.each([
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -351,6 +353,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -368,6 +371,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
