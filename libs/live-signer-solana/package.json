@@ -29,8 +29,8 @@
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250711135456",
-    "@ledgerhq/device-signer-kit-solana": "1.1.1",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-solana": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
