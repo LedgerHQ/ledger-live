@@ -34,6 +34,12 @@ jest.mock("react-native-gesture-handler", () => {
   };
 });
 
+jest.mock("react-native-haptic-feedback", () => ({
+  default: {
+    trigger: jest.fn(),
+  },
+}));
+
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
 jest.mock("react-native-launch-arguments", () => ({}));

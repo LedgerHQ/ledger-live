@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
+import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
 
 import { Button } from "@ledgerhq/native-ui";
 import {
@@ -16,6 +17,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { ModularDrawer, useModularDrawerController } from "..";
+import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNavigator";
 
 export const WITH_ACCOUNT_SELECTION = "Open Drawer (with account selection)";
 export const WITHOUT_ACCOUNT_SELECTION = "Open Drawer (without account selection)";
@@ -45,19 +47,21 @@ const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 type MockModularDrawerComponentProps = {
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  flow?: string;
 };
 
 const MockModularDrawerComponent = ({
   networksConfiguration,
   assetsConfiguration,
+  flow = "integration_test",
 }: MockModularDrawerComponentProps) => {
   const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
 
   const handleOpenDrawer = useCallback(
-    (withAccountSelection: boolean) => {
+    (withAccountSelection: boolean, flow: string) => {
       openDrawer({
         enableAccountSelection: withAccountSelection,
-        flow: "integration_test",
+        flow,
         source: "modular_drawer_shared",
       });
     },
@@ -72,7 +76,7 @@ const MockModularDrawerComponent = ({
         outline
         mt={6}
         mb={8}
-        onPress={() => handleOpenDrawer(true)}
+        onPress={() => handleOpenDrawer(true, flow)}
         role="button"
       >
         {WITH_ACCOUNT_SELECTION}
@@ -83,7 +87,7 @@ const MockModularDrawerComponent = ({
         outline
         mt={6}
         mb={8}
-        onPress={() => handleOpenDrawer(false)}
+        onPress={() => handleOpenDrawer(false, flow)}
         role="button"
       >
         {WITHOUT_ACCOUNT_SELECTION}
@@ -107,6 +111,16 @@ export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentPr
     <Stack.Screen
       name={NavigatorName.DeviceSelection}
       component={DeviceSelectionNavigator}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={NavigatorName.AddAccounts}
+      component={AddAccountsNavigator}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={NavigatorName.ReceiveFunds}
+      component={ReceiveFundsNavigator}
       options={{ headerShown: false }}
     />
   </Stack.Navigator>
