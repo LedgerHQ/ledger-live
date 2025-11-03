@@ -13,11 +13,12 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
   craftTransaction,
-  estimateFees,
+  estimateFees as logicEstimateFees,
   getBalance,
   listOperations as logicListOperations,
   getAssetFromToken,
@@ -35,6 +36,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
   return {
     broadcast: async tx => {
       const response = await logicBroadcast(tx);
+
       return Buffer.from(response.transactionHash).toString("base64");
     },
     combine,
@@ -55,10 +57,15 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     estimateFees: async transactionIntent => {
       const operationType = mapIntentToSDKOperation(transactionIntent);
-      const estimatedFee = await estimateFees(currency, operationType);
+
+      if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
+        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+      }
+
+      const estimatedFee = await logicEstimateFees({ currency, operationType });
 
       return {
-        value: BigInt(estimatedFee.toString()),
+        value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
     getBalance: address => getBalance(currency, address),

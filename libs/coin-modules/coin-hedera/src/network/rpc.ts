@@ -15,6 +15,7 @@ function getInstance(): Client {
 
 // for testing purposes only, used to reset singleton client instance
 function _resetInstance() {
+  _hederaClient?.close();
   _hederaClient = null;
 }
 

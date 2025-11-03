@@ -324,7 +324,7 @@ export function convertHederaTokens([
     id,
     contractAddress: tokenId,
     parentCurrency: getCryptoCurrencyById(network),
-    tokenType: "hts",
+    tokenType: id.includes("/erc20/") ? "erc20" : "hts",
     name,
     ticker,
     delisted,
