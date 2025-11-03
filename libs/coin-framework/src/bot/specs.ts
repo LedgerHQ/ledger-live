@@ -78,19 +78,36 @@ export function deviceActionFlow<T extends TransactionCommon>(
           const stepValueTransform = currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
-            Promise.resolve(expectedValue(arg, acc))
-              .then(resolvedResult => {
-                botTest("deviceAction confirm step '" + stepTitle + "'", () => {
-                  expect({
-                    [stepTitle]: stepValueTransform(stepValue),
-                  }).toMatchObject({
-                    [stepTitle]: resolvedResult.trim(),
+            const expectedResult = expectedValue(arg, acc);
+
+            // Handle both sync and async expectedValue
+            if (expectedResult instanceof Promise) {
+              // For async expectedValue, perform validation asynchronously without blocking
+              const currentStepTitle = stepTitle;
+              const currentStepValue = stepValue;
+
+              expectedResult
+                .then(resolvedResult => {
+                  botTest("deviceAction confirm step '" + currentStepTitle + "'", () => {
+                    expect({
+                      [currentStepTitle]: stepValueTransform(currentStepValue),
+                    }).toMatchObject({
+                      [currentStepTitle]: resolvedResult.trim(),
+                    });
                   });
+                })
+                .catch(error => {
+                  console.error(`Async validation failed for step '${currentStepTitle}':`, error);
                 });
-              })
-              .catch(error => {
-                console.error(`Async validation failed for step '${stepTitle}':`, error);
+            } else {
+              botTest("deviceAction confirm step '" + stepTitle + "'", () => {
+                expect({
+                  [stepTitle]: stepValueTransform(stepValue),
+                }).toMatchObject({
+                  [stepTitle]: expectedResult.trim(),
+                });
               });
+            }
           }
         }
 
