@@ -1,7 +1,12 @@
 import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
 import invariant from "invariant";
-import { AccountId, Transaction as HederaSDKTransaction } from "@hashgraph/sdk";
+import {
+  AccountId,
+  EntityIdHelper,
+  Transaction as HederaSDKTransaction,
+  TransactionId,
+} from "@hashgraph/sdk";
 import { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
@@ -75,8 +80,12 @@ export const mapIntentToSDKOperation = (txIntent: TransactionIntent) => {
     return HEDERA_OPERATION_TYPES.TokenAssociate;
   }
 
-  if (txIntent.type === HEDERA_TRANSACTION_MODES.Send && txIntent.asset.type !== "native") {
+  if (txIntent.type === HEDERA_TRANSACTION_MODES.Send && txIntent.asset.type === "hts") {
     return HEDERA_OPERATION_TYPES.TokenTransfer;
+  }
+
+  if (txIntent.type === HEDERA_TRANSACTION_MODES.Send && txIntent.asset.type === "erc20") {
+    return HEDERA_OPERATION_TYPES.ContractCall;
   }
 
   return HEDERA_OPERATION_TYPES.CryptoTransfer;
@@ -127,6 +136,10 @@ export const isTokenAssociationRequired = (
   account: AccountLike,
   token: TokenCurrency | null | undefined,
 ) => {
+  if (token?.tokenType !== "hts") {
+    return false;
+  }
+
   const subAccounts = !!account && "subAccounts" in account ? account.subAccounts ?? [] : [];
   const isTokenAssociated = subAccounts.some(item => item.token.id === token?.id);
 
@@ -170,7 +183,11 @@ export const getCurrencyToUSDRate = makeLRUCache(
 );
 
 export const checkAccountTokenAssociationStatus = makeLRUCache(
-  async (address: string, tokenId: string) => {
+  async (address: string, token: TokenCurrency) => {
+    if (token.tokenType !== "hts") {
+      return true;
+    }
+
     const [parsingError, parsingResult] = safeParseAccountId(address);
 
     if (parsingError) {
@@ -185,13 +202,13 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
       return true;
     }
 
-    const isTokenAssociated = mirrorAccount.balance.tokens.some(token => {
-      return token.token_id === tokenId;
+    const isTokenAssociated = mirrorAccount.balance.tokens.some(t => {
+      return t.token_id === token.contractAddress;
     });
 
     return isTokenAssociated;
   },
-  (accountId, tokenId) => `${accountId}-${tokenId}`,
+  (accountId, token) => `${accountId}-${token.contractAddress}`,
   seconds(30),
 );
 
@@ -203,16 +220,11 @@ export const safeParseAccountId = (
 
   try {
     const accountId = AccountId.fromString(address);
+    const checksum = EntityIdHelper.fromString(address).checksum ?? null;
 
-    // verify checksum if present
-    // FIXME: migrate to EntityIdHelper methods once SDK is upgraded:
-    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L197
-    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L446
-    const checksum: string | null = address.split("-")[1] ?? null;
     if (checksum) {
       const client = rpcClient.getInstance();
-      const recipientWithChecksum = accountId.toStringWithChecksum(client);
-      const expectedChecksum = recipientWithChecksum.split("-")[1];
+      const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
 
       if (checksum !== expectedChecksum) {
         return [new HederaRecipientInvalidChecksum(), null];
@@ -253,3 +265,53 @@ export function getSyntheticBlock(
 
   return { blockHeight, blockHash, blockTime };
 }
+
+export const formatTransactionId = (transactionId: TransactionId): string => {
+  const [accountId, timestamp] = transactionId.toString().split("@");
+  const [secs, nanos] = timestamp.split(".");
+
+  return `${accountId}-${secs}-${nanos}`;
+};
+
+/**
+ * Converts a Hedera account ID (e.g. "0.0.1234") into its corresponding EVM address in hexadecimal format.
+ * If the conversion fails, it returns null.
+ *
+ * @param address - Hedera account ID in the format `shard.realm.num`
+ * @returns the long-zero EVM address (`0x...`) or null if conversion fails
+ */
+export const toEVMAddress = (accountId: string) => {
+  try {
+    const evmAddress = "0x" + AccountId.fromString(accountId).toEvmAddress();
+    return evmAddress;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Converts EVM address in hexadecimal format to its corresponding Hedera account ID.
+ * Only long-zero addresses can be mathematically converted back to account IDs.
+ * Non-long-zero addresses support would require mirror node call and is not needed for now
+ * Uses shard 0 and realm 0 by default for the conversion.
+ * If the conversion fails, it returns null.
+ *
+ * @param evmAddress - EVM address in hexadecimal format (should start with '0x')
+ * @param shard - Optional shard ID (defaults to 0)
+ * @param realm - Optional realm ID (defaults to 0)
+ * @returns Hedera account ID in the format `shard.realm.num` or null if conversion fails
+ */
+export const fromEVMAddress = (evmAddress: string, shard = 0, realm = 0): string | null => {
+  try {
+    const isLongZeroAddress = evmAddress.includes("0".repeat(20));
+
+    if (!isLongZeroAddress) {
+      return null;
+    }
+
+    const accountId = AccountId.fromEvmAddress(shard, realm, evmAddress).toString();
+    return accountId;
+  } catch {
+    return null;
+  }
+};

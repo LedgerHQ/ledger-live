@@ -13,3 +13,6 @@ export const HederaRecipientTokenAssociationRequired = createCustomErrorClass(
 export const HederaRecipientTokenAssociationUnverified = createCustomErrorClass(
   "HederaRecipientTokenAssociationUnverified",
 );
+export const HederaRecipientEvmAddressVerificationRequired = createCustomErrorClass(
+  "HederaRecipientEvmAddressVerificationRequired",
+);
