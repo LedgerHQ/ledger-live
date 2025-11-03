@@ -1,12 +1,12 @@
 import { getTokenFromAsset } from "./getTokenFromAsset";
-import { getMockedCurrency, getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 setupMockCryptoAssetsStore();
 
 describe("getTokenFromAsset", () => {
   const mockCurrency = getMockedCurrency();
-  const mockToken = getMockedTokenCurrency();
+  const mockToken = getMockedHTSTokenCurrency();
 
   beforeEach(() => {
     jest.clearAllMocks();

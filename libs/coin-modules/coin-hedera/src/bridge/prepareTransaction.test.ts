@@ -4,17 +4,19 @@ import { prepareTransaction } from "./prepareTransaction";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import * as utils from "./utils";
+import type { EstimateFeesResult } from "../types";
 
 jest.mock("../logic/estimateFees");
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount();
   const mockTx = getMockedTransaction();
+  const mockFeeEstimation: EstimateFeesResult = { tinybars: new BigNumber(10) };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (estimateFees as jest.Mock).mockResolvedValue(Promise.resolve(new BigNumber(10)));
+    (estimateFees as jest.Mock).mockResolvedValue(mockFeeEstimation);
     jest
       .spyOn(utils, "calculateAmount")
       .mockResolvedValue(

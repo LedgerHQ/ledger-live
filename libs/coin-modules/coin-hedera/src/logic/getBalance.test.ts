@@ -1,12 +1,10 @@
-import { getBalance } from "./getBalance";
-import { apiClient } from "../network/api";
-import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getBalance } from "./getBalance";
+import { apiClient } from "../network/api";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 
 jest.mock("../network/api");
-
-setupMockCryptoAssetsStore();
 
 describe("getBalance", () => {
   beforeEach(() => {
@@ -53,42 +51,16 @@ describe("getBalance", () => {
         token_id: "0.0.7890",
         balance: "5000",
       },
-      {
-        token_id: "0.0.9876",
-        balance: "10000",
-      },
     ];
-    const mockToken1: TokenCurrency = {
-      type: "TokenCurrency",
-      id: "token1",
+    const mockTokenHTS = getMockedHTSTokenCurrency({
       contractAddress: "0.0.7890",
-      tokenType: "hts",
-      name: "Test Token 1",
-      ticker: "TT1",
-      parentCurrency: mockCurrency,
-      units: [{ name: "TT1", code: "tt1", magnitude: 6 }],
-      delisted: false,
-      disableCountervalue: false,
-    };
-    const mockToken2: TokenCurrency = {
-      type: "TokenCurrency",
-      id: "token2",
-      contractAddress: "0.0.9876",
-      tokenType: "hts",
-      name: "Test Token 2",
-      ticker: "TT2",
-      parentCurrency: mockCurrency,
-      units: [{ name: "TT2", code: "tt2", magnitude: 8 }],
-      delisted: false,
-      disableCountervalue: false,
-    };
+    });
 
     const findTokenByAddressInCurrencyMock = jest
       .fn()
       .mockImplementation(
         async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
-          if (tokenId === "0.0.7890") return mockToken1;
-          if (tokenId === "0.0.9876") return mockToken2;
+          if (tokenId === "0.0.7890") return mockTokenHTS;
           return undefined;
         },
       );
@@ -106,10 +78,9 @@ describe("getBalance", () => {
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
-    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(2);
+    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(1);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.9876", "hedera");
-    expect(result).toHaveLength(3);
+    expect(result).toHaveLength(2);
     expect(result).toEqual(
       expect.arrayContaining([
         {
@@ -119,21 +90,11 @@ describe("getBalance", () => {
         {
           value: BigInt("5000"),
           asset: {
-            type: mockToken1.tokenType,
-            assetReference: mockToken1.contractAddress,
+            type: mockTokenHTS.tokenType,
+            assetReference: mockTokenHTS.contractAddress,
             assetOwner: address,
-            name: mockToken1.name,
-            unit: mockToken1.units[0],
-          },
-        },
-        {
-          value: BigInt("10000"),
-          asset: {
-            type: mockToken2.tokenType,
-            assetReference: mockToken2.contractAddress,
-            assetOwner: address,
-            name: mockToken2.name,
-            unit: mockToken2.units[0],
+            name: mockTokenHTS.name,
+            unit: mockTokenHTS.units[0],
           },
         },
       ]),
@@ -158,7 +119,7 @@ describe("getBalance", () => {
         balance: "10000",
       },
     ];
-    const mockToken1: TokenCurrency = {
+    const mockTokenHTS: TokenCurrency = {
       type: "TokenCurrency",
       id: "token1",
       contractAddress: "0.0.7890",
@@ -175,7 +136,7 @@ describe("getBalance", () => {
       .fn()
       .mockImplementation(
         async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
-          if (tokenId === "0.0.7890") return mockToken1;
+          if (tokenId === "0.0.7890") return mockTokenHTS;
           return undefined;
         },
       );
@@ -197,11 +158,11 @@ describe("getBalance", () => {
     expect(result[1]).toEqual({
       value: BigInt("5000"),
       asset: {
-        type: mockToken1.tokenType,
-        assetReference: mockToken1.contractAddress,
+        type: mockTokenHTS.tokenType,
+        assetReference: mockTokenHTS.contractAddress,
         assetOwner: address,
-        name: mockToken1.name,
-        unit: mockToken1.units[0],
+        name: mockTokenHTS.name,
+        unit: mockTokenHTS.units[0],
       },
     });
   });

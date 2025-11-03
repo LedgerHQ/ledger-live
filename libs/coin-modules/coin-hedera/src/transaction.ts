@@ -44,6 +44,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...commonGeneric,
     ...commonHedera,
     mode: tr.mode,
+    ...(tr.gasLimit && { gasLimit: new BigNumber(tr.gasLimit) }),
   };
 }
 
@@ -70,6 +71,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     ...commonGeneric,
     ...commonHedera,
     mode: t.mode,
+    ...(t.gasLimit && { gasLimit: t.gasLimit.toString() }),
   };
 }
 
