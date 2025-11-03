@@ -19072,6 +19072,7 @@ function main(ref) {
     "coin-tester-modules\\/([^/]+)"
     // coin-tester-modules/<coin>
   ];
+  const coins = /* @__PURE__ */ new Set();
   const combinedRegex = new RegExp(`(${patterns.join(")|(")})`);
   (0, import_child_process.exec)(
     cmd,
@@ -19091,8 +19092,9 @@ function main(ref) {
             if (m) {
               const [first, second, third] = m;
               if (first.startsWith("coin-modules/")) {
-                return first.replace(/^.*coin-/, "");
-              } else if (second === "families") {
+                coins.add(first.replace(/^.*coin-/, ""));
+              }
+              if (second === "families") {
                 return `${second}/${third}`;
               } else if (second === "live-common/src/bridge/generic-alpaca") {
                 return GENERIC_ALPACA_CHAINS;
@@ -19105,6 +19107,7 @@ function main(ref) {
       ];
       core.setOutput("is-affected", String(list.length > 0));
       core.setOutput("paths", list.join(" "));
+      core.setOutput("coins", Array.from(coins).join(" "));
       if (list.length > 0) {
         core.info(`${list.length} paths affected since ${ref}: ${list.join(" ")}`);
       } else {
