@@ -9,6 +9,8 @@ import { buildSubAccounts } from "./buildSubAccounts";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { APINetworkInfo } from "./api/api-types";
 import { CardanoSigner } from "./signer";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/lib/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
@@ -78,6 +80,11 @@ describe("makeGetAccountShape", () => {
   });
 
   describe("balance", () => {
+    beforeAll(() => {
+      setCryptoAssetsStore({
+        getTokensSyncHash: jest.fn().mockResolvedValue("some_random_hash"),
+      } as unknown as CryptoAssetsStore);
+    });
     it("should return 0 balance when there is no utxos", async () => {
       getTransactionsMock.mockReturnValue(
         Promise.resolve({

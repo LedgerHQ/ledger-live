@@ -125,6 +125,7 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
         gasOptions: {
           fast: {
             maxFeePerGas: null,
@@ -193,6 +194,7 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
         gasOptions: {
           fast: {
             maxFeePerGas: null,
@@ -213,6 +215,41 @@ describe("estimateFees", () => {
             nextBaseFee: null,
           },
         },
+      },
+    });
+  });
+
+  it("re-adjusts the transaction type", async () => {
+    mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
+    mockNodeApi.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber(20000000),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+
+    const result = await estimateFees(mockCurrency, {
+      intentType: "transaction",
+      type: "send-eip1559",
+      amount: BigInt("1000000000000000000"),
+      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+      sender: "0xsender",
+      feesStrategy: "medium",
+      data: { type: "buffer", value: Buffer.from([]) },
+      asset: { type: "native" },
+    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+
+    expect(result).toEqual({
+      value: 420000000000n,
+      parameters: {
+        gasPrice: 20000000n,
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        nextBaseFee: null,
+        gasLimit: 21000n,
+        type: 0,
       },
     });
   });
@@ -246,6 +283,7 @@ describe("estimateFees", () => {
         maxFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
       },
     });
   });
@@ -280,6 +318,7 @@ describe("estimateFees", () => {
         maxFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
       },
     });
   });
@@ -316,6 +355,7 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
         additionalFees: 8000n,
       },
     });
@@ -352,6 +392,7 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
       },
     });
   });
@@ -388,6 +429,7 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
       },
     });
   });

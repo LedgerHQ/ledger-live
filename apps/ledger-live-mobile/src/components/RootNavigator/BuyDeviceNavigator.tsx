@@ -4,7 +4,6 @@ import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import GetDevice from "~/screens/GetDeviceScreen";
 import GetFlex from "LLM/features/Reborn/screens/UpsellFlex";
 import PurchaseDevice from "~/screens/PurchaseDevice";
 import { BuyDeviceNavigatorParamList } from "./types/BuyDeviceNavigator";
@@ -14,15 +13,11 @@ const Stack = createStackNavigator<BuyDeviceNavigatorParamList>();
 const BuyDeviceNavigator = () => {
   const { colors } = useTheme();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
-  const upsellFlexFF = useFeature("llmRebornFlex");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: false }}>
-      <Stack.Screen
-        name={ScreenName.GetDevice}
-        component={upsellFlexFF?.enabled ? GetFlex : GetDevice}
-      />
+      <Stack.Screen name={ScreenName.GetDevice} component={GetFlex} />
       {buyDeviceFromLive?.enabled && (
         <Stack.Screen name={ScreenName.PurchaseDevice} component={PurchaseDevice} />
       )}

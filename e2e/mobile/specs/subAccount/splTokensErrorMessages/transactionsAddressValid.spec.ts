@@ -4,7 +4,7 @@ const transactionE2E = {
   expectedWarningMessage:
     "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing",
   xrayTicket: ["B2CQA-3082"],
-  tag: ["@NanoSP", "@NanoX", "@Stax"],
+  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
 };
 runSendSPLAddressValid(
   transactionE2E.tx,

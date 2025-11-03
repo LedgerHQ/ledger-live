@@ -216,14 +216,12 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
-  llmMarketQuickActions: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
-  llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
@@ -271,6 +269,7 @@ export type Features = CurrencyFeatures & {
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
+  newSendFlow: DefaultFeature;
 };
 
 /**
@@ -634,6 +633,7 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+  postOnboarding: boolean;
 }>;
 
 export type Feature_LlNftEntryPoint = Feature<{

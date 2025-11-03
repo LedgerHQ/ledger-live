@@ -1,4 +1,5 @@
 import { expect } from "detox";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class MarketPage {
   marketRowTitleBaseId = "market-row-title-";
@@ -8,7 +9,15 @@ export default class MarketPage {
   marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
 
   starMarketListButton = () => getElementById("toggle-starred-currencies");
-  buyAssetButton = () => getElementById("market-buy-btn");
+  buyAssetButton = () => getElementById("market-quick-action-button-buy");
+
+  async openViaDeeplink(currencyId?: string) {
+    await openDeeplink(currencyId ? `market/${currencyId}` : "market");
+  }
+
+  async expectMarketDetailPage() {
+    await expect(this.starButton()).toBeVisible();
+  }
 
   async searchAsset(asset: string) {
     await typeTextByElement(this.searchBar(), asset);

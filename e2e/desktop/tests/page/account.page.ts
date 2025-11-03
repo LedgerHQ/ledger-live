@@ -12,7 +12,7 @@ export class AccountPage extends AppPage {
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private buyButton = this.page.getByRole("button", { name: "Buy" });
-  private accountName = (name: string) => this.page.locator(`text=${name}`);
+  private accountName = this.page.locator("#account-header-name");
   private lastOperation = this.page.locator("text=Latest operations");
   private tokenValue = (tokenName: string, accountName: string) =>
     this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`).getByText(`${accountName}`);
@@ -115,7 +115,7 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName(firstAccountName)).toBeVisible();
+    await expect(this.accountName).toHaveValue(firstAccountName);
     await this.settingsButton.waitFor({ state: "visible" });
   }
 

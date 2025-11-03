@@ -531,7 +531,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
-  llmMarketQuickActions: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -552,7 +551,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
-  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
   llmLedgerSyncEntryPoints: {
     ...DEFAULT_FEATURE,
@@ -569,6 +567,7 @@ export const DEFAULT_FEATURES: Features = {
       accounts: true,
       settings: true,
       onboarding: true,
+      postOnboarding: true,
     },
   },
   lldNanoSUpsellBanners: {
@@ -693,6 +692,7 @@ export const DEFAULT_FEATURES: Features = {
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
+  newSendFlow: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

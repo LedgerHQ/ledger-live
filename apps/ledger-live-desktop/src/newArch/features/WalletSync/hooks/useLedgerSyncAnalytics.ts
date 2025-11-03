@@ -37,6 +37,7 @@ export enum AnalyticsPage {
   Accounts = "Accounts",
   Manager = "Manager",
   Onboarding = "Onboarding",
+  PostOnboarding = "PostOnboarding",
   Settings = "Settings",
 }
 

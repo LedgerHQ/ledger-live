@@ -4,6 +4,7 @@ import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/mark
 import Graph from "~/components/Graph";
 import { Flex } from "@ledgerhq/native-ui";
 import { LargeMoverGraph } from "../LargeMoverGraph";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("~/components/Graph", () => {
   return jest.fn(() => {
@@ -30,6 +31,30 @@ const mockChartData: MarketCoinDataChart = {
   ],
 };
 
+const mockBitcoinCurrency: CryptoCurrency = {
+  type: "CryptoCurrency",
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  managerAppName: "Bitcoin",
+  coinType: 0,
+  scheme: "bitcoin",
+  color: "#ff9900",
+  symbol: "₿",
+  family: "bitcoin",
+  blockAvgTime: 600,
+  units: [
+    {
+      name: "bitcoin",
+      code: "BTC",
+      magnitude: 8,
+    },
+  ],
+  keywords: ["btc", "bitcoin"],
+  explorerViews: [],
+  explorerId: "btc",
+};
+
 describe("LargeMoverGraph", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -40,7 +65,7 @@ describe("LargeMoverGraph", () => {
       <LargeMoverGraph
         chartData={mockChartData}
         range={KeysPriceChange.day}
-        currencyId="bitcoin"
+        currency={mockBitcoinCurrency}
         width={200}
         loading={false}
       />,
@@ -55,7 +80,7 @@ describe("LargeMoverGraph", () => {
       <LargeMoverGraph
         chartData={mockChartData}
         range={KeysPriceChange.day}
-        currencyId="bitcoin"
+        currency={mockBitcoinCurrency}
         width={200}
         loading={false}
       />,
@@ -75,7 +100,7 @@ describe("LargeMoverGraph", () => {
       <LargeMoverGraph
         chartData={mockChartData}
         range={KeysPriceChange.week}
-        currencyId="bitcoin"
+        currency={mockBitcoinCurrency}
         width={200}
         loading={false}
       />,

@@ -7,17 +7,11 @@ import type {
   IterateResultBuilder,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
 import { listOperations } from "../logic/listOperations";
 import { apiClient } from "../network/api";
 import type { HederaAccount } from "../types";
-import {
-  getSubAccounts,
-  prepareOperations,
-  applyPendingExtras,
-  mergeSubAccounts,
-  getSyncHash,
-} from "./utils";
+import { getSubAccounts, prepareOperations, applyPendingExtras, mergeSubAccounts } from "./utils";
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
@@ -46,7 +40,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const accountBalance = new BigNumber(mirrorAccount.balance.balance);
 
   // we should sync again when new tokens are added or blacklist changes
-  const syncHash = getSyncHash(currency, blacklistedTokenIds);
+
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
   const oldOperations = initialAccount?.operations ?? [];

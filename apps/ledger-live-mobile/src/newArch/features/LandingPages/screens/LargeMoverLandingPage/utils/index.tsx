@@ -67,4 +67,5 @@ function getCurrencyIdsFromTickers(tickers: string[]): string[] {
     return currency?.id ? [currency.id] : [];
   });
 }
+
 export { formatCounterValue, getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };

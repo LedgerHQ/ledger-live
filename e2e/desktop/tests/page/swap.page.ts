@@ -296,8 +296,8 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
-  @step("Check if asset is already selected")
-  async checkIfAssetIsAlreadySelected(
+  @step("Check if $0 asset is already selected")
+  async checkIfFromAssetIsAlreadySelected(
     asset: string,
     electronApp: ElectronApplication,
   ): Promise<boolean> {
@@ -308,6 +308,18 @@ export class SwapPage extends AppPage {
       const el = document.querySelector(`[data-testid='${selectorTestId}']`);
       return el && el.textContent && el.textContent !== "Choose asset";
     }, this.fromAccountCoinSelector);
+
+    const text = await selector.textContent();
+    return text?.includes(asset) ?? false;
+  }
+
+  @step("Check if $0 asset is already selected")
+  async checkIfToAssetIsAlreadySelected(
+    asset: string,
+    electronApp: ElectronApplication,
+  ): Promise<boolean> {
+    const [, webview] = electronApp.windows();
+    const selector = webview.getByTestId(this.toAccountCoinSelector);
 
     const text = await selector.textContent();
     return text?.includes(asset) ?? false;
@@ -328,8 +340,15 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
+  @step("Select currency to swap from: $1")
+  async selectAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
   @step("Choose from asset $0")
-  async chooseFromAsset(currency: string, networkName?: string) {
+  async selectAsset(currency: string, networkName?: string) {
     await this.chooseAssetDrawer.chooseFromAsset(currency, networkName);
   }
 

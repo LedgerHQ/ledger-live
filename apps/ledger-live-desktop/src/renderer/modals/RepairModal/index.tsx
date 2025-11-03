@@ -10,13 +10,12 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
 import FlashMCU from "~/renderer/components/FlashMCU";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import IconCheck from "~/renderer/icons/Check";
-import { colors } from "~/renderer/styles/theme";
+import HelpCenterButton from "./components/HelpCenterButton";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
@@ -223,9 +222,7 @@ class RepairModal extends PureComponent<Props, State> {
           renderFooter={() =>
             !isLoading ? (
               <Box horizontal alignItems="center" flow={2} flex={1}>
-                <Button onClick={() => openURL(urls.troubleshootingUSB)} textColor={colors.wallet}>
-                  {t("common.help")}
-                </Button>
+                <HelpCenterButton t={t} />
                 <div
                   style={{
                     flex: 1,

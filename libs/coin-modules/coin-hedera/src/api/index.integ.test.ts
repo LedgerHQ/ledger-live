@@ -1,4 +1,6 @@
 import invariant from "invariant";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import {
   AccountId,
   Hbar,
@@ -13,6 +15,9 @@ import { getSyntheticBlock } from "../logic/utils";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
+  beforeAll(() => {
+    setCryptoAssetsStore(legacyCryptoAssetsStore);
+  });
   const api = createApi({});
 
   describe("craftTransaction", () => {

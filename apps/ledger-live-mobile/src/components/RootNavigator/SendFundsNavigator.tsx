@@ -16,6 +16,8 @@ import SendValidationError from "~/screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import SendWorkflow from "LLM/features/Send";
 
 const totalSteps = "5";
 
@@ -25,6 +27,8 @@ export default function SendFundsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
+  const newSendFlow = useFeature("newSendFlow");
 
   return (
     <DomainServiceProvider>
@@ -45,7 +49,7 @@ export default function SendFundsNavigator() {
             ),
           }}
           initialParams={{
-            next: ScreenName.SendSelectRecipient,
+            next: !newSendFlow?.enabled ? ScreenName.SendSelectRecipient : ScreenName.NewSendFlow,
             category: "SendFunds",
             notEmptyAccounts: true,
             minBalance: 0,
@@ -153,6 +157,25 @@ export default function SendFundsNavigator() {
           component={SendValidationError}
           options={{
             headerShown: false,
+          }}
+        />
+        {/* ---- New Send flow screens */}
+        <Stack.Screen
+          name={ScreenName.NewSendFlow}
+          component={SendWorkflow}
+          options={{
+            headerShown: false,
+            // eslint-disable-next-line i18next/no-literal-string
+            headerTitle: () => (
+              <StepHeader
+                testID="send-header-step1-title"
+                title={"New Send flow"}
+                subtitle={t("send.stepperHeader.stepRange", {
+                  currentStep: "1",
+                  totalSteps: "1",
+                })}
+              />
+            ),
           }}
         />
       </Stack.Navigator>

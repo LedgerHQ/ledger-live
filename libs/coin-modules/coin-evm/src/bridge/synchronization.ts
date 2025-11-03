@@ -20,7 +20,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ExplorerApi } from "../network/explorer/types";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
-import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
+import { attachOperations, mergeSubAccounts, createSwapHistoryMap, getSyncHash } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
 import { getCoinConfig } from "../config";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
@@ -52,7 +52,8 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   });
   const findToken = async (contractAddress: string): Promise<TokenCurrency | undefined> =>
     getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, currency.id);
-  const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  const syncHash = await getSyncHash(currency, blacklistedTokenIds);
+
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;

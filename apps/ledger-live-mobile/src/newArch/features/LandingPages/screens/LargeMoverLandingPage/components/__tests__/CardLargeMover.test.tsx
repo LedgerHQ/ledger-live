@@ -2,7 +2,8 @@ import React from "react";
 import { render } from "@tests/test-renderer";
 import { Card } from "../Card";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { mockCurrencyData } from "../../fixtures/currency";
+import { mockCurrencyData, mockChartData } from "../../fixtures/currency";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("~/logic/getWindowDimensions", () => () => ({
   width: 400,
@@ -22,6 +23,30 @@ jest.mock("@react-navigation/native", () => ({
 
 const mockSetRange = jest.fn();
 
+const mockEthereumCurrency: CryptoCurrency = {
+  type: "CryptoCurrency",
+  id: "ethereum",
+  name: "Ethereum",
+  ticker: "ETH",
+  managerAppName: "Ethereum",
+  coinType: 60,
+  scheme: "ethereum",
+  color: "#627eea",
+  symbol: "Ξ",
+  family: "evm",
+  blockAvgTime: 15,
+  units: [
+    {
+      name: "ether",
+      code: "ETH",
+      magnitude: 18,
+    },
+  ],
+  keywords: ["eth", "ethereum"],
+  explorerViews: [],
+  explorerId: "eth",
+};
+
 describe("Card", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -31,7 +56,8 @@ describe("Card", () => {
     const { getByText } = render(
       <Card
         data={mockCurrencyData}
-        chartData={mockCurrencyData.chartData}
+        currency={mockEthereumCurrency}
+        chartData={mockChartData}
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
@@ -48,7 +74,8 @@ describe("Card", () => {
     const { getByText } = render(
       <Card
         data={mockCurrencyData}
-        chartData={mockCurrencyData.chartData}
+        currency={mockEthereumCurrency}
+        chartData={mockChartData}
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
@@ -68,7 +95,8 @@ describe("Card", () => {
     const { getByText, user } = render(
       <Card
         data={mockCurrencyData}
-        chartData={mockCurrencyData.chartData}
+        currency={mockEthereumCurrency}
+        chartData={mockChartData}
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}

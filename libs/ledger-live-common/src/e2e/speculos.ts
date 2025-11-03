@@ -887,19 +887,40 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   }
 }
 
-export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(
+  swap: Swap,
+  amount: string,
+  errorMessage: string | null,
+) {
+  if (errorMessage === null && isTouchDevice()) {
+    await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+    await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
+  } else {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  }
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.REJECT);
+  let events: string[] = [];
+  if (isTouchDevice()) {
+    events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  } else {
+    events = await pressUntilTextFound(DeviceLabels.REJECT);
+  }
+
   verifySwapData(swap, events, amount);
   if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+    await pressAndRelease(DeviceLabels.REJECT);
+    await waitFor(DeviceLabels.YES_REJECT);
+    await pressAndRelease(DeviceLabels.YES_REJECT);
   } else {
     await pressBoth();
   }
@@ -911,7 +932,6 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
     expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
   }
-
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 

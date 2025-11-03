@@ -159,12 +159,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     },
   };
 
+  const newSendFlow = useFeature("newSendFlow");
   const SendAction = {
     id: "send",
     navigationParams: [
       NavigatorName.SendFunds,
       {
-        screen: ScreenName.SendSelectRecipient,
+        screen: !newSendFlow?.enabled ? ScreenName.SendSelectRecipient : ScreenName.NewSendFlow,
       },
     ],
     label: t("account.send"),

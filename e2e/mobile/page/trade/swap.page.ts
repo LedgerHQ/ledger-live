@@ -50,6 +50,7 @@ export default class SwapPage {
   @Step("Open swap via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(app.common.walletApiWebview);
   }
 
   @Step("Expect swap page")
@@ -149,8 +150,12 @@ export default class SwapPage {
   }
 
   @Step("Verify amounts and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: SwapType, amount: string) {
-    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
+  async verifyAmountsAndAcceptSwapForDifferentSeed(
+    swap: SwapType,
+    amount: string,
+    errorMessage: string | null,
+  ) {
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
     await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 

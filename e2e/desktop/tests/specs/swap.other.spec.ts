@@ -15,6 +15,7 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   handleSwapErrorOrSuccess,
+  selectAccountMAD,
 } from "../utils/swapUtils";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
@@ -420,83 +421,124 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
   });
 }
 
-const swapWithoutAccount = [
-  {
-    account1: Account.BTC_NATIVE_SEGWIT_1,
-    account2: Account.ETH_1,
-    testTitle: "from Account present to Account not present",
-    xrayTicket: "B2CQA-3353",
-  },
-  {
-    account1: Account.ETH_1,
-    account2: Account.BTC_NATIVE_SEGWIT_1,
-    testTitle: "from Account not present to Account present",
-    xrayTicket: "B2CQA-3354",
-  },
-];
+test.describe("Swap a coin for which you have no account yet", () => {
+  setupEnv(true);
+  const account1 = Account.BTC_NATIVE_SEGWIT_1;
+  const account2 = Account.ETH_1;
+  const xrayTicket = "B2CQA-3353";
 
-for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) {
-  test.describe("Swap a coin for which you have no account yet", () => {
-    setupEnv(true);
-
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: account2.currency.speculosApp,
-      cliCommandsOnApp: [
-        [
-          {
-            app: account1.currency.speculosApp,
-            cmd: liveDataCommand(account1.currency.speculosApp, account1.index),
-          },
-        ],
-        { scope: "test" },
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account2.currency.speculosApp,
+    cliCommandsOnApp: [
+      [
+        {
+          app: account1.currency.speculosApp,
+          cmd: liveDataCommand(account1.currency.speculosApp, account1.index),
+        },
       ],
-    });
-
-    test(
-      `${testTitle}`,
-      {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
-        annotation: { type: "TMS", description: xrayTicket },
-      },
-      async ({ app, electronApp, speculosApp }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
-
-        const debitAccount = speculosApp ? account1 : account2;
-        const creditAccount = speculosApp ? account2 : account1;
-
-        await app.swap.selectFromAccountCoinSelector(electronApp);
-
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.selectAssetByTickerAndName(debitAccount.currency);
-          await app.modularDrawer.selectNetwork(debitAccount.currency);
-          await app.modularDrawer.selectAccountByName(debitAccount);
-
-          await app.swap.selectToAccountCoinSelector(electronApp);
-          await app.modularDrawer.selectAssetByTickerAndName(creditAccount.currency);
-          await app.modularDrawer.selectNetwork(creditAccount.currency);
-          await app.modularDrawer.clickOnAddAndExistingAccountButton();
-
-          await app.addAccount.addAccounts();
-          await app.addAccount.done();
-          await app.modularDrawer.selectAccountByName(creditAccount);
-        } else {
-          await app.swap.chooseFromAsset(account1.currency.name);
-          await app.swapDrawer.selectAccountByName(debitAccount);
-
-          await app.swap.selectAssetTo(electronApp, creditAccount.currency.name);
-          await app.swapDrawer.clickOnAddAccountButton();
-
-          await app.addAccount.addAccounts();
-          await app.addAccount.done();
-          await app.swapDrawer.selectAccountByName(creditAccount);
-        }
-      },
-    );
+      { scope: "test" },
+    ],
   });
-}
+
+  test(
+    "from Account present to Account not present",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      annotation: { type: "TMS", description: xrayTicket },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+
+      await app.swap.selectFromAccountCoinSelector(electronApp);
+
+      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+      if (isModularDrawer) {
+        await selectAccountMAD(app, account1);
+
+        await app.swap.selectToAccountCoinSelector(electronApp);
+        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
+        await app.modularDrawer.selectNetwork(account2.currency);
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
+      } else {
+        await app.swap.selectAssetFrom(electronApp, account1.currency.name);
+        await app.swapDrawer.selectAccountByName(account1);
+
+        await app.swap.selectAssetTo(electronApp, account2.currency.name);
+        await app.swapDrawer.clickOnAddAccountButton();
+
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.swapDrawer.selectAccountByName(account2);
+      }
+      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
+      await app.swap.checkAssetTo(electronApp, account2.currency.name);
+    },
+  );
+});
+
+test.describe("Swap a coin for which you have no account yet", () => {
+  setupEnv(true);
+  const account1 = Account.ETH_1;
+  const account2 = Account.BTC_NATIVE_SEGWIT_1;
+  const xrayTicket = "B2CQA-3354";
+
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account1.currency.speculosApp,
+    cliCommandsOnApp: [
+      [
+        {
+          app: account2.currency.speculosApp,
+          cmd: liveDataCommand(account2.currency.speculosApp, account2.index),
+        },
+      ],
+      { scope: "test" },
+    ],
+  });
+
+  test(
+    "from Account not present to Account present",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      annotation: { type: "TMS", description: xrayTicket },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+
+      await app.swap.selectFromAccountCoinSelector(electronApp);
+      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+      if (isModularDrawer) {
+        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
+        await app.modularDrawer.selectNetwork(account1.currency);
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
+
+        await app.swap.selectToAccountCoinSelector(electronApp);
+        await selectAccountMAD(app, account2);
+      } else {
+        await app.swap.selectAssetFrom(electronApp, account1.currency.name);
+        await app.swapDrawer.clickOnAddAccountButton();
+
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.swapDrawer.selectAccountByName(account1);
+
+        await app.swap.selectAssetTo(electronApp, account2.currency.name);
+        await app.swapDrawer.selectAccountByName(account2);
+      }
+      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
+      await app.swap.checkAssetTo(electronApp, account2.currency.name);
+    },
+  );
+});
 
 test.describe("Swap a coin for which you have no account yet", () => {
   const account1 = Account.ETH_1;
@@ -528,18 +570,16 @@ test.describe("Swap a coin for which you have no account yet", () => {
         await app.modularDrawer.selectNetwork(account1.currency);
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.modularDrawer.selectAccountByName(account1);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
 
         await app.swap.selectToAccountCoinSelector(electronApp);
         await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
         await app.modularDrawer.selectNetwork(account2.currency);
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.modularDrawer.selectAccountByName(account2);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
       } else {
         await app.swap.chooseFromAsset(account1.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
@@ -553,6 +593,8 @@ test.describe("Swap a coin for which you have no account yet", () => {
         await app.addAccount.done();
         await app.swapDrawer.selectAccountByName(account2);
       }
+      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
+      await app.swap.checkAssetTo(electronApp, account2.currency.name);
     },
   );
 });

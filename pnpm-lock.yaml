@@ -39,6 +39,9 @@ catalogs:
     react-i18next:
       specifier: 13.5.0
       version: 13.5.0
+    react-redux:
+      specifier: 7.2.9
+      version: 7.2.9
     react-test-renderer:
       specifier: 18.3.1
       version: 18.3.1
@@ -94,9 +97,6 @@ patchedDependencies:
   react-native-bundle-visualizer@3.1.3:
     hash: fgdd2c4kpymhnfnsaf5bc33xwi
     path: patches/react-native-bundle-visualizer@3.1.3.patch
-  react-native-fast-crypto@2.2.0:
-    hash: bmot5xcuajv3pdpobflt4ufvae
-    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-fast-pbkdf2@0.3.1:
     hash: wbvgqbzrhkn4r62in5uz4ok7im
     path: patches/react-native-fast-pbkdf2@0.3.1.patch
@@ -407,6 +407,9 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
+      '@electron/fuses':
+        specifier: 2.0.0
+        version: 2.0.0
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -618,7 +621,7 @@ importers:
         specifier: 0.5.2
         version: 0.5.2(react@18.3.1)
       react-redux:
-        specifier: 7.2.9
+        specifier: 'catalog:'
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
         specifier: 5.3.4
@@ -1267,8 +1270,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-native-fast-crypto:
-        specifier: 2.2.0
-        version: 2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
+        specifier: '3'
+        version: 3.0.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-native-fast-image:
         specifier: 8.6.3
         version: 8.6.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -1372,7 +1375,7 @@ importers:
         specifier: 13.13.5
         version: 13.13.5(patch_hash=r7bejpcnocn3555cbyefvt6uqm)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-redux:
-        specifier: 7.2.9
+        specifier: 'catalog:'
         version: 7.2.9(@types/react@18.2.73)(react@18.3.1)
       redux:
         specifier: 4.2.1
@@ -2122,6 +2125,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2144,6 +2150,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -3187,9 +3196,6 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      imurmurhash:
-        specifier: ^0.1.4
-        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -3206,9 +3212,6 @@ importers:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
-      '@types/imurmurhash':
-        specifier: ^0.1.4
-        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -4335,9 +4338,6 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      imurmurhash:
-        specifier: ^0.1.4
-        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -4354,9 +4354,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@types/imurmurhash':
-        specifier: ^0.1.4
-        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -5678,7 +5675,7 @@ importers:
         specifier: ^6.10.1
         version: 6.13.0
       react-redux:
-        specifier: ^7.2.9
+        specifier: 'catalog:'
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reselect:
         specifier: ^4.1.5
@@ -12509,6 +12506,11 @@ packages:
 
   '@electron/fuses@1.8.0':
     resolution: {integrity: sha512-zx0EIq78WlY/lBb1uXlziZmDZI4ubcCXIMJ4uGjXzZW0nS19TjSPeXPAjzzTmKQlJUZm0SbmZhPKP7tuQ1SsEw==}
+    hasBin: true
+
+  '@electron/fuses@2.0.0':
+    resolution: {integrity: sha512-lyb1zK3YHeWUjaz7yiK0GnxSPduwASKMyiDbCtbn3spP6EEt+UWtktggWehG0icFrXAk3GwvcJ4nCrJO0N9IhQ==}
+    engines: {node: '>=22.12.0'}
     hasBin: true
 
   '@electron/get@2.0.3':
@@ -32157,8 +32159,8 @@ packages:
       prop-types:
         optional: true
 
-  react-native-fast-crypto@2.2.0:
-    resolution: {integrity: sha512-JXQmnXGH3HpJYZrBsR7sL6cO/W3k1pHqTYbwnwTsJ8VUYXIsIEf1T0nMk6Z+XkQNI8RIQOeWJ9AuZLai4onHZg==}
+  react-native-fast-crypto@3.0.0:
+    resolution: {integrity: sha512-30F8C/1+Qkt2z6XEZOzcddS9nHqHifh+wTy3ORvPBzKgSbaFZXPe9XoJATwn+DOsYcAgSSLVK3MRbOYCWsEEcQ==}
     peerDependencies:
       react-native: '>=0.47.0 <1.0.0'
 
@@ -33009,8 +33011,8 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rfc4648@1.5.3:
-    resolution: {integrity: sha512-MjOWxM065+WswwnmNONOT+bD1nXzY9Km6u3kzvnx8F8/HXGZdz3T6e6vZJ8Q/RIMUSp/nxqjH3GwvJDy8ijeQQ==}
+  rfc4648@1.5.4:
+    resolution: {integrity: sha512-rRg/6Lb+IGfJqO05HZkN50UtY7K/JhxJag1kP23+zyMfrvoB0B7RWv06MbOzoc79RgCdNTiUaNsTT1AJZ7Z+cg==}
 
   rfdc@1.3.1:
     resolution: {integrity: sha512-r5a3l5HzYlIC68TpmYKlxWjmOP6wiPJ1vWv2HeLhNsRZMrCkxeqxiHlQ21oXmQ4F3SiryXBHhAD7JZqvOJjFmg==}
@@ -41535,6 +41537,8 @@ snapshots:
       chalk: 4.1.2
       fs-extra: 9.1.0
       minimist: 1.2.8
+
+  '@electron/fuses@2.0.0': {}
 
   '@electron/get@2.0.3':
     dependencies:
@@ -71496,11 +71500,11 @@ snapshots:
     optionalDependencies:
       prop-types: 15.8.1
 
-  react-native-fast-crypto@2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
+  react-native-fast-crypto@3.0.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
     dependencies:
       buffer: 5.7.1
       react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-      rfc4648: 1.5.3
+      rfc4648: 1.5.4
 
   react-native-fast-image@8.6.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -72018,7 +72022,7 @@ snapshots:
 
   react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       '@types/react-redux': 7.1.33(@types/react@18.2.73)
       hoist-non-react-statics: 3.3.2
       loose-envify: 1.4.0
@@ -72032,7 +72036,7 @@ snapshots:
 
   react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       '@types/react-redux': 7.1.33(@types/react@18.2.73)
       hoist-non-react-statics: 3.3.2
       loose-envify: 1.4.0
@@ -72535,7 +72539,7 @@ snapshots:
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.28.4
 
   redux@5.0.1: {}
 
@@ -72862,7 +72866,7 @@ snapshots:
 
   reusify@1.0.4: {}
 
-  rfc4648@1.5.3: {}
+  rfc4648@1.5.4: {}
 
   rfdc@1.3.1: {}
 

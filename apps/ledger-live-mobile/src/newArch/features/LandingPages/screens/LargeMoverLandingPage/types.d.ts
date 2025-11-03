@@ -1,22 +1,14 @@
-type InformationsProps = {
-  price: number;
+import { PartialMarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
+
+type InformationsProps = PartialMarketItemResponse & {
   ticker: string;
-  marketCap: number | undefined;
-  volume: number;
-  marketCapPercent: number;
-  fdv: number;
-  circulatingSupply: number;
-  totalSupply: number;
-  allTimeHigh: number;
-  allTimeHighDate: Date;
-  allTimeLow: number;
-  allTimeLowDate: Date;
 };
 
 type CardType = {
   id: string;
-  data?: CurrencyData | undefined;
+  data?: PartialMarketItemResponse | undefined;
   chartData?: MarketCoinDataChart | undefined;
+  idCard: number;
 };
 
 export type { InformationsProps, CardType };

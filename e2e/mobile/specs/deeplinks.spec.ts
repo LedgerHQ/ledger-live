@@ -1,7 +1,7 @@
 import { waitSwapReady } from "../bridge/server";
 
 $TmsLink("B2CQA-1837");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
@@ -84,6 +84,11 @@ describe("DeepLinks Tests", () => {
     await app.swap.openViaDeeplink();
     await waitSwapReady();
     await app.swap.expectSwapPage();
+  });
+
+  it("should open Market Detail page for Bitcoin", async () => {
+    await app.market.openViaDeeplink("bitcoin");
+    await app.market.expectMarketDetailPage();
   });
 
   it("should open Send pages", async () => {

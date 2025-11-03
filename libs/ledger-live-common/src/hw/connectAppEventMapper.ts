@@ -12,11 +12,9 @@ import type {
 import {
   DeviceActionStatus,
   DeviceDisconnectedWhileSendingError,
-  DeviceLockedError,
   DeviceSessionStateType,
   UserInteractionRequired,
   OutOfMemoryDAError,
-  SecureChannelError,
   UnsupportedFirmwareDAError,
 } from "@ledgerhq/device-management-kit";
 import type {
@@ -254,10 +252,10 @@ export class ConnectAppEventMapper {
             deviceState.firmwareUpdateContext!.currentFirmware.version,
         }),
       );
-    } else if (error instanceof DeviceLockedError) {
+    } else if ("_tag" in error && error._tag === "DeviceLockedError") {
       this.eventSubject.next({ type: "lockedDevice" });
       this.eventSubject.complete();
-    } else if (error instanceof SecureChannelError) {
+    } else if ("_tag" in error && error._tag === "RefusedByUserDAError") {
       this.eventSubject.error(new UserRefusedAllowManager());
     } else if (error instanceof DeviceDisconnectedWhileSendingError) {
       this.eventSubject.next({ type: "disconnected", expected: false });

@@ -17,8 +17,13 @@ const HeroCard = ContentCardBuilder<Props>(
   ({ title, image, secondaryText, cta, tag, metadata, centeredText }) => {
     useEffect(() => metadata.actions?.onView?.());
 
+    const isClickable = !!metadata.actions?.onClick;
+    const ContainerComponent = isClickable ? TouchableOpacity : Flex;
     return (
-      <TouchableOpacity onPress={metadata.actions?.onClick} key={metadata.id}>
+      <ContainerComponent
+        {...(isClickable ? { onPress: metadata.actions?.onClick } : {})}
+        key={metadata.id}
+      >
         <Flex alignItems={centeredText ? "center" : "start"} rowGap={16} position="relative">
           {image && <Image uri={image} />}
           {tag && <Tag label={tag} />}
@@ -38,7 +43,7 @@ const HeroCard = ContentCardBuilder<Props>(
             </Flex>
           )}
         </Flex>
-      </TouchableOpacity>
+      </ContainerComponent>
     );
   },
 );
