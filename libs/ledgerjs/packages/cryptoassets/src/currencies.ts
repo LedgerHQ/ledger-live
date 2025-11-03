@@ -1516,7 +1516,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://hashscan.io/mainnet/account/$address",
       },
     ],
-    tokenTypes: ["hts"],
+    tokenTypes: ["hts", "erc20"],
   },
   helium: {
     type: "CryptoCurrency",

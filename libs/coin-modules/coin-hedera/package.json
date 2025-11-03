@@ -75,7 +75,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hashgraph/sdk": "2.14.2",
+    "@hashgraph/sdk": "2.74.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -88,7 +88,8 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "viem": "^2.27.0"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

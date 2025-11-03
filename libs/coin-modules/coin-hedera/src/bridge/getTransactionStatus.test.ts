@@ -7,8 +7,9 @@ import {
 } from "@ledgerhq/errors";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
-  HederaRecipientInvalidChecksum,
   HederaInsufficientFundsForAssociation,
+  HederaRecipientEvmAddressVerificationRequired,
+  HederaRecipientInvalidChecksum,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
 } from "../errors";
@@ -16,11 +17,16 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
-import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import {
+  getMockedERC20TokenCurrency,
+  getMockedHTSTokenCurrency,
+} from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
+import type { EstimateFeesResult } from "../types";
+import { rpcClient } from "../network/rpc";
 
 describe("getTransactionStatus", () => {
-  const mockedEstimatedFee = new BigNumber(1);
+  const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
   const mockedUsdRate = new BigNumber(1);
   const validRecipientAddress = "0.0.1234567";
   const validRecipientAddressWithChecksum = "0.0.1234567-ylkls";
@@ -30,6 +36,10 @@ describe("getTransactionStatus", () => {
 
     jest.spyOn(logicUtils, "getCurrencyToUSDRate").mockResolvedValueOnce(mockedUsdRate);
     jest.spyOn(estimateFees, "estimateFees").mockResolvedValueOnce(mockedEstimatedFee);
+  });
+
+  afterAll(() => {
+    rpcClient._resetInstance();
   });
 
   test("coin transfer with valid recipient and sufficient balance completes successfully", async () => {
@@ -47,10 +57,10 @@ describe("getTransactionStatus", () => {
     expect(result.totalSpent.isGreaterThan(100)).toBe(true);
   });
 
-  test("token transfer with valid recipient and sufficient balance completes successfully", async () => {
+  test("hts token transfer with valid recipient and sufficient balance completes successfully", async () => {
     jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(true);
 
-    const tokenCurrency = getMockedTokenCurrency();
+    const tokenCurrency = getMockedHTSTokenCurrency();
     const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(500) });
     const account = getMockedAccount({ balance: new BigNumber(1000), subAccounts: [tokenAccount] });
     const transaction = getMockedTransaction({
@@ -66,8 +76,27 @@ describe("getTransactionStatus", () => {
     expect(result.amount).toEqual(new BigNumber(200));
   });
 
+  test("erc20 token transfer with valid recipient and sufficient balance completes successfully", async () => {
+    const tokenCurrency = getMockedERC20TokenCurrency();
+    const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(500) });
+    const account = getMockedAccount({ balance: new BigNumber(1000), subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      subAccountId: tokenAccount.id,
+      recipient: validRecipientAddress,
+      amount: new BigNumber(200),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors).toEqual({});
+    expect(result.warnings).toMatchObject({
+      unverifiedEvmAddress: expect.any(Error),
+    });
+    expect(result.amount).toEqual(new BigNumber(200));
+  });
+
   test("token associate transaction with sufficient USD worth completes successfully", async () => {
-    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
@@ -81,8 +110,8 @@ describe("getTransactionStatus", () => {
     expect(result.amount).toEqual(new BigNumber(0));
     expect(result.errors).toEqual({});
     expect(result.warnings).toEqual({});
-    expect(result.totalSpent).toEqual(mockedEstimatedFee);
-    expect(result.estimatedFees).toEqual(mockedEstimatedFee);
+    expect(result.totalSpent).toEqual(mockedEstimatedFee.tinybars);
+    expect(result.estimatedFees).toEqual(mockedEstimatedFee.tinybars);
   });
 
   test("recipient with checksum is supported", async () => {
@@ -137,7 +166,7 @@ describe("getTransactionStatus", () => {
   });
 
   test("adds error if USD balance is too low for token association", async () => {
-    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedAccount = getMockedAccount({ balance: new BigNumber(0) });
     const mockedTransaction = getMockedTransaction({
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
@@ -156,7 +185,7 @@ describe("getTransactionStatus", () => {
   test("adds warning during token transfer if recipient has no token associated", async () => {
     jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(false);
 
-    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
     const mockedTransaction = getMockedTransaction({
@@ -171,12 +200,28 @@ describe("getTransactionStatus", () => {
     );
   });
 
+  test("adds evm address verification warning during ERC20 token transfer", async () => {
+    const mockedTokenCurrency = getMockedERC20TokenCurrency();
+    const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
+    const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
+    const mockedTransaction = getMockedTransaction({
+      subAccountId: mockedTokenAccount.id,
+      recipient: validRecipientAddress,
+    });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.warnings.unverifiedEvmAddress).toBeInstanceOf(
+      HederaRecipientEvmAddressVerificationRequired,
+    );
+  });
+
   test("adds warning if token association status can't be verified", async () => {
     jest
       .spyOn(logicUtils, "checkAccountTokenAssociationStatus")
       .mockRejectedValueOnce(new HederaRecipientTokenAssociationUnverified());
 
-    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
     const mockedTransaction = getMockedTransaction({
@@ -192,7 +237,7 @@ describe("getTransactionStatus", () => {
   });
 
   test("adds error during token transfer with insufficient balance", async () => {
-    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency, {
       balance: new BigNumber(0),
     });
