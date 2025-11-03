@@ -892,7 +892,7 @@ export async function verifyAmountsAndAcceptSwapForDifferentSeed(
   amount: string,
   errorMessage: string | null,
 ) {
-  if (errorMessage === null) {
+  if (errorMessage === null && isTouchDevice()) {
     await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
     await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
   } else {
