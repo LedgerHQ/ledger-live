@@ -107,15 +107,26 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.memo = op.details.memo as string;
   }
   const bnFees = new BigNumber(op.tx.fees.toString());
+  const hasFailed = op.details?.status === "failed";
+
+  let value: BigNumber;
+  if (hasFailed) {
+    value = bnFees;
+  } else if (
+    op.asset.type === "native" &&
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+  ) {
+    value = new BigNumber(op.value.toString()).plus(bnFees);
+  } else {
+    value = new BigNumber(op.value.toString());
+  }
+
   const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value:
-      op.asset.type === "native" && ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
-        ? new BigNumber(op.value.toString()).plus(bnFees)
-        : new BigNumber(op.value.toString()),
+    value,
     fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
@@ -123,7 +134,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     recipients: extra.parentRecipients ?? op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    hasFailed: op.details?.status === "failed",
+    hasFailed,
     extra,
   };
 
