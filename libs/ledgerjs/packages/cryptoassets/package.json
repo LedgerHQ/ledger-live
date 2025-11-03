@@ -37,9 +37,10 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
+    "@ledgerhq/logs": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
     "bs58check": "^2.1.2",
     "invariant": "2",
-    "@reduxjs/toolkit": "catalog:",
     "zod": "^3.22.4"
   },
   "devDependencies": {

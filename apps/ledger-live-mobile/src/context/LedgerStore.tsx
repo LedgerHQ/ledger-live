@@ -8,6 +8,7 @@ import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import {
   getAccounts,
   getCountervalues,
+  getCryptoAssetsCacheState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -28,6 +29,10 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
+import {
+  restoreTokensToCache,
+  PERSISTENCE_VERSION,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 interface Props {
   onInitFinished: () => void;
@@ -72,6 +77,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         protect,
         initialCountervalues,
         largeMoverState,
+        cryptoAssetsCache,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -85,6 +91,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+        retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -161,6 +168,20 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeMoverState) {
         store.dispatch(importLargeMoverState(largeMoverState));
+      }
+
+      // Hydrate persisted crypto assets tokens
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      // Check version and restore tokens
+      if (cryptoAssetsCache?.tokens) {
+        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
+          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+          restoreTokensToCache(store.dispatch, cryptoAssetsCache.tokens, TOKEN_CACHE_TTL);
+        } else {
+          console.warn(
+            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
+          );
+        }
       }
 
       setInitialCountervalues(initialCountervalues);

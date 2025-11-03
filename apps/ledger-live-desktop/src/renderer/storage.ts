@@ -61,6 +61,7 @@ type DatabaseValues = {
   trustchain: TrustchainStore;
   wallet: ExportedWalletState;
   market: Market;
+  cryptoAssets: import("@ledgerhq/cryptoassets/cal-client/persistence").PersistedTokens;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

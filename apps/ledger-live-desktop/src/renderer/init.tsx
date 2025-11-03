@@ -19,12 +19,13 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
-import { hydrateCurrency, prepareCurrency } from "~/renderer/bridge/cache";
+import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
-  getCryptoCurrencyById,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+  restoreTokensToCache,
+  PERSISTENCE_VERSION,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
@@ -120,7 +121,29 @@ async function init() {
 
   setupCryptoAssetsStore(store);
 
+  // Hydrate persisted crypto assets tokens from app.json
+  // Cross-caching is automatic: tokens are cached under both ID and address lookups
+  try {
+    const persistedData = await getKey("app", "cryptoAssets");
+
+    console.log({ persistedData });
+    // Check version and restore tokens
+    if (persistedData?.tokens) {
+      if (persistedData.version === PERSISTENCE_VERSION) {
+        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+        restoreTokensToCache(store.dispatch, persistedData.tokens, TOKEN_CACHE_TTL);
+      } else {
+        logger.warn(
+          `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
+        );
+      }
+    }
+  } catch (error) {
+    logger.error("Failed to load crypto assets tokens from app.json:", error);
+  }
+
   if (getEnv("PLAYWRIGHT_RUN")) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
   sentry(() => sentryLogsSelector(store.getState()));
@@ -173,11 +196,6 @@ async function init() {
   if (accountData) {
     const e = initAccounts(accountData);
     store.dispatch(e);
-
-    // preload currency that's not in accounts list
-    if (e.payload.accounts.some(a => a.currency.id !== "ethereum")) {
-      prepareCurrency(getCryptoCurrencyById("ethereum"));
-    }
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
@@ -219,7 +237,8 @@ async function init() {
   window.addEventListener("click", () => {
     if (isGlobalTabEnabled()) disableGlobalTab();
   });
-  window.addEventListener("beforeunload", async () => {
+
+  window.addEventListener("beforeunload", () => {
     // This event is triggered when we reload the app, we want it to forget what it knows
     reload();
   });
