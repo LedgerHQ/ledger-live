@@ -125,36 +125,34 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     errorSteps.push(0);
   }
 
-  const stepperProps = {
-    title: <Trans i18nKey="mina.selectValidator.title" />,
-    device,
-    account,
-    transaction,
-    signed,
-    stepId,
-    steps,
-    errorSteps,
-    disabledSteps: [],
-    hideBreadcrumb: !!error && ["validator"].includes(stepId),
-    onRetry: handleRetry,
-    onStepChange: handleStepChange,
-    onClose,
-    error,
-    status,
-    optimisticOperation,
-    openModal,
-    setSigned,
-    onChangeTransaction: setTransaction,
-    onUpdateTransaction: updateTransaction,
-    onOperationBroadcasted: handleOperationBroadcasted,
-    onTransactionError: handleTransactionError,
-    t,
-    bridgePending,
-    source,
-  };
-
   return (
-    <Stepper {...stepperProps}>
+    <Stepper
+      title={<Trans i18nKey="mina.selectValidator.title" />}
+      device={device}
+      account={account}
+      transaction={transaction}
+      signed={signed}
+      stepId={stepId}
+      steps={steps}
+      errorSteps={errorSteps}
+      disabledSteps={[]}
+      hideBreadcrumb={!!error && ["validator"].includes(stepId)}
+      onRetry={handleRetry}
+      onStepChange={handleStepChange}
+      onClose={onClose}
+      error={error}
+      status={status}
+      optimisticOperation={optimisticOperation}
+      openModal={openModal}
+      setSigned={setSigned}
+      onChangeTransaction={setTransaction}
+      onUpdateTransaction={updateTransaction}
+      onOperationBroadcasted={handleOperationBroadcasted}
+      onTransactionError={handleTransactionError}
+      t={t}
+      bridgePending={bridgePending}
+      source={source}
+    >
       <SyncSkipUnderPriority priority={100} />
       <Track onUnmount event="CloseModalStake" />
     </Stepper>
