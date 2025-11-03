@@ -131,6 +131,7 @@ describe("listOperations", () => {
             },
             fees: 20n,
             date: new Date("2025-02-12"),
+            failed: false,
           },
           details: { status: "success", sequence: BigNumber(1) },
         },
@@ -149,6 +150,7 @@ describe("listOperations", () => {
             },
             fees: 20n,
             date: new Date("2025-02-20"),
+            failed: true,
           },
           details: { status: "failed", sequence: BigNumber(2) },
         },
@@ -167,6 +169,7 @@ describe("listOperations", () => {
             },
             fees: 20n,
             date: new Date("2025-02-20"),
+            failed: false,
           },
           details: {
             ledgerOpType: "OUT",
@@ -198,6 +201,7 @@ describe("listOperations", () => {
             },
             date: new Date("2025-02-20"),
             fees: 20n,
+            failed: false,
           },
           details: {
             assetAmount: "2",
