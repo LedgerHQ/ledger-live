@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { PsbtV2 } from "@ledgerhq/hw-app-btc/newops/psbtv2";
 // NOTE: could exist in hw-app-btc and only export the feeFromPsbtBase64 fn from there
 
 /** normalize possible inputs: base64 (with whitespace/URL-safe), or raw hex */
@@ -54,20 +55,6 @@ export function feeFromPsbtBase64(psbtStr: string): BigNumber | null {
   }
 
   try {
-    // Load PsbtV2 from the source (monorepo tests) or the built path
-    // Adjust these paths if your jest/tsconfig mapping differs.
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const trySrc = () => require("@ledgerhq/hw-app-btc/src/newops/psbtv2");
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const tryBuilt = () => require("@ledgerhq/hw-app-btc/newops/psbtv2");
-    const { PsbtV2 } = (() => {
-      try {
-        return trySrc();
-      } catch {
-        return tryBuilt();
-      }
-    })();
-
     const psbt = new PsbtV2();
     psbt.deserialize(buf);
 
