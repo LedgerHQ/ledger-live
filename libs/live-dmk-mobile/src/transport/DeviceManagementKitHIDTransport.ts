@@ -139,16 +139,12 @@ export class DeviceManagementKitHIDTransport extends Transport {
         error: err => {
           tracer.trace("[listen] error", err);
           observer.error(err);
-          if (availableSubscription) {
-            availableSubscription.unsubscribe();
-          }
+          availableSubscription?.unsubscribe();
         },
       });
 
     const unsubscribe = () => {
-      if (availableSubscription && !availableSubscription.closed) {
-        availableSubscription.unsubscribe();
-      }
+      availableSubscription?.unsubscribe();
     };
 
     return {
