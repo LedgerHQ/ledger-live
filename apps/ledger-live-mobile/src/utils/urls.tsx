@@ -243,6 +243,7 @@ export const urls = {
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
+    evmAddressVerification: "https://ledger.com/e14",
   },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",

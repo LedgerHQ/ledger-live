@@ -30,14 +30,14 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
   };
 };
 
-export const getTokenCurrencyFromCAL = (
+export const getTokenCurrencyFromCALByIndex = (
   index: number,
   overrides?: Partial<TokenCurrency>,
 ): TokenCurrency => {
   const hedera = getCryptoCurrencyById("hedera");
   const token = listTokensForCryptoCurrency(hedera)[index];
 
-  invariant(token, `token not found in CAL list on ${index} position`);
+  invariant(token, `token not found in CAL on ${index} position`);
 
   return {
     ...token,
@@ -45,19 +45,54 @@ export const getTokenCurrencyFromCAL = (
   };
 };
 
-export const getMockedTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
+export const getTokenCurrencyFromCALByType = (
+  type: "hts" | "erc20",
+  overrides?: Partial<TokenCurrency>,
+): TokenCurrency => {
+  const hedera = getCryptoCurrencyById("hedera");
+  const token = listTokensForCryptoCurrency(hedera).find(t => t.tokenType === type);
+
+  invariant(token, `token of type ${type} not found in CAL`);
+
   return {
-    id: "hedera/hts/test_0.0.1234567",
+    ...token,
+    ...overrides,
+  };
+};
+
+export const getMockedHTSTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
+  return {
+    id: "hedera/hts/test1_0.0.1234567",
     contractAddress: "0.0.1001",
     parentCurrency: getMockedCurrency(),
     tokenType: "hts",
-    name: "Test token",
-    ticker: "TEST",
+    name: "Test HTS token",
+    ticker: "TEST1",
     type: "TokenCurrency",
     units: [
       {
-        name: "Test",
-        code: "TEST",
+        name: "Test HTS",
+        code: "TEST1",
+        magnitude: 8,
+      },
+    ],
+    ...overrides,
+  };
+};
+
+export const getMockedERC20TokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
+  return {
+    id: "hedera/erc20/_0x915fe7c00730c08708581e30e27d9c0605be40bd",
+    contractAddress: "0x915fe7c00730c08708581e30e27d9c0605be40bd",
+    parentCurrency: getMockedCurrency(),
+    tokenType: "erc20",
+    name: "Test ERC20 token",
+    ticker: "TEST2",
+    type: "TokenCurrency",
+    units: [
+      {
+        name: "Test ERC20",
+        code: "TEST2",
         magnitude: 8,
       },
     ],
