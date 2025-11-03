@@ -97,6 +97,7 @@
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
+    "test-integ": "jest --config=jest.integ.config.js",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
