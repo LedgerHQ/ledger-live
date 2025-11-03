@@ -9,7 +9,7 @@ const chainNames = new Map<number, string>();
 
 export const importTokenByChainId = async (outputDir: string, chainId: number) => {
   try {
-    console.log(`importing chain with chainId: ${chainId}...`);
+    console.log(`importing chain with chainId:importers evm ${chainId}...`);
     const { tokens, hash } = await fetchTokensFromCALService(
       {
         chainId,
