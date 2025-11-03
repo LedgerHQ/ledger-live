@@ -140,7 +140,7 @@ export class Currency {
   static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
-  static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
+  static readonly ALGO_USDT = new Currency("Tether USD", "USDT", "algorand", AppInfos.ALGORAND, [
     Network.ALGORAND,
   ]);
   static readonly TRX_USDT = new Currency("Tether USD", "USDT", "tron", AppInfos.TRON, [
