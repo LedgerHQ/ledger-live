@@ -7,5 +7,5 @@
   ],
   "ignorePatterns": ["src/data/**/*.ts", "src/**/*.test.ts"],
   "ignoreUnimported": ["src/data/**", "src/**/*.test.ts", "src/cal-client/**", "src/legacy/legacy-data.ts"],
-  "ignoreUnused": ["zod", "@reduxjs/toolkit"]
+  "ignoreUnused": ["zod", "@reduxjs/toolkit", "@ledgerhq/logs"]
 }

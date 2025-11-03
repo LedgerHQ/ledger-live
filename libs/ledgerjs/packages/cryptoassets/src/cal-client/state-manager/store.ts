@@ -7,8 +7,8 @@ import { CryptoAssetsApi } from "./api";
  * The persistent caching is handled internally by the API's custom baseQuery.
  */
 export class RtkCryptoAssetsStore implements CryptoAssetsStore {
-  private api: CryptoAssetsApi;
-  private dispatch: <T>(action: T) => Promise<any>;
+  private readonly api: CryptoAssetsApi;
+  private readonly dispatch: <T>(action: T) => Promise<any>;
 
   constructor(api: CryptoAssetsApi, dispatch: <T>(action: T) => Promise<any>) {
     this.api = api;
@@ -16,9 +16,7 @@ export class RtkCryptoAssetsStore implements CryptoAssetsStore {
   }
 
   async findTokenById(id: string): Promise<TokenCurrency | undefined> {
-    const result = await this.dispatch(
-      this.api.endpoints.findTokenById.initiate({ id }, { forceRefetch: true }),
-    );
+    const result = await this.dispatch(this.api.endpoints.findTokenById.initiate({ id }));
 
     if (result.error) throw result.error;
     return result.data;
@@ -29,13 +27,10 @@ export class RtkCryptoAssetsStore implements CryptoAssetsStore {
     currencyId: string,
   ): Promise<TokenCurrency | undefined> {
     const result = await this.dispatch(
-      this.api.endpoints.findTokenByAddressInCurrency.initiate(
-        {
-          contract_address: address,
-          network: currencyId,
-        },
-        { forceRefetch: true },
-      ),
+      this.api.endpoints.findTokenByAddressInCurrency.initiate({
+        contract_address: address,
+        network: currencyId,
+      }),
     );
 
     if (result.error) throw result.error;
@@ -43,9 +38,7 @@ export class RtkCryptoAssetsStore implements CryptoAssetsStore {
   }
 
   async getTokensSyncHash(currencyId: string): Promise<string> {
-    const result = await this.dispatch(
-      this.api.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: true }),
-    );
+    const result = await this.dispatch(this.api.endpoints.getTokensSyncHash.initiate(currencyId));
     if (result.error) throw result.error;
     return result.data;
   }
