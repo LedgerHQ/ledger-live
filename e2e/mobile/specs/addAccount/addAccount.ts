@@ -18,16 +18,29 @@ export function runAddAccountTest(
     tags.forEach(tag => $Tag(tag));
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
+
+      const isModularDrawer = await app.modularDrawer.isModularDrawerVisible();
+      await app.common.disableSynchronizationForiOS();
       await app.addAccount.importWithYourLedger();
-      await app.common.performSearch(currency.name);
-      await app.receive.selectCurrency(currency.id);
-      await app.receive.selectNetworkIfAsked(currency.id);
+
+      if (isModularDrawer) {
+        await app.modularDrawer.performSearchByTicker(currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+        await app.modularDrawer.selectNetworkIfAsked(currency.name);
+      } else {
+        await app.common.performSearch(currency.id);
+        await app.receive.selectCurrency(currency.id);
+        await app.receive.selectNetworkIfAsked(currency.id);
+      }
+
+      await app.common.enableSynchronization();
 
       const accountId = await app.addAccount.addAccountAtIndex(
         `${currency.name} 1`,
         currency.id,
         0,
       );
+
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.name);

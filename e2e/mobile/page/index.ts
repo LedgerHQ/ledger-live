@@ -27,6 +27,7 @@ import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnDashboardPage from "./trade/earnDasboard.page";
+import ModularDrawer from "./drawer/modular.drawer";
 
 import path from "path";
 import fs from "fs";
@@ -80,6 +81,7 @@ export class Application {
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private earnDashboardPageInstance = lazyInit(EarnDashboardPage);
+  private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -207,5 +209,9 @@ export class Application {
 
   public get earnDashboard() {
     return this.earnDashboardPageInstance();
+  }
+
+  public get modularDrawer() {
+    return this.modularDrawerPageInstance();
   }
 }

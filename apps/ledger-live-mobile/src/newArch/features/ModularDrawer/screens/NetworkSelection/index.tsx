@@ -113,6 +113,7 @@ const NetworkSelection = ({
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
         }}
+        testID="network-selection-scrollView"
       />
     </Flex>
   );

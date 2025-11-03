@@ -67,6 +67,7 @@ export const AssetItem = ({
         backgroundColor: String(tokens["colors-surface-transparent-default"]),
         opacity: pressed ? 0.7 : 1,
       })}
+      testID={`asset-item-${ticker}`}
     >
       <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper>

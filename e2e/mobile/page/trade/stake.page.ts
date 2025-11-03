@@ -5,6 +5,8 @@ export default class StakePage {
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
 
+  madSearchBarId = "modular-drawer-search-input";
+
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;
   delegationSummaryValidator = (currencyId: string) =>
@@ -104,7 +106,17 @@ export default class StakePage {
 
   @Step("Verify choose asset page is visible")
   async verifyChooseAssetPage() {
-    await waitForElementById(this.selectAssetTitle);
-    await detoxExpect(app.common.searchBar()).toBeVisible();
+    // Faire un methode pour detecter le mad
+    const isModularDrawer = true;
+    if (isModularDrawer) {
+      console.log("MAD");
+      await app.common.disableSynchronizationForiOS();
+      await waitForElementById(this.madSearchBarId);
+      await detoxExpect(getElementById(this.madSearchBarId)).toBeVisible();
+    } else {
+      console.log("NOT MAD");
+      await waitForElementById(this.selectAssetTitle);
+      await detoxExpect(app.common.searchBar()).toBeVisible();
+    }
   }
 }
