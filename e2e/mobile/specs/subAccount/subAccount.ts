@@ -176,21 +176,37 @@ export function runAddSubAccountTest(
             await app.portfolio.addAccount();
           }
 
-          await app.addAccount.importWithYourLedger();
-          await app.common.performSearch(
-            asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-          );
-          if (asset.tokenType) {
-            await app.receive.selectCurrencyByType(asset.tokenType);
+          const isModularDrawer = true;
+
+          if (isModularDrawer) {
+            await app.common.disableSynchronizationForiOS();
+            await app.addAccount.importWithYourLedger();
+            await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+            await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+            const networkName =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name
+                : asset?.parentAccount?.currency.name;
+            console.log("networkName: ", networkName);
+            await app.modularDrawer.selectNetworkIfAsked(networkName);
           } else {
-            await app.receive.selectCurrency(asset.currency.id);
+            await app.addAccount.importWithYourLedger();
+            await app.common.performSearch(
+              asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
+            );
+            if (asset.tokenType) {
+              await app.receive.selectCurrencyByType(asset.tokenType);
+            } else {
+              await app.receive.selectCurrency(asset.currency.id);
+            }
+            const networkId =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name.toLowerCase()
+                : asset?.parentAccount?.currency.id;
+            await app.receive.selectNetworkIfAsked(networkId);
           }
 
-          const networkId =
-            asset?.parentAccount === undefined
-              ? asset.currency.speculosApp.name.toLowerCase()
-              : asset?.parentAccount?.currency.id;
-          await app.receive.selectNetworkIfAsked(networkId);
+          await app.common.enableSynchronization();
 
           const accountId = await app.addAccount.addAccountAtIndex(
             asset?.parentAccount === undefined

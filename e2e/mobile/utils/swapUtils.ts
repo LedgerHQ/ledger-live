@@ -3,6 +3,8 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
 
+  await app.common.disableSynchronizationForiOS();
+
   if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
@@ -11,9 +13,13 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-  await app.common.performSearch(account.currency.name);
-  await app.stake.selectCurrency(account.currency.id);
-  await app.common.selectFirstAccount();
+  if (await app.modularDrawer.isModularDrawerVisible()) {
+    await app.modularDrawer.selectAsset(account);
+  } else {
+    await app.common.performSearch(account.currency.id);
+    await app.stake.selectCurrency(account.currency.id);
+    await app.common.selectFirstAccount();
+  }
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 

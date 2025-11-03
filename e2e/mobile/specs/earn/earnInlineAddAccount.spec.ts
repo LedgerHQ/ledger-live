@@ -7,3 +7,4 @@ const testConfig = {
 };
 
 runInlineAddAccountTest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+//pas ok

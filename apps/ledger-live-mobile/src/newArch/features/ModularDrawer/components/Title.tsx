@@ -19,7 +19,7 @@ export const Title = ({ step }: Props) => {
 
   return (
     <TitleContainer>
-      <TitleText>{t(TranslationKeyMap[step])}</TitleText>
+      <TitleText testID={`modular-drawer-${step}-title`}>{t(TranslationKeyMap[step])}</TitleText>
     </TitleContainer>
   );
 };
