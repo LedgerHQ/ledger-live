@@ -6,11 +6,11 @@ import type {
   HederaResourcesRaw,
 } from "../../types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { getMockedCurrency, getMockedTokenCurrency } from "./currency.fixture";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const defaultMockedCurrency = getMockedCurrency();
-const defaultMockedTokenCurrency = getMockedTokenCurrency();
+const defaultMockedTokenCurrency = getMockedHTSTokenCurrency();
 const defaultMockAccountId = "js:2:hedera:0.0.1234567:hederaBip44";
 const defaultMockTokenAccountId = `${defaultMockAccountId}+${defaultMockedTokenCurrency.id}`;
 const defaultBalance = new BigNumber(100000000);

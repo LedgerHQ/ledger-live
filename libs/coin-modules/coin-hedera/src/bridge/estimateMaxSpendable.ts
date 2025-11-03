@@ -18,11 +18,11 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     return Promise.resolve(balance);
   }
 
-  const estimatedFees = await estimateFees(
-    mainAccount.currency,
-    HEDERA_OPERATION_TYPES.CryptoTransfer,
-  );
-  let maxSpendable = balance.minus(estimatedFees);
+  const estimatedFees = await estimateFees({
+    currency: mainAccount.currency,
+    operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+  });
+  let maxSpendable = balance.minus(estimatedFees.tinybars);
 
   // set max spendable to 0 if negative
   // for cases where the user's account balance is smaller than the estimated fee
