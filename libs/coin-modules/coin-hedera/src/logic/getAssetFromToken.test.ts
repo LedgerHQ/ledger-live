@@ -1,10 +1,10 @@
 import { getAssetFromToken } from "./getAssetFromToken";
-import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 
 describe("getAssetFromToken", () => {
   it("returns asset from TEST token", () => {
     const owner = "owner";
-    const token = getMockedTokenCurrency({
+    const token = getMockedHTSTokenCurrency({
       contractAddress: "0.0.1234567",
       name: "TEST",
       units: [

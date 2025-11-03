@@ -1,6 +1,7 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
 import type { TokenUnit } from "./cal-client/entities";
+import { HEDERA_ERC20_OVERRIDES } from "./overrides";
 
 export interface ApiTokenData {
   id: string;
@@ -54,6 +55,7 @@ export function legacyIdToApiId(legacyId: string): string {
  * - Cardano: Reconstructs contractAddress from policyId + tokenIdentifier [LIVE-22559]
  * - Sui: Transforms tokenType from "coin" to "sui" [LIVE-22560]
  * - TON Jetton: Removes name prefix from ID (ton/jetton/name_address → ton/jetton/address) [LIVE-22561]
+ * - Hedera: Overrides contractAddress and standard for erc20 tokens [LIVE-22366]
  *
  * @param apiToken - Token data from backend API
  * @returns TokenCurrency object in Ledger Live format, or undefined if parent currency not found
@@ -114,6 +116,15 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     const parts = patchedId.split("_");
     if (parts.length === 2) {
       patchedId = "ton/jetton/" + parts[1];
+    }
+  }
+
+  // LIVE-22366: Hedera ERC20 - transform standard and address
+  if (patchedId.startsWith("hedera/")) {
+    const override = HEDERA_ERC20_OVERRIDES[contractAddress];
+    if (override?.contractAddress) {
+      patchedContractAddress = override.contractAddress;
+      patchedStandard = "erc20";
     }
   }
 
