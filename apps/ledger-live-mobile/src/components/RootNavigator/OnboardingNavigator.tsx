@@ -37,7 +37,6 @@ import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setu
 import OnboardingGeneralInformation from "~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
 import OnboardingBluetoothInformation from "~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
 import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
-import GetDeviceScreen from "~/screens/GetDeviceScreen";
 import OnboardingProtectFlow from "~/screens/Onboarding/steps/protectFlow";
 
 import {
@@ -134,11 +133,6 @@ export default function OnboardingNavigator() {
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
-      />
-      <Stack.Screen
-        name={ScreenName.GetDevice}
-        component={GetDeviceScreen}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingLanguage}
