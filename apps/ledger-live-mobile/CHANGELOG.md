@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.97.0-next.2
+
+### Minor Changes
+
+- [#12606](https://github.com/LedgerHQ/ledger-live/pull/12606) [`24b811c`](https://github.com/LedgerHQ/ledger-live/commit/24b811cb70f00b3d08457e04d625b7df5978ac22) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add popToTop property to NavigationHeaderCloseButtonAdvanced in add account
+
 ## 3.97.0-next.1
 
 ### Minor Changes
