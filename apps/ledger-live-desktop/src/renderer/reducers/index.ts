@@ -18,7 +18,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 import onboarding, { OnboardingState } from "./onboarding";
-import { lldRTKApiReducers, LLDRTKApiState } from "./rtkApi";
+import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;

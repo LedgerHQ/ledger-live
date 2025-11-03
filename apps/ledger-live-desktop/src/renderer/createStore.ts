@@ -1,7 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
-import { lldRTKApiMiddlewares } from "./reducers/rtkApi";
+import { lldRTKApiMiddlewares } from "./reducers/rtkQueryApi";
 
 type Props = {
   state?: State;

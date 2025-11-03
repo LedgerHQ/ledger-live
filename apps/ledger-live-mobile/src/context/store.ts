@@ -3,7 +3,7 @@ import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
-import { applyLlmRTKApiMiddlewares } from "./rtkApi";
+import { applyLlmRTKApiMiddlewares } from "./rtkQueryApi";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({

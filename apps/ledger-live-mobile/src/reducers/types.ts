@@ -33,7 +33,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { LLMRTKApiState } from "~/context/rtkApi";
+import { LLMRTKApiState } from "~/context/rtkQueryApi";
 
 // === ACCOUNT STATE ===
 

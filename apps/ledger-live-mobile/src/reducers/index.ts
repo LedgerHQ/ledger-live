@@ -1,6 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { combineReducers, Store } from "redux";
-import { llmRTKApiReducers } from "~/context/rtkApi";
+import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
 import appstate from "./appstate";
