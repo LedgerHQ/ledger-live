@@ -13,7 +13,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/ind
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-// Mock findTokenById and listTokensForCryptoCurrency
+// Mock findTokenById
 jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
   findTokenById: async (coinType: string) => ({
     id: coinType,
@@ -25,7 +25,6 @@ jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
     parentCurrency: { id: "sui" },
     contract: "0x123",
   }),
-  listTokensForCryptoCurrency: () => [{ id: "0x123::sui::TEST" }],
 }));
 
 jest.mock("../network", () => {
