@@ -342,6 +342,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     await waitForExplorerSync();
   },
   afterAll: async account => {
+    await waitForExplorerSync();
     expect(account.operations.length).toBeGreaterThanOrEqual(14);
   },
   beforeEach: async () => {
