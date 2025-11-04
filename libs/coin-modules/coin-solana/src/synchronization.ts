@@ -174,6 +174,8 @@ function toAssociatedTokenAccount(
 const tokenAccountIsNFT = (tokenAccount: ParsedOnChainTokenAccountWithInfo) => {
   return (
     tokenAccount &&
+    // amount could be above 1 if it was minted again
+    // should we also support/allow them ?
     tokenAccount.info.tokenAmount.uiAmount === 1 &&
     tokenAccount.info.tokenAmount.decimals === 0
   );
@@ -340,36 +342,19 @@ export const getAccountShapeWithAPI = async (
   const lastOpSeqNumber = Number(mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0);
   const newOpsCount = newMainAccTxs.length;
 
-  const prevOps = mainInitialAcc?.operations ?? [];
-  const prevByHash = new Map(prevOps.map(o => [o.hash, o]));
-  const prevHashes = new Set(prevByHash.keys());
-
-  const dedupedMainAccTxs = newMainAccTxs.filter(tx => !prevHashes.has(tx.info.signature));
-
-  const newMainAccOpsUnstabilized = dedupedMainAccTxs
+  const newMainAccOps = newMainAccTxs
     .map((tx, i) =>
       txToMainAccOperation(
         tx,
         mainAccountId,
         mainAccAddress,
-        // transactions are ordered by date (0th = most recent)
-        lastOpSeqNumber + dedupedMainAccTxs.length - i,
+        // transactions are ordered by date (0'th - most recent tx)
+        lastOpSeqNumber + newOpsCount - i,
       ),
     )
     .filter((op): op is Operation => op !== undefined);
 
-  // prefer richer classification when we only have new ops, never downgrade existing ones
-  const newMainAccOps = stabiliseOpsByHash(prevOps, newMainAccOpsUnstabilized);
-
-  let mainAccTotalOperations: Operation[];
-  if (newMainAccOps.length === 0) {
-    // no new ops at all, return the exact previous array
-    mainAccTotalOperations = prevOps;
-  } else {
-    // merge and rehydrate, for existing hashes return the exact previous objects
-    const merged = mergeOps(prevOps, newMainAccOps);
-    mainAccTotalOperations = merged.map(op => prevByHash.get(op.hash) ?? op);
-  }
+  const mainAccTotalOperations = mergeOps(mainInitialAcc?.operations ?? [], newMainAccOps);
 
   const totalStakedBalance = sum(stakes.map(s => s.stakeAccBalance));
 
@@ -387,7 +372,8 @@ export const getAccountShapeWithAPI = async (
       s => s.activation.state === "active" || s.activation.state === "activating",
     );
 
-    // "active"/"activating" need deactivating + withdrawing; "inactive"/"deactivating" only withdrawing
+    // "active" and "activating" stakes require "deactivating" + "withdrawing" steps
+    // "inactive" and "deactivating" stakes require withdrawing only
     unstakeReserve = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
   }
 
@@ -396,6 +382,9 @@ export const getAccountShapeWithAPI = async (
     const isListed = await tokenIsListedOnLedger(currency.id, tokenAccount.info.mint.toBase58());
     if (!isListed && tokenAccountIsNFT(tokenAccount)) {
       const mint = tokenAccount.info.mint.toBase58();
+      // A fake tokenId is used as the mint address for the contract field with NMS
+      // because we don't have the collection with the node data
+      // We would need to fetch the metaplex metdata associated to this account
       const tokenId = "0";
       const id = encodeNftId(mainAccountId, tokenId, mint, currency.id);
       nextNfts.push({
@@ -507,20 +496,9 @@ async function patchedSubAcc({
 }): Promise<SolanaTokenAccount> {
   const balance = new BigNumber(assocTokenAcc.info.tokenAmount.amount);
 
-  const newOpsRaw = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, subAcc.id)));
+  const newOps = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, subAcc.id)));
 
-  // stabilise vs previous sub-account ops and rehydrate to preserve object refs
-  const stabilisedNewOps = stabiliseOpsByHash(subAcc.operations, newOpsRaw);
-  const prevByHash = new Map(subAcc.operations.map(o => [o.hash, o]));
-
-  let totalOps: Operation[];
-  if (stabilisedNewOps.length === 0) {
-    totalOps = subAcc.operations;
-  } else {
-    const merged = mergeOps(subAcc.operations, stabilisedNewOps);
-    totalOps = merged.map(op => prevByHash.get(op.hash) ?? op);
-  }
-
+  const totalOps = mergeOps(subAcc.operations, newOps);
   const extensions =
     mintExtensions || assocTokenAcc.info.extensions
       ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
@@ -623,54 +601,25 @@ function txToMainAccOperation(
   const isFeePayer = accountIndex === 0;
   const txFee = new BigNumber(tx.parsed.meta.fee);
 
-  let opType = getMainAccOperationType({
+  const opType = getMainAccOperationType({
     tx: tx.parsed.transaction,
     fee: txFee,
     isFeePayer,
     balanceDelta,
   });
 
-  let { senders, recipients } = getMainSendersRecipients(tx, opType, txFee, accountAddress);
+  const { senders, recipients } = getMainSendersRecipients(tx, opType, txFee, accountAddress);
 
   const txHash = tx.info.signature;
   const txDate = new Date(tx.info.blockTime * 1000);
 
   const opFee = isFeePayer ? txFee : new BigNumber(0);
-  let opValue = getOpValue(balanceDelta, opFee, opType);
-
-  // deterministic fallback for system transfers with 0 delta
-  if (opType === "NONE" && opValue.isZero() && senders.length === 0 && recipients.length === 0) {
-    const parsedIxs = parseTxInstructions(tx.parsed.transaction);
-    const sysXfer =
-      parsedIxs.find(ix => ix.program === "system" && ix.instruction?.type === "transfer") ||
-      parsedIxs.find(ix => ix.program === "system" && ix.instruction?.type === "transferWithSeed");
-
-    const info: any = sysXfer?.instruction?.info;
-    if (info && (typeof info.lamports === "number" || typeof info.lamports === "string")) {
-      const to58 = (k: any) => (typeof k?.toBase58 === "function" ? k.toBase58() : k);
-      const src = to58(info.source);
-      const dest = to58(info.destination);
-      const lamports = new BigNumber(info.lamports);
-
-      if (dest === accountAddress) {
-        opType = "IN";
-        senders = [src].filter(Boolean);
-        recipients = [accountAddress];
-        opValue = lamports; // IN never includes fees
-      } else if (src === accountAddress) {
-        opType = "OUT";
-        senders = [accountAddress];
-        recipients = [dest].filter(Boolean);
-        // OUT includes fees when we're the fee payer
-        opValue = isFeePayer ? lamports.plus(opFee) : lamports;
-      }
-    }
-  }
+  const opValue = getOpValue(balanceDelta, opFee, opType);
 
   return {
     id: encodeOperationId(accountId, txHash, opType),
     hash: txHash,
-    accountId,
+    accountId: accountId,
     hasFailed: !!tx.info.err,
     blockHeight: tx.info.slot,
     blockHash: message.recentBlockhash,
@@ -1021,30 +970,4 @@ function dropMemoLengthPrefixIfAny(memo: string) {
     }
   }
   return memo;
-}
-
-function stabiliseOpsByHash(prevOps: Operation[] = [], nextOps: Operation[] = []): Operation[] {
-  const prevByHash = new Map(prevOps.map(o => [o.hash, o]));
-
-  const strictlyBetter = (prev: Operation, next: Operation) => {
-    if (prev.type === "NONE" && next.type !== "NONE") return true;
-    if (
-      (!prev.senders?.length && next.senders?.length) ||
-      (!prev.recipients?.length && next.recipients?.length)
-    )
-      return true;
-    if (prev.value?.isZero?.() && next.value && !next.value.isZero()) return true;
-    if (prev.fee?.isZero?.() && next.fee && !next.fee.isZero()) return true;
-    return false;
-  };
-
-  return nextOps.map(next => {
-    const prev = prevByHash.get(next.hash);
-    if (!prev) return next; // brand-new tx
-    if (strictlyBetter(prev, next)) {
-      // accept upgrade but keep previous blockHash when available (RPCs may differ)
-      return { ...next, blockHash: prev.blockHash ?? next.blockHash };
-    }
-    return prev;
-  });
 }

@@ -57,9 +57,15 @@ catalogs:
     '@reduxjs/toolkit':
       specifier: 2.8.2
       version: 2.8.2
+    '@types/bs58':
+      specifier: ^4.0.1
+      version: 4.0.4
     axios:
       specifier: 1.12.2
       version: 1.12.2
+    bs58:
+      specifier: ^4.0.1
+      version: 4.0.1
     electron:
       specifier: 38.2.0
       version: 38.2.0
@@ -2494,7 +2500,7 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       bs58check:
         specifier: ^2.1.2
@@ -2534,7 +2540,7 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/bs58check':
         specifier: ^2.1.2
@@ -3921,7 +3927,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       expect:
         specifier: ^27.4.6
@@ -3961,7 +3967,7 @@ importers:
         specifier: 0.2.36
         version: 0.2.36(@swc/core@1.4.11)
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/invariant':
         specifier: ^2.2.2
@@ -5661,7 +5667,7 @@ importers:
         specifier: ^3.0.4
         version: 3.1.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       date-fns:
         specifier: ^2.23.0
@@ -5782,7 +5788,7 @@ importers:
         specifier: ^14.1.2
         version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/cbor':
         specifier: 6.0.0
@@ -6285,7 +6291,7 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       bs58check:
         specifier: ^2.1.2
@@ -8656,10 +8662,10 @@ importers:
         specifier: workspace:^
         version: link:../ledger-services/trust
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       rxjs:
         specifier: 7.8.1

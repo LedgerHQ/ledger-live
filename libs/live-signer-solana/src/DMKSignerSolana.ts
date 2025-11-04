@@ -12,6 +12,7 @@ import {
   GetAppConfigurationDAError,
   SignMessageDAError,
   SignTransactionDAError,
+  SignerSolana,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
@@ -27,8 +28,8 @@ export type DAError =
  * DMK-based Solana signer using DMK signer-kit
  */
 export class DMKSignerSolana implements SolanaSigner {
-  private dmkSigner: ReturnType<typeof SignerSolanaBuilder.prototype.build>;
-  private readonly DMKPubKeyDisplayMode = {
+  private dmkSigner: SignerSolana;
+  private readonly DMKPubKeyDisplayMode: { readonly long: string; readonly short: string } = {
     long: "long",
     short: "short",
   };
