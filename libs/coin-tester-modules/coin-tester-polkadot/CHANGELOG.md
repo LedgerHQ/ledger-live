@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.4.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`fd01486`](https://github.com/LedgerHQ/ledger-live/commit/fd01486fe2c92313c085a2a2ef1cdd249930b3fd)]:
+  - @ledgerhq/coin-polkadot@6.12.0-next.1
+
 ## 1.4.1-next.0
 
 ### Patch Changes

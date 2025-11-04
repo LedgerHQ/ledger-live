@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-polkadot": patch
+"@ledgerhq/coin-polkadot": minor
 "live-mobile": minor
 "ledger-live-desktop": minor
 ---

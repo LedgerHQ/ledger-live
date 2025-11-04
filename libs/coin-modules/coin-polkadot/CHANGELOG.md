@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.12.0-next.1
+
+### Minor Changes
+
+- [#12636](https://github.com/LedgerHQ/ledger-live/pull/12636) [`fd01486`](https://github.com/LedgerHQ/ledger-live/commit/fd01486fe2c92313c085a2a2ef1cdd249930b3fd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Assethub fix
+
 ## 6.12.0-next.0
 
 ### Minor Changes

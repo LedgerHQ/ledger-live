@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.97.0-next.4
+
+### Minor Changes
+
+- [#12636](https://github.com/LedgerHQ/ledger-live/pull/12636) [`fd01486`](https://github.com/LedgerHQ/ledger-live/commit/fd01486fe2c92313c085a2a2ef1cdd249930b3fd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Assethub fix
+
 ## 3.97.0-next.3
 
 ### Minor Changes
