@@ -16,6 +16,8 @@ permissions:
 jobs:
   scan:
     name: Scan LLM && LLD & Libs
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +28,7 @@ jobs:
         id: caches
         with:
           skip-turbo-cache: "false"
+          install-proto: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
