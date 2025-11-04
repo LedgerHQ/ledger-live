@@ -1,5 +1,5 @@
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getStablecoinYieldSetting, getBitcoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
@@ -162,6 +162,7 @@ const getPtxAttributes = () => {
       ? Object.keys(stakePrograms.params.redirects)
       : "flag not loaded";
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
@@ -170,6 +171,7 @@ const getPtxAttributes = () => {
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
     stablecoinYield,
+    bitcoinYield,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };

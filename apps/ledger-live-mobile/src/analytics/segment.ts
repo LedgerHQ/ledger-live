@@ -19,7 +19,7 @@ import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getStablecoinYieldSetting, getBitcoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
@@ -115,6 +115,7 @@ const getFeatureFlagProperties = () => {
         : "flag not loaded";
 
     const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+    const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
@@ -123,6 +124,7 @@ const getFeatureFlagProperties = () => {
       stakingProvidersEnabled,
       ptxCard: ptxCard?.enabled,
       stablecoinYield,
+      bitcoinYield,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
@@ -281,6 +283,7 @@ const extraProperties = async (store: AppStore) => {
       : [];
 
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -331,6 +334,7 @@ const extraProperties = async (store: AppStore) => {
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     stablecoinYield,
+    bitcoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
