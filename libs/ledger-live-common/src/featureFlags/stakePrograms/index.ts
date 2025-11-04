@@ -29,7 +29,7 @@ export const getStablecoinYieldSetting = (
   return !usdtProvider ? "inactive" : usdtProvider === "earn" ? "api" : "dapp";
 };
 
-type BitcoinYield = "deposit_screen" | "dApp" | "inactive";
+type BitcoinYield = "deposit_screen" | "inactive";
 
 export const getBitcoinYieldSetting = (
   stakePrograms: Feature_StakePrograms | null,
@@ -40,5 +40,5 @@ export const getBitcoinYieldSetting = (
       ? undefined
       : stakePrograms?.params?.redirects["bitcoin"]?.platform;
 
-  return !bitcoinProvider ? "inactive" : bitcoinProvider === "earn" ? "deposit_screen" : "dApp";
+  return bitcoinProvider === "earn" ? "deposit_screen" : "inactive";
 };
