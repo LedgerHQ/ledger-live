@@ -12,7 +12,7 @@ export function AppGeoBlocker({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoading) return;
-    window.api?.appLoaded();
+    globalThis.api?.appLoaded();
   }, [isLoading]);
 
   const localizedLearnMoreUrl = useLocalizedUrl(urls.geoBlock.learnMore);
