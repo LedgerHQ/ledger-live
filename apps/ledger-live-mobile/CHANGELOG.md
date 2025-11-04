@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.97.0-next.3
+
+### Minor Changes
+
+- [#12629](https://github.com/LedgerHQ/ledger-live/pull/12629) [`936b599`](https://github.com/LedgerHQ/ledger-live/commit/936b599c14699c109dc345b226bb74be13762f94) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: passing new drawer ff to swap live app
+
 ## 3.97.0-next.2
 
 ### Minor Changes
