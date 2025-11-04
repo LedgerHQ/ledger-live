@@ -151,18 +151,17 @@ jobs:
           SKIP_JS_BUNDLING: true
 
       - name: Upload Detox Native Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           path: |
-            ${{ env.ANDROID_APK_PATH }}
-            ${{ env.ANDROID_TESTBINARY_PATH }}
+            ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
+            ${{ github.workspace }}/${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ inputs.android-native-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
   build-android-js:
     name: "Android Build JS"
@@ -224,16 +223,15 @@ jobs:
           echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
-          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
+          path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
   skip-android-js:
     name: "Android Build JS - Skip"
