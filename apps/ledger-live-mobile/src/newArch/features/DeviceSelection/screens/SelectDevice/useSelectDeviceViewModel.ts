@@ -40,23 +40,17 @@ export default function useSelectDeviceViewModel(
     (meta: AppResult) => {
       setDevice(null);
 
-      const { inline } = route.params;
       const params = {
         ...route.params,
         ...meta,
         context,
         sourceScreenName: ScreenName.SelectDevice,
       };
-      if (inline) {
-        navigation.replace(NavigatorName.AddAccounts, {
-          screen: ScreenName.ScanDeviceAccounts,
-          params,
-        });
-      } else
-        navigation.navigate(NavigatorName.AddAccounts, {
-          screen: ScreenName.ScanDeviceAccounts,
-          params,
-        });
+
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.ScanDeviceAccounts,
+        params,
+      });
     },
     [navigation, route, context],
   );
