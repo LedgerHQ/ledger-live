@@ -19,8 +19,6 @@ import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
-import { setShouldSkipTokenLoading } from "@ledgerhq/coin-solana/preload";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
 
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) =>
@@ -29,13 +27,6 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) =>
 const getCurrencyConfig = () => {
   return getCurrencyConfiguration<SolanaCoinConfig>(getCryptoCurrencyById("solana"));
 };
-
-try {
-  const isCALLazyLoadingEnabled = LiveConfig.getValueByKey("feature_cal_lazy_loading");
-  setShouldSkipTokenLoading(Boolean(isCALLazyLoadingEnabled));
-} catch (error) {
-  setShouldSkipTokenLoading(false);
-}
 
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
