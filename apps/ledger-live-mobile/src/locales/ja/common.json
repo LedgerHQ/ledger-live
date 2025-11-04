@@ -1285,7 +1285,7 @@
     "open" : "アプリの許可設定を開く",
     "authorize" : "許可する",
     "bluetooth" : {
-      "modalTitle" : "BluetoothでLedgerをペアリングするために必要な許可",
+      "modalTitle" : "BluetoothでLedgerをペアリングするために許可が必要です",
       "modalDescriptionBase" : "LedgerをBluetoothでペアリングするには、Ledger Walletが近くのデバイスをスキャンするのを許可する必要があります。",
       "modalDescriptionSettingsVariant" : "BluetoothでLedgerをペアリングするには、スマートフォンの設定でLedger Walletによる近くのデバイススキャンを許可する必要があります。",
       "modalButtonLabelBase" : "許可する",
@@ -1506,7 +1506,7 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "大切な資産。正しく管理しましょう。",
+      "title" : "大切な資産を正しく管理",
       "desc" : "暗号資産を自分自身で管理して、主導権を握り自由への一歩を踏み出しましょう。"
     },
     "1" : {
@@ -1524,13 +1524,13 @@
     "title" : "Ledgerが必要です",
     "desc" : "セキュリティ上の理由から、\nLedger WalletはLedgerデバイスでのみ動作します。",
     "cta" : "Ledgerを今すぐ購入",
-    "footer" : "すでにLedgerを持っているので、セットアップします",
+    "footer" : "所有するLedgerをセットアップ",
     "bannerTitle" : "暗号資産とNFTの一流のセキュリティ",
     "bannerTitle2" : "トレードにはLedgerが必要です",
     "bannerSubtitle" : "Ledger Flexで実現",
     "bannerButtonTitle" : "Flexの詳細を知る",
     "bannerButtonTitle2" : "Ledgerを購入する",
-    "setupCta" : "すでにLedgerを持っているので、セットアップします"
+    "setupCta" : "所有するLedgerをセットアップ"
   },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledgerはすでに入手されましたか？",
@@ -2403,7 +2403,7 @@
     "firstStepReadyTitle" : "{{productName}}、準備完了",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
-      "title" : "設定したいLedgerを選択：",
+      "title" : "設定するLedgerを選択：",
       "brand" : "Ledger",
       "setupTime" : "{{time}}分",
       "notCompatible" : "iPhoneとの互換性はありません",
@@ -3397,7 +3397,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "通知をオンにする",
-      "desc" : "Ledger Wallet、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定でいつでも購読解除できます",
+      "desc" : "Ledger Wallet、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定からいつでも購読解除できます。",
       "allow" : "通知を許可",
       "later" : "後で"
     },

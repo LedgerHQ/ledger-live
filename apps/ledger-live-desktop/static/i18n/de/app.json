@@ -5813,11 +5813,11 @@
         }
       },
       "tooManyUtxos" : {
-        "title" : "Action Needed: Too Many UTXOs",
-        "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
-        "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
-        "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
-        "consolidate" : "Consolidate"
+        "title" : "Handlungsbedarf: Zu viele UTXOs",
+        "description" : "Auf deinem Konto sind zu viele kleine UTXOs, um diese Überweisung abwickeln zu können. Führe sie jetzt zusammen, um ein Ablaufen aufgrund anfallender Haltegebühren zu vermeiden und Übertragungen zu ermöglichen.",
+        "quickFix" : "Schnelle Abhilfe: Schick ein paar Assets an dich selbst, um sie zu bündeln.",
+        "warning" : "Auf deinem Konto sind zu viele kleine UTXOs. Schick ein paar Assets an dich selbst, um sie zu konsolidieren.",
+        "consolidate" : "Konsolidieren"
       }
     },
     "stellar" : {

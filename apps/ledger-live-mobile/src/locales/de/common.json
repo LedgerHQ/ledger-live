@@ -1524,7 +1524,7 @@
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert\n Ledger Wallet nur mit einem Ledger-Gerät.",
     "cta" : "Ledger jetzt kaufen",
-    "footer" : "Ich habe bereits ein Ledger-Gerät. Bitte Einrichtung starten.",
+    "footer" : "Ich habe bereits ein Ledger-Gerät. Einrichtung starten.",
     "bannerTitle" : "Überragende Sicherheit für deine Kryptos und NFTs",
     "bannerTitle2" : "Du brauchst ein Ledger-Gerät zum Handeln",
     "bannerSubtitle" : "mit einer Ledger Flex",
@@ -1682,19 +1682,19 @@
       "walletSync" : "Ledger Sync verwenden"
     },
     "discoverLive" : {
-      "exploreWithoutADevice" : "Erkunden Sie ohne ein Gerät",
+      "exploreWithoutADevice" : "Ohne ein Gerät erkunden",
       "buyALedgerNow" : "Jetzt Ledger kaufen",
       "0" : {
         "title" : "Alle Krypto-Werte sichern"
       },
       "1" : {
-        "title" : "Behalten Sie die Märkte im Auge."
+        "title" : "Behalte die Märkte im Auge."
       },
       "2" : {
         "title" : "Unsere Apps kennenlernen & mehr über Web3 erfahren."
       },
       "3" : {
-        "title" : "Sichern Sie Ihre Krypto & NFTs."
+        "title" : "Sichere deine Kryptos & NFTs."
       }
     },
     "stepLanguage" : {
@@ -2298,10 +2298,10 @@
         "openSettingsCta" : "Gehen Sie zu den Bluetooth-Einstellungen",
         "howToFixPairingIssue" : "So behebst du Verbindungsprobleme",
         "forgetDevice" : {
-          "title" : "Go to your phone's Bluetooth settings to unpair {{productName}}",
-          "description" : "To fix the pairing issue, remove {{productName}} from your phone's Bluetooth list, then return to this app and try again.",
-          "learnHowToFixCta" : "Learn how to fix",
-          "tryAgainCta" : "I unpaired. Try again"
+          "title" : "Öffne die Bluetooth-Einstellungen deines Mobiltelefons, um die Kopplung mit {{productName}} aufzuheben",
+          "description" : "Zum Beheben des Kopplungsproblems lösche {{productName}} aus der Bluetooth-Liste deines Mobiltelefons. Dann rufst du diese App erneut auf und versuchst es noch einmal.",
+          "learnHowToFixCta" : "Informationen zur Fehlerbehebung",
+          "tryAgainCta" : "Ich habe die Kopplung aufgehoben. Wiederholen"
         }
       }
     }
@@ -2554,7 +2554,7 @@
       "title" : "Deine {{productName}} ist nun einsatzbereit, um deine digitalen Assets zu schützen"
     },
     "newSeed" : {
-      "subtitle" : "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
+      "subtitle" : "Du kannst Kryptos von jeder Börse oder Wallet nach Ledger Wallet übertragen, um maximale Sicherheit zu garantieren.",
       "installCTA" : "Meine Kryptos schützen",
       "skipCTA" : "Vielleicht später"
     }
@@ -3131,7 +3131,7 @@
         "light" : "Hell",
         "dusk" : "Mittel"
       },
-      "counterValueDesc" : "Wählen Sie die Währung für Salden und Aktionen.",
+      "counterValueDesc" : "Wähle die Währung für Salden und Aktionen.",
       "exchange" : "Anbieter bewerten",
       "exchangeDesc" : "Anbieter des Wechselkurses von Bitcoin zu {{fiat}} einstellen",
       "stock" : "Regionaler Marktindikator",
@@ -3215,10 +3215,10 @@
       "termsConditions" : "Allgemeinen Geschäftsbedingungen",
       "termsConditionsDesc" : "Die Nutzung von Ledger Wallet gilt als Annahme unserer Nutzungsbedingungen.",
       "privacyPolicy" : "Datenschutzrichtlinie",
-      "privacyPolicyDesc" : "Sehen Sie, welche persönlichen Daten erfasst werden, warum und wie sie verwendet werden.",
+      "privacyPolicyDesc" : "Sehe hier, welche persönlichen Daten erfasst werden, warum und wie sie verwendet werden.",
       "liveReview" : {
         "title" : "Feedback",
-        "desc" : "Teilen Sie uns Ihr Feedback per App mit",
+        "desc" : "Teile und dein Feedback über die App mit",
         "ios" : "Im App Store bewerten",
         "android" : "Im Google Play Store bewerten"
       }
@@ -3284,7 +3284,7 @@
     },
     "experimental" : {
       "title" : "Experimentelle Funktionen",
-      "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
+      "desc" : "Probiere die experimentellen Funktionen aus und lass uns wissen, was du davon hältst.",
       "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass du sie aktivierst, erklärst du dich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
       "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
       "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
@@ -3343,7 +3343,7 @@
         },
         "staggingUrl" : {
           "title" : "Lernen Sie die Staging-URL",
-          "description" : "Verwenden Sie die Staging-URL für die Lern-Website."
+          "description" : "Verwende die Staging-URL für die Lern-Website."
         },
         "platformManifest" : {
           "title" : "Plattform-Manifest laden"
@@ -3356,7 +3356,7 @@
     },
     "developer" : {
       "title" : "Entwickler",
-      "desc" : "Probieren Sie die experimentellen Entwicklerfunktionen aus und lassen Sie uns wissen, was Sie davon halten.",
+      "desc" : "Probiere die experimentellen Funktionen aus und lass uns wissen, was du davon hältst.",
       "customManifest" : {
         "title" : "Manifest laden"
       },
@@ -4606,9 +4606,9 @@
       "showAllCTA" : "Alle {{count}} Ledger-Geräte anzeigen",
       "showLessCTA" : "Weniger anzeigen",
       "otgBanner" : "Um die Ledger Nano S oder Ledger Nano S Plus zu verwenden, schließe sie mit dem USB-Kabel an.",
-      "connectExistingLedger" : "Vorhandenes Ledger verbinden",
-      "connectExistingLedgerDescription" : "Wenn deine Ledger bereits eingerichtet ist",
-      "setUpNewLedger" : "Richten Sie ein neues Ledger ein",
+      "connectExistingLedger" : "Vorhandenen Ledger verbinden",
+      "connectExistingLedgerDescription" : "Wenn dein Ledger bereits eingerichtet ist",
+      "setUpNewLedger" : "Einen neuen Ledger einrichten",
       "setUpNewLedgerDescription" : "Wenn Ihr Ledger noch nicht eingerichtet ist",
       "buyDeviceCTA" : "<0>Brauchst du ein neues Ledger-Gerät? </0><1>Jetzt kaufen</1>",
       "item" : {
@@ -7988,11 +7988,11 @@
       "error429" : "Canton Network lässt momentan nur eine begrenzte Anzahl von Kontoerstellungen pro Tag zu. Versuche es bitte später noch einmal."
     },
     "tooManyUtxos" : {
-      "title" : "Action Needed: Too Many UTXOs",
-      "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
-      "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
-      "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
-      "consolidate" : "Consolidate"
+      "title" : "Handlungsbedarf: Zu viele UTXOs",
+      "description" : "Auf deinem Konto sind zu viele kleine UTXOs, um diese Überweisung abwickeln zu können. Führe sie jetzt zusammen, um ein Ablaufen aufgrund anfallender Haltegebühren zu vermeiden und Übertragungen zu ermöglichen.",
+      "quickFix" : "Schnelle Abhilfe: Schick ein paar Assets an dich selbst, um sie zu bündeln.",
+      "warning" : "Auf deinem Konto sind zu viele kleine UTXOs. Schick ein paar Assets an dich selbst, um sie zu konsolidieren.",
+      "consolidate" : "Konsolidieren"
     }
   }
 }

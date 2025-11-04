@@ -7331,7 +7331,7 @@
     "protect" : {
       "status" : {
         "new" : {
-          "title" : "신규",
+          "title" : "New",
           "desc" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
           "actions" : {
             "learnMore" : "Ledger Recover 알아보기",

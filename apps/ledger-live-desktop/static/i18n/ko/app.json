@@ -73,7 +73,7 @@
   },
   "common" : {
     "never" : "절대",
-    "new" : "신규",
+    "new" : "New",
     "skip" : "건너뛰기",
     "apply" : "적용",
     "done" : "완료",

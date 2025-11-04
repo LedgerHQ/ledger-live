@@ -1529,14 +1529,14 @@
     "bannerTitle2" : "Vous avez besoin d’un appareil Ledger pour le trading",
     "bannerSubtitle" : "avec le Ledger Flex",
     "bannerButtonTitle" : "Découvrir Ledger Flex",
-    "bannerButtonTitle2" : "Acheter un wallet",
+    "bannerButtonTitle2" : "Acheter un appareil",
     "setupCta" : "J’ai un appareil Ledger, je le configure"
   },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Avez-vous déjà votre appareil Ledger ?",
     "desc" : "Dès que vous recevez votre Ledger, configurez-le pour découvrir toutes les fonctionnalités de l’application Ledger Wallet.",
-    "cta" : "Configurer mon wallet",
-    "bannerTitle" : "Vous avez reçu votre wallet ?",
+    "cta" : "Configurer mon Ledger",
+    "bannerTitle" : "Vous avez reçu votre Ledger ?",
     "bannerCta" : "Démarrer",
     "continue" : "Continuer"
   },
@@ -1650,7 +1650,7 @@
       "noLedgerYetModal" : {
         "title" : "Des millions d’utilisateurs. Aucun piratage.",
         "desc" : "Sécurisez vos actifs numériques avec un appareil Ledger, pour une tranquillité d’esprit absolue.",
-        "buy" : "Acheter un wallet",
+        "buy" : "Acheter un Ledger",
         "explore" : "Explorer l’application"
       },
       "setupLedger" : {
@@ -1728,7 +1728,7 @@
         "section" : "Configurez votre Ledger {{model}}",
         "title" : "Créer un nouveau wallet",
         "subTitle" : "Vous allez générer une nouvelle phrase de récupération secrète.",
-        "desc" : "Commencez par configurer votre nouveau wallet.",
+        "desc" : "Commencez par configurer votre nouvel appareil.",
         "label" : "30 min"
       },
       "devicePairing" : {
@@ -1739,7 +1739,7 @@
       },
       "newDevice" : {
         "label" : "nouvel appareil",
-        "title" : "Configurer comme un nouveau wallet",
+        "title" : "Configurer comme un nouvel appareil",
         "subTitle" : "Choisissez cette option si vous configurez votre Ledger pour la première fois."
       },
       "desktopSync" : {
@@ -1791,7 +1791,7 @@
       "4" : {
         "label" : "Les bases",
         "title" : "Configurez votre wallet",
-        "desc" : "Commencez par configurer votre nouveau Ledger Nano."
+        "desc" : "Commencez par configurer votre nouvel appareil."
       },
       "cta" : "Configurer mon appareil",
       "title" : "LES BASES"
@@ -2005,7 +2005,7 @@
         "desc" : "Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
         "cta" : "Comment mettre à jour",
         "supportLink" : "Contacter l’Assistance Ledger",
-        "buyLedger" : "Acheter un wallet"
+        "buyLedger" : "Acheter un Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -2472,7 +2472,7 @@
       "recoverSeed" : "Placeholder : Ledger Recover",
       "selection" : "Choisissez votre option de configuration :",
       "selectionNewLedger" : {
-        "title" : "Configurer comme un nouveau wallet",
+        "title" : "Configurer comme un nouvel appareil",
         "desc" : "Pour générer votre nouvelle phrase de récupération secrète."
       },
       "selectionRestore" : {
@@ -2536,7 +2536,7 @@
       },
       "manualBackup" : {
         "title" : "Non, la version papier me suffit",
-        "description" : "Sans sauvegarde numérique, votre feuille de récupération est votre seul moyen de restaurer l’accès à votre wallet. Ne la perdez surtout pas.",
+        "description" : "Sans sauvegarde numérique, votre feuille de récupération est votre seul moyen de restaurer l’accès à vos actifs. Ne la perdez surtout pas.",
         "cta" : "Compris"
       }
     },
@@ -2560,7 +2560,7 @@
     }
   },
   "tabs" : {
-    "portfolio" : "Wallet",
+    "portfolio" : "Portefeuille",
     "accounts" : "Comptes",
     "transfer" : "Transfert",
     "manager" : "My Ledger",
@@ -2589,7 +2589,7 @@
         "import" : "Ajouter un actif",
         "buy" : "Acheter",
         "manager" : "Installer des apps",
-        "managerSecondary" : "Installer des apps sur mon wallet"
+        "managerSecondary" : "Installer des apps sur mon appareil"
       },
       "addAccounts" : {
         "addAccounts" : "Ajouter un actif",
@@ -4010,7 +4010,7 @@
     },
     "recover" : {
       "title" : "Ledger Recover",
-      "description" : "Récupérez l’accès à votre wallet. Tout simplement.",
+      "description" : "Restaurez l’accès à vos actifs. Tout simplement.",
       "tag" : "1 mois offert"
     }
   },
@@ -4608,9 +4608,9 @@
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
       "connectExistingLedger" : "Connecter un appareil configuré",
       "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
-      "setUpNewLedger" : "Configurer un nouveau wallet",
+      "setUpNewLedger" : "Configurer un nouvel appareil",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
-      "buyDeviceCTA" : "<0>Besoin d’un nouveau wallet ? </0><1>Achetez-le ici</1>",
+      "buyDeviceCTA" : "<0>Besoin d’un nouveau Ledger ? </0><1>Achetez-le ici</1>",
       "item" : {
         "usb" : "Connecté via USB",
         "available" : "Disponible. Appuyez pour vous connecter",
@@ -4719,7 +4719,7 @@
     },
     "update" : {
       "title_one" : "{{number}} mise à jour d’app",
-      "title_other" : "{{number}} mises à jour d’apps",
+      "title_other" : "{{number}} mises à jour",
       "step" : "Étape {{step}} de la mise à jour :",
       "updateWarn" : "Ne sortez pas de My Ledger pendant la mise à jour.",
       "progress" : "En cours...",
@@ -6754,10 +6754,10 @@
     "receive" : "Recevoir plus",
     "changeValidator" : "Changer le validateur",
     "endDelegation" : "Arrêter la délégation",
-    "durationForDays0" : "Juste maintenant",
+    "durationForDays0" : "À l’instant",
     "durationForDays_one" : "Pendant un jour",
     "durationForDays_other" : "Pendant {{count}} jours",
-    "durationDays0" : "Juste maintenant",
+    "durationDays0" : "À l’instant",
     "durationDays_one" : "1 jour",
     "durationDays_other" : "{{count}} jours",
     "selectValidatorTitle" : "Sélectionner un validateur",
@@ -7823,7 +7823,7 @@
   "lnsUpsell" : {
     "opted_in" : {
       "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
-      "cta" : "Choisir mon wallet"
+      "cta" : "Choisir mon Ledger"
     },
     "opted_out" : {
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",

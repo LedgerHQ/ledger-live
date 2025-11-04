@@ -148,7 +148,7 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un wallet",
+    "buyLedger" : "Acheter un Ledger",
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
@@ -1278,7 +1278,7 @@
         "restoreCharonDescription" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
         "restoreCharonContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
         "selection" : "Choisissez votre option de configuration :",
-        "selectionNewLedgerTitle" : "Configurer comme un nouveau wallet",
+        "selectionNewLedgerTitle" : "Configurer comme un nouvel appareil",
         "selectionNewLedgerDescription" : "Pour générer une nouvelle phrase de récupération secrète.",
         "selectionRestoreTitle" : "Restaurer l’accès à vos actifs",
         "selectionRestoreDescription" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète ou Ledger Recover.",
@@ -1321,7 +1321,7 @@
         },
         "manualBackup" : {
           "title" : "Non, la version papier me suffit",
-          "description" : "Sans sauvegarde numérique, votre feuille de récupération est votre seul moyen de restaurer l’accès à votre wallet. Ne la perdez surtout pas.",
+          "description" : "Sans sauvegarde numérique, votre feuille de récupération est votre seul moyen de restaurer l’accès à vos actifs. Ne la perdez surtout pas.",
           "cta" : "Compris"
         }
       },
@@ -1978,7 +1978,7 @@
         "title" : "Mise à jour disponible",
         "title_other" : "Mises à jour disponibles",
         "progressTitle" : "{{number}} mise à jour d’app",
-        "progressTitle_other" : "{{number}} mises à jour d’apps",
+        "progressTitle_other" : "{{number}} mises à jour",
         "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
         "progress" : "Mises à jour..."
       },
@@ -5124,7 +5124,7 @@
           },
           "4" : {
             "title" : "Configurez votre wallet",
-            "desc" : "Commencez par configurer votre nouveau Ledger Nano."
+            "desc" : "Commencez par configurer votre nouvel appareil."
           }
         }
       },
@@ -5138,7 +5138,7 @@
         "options" : {
           "1" : {
             "title" : "Configurer un {{deviceName}}",
-            "description" : "Commencez par configurer votre nouveau wallet."
+            "description" : "Commencez par configurer votre nouvel appareil."
           },
           "2" : {
             "title" : "Connecter un {{deviceName}}",
@@ -5478,7 +5478,7 @@
         },
         "setUpNanoWallet" : {
           "title" : "Configurez votre wallet",
-          "description" : "Commencez par configurer votre nouveau Ledger Nano.",
+          "description" : "Commencez par configurer votre nouvel appareil.",
           "CTA" : "Configurer"
         }
       }
@@ -7457,7 +7457,7 @@
     "opted_in" : {
       "title" : "Mémoire limitée, expérience limitée",
       "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>-{{discount}}% en exclusivité</0>.",
-      "cta" : "Choisir mon wallet"
+      "cta" : "Choisir mon Ledger"
     },
     "opted_out" : {
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",
