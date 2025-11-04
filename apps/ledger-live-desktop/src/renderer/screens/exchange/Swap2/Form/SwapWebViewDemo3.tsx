@@ -545,8 +545,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
-            isModularDrawer: isLldModularDrawer,
-            distinctId,
+            isModularDrawer: isLldModularDrawer ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
