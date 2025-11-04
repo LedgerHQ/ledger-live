@@ -13,7 +13,6 @@ export const mapDiscoveredDeviceToScannedDevice = (device: DiscoveredDevice): Sc
   deviceName: device.name,
   wired: false,
   modelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],
-  isAlreadyKnown: false,
 });
 
 const BleStatesToAllowScanning = [...UndeterminedBleStates, BleState.PoweredOn];

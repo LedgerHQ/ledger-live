@@ -1,7 +1,7 @@
-import { Device } from "@ledgerhq/types-devices";
+import { ScannedDevice } from "./ScannedDevice";
 
 export type BleScanningState = {
-  scannedDevices: Device[];
+  scannedDevices: ScannedDevice[];
   scanningBleError: Error | null;
   isScanning: boolean;
 };

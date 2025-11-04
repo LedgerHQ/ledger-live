@@ -33,11 +33,15 @@ import {
   useBleDevicesScanning,
   filterScannedDevice,
   useDeviceManagementKitEnabled,
+  ScannedDevice,
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DisplayedDevice } from "./DisplayedDevice";
+import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
+import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
 
 export type { SetHeaderOptionsRequest };
 
@@ -109,7 +113,14 @@ export default function SelectDevice({
   const bleScanningState = useBleDevicesScanning(
     isLDMKEnabled && isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
   );
-  const scannedDevices = isLDMKEnabled ? bleScanningState.scannedDevices : legacyScannedDevices;
+
+  const scannedDevices = useMemo(
+    () =>
+      isLDMKEnabled
+        ? bleScanningState.scannedDevices
+        : legacyScannedDevices.map(mapLegacyScannedDeviceToScannedDevice),
+    [isLDMKEnabled, bleScanningState.scannedDevices, legacyScannedDevices],
+  );
 
   const filteredScannedDevices = useMemo(() => {
     return scannedDevices.filter(device =>
@@ -123,10 +134,10 @@ export default function SelectDevice({
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
-  const [
-    lastSelectedDeviceBeforeRequireBluetoothCheck,
-    setLastSelectedDeviceBeforeRequireBluetoothCheck,
-  ] = useState<Device | null>(null);
+  const [selectedBleDevice, setSelectedBleDevice] = useState<DisplayedDevice | null>(null);
+
+  const [showSelectedBleDeviceNotAvailableDrawer, setShowSelectedBleDeviceNotAvailableDrawer] =
+    useState(false);
 
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
@@ -143,8 +154,19 @@ export default function SelectDevice({
     setIsBleRequired(false);
   }, [setIsBleRequired]);
 
-  const handleOnSelect = useCallback(
+  const notifyDeviceSelected = useCallback(
     (device: Device) => {
+      dispatch(updateMainNavigatorVisibility(true));
+      dispatch(setLastConnectedDevice(device));
+      dispatch(setHasConnectedDevice(true));
+      onSelect(device);
+      dispatch(setReadOnlyMode(false));
+    },
+    [dispatch, onSelect],
+  );
+
+  const handleOnSelect = useCallback(
+    (device: DisplayedDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
 
       const { modelId, wired, deviceId } = device;
@@ -155,43 +177,57 @@ export default function SelectDevice({
 
       // If neither wired nor proxy-debug device, bluetooth is required
       if (!wired && !deviceId.includes("httpdebug")) {
-        if (!isBleRequired) {
-          setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
-          setIsBleRequired(true);
-          return;
-        }
-
-        // Normally, if isBleRequired is true, and the user managed to click to select a device
-        // then all the bluetooth requirements should be respected. But to be sure no UI glitch
-        // happened, checks the bluetoothRequirementsState
-        if (bluetoothRequirementsState !== "all_respected") {
-          setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
-          return;
-        }
+        setSelectedBleDevice(device);
+        setIsBleRequired(true);
       } else {
         setIsBleRequired(false);
       }
 
       setIsPairingDevices(false);
-
-      dispatch(setLastConnectedDevice(device));
-      dispatch(setHasConnectedDevice(true));
-      onSelect(device);
-      dispatch(setReadOnlyMode(false));
     },
-    [bluetoothRequirementsState, dispatch, isBleRequired, onSelect, setIsBleRequired],
+    [dispatch, setIsBleRequired],
   );
 
-  // Once all the bluetooth requirements are respected, the device selection is triggered
+  /**
+   * When the user selects a device, the data we keep in state is static, it does not reflect the dynamic availability of the device.
+   * The availability of the device might change after the user selects it.
+   * This hook is used to get the dynamic information about the device.
+   */
+  const availableDeviceMatchingSelectedBleDevice = useMemo<ScannedDevice | null>(() => {
+    if (!selectedBleDevice) return null;
+    const availableDevice = scannedDevices.find(
+      ({ deviceId }) => deviceId === selectedBleDevice.deviceId,
+    );
+    return availableDevice ?? null;
+  }, [selectedBleDevice, scannedDevices]);
+
   useEffect(() => {
-    if (
-      bluetoothRequirementsState === "all_respected" &&
-      lastSelectedDeviceBeforeRequireBluetoothCheck
-    ) {
-      handleOnSelect(lastSelectedDeviceBeforeRequireBluetoothCheck);
-      setLastSelectedDeviceBeforeRequireBluetoothCheck(null);
+    if (!selectedBleDevice) return;
+    // Handle case where the "device not available" drawer is open and the device becomes available again.
+    if (showSelectedBleDeviceNotAvailableDrawer && availableDeviceMatchingSelectedBleDevice) {
+      setSelectedBleDevice(null);
+      setShowSelectedBleDeviceNotAvailableDrawer(false);
+      notifyDeviceSelected(availableDeviceMatchingSelectedBleDevice);
+      return;
     }
-  }, [bluetoothRequirementsState, lastSelectedDeviceBeforeRequireBluetoothCheck, handleOnSelect]);
+    // Once all the bluetooth requirements are respected, the device selection is triggered
+    if (bluetoothRequirementsState === "all_respected" && selectedBleDevice) {
+      // If the device is not available, display the "device not available" drawer
+      if (!availableDeviceMatchingSelectedBleDevice) {
+        setShowSelectedBleDeviceNotAvailableDrawer(true);
+        return;
+      }
+      notifyDeviceSelected(selectedBleDevice);
+      setSelectedBleDevice(null);
+      setShowSelectedBleDeviceNotAvailableDrawer(false);
+    }
+  }, [
+    bluetoothRequirementsState,
+    selectedBleDevice,
+    notifyDeviceSelected,
+    availableDeviceMatchingSelectedBleDevice,
+    showSelectedBleDeviceNotAvailableDrawer,
+  ]);
 
   useEffect(() => {
     const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
@@ -335,6 +371,11 @@ export default function SelectDevice({
     [deviceList],
   );
 
+  const handleBleDeviceNotAvailableDrawerClose = useCallback(() => {
+    setShowSelectedBleDeviceNotAvailableDrawer(false);
+    setSelectedBleDevice(null);
+  }, [setShowSelectedBleDeviceNotAvailableDrawer, setSelectedBleDevice]);
+
   return (
     <StyledView>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
@@ -345,6 +386,14 @@ export default function SelectDevice({
         retryRequestOnIssue={retryRequestOnIssue}
         cannotRetryRequest={cannotRetryRequest}
       />
+      {!!selectedBleDevice && (
+        <BleDeviceNotAvailableDrawer
+          isOpen={showSelectedBleDeviceNotAvailableDrawer}
+          device={selectedBleDevice}
+          onClose={handleBleDeviceNotAvailableDrawerClose}
+          redirectToScan={openBlePairingFlow}
+        />
+      )}
       {/* @Fixme Add a hidden text element to render screen correctly on ios sim release e2e test */}
       <Text style={{ height: 0, opacity: 0 }}>
         {"Hidden text element to pass detox ios release onboarding.spec"}

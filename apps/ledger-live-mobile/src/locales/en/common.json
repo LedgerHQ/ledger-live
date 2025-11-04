@@ -4493,6 +4493,9 @@
       "title": "Connect via Bluetooth...",
       "label": "Automatically detect your Nano"
     },
+    "bleDeviceNotAvailableDrawer": {
+      "scanSignersCta": "Scan signers"
+    },
     "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "... or plug USB cable",
