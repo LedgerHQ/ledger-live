@@ -19,7 +19,10 @@ import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { getStablecoinYieldSetting, getBitcoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  getStablecoinYieldSetting,
+  getBitcoinYieldSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";

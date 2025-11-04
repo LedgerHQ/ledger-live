@@ -29,16 +29,16 @@ export const getStablecoinYieldSetting = (
   return !usdtProvider ? "inactive" : usdtProvider === "earn" ? "api" : "dapp";
 };
 
-type BitcoinYield = "deposit_screen" | "inactive";
-
-export const getBitcoinYieldSetting = (
-  stakePrograms: Feature_StakePrograms | null,
-): BitcoinYield => {
+export const getBitcoinYieldSetting = (stakePrograms: Feature_StakePrograms | null): string => {
   /** Check if Bitcoin has "earn" provider configured in redirects. */
   const bitcoinProvider =
     !stakePrograms?.enabled || !stakePrograms?.params?.redirects
       ? undefined
       : stakePrograms?.params?.redirects["bitcoin"]?.platform;
 
-  return bitcoinProvider === "earn" ? "deposit_screen" : "inactive";
+  return !bitcoinProvider
+    ? "inactive"
+    : bitcoinProvider === "earn"
+      ? "deposit_screen"
+      : bitcoinProvider;
 };
