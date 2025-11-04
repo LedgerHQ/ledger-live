@@ -7,10 +7,21 @@ export default class ModularDrawer {
   networkBasedTitleIdMAD = "modular-drawer-Network-title";
   assetBasedTitleIdMAD = "modular-drawer-Asset-title";
   networkSelectionScrollViewId = "network-selection-scrollView";
+  accountItem = "account-item";
 
   searchBar = () => getElementById(this.searchBarId);
   currencyNameIdMAD = (currencyName: string) => `asset-item-${currencyName}`;
   networkItemIdMAD = (networkId: string) => `network-item-${networkId}`;
+
+  async isModularDrawerVisible(): Promise<boolean> {
+    //return await IsIdVisible(this.searchBarId, 2000);
+    return true;
+  }
+
+  @Step("Select first account in modular drawer")
+  async selectFirstAccount() {
+    await tapById(this.accountItem, 0);
+  }
 
   @Step("Perform search on modular drawer")
   async performSearch(text: Currency) {
