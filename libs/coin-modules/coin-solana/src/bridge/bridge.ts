@@ -13,7 +13,7 @@ import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
 import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
-import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../preload";
+import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { getAccountShapeWithAPI } from "../synchronization";
 import { createTransaction } from "../createTransaction";
@@ -32,6 +32,7 @@ import {
   assignToTokenAccountRaw,
 } from "../serialization";
 import nftResolvers from "../nftResolvers";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   const prepareTransaction: AccountBridge<
@@ -190,7 +191,7 @@ export function makeBridges({
 
   const currencyBridge: CurrencyBridge = {
     preload: makePreload(getQueuedAndCachedAPI),
-    hydrate,
+    hydrate: (_data: unknown, _currency: CryptoCurrency) => {},
     scanAccounts: scan,
     getPreloadStrategy,
     nftResolvers,
