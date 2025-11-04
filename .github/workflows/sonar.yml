@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   scan:
-    name: Scan LLM && LLD
+    name: Scan LLM && LLD & libs
     runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
@@ -34,11 +34,13 @@ jobs:
         env:
           LANG: en_US.UTF-8
         run: |
+          pnpm i --filter="./libs/**" --no-frozen-lockfile --unsafe-perm
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
         run: |
+          pnpm build:libs --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
           pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
@@ -46,11 +48,37 @@ jobs:
         run: |
           pnpm desktop test:jest:coverage
           pnpm mobile test:jest:coverage
+      
+      - name: Generate Unit test coverage for libs
+        run: |
+          
+          mkdir -p libs/coverage
+          touch libs/coverage/lcov.info
+          touch libs/coverage/sonar-executionTests-report.xml
+         
+          pnpm turbo run coverage --filter="./libs/**" --concurrency=4 -- --runInBand=1
+          
+          for package_json in $(find ./libs -name "package.json"); do
+            lib=$(dirname "$package_json")
+            echo "Processing library at path: $lib"
+            
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
+              if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $lib"
+                cat "$lib/coverage/lcov.info" >> libs/coverage/lcov.info
+                cat "$lib/coverage/sonar-executionTests-report.xml" >> libs/coverage/sonar-executionTests-report.xml
+              fi
+            elif [ -f "$package_json" ] && ! jq -e '.scripts.coverage' "$package_json" && jq -e '.scripts.test' "$package_json"; then
+              echo "Coverage script not defined for $lib"
+            else
+              echo "No coverage or test script found for $lib, skipping."
+            fi
+          done
 
       - name: Merge coverage files
         run: |
-          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
-          cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
+          cat libs/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+          cat libs/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - uses: SonarSource/sonarqube-scan-action@v4
         env:
