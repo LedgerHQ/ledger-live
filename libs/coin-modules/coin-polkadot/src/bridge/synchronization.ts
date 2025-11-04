@@ -50,8 +50,8 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
     balance,
     currency: currencyToUse,
     spendableBalance,
-    operations,
-    operationsCount: operations.length,
+    operations: shouldMigrate ? [] : operations,
+    operationsCount: shouldMigrate ? 0 : operations.length,
     blockHeight,
     polkadotResources: {
       nonce,

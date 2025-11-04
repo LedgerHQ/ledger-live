@@ -37,4 +37,16 @@ describe("preload", () => {
     expect(getStakingProgressMock).toHaveBeenCalledTimes(1);
     expect(getValidatorsMock).toHaveBeenCalledTimes(1);
   });
+
+  it("should return fallback stakingProgress if getStakingProgress throws", async () => {
+    getStakingProgressMock.mockRejectedValue(new Error("issou"));
+    const currency = getCryptoCurrencyById(account.currency.id);
+    const result = await preload(currency);
+    expect(result.staking).toEqual({
+      electionClosed: false,
+      activeEra: 0,
+      maxNominatorRewardedPerValidator: 128,
+      bondingDuration: 28,
+    });
+  });
 });
