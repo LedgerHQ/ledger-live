@@ -3250,7 +3250,7 @@
       },
       "largeMover" : {
         "title" : "Fiyat Uyarıları",
-        "desc" : "Sahip olduğunuz popüler token’lardaki önemli fiyat hareketleri için bildirim alacaksınız"
+        "desc" : "Sahip olduğunuz popüler token’lardaki önemli fiyat hareketleri için bildirimler alın"
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
