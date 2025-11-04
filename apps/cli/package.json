@@ -72,7 +72,7 @@
     "usb": "*",
     "winston": "3.13.0",
     "ws": "8.17.1",
-    "@zondax/ledger-live-icp": "1.4.0"
+    "@zondax/ledger-live-icp": "1.4.1"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
