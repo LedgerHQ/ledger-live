@@ -327,6 +327,7 @@
   ],
   "ignoreUnimported": [
     "src/account/typeGuards.ts",
+    "src/api/ofacGeoBlockApi.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
     "src/bridge/generic-alpaca/signer/Eth.ts",

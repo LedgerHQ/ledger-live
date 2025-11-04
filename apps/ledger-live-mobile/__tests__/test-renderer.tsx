@@ -44,8 +44,7 @@ import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -70,8 +69,7 @@ const INITIAL_STATE: State = {
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
-  assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
-  cryptoAssetsApi: cryptoAssetsApi.reducer(undefined, { type: "INIT" }),
+  ...llmRtkApiInitialStates,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -88,9 +86,8 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
-        assetsDataApi.middleware,
-        cryptoAssetsApi.middleware,
+      applyLlmRTKApiMiddlewares(
+        getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
       ),
     preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,
