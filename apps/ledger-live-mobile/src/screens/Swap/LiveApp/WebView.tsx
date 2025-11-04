@@ -26,6 +26,7 @@ import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/Custom
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import SafeAreaView from "~/components/SafeAreaView";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -64,6 +65,9 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const currentAccounts = useSelector(flattenAccountsSelector);
     const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
     const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
+    const llmModularDrawerFF = useFeature("llmModularDrawer");
+
+    const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
     // Capture the initial source to prevent webview refreshes.
     // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
@@ -93,6 +97,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
               platform: "LLM", // need consistent format with LLD, Platform doesn't work
               shareAnalytics,
               hasSeenAnalyticsOptInPrompt,
+              isModularDrawer: isLlmModularDrawer ? "true" : "false",
               ...swapParams,
             }}
           />
