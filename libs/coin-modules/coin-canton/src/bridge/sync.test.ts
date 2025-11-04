@@ -52,6 +52,7 @@ describe("makeGetAccountShape", () => {
     mockedCoinConfig.mockReturnValue({
       nativeInstrumentId: "Native",
       minReserve: "0",
+      useGateway: true,
     });
 
     mockedIsAuthorized.mockResolvedValue(true);
@@ -64,6 +65,7 @@ describe("makeGetAccountShape", () => {
         instrument_id: "Native",
         amount: "1000",
         locked: false,
+        utxo_count: 1,
       },
     ]);
     mockedGetOperations.mockResolvedValue({
@@ -113,11 +115,13 @@ describe("makeGetAccountShape", () => {
         instrument_id: "LockedNative",
         amount: "1000",
         locked: true,
+        utxo_count: 1,
       },
       {
         instrument_id: "Native",
         amount: "10",
         locked: false,
+        utxo_count: 1,
       },
     ]);
 
@@ -128,7 +132,7 @@ describe("makeGetAccountShape", () => {
 
     expect(shape).toBeDefined();
     expect(shape.balance).toEqual(BigNumber(1010));
-    expect(shape.spendableBalance).toEqual(BigNumber(10));
+    expect(shape.spendableBalance).toEqual(BigNumber(1010));
   });
 
   it("should handle empty balances correctly", async () => {

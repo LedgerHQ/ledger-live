@@ -99,7 +99,7 @@ describe("LedgerSyncEntryPoint", () => {
       },
     );
 
-    const button = screen.getByText(/Sync with another Ledger Live app/);
+    const button = screen.getByText(/Sync with another Ledger Wallet app/);
 
     expect(button).toBeVisible();
 

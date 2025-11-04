@@ -53,8 +53,9 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, true);
@@ -99,8 +100,10 @@ export function runSendSPLAddressValid(
   transaction: TransactionType,
   expectedWarningMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - valid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
@@ -122,8 +125,10 @@ export function runSendSPLAddressInvalid(
   recipientContractAddress: string | undefined,
   expectedErrorMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - invalid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);

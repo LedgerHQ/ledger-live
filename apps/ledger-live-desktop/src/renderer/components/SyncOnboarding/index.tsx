@@ -6,7 +6,7 @@ import SyncOnboardingDeviceConnection, {
   SyncOnboardingDeviceConnectionProps,
 } from "./DeviceConnection";
 import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
-import CompletionScreen from "./Manual/CompletionScreen";
+import CompletionScreen from "./Manual/SyncOnboardingCompanion/CompletionScreen";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;

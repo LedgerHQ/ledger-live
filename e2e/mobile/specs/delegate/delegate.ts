@@ -7,7 +7,7 @@ import { getCurrencyManagerApp } from "../../models/currencies";
 export function runDelegateTest(
   delegation: DelegateType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));

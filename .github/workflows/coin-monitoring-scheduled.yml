@@ -4,7 +4,7 @@ permissions:
   contents: read
 on:
   schedule:
-    - cron: "0 15 * * 1-5" # every working day at 3pm
+    - cron: "0 15 * * *" # every working day at 3pm
 
 jobs:
   run-monitoring:

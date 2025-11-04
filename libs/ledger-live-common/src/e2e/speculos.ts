@@ -69,6 +69,8 @@ export type Dependency = { name: string; appVersion?: string };
 export type SpeculosDevice = {
   id: string;
   port: number;
+  appName?: string;
+  appVersion?: string;
 };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
@@ -418,7 +420,12 @@ export async function startSpeculos(
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return { id: device.id, port: device.ports.apiPort };
+          return {
+            id: device.id,
+            port: device.ports.apiPort,
+            appName: appCandidate.appName,
+            appVersion: appCandidate.appVersion,
+          };
         });
   } catch (e: unknown) {
     console.error(e);
@@ -654,7 +661,12 @@ export async function activateLedgerSync() {
 export async function activateExpertMode() {
   if (isTouchDevice()) {
     await goToSettings();
-    await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1);
+    const SettingsToggle1Coordinates = { x: 344, y: 136 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS_TOGGLE_1,
+      SettingsToggle1Coordinates.x,
+      SettingsToggle1Coordinates.y,
+    );
   } else {
     await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
     await pressBoth();
@@ -670,7 +682,12 @@ export async function activateContractData() {
 
 export async function goToSettings() {
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.SETTINGS);
+    const SettingsCogwheelCoordinates = { x: 400, y: 75 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS,
+      SettingsCogwheelCoordinates.x,
+      SettingsCogwheelCoordinates.y,
+    );
   } else {
     await pressUntilTextFound(DeviceLabels.SETTINGS);
     await pressBoth();
@@ -870,19 +887,40 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   }
 }
 
-export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(
+  swap: Swap,
+  amount: string,
+  errorMessage: string | null,
+) {
+  if (errorMessage === null) {
+    await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+    await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
+  } else {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  }
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.REJECT);
+  let events: string[] = [];
+  if (isTouchDevice()) {
+    events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  } else {
+    events = await pressUntilTextFound(DeviceLabels.REJECT);
+  }
+
   verifySwapData(swap, events, amount);
   if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+    await pressAndRelease(DeviceLabels.REJECT);
+    await waitFor(DeviceLabels.YES_REJECT);
+    await pressAndRelease(DeviceLabels.YES_REJECT);
   } else {
     await pressBoth();
   }
@@ -894,7 +932,6 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
     expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
   }
-
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 

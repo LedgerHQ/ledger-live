@@ -1,6 +1,5 @@
 import React, { memo, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -15,7 +14,6 @@ import Button from "~/components/wrappedUi/Button";
 import MarketGraph from "./components/MarketGraph";
 import { ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { FabMarketActions } from "~/components/FabActions/actionsList/market";
 import { MarketQuickActions } from "~/components/MarketQuickActions";
 import BackButton from "./components/BackButton";
 import { Item } from "~/components/Graph/types";
@@ -33,7 +31,6 @@ interface ViewProps {
   loading: boolean;
   loadingChart: boolean;
   refresh: (param?: MarketCurrencyChartDataRequestParams) => void;
-  defaultAccount?: AccountLike;
   toggleStar: () => void;
   isStarred: boolean;
   accounts: AccountLike[];
@@ -48,7 +45,6 @@ function View({
   loading,
   loadingChart,
   refresh,
-  defaultAccount,
   toggleStar,
   currency,
   dataChart,
@@ -74,7 +70,7 @@ function View({
   const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} isFlex>
+    <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <ScrollContainerHeader
         TopLeftSection={<BackButton />}
         MiddleSection={
@@ -102,48 +98,31 @@ function View({
           />
         }
         BottomSection={
-          <>
-            <Flex justifyContent="center" alignItems="flex-start" pb={3}>
-              <Text variant="h1" mb={1}>
-                {counterValueFormatter({
-                  currency: counterCurrency,
-                  value: hoveredItem?.value ? hoveredItem.value : price || 0,
-                  locale,
-                  t,
-                })}
-              </Text>
+          <Flex justifyContent="center" alignItems="flex-start" pb={3}>
+            <Text variant="h1" mb={1}>
+              {counterValueFormatter({
+                currency: counterCurrency,
+                value: hoveredItem?.value ? hoveredItem.value : price || 0,
+                locale,
+                t,
+              })}
+            </Text>
 
-              <Flex height={20}>
-                {hoveredItem && hoveredItem.date ? (
-                  <Text variant="body" color="neutral.c70">
-                    {dateRangeFormatter.format(hoveredItem.date)}
-                  </Text>
-                ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
-                  <DeltaVariation percent value={priceChangePercentage} />
-                ) : (
-                  <Text variant="body" color="neutral.c70">
-                    {" "}
-                    -
-                  </Text>
-                )}
-              </Flex>
+            <Flex height={20}>
+              {hoveredItem && hoveredItem.date ? (
+                <Text variant="body" color="neutral.c70">
+                  {dateRangeFormatter.format(hoveredItem.date)}
+                </Text>
+              ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
+                <DeltaVariation percent value={priceChangePercentage} />
+              ) : (
+                <Text variant="body" color="neutral.c70">
+                  {" "}
+                  -
+                </Text>
+              )}
             </Flex>
-
-            {internalCurrency ? (
-              <FeatureToggle
-                featureId="llmMarketQuickActions"
-                fallback={
-                  <Flex mb={6}>
-                    <FabMarketActions
-                      defaultAccount={defaultAccount}
-                      currency={internalCurrency}
-                      accounts={accounts}
-                    />
-                  </Flex>
-                }
-              />
-            ) : null}
-          </>
+          </Flex>
         }
         refreshControl={
           <RefreshControl
@@ -163,11 +142,7 @@ function View({
           currency={internalCurrency}
         />
 
-        {internalCurrency && (
-          <FeatureToggle featureId="llmMarketQuickActions">
-            <MarketQuickActions currency={internalCurrency} accounts={accounts} />
-          </FeatureToggle>
-        )}
+        {internalCurrency && <MarketQuickActions currency={internalCurrency} accounts={accounts} />}
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>

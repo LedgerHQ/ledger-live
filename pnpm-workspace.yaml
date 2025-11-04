@@ -19,6 +19,15 @@ catalog:
   react-test-renderer: 18.3.1
   react-i18next: 13.5.0
   i18next: 23.10.1
+  axios: 1.12.2
+  ethers: 6.15.0
+  "@reduxjs/toolkit": 2.8.2
+  # Singers, Transports and DMK
+  "@ledgerhq/context-module": 1.9.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.9.0
+  "@ledgerhq/device-transport-kit-web-hid": 1.2.1
+  "@ledgerhq/device-transport-kit-react-native-ble": 1.2.0
+  "@ledgerhq/device-management-kit": 0.9.2
 
 overrides:
   node-abi: ^4.9.0

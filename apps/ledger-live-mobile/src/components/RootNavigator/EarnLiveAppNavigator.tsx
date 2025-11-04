@@ -13,6 +13,7 @@ import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 
@@ -33,6 +34,10 @@ const Earn = (props: NavigationProps) => {
     navigation,
     parentRoute: route,
     alwaysShowNoFunds: false,
+  });
+
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "earn_app_cta",
   });
 
   useEffect(() => {
@@ -65,12 +70,7 @@ const Earn = (props: NavigationProps) => {
           break;
         }
         case "stake":
-          navigation.navigate(NavigatorName.StakeFlow, {
-            screen: ScreenName.Stake,
-            params: {
-              parentRoute: route,
-            },
-          });
+          handleOpenStakeDrawer();
           break;
         case "stake-account": {
           const walletId = props.route.params?.accountId;
@@ -136,7 +136,16 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return () => clearDeepLink();
-  }, [paramAction, props.route.params, accounts, navigation, route, openStakingDrawer, dispatch]);
+  }, [
+    paramAction,
+    props.route.params,
+    accounts,
+    navigation,
+    route,
+    openStakingDrawer,
+    dispatch,
+    handleOpenStakeDrawer,
+  ]);
 
   return (
     <>

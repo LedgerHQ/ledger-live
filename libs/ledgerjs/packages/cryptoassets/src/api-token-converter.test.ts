@@ -1,231 +1,82 @@
-import { convertApiToken, type ApiTokenData } from "./api-token-converter";
+import { convertApiToken, legacyIdToApiId, type ApiTokenData } from "./api-token-converter";
+
+describe("legacyIdToApiId", () => {
+  it("should transform MultiversX to elrond format", () => {
+    expect(legacyIdToApiId("multiversx/esdt/USDC-c76f1f")).toBe("elrond/esdt/USDC-c76f1f");
+  });
+
+  it("should transform Stellar to lowercase", () => {
+    expect(
+      legacyIdToApiId(
+        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+      ),
+    ).toBe("stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn");
+  });
+
+  it("should not transform other IDs", () => {
+    expect(legacyIdToApiId("ethereum/erc20/usdc")).toBe("ethereum/erc20/usdc");
+    expect(legacyIdToApiId("ton/jetton/test")).toBe("ton/jetton/test");
+  });
+});
 
 describe("convertApiToken", () => {
-  describe("ERC20 tokens", () => {
-    it("should convert ERC20 token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "ethereum/erc20/usdc",
-        contractAddress: "0xA0b86a33E6441E6e96481a83b9ceaaA8d547B8cf",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
-        standard: "erc20",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("ethereum/erc20/usdc");
-      expect(result?.contractAddress).toBe("0xA0b86a33E6441E6e96481a83b9ceaaA8d547B8cf");
-      expect(result?.ticker).toBe("USDC");
-      expect(result?.name).toBe("USD Coin");
-      expect(result?.parentCurrency?.id).toBe("ethereum");
-      expect(result?.tokenType).toBe("erc20");
-    });
-
-    it("should convert BEP20 token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "bsc/bep20/usdt",
-        contractAddress: "0x55d398326f99059fF775485246999027B3197955",
-        name: "Tether USD",
-        ticker: "USDT",
-        units: [{ code: "USDT", name: "Tether USD", magnitude: 18 }],
-        standard: "bep20",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("bsc");
-      expect(result?.tokenType).toBe("bep20");
-    });
-  });
-
-  describe("SPL tokens", () => {
-    it("should convert SPL token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "solana/spl/usdc",
-        contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
-        standard: "spl",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("solana");
-      expect(result?.tokenType).toBe("spl");
-    });
-  });
-
-  describe("Jetton tokens", () => {
-    it("should convert Jetton token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "ton/jetton/usdt",
-        contractAddress: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
-        name: "Tether USD",
-        ticker: "USDT",
-        units: [{ code: "USDT", name: "Tether USD", magnitude: 6 }],
-        standard: "jetton",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("ton");
-      expect(result?.tokenType).toBe("jetton");
-    });
-  });
-
-  describe("ASA tokens", () => {
-    it("should convert ASA token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "algorand/asa/31566704",
-        contractAddress: "31566704",
-        name: "USDC",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USDC", magnitude: 6 }],
-        standard: "asa",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("algorand/asa/31566704");
-      expect(result?.parentCurrency?.id).toBe("algorand");
-      expect(result?.tokenType).toBe("asa");
-    });
-  });
-
-  describe("ESDT tokens", () => {
-    it("should convert ESDT token correctly", () => {
+  describe("MultiversX transformation", () => {
+    it("should transform elrond ID to multiversx", () => {
       const apiToken: ApiTokenData = {
         id: "elrond/esdt/USDC-c76f1f",
         contractAddress: "USDC-c76f1f",
-        name: "WrappedUSDC",
+        name: "USD Coin",
         ticker: "USDC",
-        units: [{ code: "USDC", name: "WrappedUSDC", magnitude: 6 }],
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
         standard: "esdt",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
       expect(result?.id).toBe("multiversx/esdt/USDC-c76f1f");
       expect(result?.parentCurrency?.id).toBe("elrond");
       expect(result?.tokenType).toBe("esdt");
     });
   });
 
-  describe("TRON tokens", () => {
-    it("should convert TRC20 token correctly", () => {
+  describe("Stellar transformation", () => {
+    it("should transform lowercase stellar to mixed-case format", () => {
       const apiToken: ApiTokenData = {
-        id: "tron/trc20/usdt",
-        contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        name: "Tether USD",
-        ticker: "USDT",
-        units: [{ code: "USDT", name: "Tether USD", magnitude: 6 }],
-        standard: "trc20",
+        id: "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
+        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
+        standard: "asset",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("tron/trc20/usdt");
-      expect(result?.parentCurrency?.id).toBe("tron");
-      expect(result?.tokenType).toBe("trc20");
-    });
-
-    it("should convert TRC10 token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "tron/trc10/1002000",
-        contractAddress: "1002000",
-        name: "BitTorrent",
-        ticker: "BTT",
-        units: [{ code: "BTT", name: "BitTorrent", magnitude: 6 }],
-        standard: "trc10",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("tron/trc10/1002000");
-      expect(result?.parentCurrency?.id).toBe("tron");
-      expect(result?.tokenType).toBe("trc10");
-    });
-  });
-
-  describe("VeChain tokens", () => {
-    it("should convert VIP180 token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "vechain/vip180/vtho",
-        contractAddress: "0x0000000000000000000000000000456E65726779",
-        name: "VeThor Token",
-        ticker: "VTHO",
-        units: [{ code: "VTHO", name: "VeThor Token", magnitude: 18 }],
-        standard: "vip180",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("vechain/vip180/vtho");
-      expect(result?.parentCurrency?.id).toBe("vechain");
-      expect(result?.tokenType).toBe("vip180");
-    });
-  });
-
-  describe("Cardano native tokens", () => {
-    it("should convert Cardano native token correctly", () => {
-      const apiToken: ApiTokenData = {
-        id: "cardano/native/f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc535.41474958",
-        contractAddress: "f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc535.41474958",
-        name: "AGIX",
-        ticker: "AGIX",
-        units: [{ code: "AGIX", name: "AGIX", magnitude: 8 }],
-        standard: "native",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
       expect(result?.id).toBe(
-        "cardano/native/f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc53541474958",
+        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
       );
-      expect(result?.parentCurrency?.id).toBe("cardano");
-      expect(result?.tokenType).toBe("native");
+      expect(result?.tokenType).toBe("stellar");
     });
 
-    it("should return undefined for non-cardano native tokens", () => {
+    it("should keep already uppercase stellar suffix", () => {
       const apiToken: ApiTokenData = {
-        id: "ethereum/native/test",
-        contractAddress: "test",
-        name: "Test Token",
-        ticker: "TEST",
-        units: [{ code: "TEST", name: "Test Token", magnitude: 18 }],
-        standard: "native",
+        id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
+        standard: "asset",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeUndefined();
+      expect(result?.id).toBe(
+        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+      );
+      expect(result?.tokenType).toBe("stellar");
     });
-  });
 
-  describe("Stellar tokens", () => {
-    it("should convert Stellar token correctly", () => {
+    it("should handle stellar standard without transformation", () => {
       const apiToken: ApiTokenData = {
         id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
@@ -237,18 +88,61 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe(
-        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      );
-      expect(result?.parentCurrency?.id).toBe("stellar");
       expect(result?.tokenType).toBe("stellar");
     });
   });
 
-  describe("Aptos tokens", () => {
-    it("should convert Aptos coin token correctly", () => {
+  describe("Cardano transformation", () => {
+    it("should reconstruct contractAddress from policyId + tokenIdentifier", () => {
+      const apiToken: ApiTokenData = {
+        id: "cardano/native/policyId.assetName",
+        contractAddress: "policyId",
+        name: "Test Token",
+        ticker: "TEST",
+        units: [{ code: "TEST", name: "Test Token", magnitude: 6 }],
+        standard: "native",
+        tokenIdentifier: ".assetName",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.contractAddress).toBe("policyId.assetName");
+      expect(result?.tokenType).toBe("native");
+    });
+
+    it("should not reconstruct if tokenIdentifier is missing", () => {
+      const apiToken: ApiTokenData = {
+        id: "cardano/native/policyId",
+        contractAddress: "policyId",
+        name: "Test Token",
+        ticker: "TEST",
+        units: [{ code: "TEST", name: "Test Token", magnitude: 6 }],
+        standard: "native",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.contractAddress).toBe("policyId");
+    });
+  });
+
+  describe("Sui transformation", () => {
+    it("should transform coin standard to sui for sui tokens", () => {
+      const apiToken: ApiTokenData = {
+        id: "sui/coin/0x2::sui::SUI",
+        contractAddress: "0x2::sui::SUI",
+        name: "Sui",
+        ticker: "SUI",
+        units: [{ code: "SUI", name: "Sui", magnitude: 9 }],
+        standard: "coin",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.tokenType).toBe("sui");
+    });
+
+    it("should not transform coin standard for non-sui tokens", () => {
       const apiToken: ApiTokenData = {
         id: "aptos/coin/0x1::aptos_coin::AptosCoin",
         contractAddress: "0x1::aptos_coin::AptosCoin",
@@ -260,92 +154,145 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("aptos");
       expect(result?.tokenType).toBe("coin");
     });
+  });
 
-    it("should convert Aptos fungible asset correctly", () => {
+  describe("TON Jetton transformation", () => {
+    it("should remove name prefix from jetton ID", () => {
       const apiToken: ApiTokenData = {
-        id: "aptos/fungible_asset/0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT",
-        contractAddress:
-          "0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT",
-        name: "Tether USD",
-        ticker: "USDT",
-        units: [{ code: "USDT", name: "Tether USD", magnitude: 6 }],
-        standard: "fungible_asset",
+        id: "ton/jetton/catizen_eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7",
+        contractAddress: "eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7",
+        name: "Catizen",
+        ticker: "CATI",
+        units: [{ code: "CATI", name: "Catizen", magnitude: 9 }],
+        standard: "jetton",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("aptos");
-      expect(result?.tokenType).toBe("fungible_asset");
+      expect(result?.id).toBe("ton/jetton/eqd-cvr0nz6xayrbvbhz-abtrrc6si5tvhvvpeqrav9uaad7");
     });
-  });
 
-  describe("Sui tokens", () => {
-    it("should convert Sui token correctly", () => {
+    it("should not transform jetton ID without underscore", () => {
       const apiToken: ApiTokenData = {
-        id: "sui/sui/0x2::sui::SUI",
-        contractAddress: "0x2::sui::SUI",
-        name: "Sui",
-        ticker: "SUI",
-        units: [{ code: "SUI", name: "Sui", magnitude: 9 }],
-        standard: "sui",
+        id: "ton/jetton/eqdtest",
+        contractAddress: "eqdtest",
+        name: "Test",
+        ticker: "TEST",
+        units: [{ code: "TEST", name: "Test", magnitude: 9 }],
+        standard: "jetton",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("sui");
-      expect(result?.tokenType).toBe("sui");
+      expect(result?.id).toBe("ton/jetton/eqdtest");
     });
   });
 
-  describe("Unknown token standards", () => {
-    it("should return undefined for unknown parent currency", () => {
+  describe("ledgerSignature handling", () => {
+    it("should include ledgerSignature when provided", () => {
       const apiToken: ApiTokenData = {
-        id: "nonexistent/unknown/test",
-        contractAddress: "0x123...",
+        id: "ethereum/erc20/usdc",
+        contractAddress: "0xA0b86",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+        standard: "erc20",
+        ledgerSignature: "3045022100...",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.ledgerSignature).toBe("3045022100...");
+    });
+
+    it("should not include ledgerSignature when not provided", () => {
+      const apiToken: ApiTokenData = {
+        id: "ethereum/erc20/usdc",
+        contractAddress: "0xA0b86",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+        standard: "erc20",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.ledgerSignature).toBeUndefined();
+    });
+  });
+
+  describe("disableCountervalue handling", () => {
+    it("should set disableCountervalue for testnet currencies", () => {
+      const apiToken: ApiTokenData = {
+        id: "ethereum_sepolia/erc20/usdc",
+        contractAddress: "0x123",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+        standard: "erc20",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.disableCountervalue).toBe(true);
+    });
+
+    it("should respect explicit disableCountervalue flag", () => {
+      const apiToken: ApiTokenData = {
+        id: "ethereum/erc20/test",
+        contractAddress: "0x123",
         name: "Test Token",
         ticker: "TEST",
         units: [{ code: "TEST", name: "Test Token", magnitude: 18 }],
-        standard: "unknown",
+        standard: "erc20",
+        disableCountervalue: true,
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.disableCountervalue).toBe(true);
+    });
+  });
+
+  describe("Edge cases", () => {
+    it("should return undefined for unknown parent currency", () => {
+      const apiToken: ApiTokenData = {
+        id: "unknowncurrency/erc20/test",
+        contractAddress: "0x123",
+        name: "Test",
+        ticker: "TEST",
+        units: [{ code: "TEST", name: "Test", magnitude: 18 }],
+        standard: "erc20",
       };
 
       const result = convertApiToken(apiToken);
 
       expect(result).toBeUndefined();
     });
-  });
 
-  describe("Edge cases", () => {
     it("should handle delisted tokens", () => {
       const apiToken: ApiTokenData = {
-        id: "ethereum/erc20/test",
-        contractAddress: "0x123...",
-        name: "Test Token",
-        ticker: "TEST",
-        units: [{ code: "TEST", name: "Test Token", magnitude: 18 }],
+        id: "ethereum/erc20/old",
+        contractAddress: "0x123",
+        name: "Old Token",
+        ticker: "OLD",
+        units: [{ code: "OLD", name: "Old Token", magnitude: 18 }],
         standard: "erc20",
         delisted: true,
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
       expect(result?.delisted).toBe(true);
     });
 
-    it("should handle missing units gracefully", () => {
+    it("should handle empty units array", () => {
       const apiToken: ApiTokenData = {
         id: "ethereum/erc20/test",
-        contractAddress: "0x123...",
-        name: "Test Token",
+        contractAddress: "0x123",
+        name: "Test",
         ticker: "TEST",
         units: [],
         standard: "erc20",
@@ -353,23 +300,72 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
+      expect(result?.units).toEqual([]);
     });
+  });
 
-    it("should handle complex token identifiers", () => {
+  describe("Standard token types", () => {
+    it("should convert ERC20 token", () => {
       const apiToken: ApiTokenData = {
-        id: "cardano/native/policy123.asset456",
-        contractAddress: "policy123.asset456",
-        name: "Complex Token",
-        ticker: "COMPLEX",
-        units: [{ code: "COMPLEX", name: "Complex Token", magnitude: 6 }],
-        standard: "native",
+        id: "ethereum/erc20/usdc",
+        contractAddress: "0xA0b86",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+        standard: "erc20",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.id).toBe("cardano/native/policy123asset456");
+      expect(result?.type).toBe("TokenCurrency");
+      expect(result?.tokenType).toBe("erc20");
+      expect(result?.parentCurrency?.id).toBe("ethereum");
+    });
+
+    it("should convert SPL token", () => {
+      const apiToken: ApiTokenData = {
+        id: "solana/spl/usdc",
+        contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+        standard: "spl",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.tokenType).toBe("spl");
+      expect(result?.parentCurrency?.id).toBe("solana");
+    });
+
+    it("should convert TRC20 token", () => {
+      const apiToken: ApiTokenData = {
+        id: "tron/trc20/usdt",
+        contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        name: "Tether USD",
+        ticker: "USDT",
+        units: [{ code: "USDT", name: "Tether USD", magnitude: 6 }],
+        standard: "trc20",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.tokenType).toBe("trc20");
+    });
+
+    it("should convert ASA token", () => {
+      const apiToken: ApiTokenData = {
+        id: "algorand/asa/31566704",
+        contractAddress: "31566704",
+        name: "USDC",
+        ticker: "USDC",
+        units: [{ code: "USDC", name: "USDC", magnitude: 6 }],
+        standard: "asa",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result?.tokenType).toBe("asa");
     });
   });
 });

@@ -28,6 +28,7 @@ export { closeAllSpeculosDevices, releaseSpeculosDevice, createSpeculosDevice };
 export type { SpeculosTransport };
 
 const modelMapPriority: Record<string, number> = {
+  flex: 6,
   stax: 5,
   nanos: 4,
   "nanos+": 3,

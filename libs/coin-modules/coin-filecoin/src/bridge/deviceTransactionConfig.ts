@@ -40,12 +40,12 @@ export type ExtraDeviceTransactionField =
 
 export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
-function getDeviceTransactionConfig(input: {
+async function getDeviceTransactionConfig(input: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const tokenTransfer = input.account.type === AccountType.TokenAccount;
   const subAccount = tokenTransfer ? (input.account as TokenAccount) : null;
 

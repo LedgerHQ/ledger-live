@@ -31,6 +31,7 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+          - stax
         default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
@@ -80,7 +81,6 @@ on:
         description: "Speculos device to use"
         required: true
         type: string
-        default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -91,6 +91,10 @@ on:
         required: false
         type: boolean
         default: false
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -113,8 +117,11 @@ jobs:
     name: "Determine Builds & Generate Shards"
     runs-on: ledger-live-medium
     outputs:
-      matrix: ${{ steps.generate-shards.outputs.matrix }}
+      matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
+      matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
+      ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
+      android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
       android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
@@ -286,7 +293,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(needs.determine-builds.outputs.matrix) }}
+        include: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -454,6 +461,7 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
+        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         run: |
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
@@ -496,7 +504,7 @@ jobs:
     name: Android E2E Tests
     needs: [build-android, determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -528,7 +536,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(needs.determine-builds.outputs.matrix) }}
+        include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -747,6 +755,7 @@ jobs:
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
+        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
         run: |
           pnpm mobile e2e:ci -p android -t \
             --e2e \

@@ -6,7 +6,7 @@ const transactionE2E = {
   errorMessage: new RegExp(/Minimum \d+(\.\d{1,10})? USDT needed for quotes\.[\s\S]*Learn More/),
   ctaBanner: false,
   quotesVisible: false,
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runTooLowAmountForQuoteSwapsTest(

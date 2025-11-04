@@ -10,16 +10,24 @@ function getSpeculosInfo(): {
   const speculosAddress = getSpeculosAddress();
   return { speculosApiPort, speculosAddress };
 }
+
 export async function pressAndRelease(deviceLabel: string, x?: number, y?: number) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
-  const { x: coordX, y: coordY } = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
-  x = x === undefined ? coordX : x;
-  y = y === undefined ? coordY : y;
+  let xCoord: number;
+  let yCoord: number;
+  if (x && y) {
+    xCoord = x;
+    yCoord = y;
+  } else {
+    const coords = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
+    xCoord = coords.x;
+    yCoord = coords.y;
+  }
   await retryAxiosRequest(() =>
     axios.post(`${speculosAddress}:${speculosApiPort}/finger`, {
       action: "press-and-release",
-      x: x,
-      y: y,
+      x: xCoord,
+      y: yCoord,
     }),
   );
 }

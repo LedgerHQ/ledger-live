@@ -15,12 +15,14 @@ const getBalanceMock = jest.fn();
 const lastBlockMock = jest.fn();
 const getTokenFromAssetMock = jest.fn();
 const chainSpecificGetAccountShapeMock = jest.fn();
+const refreshOperationsMock = jest.fn();
 jest.mock("../alpaca", () => ({
   getAlpacaApi: () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
     getTokenFromAsset: (...a: any[]) => getTokenFromAssetMock(...a),
+    refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
     getChainSpecificRules: () => ({
       getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
     }),
@@ -68,7 +70,16 @@ describe("genericGetAccountShape", () => {
         type: "OPT_IN",
         extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
       };
-      const initialAccount = { operations: [oldOp], blockHeight: 10 };
+      const pendingOp = {
+        hash: "h0",
+        blockHeight: 10,
+        type: "OUT",
+      };
+      const initialAccount = {
+        operations: [oldOp],
+        pendingOperations: [pendingOp],
+        blockHeight: 10,
+      };
 
       extractBalanceMock.mockReturnValue({ value: "1000", locked: "300" });
       getBalanceMock.mockResolvedValue([
@@ -83,6 +94,13 @@ describe("genericGetAccountShape", () => {
 
       const coreOp = { hash: "h2", height: 12 };
       listOperationsMock.mockResolvedValue([[coreOp]]);
+      refreshOperationsMock.mockImplementation(ops => {
+        const op = ops[0];
+        if (op?.hash === "h0") {
+          return [{ ...op, blockHeight: 12 }];
+        }
+        return [];
+      });
 
       adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
         hash: op.hash,
@@ -141,9 +159,14 @@ describe("genericGetAccountShape", () => {
         balance: new BigNumber(1000),
         spendableBalance: new BigNumber(700),
         blockHeight: 123,
-        operationsCount: 2,
+        operationsCount: 3,
         subAccounts: [{ id: `${currency.id}_subAcc1`, type: "TokenAccount" }],
         operations: [
+          {
+            hash: "h0",
+            type: "OUT",
+            blockHeight: 12,
+          },
           {
             hash: "h2",
             type: "IN",

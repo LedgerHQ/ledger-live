@@ -83,9 +83,9 @@ function ReceiveFunds({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView isFlex edges={["left", "right"]}>
+    <SafeAreaView isFlex edges={["left", "right", "bottom"]}>
       <TrackScreen category={category || ""} name="SelectAccount" />
-      <Flex m={6} style={{ flex: 1 }}>
+      <Flex marginX={6} marginTop={6} style={{ flex: 1 }}>
         <AccountSelector
           list={allAccounts}
           onSelectAccount={handleSelectAccount}

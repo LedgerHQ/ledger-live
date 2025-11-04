@@ -4,15 +4,16 @@ import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
-import { useDispatch } from "react-redux";
-import { setStep } from "~/reducers/modularDrawer";
+import { useDispatch, useSelector } from "react-redux";
 import { ModularDrawerStep } from "../types";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
+import type { ModularDrawerProps } from "../ModularDrawer";
+import { modularDrawerStateSelector, setStep } from "~/reducers/modularDrawer";
 
 type UseDeviceNavigationParams = {
   onClose?: () => void;
   resetSelection: () => void;
-  onAccountSelected?: (account: AccountLike) => void;
+  onAccountSelected: ModularDrawerProps["onAccountSelected"];
 };
 
 export function useDeviceNavigation({
@@ -21,7 +22,10 @@ export function useDeviceNavigation({
   onAccountSelected,
 }: UseDeviceNavigationParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+  const { flow } = useSelector(modularDrawerStateSelector);
   const dispatch = useDispatch();
+
+  const isInline = flow !== "add_account";
 
   const onSuccess = useCallback(
     (res?: { scannedAccounts: Account[]; selected: Account[] }) => {
@@ -43,14 +47,14 @@ export function useDeviceNavigation({
           currency: selectedAsset,
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
-          inline: Boolean(onAccountSelected),
+          inline: isInline,
           onCloseNavigation: onClose,
           onSuccess,
         },
       });
       dispatch(setStep(ModularDrawerStep.Asset));
     },
-    [onClose, resetSelection, dispatch, navigation, onAccountSelected, onSuccess],
+    [onClose, resetSelection, dispatch, navigation, isInline, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

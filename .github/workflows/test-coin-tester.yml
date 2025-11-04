@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin"
 
 jobs:
   is-affected:
@@ -66,11 +66,20 @@ jobs:
             else
             # Fallback to checking affected paths
             CHAINS=()
-            for coin in $COIN_TESTER_CURRENCIES; do
+
+            if echo "${{ steps.affected.outputs.paths }}" | grep -qE "(^|/| )coin-tester(/| |$)"; then
+              echo "Detected base coin-tester → adding all coins"
+              for coin in $COIN_TESTER_CURRENCIES; do
+                CHAINS+=("$coin")
+              done
+            else
+            # Otherwise, only add coins that appear individually
+              for coin in $COIN_TESTER_CURRENCIES; do
                 if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
                   CHAINS+=("$coin")
                 fi
-            done
+              done
+            fi
             # If it's a scheduled job and no chain is detected, run all chains by default
             if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
               for coin in $COIN_TESTER_CURRENCIES; do
@@ -100,7 +109,7 @@ jobs:
     name: Coin Tester - ${{ matrix.chain }}
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
-    runs-on: ubuntu-22.04
+    runs-on: public-ledgerhq-shared-small
     continue-on-error: true
 
     strategy:
@@ -139,6 +148,18 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
+
+      - name: Login to Ledger Artifactory
+        id: jfrog-login
+        timeout-minutes: 10
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Login to JFrog OCI Registry
+        uses: docker/login-action@v3
+        with:
+          registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
+          username: ${{ steps.jfrog-login.outputs.oidc-user }}
+          password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: Setup environment
         uses: ./tools/actions/composites/setup-coin-tester-env

@@ -10,16 +10,6 @@ import { useInformations } from "../../hooks/useInformations";
 
 export const Informations: React.FC<InformationsProps> = props => {
   const {
-    marketCap,
-    volume,
-    fdv,
-    circulatingSupply,
-    totalSupply,
-    ticker,
-    allTimeLow,
-    allTimeHigh,
-  } = props;
-  const {
     athDate,
     atlDate,
     percentChangeATH,
@@ -29,6 +19,14 @@ export const Informations: React.FC<InformationsProps> = props => {
     locale,
     t,
     marketCapVolume24h,
+    totalVolume,
+    fullyDilutedValuation,
+    circulatingSupply,
+    totalSupply,
+    ticker,
+    marketCap,
+    allTimeHigh,
+    allTimeLow,
   } = useInformations(props);
 
   return (
@@ -43,7 +41,7 @@ export const Informations: React.FC<InformationsProps> = props => {
         />
         <InfoCard
           label={t("largeMover.volume")}
-          value={formatCounterValue(volume ?? 0, counterValueCurrency.ticker, locale, t)}
+          value={formatCounterValue(totalVolume ?? 0, counterValueCurrency.ticker, locale, t)}
         />
       </Flex>
 
@@ -51,7 +49,12 @@ export const Informations: React.FC<InformationsProps> = props => {
         <InfoCard
           left
           label={t("largeMover.fdv")}
-          value={formatCounterValue(fdv ?? 0, counterValueCurrency.ticker, locale, t)}
+          value={formatCounterValue(
+            fullyDilutedValuation ?? 0,
+            counterValueCurrency.ticker,
+            locale,
+            t,
+          )}
         />
         <InfoCard
           label={t("largeMover.marketCap24h")}
@@ -68,13 +71,13 @@ export const Informations: React.FC<InformationsProps> = props => {
         <InfoCard
           left
           label={t("largeMover.circulatingSupply")}
-          value={formatCounterValue(circulatingSupply ?? 0, "", locale, t, {
+          value={formatCounterValue(circulatingSupply, "", locale, t, {
             ticker,
           })}
         />
         <InfoCard
           label={t("largeMover.totalSupply")}
-          value={`${formatCounterValue(totalSupply ?? 0, "", locale, t, { ticker })} ${ticker}`}
+          value={`${formatCounterValue(totalSupply, "", locale, t, { ticker })} ${ticker}`}
         />
       </Flex>
 

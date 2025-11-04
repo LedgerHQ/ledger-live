@@ -228,11 +228,12 @@ export function useDeepLinkHandler() {
           break;
         }
         case "swap": {
-          const { amountFrom, fromToken, toToken } = query;
+          const { amountFrom, fromToken, toToken, affiliate } = query;
 
           const state: {
             defaultToken?: { fromTokenId: string; toTokenId: string };
             defaultAmountFrom?: string;
+            affiliate?: string;
           } = {};
 
           if (fromToken !== toToken) {
@@ -241,6 +242,10 @@ export function useDeepLinkHandler() {
 
           if (amountFrom) {
             state.defaultAmountFrom = amountFrom;
+          }
+
+          if (affiliate) {
+            state.affiliate = affiliate;
           }
 
           navigate("/swap", state);
@@ -367,7 +372,11 @@ export function useDeepLinkHandler() {
           break;
         }
         case "market":
-          navigate(`/market`);
+          if (path) {
+            navigate(`/market/${path}`);
+          } else {
+            navigate(`/market`);
+          }
           break;
         case "recover":
           navigate(`/recover/${path}`, undefined, search);

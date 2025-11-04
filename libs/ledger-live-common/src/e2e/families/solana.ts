@@ -22,10 +22,7 @@ export async function sendSolana(tx: Transaction) {
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
-    const isAddressCorrect = containsSubstringInEvent(
-      tx.accountToCredit.parentAccount?.address ?? tx.accountToCredit.address,
-      events,
-    );
+    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
   }
 

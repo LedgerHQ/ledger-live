@@ -55,7 +55,11 @@ const MockComponent = () => {
         {t("portfolio.emptyState.buttons.import")}
       </Button>
       <AddAccountDrawer isOpened={isOpen} onClose={handleCloseDrawer} />
-      <ModularDrawer isOpen={isOpen} currencies={currencies.map(c => c.id)} />
+      <ModularDrawer
+        isOpen={isOpen}
+        currencies={currencies.map(c => c.id)}
+        onAccountSelected={() => {}}
+      />
     </>
   );
 };

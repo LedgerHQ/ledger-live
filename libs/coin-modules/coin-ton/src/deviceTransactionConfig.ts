@@ -7,12 +7,12 @@ import { BigNumber } from "bignumber.js";
 import { TOKEN_TRANSFER_MAX_FEE } from "./constants";
 import type { Transaction, TransactionStatus } from "./types";
 
-function getDeviceTransactionConfig(input: {
+async function getDeviceTransactionConfig(input: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
   const tokenTransfer = Boolean(input.account && isTokenAccount(input.account));
 

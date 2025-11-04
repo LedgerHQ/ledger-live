@@ -27,6 +27,7 @@ export type StepProps = {
   onboardingResult: OnboardingResult | undefined;
   onboardingStatus: OnboardStatus;
   authorizeStatus: AuthorizeStatus;
+  error: Error | null;
   onAddAccounts: (accounts: Account[]) => void;
   onAddMore: () => void;
   onAuthorizePreapproval: () => void;

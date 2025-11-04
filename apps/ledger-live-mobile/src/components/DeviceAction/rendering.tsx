@@ -52,6 +52,7 @@ import GenericErrorView from "../GenericErrorView";
 import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -548,17 +549,18 @@ export function renderError({
     }
   };
 
-  // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
-  // can be used directly by other component
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
-  // TODO Once we have the aligned Error renderings, the CTA list should be determined
-  // by the error class, not patched like here.
-  let showRetryIfAvailable = true;
+  // User needs to forget the device on their phone settings
   if (error instanceof PeerRemovedPairing) {
-    showRetryIfAvailable = false;
+    const productName = device ? getDeviceModel(device?.modelId).productName : "Ledger Device";
+    return (
+      <Flex flex={1}>
+        <BleForgetDeviceIllustration productName={productName} onRetry={() => onRetry?.()} />
+      </Flex>
+    );
   }
 
   return (
@@ -570,7 +572,7 @@ export function renderError({
         iconColor={iconColor}
         hasExportLogButton={hasExportLogButton}
       >
-        {showRetryIfAvailable && (onRetry || managerAppName) ? (
+        {onRetry || managerAppName ? (
           <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
             <StyledButton
               event="DeviceActionErrorRetry"

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -25,7 +25,7 @@ type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
 
-const edges = ["left", "right"] as const;
+const edges = ["left", "right", "bottom"] as const;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const action = useAppDeviceAction();

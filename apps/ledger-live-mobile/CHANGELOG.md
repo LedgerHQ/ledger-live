@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.96.1
+
+### Patch Changes
+
+- [#12392](https://github.com/LedgerHQ/ledger-live/pull/12392) [`da1a8e3`](https://github.com/LedgerHQ/ledger-live/commit/da1a8e38d70eac32d0ee692b608a4b5731393561) Thanks [@lewisd5](https://github.com/lewisd5)! - Lock ap assets
+
+## 3.96.1-hotfix.0
+
+### Patch Changes
+
+- [#12392](https://github.com/LedgerHQ/ledger-live/pull/12392) [`da1a8e3`](https://github.com/LedgerHQ/ledger-live/commit/da1a8e38d70eac32d0ee692b608a4b5731393561) Thanks [@lewisd5](https://github.com/lewisd5)! - Lock ap assets
+
 ## 3.96.0
 
 ### Minor Changes

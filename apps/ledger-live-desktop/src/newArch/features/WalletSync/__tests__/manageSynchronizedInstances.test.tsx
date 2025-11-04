@@ -50,13 +50,13 @@ describe("manageSynchronizedInstances", () => {
 
     const row = await screen.findByTestId("walletSync-manage-instances");
 
-    expect(screen.getByText("2 Ledger Live apps synched")).toBeDefined();
+    expect(screen.getByText("2 Ledger Wallet apps synched")).toBeDefined();
 
     await user.click(row);
 
     //Manage Synch Instances Step
 
-    expect(await screen.findByText("Ledger Live is synched across")).toBeDefined();
+    expect(await screen.findByText("Ledger Wallet is synched across")).toBeDefined();
 
     const instance = screen.getByTestId("walletSync-manage-instance-macOS");
     expect(instance).toBeDefined();

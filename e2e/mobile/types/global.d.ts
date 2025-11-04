@@ -68,6 +68,7 @@ declare global {
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;
+  var waitForElement: typeof NativeElementHelpers.waitForElement;
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;

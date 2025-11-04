@@ -62,11 +62,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Wallet apps synched/i)).toBeVisible();
 
     await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Wallet is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();
@@ -99,11 +99,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Wallet apps synched/i)).toBeVisible();
 
     await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Wallet is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();

@@ -1,8 +1,8 @@
 {
   "name": "ledger-live-desktop",
-  "productName": "Ledger Live",
-  "description": "Ledger Live - Desktop",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "productName": "Ledger Wallet",
+  "description": "Ledger Wallet - Desktop",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.131.0",
+  "version": "2.131.1",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
+    "@electron/fuses": "2.0.0",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
@@ -87,7 +88,7 @@
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "1.9.7",
-    "@reduxjs/toolkit": "2.8.2",
+    "@reduxjs/toolkit": "catalog:",
     "@sentry/electron": "5.2.0",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",
@@ -114,7 +115,6 @@
     "json-rpc-2.0": "0.2.19",
     "jsqr": "1.4.0",
     "lodash": "4.17.21",
-    "mixpanel-browser": "2.71.0",
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",
@@ -206,7 +206,7 @@
     "@types/write-file-atomic": "4.0.3",
     "@vitejs/plugin-react": "3.1.0",
     "allure-playwright": "2.15.1",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "buffer": "6.0.3",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",

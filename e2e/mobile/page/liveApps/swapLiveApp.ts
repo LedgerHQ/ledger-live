@@ -14,6 +14,7 @@ export default class SwapLiveAppPage {
   quotesCountDown = "quotes-countdown";
   quoteCardProviderName = "compact-quote-card-provider-";
   executeSwapButton = "execute-button";
+  executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
   showDetailslink = "show-details-link";
@@ -119,6 +120,13 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.executeSwapButton);
   }
 
+  @Step("Tap execute swap button on step approval")
+  async tapExecuteSwapOnStepApproval() {
+    await waitWebElementByTestId(this.executeSwapButtonStepApproval);
+    await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
+    await tapWebElementByTestId(this.executeSwapButtonStepApproval);
+  }
+
   @Step("Get minimum amount for swap")
   async getMinimumAmount(fromAccount: Account, toAccount: Account) {
     return (await getMinimumSwapAmount(fromAccount, toAccount))?.toString() ?? "";
@@ -169,18 +177,11 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Check exchange button has provider name: $0")
-  async checkExchangeButtonHasProviderName(provider: string) {
-    const expectedButtonText = [
-      Provider.ONE_INCH.uiName,
-      Provider.VELORA.uiName,
-      Provider.MOONPAY.uiName,
-    ].includes(provider)
-      ? `Continue with ${provider}`
-      : `Swap with ${provider}`;
-
+  async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
     await waitWebElementByTestId(this.executeSwapButton);
     const actualButtonText = await getWebElementText(this.executeSwapButton);
-    jestExpect(actualButtonText).toEqual(expectedButtonText);
+    jestExpect(actualButtonText).toMatch(new RegExp(`^(Swap|Continue) with ${provider}$`, "i"));
+    return actualButtonText;
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -258,7 +259,7 @@ export default class SwapLiveAppPage {
 
   @Step("Retrieve receive currency amount value")
   async getAmountToReceive() {
-    return await getValueByWebTestId(this.toAmountInput);
+    return await getWebElementText(this.toAmountInput);
   }
 
   @Step("Tap on Switch currencies button")
@@ -302,8 +303,16 @@ export default class SwapLiveAppPage {
   async goToProviderLiveApp(provider: string) {
     const continueButton = getWebElementByTestId(this.executeSwapButton);
     await detoxExpect(continueButton).toExist();
-    await this.checkExchangeButtonHasProviderName(provider);
-    await this.tapExecuteSwap();
+    const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
+    await app.swapLiveApp.tapExecuteSwap();
+    if (provider === "1inch" && actualButtonText.includes("Swap with")) {
+      await app.swapLiveApp.tapExecuteSwapOnStepApproval();
+      const summaryContinueButton = app.send.summaryContinueButton();
+      await waitForElement(summaryContinueButton);
+      //Test will fail here with a known issue: LIVE-21138
+      await tapByElement(summaryContinueButton);
+      await app.common.selectKnownDevice();
+    }
   }
 
   @Step("Verify live app title contains $0")

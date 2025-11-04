@@ -14,6 +14,7 @@ import type {
   Stake,
   Reward,
   CraftedTransaction,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -205,5 +206,8 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   }) satisfies Api<any>;

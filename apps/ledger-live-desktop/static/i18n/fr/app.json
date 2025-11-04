@@ -4870,7 +4870,7 @@
     "checking" : "Vérification de la mise à jour...",
     "checkSuccess" : "Mise à jour de Ledger Live disponible. Elle s’installera et relancera Ledger Live à la fermeture de l’application.",
     "quitAndInstall" : "Installer maintenant et relancer",
-    "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
+    "updateAvailable" : "Mise à jour disponible vers la version Ledger Wallet {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
     "reDownload" : "Recommencer le téléchargement",
     "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement."

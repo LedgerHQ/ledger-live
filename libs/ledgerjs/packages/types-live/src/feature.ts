@@ -139,6 +139,8 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyCantonNetworkDevnet: DefaultFeature;
+  currencyCantonNetworkTestnet: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
@@ -146,6 +148,7 @@ export type CurrencyFeatures = {
   currencyAssetHubWestend: DefaultFeature;
   currencyAssetHubPolkadot: DefaultFeature;
   currencyPolkadot: DefaultFeature;
+  currencyMonad: DefaultFeature;
 };
 
 /**
@@ -172,7 +175,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
-  mixpanelAnalytics: DefaultFeature;
   storyly: Feature_Storyly;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
@@ -214,7 +216,6 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
-  llmMarketQuickActions: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -238,7 +239,6 @@ export type Features = CurrencyFeatures & {
   lldNetworkBasedAddAccount: DefaultFeature;
   llmOfacGeoBlocking: DefaultFeature;
   lldOfacGeoBlocking: DefaultFeature;
-  lldSessionReplay: Feature_LldSessionReplay;
   llmDatadog: {
     enabled: boolean;
     params: Partial<{
@@ -270,6 +270,7 @@ export type Features = CurrencyFeatures & {
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
+  newSendFlow: DefaultFeature;
 };
 
 /**
@@ -654,7 +655,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-type Feature_ModularDrawer = Feature<{
+export type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
   live_apps_allowlist: string[];
@@ -737,7 +738,3 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
-
-export type Feature_LldSessionReplay = Feature<{
-  sampling: number;
-}>;

@@ -362,6 +362,11 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shardIndex }}"
 
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
+        run: |
+          echo "Flake detected for iOS tests"
+
   detox-tests-android:
     name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
@@ -591,6 +596,11 @@ jobs:
         with:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shardIndex }}"
+
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
+        run: |
+          echo "Flake detected for Android tests"
 
       - name: Set job output based on detox result
         id: set-output

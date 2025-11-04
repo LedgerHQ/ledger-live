@@ -50,9 +50,9 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  
+
   [MMKV initializeMMKV:nil];
-  
+
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
@@ -101,7 +101,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   if (!appLaunched) {
     return NO;
   }
-  
+
   // --- Step 1: Initialize the 'hasLaunchedInThisSession' flag ---
       // This static variable ensures that `self.hasLaunchedInThisSession`
       // is only reset to NO once per application process launch (cold start).
@@ -130,7 +130,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   {
       isRelaunchFromExternalEvent = YES;
   }
-  
+
   NSTimeInterval durationFromProcessStart = (currentExecutionPointTime - self.launchStartTime) * 1000;
 
   if (!self.didInitialColdLaunchComplete) {
@@ -145,8 +145,8 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   else if (isRelaunchFromExternalEvent) {
       startupType = @"warm";
   }
-  
-  
+
+
   [StartupInfoModule setStartupType:startupType duration:durationFromProcessStart];
 
 
@@ -156,6 +156,9 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
   UIView *rootView = self.window.rootViewController.view;
   [RNSplashScreen show];
+
+  // Ensure biometric overlay flag starts clean on launch
+  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"BiometricInProgressOverlay"];
 
   return YES;
 }
@@ -266,7 +269,7 @@ static Braze *_braze;
                     startupType = @"hot";
                 }
 
-        
+
         NSTimeInterval activationDuration = CFAbsoluteTimeGetCurrent() - resumeStartTime;
 
         [StartupInfoModule setStartupType:startupType duration:activationDuration];
@@ -275,17 +278,18 @@ static Braze *_braze;
       // Reset the background flag once the app is active
       self.didEnterBackgroundSinceLastActive = NO;
       self.backgroundEnterTime = 0.0;
-}
 
-- (void)applicationWillResignActive:(UIApplication *)application {
-  [self showOverlay];
+      // Clear any stale biometric-in-progress flag when app is active again
+      [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"BiometricInProgressOverlay"];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // This method is called when the app goes into the background.
-    // Useful for understanding the app's state transitions.
-    self.didEnterBackgroundSinceLastActive = YES; // Mark that app has been in background
+    self.didEnterBackgroundSinceLastActive = YES;
     self.backgroundEnterTime = CFAbsoluteTimeGetCurrent();
+    BOOL biometricInProgress = [[NSUserDefaults standardUserDefaults] boolForKey:@"BiometricInProgressOverlay"];
+    if (!biometricInProgress) {
+      [self showOverlay];
+    }
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

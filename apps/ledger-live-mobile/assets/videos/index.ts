@@ -7,6 +7,6 @@ export default {
   onboardingSuccessStaxDark: require("./stax/onboardingSuccessDark.mp4"),
   onboardingSuccessStaxLight: require("./stax/onboardingSuccessLight.mp4"),
   // Apex
-  onboardingSuccessApexDark: require("./apex/onboardingSuccessDark.mp4"),
-  onboardingSuccessApexLight: require("./apex/onboardingSuccessLight.mp4"),
+  onboardingSuccessApexDark: require("./apex/onboardingSuccess.mp4"),
+  onboardingSuccessApexLight: require("./apex/onboardingSuccess.mp4"),
 };

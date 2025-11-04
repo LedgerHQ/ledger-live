@@ -17,7 +17,7 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "bitcoin_testnet") {
+  } else if (networkName === "bitcoin_testnet" || networkName === "bitcoin_regtest") {
     return {
       identifier: "btc_testnet",
       P2PKHVersion: Buffer.from([0x6f]),

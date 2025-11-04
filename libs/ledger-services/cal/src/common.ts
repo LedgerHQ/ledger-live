@@ -13,7 +13,5 @@ export const DEFAULT_OPTION: ServiceOption = {
 export const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 
 export function getCALDomain(env: "prod" | "test"): string {
-  return env === "prod"
-    ? getEnv("CAL_SERVICE_URL")
-    : "https://crypto-assets-service.api.ledger-test.com";
+  return env === "prod" ? getEnv("CAL_SERVICE_URL") : getEnv("CAL_SERVICE_URL_STAGING");
 }

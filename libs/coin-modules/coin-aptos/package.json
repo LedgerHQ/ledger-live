@@ -113,7 +113,7 @@
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.14",
     "@types/semver": "^7.5.8",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "jest": "^29.7.0",
     "react": "catalog:",
     "ts-jest": "^29.2.5"

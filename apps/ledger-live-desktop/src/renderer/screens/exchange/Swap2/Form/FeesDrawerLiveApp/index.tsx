@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
@@ -15,6 +15,7 @@ import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Alert from "~/renderer/components/Alert";
 import { useTrack } from "~/renderer/analytics/segment";
+import isEqual from "lodash/isEqual";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -44,32 +45,45 @@ export default function FeesDrawerLiveApp({
   const [transaction, setTransactionState] = useState(initialTransaction);
   const [transactionStatus, setTransactionStatus] = useState(status);
   const mainAccount = getMainAccount(account, parentAccount);
+  const isPreparingRef = useRef(false);
 
   const bridge = getAccountBridge(mainAccount, parentAccount);
   const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(
-    (transaction: Transaction) => {
+    (newTransaction: Transaction) => {
+      // Prevent concurrent preparations
+      if (isPreparingRef.current) {
+        return;
+      }
+
+      // Check if transaction actually changed to prevent unnecessary re-preparations
+      if (isEqual(transaction, newTransaction)) {
+        return;
+      }
+
+      isPreparingRef.current = true;
       bridge
-        .prepareTransaction(mainAccount, transaction)
-        .then(preparedTransaction =>
-          bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+        .prepareTransaction(mainAccount, newTransaction)
+        .then(preparedTransaction => {
+          return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
             setTransactionStatus(status);
             setTransactionState(preparedTransaction);
-            setTransaction(preparedTransaction);
-          }),
-        )
+            isPreparingRef.current = false;
+          });
+        })
         .catch(error => {
           console.error("Error preparing transaction:", error);
+          isPreparingRef.current = false;
         });
     },
-    [setTransaction, bridge, mainAccount],
+    [bridge, mainAccount, transaction],
   );
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
-        let updatedTransaction = updater(prevTransaction);
+        const updatedTransaction = updater(prevTransaction);
 
         if (prevTransaction.feesStrategy !== updatedTransaction.feesStrategy) {
           track("button_clicked", {
@@ -79,24 +93,37 @@ export default function FeesDrawerLiveApp({
           });
         }
 
+        // Prevent concurrent preparations
+        if (isPreparingRef.current) {
+          return prevTransaction;
+        }
+
+        // Check if transaction actually changed to prevent unnecessary re-preparations
+        if (isEqual(prevTransaction, updatedTransaction)) {
+          return prevTransaction;
+        }
+
+        isPreparingRef.current = true;
         bridge
           .prepareTransaction(mainAccount, updatedTransaction)
-          .then(preparedTransaction =>
-            bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+          .then(preparedTransaction => {
+            return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
               setTransactionStatus(status);
-              setTransaction(preparedTransaction);
-              updatedTransaction = preparedTransaction;
-            }),
-          )
+              setTransactionState(preparedTransaction);
+              // DON'T call parent's setTransaction here - only when closing!
+              isPreparingRef.current = false;
+            });
+          })
           .catch(error => {
             console.error("Error updating transaction:", error);
+            isPreparingRef.current = false;
             return prevTransaction;
           });
 
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, swapDefaultTrack, track],
+    [bridge, mainAccount, swapDefaultTrack, track],
   );
 
   const mapStrategies = useCallback(
@@ -111,11 +138,17 @@ export default function FeesDrawerLiveApp({
   );
 
   const handleRequestClose = useCallback(
-    (save: boolean) => {
+    async (save: boolean) => {
       setIsOpen(false);
+
+      // Only notify parent with final transaction when saving
+      if (save) {
+        await setTransaction(transaction);
+      }
+
       onRequestClose(save);
     },
-    [onRequestClose, setIsOpen],
+    [onRequestClose, setIsOpen, transaction, setTransaction],
   );
 
   if (!mainAccount) return;

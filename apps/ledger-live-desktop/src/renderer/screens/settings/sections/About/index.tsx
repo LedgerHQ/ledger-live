@@ -46,7 +46,7 @@ const SectionHelp = () => {
         <Row
           dataTestId="version-row"
           title={t("settings.help.version")}
-          desc={`Ledger Live ${version}`}
+          desc={`Ledger Wallet ${version}`}
           onClick={onVersionClick}
         >
           <ReleaseNotesButton />

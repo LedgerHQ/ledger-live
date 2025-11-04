@@ -4,7 +4,7 @@ import { Transaction } from "../types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   parentAccount,
   transaction,
@@ -12,7 +12,7 @@ function getDeviceTransactionConfig({
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { mode } = transaction;
   const fields: DeviceTransactionField[] = [];
   const mainAccount = getMainAccount(account, parentAccount);

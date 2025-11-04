@@ -32,7 +32,10 @@ export class ReceiveModal extends Modal {
 
   @step("Retrieve address displayed")
   async getAddressDisplayed() {
+    const stopRecovery = this.recoverFromGetAppAndVersionError();
     const text = await this.addressDisplayedValue.textContent();
+
+    stopRecovery();
     return text ? text?.split(" ")[0] : "";
   }
 

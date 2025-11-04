@@ -32,7 +32,7 @@ export async function sendBTC(tx: Transaction) {
     expect(isAmountCorrect).toBeTruthy();
     const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
-    if (speculosDevice === DeviceModelId.stax) {
+    if (isTouchDevice()) {
       await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
     } else {
       await pressBoth();

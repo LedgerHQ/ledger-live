@@ -58,7 +58,7 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { getMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
+
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -146,6 +146,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     defaultAmountFrom?: string;
     from?: string;
     defaultToken?: TokenParams;
+    affiliate?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -153,8 +154,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-
-  const distinctId = getMixpanelDistinctId();
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
@@ -439,43 +438,51 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [customPTXHandlers],
   );
 
-  const hashString = useMemo(
-    () =>
-      new URLSearchParams({
-        ...(isOffline ? { isOffline: "true" } : {}),
-        ...(state?.defaultAccount
-          ? {
-              fromAccountId: accountToWalletAPIAccount(
-                walletState,
-                state?.defaultAccount,
-                state?.defaultParentAccount,
-              ).id,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-        ...(state?.from
-          ? {
-              fromPath: simplifyFromPath(state?.from),
-            }
-          : {}),
-        ...(state?.defaultToken
-          ? {
-              fromTokenId: state.defaultToken.fromTokenId,
-              toTokenId: state.defaultToken.toTokenId,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-      }).toString(),
-    [
-      isOffline,
-      state?.defaultAccount,
-      state?.defaultParentAccount,
-      state?.defaultAmountFrom,
-      state?.from,
-      state?.defaultToken,
-      walletState,
-    ],
-  );
+  const hashString = useMemo(() => {
+    const params = new URLSearchParams({
+      ...(isOffline ? { isOffline: "true" } : {}),
+      ...(state?.defaultAccount
+        ? {
+            fromAccountId: accountToWalletAPIAccount(
+              walletState,
+              state?.defaultAccount,
+              state?.defaultParentAccount,
+            ).id,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.from
+        ? {
+            fromPath: simplifyFromPath(state?.from),
+          }
+        : {}),
+      ...(state?.defaultToken
+        ? {
+            fromTokenId: state.defaultToken.fromTokenId,
+            toTokenId: state.defaultToken.toTokenId,
+            fromToken: state.defaultToken.fromTokenId,
+            toToken: state.defaultToken.toTokenId,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.affiliate
+        ? {
+            affiliate: state.affiliate,
+          }
+        : {}),
+    }).toString();
+
+    return params;
+  }, [
+    isOffline,
+    state?.defaultAccount,
+    state?.defaultParentAccount,
+    state?.defaultAmountFrom,
+    state?.from,
+    state?.defaultToken,
+    state?.affiliate,
+    walletState,
+  ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);

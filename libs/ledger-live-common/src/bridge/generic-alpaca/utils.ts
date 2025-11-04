@@ -241,11 +241,12 @@ export const buildOptimisticOperation = (
   const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
+  const parentType = subAccountId ? "FEES" : type;
 
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, "", parentType),
     hash: "",
-    type: type,
+    type: parentType,
     value: subAccountId ? new BigNumber(fees.toString()) : transaction.amount, // match old behavior
     fee: new BigNumber(fees.toString()),
     blockHash: null,
@@ -266,9 +267,9 @@ export const buildOptimisticOperation = (
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
-        id: `${subAccountId}--OUT`,
+        id: `${subAccountId}--${type}`,
         hash: "",
-        type: "OUT",
+        type,
         value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,

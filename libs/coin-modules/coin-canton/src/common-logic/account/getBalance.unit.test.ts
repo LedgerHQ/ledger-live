@@ -29,11 +29,13 @@ describe("getBalance", () => {
       {
         instrument_id: "native-id",
         amount: "1000",
+        utxo_count: 1,
         locked: false,
       },
       {
         instrument_id: "token-123",
         amount: "5000",
+        utxo_count: 1,
         locked: true,
       },
     ];
@@ -43,16 +45,20 @@ describe("getBalance", () => {
     const result = await getBalance(mockCurrency, "party-id");
 
     expect(getBalanceFromNetwork).toHaveBeenCalledWith(mockCurrency, "party-id");
-    expect(result).toEqual<Balance[]>([
+    expect(result).toEqual([
       {
         value: BigInt(1000),
         locked: BigInt(0),
         asset: { type: "native" },
+        utxoCount: 1,
+        instrumentId: "native-id",
       },
       {
         value: BigInt(5000),
         locked: BigInt(5000),
         asset: { type: "token", assetReference: "token-123" },
+        utxoCount: 1,
+        instrumentId: "token-123",
       },
     ]);
   });

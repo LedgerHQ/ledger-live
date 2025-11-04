@@ -1,4 +1,4 @@
-import { AppPage } from "tests/page/abstractClasses";
+import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 
 export class OnboardingPage extends AppPage {

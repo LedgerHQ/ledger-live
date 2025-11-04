@@ -93,6 +93,7 @@ const MockModularDrawerComponent = ({
         onClose={closeDrawer}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
+        onAccountSelected={() => {}}
       />
     </>
   );

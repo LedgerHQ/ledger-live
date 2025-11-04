@@ -8,14 +8,17 @@ import { useDateFormat } from "./useDateFormat";
 
 export function useInformations(props: InformationsProps) {
   const {
-    price,
+    price = 0,
     allTimeHighDate,
     allTimeLowDate,
-    allTimeHigh,
-    allTimeLow,
-    marketCapPercent,
-    volume,
+    allTimeHigh = 0,
+    allTimeLow = 0,
     marketCap,
+    totalVolume,
+    fullyDilutedValuation,
+    circulatingSupply = 0,
+    totalSupply = 0,
+    ticker,
   } = props;
 
   const { dateFormatter, locale } = useDateFormat();
@@ -38,26 +41,37 @@ export function useInformations(props: InformationsProps) {
     [price, allTimeLow],
   );
 
-  const athDate = allTimeHighDate ? new Date(allTimeHighDate) : null;
-  const atlDate = allTimeLowDate ? new Date(allTimeLowDate) : null;
+  const athDate = useMemo(
+    () => (allTimeHighDate ? new Date(allTimeHighDate) : null),
+    [allTimeHighDate],
+  );
+  const atlDate = useMemo(
+    () => (allTimeLowDate ? new Date(allTimeLowDate) : null),
+    [allTimeLowDate],
+  );
 
-  const percentChangeMkt24h: ValueChange = {
-    value: marketCapPercent,
-    percentage: marketCapPercent,
-  };
-
-  const marketCapVolume24h = (volume / (marketCap ?? 1)) * 10000;
+  const marketCapVolume24h = useMemo(
+    () => (totalVolume ? (totalVolume / (marketCap ?? 1)) * 10000 : 0),
+    [totalVolume, marketCap],
+  );
 
   return {
     athDate,
     atlDate,
     percentChangeATH,
     percentChangeATL,
-    percentChangeMkt24h,
     counterValueCurrency,
     dateFormatter,
     locale,
     t,
     marketCapVolume24h,
+    totalVolume,
+    fullyDilutedValuation,
+    circulatingSupply,
+    totalSupply,
+    ticker,
+    marketCap,
+    allTimeHigh,
+    allTimeLow,
   };
 }

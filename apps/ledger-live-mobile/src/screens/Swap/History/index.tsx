@@ -13,7 +13,6 @@ import {
   Linking,
   ListRenderItemInfo,
   RefreshControl,
-  SafeAreaView,
   SectionList,
   StyleSheet,
   Pressable,
@@ -37,6 +36,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { sendFile } from "../../../../e2e/bridge/client";
 import { Text } from "react-native";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
+import SafeAreaView from "~/components/SafeAreaView";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -164,7 +164,7 @@ const History = () => {
       }
     } else {
       try {
-        sendFile({ fileName: "ledgerlive-swap-history.csv", fileContent: mapped });
+        sendFile({ fileName: "ledgerwallet-swap-history.csv", fileContent: mapped });
       } catch (err) {
         logger.critical(err as Error);
       }
@@ -172,7 +172,11 @@ const History = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      isFlex
+      edges={["bottom"]}
+    >
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>

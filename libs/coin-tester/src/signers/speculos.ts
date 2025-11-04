@@ -10,9 +10,9 @@ import { ENV } from "../types";
 const { SPECULOS_API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
 
-const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
+export const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
-function ensureEnv() {
+export function ensureEnv() {
   const mandatory_env_variables = ["SEED", "SPECULOS_API_PORT", "GH_TOKEN"];
   const optional_env_variables = ["SPECULOS_IMAGE"];
 

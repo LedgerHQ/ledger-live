@@ -9,14 +9,9 @@ import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNaviga
 
 import { useStakingDrawer } from "./useStakingDrawer";
 import { useStake } from "LLM/hooks/useStake/useStake";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 
 const StakeFlow = ({ route }: Props) => {
   const { enabledCurrencies, partnerSupportedAssets } = useStake();
@@ -25,15 +20,6 @@ const StakeFlow = ({ route }: Props) => {
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;
   const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
-  const { openDrawer } = useModularDrawerController();
-  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
@@ -45,28 +31,24 @@ const StakeFlow = ({ route }: Props) => {
     navigation,
     parentRoute,
     alwaysShowNoFunds,
-    entryPoint: route.params.entryPoint,
+    entryPoint: route?.params?.entryPoint,
+  });
+
+  const currency = cryptoCurrencies.length === 1 ? cryptoCurrencies[0] : undefined;
+  const enabledCurrenciesForDrawer = cryptoCurrencies.map(c => c.id);
+
+  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
+    currency,
+    sourceScreenName: "stake_flow",
+    enabledCurrencies: enabledCurrenciesForDrawer,
   });
 
   const requestAccountRef = useRef(() => {});
 
   requestAccountRef.current = () => {
-    if (modularDrawerVisible) {
-      const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-      openDrawer({
-        currencies: cryptoCurrencies.map(c => c.id),
-        flow: "stake",
-        source: "stake_flow",
-        enableAccountSelection: true,
-        onAccountSelected: goToAccountStakeFlow,
-        useCase: "earn",
-        ...(finalDrawerConfiguration.assets && {
-          assetsConfiguration: finalDrawerConfiguration.assets,
-        }),
-        ...(finalDrawerConfiguration.networks && {
-          networksConfiguration: finalDrawerConfiguration.networks,
-        }),
-      });
+    if (isModularDrawerEnabled) {
+      handleOpenStakeDrawer();
+      return;
     } else {
       // Fallback to traditional navigation
       if (cryptoCurrencies.length === 1) {

@@ -704,7 +704,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://developer-access-mainnet.base.org",
+        uri: "https://base-rpc.publicnode.com",
       },
       explorer: {
         type: "etherscan",
@@ -922,6 +922,23 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: { type: "active" },
       node: { type: "external", uri: "https://sepolia.era.zksync.dev" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
+      showNfts: false,
+    },
+  },
+  config_currency_monad: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.monad.xyz",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/143",
+      },
       showNfts: false,
     },
   },

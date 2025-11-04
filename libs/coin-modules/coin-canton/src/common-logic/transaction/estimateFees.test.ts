@@ -47,4 +47,14 @@ describe("estimateFees", () => {
     // 3 CC
     expect(result).toEqual(3n * magnitude);
   });
+
+  it("returns forced fees when 0 is setup in config", async () => {
+    mockGetCoinConfig.mockReturnValue({
+      fee: 0,
+    } as unknown as coinConfigModule.CantonCoinConfig);
+
+    const result = await estimateFees(mockCurrency, 1000n * magnitude);
+
+    expect(result).toEqual(0n);
+  });
 });

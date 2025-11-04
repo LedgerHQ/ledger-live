@@ -4,7 +4,7 @@ import type { SuiPreloadData, SuiToken } from "../types";
 import { getValidators } from "../network/sdk";
 import suiTokens, { hash } from "@ledgerhq/cryptoassets/data/sui";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
-import { addTokens, convertSuiTokens } from "@ledgerhq/cryptoassets/tokens";
+import { addTokens, convertSuiTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { AxiosError } from "axios";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes

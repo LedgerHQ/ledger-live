@@ -6,6 +6,7 @@ import {
   Stake,
   Reward,
   Page,
+  Validator,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
@@ -50,6 +51,9 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

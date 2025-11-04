@@ -112,6 +112,7 @@
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
+    "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -251,7 +252,8 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5"
+      "@sentry/react-native>metro": "0.81.5",
+      "ethers": "6.15.0"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",

@@ -1,5 +1,5 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -406,6 +406,33 @@ export type Page<T> = {
   next?: Cursor | undefined;
 };
 
+/** A network validator */
+export type Validator = {
+  /** Address of the validator. */
+  address: string;
+
+  /** Human-readable name of the validator. */
+  name: string;
+
+  /** Human-readable description of the validator. */
+  description?: string | undefined;
+
+  /** URL of the entity running the validator. */
+  url?: string | undefined;
+
+  /** URL of the logo for the validator. */
+  logo?: string | undefined;
+
+  /** Amount of native asset in the pool (in base unit of chain native currency). */
+  balance?: bigint | undefined;
+
+  /** Validator commission (a bigint serialized as a string). */
+  commissionRate?: string | undefined;
+
+  /** Validator Annual Percentage Yield (floating point number between 0 and 1). */
+  apy?: number | undefined;
+};
+
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
@@ -481,6 +508,15 @@ export type AlpacaApi<
    * @see getStakes
    */
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
+  /**
+   * Get the list of validators available on the network.
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *         i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *         a date or transaction hash).
+   *         The concrete implementation may return all validators in a single page when the underlying SDK
+   *         does not provide cursor-based pagination.
+   */
+  getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
 };
 
 export type ChainSpecificRules = {
@@ -503,6 +539,7 @@ export type BridgeApi<
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
+  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
 };
 
 export type Api<

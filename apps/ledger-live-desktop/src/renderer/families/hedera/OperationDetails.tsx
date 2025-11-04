@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { OperationType } from "@ledgerhq/types-live";
-import { isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
+import { isValidExtra } from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";

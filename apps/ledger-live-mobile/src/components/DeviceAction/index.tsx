@@ -390,6 +390,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
+
   if (allowManagerRequested) {
     return renderAllowManager({
       t,

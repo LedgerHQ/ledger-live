@@ -97,12 +97,15 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyCantonNetworkDevnet: DEFAULT_FEATURE,
+  currencyCantonNetworkTestnet: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
   currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
   currencyWestend: DEFAULT_FEATURE,
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
+  currencyMonad: DEFAULT_FEATURE,
 };
 
 /**
@@ -130,10 +133,7 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
-  mixpanelAnalytics: initFeature({
-    enabled: false,
-    params: { record_sessions_percent: 100 },
-  }),
+
   ptxSwapDetailedView: initFeature({
     enabled: false,
     params: {
@@ -531,7 +531,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
-  llmMarketQuickActions: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -693,12 +692,7 @@ export const DEFAULT_FEATURES: Features = {
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
-  lldSessionReplay: {
-    ...DEFAULT_FEATURE,
-    params: {
-      sampling: 100,
-    },
-  },
+  newSendFlow: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

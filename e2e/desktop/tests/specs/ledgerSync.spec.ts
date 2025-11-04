@@ -54,7 +54,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   test(
     "Sync instances, rename and delete accounts, delete instance then delete the backup",
     {
-      tag: ["@NanoSP", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2303, B2CQA-2302, B2CQA-2300, B2CQA-2297, B2CQA-2296",

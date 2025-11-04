@@ -7,6 +7,7 @@ import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { isTouchDevice } from "../speculosAppVersion";
 
 function validateTransactionData(tx: Transaction, events: string[]) {
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
@@ -20,7 +21,7 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   }
 }
 
-async function sendEvmStax(tx: Transaction) {
+async function sendEvmTouchDevices(tx: Transaction) {
   const events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   validateTransactionData(tx, events);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
@@ -40,8 +41,8 @@ async function sendEvmNanoS(tx: Transaction) {
 
 export async function sendEVM(tx: Transaction) {
   const speculosModel = getSpeculosModel();
-  if (speculosModel === DeviceModelId.stax) {
-    return sendEvmStax(tx);
+  if (isTouchDevice()) {
+    return sendEvmTouchDevices(tx);
   }
   if (speculosModel === DeviceModelId.nanoS) {
     return sendEvmNanoS(tx);

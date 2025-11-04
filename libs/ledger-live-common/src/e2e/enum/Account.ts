@@ -108,12 +108,6 @@ export class Account {
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
   );
-  static readonly BSC_POL = new Account(
-    Currency.BSC_POL,
-    "BNB Chain 1",
-    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
-    0,
-  );
   static readonly BSC_SHIBA = new Account(
     Currency.BSC_SHIBA,
     "BNB Chain 1",
