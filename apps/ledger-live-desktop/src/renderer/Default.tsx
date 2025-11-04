@@ -51,6 +51,7 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -60,6 +61,7 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
+import { initMixpanel } from "./analytics/mixpanel";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -210,6 +212,14 @@ export default function Default() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
+  const mixpanelFF = useFeature("lldSessionReplay");
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
+
+  useEffect(() => {
+    if (mixpanelFF?.enabled && shareAnalytics) {
+      initMixpanel(mixpanelFF?.params?.sampling);
+    }
+  }, [mixpanelFF, shareAnalytics]);
 
   useEffect(() => {
     // WebHID is now always enabled, set provider if specified
