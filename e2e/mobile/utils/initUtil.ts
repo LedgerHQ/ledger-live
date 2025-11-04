@@ -313,6 +313,10 @@ export class InitializationManager {
           entryPoints: [],
         },
       },
+      llmMarketQuickActions: {
+        enabled: true,
+      },
+      llmAccountListUI: { enabled: true },
     });
   }
 }

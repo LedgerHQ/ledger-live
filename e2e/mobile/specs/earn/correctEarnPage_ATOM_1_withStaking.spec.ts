@@ -14,3 +14,5 @@ runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
+
+//ok
