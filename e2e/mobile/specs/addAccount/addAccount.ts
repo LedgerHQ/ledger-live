@@ -19,19 +19,17 @@ export function runAddAccountTest(
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
 
-      // Faire un methode pour detecter le mad
-      const isModularDrawer = true;
+      const isModularDrawer = await app.modularDrawer.isModularDrawerVisible();
+      await app.addAccount.importWithYourLedger();
 
       if (isModularDrawer) {
         console.log("MAD");
         await app.common.disableSynchronizationForiOS();
-        await app.addAccount.importWithYourLedger();
         await app.modularDrawer.performSearch(currency);
         await app.modularDrawer.selectCurrency(currency.name);
         await app.modularDrawer.selectNetworkIfAsked(currency.name);
       } else {
         console.log("NOT MAD");
-        await app.addAccount.importWithYourLedger();
         await app.common.performSearch(currency.id);
         await app.receive.selectCurrency(currency.id);
         await app.receive.selectNetworkIfAsked(currency.id);

@@ -1,7 +1,8 @@
-import { Currency } from "@ledgerhq/live-common/lib/e2e/enum/Currency";
 import { delay } from "../../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class ModularDrawer {
+  accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "select-crypto-scrollView";
   networkBasedTitleIdMAD = "modular-drawer-Network-title";
@@ -10,7 +11,7 @@ export default class ModularDrawer {
   accountItem = "account-item";
 
   searchBar = () => getElementById(this.searchBarId);
-  currencyNameIdMAD = (currencyName: string) => `asset-item-${currencyName}`;
+  assetItem = (addressOrId: string) => new RegExp(`asset-item-${addressOrId}`, "i");
   networkItemIdMAD = (networkId: string) => `network-item-${networkId}`;
 
   async isModularDrawerVisible(): Promise<boolean> {
@@ -24,25 +25,26 @@ export default class ModularDrawer {
   }
 
   @Step("Perform search on modular drawer")
-  async performSearch(text: Currency) {
+  async performSearch(searchText: string) {
     await waitForElementById(this.searchBarId);
-    await typeTextByElement(this.searchBar(), text.ticker);
+    await typeTextByElement(this.searchBar(), searchText);
     await delay(500);
   }
 
   @Step("Select currency in receive list")
-  async selectCurrency(currencyName: string): Promise<void> {
-    if (!(await IsTextVisible(currencyName))) {
-      await scrollToText(currencyName, this.selectCryptoScrollViewId);
+  async selectCurrency(addressOrId: string): Promise<void> {
+    const assetItemId = this.assetItem(addressOrId);
+    if (!(await IsIdVisible(assetItemId))) {
+      await scrollToId(assetItemId, this.selectCryptoScrollViewId);
     }
     await delay(500);
-    await tapByText(currencyName);
+    await tapById(assetItemId);
   }
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     await delay(1000);
-    if (await IsTextVisible(networkName)) {
+    if (await IsTextVisible(networkName, 2000)) {
       await this.selectNetwork(networkName);
     }
   }
@@ -54,5 +56,15 @@ export default class ModularDrawer {
     }
     await delay(500);
     await tapByText(networkName);
+  }
+
+  @Step("Select currency $0 in modular drawer")
+  async selectAsset(account: Account): Promise<void> {
+    await this.performSearch(account.currency.name);
+    await this.selectCurrency(account.currency.contractAddress ?? account.currency.id);
+    await this.selectNetworkIfAsked(
+      account.parentAccount ? account.parentAccount.currency.name : account.currency.name,
+    );
+    await this.selectFirstAccount();
   }
 }

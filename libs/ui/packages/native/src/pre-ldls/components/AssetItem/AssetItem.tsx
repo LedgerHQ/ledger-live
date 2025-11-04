@@ -9,6 +9,7 @@ export type AssetType = {
   name: string;
   ticker: string;
   id: string;
+  contractAddress?: string;
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
 };
@@ -43,6 +44,7 @@ export const AssetItem = ({
   name,
   ticker,
   id,
+  contractAddress,
   onClick,
   leftElement,
   rightElement,
@@ -67,7 +69,7 @@ export const AssetItem = ({
         backgroundColor: String(tokens["colors-surface-transparent-default"]),
         opacity: pressed ? 0.7 : 1,
       })}
-      testID={`asset-item-${id}`}
+      testID={`asset-item-${contractAddress ?? id}`}
     >
       <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper>

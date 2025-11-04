@@ -13,21 +13,13 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-
-  const isModularDrawer = true;
-  if (isModularDrawer) {
-    console.log("MAD");
-    await app.modularDrawer.performSearch(account.currency);
-    await app.modularDrawer.selectCurrency(account.currency.name);
-    await app.modularDrawer.selectNetworkIfAsked(account.currency.name);
-    await app.modularDrawer.selectFirstAccount();
+  if (await app.modularDrawer.isModularDrawerVisible()) {
+    await app.modularDrawer.selectAsset(account);
   } else {
-    console.log("NOT MAD");
     await app.common.performSearch(account.currency.id);
     await app.stake.selectCurrency(account.currency.id);
     await app.common.selectFirstAccount();
   }
-  await app.common.enableSynchronization();
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
