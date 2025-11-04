@@ -237,6 +237,9 @@ const makeInternalScenarioTransactions = async () => {
       const mempool = await getRawMempool();
       expect(mempool.includes(txId)).toBe(false);
       expect(mempool.includes(replacementTxid)).toBe(true);
+
+      // Ensure explorer is synced after replacement
+      await waitForExplorerSync();
     },
   };
   const scenarioCancelBtcTransaction: BitcoinScenarioTransaction = {
@@ -254,6 +257,9 @@ const makeInternalScenarioTransactions = async () => {
       const mempool = await getRawMempool();
       expect(mempool.includes(txId)).toBe(false);
       expect(mempool.includes(replacementTxid)).toBe(true);
+
+      // Ensure explorer is synced after cancellation
+      await waitForExplorerSync();
     },
   };
 

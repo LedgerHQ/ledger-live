@@ -5,7 +5,7 @@ import { scenarioBitcoin } from "./scenarii/bitcoin";
 import { killAtlas } from "./atlas";
 
 global.console = console;
-jest.setTimeout(500_000);
+jest.setTimeout(1_000_000);
 
 describe("Bitcoin Deterministic Tester", () => {
   it("scenario Bitcoin", async () => {
