@@ -1304,7 +1304,7 @@
       },
       "secureCrypto" : {
         "description" : "Для максимальной безопасности выведите криптовалюты с любой биржи или кошелька на Ledger Wallet.",
-        "depositButton" : "Обезопасьте криптовалюты",
+        "depositButton" : "Хочу защититься",
         "skipButton" : "Не сейчас"
       },
       "backup" : {
