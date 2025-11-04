@@ -5965,7 +5965,7 @@ importers:
         version: link:../types-live
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.12.2
@@ -6010,8 +6010,8 @@ importers:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
       react-redux:
-        specifier: ^9.1.2
-        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+        specifier: 'catalog:'
+        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -48358,18 +48358,6 @@ snapshots:
       react: 18.3.1
       react-redux: 7.2.9(@types/react@18.2.73)(react@18.3.1)
 
-  '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      '@standard-schema/utils': 0.3.0
-      immer: 10.0.3
-      redux: 5.0.1
-      redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
-    optionalDependencies:
-      react: 18.3.1
-      react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)
-
   '@reduxjs/toolkit@2.9.0(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@19.2.0)':
     dependencies:
       '@standard-schema/spec': 1.0.0
@@ -71989,14 +71977,6 @@ snapshots:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
-
-  react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1):
-    dependencies:
-      '@types/use-sync-external-store': 0.0.6
-      react: 18.3.1
-      use-sync-external-store: 1.5.0(react@18.3.1)
-    optionalDependencies:
-      '@types/react': 18.2.73
 
   react-redux@9.2.0(@types/react@18.2.73)(react@19.2.0)(redux@5.0.1):
     dependencies:
