@@ -235,7 +235,8 @@ class AddAccounts extends PureComponent<Props, State> {
 
   onFlowFinished = () => {
     const { newModalName, openModal } = this.props;
-    if (newModalName && openModal) {
+    const { stepId } = this.state;
+    if (newModalName && openModal && stepId === "finish") {
       openModal(newModalName);
     }
   };
