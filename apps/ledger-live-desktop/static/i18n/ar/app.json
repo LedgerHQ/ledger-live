@@ -5319,7 +5319,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "أدخل عبارة الاسترداد الخاصة بك",
-            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
+            "paragraph1" : "عبارة الاسترداد الخاصة بك هي القائمة السرية من الكلمات التي قمت بنسخها احتياطياً عندما قمت بإعداد جهازك Ledger لأول مرة.",
             "paragraph2" : "Ledger لا تحتفظ بنسخة من عبارة الاسترداد الخاصة بك.",
             "disclaimer" : "أفهم أنني إذا فقدت عبارة الاسترداد الخاصة بي فلن أتمكن من الوصول إلى أصولي المشفرة في حالة أن فقدت الوصول إلى Nano الخاصة بي.",
             "buttons" : {
