@@ -6,7 +6,6 @@ const initialData: SolanaPreloadDataV1 = {
   version: "1",
   validatorsWithMeta: [],
   validators: [],
-  splTokens: null,
 };
 
 const dataByCurrency = new Map<string, SolanaPreloadDataV1>([
