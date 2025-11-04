@@ -453,7 +453,8 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/utils/addressUtils.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",
