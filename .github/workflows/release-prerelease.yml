@@ -14,10 +14,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+
 jobs:
   prerelease:
     name: "Prerelease"
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -27,15 +30,31 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
+
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Login to JFrog Ledger
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Configure npmrc
+        id: jfrog-npm
+        if: ${{ vars.ARTIFACTORY_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_URL }}
+          npmrc-location: "~/.npmrc"
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the caches
@@ -134,7 +153,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "support/jfrog-enablement",
               workflow_id: "pre-desktop.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
@@ -149,35 +168,35 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "support/jfrog-enablement",
               workflow_id: "pre-mobile.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
 
-
-  prerelease-fail:
-    name: "Prerelease > Failure Reporting"
-    needs: prerelease
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Prerelease failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Prerelease failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#
+#  prerelease-fail:
+#    name: "Prerelease > Failure Reporting"
+#    needs: prerelease
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Prerelease failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Prerelease failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

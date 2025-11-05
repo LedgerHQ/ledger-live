@@ -14,10 +14,13 @@ on:
           - LLM
           - LLD
 
+permissions:
+  id-token: write
+
 jobs:
   create-hotfix:
     name: Create Hotfix
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -28,11 +31,18 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Checkout composite actions
-        uses: actions/checkout@v4
+      - name: Login to JFrog Ledger
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Configure npmrc
+        id: jfrog-npm
+        if: ${{ vars.ARTIFACTORY_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
         with:
-          ref: develop
-          sparse-checkout: tools/actions/composites
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_URL }}
+          npmrc-location: "~/.npmrc"
 
       - name: Generate ref/tag version to use during main checkout
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
@@ -93,37 +103,37 @@ jobs:
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-      - name: create PR to main
-        run: |
-          gh pr create \
-            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
-            -F ./.github/templates/hotfix.md \
-            --base main \
-            --head hotfix
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-  create-hotfix-fail:
-    name: Create Hotfix > Failure Reporting
-    needs: create-hotfix
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Create Hotfix failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Create Hotfix failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#      - name: create PR to main
+#        run: |
+#          gh pr create \
+#            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+#            -F ./.github/templates/hotfix.md \
+#            --base main \
+#            --head hotfix
+#        env:
+#          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+##
+#  create-hotfix-fail:
+#    name: Create Hotfix > Failure Reporting
+#    needs: create-hotfix
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Create Hotfix failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Create Hotfix failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
