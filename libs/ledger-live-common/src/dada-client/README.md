@@ -24,6 +24,14 @@ const { data, isLoading, error } = useAssetsData({
   search: "bitcoin",
 });
 
+// You can control the fetching with the skip parameter
+const { data, isLoading, error } = useAssetsData({
+  product: "llm",
+  version: "1.0.0",
+  search: "bitcoin",
+  skip: true, // true: no fetch
+});
+
 // Get interest rates for currencies
 const currencies = [bitcoinCurrency, ethereumCurrency];
 const interestRates = useInterestRatesByCurrencies(currencies);
