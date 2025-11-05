@@ -7,7 +7,7 @@ export const cosmosConfig: CosmosConfig = {
     type: "object",
     default: {
       lcd: "https://lcd-axelar.imperator.co",
-      minGasPrice: 0.07,
+      minGasPrice: 0.07 + 0.6,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
         type: "active",
