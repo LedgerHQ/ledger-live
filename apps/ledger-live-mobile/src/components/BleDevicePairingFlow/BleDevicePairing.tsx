@@ -57,9 +57,13 @@ const BleDevicePairing = ({
   }, [isPaired, deviceToPair, onPaired]);
 
   let content: ReactNode;
+  const teste2ePR = "This is a test e2e PR, do not review or merge this PR, thanks :)";
+  const answer = "in any case, this PR will be deleted soon";
+
+  const sum = teste2ePR + answer;
 
   if (isPaired) {
-    content = <BleDevicePaired device={deviceToPair} productName={productName} />;
+    content = <BleDevicePaired device={deviceToPair} productName={productName} key={sum} />;
   } else if (pairingError instanceof PeerRemovedPairing) {
     content = (
       <BleDevicePeerRemoved onRetry={onRetry} onOpenHelp={onOpenHelp} pairingError={pairingError} />
