@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
@@ -26,6 +26,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   const currency = account ? getAccountCurrency(account) : null;
+
+  const network = useMemo(() => {
+    if (currency && currency.type === "TokenCurrency") {
+      return currency.parentCurrency?.name;
+    }
+    return currency?.name;
+  }, [currency]);
+
   useEffect(() => {
     if (!account) return;
     let result = route.params?.result;
@@ -36,6 +44,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     // IT NEEDS TO BE RERUN WHEN DEPS CHANGE
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    track("send_done", {
+      asset: currency?.name,
+      network,
+      page: "Send Validation Success",
+    });
+  }, [currency, network]);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
@@ -21,6 +21,21 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
   const statusColor = colors.neutral.c100;
+
+  const network = useMemo(() => {
+    if (currency.type === "TokenCurrency") {
+      return currency.parentCurrency?.name;
+    }
+    return currency.name;
+  }, [currency]);
+
+  useEffect(() => {
+    track("add_account_done", {
+      asset: currency.name,
+      network,
+      page: "Add Accounts Success",
+    });
+  }, [currency, network]);
 
   const goToAccounts = useCallback(
     (accountId: string) => () => {
