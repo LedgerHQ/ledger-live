@@ -134,7 +134,7 @@ export default function SelectDevice({
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
-  const [selectedBleDevice, setSelectedBleDevice] = useState<DisplayedDevice | null>(null);
+  const [selectedBleDevice, setSelectedBleDevice] = useState<Device | null>(null);
 
   const [showSelectedBleDeviceNotAvailableDrawer, setShowSelectedBleDeviceNotAvailableDrawer] =
     useState(false);
@@ -166,7 +166,7 @@ export default function SelectDevice({
   );
 
   const handleOnSelect = useCallback(
-    (device: DisplayedDevice) => {
+    (device: Device) => {
       dispatch(updateMainNavigatorVisibility(true));
 
       const { modelId, wired, deviceId } = device;
@@ -256,7 +256,7 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
-    const devices: Device[] = knownDevices
+    const devices: DisplayedDevice[] = knownDevices
       .map(device => {
         const equivalentScannedDevice = filteredScannedDevices.find(
           ({ deviceId }) => device.id === deviceId,
@@ -273,10 +273,10 @@ export default function SelectDevice({
       .sort((a, b) => Number(b.available) - Number(a.available));
 
     if (USBDevice) {
-      devices.push(USBDevice);
+      devices.push({ ...USBDevice, available: true });
     }
     if (ProxyDevice) {
-      devices.push(ProxyDevice);
+      devices.push({ ...ProxyDevice, available: true });
     }
 
     return filterByDeviceModelId

@@ -2,15 +2,15 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { DisplayedDevice } from "./DisplayedDevice";
 import { useCallback } from "react";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { renderConnectYourDevice } from "../DeviceAction/rendering";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 
 interface Props {
   isOpen: boolean;
-  device: DisplayedDevice;
+  device: Device;
   onClose: () => void;
   redirectToScan: () => void;
 }
