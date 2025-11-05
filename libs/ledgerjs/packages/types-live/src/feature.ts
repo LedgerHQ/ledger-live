@@ -628,6 +628,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
   manager: boolean;

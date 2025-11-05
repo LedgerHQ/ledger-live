@@ -18,6 +18,7 @@ export enum PostOnboardingActionId {
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
   recoverMock = "recoverMock",
+  syncAccountsMock = "syncAccountsMock",
 }
 
 export type WithNavigationParams = {
@@ -33,17 +34,19 @@ export type WithNavigationParams = {
   }) => [screen: any] | [screen: any, navigationParams: any];
 };
 
+export interface StartActionArgs {
+  openModalCallback?: (modalName: any) => void;
+  navigationCallback?: (location: Record<string, unknown> | string) => void;
+  deviceModelId?: DeviceModelId;
+  protectId?: string;
+  openActivationDrawer?: () => void;
+}
+
 type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: (args: {
-    openModalCallback: (modalName: any) => void;
-    navigationCallback: (location: Record<string, unknown> | string) => void;
-    deviceModelId: DeviceModelId;
-    protectId: string;
-    openActivationDrawer: () => void;
-  }) => void;
+  startAction: (args: StartActionArgs) => void;
   /**
    * Optional Redux dispatch function
    */
@@ -113,6 +116,11 @@ export type PostOnboardingAction = {
    * the post-onboarding and false otherwise
    */
   getIsAlreadyCompleted?: (args: { protectId: string }) => Promise<boolean>;
+
+  /**
+   * Check if passed state shows the action has already been completed
+   */
+  getIsAlreadyCompletedByState?: (args: { isLedgerSyncActive?: boolean }) => boolean;
 
   /**
    * Used to set the action as complete when clicking on it.

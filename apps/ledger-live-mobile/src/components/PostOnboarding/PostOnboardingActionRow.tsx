@@ -14,7 +14,12 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";
 
 export type Props = PostOnboardingAction &
-  PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
+  PostOnboardingActionState & {
+    deviceModelId: DeviceModelId;
+    productName: string;
+    isLedgerSyncActive: boolean;
+    openActivationDrawer: () => void;
+  };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
@@ -25,12 +30,14 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     description,
     tagLabel,
     completed,
-    getIsAlreadyCompleted,
+    getIsAlreadyCompletedByState,
     disabled,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
     productName,
     shouldCompleteOnStart,
+    openActivationDrawer,
+    isLedgerSyncActive,
   } = props;
   const { t } = useTranslation();
   const recoverServices = useFeature("protectServicesMobile");
@@ -44,8 +51,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
   const initIsActionCompleted = useCallback(async () => {
-    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
-  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive]);
 
   useEffect(() => {
     initIsActionCompleted();
@@ -53,16 +61,16 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const customActionHandlers = usePostOnboardingActionHandlers();
 
-  const trackAction = () => {
-    buttonLabelForAnalyticsEvent &&
-      track("button_clicked", {
-        button: buttonLabelForAnalyticsEvent,
-        deviceModelId,
-        flow: "post-onboarding",
-      });
-  };
-
   const handlePress = () => {
+    const trackAction = () => {
+      buttonLabelForAnalyticsEvent &&
+        track("button_clicked", {
+          button: buttonLabelForAnalyticsEvent,
+          deviceModelId,
+          flow: "post-onboarding",
+        });
+    };
+
     // Execute custom handler if it exists
     const customHandler = customActionHandlers[id];
     if (customHandler) {
@@ -76,6 +84,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
       });
       navigation.navigate(navigationArgs[0], navigationArgs[1]);
+    } else if ("startAction" in props) {
+      props.startAction({
+        openActivationDrawer,
+      });
     }
 
     trackAction();

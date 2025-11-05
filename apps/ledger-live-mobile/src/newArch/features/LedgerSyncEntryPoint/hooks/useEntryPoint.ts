@@ -16,7 +16,9 @@ export function useEntryPoint(entryPoint: EntryPoint) {
 
   const isLedgerSyncEnabled = featureWalletSync?.enabled ?? false;
   const areEntryPointsEnabled = featureLedgerSyncEntryPoints?.enabled ?? false;
+
   const isLedgerSyncActivated = Boolean(trustchain && trustchain?.rootId);
+
   const isDeviceEligible =
     lastSeenDevice !== null && lastSeenDevice.modelId !== DeviceModelId.nanoS;
 
@@ -44,6 +46,10 @@ export function useEntryPoint(entryPoint: EntryPoint) {
     },
     [EntryPoint.settings]: {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,
+      ...cardEntryPoint,
+    },
+    [EntryPoint.postOnboarding]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
       ...cardEntryPoint,
     },
   };

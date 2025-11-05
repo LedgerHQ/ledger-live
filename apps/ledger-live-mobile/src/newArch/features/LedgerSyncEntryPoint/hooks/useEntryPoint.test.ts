@@ -24,6 +24,7 @@ const entryPointsVisibleState = (state: State) => ({
           manager: false,
           accounts: true,
           settings: true,
+          postOnboarding: true,
         },
       },
     },
@@ -62,7 +63,7 @@ describe("useEntryPoint", () => {
   });
 
   it("shouldDisplayEntryPoint should be false when llmLedgerSyncEntryPoints ff is disabled", async () => {
-    const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
+    const { result } = renderHook(() => useEntryPoint(EntryPoint.postOnboarding), {
       overrideInitialState: (state: State) => {
         const newState = entryPointsVisibleState(state);
         return {
@@ -70,8 +71,15 @@ describe("useEntryPoint", () => {
           settings: {
             ...newState.settings,
             overriddenFeatureFlags: {
+              ...newState.settings.overriddenFeatureFlags,
               llmLedgerSyncEntryPoints: {
-                enabled: false,
+                enabled: true,
+                params: {
+                  manager: true,
+                  accounts: true,
+                  settings: true,
+                  postOnboarding: false,
+                },
               },
             },
           },
@@ -93,6 +101,27 @@ describe("useEntryPoint", () => {
   it("shouldDisplayEntryPoint should be false when the entry point has been individually disabled in the ff", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.manager), {
       overrideInitialState: entryPointsVisibleState,
+    });
+
+    expect(result.current.shouldDisplayEntryPoint).toBe(false);
+  });
+
+  it("shouldDisplayEntryPoint should be false when the entry point has been individually disabled in the ff params", async () => {
+    const { result } = renderHook(() => useEntryPoint(EntryPoint.postOnboarding), {
+      overrideInitialState: (state: State) => {
+        const newState = entryPointsVisibleState(state);
+        return {
+          ...newState,
+          settings: {
+            ...newState.settings,
+            overriddenFeatureFlags: {
+              llmWalletSync: {
+                enabled: false,
+              },
+            },
+          },
+        };
+      },
     });
 
     expect(result.current.shouldDisplayEntryPoint).toBe(false);
