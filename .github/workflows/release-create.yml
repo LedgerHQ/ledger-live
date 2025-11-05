@@ -3,10 +3,13 @@ name: "[Release] - Start Release - Manual"
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   create-release:
     name: Create Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       RELEASE_BRANCH: "release"
@@ -21,6 +24,20 @@ jobs:
         with:
           ref: develop
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Login to JFrog Ledger
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Configure npmrc
+        id: jfrog-npm
+        if: ${{ vars.ARTIFACTORY_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_URL }}
+          npmrc-location: "~/.npmrc"
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: create release branch
@@ -64,28 +81,28 @@ jobs:
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-  create-release-fail:
-    name: Create Release > Failure Reporting
-    needs: create-release
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Create Release failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Create Release failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#
+#  create-release-fail:
+#    name: Create Release > Failure Reporting
+#    needs: create-release
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Create Release failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Create Release failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

@@ -28,10 +28,13 @@ on:
         required: false
         default: main
 
+permissions:
+  id-token: write
+
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -46,6 +49,20 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: 2
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Login to JFrog Ledger
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Configure npmrc
+        id: jfrog-npm
+        if: ${{ vars.ARTIFACTORY_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_URL }}
+          npmrc-location: "~/.npmrc"
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the caches
@@ -144,7 +161,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "support/jfrog-enablement",
               workflow_id: "release-desktop.yml",
               inputs: {
                 branch: "${{ inputs.ref }}"
@@ -159,34 +176,34 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "support/jfrog-enablement",
               workflow_id: "release-mobile.yml",
               inputs: {
                 ref: "${{ inputs.ref }}"
               }
             });
 
-  release-fail:
-    name: Release Final > Failure Reporting
-    needs: release
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Release failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Release (final) failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#  release-fail:
+#    name: Release Final > Failure Reporting
+#    needs: release
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Release failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Release (final) failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

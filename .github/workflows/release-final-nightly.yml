@@ -5,11 +5,13 @@ on:
     - cron: "0 2 * * TUE-SAT"  # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
-jobs:
+permissions:
+  id-token: write
 
+jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -27,6 +29,21 @@ jobs:
           fetch-depth: 1
           token: ${{ steps.generate-token.outputs.token }}
 
+      # Jfrog config
+
+      - name: Login to JFrog Ledger
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Configure npmrc
+        id: jfrog-npm
+        if: ${{ vars.ARTIFACTORY_URL != '' }} #Feature flag - to be removed when all is migrated
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_URL }}
+          npmrc-location: "~/.npmrc"
+
       - name: Get checked out commit SHA
         id: get-sha
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -42,10 +59,6 @@ jobs:
           install-proto: true
           skip-turbo-cache: "false"
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.0
-
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
@@ -57,15 +70,39 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot nightly
 
+      #Jfrog publishing - if statements to be removed when all is migrated
+
+      - name: clean npmrc
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: rm -f ~/.npmrc
+
+      - name: Configure npmrc
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+          npmrc-location: "~/.npmrc"
+
+      - name: publish nightly
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: pnpm changeset publish --tag nightly --no-git-tag
+
+      #NPM publishing - to be removed when all is migrated
+
       - name: authenticate with npm
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         uses: actions/setup-node@v4
         with:
           registry-url: "https://registry.npmjs.org"
 
-      - name: publish nightly
+      - name: publish release
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         run: pnpm changeset publish --tag nightly --no-git-tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      #End NPM publishing
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -77,65 +114,65 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
-      - name: tag nightly ref
-        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
-        with:
-          ref: ${{ steps.get-sha.outputs.sha }}
-          tagName: nightly
-          token: ${{ steps.generate-token.outputs.token }}
-          overwrite: true
+#      - name: tag nightly ref
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
+#        with:
+#          ref: ${{ steps.get-sha.outputs.sha }}
+#          tagName: nightly
+#          token: ${{ steps.generate-token.outputs.token }}
+#          overwrite: true
 
-      - uses: actions/github-script@v7
-        name: trigger nightly build of desktop
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "nightly-desktop.yml",
-              inputs: {
-                  version_override: "${{ steps.post-desktop-version.outputs.version }}"
-              }
-            });
+#      - uses: actions/github-script@v7
+#        name: trigger nightly build of desktop
+#        with:
+#          github-token: ${{ steps.generate-token.outputs.token }}
+#          script: |
+#            github.rest.actions.createWorkflowDispatch({
+#              owner: "ledgerhq",
+#              repo: "ledger-live-build",
+#              ref: "main",
+#              workflow_id: "nightly-desktop.yml",
+#              inputs: {
+#                  version_override: "${{ steps.post-desktop-version.outputs.version }}"
+#              }
+#            });
+#
+#      - uses: actions/github-script@v7
+#        name: trigger nightly build of mobile
+#        with:
+#          github-token: ${{ steps.generate-token.outputs.token }}
+#          script: |
+#            github.rest.actions.createWorkflowDispatch({
+#              owner: "ledgerhq",
+#              repo: "ledger-live-build",
+#              ref: "main",
+#              workflow_id: "nightly-mobile.yml",
+#              inputs: {
+#                  version_override: "${{ steps.post-mobile-version.outputs.version }}"
+#              }
+#            });
 
-      - uses: actions/github-script@v7
-        name: trigger nightly build of mobile
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "nightly-mobile.yml",
-              inputs: {
-                  version_override: "${{ steps.post-mobile-version.outputs.version }}"
-              }
-            });
-
-  nightly-fail:
-    name: Nightly Release > Failure Reporting
-    needs: nightly-release
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Nightly Release failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Nightly Release failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#  nightly-fail:
+#    name: Nightly Release > Failure Reporting
+#    needs: nightly-release
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Nightly Release failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Nightly Release failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
