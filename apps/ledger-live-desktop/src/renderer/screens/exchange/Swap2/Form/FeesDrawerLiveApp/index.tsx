@@ -1,21 +1,21 @@
-import React, { useCallback, useState, useRef } from "react";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
-import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import Alert from "~/renderer/components/Alert";
-import { useTrack } from "~/renderer/analytics/segment";
+import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import { t } from "i18next";
 import isEqual from "lodash/isEqual";
+import React, { useCallback, useRef, useState } from "react";
+import { useTrack } from "~/renderer/analytics/segment";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import Alert from "~/renderer/components/Alert";
+import Box from "~/renderer/components/Box";
+import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
+import Text from "~/renderer/components/Text";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -82,48 +82,42 @@ export default function FeesDrawerLiveApp({
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
-      setTransactionState(prevTransaction => {
-        const updatedTransaction = updater(prevTransaction);
+      const updatedTransaction = updater(transaction);
 
-        if (prevTransaction.feesStrategy !== updatedTransaction.feesStrategy) {
-          track("button_clicked", {
-            ...swapDefaultTrack,
-            button: updatedTransaction.feesStrategy,
-            page: "quoteSwap",
-          });
-        }
+      if (transaction.feesStrategy !== updatedTransaction.feesStrategy) {
+        track("button_clicked", {
+          ...swapDefaultTrack,
+          button: updatedTransaction.feesStrategy,
+          page: "quoteSwap",
+        });
+      }
 
-        // Prevent concurrent preparations
-        if (isPreparingRef.current) {
-          return prevTransaction;
-        }
+      // Prevent concurrent preparations
+      if (isPreparingRef.current) {
+        return;
+      }
 
-        // Check if transaction actually changed to prevent unnecessary re-preparations
-        if (isEqual(prevTransaction, updatedTransaction)) {
-          return prevTransaction;
-        }
+      // Check if transaction actually changed to prevent unnecessary re-preparations
+      if (isEqual(transaction, updatedTransaction)) {
+        return;
+      }
 
-        isPreparingRef.current = true;
-        bridge
-          .prepareTransaction(mainAccount, updatedTransaction)
-          .then(preparedTransaction => {
-            return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
-              setTransactionStatus(status);
-              setTransactionState(preparedTransaction);
-              // DON'T call parent's setTransaction here - only when closing!
-              isPreparingRef.current = false;
-            });
-          })
-          .catch(error => {
-            console.error("Error updating transaction:", error);
+      isPreparingRef.current = true;
+      bridge
+        .prepareTransaction(mainAccount, updatedTransaction)
+        .then(preparedTransaction => {
+          return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+            setTransactionStatus(status);
+            setTransactionState(preparedTransaction);
             isPreparingRef.current = false;
-            return prevTransaction;
           });
-
-        return updatedTransaction;
-      });
+        })
+        .catch(error => {
+          console.error("Error updating transaction:", error);
+          isPreparingRef.current = false;
+        });
     },
-    [bridge, mainAccount, swapDefaultTrack, track],
+    [bridge, mainAccount, swapDefaultTrack, track, transaction],
   );
 
   const mapStrategies = useCallback(
@@ -167,6 +161,9 @@ export default function FeesDrawerLiveApp({
         <Text color={"palette.neutral.c70"} fontSize={14} fontWeight="500">
           {t("swap2.form.details.label.feesDescription")}
         </Text>
+        {transaction.family}
+        {mainAccount.currency.family}
+
         {transaction && mainAccount && (
           <SendAmountFields
             account={parentAccount || mainAccount}
