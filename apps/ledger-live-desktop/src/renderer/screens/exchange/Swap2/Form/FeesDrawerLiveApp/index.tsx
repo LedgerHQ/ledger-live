@@ -161,9 +161,6 @@ export default function FeesDrawerLiveApp({
         <Text color={"palette.neutral.c70"} fontSize={14} fontWeight="500">
           {t("swap2.form.details.label.feesDescription")}
         </Text>
-        {transaction.family}
-        {mainAccount.currency.family}
-
         {transaction && mainAccount && (
           <SendAmountFields
             account={parentAccount || mainAccount}
