@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.132.0-next.4
+
+### Minor Changes
+
+- [#12641](https://github.com/LedgerHQ/ledger-live/pull/12641) [`fccb2b0`](https://github.com/LedgerHQ/ledger-live/commit/fccb2b03d0367e932f82bd8c75a0847506079460) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Polkadot: edit electionclosed bool
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.52.0-next.3
+  - @ledgerhq/live-dmk-desktop@0.12.0-next.3
+
 ## 2.132.0-next.3
 
 ### Minor Changes

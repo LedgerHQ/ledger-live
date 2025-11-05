@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.12.0-next.2
+
+### Minor Changes
+
+- [#12641](https://github.com/LedgerHQ/ledger-live/pull/12641) [`fccb2b0`](https://github.com/LedgerHQ/ledger-live/commit/fccb2b03d0367e932f82bd8c75a0847506079460) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Polkadot: edit electionclosed bool
+
 ## 6.12.0-next.1
 
 ### Minor Changes
