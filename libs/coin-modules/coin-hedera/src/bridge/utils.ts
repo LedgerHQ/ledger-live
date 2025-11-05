@@ -139,10 +139,10 @@ export const getSubAccounts = async ({
 
     if (token.tokenType === "erc20") {
       const rawBalance = erc20Tokens.find(t => t.token.contractAddress === token.contractAddress);
-      balance = rawBalance !== undefined ? new BigNumber(rawBalance.balance) : null;
+      balance = rawBalance === undefined ? null : new BigNumber(rawBalance.balance);
     } else {
       const rawBalance = mirrorTokens.find(t => t.token_id === token.contractAddress)?.balance;
-      balance = rawBalance !== undefined ? new BigNumber(rawBalance) : null;
+      balance = rawBalance === undefined ? null : new BigNumber(rawBalance);
     }
 
     if (!balance) {
