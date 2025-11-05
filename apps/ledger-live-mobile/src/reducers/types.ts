@@ -227,6 +227,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean;
   isOnboardingFlow: boolean;
   isOnboardingFlowReceiveSuccess: boolean;
+  isPostOnboardingFlow: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
