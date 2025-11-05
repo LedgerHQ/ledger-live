@@ -564,6 +564,7 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
+      postOnboarding: true,
     },
   },
   lldLedgerSyncEntryPoints: {
