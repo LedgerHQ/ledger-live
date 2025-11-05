@@ -6,7 +6,6 @@ protocols:
     - ledgerlive
     - ledgerwallet
 
-
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet

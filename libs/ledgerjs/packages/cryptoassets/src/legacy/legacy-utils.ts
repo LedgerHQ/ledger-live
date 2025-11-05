@@ -145,9 +145,14 @@ export function convertTRONTokens(type: "trc10" | "trc20") {
     | TRC20Token): TokenCurrency => {
     const parentCurrency = getCryptoCurrencyById("tron");
 
+    // For TRC20 tokens, use contract address as ID to match backend API format
+    // API expects lowercase addresses, so normalize here
+    // For TRC10 tokens, use numeric ID as before
+    const tokenId = type === "trc20" ? contractAddress.toLowerCase() : id;
+
     return {
       type: "TokenCurrency",
-      id: `tron/${type}/${id}`,
+      id: `tron/${type}/${tokenId}`,
       contractAddress,
       parentCurrency,
       tokenType: type,

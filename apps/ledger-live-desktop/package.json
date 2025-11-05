@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
+    "@electron/fuses": "2.0.0",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
@@ -126,7 +127,7 @@
     "react-lottie": "1.2.4",
     "react-markdown": "4.3.1",
     "react-motion": "0.5.2",
-    "react-redux": "7.2.9",
+    "react-redux": "catalog:",
     "react-router": "5.3.4",
     "react-router-dom": "5.3.4",
     "react-select": "3.2.0",

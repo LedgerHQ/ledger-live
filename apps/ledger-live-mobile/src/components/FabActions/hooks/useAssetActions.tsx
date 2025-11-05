@@ -95,7 +95,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               modalOnDisabledClick: {
                 component: PtxToast,
               },
-              testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
                 {

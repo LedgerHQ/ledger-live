@@ -102,8 +102,8 @@ const createNetworkMock = <T>(responseData: T[], pageCount = 1, itemCount = resp
   ({
     data: {
       data: responseData,
-      pageCount,
-      itemCount,
+      page_count: pageCount,
+      item_count: itemCount,
       pages: [],
     },
     status: 200,

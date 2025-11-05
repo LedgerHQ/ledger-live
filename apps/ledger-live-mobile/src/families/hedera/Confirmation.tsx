@@ -1,41 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useMemo } from "react";
+import { View } from "react-native";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
-import ReactNativeModal from "react-native-modal";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
+import { CompositeScreenProps } from "@react-navigation/native";
+import styled, { useTheme } from "styled-components/native";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
-import PreventNativeBack from "~/components/PreventNativeBack";
-import LText from "~/components/LText/index";
-import DisplayAddress from "~/components/DisplayAddress";
-import Alert from "~/components/Alert";
-import QueuedDrawer from "~/components/QueuedDrawer";
-import Close from "~/icons/Close";
-import QRcodeZoom from "~/icons/QRcodeZoom";
-import Touchable from "~/components/Touchable";
-import Button from "~/components/Button";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import CopyLink from "~/components/CopyLink";
-import ShareLink from "~/components/ShareLink";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import SkipLock from "~/components/behaviour/SkipLock";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import GenericErrorView from "~/components/GenericErrorView";
+import Alert from "~/components/Alert";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import ReceiveConfirmationTokenAlert from "./ReceiveConfirmationTokenAlert";
+import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
+import { getFreshAccountAddress } from "~/utils/address";
+import CopyButton from "LLM/components/CopyButton";
+import ShareButton from "LLM/components/ShareButton";
 
 type ScreenProps = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
@@ -48,329 +37,147 @@ type Props = {
   readOnlyModeEnabled?: boolean;
 } & ScreenProps;
 
-export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { colors, dark } = useTheme();
+export default function ReceiveConfirmation({ route }: Props) {
+  const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const [verified] = useState(false);
-  const [isModalOpened, setIsModalOpened] = useState(false);
-  const onModalHide = useRef(() => {
-    /* ignore */
-  });
-  const [error] = useState(null);
-  const [zoom, setZoom] = useState(false);
-  const [allowNavigation] = useState(true);
 
-  function onRetry(): void {
-    if (isModalOpened) {
-      setIsModalOpened(false);
-      onModalHide.current = navigation.goBack;
-    } else {
-      navigation.goBack();
-    }
-  }
-
-  function onModalClose(): void {
-    setIsModalOpened(false);
-    onModalHide.current = onDone;
-  }
-
-  function onZoom(): void {
-    setZoom(!zoom);
-  }
-
-  function onDone(): void {
-    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
-  }
-
-  const accountName = useMaybeAccountName(account);
   const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = account && getAccountCurrency(account);
   const mainAccountName = useMaybeAccountName(mainAccount);
-
-  useEffect(() => {
-    if (!allowNavigation) {
-      navigation.setOptions({
-        headerLeft: undefined,
-        headerRight: () => null,
-        gestureEnabled: false,
-      });
-      return;
-    }
-
-    const { headerRight } = getStackNavigatorConfig(colors, true);
-    navigation.setOptions({
-      headerLeft: undefined,
-      headerRight,
-      gestureEnabled: Platform.OS === "ios",
-    });
-  }, [allowNavigation, colors, navigation]);
-  if (!mainAccount || !account) return null;
-  const { width } = getWindowDimensions();
-  const unsafe = !route.params.device?.deviceId;
-  const QRSize = Math.round(width / 1.8 - 16);
-  const address = mainAccount.freshAddress;
-  const currency = getAccountCurrency(account);
   const name = mainAccountName;
 
-  return (
-    <SafeAreaView
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      <TrackScreen
-        category="ReceiveFunds"
-        name="Confirmation"
-        unsafe={unsafe}
-        verified={verified}
-        currencyName={currency.name}
-      />
-      {allowNavigation ? null : (
-        <>
-          <PreventNativeBack />
-          <SkipLock />
-        </>
-      )}
-      <NavigationScrollView style={styles.root}>
-        <View style={styles.container}>
-          <Touchable event="QRZoom" onPress={onZoom}>
-            {width < 350 ? (
-              <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
-                <QRcodeZoom size={72} />
-              </View>
-            ) : (
-              <View
-                style={[
-                  styles.qrWrapper,
-                  {
-                    borderColor: colors.lightFog,
-                  },
-                  dark
-                    ? {
-                        backgroundColor: "white",
-                      }
-                    : {},
-                ]}
-              >
-                <QRCode size={QRSize} value={address} ecl="H" />
-              </View>
-            )}
-          </Touchable>
-          <View>
-            <LText style={styles.addressTitle} color="grey">
-              <Trans i18nKey="transfer.receive.address" />
-            </LText>
-          </View>
-          <View style={styles.addressWrapper}>
-            <CurrencyIcon currency={currency} size={20} />
-            <LText semiBold style={styles.addressTitleBold}>
-              {accountName}
-            </LText>
-          </View>
-          <View style={styles.address}>
-            <DisplayAddress address={address} verified={verified} />
-          </View>
-          {mainAccount.derivationMode === "taproot" ? (
-            <View style={styles.taprootWarning}>
-              <Alert type="warning">
-                <Trans i18nKey="transfer.receive.taprootWarning" />
-              </Alert>
-            </View>
-          ) : null}
+  const freshAccountAddress = useMemo(() => {
+    return mainAccount && getFreshAccountAddress(mainAccount);
+  }, [mainAccount]);
 
-          <View style={styles.copyLink}>
-            <CopyLink
-              style={styles.copyShare}
-              string={address}
-              replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
+  if (!mainAccount || !account || !currency) return null;
+
+  const address = mainAccount.freshAddress;
+
+  const { width } = getWindowDimensions();
+  const QRSize = Math.round(width / 1.8 - 16);
+  const QRContainerSize = QRSize + 16 * 4;
+
+  return (
+    <Flex flex={1}>
+      <NavigationScrollView
+        testID="receive-screen-scrollView"
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
+      >
+        <TrackScreen category="ReceiveFunds" name="Confirmation" currencyName={currency.name} />
+        <Flex flexDirection="column" justifyContent="space-around" flex={1}>
+          <Box alignItems="center" justifyContent="center" p={0}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              width={QRContainerSize}
+              p={6}
+              mt={10}
+              bg={colors.opacityDefault.c05}
+              borderRadius={2}
             >
-              <Trans i18nKey="transfer.receive.copyAddress" />
-            </CopyLink>
-            <View style={styles.copyShare}>
-              <ShareLink value={address}>
-                <Trans i18nKey="transfer.receive.shareAddress" />
-              </ShareLink>
-            </View>
-          </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          {/* warning message for unverified address */}
-          <Alert type="security">
-            <Trans
-              i18nKey="hedera.currentAddress.messageIfVirtual"
-              values={{
-                name,
-              }}
-            />
-          </Alert>
-          {/* message about token association */}
-          <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
-        </View>
-      </NavigationScrollView>
-      <ReactNativeModal
-        isVisible={zoom}
-        onBackdropPress={onZoom}
-        onBackButtonPress={onZoom}
-        useNativeDriver
-        hideModalContentWhileAnimating
-      >
-        <View
-          style={[
-            styles.qrZoomWrapper,
-            {
-              backgroundColor: "#FFF",
-            },
-          ]}
-        >
-          <QRCode size={width - 66} value={address} ecl="H" />
-        </View>
-      </ReactNativeModal>
-      <QueuedDrawer
-        isRequestingToBeOpened={isModalOpened}
-        onClose={onModalClose}
-        onModalHide={onModalHide.current}
-      >
-        {error ? (
-          <View style={styles.modal}>
-            <GenericErrorView error={error} />
-            <View style={styles.buttonsContainer}>
-              <Button
-                event="ReceiveRetry"
-                type="primary"
-                title={<Trans i18nKey="common.retry" />}
-                containerStyle={styles.bigButton}
-                onPress={onRetry}
+              <View>
+                <Box mb={6}>
+                  <Text
+                    variant={"body"}
+                    fontWeight={"semiBold"}
+                    textAlign={"center"}
+                    numberOfLines={1}
+                    testID={"receive-account-name-" + mainAccountName}
+                  >
+                    {mainAccountName}
+                  </Text>
+                </Box>
+                <Flex
+                  p={6}
+                  borderRadius={24}
+                  position="relative"
+                  bg="constant.white"
+                  borderWidth={1}
+                  borderColor="neutral.c40"
+                  alignItems="center"
+                  justifyContent="center"
+                  testID={"receive-qr-code-container-" + mainAccountName}
+                >
+                  <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    width={QRSize * 0.3}
+                    height={QRSize * 0.3}
+                    bg="constant.white"
+                    position="absolute"
+                  >
+                    <CurrencyIcon
+                      currency={currency}
+                      color={colors.constant.white}
+                      bg={getCurrencyColor(currency) || colors.constant.black}
+                      size={48}
+                      circle
+                    />
+                  </Flex>
+                </Flex>
+                <Text
+                  testID="receive-fresh-address"
+                  variant={"body"}
+                  fontWeight={"medium"}
+                  textAlign={"center"}
+                  mt={6}
+                >
+                  {freshAccountAddress}
+                </Text>
+              </View>
+            </Flex>
+            {mainAccount.derivationMode === "taproot" ? (
+              <Flex mt={6} px={6} alignSelf="stretch">
+                <Alert type="warning">
+                  <Trans i18nKey="transfer.receive.taprootWarning" />
+                </Alert>
+              </Flex>
+            ) : null}
+            <Flex width={QRContainerSize} flexDirection="row" mt={6}>
+              <StyledPressable
+                borderRadius={2}
+                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+              >
+                <ShareButton value={address} />
+              </StyledPressable>
+              <StyledPressable
+                borderRadius={2}
+                isFlex
+                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+              >
+                <CopyButton text={address}>
+                  <Trans i18nKey="transfer.receive.copyAddress" />
+                </CopyButton>
+              </StyledPressable>
+            </Flex>
+          </Box>
+          <Flex px={6} flexDirection="column" rowGap={8} mt={6} mb={4}>
+            <Alert type="security">
+              <Trans
+                i18nKey="hedera.currentAddress.messageIfVirtual"
+                values={{
+                  name,
+                }}
               />
-            </View>
-          </View>
-        ) : null}
-        <Touchable event="ReceiveClose" style={styles.close} onPress={onModalClose}>
-          <Close color={colors.fog} size={20} />
-        </Touchable>
-      </QueuedDrawer>
-    </SafeAreaView>
+            </Alert>
+            <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
+          </Flex>
+        </Flex>
+      </NavigationScrollView>
+    </Flex>
   );
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    paddingBottom: 16,
-  },
-  container: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomContainer: {
-    gap: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 32,
-  },
-  qrWrapper: {
-    borderWidth: 1,
-    padding: 16,
-    borderRadius: 4,
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-      width: 0,
-    },
-  },
-  qrWrapperSmall: {
-    padding: 8,
-  },
-  qrZoomWrapper: {
-    padding: 16,
-    borderRadius: 4,
-    alignItems: "center",
-  },
-  addressTitle: {
-    paddingTop: 16,
-    fontSize: 14,
-  },
-  addressTitleBold: {
-    paddingLeft: 8,
-    fontSize: 16,
-  },
-  addressWrapper: {
-    paddingTop: 8,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  address: {
-    paddingTop: 24,
-  },
-  taprootWarning: {
-    paddingTop: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignSelf: "stretch",
-  },
-  copyLink: {
-    paddingTop: 24,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignSelf: "stretch",
-  },
-  copyShare: {
-    paddingHorizontal: 12,
-  },
-  modal: {
-    flexDirection: "column",
-  },
-  modalBody: {
-    alignItems: "center",
-    paddingHorizontal: 16,
-  },
-  modalIcon: {
-    paddingTop: 20,
-  },
-  modalTitle: {
-    paddingTop: 40,
-    fontSize: 16,
-    textAlign: "center",
-  },
-  modalDescription: {
-    paddingTop: 16,
-    marginBottom: 40,
-    fontSize: 14,
-    paddingHorizontal: 40,
-    textAlign: "center",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 8,
-    alignItems: "flex-end",
-    flexGrow: 1,
-  },
-  button: {
-    flexGrow: 1,
-    marginHorizontal: 8,
-  },
-  bigButton: {
-    flexGrow: 2,
-    marginHorizontal: 8,
-  },
-  footer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    paddingTop: 8,
-  },
-  close: {
-    position: "absolute",
-    right: 10,
-    top: 10,
-  },
-  textUnderline: {
-    textDecorationLine: "underline",
-  },
-  learnmore: {
-    paddingLeft: 8,
-    paddingTop: 4,
-  },
-});
+
+const StyledPressable = styled.Pressable<BaseStyledProps & { isFlex?: boolean }>`
+  padding: 4px;
+  background-color: ${({ theme }) => theme.colors.opacityDefault.c05};
+  margin-right: 4px;
+  ${({ isFlex }) =>
+    isFlex &&
+    `
+      flex: 1;
+    `}
+`;

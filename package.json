@@ -100,7 +100,7 @@
     "coin:hedera": "pnpm --filter coin-hedera",
     "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
-    "coin:icp": "pnpm --filter coin-internet_computer",
+    "coin:internet_computer": "pnpm --filter coin-internet_computer",
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
@@ -256,7 +256,6 @@
       "ethers": "6.15.0"
     },
     "patchedDependencies": {
-      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",

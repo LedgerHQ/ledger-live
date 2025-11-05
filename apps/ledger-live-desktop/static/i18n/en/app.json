@@ -1446,6 +1446,12 @@
         "description": "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel": "Assets transferred"
       },
+      "syncAccounts": {
+        "title": "Sync your crypto accounts",
+        "titleCompleted": "Your accounts are synchronized",
+        "description": "Activate Ledger Sync to sync your crypto accounts",
+        "actionCompletedPopupLabel": "Accounts synced"
+      },
       "recover": {
         "title": "Subscribe to Ledger Recover",
         "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
+      "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",

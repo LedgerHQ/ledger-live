@@ -130,7 +130,7 @@ export async function handleSwapErrorOrSuccess(
     );
   } else {
     await app.swap.waitForPageDomContentLoadedState();
-    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
     await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
   }
 }

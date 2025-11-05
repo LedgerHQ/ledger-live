@@ -2,7 +2,10 @@ import React, { MutableRefObject, useCallback, useContext, useEffect } from "rea
 import { Flex } from "@ledgerhq/native-ui";
 import { Platform, RefreshControl, ViewToken } from "react-native";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import {
+  MarketCurrencyData,
+  MarketListRequestParams,
+} from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -23,16 +26,16 @@ import { MARKET_LIST_VIEW_ID } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
-  CollapsibleHeaderFlatList<CurrencyData>,
+  CollapsibleHeaderFlatList<MarketCurrencyData>,
   {
     progressViewOffset: Platform.OS === "android" ? 64 : 0,
   },
 );
 
-const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
+const keyExtractor = (item: MarketCurrencyData, index: number) => item.id + index;
 
 interface ViewProps {
-  marketData?: CurrencyData[];
+  marketData?: MarketCurrencyData[];
   filterByStarredCurrencies: boolean;
   starredMarketCoins: string[];
   search?: string;
@@ -127,7 +130,7 @@ function View({
       paddingBottom: TAB_BAR_SAFE_HEIGHT,
     },
     data: marketData,
-    renderItem: ({ item, index }: { item: CurrencyData; index: number }) => (
+    renderItem: ({ item, index }: { item: MarketCurrencyData; index: number }) => (
       <ListRow item={item} index={index} counterCurrency={counterCurrency} range={range} />
     ),
     onEndReached,

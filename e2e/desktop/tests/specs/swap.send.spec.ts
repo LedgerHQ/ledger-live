@@ -94,6 +94,12 @@ const swaps = [
     xrayTicket: "B2CQA-3907",
     tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
   },
+  {
+    fromAccount: TokenAccount.CELO_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-4011",
+    tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {

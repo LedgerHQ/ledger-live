@@ -12,6 +12,7 @@ export default class CommonPage {
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
   deviceItemRegex = /device-item-.*/;
+  walletApiWebview = "wallet-api-webview";
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");

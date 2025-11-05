@@ -51,6 +51,23 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
   recoverAction,
 ];
 
+/**
+ * Mock of post onboarding actions for DeviceModelId.apex
+ */
+const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
+  assetsTransferMock,
+  buyCryptoMock,
+  customImageMock,
+  recoverMock,
+];
+
+const apexPostOnboardingActions: PostOnboardingAction[] = [
+  assetsTransferAction,
+  buyCryptoAction,
+  customImageAction,
+  recoverAction,
+];
+
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
 ): PostOnboardingAction | undefined {
@@ -82,6 +99,9 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
       return europaPostOnboardingActions;
+    case DeviceModelId.apex:
+      if (mock) return apexPostOnboardingActionsMock;
+      return apexPostOnboardingActions;
     default:
       return [];
   }

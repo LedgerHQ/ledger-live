@@ -5,7 +5,6 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
-import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
 import {
   makeAccount,
@@ -67,7 +66,6 @@ export const tokenAccount = {
 };
 export const account = Object.freeze({
   ...makeAccount("0xkvn", currency, [tokenAccount]),
-  syncHash: logic.getSyncHash(currency),
 });
 
 export const coinOperations = [

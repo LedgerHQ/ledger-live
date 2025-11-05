@@ -6,7 +6,7 @@ const transactionE2E = {
   errorMessage: "Not enough balance, including network fee",
   ctaBanner: true,
   quotesVisible: false,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runTooLowAmountForQuoteSwapsTest(

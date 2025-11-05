@@ -9,14 +9,14 @@ import { ScreenName } from "~/const";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTimeRange } from "~/actions/settings";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
-  selectedCoinData: CurrencyData;
+  selectedCoinData: MarketCurrencyData;
   counterCurrency: string | undefined;
 };
 
@@ -33,7 +33,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
     });
   }, [currency, navigation]);
 
-  const getPrice = (selectedCoinData: CurrencyData, range: PortfolioRange) => {
+  const getPrice = (selectedCoinData: MarketCurrencyData, range: PortfolioRange) => {
     const key: KeysPriceChange = range === "all" ? KeysPriceChange.year : KeysPriceChange[range];
     return selectedCoinData.priceChangePercentage[key];
   };

@@ -3,7 +3,7 @@ import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 export function runAddAccountTest(
   currency: CurrencyType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 ) {
   describe("Add accounts - Network Based", () => {
     beforeAll(async () => {

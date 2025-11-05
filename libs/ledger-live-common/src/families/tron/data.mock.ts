@@ -11,6 +11,7 @@ export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 setCryptoAssetsStoreForCoinFramework({
   findTokenById: (_: string) => undefined,
   findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
 } as unknown as CryptoAssetsStore);
 
 export const mockAccount = fromAccountRaw({

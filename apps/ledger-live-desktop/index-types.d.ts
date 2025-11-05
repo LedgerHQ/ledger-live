@@ -95,3 +95,7 @@ interface Window {
     };
   };
 }
+
+// Add variables to the global scope (`declare const` does not seem to work here):
+
+declare var api: Window["api"] | undefined; // eslint-disable-line no-var

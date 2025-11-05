@@ -27,6 +27,7 @@ export default class BuySellPage {
   @Step("Open page via deeplink")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
+    await waitForElementById(app.common.walletApiWebview);
     await waitWebElementByTestId(this.cryptoCurrencySelector);
   }
 

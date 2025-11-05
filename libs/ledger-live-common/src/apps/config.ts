@@ -42,6 +42,7 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "1.5.0",
+      nanosMinVersion: "1.3.2",
     },
   },
   config_nanoapp_cardano_ada: {

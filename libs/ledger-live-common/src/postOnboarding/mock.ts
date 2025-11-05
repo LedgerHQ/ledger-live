@@ -5,6 +5,7 @@ import { FeatureId, PostOnboardingAction, PostOnboardingActionId } from "@ledger
 const MockIcon = () => null;
 
 export const mockedFeatureIdToTest: FeatureId = "mockFeature";
+export const mockedFeatureParamIdToTest: string = "mockFeatureParam";
 
 export const claimTestMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
@@ -21,6 +22,7 @@ export const personalizeTestMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: MockIcon,
   featureFlagId: mockedFeatureIdToTest,
+  featureFlagParamId: mockedFeatureParamIdToTest,
   title: `Personalize my device`,
   titleCompleted: `Personalize my device`,
   description: "By customizing the screen.",

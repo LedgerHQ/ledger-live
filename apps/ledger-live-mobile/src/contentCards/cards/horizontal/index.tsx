@@ -24,8 +24,13 @@ const HorizontalCard = ContentCardBuilder<Props>(
 
     useEffect(() => metadata.actions?.onView?.());
 
+    const isClickable = !!metadata.actions?.onClick;
+    const ContainerComponent = isClickable ? TouchableOpacity : Flex;
     return (
-      <TouchableOpacity onPress={metadata.actions?.onClick} key={metadata.id}>
+      <ContainerComponent
+        {...(isClickable ? { onPress: metadata.actions?.onClick } : {})}
+        key={metadata.id}
+      >
         <Flex
           bg={colors.opacityDefault.c05}
           p="13px"
@@ -53,7 +58,7 @@ const HorizontalCard = ContentCardBuilder<Props>(
             {description ? <Subtitle label={description} /> : null}
           </Flex>
         </Flex>
-      </TouchableOpacity>
+      </ContainerComponent>
     );
   },
 );
