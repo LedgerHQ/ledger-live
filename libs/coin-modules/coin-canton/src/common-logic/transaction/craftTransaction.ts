@@ -27,7 +27,7 @@ export async function craftTransaction(
 }> {
   const params: PrepareTransferRequest = {
     recipient: transaction.recipient || "",
-    amount: transaction.amount.toString(),
+    amount: transaction.amount.toFixed(),
     type: "token-transfer-request" as const,
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,

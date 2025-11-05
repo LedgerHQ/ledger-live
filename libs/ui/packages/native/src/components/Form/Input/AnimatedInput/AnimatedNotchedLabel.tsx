@@ -29,7 +29,7 @@ const labelFinalPositions = {
 const LabelContainer = styled(Animated.View)<{ notched: boolean }>`
   position: absolute;
   padding: ${`0 ${labelPadding}px`};
-  height: 15px;
+  overflow: visible;
   z-index: ${(p) => (p.notched ? 3 : 0)};
 `;
 
@@ -40,8 +40,7 @@ type LabelTextProps = {
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const LabelText = styled(AnimatedText)<LabelTextProps>`
-  height: 15px;
-  line-height: 18px;
+  include-font-padding: false;
   vertical-align: top;
   color: ${(p) =>
     p.status === "default" ? inputTextColor[p.status] : inputStatusColors[p.status]};

@@ -180,6 +180,7 @@ describe("EVM Family", () => {
           blockHeight: 17586913,
           blockHash: "0x6db17db08345729953a1408a56dcc588aa3d23e8cc917f2624b8bf047148cce2",
           nonce: 271392,
+          status: 1,
         });
       });
     });

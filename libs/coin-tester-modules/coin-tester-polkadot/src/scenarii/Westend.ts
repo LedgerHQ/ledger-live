@@ -8,7 +8,7 @@ import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";

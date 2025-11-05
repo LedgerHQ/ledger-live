@@ -14,6 +14,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       useGateway: true,
       networkType: "mainnet",
       nativeInstrumentId: "Amulet",
+      fee: 0,
     },
   },
   config_currency_canton_network_devnet: {
@@ -29,6 +30,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
+      fee: 0,
     },
   },
   config_currency_canton_network_testnet: {
@@ -44,6 +46,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       nativeInstrumentId: "Amulet",
       useGateway: true,
       networkType: "testnet",
+      fee: 0,
     },
   },
 };

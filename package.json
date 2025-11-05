@@ -112,6 +112,7 @@
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
+    "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -251,7 +252,8 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5"
+      "@sentry/react-native>metro": "0.81.5",
+      "ethers": "6.15.0"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
@@ -264,7 +266,7 @@
       "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
       "react-native-bundle-visualizer@3.1.3": "patches/react-native-bundle-visualizer@3.1.3.patch",
-      "@ton/core@0.60.1": "patches/@ton__core@0.60.1.patch",
+      "@ton/core": "patches/@ton__core.patch",
       "storyly-react-native": "patches/storyly-react-native.patch",
       "react-native-webview": "patches/react-native-webview.patch",
       "detox@20.41.2": "patches/detox@20.41.2.patch",

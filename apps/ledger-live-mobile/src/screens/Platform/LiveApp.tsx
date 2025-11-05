@@ -14,6 +14,7 @@ import { useLocale } from "~/context/Locale";
 import { ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
@@ -55,7 +56,7 @@ export function LiveApp({ route }: Props) {
     };
   }
   return manifest ? (
-    <>
+    <SafeAreaViewFixed edges={["top", "bottom", "left", "right"]} isFlex>
       <TrackScreen category="Platform" name="App" />
       <WebPlatformPlayer
         manifest={manifest}
@@ -65,7 +66,7 @@ export function LiveApp({ route }: Props) {
           ...params,
         }}
       />
-    </>
+    </SafeAreaViewFixed>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

@@ -65,7 +65,7 @@ describe("makeGetAccountShape", () => {
       deviceId: "id",
     };
     const buildSubAccountsMock = jest.mocked(buildSubAccounts);
-    buildSubAccountsMock.mockReturnValue([]);
+    buildSubAccountsMock.mockResolvedValue([]);
     getTransactionsMock = jest.mocked(getTransactions);
     const getNetworkInfoMock = jest.mocked(fetchNetworkInfo);
     getNetworkInfoMock.mockReturnValue(

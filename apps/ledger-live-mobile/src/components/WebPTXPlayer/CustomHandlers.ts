@@ -7,7 +7,7 @@ import {
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
@@ -22,6 +22,9 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { createCustomErrorClass } from "@ledgerhq/errors";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
+
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
 
@@ -43,9 +46,20 @@ export function useCustomExchangeHandlers({
   handleLoaderDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const route = useRoute();
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device>();
   const syncAccountById = useSyncAccountById();
+
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "earn_redirect_provider",
+  });
+
+  const goToAccountStakeFlow = useStakingDrawer({
+    navigation: navigation.getParent() || navigation,
+    parentRoute: route,
+    alwaysShowNoFunds: false,
+  });
 
   // Add refs to track active promises
   const activePromises = useRef<
@@ -130,6 +144,44 @@ export function useCustomExchangeHandlers({
           }
         });
       },
+      "custom.navigate": async (request: {
+        params?: { action?: string; currencyId?: string; accountId?: string; source?: string };
+      }) => {
+        const { action } = request.params || {};
+
+        if (!action) {
+          throw new Error("Missing action parameter");
+        }
+
+        if (action === "go-back") {
+          navigation.goBack();
+          return { success: true };
+        } else if (action === "redirect-provider") {
+          const { accountId: walletAccountId } = request.params || {};
+
+          if (walletAccountId) {
+            // If we have a specific account, go directly to the stake flow for that account
+            const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+            const account = accounts.find(acc => acc.id === accountId);
+
+            if (account) {
+              const parentAccount = isTokenAccount(account)
+                ? getParentAccount(account, accounts)
+                : undefined;
+
+              // Go directly to stake flow for this specific account
+              goToAccountStakeFlow(account, parentAccount);
+              return { success: true };
+            }
+          }
+
+          // If no account specified or not found, open the general stake drawer
+          handleOpenStakeDrawer();
+
+          return { success: true };
+        }
+        throw new Error("Unknown navigation action");
+      },
     };
 
     return {
@@ -195,6 +247,7 @@ export function useCustomExchangeHandlers({
                   signature: exchangeParams.signature,
                   feesStrategy: exchangeParams.feesStrategy,
                   amountExpectedTo: exchangeParams.amountExpectedTo,
+                  sponsored: exchangeParams.sponsored,
                 },
                 device,
                 onResult: result => {
@@ -261,6 +314,7 @@ export function useCustomExchangeHandlers({
                   signature: exchangeParams.signature,
                   feesStrategy: exchangeParams.feesStrategy,
                   amountExpectedTo: exchangeParams.amountExpectedTo,
+                  sponsored: exchangeParams.sponsored,
                 },
                 device: currentDevice,
                 onResult: result => {
@@ -300,6 +354,8 @@ export function useCustomExchangeHandlers({
     sendAppReady,
     syncAccountById,
     tracking,
+    handleOpenStakeDrawer,
+    goToAccountStakeFlow,
   ]);
 }
 

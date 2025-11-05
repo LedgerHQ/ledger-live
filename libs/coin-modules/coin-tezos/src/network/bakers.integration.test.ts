@@ -60,7 +60,7 @@ describe("tezos bakers", () => {
 
   // TODO we'll need two accounts to test diff cases
   test("load account baker info", async () => {
-    const account = fromAccountRaw(accountTZrevealedDelegating);
+    const account = await fromAccountRaw(accountTZrevealedDelegating);
     const delegation = await loadAccountDelegation(account);
     expect(delegation).toBe(null);
   });

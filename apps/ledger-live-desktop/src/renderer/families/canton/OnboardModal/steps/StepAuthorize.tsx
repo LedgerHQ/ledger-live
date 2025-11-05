@@ -3,6 +3,7 @@ import styled from "styled-components";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { AuthorizeStatus } from "@ledgerhq/coin-canton/types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -13,9 +14,25 @@ import Spinner from "~/renderer/components/Spinner";
 import { TransactionConfirm } from "../components/TransactionConfirm";
 import { ValidatorRow } from "../components/ValidatorRow";
 import { StepProps } from "../types";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
-const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult }: StepProps) => {
+const StepAuthorize = ({
+  accountName,
+  authorizeStatus,
+  device,
+  onboardingResult,
+  error,
+}: StepProps) => {
   invariant(onboardingResult?.completedAccount, "canton: completed account is required");
+  const link = useLocalizedUrl(urls.canton.learnMore);
+
+  const getErrorMessage = (error: Error | null) => {
+    if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+      return <Trans i18nKey={error.message} />;
+    }
+    return <Trans i18nKey="families.canton.addAccount.auth.error" />;
+  };
 
   const renderContent = (status: AuthorizeStatus) => {
     switch (status) {
@@ -60,14 +77,12 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
             </Box>
 
             {status === AuthorizeStatus.ERROR ? (
-              <Alert type="error">
-                <Trans i18nKey="families.canton.addAccount.auth.error" />
-              </Alert>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
             ) : (
               <Alert>
                 <Trans i18nKey="families.canton.addAccount.auth.hint" />
                 <br />
-                <Link href="https://ledger.com" type="external">
+                <Link href={link} type="external">
                   <Trans i18nKey="common.learnMore" />
                 </Link>
               </Alert>
@@ -84,7 +99,7 @@ export const StepAuthorizeFooter = ({
   authorizeStatus,
   isProcessing,
   onAuthorizePreapproval,
-  onRetry,
+  onRetryPreapproval,
 }: StepProps) => {
   if (authorizeStatus === AuthorizeStatus.SIGN) {
     return <></>;
@@ -94,7 +109,7 @@ export const StepAuthorizeFooter = ({
     switch (authorizeStatus) {
       case AuthorizeStatus.ERROR:
         return (
-          <Button primary onClick={onRetry}>
+          <Button primary onClick={onRetryPreapproval}>
             <Trans i18nKey="common.tryAgain" />
           </Button>
         );
@@ -110,6 +125,11 @@ export const StepAuthorizeFooter = ({
       default:
         return (
           <Button primary onClick={onAuthorizePreapproval} disabled={isProcessing}>
+            {isProcessing && (
+              <Box mr={2}>
+                <Spinner size={20} />
+              </Box>
+            )}
             <Trans i18nKey="common.confirm" />
           </Button>
         );

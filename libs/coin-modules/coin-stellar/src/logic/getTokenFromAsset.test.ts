@@ -1,15 +1,17 @@
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as tokenModule from "@ledgerhq/cryptoassets/tokens";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
+beforeAll(() => {
+  initializeLegacyTokens(addTokensLegacy);
+  setCryptoAssetsStore(legacyCryptoAssetsStore);
+});
+
 describe("getTokenFromAsset", () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("computes the token of the USDC asset, trusting the CAL", async () => {
-    const findTokenById = jest.spyOn(tokenModule, "findTokenById");
-
+  it("computes the token of the USDC asset", async () => {
     expect(
       await getTokenFromAsset({
         type: "token",
@@ -21,14 +23,9 @@ describe("getTokenFromAsset", () => {
       contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
       name: "USDC",
     });
-    expect(findTokenById).toHaveBeenCalledWith(
-      "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-    );
   });
 
   it("does not compute the token of an unknown asset, trusting the CAL", async () => {
-    const findTokenById = jest.spyOn(tokenModule, "findTokenById");
-
     expect(
       await getTokenFromAsset({
         type: "token",
@@ -36,7 +33,6 @@ describe("getTokenFromAsset", () => {
         assetOwner: "unknown-owner",
       }),
     ).toBeUndefined();
-    expect(findTokenById).toHaveBeenCalledWith("stellar/asset/unknown-reference:unknown-owner");
   });
 });
 

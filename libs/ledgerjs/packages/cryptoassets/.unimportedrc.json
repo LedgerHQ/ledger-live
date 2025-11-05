@@ -1,8 +1,6 @@
 {
-  "entry": [
-    "src/index.ts",
-    "src/crypto-assets-importer/index.ts"
-  ],
+  "entry": ["src/index.ts", "src/hooks.ts", "src/crypto-assets-importer/index.ts"],
   "ignorePatterns": ["src/data/**/*.ts", "src/**/*.test.ts"],
-  "ignoreUnimported": ["src/data/**", "src/**/*.test.ts"]
+  "ignoreUnimported": ["src/data/**", "src/**/*.test.ts", "src/cal-client/**"],
+  "ignoreUnused": ["zod", "@reduxjs/toolkit"]
 }

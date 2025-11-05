@@ -115,11 +115,12 @@ jobs:
       - test-mobile
       - test-libraries
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success')}}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
-      should_download_libs_coverage: ${{ needs.test-libs.outputs.coverage_generated }}
+      should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
 
   # Final Check required
   ok:

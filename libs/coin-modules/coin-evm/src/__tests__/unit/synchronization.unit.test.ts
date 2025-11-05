@@ -6,7 +6,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -767,7 +767,7 @@ describe("EVM Family", () => {
       });
 
       it("should return filtered subAccounts from blacklistedTokenIds, recomputing operations `id` and `accountId`", async () => {
-        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+        const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
@@ -882,6 +882,7 @@ describe("EVM Family", () => {
           gasPrice: "0",
           gasUsed: "0",
           value: "0",
+          status: 1,
         }));
 
         const expectedAddition = {
@@ -922,6 +923,7 @@ describe("EVM Family", () => {
           gasPrice: "0",
           gasUsed: "0",
           value: "0",
+          status: 1,
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")

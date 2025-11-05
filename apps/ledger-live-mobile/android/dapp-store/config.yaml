@@ -112,7 +112,23 @@ release:
       saga_features: ""
   media:
     - purpose: screenshot
-      uri: ./media/splash.webp
+      uri: ./media/1.png
+    - purpose: screenshot
+      uri: ./media/2.png
+    - purpose: screenshot
+      uri: ./media/3.png
+    - purpose: screenshot
+      uri: ./media/4.png
+    - purpose: screenshot
+      uri: ./media/5.png
+    - purpose: screenshot
+      uri: ./media/6.png
+    - purpose: screenshot
+      uri: ./media/7.png
+    - purpose: screenshot
+      uri: ./media/8.png
+    - purpose: screenshot
+      uri: ./media/9.png
     - purpose: banner
       uri: ./media/banner.png
   files:

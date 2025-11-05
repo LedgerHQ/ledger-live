@@ -110,6 +110,11 @@ export const mapStakingPositions = (
       validator,
       stakedSuiId: sp.stakedSuiId,
       formattedAmount: formatCurrencyUnit(unit, BigNumber(sp.principal), formatConfig),
+      formattedEstimatedReward: formatCurrencyUnit(
+        unit,
+        BigNumber(sp.status === "Active" ? sp.estimatedReward : 0),
+        formatConfig,
+      ),
     };
   });
 };

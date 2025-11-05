@@ -1,5 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { UseBalanceDeps, CreateBalanceItem } from "../utils/type";
+import { UseBalanceDeps, CreateBalanceItem, BalanceUI } from "../utils/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import BigNumber from "bignumber.js";
 
@@ -13,7 +13,10 @@ type Params = {
 };
 
 export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: NetworkDeps) {
-  return function useRightBalanceNetwork({ networks }: Params) {
+  return function useRightBalanceNetwork({ networks }: Params): Array<{
+    rightElement?: React.ReactNode;
+    balanceData?: BalanceUI;
+  }> {
     const { flattenedAccounts, state, counterValueCurrency } = useBalanceDeps();
 
     const networkBalanceData = getBalanceAndFiatValueByAssets(
@@ -34,7 +37,6 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
       };
 
       return {
-        ...currency,
         rightElement: balanceItem(balanceData),
         balanceData,
       };

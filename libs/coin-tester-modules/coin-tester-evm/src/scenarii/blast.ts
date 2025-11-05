@@ -10,9 +10,9 @@ import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { blast, callMyDealer, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";

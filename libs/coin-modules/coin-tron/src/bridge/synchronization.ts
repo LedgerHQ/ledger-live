@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/coin-framework/account";
 import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenByAddressInCurrency, findTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
@@ -22,6 +22,7 @@ import {
   isAccountEmpty,
 } from "./utils";
 import { getAccount } from "../logic/getAccount";
+import { AccountTronAPI } from "../network/types";
 
 type TronToken = {
   key: string;
@@ -32,6 +33,43 @@ type TronToken = {
 
 // the balance does not update straightaway so we should ignore recent operations if they are in pending for a bit
 const PREFER_PENDING_OPERATIONS_UNTIL_BLOCK_VALIDATION = 35;
+const MAX_OPERATIONS_PAGE_SIZE = 1000;
+
+async function getTrc10Tokens(acc: AccountTronAPI): Promise<TronToken[]> {
+  const trc10Tokens: TronToken[] = [];
+  for (const { key, value } of get(acc, "assetV2", []) as { key: string; value: number }[]) {
+    const tokenInfo = await getCryptoAssetsStore().findTokenById(`tron/trc10/${key}`);
+    if (tokenInfo) {
+      trc10Tokens.push({
+        key,
+        type: "trc10",
+        tokenId: tokenInfo.id,
+        balance: value.toString(),
+      });
+    }
+  }
+  return trc10Tokens;
+}
+
+async function getTrc20Tokens(acc: AccountTronAPI, currencyId: string): Promise<TronToken[]> {
+  const trc20Tokens: TronToken[] = [];
+  for (const trc20 of get(acc, "trc20", []) as Record<string, string>[]) {
+    const [[contractAddress, balance]] = Object.entries(trc20);
+    const tokenInfo = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      contractAddress,
+      currencyId,
+    );
+    if (tokenInfo) {
+      trc20Tokens.push({
+        key: contractAddress,
+        type: "trc20",
+        tokenId: tokenInfo.id,
+        balance,
+      });
+    }
+  }
+  return trc20Tokens;
+}
 
 export const getAccountShape: GetAccountShape<TronAccount> = async (
   { initialAccount, currency, address, derivationMode },
@@ -58,14 +96,10 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   }
 
   const acc = tronAcc[0];
-  const cacheTransactionInfoById = initialAccount
-    ? {
-        ...(initialAccount?.tronResources?.cacheTransactionInfoById || {}),
-      }
-    : {};
+  const cacheTransactionInfoById = initialAccount?.tronResources?.cacheTransactionInfoById || {};
   const operationsPageSize = Math.min(
-    1000,
-    getOperationsPageSize(initialAccount && initialAccount.id, syncConfig),
+    MAX_OPERATIONS_PAGE_SIZE,
+    getOperationsPageSize(initialAccount?.id, syncConfig),
   );
   // FIXME: this is not optional especially that we might already have initialAccount
   // use minimalOperationsBuilderSync to reconciliate and KEEP REF
@@ -86,68 +120,36 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     parentTxs.map(tx => txInfoToOperation(accountId, address, tx)),
   );
 
-  const trc10Tokens = get(acc, "assetV2", []).reduce(
-    (accumulator: TronToken[], { key, value }: { key: string; value: number }) => {
-      const tokenInfo = findTokenById(`tron/trc10/${key}`);
-      if (tokenInfo) {
-        accumulator.push({
-          key,
-          type: "trc10",
-          tokenId: tokenInfo.id,
-          balance: value.toString(),
-        });
-      }
-      return accumulator;
-    },
-    [],
-  );
-
-  const trc20Tokens = get(acc, "trc20", []).reduce(
-    (accumulator: TronToken[], trc20: Record<string, string>) => {
-      const [[contractAddress, balance]] = Object.entries(trc20);
-      const tokenInfo = findTokenByAddressInCurrency(contractAddress, currency.id);
-      if (tokenInfo) {
-        accumulator.push({
-          key: contractAddress,
-          type: "trc20",
-          tokenId: tokenInfo.id,
-          balance,
-        });
-      }
-      return accumulator;
-    },
-    [],
-  );
+  const trc10Tokens = await getTrc10Tokens(acc);
+  const trc20Tokens = await getTrc20Tokens(acc, currency.id);
 
   const { blacklistedTokenIds = [] } = syncConfig;
 
-  const subAccounts: TokenAccount[] = compact(
-    trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }: TronToken) => {
-      const { blacklistedTokenIds = [] } = syncConfig;
-      const token = findTokenById(tokenId);
-      if (!token || blacklistedTokenIds.includes(tokenId)) return;
-      const id = encodeTokenAccountId(accountId, token);
-      const tokenTxs = txs.filter(tx => tx.tokenId === key);
-      const operations = compact(tokenTxs.map(tx => txInfoToOperation(id, address, tx)));
-      const maybeExistingSubAccount = initialAccount?.subAccounts?.find(a => a.id === id);
-      const bnBalance = new BigNumber(balance);
-      const sub: TokenAccount = {
-        type: "TokenAccount",
-        id,
-        parentId: accountId,
-        token,
-        balance: bnBalance,
-        spendableBalance: bnBalance,
-        operationsCount: operations.length,
-        operations,
-        pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
-        creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
-        swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
-        balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-      };
-      return sub;
-    }),
-  );
+  const subAccounts: TokenAccount[] = [];
+  for (const { key, tokenId, balance } of trc10Tokens.concat(trc20Tokens)) {
+    const token = await getCryptoAssetsStore().findTokenById(tokenId);
+    if (!token || blacklistedTokenIds.includes(tokenId)) continue;
+    const id = encodeTokenAccountId(accountId, token);
+    const tokenTxs = txs.filter(tx => tx.tokenId === key);
+    const operations = compact(tokenTxs.map(tx => txInfoToOperation(id, address, tx)));
+    const maybeExistingSubAccount = initialAccount?.subAccounts?.find(a => a.id === id);
+    const bnBalance = new BigNumber(balance);
+    const sub: TokenAccount = {
+      type: "TokenAccount",
+      id,
+      parentId: accountId,
+      token,
+      balance: bnBalance,
+      spendableBalance: bnBalance,
+      operationsCount: operations.length,
+      operations,
+      pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
+      creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
+      swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
+      balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
+    };
+    subAccounts.push(sub);
+  }
 
   // Filter blacklisted tokens from the initial account's subAccounts
   // Could be use to filter out tokens that got their CAL id changed
@@ -197,7 +199,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   };
 };
 
-const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
+export const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
   function evictRecentOpsIfPending(a: Account | TokenAccount) {
     a.pendingOperations.forEach(pending => {
       const i = a.operations.findIndex(o => o.id === pending.id);
@@ -231,19 +233,12 @@ const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
 const mergeSubAccounts = (subAccounts1: TokenAccount[], subAccounts2: TokenAccount[]) => {
   const existingIds = new Set(subAccounts1.map(subAccount => subAccount.id));
   const filteredSubAccounts2: TokenAccount[] = subAccounts2
-    .map(subAccount => {
-      if (existingIds.has(subAccount.id)) {
-        return null;
-      } else {
-        // Set balance and spendableBalance to 0 has if they are not here it means balance is 0
-        return {
-          ...subAccount,
-          balance: new BigNumber(0),
-          spendableBalance: new BigNumber(0),
-        };
-      }
-    })
-    .filter((elt): elt is NonNullable<typeof elt> => elt !== null);
+    .filter(subAccount => !existingIds.has(subAccount.id))
+    .map(subAccount => ({
+      ...subAccount,
+      balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
+    }));
 
   return subAccounts1.concat(filteredSubAccounts2);
 };

@@ -21,10 +21,14 @@ function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
   return "NONE";
 }
 
-function computeValue(asset: AssetConfig, op: LiveOperation, type: OperationType): bigint {
-  if (type === "FEES") return BigInt(op.fee.toFixed(0));
-  if (asset.type === "native" && op.type === "OUT")
+function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
+  if (asset.type === "native" && ["OUT", "FEES"].includes(op.type)) {
     return BigInt(op.value.toFixed(0)) - BigInt(op.fee.toFixed(0));
+  }
+
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return BigInt(asset.parents[op.hash].value.toFixed(0));
+  }
 
   return BigInt(op.value.toFixed(0));
 }
@@ -39,7 +43,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   }
 
   const type = extractType(asset, op);
-  const value = computeValue(asset, op, type);
+  const value = computeValue(asset, op);
 
   return {
     id: op.id,
@@ -58,8 +62,18 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       date: op.date,
     },
     details: {
-      ledgerOpType: op.type,
-      ...(asset.type === "token" ? { assetAmount: op.value.toFixed(0) } : {}),
+      sequence: op.transactionSequenceNumber,
+      status: op.hasFailed ? "failed" : "success",
+      ...(asset.type === "token"
+        ? {
+            ledgerOpType: op.type,
+            assetAmount: op.value.toFixed(0),
+            assetSenders: op.senders,
+            assetRecipients: op.recipients,
+            parentSenders: asset.parents[op.hash]?.senders ?? [],
+            parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+          }
+        : {}),
     },
   };
 }
@@ -81,7 +95,7 @@ export async function listOperations(
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
     ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
   const isTokenOperation = (coinOperation: LiveOperation): boolean =>
-    lastTokenOperations.map(op => op.hash).includes(coinOperation.hash);
+    [...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
   const parents = Object.fromEntries(
     lastCoinOperations.filter(isTokenOperation).map(op => [op.hash, op]),
   );
@@ -89,17 +103,22 @@ export async function listOperations(
   const nativeOperations = lastCoinOperations
     .filter(isNativeOperation)
     .map<Operation<MemoNotSupported>>(op => toOperation({ type: "native" }, op));
-  const tokenOperations = lastTokenOperations.map<Operation<MemoNotSupported>>(op =>
-    toOperation({ type: "token", owner: address, parents }, op),
-  );
+  const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
+    Operation<MemoNotSupported>
+  >(op => toOperation({ type: "token", owner: address, parents }, op));
 
   const hasValidType = (operation: Operation): boolean =>
-    ["NONE", "FEES", "IN", "OUT", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(operation.type);
-  const isAlone = (operation: Operation): boolean =>
-    ["NONE", "FEES"].includes(operation.type) && !("assetAmount" in (operation.details ?? {}));
+    [
+      "NONE",
+      "FEES",
+      "IN",
+      "OUT",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "NFT_IN",
+      "NFT_OUT",
+    ].includes(operation.type);
 
-  return [
-    nativeOperations.concat(tokenOperations).filter(op => hasValidType(op) && !isAlone(op)),
-    "",
-  ];
+  return [nativeOperations.concat(tokenOperations).filter(hasValidType), ""];
 }

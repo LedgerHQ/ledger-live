@@ -26,15 +26,13 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
         actionsState: [],
         postOnboardingInProgress: hubState.postOnboardingInProgress,
       };
-    const actionsState = hubState.actionsToComplete
-      .map(actionId => ({
-        ...getPostOnboardingAction(actionId),
-        completed: !!hubState.actionsCompleted[actionId],
-      }))
-      .filter(
-        actionWithState =>
-          !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
-      );
+    const actionsState = hubState.actionsToComplete.flatMap(actionId => {
+      const action = getPostOnboardingAction(actionId);
+      if (!action || (action.featureFlagId && !getFeature(action.featureFlagId)?.enabled)) {
+        return [];
+      }
+      return [{ ...action, completed: !!hubState.actionsCompleted[actionId] }];
+    });
     const lastActionCompleted = hubState.lastActionCompleted
       ? getPostOnboardingAction(hubState.lastActionCompleted)
       : null;

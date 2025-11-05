@@ -6,7 +6,7 @@ const swapCheckProviderTestConfig = {
   toAccount: TokenAccount.ETH_USDT_1,
   provider: Provider.VELORA,
   tmsLinks: ["B2CQA-3119"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runSwapCheckProvider(

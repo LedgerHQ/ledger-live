@@ -6,10 +6,15 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
+
+initializeLegacyTokens(addTokens);
 
 describe.each([
   [
@@ -20,6 +25,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
+      showNfts: true,
     },
   ],
   [
@@ -30,13 +36,14 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
+      showNfts: true,
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
     module = createApi(config as EvmConfig, "ethereum");
   });
 
@@ -172,7 +179,17 @@ describe.each([
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
-        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect([
+          "NONE",
+          "FEES",
+          "IN",
+          "OUT",
+          "DELEGATE",
+          "UNDELEGATE",
+          "REDELEGATE",
+          "NFT_IN",
+          "NFT_OUT",
+        ]).toContainEqual(op.type);
         expect(op.senders.concat(op.recipients)).toContain(
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
         );

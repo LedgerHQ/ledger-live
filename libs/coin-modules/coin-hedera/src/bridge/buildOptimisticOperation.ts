@@ -2,10 +2,10 @@ import invariant from "invariant";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
-import type { HederaOperationExtra, Transaction } from "../types";
-import { getEstimatedFees } from "./utils";
-import { isTokenAssociateTransaction } from "../logic";
 import { HEDERA_OPERATION_TYPES } from "../constants";
+import { estimateFees } from "../logic/estimateFees";
+import { isTokenAssociateTransaction, safeParseAccountId } from "../logic/utils";
+import type { HederaOperationExtra, Transaction } from "../types";
 
 const buildOptimisticTokenAssociateOperation = async ({
   account,
@@ -16,15 +16,14 @@ const buildOptimisticTokenAssociateOperation = async ({
 }): Promise<Operation> => {
   invariant(isTokenAssociateTransaction(transaction), "invalid transaction properties");
 
-  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenAssociate);
-  const value = transaction.amount;
+  const estimatedFee = await estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenAssociate);
   const type: OperationType = "ASSOCIATE_TOKEN";
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
-    value,
+    value: estimatedFee,
     fee: estimatedFee,
     blockHash: null,
     blockHeight: null,
@@ -52,9 +51,11 @@ const buildOptimisticCoinOperation = async ({
   const estimatedFee =
     transactionType === "FEES"
       ? transaction.amount
-      : await getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer);
+      : await estimateFees(account.currency, HEDERA_OPERATION_TYPES.CryptoTransfer);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
+  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
@@ -65,10 +66,12 @@ const buildOptimisticCoinOperation = async ({
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
-    recipients: [transaction.recipient],
+    recipients: [recipientWithoutChecksum],
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      ...(!!transaction.memo && { memo: transaction.memo }),
+    },
   };
 
   return operation;
@@ -83,9 +86,11 @@ const buildOptimisticTokenOperation = async ({
   tokenAccount: TokenAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
-  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenTransfer);
+  const estimatedFee = await estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenTransfer);
   const value = transaction.amount;
   const type: OperationType = "OUT";
+  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   const coinOperation = await buildOptimisticCoinOperation({
     account,
@@ -109,10 +114,12 @@ const buildOptimisticTokenOperation = async ({
         blockHash: null,
         blockHeight: null,
         senders: [account.freshAddress.toString()],
-        recipients: [transaction.recipient],
+        recipients: [recipientWithoutChecksum],
         accountId: tokenAccount.id,
         date: new Date(),
-        extra: {},
+        extra: {
+          ...(!!transaction.memo && { memo: transaction.memo }),
+        },
       },
     ],
   };

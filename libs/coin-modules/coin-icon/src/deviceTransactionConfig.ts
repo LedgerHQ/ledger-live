@@ -8,7 +8,7 @@ export type ExtraDeviceTransactionField = {
   label: string;
 };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
   account,
   parentAccount,
@@ -18,7 +18,7 @@ function getDeviceTransactionConfig({
   parentAccount?: Account;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
   const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;

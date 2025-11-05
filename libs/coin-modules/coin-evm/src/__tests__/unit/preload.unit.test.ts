@@ -2,6 +2,13 @@
 jest.useFakeTimers();
 
 // eslint-disable-next-line import/order
+import axios, { AxiosResponse } from "axios";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import {
+  __clearAllLists,
+  convertERC20,
+  addTokens,
+} from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import {
   binanceDaiDefinition,
   brettDefinition,
@@ -11,9 +18,6 @@ import {
   wethDefinition,
 } from "../fixtures/preload.fixtures";
 // Maintain this order for the sake of jest mocks
-import axios, { AxiosResponse } from "axios";
-import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";
 
@@ -24,6 +28,11 @@ const currency3 = getCryptoCurrencyById("base"); // chain id 8453 + this has no 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
 mockedAxios.AxiosError = jest.requireActual("axios").AxiosError;
+
+jest.mock("@ledgerhq/cryptoassets/legacy/legacy-utils", () => ({
+  ...jest.requireActual("@ledgerhq/cryptoassets/legacy/legacy-utils"),
+  addTokens: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
   get tokens() {
@@ -48,7 +57,7 @@ jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    CALTokensAPI.__clearAllLists();
+    __clearAllLists();
     mockedAxios.get.mockImplementation(async (url, { params, headers } = {}) => {
       if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens")
         throw new Error("UNEXPECTED URL");
@@ -177,71 +186,57 @@ describe("EVM Family", () => {
 
     describe("preload", () => {
       beforeEach(() => {
-        jest.spyOn(CALTokensAPI, "addTokens").mockImplementation(() => null);
-      });
-
-      afterEach(() => {
-        jest.restoreAllMocks();
+        jest.mocked(addTokens).mockClear();
       });
 
       it("should return void when fetch is hitting cache", async () => {
         setCALHash(currency1, "newState1");
         const tokens = await preload(currency1);
         expect(tokens).toEqual(undefined);
-        expect(CALTokensAPI.addTokens).not.toHaveBeenCalled();
+        expect(addTokens).not.toHaveBeenCalled();
       });
 
       it("should return and register the new ERC20 tokens", async () => {
         setCALHash(currency1, "initialState1");
         const tokens = await preload(currency1);
         expect(tokens).toEqual([usdcDefinition, usdtDefinition]);
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-          CALTokensAPI.convertERC20(usdtDefinition),
+        expect(addTokens).toHaveBeenCalledWith([
+          convertERC20(usdcDefinition),
+          convertERC20(usdtDefinition),
         ]);
       });
     });
 
     describe("hydrate", () => {
       beforeEach(() => {
-        jest.spyOn(CALTokensAPI, "addTokens").mockImplementation(() => null);
-      });
-
-      afterEach(() => {
-        jest.restoreAllMocks();
+        jest.mocked(addTokens).mockClear();
       });
 
       it("should register ERC20 tokens from embedded", async () => {
         hydrate(undefined, currency1);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-        ]);
+        expect(addTokens).toHaveBeenCalledWith([convertERC20(usdcDefinition)]);
       });
 
       it("should register ERC20 tokens from embedded with anything other than an array", async () => {
         hydrate({}, currency1);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-        ]);
+        expect(addTokens).toHaveBeenCalledWith([convertERC20(usdcDefinition)]);
       });
 
       it("should register ERC20 tokens", async () => {
         hydrate([usdcDefinition, usdtDefinition], currency1);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-          CALTokensAPI.convertERC20(usdtDefinition),
+        expect(addTokens).toHaveBeenCalledWith([
+          convertERC20(usdcDefinition),
+          convertERC20(usdtDefinition),
         ]);
       });
 
       it("should register BEP20 tokens", async () => {
         hydrate([binanceDaiDefinition], currency2);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(binanceDaiDefinition),
-        ]);
+        expect(addTokens).toHaveBeenCalledWith([convertERC20(binanceDaiDefinition)]);
       });
     });
   });

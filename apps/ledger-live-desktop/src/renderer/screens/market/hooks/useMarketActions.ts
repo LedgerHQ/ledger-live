@@ -17,6 +17,7 @@ import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export enum Page {
   Market = "Page Market",
@@ -26,12 +27,11 @@ export enum Page {
 type MarketActionsProps = {
   currency?: CurrencyData | null;
   page?: Page;
-  currenciesAll?: string[];
 };
 
-export const useMarketActions = ({ currency, page, currenciesAll }: MarketActionsProps) => {
+export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const history = useHistory();
-
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const startStakeFlow = useStakeFlow();
 
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -159,12 +159,21 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
     [internalCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
   );
 
-  const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
-  const availableOnSwap = isAvailableOnSwap(currency, currenciesForSwapAllSet);
+  const availableOnBuy = useMemo(
+    () => isAvailableOnBuy(currency, isCurrencyAvailable),
+    [currency, isCurrencyAvailable],
+  );
+  const availableOnSwap = useMemo(
+    () => isAvailableOnSwap(currency, currenciesForSwapAllSet),
+    [currency, currenciesForSwapAllSet],
+  );
 
   const { getCanStakeCurrency } = useStake();
 
-  const availableOnStake = !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id);
+  const availableOnStake = useMemo(
+    () => !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id),
+    [internalCurrency, getCanStakeCurrency],
+  );
 
   return {
     onBuy,

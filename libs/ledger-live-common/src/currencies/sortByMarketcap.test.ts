@@ -2,18 +2,21 @@ import { sortCurrenciesByIds } from "./sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from ".";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { setup } from "../bridge/impl";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({} as CryptoAssetsStore);
+setup(legacyCryptoAssetsStore);
 
-test("sortCurrenciesByIds snapshot", () => {
+test("sortCurrenciesByIds snapshot", async () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const ids: string[] = [];
   for (const k in getBTCValues()) {
-    const c = findCurrencyByTicker(k);
+    const c =
+      findCryptoCurrencyByTicker(k) ||
+      findFiatCurrencyByTicker(k) ||
+      (await getCryptoAssetsStore().findTokenById(k));
     if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
       ids.push(c.id);
     }

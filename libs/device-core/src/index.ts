@@ -15,6 +15,7 @@ export { PROVIDERS, getProviderIdUseCase } from "./managerApi/use-cases/getProvi
 export { fetchMcus } from "./managerApi/use-cases/fetchMcus";
 export { aDeviceInfoBuilder } from "./managerApi/entities/mocks/aDeviceInfo";
 export { getAppsCatalogForDevice } from "./managerApi/use-cases/getAppsCatalogForDevice";
+export type { ApplicationV2Entity } from "./managerApi/entities/AppEntity";
 // src/commands/
 export type { FirmwareInfoEntity } from "./commands/entities/FirmwareInfoEntity";
 export { GET_VERSION_APDU } from "./commands/use-cases/getVersion";

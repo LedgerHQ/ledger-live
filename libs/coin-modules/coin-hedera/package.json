@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -113,6 +113,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }

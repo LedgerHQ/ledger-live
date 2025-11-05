@@ -305,10 +305,12 @@ export const makeScanAccounts =
     getAccountShape,
     buildIterateResult,
     getAddressFn,
+    postSync = (_, a) => a,
   }: {
     getAccountShape: GetAccountShape<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
+    postSync?: (initial: A, synced: A) => A;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
@@ -379,7 +381,7 @@ export const makeScanAccounts =
           blockHeight: 0,
           balanceHistoryCache: emptyHistoryCache,
         };
-        const account = { ...initialAccount, ...accountShape };
+        let account = { ...initialAccount, ...accountShape };
 
         if (account.balanceHistoryCache === emptyHistoryCache) {
           account.balanceHistoryCache = generateHistoryFromOperations(account);
@@ -395,6 +397,11 @@ export const makeScanAccounts =
           res.address = account.freshAddress;
           derivationsCache[account.freshAddressPath] = res;
         }
+
+        // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
+        // Using the generic doesn't resolve correctly
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        account = postSync(initialAccount as unknown as A, account as unknown as A);
 
         log("scanAccounts", "derivationsCache", res);
 

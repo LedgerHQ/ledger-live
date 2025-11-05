@@ -47,7 +47,38 @@ export function convertApiAsset(apiAsset: ApiAsset): CryptoOrTokenCurrency | und
 }
 
 function convertApiCryptoCurrency(apiCrypto: ApiCryptoCurrency): CryptoOrTokenCurrency | undefined {
-  return findCryptoCurrencyById(apiCrypto.id);
+  const localCrypto = findCryptoCurrencyById(apiCrypto.id);
+  if (localCrypto) {
+    return localCrypto;
+  }
+
+  // Create a dynamic CryptoCurrency object with placeholders for fields we can't infer
+  return {
+    type: "CryptoCurrency" as const,
+    id: apiCrypto.id,
+    name: apiCrypto.name,
+    ticker: apiCrypto.ticker,
+    units: apiCrypto.units.map(unit => ({
+      name: unit.name,
+      code: unit.code,
+      magnitude: unit.magnitude,
+    })),
+    // Required fields with placeholders when not available in API
+    managerAppName: apiCrypto.name, // Placeholder: use name as fallback
+    coinType: apiCrypto.coinType ?? 0, // Placeholder: default to 0 if not provided
+    scheme: apiCrypto.id.toLowerCase(), // Placeholder: use lowercase ticker
+    color: "#999999", // Placeholder: default gray color
+    family: apiCrypto.family ?? apiCrypto.id, // Placeholder: default to "unknown" if not provided
+    explorerViews: [], // Placeholder: empty array
+    // Optional fields from API
+    symbol: apiCrypto.symbol,
+    disableCountervalue: apiCrypto.disableCountervalue,
+    supportsSegwit: apiCrypto.hasSegwit,
+    // Add ethereumLikeInfo if chainId is present
+    ...(apiCrypto.chainId && {
+      ethereumLikeInfo: { chainId: parseInt(apiCrypto.chainId, 10) },
+    }),
+  };
 }
 
 function convertApiTokenCurrency(apiToken: ApiTokenCurrency): CryptoOrTokenCurrency | undefined {

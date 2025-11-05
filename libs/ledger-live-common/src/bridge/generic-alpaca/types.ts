@@ -1,4 +1,4 @@
-import { TransactionCommon } from "@ledgerhq/types-live";
+import type { Operation, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -32,3 +32,7 @@ export type GenericTransaction = TransactionCommon & {
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;
 };
+
+export interface OperationCommon extends Operation {
+  extra: Record<string, any>;
+}

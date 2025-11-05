@@ -2,7 +2,7 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { findTokenById } from "@ledgerhq/cryptoassets/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -327,7 +327,6 @@ async function buildSubAccount({
 }
 
 async function buildSubAccounts({
-  currency,
   accountId,
   initialAccount,
   initialAccountAddress,
@@ -344,7 +343,6 @@ async function buildSubAccounts({
   syncConfig: SyncConfig;
 }): Promise<TokenAccount[] | undefined> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts: TokenAccount[] = [];
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering

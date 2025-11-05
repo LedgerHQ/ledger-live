@@ -33,6 +33,7 @@ import {
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -197,12 +198,16 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
     : { enabled: false };
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
+  const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
     : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
@@ -261,6 +266,9 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
+    // For tracking receive flow events during onboarding
+    ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
   };
 };
 

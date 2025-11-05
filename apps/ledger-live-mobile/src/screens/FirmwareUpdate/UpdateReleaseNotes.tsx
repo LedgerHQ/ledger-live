@@ -4,6 +4,7 @@ import Button from "~/components/wrappedUi/Button";
 import SafeMarkdown from "~/components/SafeMarkdown";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 type UpdateReleaseNotesProps = {
   firmwareNotes?: string | null;
@@ -14,9 +15,9 @@ const UpdateReleaseNotes: React.FC<UpdateReleaseNotesProps> = ({ onContinue, fir
   const { t } = useTranslation();
 
   return (
-    <Flex flex={1} px={6} pb={7}>
+    <SafeAreaViewFixed isFlex edges={["bottom"]}>
       <ScrollView persistentScrollbar>
-        <Flex>
+        <Flex px={6}>
           <Text variant="h4" fontWeight="semiBold" my={3}>
             {t("FirmwareUpdate.releaseNotesTitle")}
           </Text>
@@ -26,7 +27,7 @@ const UpdateReleaseNotes: React.FC<UpdateReleaseNotesProps> = ({ onContinue, fir
       <Button size="large" onPress={onContinue} type="main">
         {t("FirmwareUpdate.beginUpdate")}
       </Button>
-    </Flex>
+    </SafeAreaViewFixed>
   );
 };
 

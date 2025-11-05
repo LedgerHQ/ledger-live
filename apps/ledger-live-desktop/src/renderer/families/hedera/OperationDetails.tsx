@@ -1,8 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { OperationType } from "@ledgerhq/types-live";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
+import { isValidExtra } from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
@@ -22,6 +21,7 @@ import {
   OpDetailsTitle,
   TextEllipsis,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { cryptoAssetsHooks } from "~/config/bridge-setup";
 
 const OperationDetailsPostAccountSection = ({
   operation,
@@ -32,9 +32,10 @@ const OperationDetailsPostAccountSection = ({
     return null;
   }
 
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
+  const { token } = cryptoAssetsHooks.useTokenByAddressInCurrency(
+    operation.extra.associatedTokenId || "",
+    "hedera",
+  );
 
   if (!token) {
     return null;
@@ -64,9 +65,11 @@ const OperationDetailsPostAlert = ({
 
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
   const associatedTokenId = extra?.associatedTokenId;
-  const token = associatedTokenId
-    ? findTokenByAddressInCurrency(associatedTokenId, "hedera")
-    : null;
+
+  const { token } = cryptoAssetsHooks.useTokenByAddressInCurrency(
+    associatedTokenId || "",
+    "hedera",
+  );
 
   if (!token) {
     return null;
@@ -99,12 +102,13 @@ const OperationDetailsPostAlert = ({
 };
 
 const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
+  const { token } = cryptoAssetsHooks.useTokenByAddressInCurrency(
+    operation.extra.associatedTokenId || "",
+    "hedera",
+  );
 
   if (!token) {
-    return null;
+    return <Box flex="1" />;
   }
 
   return (

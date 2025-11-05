@@ -22,7 +22,7 @@ import resolver from "../hw-getAddress";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
-import { getAccountShape, sync } from "./synchronization";
+import { getAccountShape, postSync, sync } from "./synchronization";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 import { buildSignOperation } from "./signOperation";
@@ -36,6 +36,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     getAddressFn: getAddress,
+    postSync,
   });
 
   return {

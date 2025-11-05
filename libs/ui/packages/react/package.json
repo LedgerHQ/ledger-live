@@ -1,8 +1,8 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "description": "Ledger Live - Desktop UI",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"

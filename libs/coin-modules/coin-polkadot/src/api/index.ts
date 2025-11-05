@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
@@ -14,6 +15,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
+  broadcast,
   craftEstimationTransaction,
   craftTransaction,
   defaultExtrinsicArg,
@@ -22,14 +24,14 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-
-const broadcast = (tx: string): Promise<string> => broadcast(tx);
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast,
+    broadcast: (transaction: string, _broadcastConfig?: BroadcastConfig) =>
+      broadcast(transaction, "polkadot"),
     combine: () => {
       throw new Error("UnsupportedMethod");
     },
@@ -57,6 +59,9 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

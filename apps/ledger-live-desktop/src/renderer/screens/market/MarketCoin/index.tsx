@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Button } from "..";
 import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
@@ -91,13 +90,6 @@ export default function MarketCoinScreen() {
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <InfiniteLoader />
               </Flex>
-            ) : internalCurrency ? (
-              <CryptoCurrencyIcon
-                currency={internalCurrency}
-                size={56}
-                circle
-                fallback={<img width="56px" height="56px" src={image} alt={"currency logo"} />}
-              />
             ) : (
               <img width="56px" height="56px" src={image} alt={"currency logo"} />
             )}

@@ -48,6 +48,7 @@ export type Transaction = TransactionCommon & {
   fee: BigNumber | null | undefined;
   memo?: string;
   tokenId: string;
+  expireInSeconds?: number;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -55,10 +56,22 @@ export type TransactionRaw = TransactionCommonRaw & {
   fee: string | null | undefined;
   memo?: string;
   tokenId: string;
+  expireInSeconds?: number;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type CantonAccount = Account;
-export type CantonAccountRaw = AccountRaw;
+export type CantonResources = {
+  instrumentUtxoCounts: Record<string, number>;
+};
+export type CantonResourcesRaw = {
+  instrumentUtxoCounts: Record<string, number>;
+};
+
+export type CantonAccount = Account & {
+  cantonResources: CantonResources;
+};
+export type CantonAccountRaw = AccountRaw & {
+  cantonResources: CantonResourcesRaw;
+};

@@ -19,7 +19,6 @@ type MarketListProps = {
   marketParams: MarketListRequestParams;
   itemCount: number;
   locale: string;
-  fromCurrencies?: string[];
   marketData: CurrencyData[];
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
@@ -29,7 +28,6 @@ type MarketListProps = {
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
-  currenciesAll: string[];
 };
 
 function MarketList({
@@ -40,7 +38,6 @@ function MarketList({
   itemCount,
   currenciesLength,
   locale,
-  fromCurrencies,
   marketData,
   resetSearch,
   isItemLoaded,
@@ -50,7 +47,6 @@ function MarketList({
   onLoadNextPage,
   checkIfDataIsStaleAndRefetch,
   t,
-  currenciesAll,
 }: MarketListProps) {
   const { order, search, starred, range, counterCurrency } = marketParams;
 
@@ -100,9 +96,7 @@ function MarketList({
                         toggleStar={toggleStar}
                         starredMarketCoins={starredMarketCoins}
                         locale={locale}
-                        swapAvailableIds={fromCurrencies ?? []}
                         range={range}
-                        currenciesAll={currenciesAll}
                       />
                     )}
                   </List>
@@ -142,9 +136,7 @@ function MarketList({
                             toggleStar={toggleStar}
                             starredMarketCoins={starredMarketCoins}
                             locale={locale}
-                            swapAvailableIds={fromCurrencies ?? []}
                             range={range}
-                            currenciesAll={currenciesAll}
                           />
                         )}
                       </List>

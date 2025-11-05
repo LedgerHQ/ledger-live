@@ -1,15 +1,40 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { broadcastTxn } from "./bridgeHelpers/icpRosetta";
+import { broadcastTxn } from "../api";
 import { Transaction } from "../types";
+import { log } from "@ledgerhq/logs";
+import invariant from "invariant";
+import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
 
+// Interface to structure raw data for broadcasting transactions
+interface BroadcastRawData {
+  encodedSignedCallBlob: string;
+}
+
+// Type guard to validate rawData shape
+function isBroadcastRawData(data: unknown): data is BroadcastRawData {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "encodedSignedCallBlob" in data &&
+    typeof (data as any).encodedSignedCallBlob === "string"
+  );
+}
+
+// Main broadcast function for handling Internet Computer transactions
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  signedOperation: { signature, operation },
+  signedOperation: { operation, rawData },
 }) => {
-  // log("debug", "[broadcast] start fn");
+  log("debug", "[broadcast] Internet Computer transaction broadcast initiated");
 
-  await broadcastTxn(signature);
+  // Validate rawData with type guard
+  invariant(isBroadcastRawData(rawData), "[ICP](broadcast) Invalid rawData format");
+  invariant(operation.extra, "[ICP](broadcast) Missing operation extra");
 
-  const result = { ...operation };
+  await broadcastTxn(
+    Buffer.from(rawData.encodedSignedCallBlob, "hex"),
+    MAINNET_LEDGER_CANISTER_ID,
+    "call",
+  );
 
-  return result;
+  return operation;
 };

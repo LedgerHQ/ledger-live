@@ -279,7 +279,7 @@ init()
   })
   .catch(error => {
     const pre = document.createElement("pre");
-    pre.innerHTML = `Ledger Live crashed. Please contact Ledger support.
+    pre.innerHTML = `Ledger Wallet crashed. Please contact Ledger support.
   ${String(error)}
   ${String((error && error.stack) || "no stacktrace")}`;
     if (document.body) {

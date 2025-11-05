@@ -9,8 +9,10 @@ import {
 } from "@ledgerhq/cryptoassets";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 import api from "./api";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+
+setCryptoAssetsStore(legacyCryptoAssetsStore);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
@@ -40,9 +42,6 @@ test("mock load with nothing to track", async () => {
   ).toBeUndefined();
 });
 test("mock fetchIdsSortedByMarketcap", async () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({} as CryptoAssetsStore);
-
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
 test("mock load with btc-usd to track", async () => {
@@ -251,11 +250,6 @@ test("missing rate in mock is filled by autofillGaps", async () => {
 });
 
 test("fetchIdsSortedByMarketcap", async () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest
-    .spyOn(cryptoAssets, "getCryptoAssetsStore")
-    .mockReturnValue({} as unknown as CryptoAssetsStore);
-
   const ids = await api.fetchIdsSortedByMarketcap();
   expect(ids).toContain("bitcoin");
 });

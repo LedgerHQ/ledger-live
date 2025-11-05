@@ -1,6 +1,10 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import {
+  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  findCryptoCurrencyByTicker,
+} from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -79,7 +83,6 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -627,7 +630,9 @@ export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_S
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+  findFiatCurrencyByTicker(state.counterValue) ||
+  findCryptoCurrencyByTicker(state.counterValue) ||
+  getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(
   settingsStoreSelector,

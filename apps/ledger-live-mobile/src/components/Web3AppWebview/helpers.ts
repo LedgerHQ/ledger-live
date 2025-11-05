@@ -10,6 +10,7 @@ import {
   useManifestCurrencies,
   useCacheBustedLiveApps,
 } from "@ledgerhq/live-common/wallet-api/react";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -45,7 +46,6 @@ import {
 } from "LLM/features/ModularDrawer";
 import { OpenDrawer } from "LLM/features/ModularDrawer/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-
 export function useWebView(
   {
     manifest,
@@ -396,6 +396,7 @@ export interface Props {
 function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
+  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -416,6 +417,10 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         drawerConfiguration,
       }) => {
         if (isModularDrawerVisible) {
+          // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
+          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
+
           openModularDrawer?.({
             source: source,
             flow: flow,
@@ -423,10 +428,16 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
             accounts$,
-            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            currencies:
+              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
-            ...drawerConfiguration,
+            ...(finalDrawerConfiguration.assets && {
+              assetsConfiguration: finalDrawerConfiguration.assets,
+            }),
+            ...(finalDrawerConfiguration.networks && {
+              networksConfiguration: finalDrawerConfiguration.networks,
+            }),
           });
         } else {
           if (currencies.length === 1) {
@@ -611,7 +622,15 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         });
       },
     }),
-    [isModularDrawerVisible, openModularDrawer, source, flow, navigation, device],
+    [
+      isModularDrawerVisible,
+      openModularDrawer,
+      source,
+      flow,
+      navigation,
+      device,
+      createDrawerConfiguration,
+    ],
   );
 }
 

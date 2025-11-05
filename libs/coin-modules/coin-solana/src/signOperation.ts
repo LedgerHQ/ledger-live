@@ -70,6 +70,7 @@ function getResolution(
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
           },
+          userInputType: command.recipientDescriptor.userInputType,
         };
       }
       return {
@@ -77,6 +78,7 @@ function getResolution(
         certificateSignatureKind,
         tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
+        userInputType: command.recipientDescriptor.userInputType,
       };
     }
     // Not sure we need to handle this case as we don't use the TLV descriptor on the steps of createATA

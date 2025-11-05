@@ -6,6 +6,7 @@ import { ScreenName } from "~/const";
 import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
+import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
 
 const Stack = createStackNavigator();
 
@@ -20,14 +21,14 @@ const bitcoinAccount = genAccount("bitcoin-account", { currency: bitcoinCurrency
 const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });
 const ethereumAccount = genAccount("ethereum-account", { currency: ethereumCurrency });
 
-jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
-  listSupportedCurrencies: jest.fn(() => [
-    usdcCurrency,
-    kaspaCurrency,
-    bitcoinCurrency,
-    ethereumCurrency,
-  ]),
-}));
+// Mock the support module
+jest.mock("@ledgerhq/coin-framework/currencies/support");
+
+// Set up the mock implementation
+(isCurrencySupported as jest.Mock).mockImplementation(currency => {
+  const supportedIds = new Set(["ethereum", "kaspa", "bitcoin"]);
+  return supportedIds.has(currency.id);
+});
 
 jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
   useRampCatalog: jest.fn(() => ({

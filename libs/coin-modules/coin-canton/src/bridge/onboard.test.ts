@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isAccountAuthorized } from "./onboard";
+import { isCantonCoinPreapproved } from "./onboard";
 import * as gateway from "../network/gateway";
 
 jest.mock("../network/gateway");
@@ -11,7 +11,7 @@ describe("onboard", () => {
     id: "canton_network",
   } as unknown as CryptoCurrency;
 
-  describe("isAccountAuthorized", () => {
+  describe("isCantonCoinPreapproved", () => {
     it("should return true when contract exists and is not expired", async () => {
       // GIVEN
       const futureDate = new Date();
@@ -27,7 +27,7 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isAccountAuthorized(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
 
       // THEN
       expect(result).toBe(true);
@@ -49,7 +49,7 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isAccountAuthorized(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
 
       // THEN
       expect(result).toBe(false);

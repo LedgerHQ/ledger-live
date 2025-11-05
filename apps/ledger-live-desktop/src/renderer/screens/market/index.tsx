@@ -48,6 +48,7 @@ const SelectBarContainer = styled(Flex)`
 `;
 
 export default function Market() {
+  const marketData = useMarket();
   const {
     refresh,
     setCounterCurrency,
@@ -66,7 +67,7 @@ export default function Market() {
     refreshRate,
     marketCurrentPage,
     t,
-  } = useMarket();
+  } = marketData;
 
   /**
    * Reset the page to 1 when the component mounts to only refetch first page
@@ -139,7 +140,7 @@ export default function Market() {
           </Flex>
         </SelectBarContainer>
       </Flex>
-      <MarketList {...useMarket()} />
+      <MarketList {...marketData} />
     </Container>
   );
 }

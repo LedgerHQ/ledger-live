@@ -57,11 +57,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
-  API_ICP_ENDPOINT: {
-    def: "https://icp.coin.ledger.com/",
-    parser: stringParser,
-    desc: "Rosetta API for ICP",
-  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
@@ -402,6 +397,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
   },
+  E2E_NANO_APP_VERSION_PATH: {
+    def: "",
+    parser: stringParser,
+    desc: "Path for e2e nanoApp version artifacts (LLD and LLM)",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -466,6 +466,11 @@ const envDefinitions = {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
+  },
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
+    parser: stringParser,
+    desc: "Ledger regtest Bitcoin explorer API",
   },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
@@ -676,6 +681,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Device model id for speculos",
   },
+  SPECULOS_FIRMWARE_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "Firmware version for speculos",
+  },
   SPECULOS_PID_OFFSET: {
     def: 0,
     parser: intParser,
@@ -799,12 +809,12 @@ const envDefinitions = {
     desc: "Trustchain API Prod",
   },
   DADA_API_STAGING: {
-    def: "https://dada.api.ledger-test.com/v1/",
+    def: "https://dada.api.ledger-test.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Staging",
   },
   DADA_API_PROD: {
-    def: "https://dada.api.ledger.com/v1/",
+    def: "https://dada.api.ledger.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
@@ -882,6 +892,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger.com",
     parser: stringParser,
     desc: "Cryptoassets list service url",
+  },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
   },
   FEATURE_FLAGS: {
     def: "{}",

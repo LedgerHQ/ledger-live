@@ -3,6 +3,10 @@ import { useAssets } from "../useAssets";
 import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
+jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
+  isCurrencySupported: jest.fn(() => true),
+}));
+
 describe("useAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();

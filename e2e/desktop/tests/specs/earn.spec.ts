@@ -1,8 +1,8 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink } from "../utils/allureUtils";
+import { getDescription } from "../utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -30,12 +30,11 @@ const ethEarn = [
     provider: Provider.STADER_LABS,
     xrayTicket: "B2CQA-3677",
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   provider: Provider.KILN,
-  //   xrayTicket: "B2CQA-3678",
-  // },
+  {
+    account: Account.ETH_1,
+    provider: Provider.KILN,
+    xrayTicket: "B2CQA-3678",
+  },
 ];
 
 for (const { account, provider, xrayTicket } of ethEarn) {
@@ -59,7 +58,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -71,8 +70,12 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          provider.uiName,
+          account,
+        );
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
+        await verifyProviderUrlPromise;
       },
     );
   });
@@ -89,7 +92,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: [
         {
           type: "TMS",
@@ -104,18 +107,15 @@ test.describe("Inline Add Account", () => {
       const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
       if (modularDrawerVisible) {
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
       } else {
         await app.delegateDrawer.clickOnAddAccountButton();
-      }
-
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(account);
-      } else {
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
         await app.delegateDrawer.selectAccountByName(account);
       }
+
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
@@ -124,12 +124,11 @@ test.describe("Inline Add Account", () => {
 });
 
 const earnDashboardCurrencies = [
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   xrayTicket: "B2CQA-3679",
-  //   staking: false,
-  // },
+  {
+    account: Account.ETH_1,
+    xrayTicket: "B2CQA-3679",
+    staking: false,
+  },
   {
     account: Account.SOL_4,
     xrayTicket: "B2CQA-3680",
@@ -145,22 +144,21 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3682",
     staking: false,
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.NEAR_1,
-  //   xrayTicket: "B2CQA-3683",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.SOL_2,
-  //   xrayTicket: "B2CQA-3684",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.ATOM_1,
-  //   xrayTicket: "B2CQA-3685",
-  //   staking: true,
-  // },
+  {
+    account: Account.NEAR_1,
+    xrayTicket: "B2CQA-3683",
+    staking: true,
+  },
+  {
+    account: Account.SOL_2,
+    xrayTicket: "B2CQA-3684",
+    staking: true,
+  },
+  {
+    account: Account.ATOM_1,
+    xrayTicket: "B2CQA-3685",
+    staking: true,
+  },
 ];
 
 for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
@@ -184,7 +182,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,

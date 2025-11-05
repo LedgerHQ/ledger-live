@@ -5,8 +5,8 @@ import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssets
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -21,8 +21,9 @@ export function useAssets({
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const isAcceptedCurrency = useAcceptedCurrency();
   const modularDrawerFeature = useFeature("llmModularDrawer");
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -37,6 +38,7 @@ export function useAssets({
     useCase,
     areCurrenciesFiltered,
     isStaging,
+    includeTestNetworks: devMode,
   });
 
   const assetsSorted: AssetData[] | undefined = useMemo(() => {
@@ -65,19 +67,10 @@ export function useAssets({
   const assetsToDisplay = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
-    return assetsSorted.reduce<CryptoOrTokenCurrency[]>((acc, { asset }) => {
-      const currency = data.cryptoOrTokenCurrencies[asset.id];
-      if (!currency) return acc;
-
-      const isActive =
-        (currency.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(currency.id)) ||
-        (currency.type === "TokenCurrency" &&
-          !deactivatedCurrencyIds.has(currency.parentCurrency?.id));
-
-      if (isActive) acc.push(currency);
-      return acc;
-    }, []);
-  }, [assetsSorted, data, deactivatedCurrencyIds]);
+    return assetsSorted
+      .map(({ asset }) => data.cryptoOrTokenCurrencies[asset.id])
+      .filter(currency => currency && isAcceptedCurrency(currency));
+  }, [assetsSorted, data, isAcceptedCurrency]);
 
   return {
     data,

@@ -97,12 +97,15 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyCantonNetworkDevnet: DEFAULT_FEATURE,
+  currencyCantonNetworkTestnet: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
   currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
   currencyWestend: DEFAULT_FEATURE,
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
+  currencyMonad: DEFAULT_FEATURE,
 };
 
 /**
@@ -440,7 +443,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  ptxEarnDrawerApy: {
+  ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
   },
@@ -688,6 +691,7 @@ export const DEFAULT_FEATURES: Features = {
   llmHomescreen: DEFAULT_FEATURE,
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
+  lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
 };
 

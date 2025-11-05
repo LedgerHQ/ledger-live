@@ -1,9 +1,10 @@
 appId: com.ledger.live.pre
 
 protocols:
-  name: Ledger Live
+  name: Ledger Wallet
   schemes:
     - ledgerlive
+    - ledgerwallet
 
 afterSign: scripts/notarize.js
 

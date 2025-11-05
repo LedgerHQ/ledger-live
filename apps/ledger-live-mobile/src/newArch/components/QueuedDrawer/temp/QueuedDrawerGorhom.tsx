@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -12,6 +12,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { useTheme } from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useQueuedDrawerGorhom from "./useQueuedDrawerGorhom";
 import BackDrop from "./components/BackDrop";
 import Header from "./components/Header";
@@ -58,6 +59,7 @@ const QueuedDrawerGorhom = ({
   ...rest
 }: Props) => {
   const { colors } = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const {
     bottomSheetRef,
@@ -145,6 +147,7 @@ const QueuedDrawerGorhom = ({
       index={0}
       snapPoints={finalSnapPoints}
       enableDynamicSizing={enableDynamicSizing}
+      bottomInset={Platform.OS === "android" ? bottomInset : 0}
       enablePanDownToClose={enablePanDownToClose}
       android_keyboardInputMode="adjustResize"
       backdropComponent={renderBackdrop}

@@ -103,7 +103,6 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
 
   // Coin operations with children ops like token & nft ops attached to it
   const lastCoinOperationsWithAttachements = await attachOperations(
-    accountId,
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
@@ -151,7 +150,7 @@ export const getSubAccounts = async (
   accountId: string,
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
-  swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
+  swapHistoryMap: Map<string, TokenAccount["swapHistory"]>,
   findToken: (contractAddress: string) => Promise<TokenCurrency | undefined>,
 ): Promise<Partial<TokenAccount>[]> => {
   const { currency } = infos;
@@ -181,7 +180,7 @@ export const getSubAccounts = async (
   if (isLedgerNode) {
     return Promise.all(
       tokenEntries.map(([token, ops]) =>
-        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token.id) || []),
       ),
     );
   }
@@ -194,7 +193,7 @@ export const getSubAccounts = async (
     const chunk = tokenEntries.slice(i, i + chunkSize);
     const chunkResults = await Promise.all(
       chunk.map(([token, ops]) =>
-        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token.id) || []),
       ),
     );
     result.push(...chunkResults);

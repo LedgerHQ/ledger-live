@@ -1,6 +1,6 @@
 const testConfig = {
   tmsLinks: ["B2CQA-2871", "B2CQA-2873", "B2CQA-3060", "B2CQA-2873"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 describe("Wallet Page", () => {

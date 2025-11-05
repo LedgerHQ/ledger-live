@@ -32,6 +32,8 @@ export type EvmTransactionBase = TransactionCommon & {
   gasOptions?: GasOptions;
   // additional informations related to an NFT in order to craft the real evm transaction at `signOperation` level
   nft?: EvmTransactionNftParam;
+  // indicates if the transaction is sponsored (gas fees covered by sponsor)
+  sponsored?: boolean;
 };
 
 // Send mode transactions are used for coin transactions & token transactions (erc20)
@@ -85,6 +87,7 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   additionalFees?: string | undefined;
   gasOptions?: GasOptionsRaw;
   nft?: EvmTransactionNftParamRaw;
+  sponsored?: boolean;
 };
 
 type EvmSendTransactionRaw = EvmTransactionBaseRaw & {

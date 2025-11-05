@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { createBridges } from ".";
-import { getEstimatedFees } from "./utils";
+import { HEDERA_OPERATION_TYPES } from "../constants";
+import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
-import { HEDERA_OPERATION_TYPES } from "../constants";
 
 describe("js-estimateMaxSpendable", () => {
   let bridge: ReturnType<typeof createBridges>;
@@ -14,7 +14,10 @@ describe("js-estimateMaxSpendable", () => {
     bridge = createBridges(signer);
 
     const mockedAccount = getMockedAccount();
-    const crypto = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
+    const crypto = await estimateFees(
+      mockedAccount.currency,
+      HEDERA_OPERATION_TYPES.CryptoTransfer,
+    );
 
     estimatedFees = { crypto };
   });

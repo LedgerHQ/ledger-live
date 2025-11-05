@@ -3,10 +3,18 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
+import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
-import { Pagination } from "@ledgerhq/coin-framework/api/types";
+import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { OperationCommon } from "./types";
+
+function isNftCoreOp(operation: Operation): boolean {
+  return (
+    typeof operation.details?.ledgerOpType === "string" &&
+    ["NFT_IN", "NFT_OUT"].includes(operation.details?.ledgerOpType)
+  );
+}
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
@@ -56,39 +64,41 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     }
 
     const [newCoreOps] = await alpacaApi.listOperations(address, paginationParams);
-    const newOps = newCoreOps.map(op =>
-      adaptCoreOperationToLiveOperation(accountId, op),
-    ) as OperationCommon[];
-    const mergedOps = mergeOps(oldOps, newOps) as OperationCommon[];
+    const newOps = newCoreOps
+      .filter(op => !isNftCoreOp(op))
+      .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
 
-    const assetOperations: OperationCommon[] = [];
-    mergedOps.forEach(operation => {
-      if (
+    const newAssetOperations = newOps.filter(
+      operation =>
         operation?.extra?.assetReference &&
         operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type)
-      ) {
-        assetOperations.push(operation);
-      }
-    });
-
-    const subAccounts = await buildSubAccounts({
-      currency,
+        !["OPT_IN", "OPT_OUT"].includes(operation.type),
+    );
+    const newSubAccounts = await buildSubAccounts({
       accountId,
       allTokenAssetsBalances,
       syncConfig,
-      operations: assetOperations,
+      operations: newAssetOperations,
       getTokenFromAsset: alpacaApi.getTokenFromAsset,
     });
+    const subAccounts = mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
-    const operations = mergedOps.map(op => {
-      const subOperations = inferSubOperations(op.hash, subAccounts);
+    const newOpsWithSubs = newOps.map(op => {
+      const subOperations = inferSubOperations(op.hash, newSubAccounts);
 
-      return {
+      return cleanedOperation({
         ...op,
         subOperations,
-      };
+      });
     });
+    const confirmedOperations =
+      alpacaApi.refreshOperations && initialAccount?.pendingOperations.length
+        ? await alpacaApi.refreshOperations(initialAccount.pendingOperations)
+        : [];
+    const operations = mergeOps(oldOps, [
+      ...confirmedOperations,
+      ...newOpsWithSubs,
+    ]) as OperationCommon[];
 
     const res = {
       id: accountId,

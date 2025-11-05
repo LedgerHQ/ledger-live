@@ -17,6 +17,7 @@ import {
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
+
 import { getMainAccount, getParentAccount } from "../account";
 import {
   listCurrencies,
@@ -628,6 +629,8 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.signAndBroadcast",
       async ({ account, tokenCurrency, transaction, options }) => {
+        const sponsored = transaction.family === "ethereum" && transaction.sponsored;
+
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
           account.id,
@@ -672,7 +675,10 @@ export function useWalletAPIServer({
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
-                  broadcastConfig: { mevProtected: !!config.mevProtected },
+                  broadcastConfig: {
+                    mevProtected: !!config.mevProtected,
+                    sponsored,
+                  },
                 });
                 tracking.broadcastSuccess(manifest);
               } catch (error) {

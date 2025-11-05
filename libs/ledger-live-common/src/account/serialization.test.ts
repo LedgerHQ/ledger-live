@@ -26,6 +26,7 @@ setCryptoAssetsStoreForCoinFramework({
     return undefined;
   },
   findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  getTokensSyncHash: (_: string) => Promise.resolve("0"),
 } as CryptoAssetsStore);
 
 describe("serialization", () => {

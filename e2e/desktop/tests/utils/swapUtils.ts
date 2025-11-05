@@ -3,12 +3,14 @@ import { Application } from "../page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export function setupEnv(disableBroadcast?: boolean) {
-  const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+export function setupEnv(disableBroadcast: boolean = false): void {
+  let originalBroadcastValue: string | undefined;
   test.beforeAll(async () => {
+    originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
     process.env.SWAP_DISABLE_APPS_INSTALL = "true";
     if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
@@ -39,14 +41,19 @@ export async function performSwapUntilQuoteSelectionStep(
     await checkAccountFromIsSynchronised(app, swap);
   }
   await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
-  const isAssetFromSelected = await app.swap.checkIfAssetIsAlreadySelected(
+  const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
     electronApp,
   );
   if (!isAssetFromSelected) {
-    await handleAssetFromNotSelected(app, electronApp, swap);
-  } else {
-    await handleAssetFromSelected(app, electronApp, swap);
+    await selectAccountFrom(app, electronApp, swap);
+  }
+  const isAssetToSelected = await app.swap.checkIfToAssetIsAlreadySelected(
+    swap.accountToCredit.currency.ticker,
+    electronApp,
+  );
+  if (!isAssetToSelected) {
+    await selectAccountTo(app, electronApp, swap);
   }
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
@@ -57,7 +64,7 @@ async function selectAssetToAndAccount(
   swap: Swap,
 ) {
   const networkName = swap.accountToCredit.parentAccount?.currency.name;
-  await app.swap.chooseFromAsset(swap.accountToCredit.currency.name, networkName);
+  await app.swap.selectAsset(swap.accountToCredit.currency.name, networkName);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
 }
@@ -68,68 +75,37 @@ async function selectAssetFromAndAccount(
   swap: Swap,
 ) {
   const networkName = swap.accountToDebit.parentAccount?.currency.name;
-  await app.swap.chooseFromAsset(swap.accountToDebit.currency.name, networkName);
+  await app.swap.selectAsset(swap.accountToDebit.currency.name, networkName);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
 }
 
-async function legacyDrawerFlow(app: Application, electronApp: ElectronApplication, swap: Swap) {
-  await selectAssetToAndAccount(app, electronApp, swap);
-}
-
-async function modularDrawerFullFlow(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  await app.modularDrawer.selectAssetByTickerAndName(swap.accountToDebit.currency);
-  await app.modularDrawer.selectNetwork(swap.accountToDebit.currency);
-  await app.modularDrawer.selectAccountByName(swap.accountToDebit);
-  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
-
-  await app.swap.selectToAccountCoinSelector(electronApp);
-  await modularDrawerSelectToAssetOnlyFlow(app, electronApp, swap);
-}
-
-async function modularDrawerSelectToAssetOnlyFlow(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  await app.modularDrawer.selectAssetByTickerAndName(swap.accountToCredit.currency);
-  await app.modularDrawer.selectNetwork(swap.accountToCredit.currency);
-  await app.modularDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
-}
-
-async function handleAssetFromNotSelected(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
+async function selectAccountFrom(app: Application, electronApp: ElectronApplication, swap: Swap) {
   await app.swap.selectFromAccountCoinSelector(electronApp);
   const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
   if (isModularDrawer) {
-    await modularDrawerFullFlow(app, electronApp, swap);
+    await selectAccountMAD(app, swap.accountToDebit);
+    await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
   } else {
     await selectAssetFromAndAccount(app, electronApp, swap);
-    await app.swap.selectToAccountCoinSelector(electronApp);
+  }
+}
+
+async function selectAccountTo(app: Application, electronApp: ElectronApplication, swap: Swap) {
+  await app.swap.selectToAccountCoinSelector(electronApp);
+  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+  if (isModularDrawer) {
+    await selectAccountMAD(app, swap.accountToCredit);
+    await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+  } else {
     await selectAssetToAndAccount(app, electronApp, swap);
   }
 }
 
-async function handleAssetFromSelected(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  await app.swap.selectToAccountCoinSelector(electronApp);
-  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-  if (isModularDrawer) {
-    await modularDrawerSelectToAssetOnlyFlow(app, electronApp, swap);
-  } else {
-    await legacyDrawerFlow(app, electronApp, swap);
-  }
+export async function selectAccountMAD(app: Application, account: Account) {
+  await app.modularDrawer.selectAssetByTickerAndName(account.currency);
+  await app.modularDrawer.selectNetwork(account.currency);
+  await app.modularDrawer.selectAccountByName(account);
 }
 
 export async function handleSwapErrorOrSuccess(

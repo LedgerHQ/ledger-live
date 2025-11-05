@@ -16,6 +16,8 @@ export interface GetAssetsDataParams {
   product: "llm" | "lld";
   version: string;
   isStaging?: boolean;
+  additionalData?: AssetsAdditionalData[];
+  includeTestNetworks?: boolean;
 }
 
 export interface PageParam {

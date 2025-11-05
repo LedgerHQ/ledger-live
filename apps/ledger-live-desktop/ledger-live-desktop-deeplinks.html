@@ -329,7 +329,7 @@
         const appConfig = {
             title: "Ledger Live Desktop DeepLinks",
             description: "Complete reference of all available deeplinks for Ledger Live Desktop",
-            scheme: "ledgerlive://",
+            scheme: "ledgerwallet://",
             footerText: "Based on the <a href='https://github.com/LedgerHQ/ledger-live/wiki/LLD:DeepLinking' target='_blank'>Ledger Live Desktop DeepLinking Documentation</a>",
             platformNote: {
                 title: "🍎 macOS Note:",
@@ -339,27 +339,38 @@
                 {
                     section: "Portfolio",
                     title: "Portfolio Page (default landing)",
-                    url: "ledgerlive://",
+                    url: "ledgerwallet://",
                     description: "Opens the portfolio page, which is the default landing page.",
-                    examples: ["ledgerlive://", "ledgerlive://portfolio"]
+                    examples: [
+                        "ledgerwallet://",
+                        "ledgerwallet://portfolio",
+                        "ledgerlive://",
+                        "ledgerlive://portfolio"
+                    ]
                 },
                 {
                     section: "Accounts",
                     title: "Accounts Page",
-                    url: "ledgerlive://accounts",
+                    url: "ledgerwallet://accounts",
                     description: "Opens the accounts page.",
-                    examples: ["ledgerlive://accounts"]
+                    examples: [
+                        "ledgerwallet://accounts",
+                        "ledgerlive://accounts"
+                    ]
                 },
                 {
                     section: "Account",
                     title: "Account Page",
-                    url: "ledgerlive://account",
+                    url: "ledgerwallet://account",
                     description: "Opens a specific account page based on currency and address parameters.",
                     parameters: [
                         { name: "currency", required: true, description: "The ticker or name of the currency" },
                         { name: "address", required: false, description: "Specific account address" }
                     ],
                     examples: [
+                        "ledgerwallet://account?currency=btc",
+                        "ledgerwallet://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
+                        "ledgerwallet://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
                         "ledgerlive://account?currency=btc",
                         "ledgerlive://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
                         "ledgerlive://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB"
@@ -368,17 +379,22 @@
                 {
                     section: "Add Account",
                     title: "Add Account Modal",
-                    url: "ledgerlive://add-account",
+                    url: "ledgerwallet://add-account",
                     description: "Opens the Add Account Modal with optional currency pre-selection.",
                     parameters: [
                         { name: "currency", required: false, description: "The ticker or name of the currency to pre-fill" }
                     ],
-                    examples: ["ledgerlive://add-account", "ledgerlive://add-account?currency=bitcoin"]
+                    examples: [
+                        "ledgerwallet://add-account",
+                        "ledgerwallet://add-account?currency=bitcoin",
+                        "ledgerlive://add-account",
+                        "ledgerlive://add-account?currency=bitcoin"
+                    ]
                 },
                 {
                     section: "Send",
                     title: "Send Flow",
-                    url: "ledgerlive://send",
+                    url: "ledgerwallet://send",
                     description: "Opens the send page (modal) with optional pre-filled parameters.",
                     parameters: [
                         { name: "currency", required: false, description: "The ticker of the currency" },
@@ -386,6 +402,9 @@
                         { name: "recipient", required: false, description: "The address to send to" }
                     ],
                     examples: [
+                        "ledgerwallet://send",
+                        "ledgerwallet://send?currency=ethereum",
+                        "ledgerwallet://send?currency=ethereum&recipient=0xex...xxx&amount=3",
                         "ledgerlive://send",
                         "ledgerlive://send?currency=ethereum",
                         "ledgerlive://send?currency=ethereum&recipient=0xex...xxx&amount=3"
@@ -394,57 +413,79 @@
                 {
                     section: "Receive",
                     title: "Receive Flow",
-                    url: "ledgerlive://receive",
+                    url: "ledgerwallet://receive",
                     description: "Opens the receive page (modal) with optional currency pre-selection.",
                     parameters: [
                         { name: "currency", required: false, description: "The ticker or name of the currency" }
                     ],
-                    examples: ["ledgerlive://receive", "ledgerlive://receive?currency=ethereum"]
+                    examples: [
+                        "ledgerwallet://receive",
+                        "ledgerwallet://receive?currency=ethereum",
+                        "ledgerlive://receive",
+                        "ledgerlive://receive?currency=ethereum"
+                    ]
                 },
                 {
                     section: "Delegate",
                     title: "Delegate Flow",
-                    url: "ledgerlive://delegate",
+                    url: "ledgerwallet://delegate",
                     description: "Opens the delegate flow for supported currencies (currently only Tezos).",
                     parameters: [
                         { name: "currency", required: true, description: "The ticker or name of the currency" }
                     ],
-                    examples: ["ledgerlive://delegate?currency=tezos"]
+                    examples: [
+                        "ledgerwallet://delegate?currency=tezos",
+                        "ledgerlive://delegate?currency=tezos"
+                    ]
                 },
                 {
                     section: "Buy Crypto",
                     title: "Buy Crypto Flow",
-                    url: "ledgerlive://buy",
+                    url: "ledgerwallet://buy",
                     description: "Opens the buy crypto page. Query parameters depend on liveApp documentation.",
-                    examples: ["ledgerlive://buy"]
+                    examples: [
+                        "ledgerwallet://buy",
+                        "ledgerlive://buy"
+                    ]
                 },
                 {
                     section: "Swap",
                     title: "Swap Crypto Flow",
-                    url: "ledgerlive://swap",
+                    url: "ledgerwallet://swap",
                     description: "Opens the swap crypto page.",
-                    examples: ["ledgerlive://swap"]
+                    examples: [
+                        "ledgerwallet://swap",
+                        "ledgerlive://swap"
+                    ]
                 },
                 {
                     section: "MyLedger",
                     title: "Device Management Flow",
-                    url: "ledgerlive://myledger",
+                    url: "ledgerwallet://myledger",
                     description: "Opens the MyLedger page for device management with optional app search.",
                     parameters: [
                         { name: "installApp", required: false, description: "Search query to pre-fill when MyLedger opens" }
                     ],
-                    examples: ["ledgerlive://myledger", "ledgerlive://myledger?installApp=bitcoin"]
+                    examples: [
+                        "ledgerwallet://myledger",
+                        "ledgerwallet://myledger?installApp=bitcoin",
+                        "ledgerlive://myledger",
+                        "ledgerlive://myledger?installApp=bitcoin"
+                    ]
                 },
                 {
                     section: "Discover",
                     title: "Live Discover Catalog",
-                    url: "ledgerlive://discover/:liveAppId/",
+                    url: "ledgerwallet://discover/:liveAppId/",
                     description: "Opens the discover catalog or specific live app with optional parameters.",
                     parameters: [
                         { name: "liveAppId", required: false, description: "The liveApp id", type: "url" },
                         { name: "&{params}", required: false, description: "URL query params transmitted to the liveApp", type: "query" }
                     ],
                     examples: [
+                        "ledgerwallet://discover",
+                        "ledgerwallet://discover/paraswap",
+                        "ledgerwallet://discover/paraswap?accountId=1",
                         "ledgerlive://discover",
                         "ledgerlive://discover/paraswap",
                         "ledgerlive://discover/paraswap?accountId=1"
@@ -453,14 +494,17 @@
                 {
                     section: "Earn",
                     title: "Earn Dashboard",
-                    url: "ledgerlive://earn",
+                    url: "ledgerwallet://earn",
                     description: "Opens the earn dashboard page with optional action parameters.",
                     parameters: [
                         { name: "action", required: false, description: "Specific action like \"stake\"" },
                         { name: "accountId", required: false, description: "Account ID for pre-selection" }
                     ],
                     examples: [
-                        "ledgerlive://earn",
+                        "ledgerwallet://earn",
+                        "ledgerwallet://earn?action=stake",
+                        "ledgerwallet://earn?action=stake-account&accountId=1",
+                        "ledgerwallet://earn",
                         "ledgerlive://earn?action=stake",
                         "ledgerlive://earn?action=stake-account&accountId=1"
                     ]
@@ -468,16 +512,27 @@
                 {
                     section: "Market",
                     title: "Live Market Page",
-                    url: "ledgerlive://market",
+                    url: "ledgerwallet://market",
                     description: "Opens the live market page.",
-                    examples: ["ledgerlive://market"]
+                    examples: [
+                        "ledgerwallet://market",
+                        "ledgerlive://market"
+                    ]
                 },
                 {
                     section: "Settings",
                     title: "Settings Pages",
-                    url: "ledgerlive://settings/",
+                    url: "ledgerwallet://settings/",
                     description: "Opens various settings pages.",
                     examples: [
+                        "ledgerwallet://settings/",
+                        "ledgerwallet://settings/general",
+                        "ledgerwallet://settings/accounts",
+                        "ledgerwallet://settings/about",
+                        "ledgerwallet://settings/help",
+                        "ledgerwallet://settings/developer",
+                        "ledgerwallet://settings/notifications",
+                        "ledgerwallet://settings/experimental",
                         "ledgerlive://settings/",
                         "ledgerlive://settings/general",
                         "ledgerlive://settings/accounts",
@@ -491,9 +546,13 @@
                 {
                     section: "Miscellaneous",
                     title: "Other DeepLinks",
-                    url: "ledgerlive://landing-page?useCase=LP_Generic",
+                    url: "ledgerwallet://landing-page?useCase=LP_Generic",
                     description: "Various other deeplinks for specific functionality.",
                     examples: [
+                        "ledgerwallet://landing-page?useCase=LP_Generic",
+                        "ledgerwallet://hw-purchase-success",
+                        "ledgerwallet://custom-image",
+                        "ledgerwallet://scan-accounts",
                         "ledgerlive://landing-page?useCase=LP_Generic",
                         "ledgerlive://hw-purchase-success",
                         "ledgerlive://custom-image",

@@ -16,6 +16,7 @@ import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StaticContext } from "react-router";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const pollingPeriodMs = 1000;
 
@@ -26,6 +27,7 @@ export type RecoverComponentParams = {
 export type RecoverState = {
   fromOnboarding?: boolean;
   deviceId?: string;
+  seedConfiguration?: SeedOriginType;
 };
 
 const FullscreenWrapper = styled.div`

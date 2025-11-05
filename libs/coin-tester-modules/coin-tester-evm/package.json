@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -71,7 +71,7 @@
     "bluebird": "^3.7.2",
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
-    "ethers": "6.15.0",
+    "ethers": "catalog:",
     "msw": "^2.2.1"
   },
   "devDependencies": {

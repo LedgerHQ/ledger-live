@@ -28,6 +28,8 @@ export { closeAllSpeculosDevices, releaseSpeculosDevice, createSpeculosDevice };
 export type { SpeculosTransport };
 
 const modelMapPriority: Record<string, number> = {
+  flex: 6,
+  stax: 5,
   nanos: 4,
   "nanos+": 3,
   nanox: 2,
@@ -128,6 +130,7 @@ export const findLatestAppCandidate = (
   appCandidates: AppCandidate[],
   search: AppSearch,
 ): AppCandidate | null => {
+  search.firmware = process.env.SPECULOS_FIRMWARE_VERSION;
   let apps = appCandidates.filter(c => appCandidatesMatches(c, search));
   if (apps.length === 0) {
     return null;

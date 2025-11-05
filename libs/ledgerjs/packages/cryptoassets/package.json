@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.31.0",
+  "version": "13.32.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -36,20 +36,28 @@
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bs58check": "^2.1.2",
-    "invariant": "2"
+    "invariant": "2",
+    "zod": "^3.22.4",
+    "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@testing-library/react": "14.2.2",
     "@types/bs58check": "^2.1.0",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
+    "@types/react": "^18.0.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.7.0"
+    "ts-node": "^10.7.0",
+    "react-redux": "^9.1.2"
   },
   "typesVersions": {
     "*": {
@@ -72,6 +80,14 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./rtk-store": {
+      "require": "./lib/rtk-store/index.js",
+      "default": "./lib-es/rtk-store/index.js"
+    },
+    "./rtk-store/*": {
+      "require": "./lib/rtk-store/*.js",
+      "default": "./lib-es/rtk-store/*.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"

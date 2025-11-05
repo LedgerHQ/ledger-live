@@ -127,14 +127,16 @@ export const makeGetAccountShape =
     const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
     const utxosSum = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
     const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
-    const subAccounts = buildSubAccounts({
-      initialAccount,
-      parentAccountId: accountId,
-      parentCurrency: currency,
-      newTransactions,
-      tokens: tokenBalance,
-      accountCredentialsMap,
-    }).filter(a => !blacklistedTokenIds?.includes(a.token.id));
+    const subAccounts = (
+      await buildSubAccounts({
+        initialAccount,
+        parentAccountId: accountId,
+        parentCurrency: currency,
+        newTransactions,
+        tokens: tokenBalance,
+        accountCredentialsMap,
+      })
+    ).filter(a => !blacklistedTokenIds?.includes(a.token.id));
 
     const stakeCredential = getAccountStakeCredential(xpub, accountIndex);
     const networkParams = getNetworkParameters(currency.id);

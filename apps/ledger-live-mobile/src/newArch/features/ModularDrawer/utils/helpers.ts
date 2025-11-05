@@ -1,35 +1,30 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 
 function getNetworksForAsset(
   assetsSorted: AssetData[] | undefined,
   assetId: string,
-  deactivatedAssets: Set<string>,
+  isAcceptedCurrency: (currency: CryptoOrTokenCurrency) => boolean,
 ) {
   return (
-    assetsSorted
-      ?.find(elem => elem.asset.id === assetId)
-      ?.networks.filter(
-        elem =>
-          !deactivatedAssets.has(elem.type === "CryptoCurrency" ? elem.id : elem.parentCurrency.id),
-      ) ?? []
+    assetsSorted?.find(elem => elem.asset.id === assetId)?.networks.filter(isAcceptedCurrency) ?? []
   );
 }
 
 function resolveCurrency(
   assetsSorted: AssetData[] | undefined,
-  deactivatedAssets: Set<string>,
+  isAcceptedCurrency: (currency: CryptoOrTokenCurrency) => boolean,
   selectedAsset?: CryptoOrTokenCurrency,
   selectedNetwork?: CryptoOrTokenCurrency,
 ): CryptoOrTokenCurrency | undefined {
   if (!selectedAsset) return undefined;
   if (!selectedNetwork) return selectedAsset;
 
-  const networksForAsset = getNetworksForAsset(assetsSorted, selectedAsset.id, deactivatedAssets);
-  const correspondingCurrency = networksForAsset.find(n =>
-    n.type === "CryptoCurrency"
-      ? n.id === selectedNetwork.id
-      : n.parentCurrency.id === selectedNetwork.id,
+  const networksForAsset = getNetworksForAsset(assetsSorted, selectedAsset.id, isAcceptedCurrency);
+
+  const correspondingCurrency = networksForAsset.find(network =>
+    belongsToSameNetwork(network, selectedNetwork),
   );
 
   return correspondingCurrency ?? selectedAsset;

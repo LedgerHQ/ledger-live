@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-casper",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Ledger Casper integration",
   "keywords": [
     "Ledger",
@@ -113,7 +113,7 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/semver": "^7.5.8",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "expect": "^27.4.6",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"

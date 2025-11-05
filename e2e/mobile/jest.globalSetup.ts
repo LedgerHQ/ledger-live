@@ -111,54 +111,56 @@ export default async function setup(): Promise<void> {
   };
 
   // Assign utilities and enums
+  global.Account = Account;
+  global.AppInfos = AppInfos;
   global.CLI = CLI;
-  global.jestExpect = expect;
   global.Currency = Currency;
   global.Delegate = Delegate;
-  global.Account = Account;
+  global.Fee = Fee;
+  global.jestExpect = expect;
+  global.Swap = Swap;
   global.TokenAccount = TokenAccount;
   global.Transaction = Transaction;
-  global.Fee = Fee;
-  global.AppInfos = AppInfos;
-  global.Swap = Swap;
 
   // Bind native helpers
+  global.clearTextByElement = NativeElementHelpers.clearTextByElement;
+  global.countElementsById = NativeElementHelpers.countElementsById;
   global.detoxExpect = NativeElementHelpers.expect;
+  global.getElementById = NativeElementHelpers.getElementById;
+  global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
+  global.getElementByText = NativeElementHelpers.getElementByText;
+  global.getElementsById = NativeElementHelpers.getElementsById;
+  global.getIdByRegexp = NativeElementHelpers.getIdByRegexp;
+  global.getIdOfElement = NativeElementHelpers.getIdOfElement;
+  global.getTextOfElement = NativeElementHelpers.getTextOfElement;
+  global.IsIdVisible = NativeElementHelpers.isIdVisible;
+  global.scrollToId = NativeElementHelpers.scrollToId;
+  global.scrollToText = NativeElementHelpers.scrollToText;
+  global.tapByElement = NativeElementHelpers.tapByElement;
+  global.tapById = NativeElementHelpers.tapById;
+  global.tapByText = NativeElementHelpers.tapByText;
+  global.typeTextByElement = NativeElementHelpers.typeTextByElement;
+  global.typeTextById = NativeElementHelpers.typeTextById;
+  global.waitForElement = NativeElementHelpers.waitForElement;
   global.waitForElementById = NativeElementHelpers.waitForElementById;
   global.waitForElementByText = NativeElementHelpers.waitForElementByText;
   global.waitForElementNotVisible = NativeElementHelpers.waitForElementNotVisible;
-  global.getElementById = NativeElementHelpers.getElementById;
-  global.getElementsById = NativeElementHelpers.getElementsById;
-  global.getElementByText = NativeElementHelpers.getElementByText;
-  global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
-  global.countElementsById = NativeElementHelpers.countElementsById;
-  global.IsIdVisible = NativeElementHelpers.isIdVisible;
-  global.tapById = NativeElementHelpers.tapById;
-  global.tapByText = NativeElementHelpers.tapByText;
-  global.tapByElement = NativeElementHelpers.tapByElement;
-  global.typeTextById = NativeElementHelpers.typeTextById;
-  global.typeTextByElement = NativeElementHelpers.typeTextByElement;
-  global.clearTextByElement = NativeElementHelpers.clearTextByElement;
-  global.scrollToText = NativeElementHelpers.scrollToText;
-  global.scrollToId = NativeElementHelpers.scrollToId;
-  global.getTextOfElement = NativeElementHelpers.getTextOfElement;
-  global.getIdByRegexp = NativeElementHelpers.getIdByRegexp;
-  global.getIdOfElement = NativeElementHelpers.getIdOfElement;
 
   // Bind web helpers
+  global.getCurrentWebviewUrl = WebElementHelpers.getCurrentWebviewUrl;
+  global.getValueByWebTestId = WebElementHelpers.getValueByWebTestId;
+  global.getWebElementByCssSelector = WebElementHelpers.getWebElementByCssSelector;
   global.getWebElementById = WebElementHelpers.getWebElementById;
   global.getWebElementByTag = WebElementHelpers.getWebElementByTag;
   global.getWebElementByTestId = WebElementHelpers.getWebElementByTestId;
-  global.getWebElementText = WebElementHelpers.getWebElementText;
-  global.getWebElementsByIdAndText = WebElementHelpers.getWebElementsByIdAndText;
   global.getWebElementsByCssSelector = WebElementHelpers.getWebElementsByCssSelector;
+  global.getWebElementsByIdAndText = WebElementHelpers.getWebElementsByIdAndText;
   global.getWebElementsText = WebElementHelpers.getWebElementsText;
-  global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
+  global.getWebElementText = WebElementHelpers.getWebElementText;
+  global.scrollToWebElement = WebElementHelpers.scrollToWebElement;
+  global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
   global.tapWebElementByTestId = WebElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
-  global.getValueByWebTestId = WebElementHelpers.getValueByWebTestId;
-  global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
-  global.scrollToWebElement = WebElementHelpers.scrollToWebElement;
-  global.getCurrentWebviewUrl = WebElementHelpers.getCurrentWebviewUrl;
   global.waitForWebElementToBeEnabled = WebElementHelpers.waitForWebElementToBeEnabled;
+  global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
 }

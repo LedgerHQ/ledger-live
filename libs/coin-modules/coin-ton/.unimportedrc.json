@@ -13,7 +13,8 @@
     "src/deviceTransactionConfig.ts",
     "src/hw-signMessage.ts",
     "src/specs.ts",
-    "src/speculos-deviceActions.ts"
+    "src/speculos-deviceActions.ts",
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env"]
 }

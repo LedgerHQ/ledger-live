@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { __clearAllLists } from "@ledgerhq/cryptoassets/tokens";
+import { __clearAllLists } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
 import { getAccountShape } from "../../bridge/synchronization";
@@ -85,9 +85,8 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
+      const decoded = await decodeTokenAccountId(subAccounts![0]?.id);
+      expect(decoded.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
     });
 
     it("should preload currency and add an account with 2 token accounts in it when there is an updated remote CAL", async () => {
@@ -122,12 +121,10 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/new_token_mock",
-      );
+      const decoded0 = await decodeTokenAccountId(subAccounts![0]?.id);
+      expect(decoded0.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
+      const decoded1 = await decodeTokenAccountId(subAccounts![1]?.id);
+      expect(decoded1.token?.id).toBe("scroll_sepolia/erc20/new_token_mock");
     });
 
     it("should preload again a currency and get the same account with 2 tokens accounts", async () => {
@@ -180,12 +177,10 @@ describe("EVM Family", () => {
 
       expect(getCALHash(currency)).toBe("newHash");
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/new_token_mock",
-      );
+      const decoded0 = await decodeTokenAccountId(subAccounts![0]?.id);
+      expect(decoded0.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
+      const decoded1 = await decodeTokenAccountId(subAccounts![1]?.id);
+      expect(decoded1.token?.id).toBe("scroll_sepolia/erc20/new_token_mock");
       expect(subAccounts).toEqual(subAccounts2);
     });
 
@@ -233,9 +228,8 @@ describe("EVM Family", () => {
       expect(getCALHash(currency)).toBe("newHash");
 
       expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
+      const decoded0 = await decodeTokenAccountId(subAccounts![0]?.id);
+      expect(decoded0.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
       expect(subAccounts).toEqual(subAccounts2);
     });
 
@@ -255,12 +249,11 @@ describe("EVM Family", () => {
       __clearAllLists();
       await hydrate(preloaded, currency);
 
-      const deserializeAccount = fromAccountRaw(serializedAccount);
+      const deserializeAccount = await fromAccountRaw(serializedAccount);
 
       expect(deserializeAccount.subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
+      const decoded0 = await decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id);
+      expect(decoded0.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
     });
 
     it("should hydrate the tokens necessary to deserialize an account with 2 token accounts when there is an updated remote CAL", async () => {
@@ -304,15 +297,13 @@ describe("EVM Family", () => {
       __clearAllLists();
       await hydrate(preloaded, currency);
 
-      const deserializeAccount = fromAccountRaw(serializedAccount);
+      const deserializeAccount = await fromAccountRaw(serializedAccount);
 
       expect(deserializeAccount.subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![1]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/new_token_mock",
-      );
+      const decoded0 = await decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id);
+      expect(decoded0.token?.id).toBe("scroll_sepolia/erc20/mock_usdt");
+      const decoded1 = await decodeTokenAccountId(deserializeAccount.subAccounts![1]?.id);
+      expect(decoded1.token?.id).toBe("scroll_sepolia/erc20/new_token_mock");
     });
   });
 });

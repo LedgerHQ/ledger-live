@@ -8,13 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Box, Flex, Button } from "@ledgerhq/native-ui";
 
 import { useTheme } from "styled-components/native";
-import {
-  isCurrencySupported,
-  listTokens,
-  listSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
@@ -37,6 +31,8 @@ import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderF
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { UpdateStep } from "../../FirmwareUpdate";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import { Asset } from "~/types/asset";
+import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 
 const maxAssetsToDisplay = 5;
 
@@ -50,6 +46,18 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+
+  const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: maxAssetsToDisplay });
+
+  const assets: Asset[] = useMemo(
+    () =>
+      sortedCryptoCurrencies?.map(currency => ({
+        amount: 0,
+        accounts: [],
+        currency,
+      })),
+    [sortedCryptoCurrencies],
+  );
 
   usePortfolioAnalyticsOptInPrompt();
 
@@ -69,32 +77,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       screen: ScreenName.Assets,
     });
   }, [navigation]);
-
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
-  );
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-  const topCryptoCurrencies = useMemo(
-    () => sortedCryptoCurrencies.slice(0, maxAssetsToDisplay),
-    [sortedCryptoCurrencies],
-  );
-  const assetsToDisplay = useMemo(
-    () =>
-      topCryptoCurrencies.slice(0, maxAssetsToDisplay).map(currency => ({
-        amount: 0,
-        accounts: [],
-        currency,
-      })),
-    [topCryptoCurrencies],
-  );
 
   const data = useMemo(
     () => [
@@ -116,7 +98,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
           ]
         : []),
       <Box background={colors.background.main} px={6} mt={6} key="Assets">
-        <Assets assets={assetsToDisplay} />
+        <Assets assets={assets} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seeAllAssets")}
         </Button>
@@ -147,7 +129,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       currentPositionY,
       graphCardEndPosition,
       colors.background.main,
-      assetsToDisplay,
+      assets,
       goToAssets,
       t,
     ],

@@ -2,7 +2,7 @@ import { runUserCanAccessLedgerSupportTest } from "./settings";
 
 const testConfig = {
   tmsLinks: ["B2CQA-820"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runUserCanAccessLedgerSupportTest(testConfig.tmsLinks, testConfig.tags);

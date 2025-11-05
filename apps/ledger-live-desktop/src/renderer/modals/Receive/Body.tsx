@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
@@ -23,6 +23,10 @@ import StepOptions from "./steps/StepOptions";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
+import {
+  onboardingReceiveFlowSelector,
+  setIsOnboardingReceiveFlow,
+} from "~/renderer/reducers/onboarding";
 
 export type StepId =
   | "warning"
@@ -145,6 +149,8 @@ const Body = ({
   const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
   const [title, setTitle] = useState("");
   const [accountError, setAccountError] = useState<Error | undefined>(undefined);
+  const dispatch = useDispatch();
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const computeAccountError = useCallback(
@@ -177,8 +183,16 @@ const Body = ({
     [setParentAccount, setAccount, computeAccountError],
   );
   const handleCloseModal = useCallback(() => {
+    if (isOnboardingReceiveFlow) {
+      dispatch(
+        setIsOnboardingReceiveFlow({
+          isFlow: false,
+          isSuccess: !!isAddressVerified,
+        }),
+      );
+    }
     closeModal("MODAL_RECEIVE");
-  }, [closeModal]);
+  }, [closeModal, dispatch, isOnboardingReceiveFlow, isAddressVerified]);
 
   const handleStepChange = useCallback(
     (e: Step<StepId, StepProps>) => onChangeStepId(e.id),

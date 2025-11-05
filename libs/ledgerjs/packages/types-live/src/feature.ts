@@ -139,6 +139,8 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyCantonNetworkDevnet: DefaultFeature;
+  currencyCantonNetworkTestnet: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
@@ -146,6 +148,7 @@ export type CurrencyFeatures = {
   currencyAssetHubWestend: DefaultFeature;
   currencyAssetHubPolkadot: DefaultFeature;
   currencyPolkadot: DefaultFeature;
+  currencyMonad: DefaultFeature;
 };
 
 /**
@@ -195,7 +198,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
-  ptxEarnDrawerApy: Feature_PtxEarnDrawerApy;
+  ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -266,6 +269,7 @@ export type Features = CurrencyFeatures & {
   llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
+  lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
 };
 
@@ -651,7 +655,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-type Feature_ModularDrawer = Feature<{
+export type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
   live_apps_allowlist: string[];
@@ -680,7 +684,17 @@ export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
-export type Feature_PtxEarnDrawerApy = DefaultFeature;
+export type Feature_PtxEarnDrawerConfiguration = Feature<{
+  assets?: {
+    filter?: "topNetworks" | "undefined";
+    leftElement?: "apy" | "marketTrend" | "undefined";
+    rightElement?: "balance" | "marketTrend" | "undefined";
+  };
+  networks?: {
+    leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+    rightElement?: "balance" | "undefined";
+  };
+}>;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 

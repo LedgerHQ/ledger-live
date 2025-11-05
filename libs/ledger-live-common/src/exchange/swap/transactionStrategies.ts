@@ -130,6 +130,7 @@ export function evmTransaction({
   recipient,
   customFeeConfig,
   extraTransactionParameters,
+  sponsored,
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "evm" }>> {
   if (customFeeConfig?.gasLimit) {
     delete customFeeConfig.gasLimit;
@@ -142,6 +143,7 @@ export function evmTransaction({
       recipient,
       ...customFeeConfig,
       data: Buffer.from(extraTransactionParameters, "hex"),
+      sponsored,
     };
   }
   return {
@@ -149,6 +151,7 @@ export function evmTransaction({
     amount,
     recipient,
     ...customFeeConfig,
+    sponsored,
   };
 }
 
@@ -234,6 +237,21 @@ export function cosmosTransaction({
   };
 }
 
+export function hederaTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "hedera" }>> {
+  return {
+    family: "hedera",
+    amount,
+    recipient,
+    ...customFeeConfig,
+    memo: payinExtraId ?? undefined,
+  };
+}
+
 export type TransactionWithCustomFee = TransactionCommon & {
   customFeeConfig: {
     [key: string]: BigNumber;
@@ -242,6 +260,7 @@ export type TransactionWithCustomFee = TransactionCommon & {
   customErrorType?: "swap";
   extraTransactionParameters?: string;
   family: string;
+  sponsored?: boolean;
 };
 
 // Define a specific type for the strategy functions, assuming they might need parameters
@@ -262,7 +281,7 @@ export const transactionStrategy: {
   cosmos: cosmosTransaction,
   evm: evmTransaction,
   filecoin: defaultTransaction,
-  hedera: defaultTransaction,
+  hedera: hederaTransaction,
   icon: defaultTransaction,
   internet_computer: defaultTransaction,
   mina: defaultTransaction,

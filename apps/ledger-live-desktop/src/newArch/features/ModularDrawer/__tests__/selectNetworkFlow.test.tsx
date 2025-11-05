@@ -1,4 +1,3 @@
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import {
@@ -11,17 +10,11 @@ import {
 import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
-}));
-
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 beforeEach(() => {
   mockDomMeasurements();

@@ -134,7 +134,7 @@ describe("StepOnboard", () => {
     const { container: container2 } = render(
       <StepOnboardFooter
         {...defaultProps}
-        onRetry={onRetry}
+        onRetryOnboardAccount={onRetry}
         onboardingStatus={OnboardStatus.ERROR}
       />,
     );

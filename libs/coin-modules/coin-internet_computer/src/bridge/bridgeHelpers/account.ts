@@ -1,16 +1,19 @@
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { fetchBalances, fetchBlockHeight, fetchTxns } from "../../api";
+import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
 import flatMap from "lodash/flatMap";
-import { Account } from "@ledgerhq/types-live";
+import { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ICPRosettaGetTxnsHistoryResponse } from "./icpRosetta/types";
 import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { normalizeEpochTimestamp } from "../../common-logic/utils";
 import { InternetComputerOperation } from "../../types";
 import invariant from "invariant";
-import { deriveAddressFromPubkey } from "./icpRosetta";
+import {
+  deriveAddressFromPubkey,
+  hashTransaction,
+  TransactionWithId,
+} from "@zondax/ledger-live-icp";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
@@ -32,17 +35,23 @@ export const getAccountShape: GetAccountShape = async info => {
   // log("debug", `Generation account shape for ${address}`);
 
   const blockHeight = await fetchBlockHeight();
-  const balanceResp = await fetchBalances(address);
-  const balance = balanceResp.balances[0];
+  const balance = await fetchBalance(address);
+  const txns = await fetchTxns(
+    address,
+    BigInt(blockHeight.toString()),
+    initialAccount ? BigInt(initialAccount.blockHeight.toString()) : undefined,
+  );
 
-  const txns = await fetchTxns(address);
   const result: Partial<Account> = {
     id: accountId,
-    balance: BigNumber(balance.value),
-    spendableBalance: BigNumber(balance.value),
-    operations: flatMap(txns.transactions.reverse(), mapTxToOps(accountId, address)),
-    blockHeight: blockHeight.current_block_identifier.index,
-    operationsCount: txns.transactions.length,
+    balance,
+    spendableBalance: balance,
+    operations: flatMap<TransactionWithId, InternetComputerOperation>(
+      txns,
+      mapTxToOps(accountId, address),
+    ),
+    blockHeight: blockHeight.toNumber(),
+    operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
     xpub: publicKey,
   };
 
@@ -59,47 +68,65 @@ function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): st
 }
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
-  return (
-    txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0],
-  ): InternetComputerOperation[] => {
+  return (txInfo: TransactionWithId): InternetComputerOperation[] => {
+    const { transaction: txn } = txInfo;
     const ops: InternetComputerOperation[] = [];
-    const ownerOperation = txInfo.transaction.operations.find(
-      cur => cur.account.address === address,
-    );
-    const counterOperation = txInfo.transaction.operations.find(
-      cur => cur.account.address !== address,
-    );
 
-    if (!ownerOperation || !counterOperation) return ops;
+    if (txn.operation === undefined) {
+      return [];
+    }
 
-    const timeStamp = txInfo.transaction.metadata.timestamp;
-    const amount = BigNumber(ownerOperation.amount.value);
-    const hash = txInfo.transaction.transaction_identifier.hash;
-    const fromAccount = amount.isPositive()
-      ? counterOperation.account.address
-      : ownerOperation.account.address;
-    const toAccount = amount.isNegative()
-      ? counterOperation.account.address
-      : ownerOperation.account.address;
-    const memo = txInfo.transaction.metadata.memo.toString();
-    const blockHeight = txInfo.transaction.metadata.block_height;
+    if ("Transfer" in txn.operation === undefined) {
+      return [];
+    }
+
+    const timeStamp = txn.timestamp[0]?.timestamp_nanos ?? Date.now();
+    let amount = BigNumber(0);
+    let fromAccount = "";
+    let toAccount = "";
+    let hash = "";
+    if ("Transfer" in txn.operation) {
+      amount = BigNumber(txn.operation.Transfer.amount.e8s.toString());
+      fromAccount = txn.operation.Transfer.from;
+      toAccount = txn.operation.Transfer.to;
+      hash = hashTransaction({
+        from: fromAccount,
+        to: toAccount,
+        amount: txn.operation.Transfer.amount.e8s,
+        fee: txn.operation.Transfer.fee.e8s,
+        memo: txn.memo,
+        created_at_time: txn.created_at_time[0]?.timestamp_nanos ?? BigInt(0),
+      });
+    }
+
+    const blockHeight = Number(txInfo.id);
+    const blockHash = "";
+
+    const memo = txInfo.transaction.memo.toString();
 
     const date = new Date(normalizeEpochTimestamp(timeStamp.toString()));
     const value = amount.abs();
     const feeToUse = BigNumber(fee);
 
-    const isSending = amount.isNegative();
-    const isReceiving = amount.isPositive();
+    const isSending = address === fromAccount;
+    const isReceiving = address === toAccount;
+
+    let type: OperationType;
+    if (isSending) {
+      type = "OUT";
+    } else {
+      type = "IN";
+    }
 
     if (isSending) {
       ops.push({
-        id: encodeOperationId(accountId, hash, "OUT"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "OUT",
+        type,
         value: value.plus(feeToUse),
         fee: feeToUse,
         blockHeight,
-        blockHash: null,
+        blockHash,
         accountId,
         senders: [fromAccount],
         recipients: [toAccount],
@@ -112,13 +139,13 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
 
     if (isReceiving) {
       ops.push({
-        id: encodeOperationId(accountId, hash, "IN"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "IN",
+        type,
         value,
         fee: feeToUse,
         blockHeight,
-        blockHash: null,
+        blockHash,
         accountId,
         senders: [fromAccount],
         recipients: [toAccount],

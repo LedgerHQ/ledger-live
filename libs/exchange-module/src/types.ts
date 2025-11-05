@@ -43,6 +43,7 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
     [key: string]: BigNumber;
   };
   swapAppVersion?: string;
+  sponsored?: boolean;
 };
 
 export type ExchangeStartResult = {

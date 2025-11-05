@@ -18,7 +18,6 @@ setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
-export const defaultNanoApp = { firmware: "2.4.2" as const, version: "1.17.0" as const };
 
 describe.each([["legacy"], ["generic-adapter"]] as const)(
   "EVM Deterministic Tester (%s strategy)",

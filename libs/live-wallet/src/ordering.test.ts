@@ -88,7 +88,11 @@ const raws: AccountRaw[] = [
   },
 ];
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setCryptoAssetsStore({
+  findTokenById: () => undefined,
+  findTokenByAddressInCurrency: () => undefined,
+  getTokensSyncHash: () => Promise.resolve("0"),
+} as CryptoAssetsStore);
 const accounts = raws.map(a => fromAccountRaw(a));
 
 const walletState: WalletState = {

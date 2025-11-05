@@ -28,6 +28,7 @@ import {
   postSwapAccepted,
   postSwapCancelled,
 } from "@ledgerhq/live-common/exchange/swap/index";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { HardwareUpdate, renderLoading } from "~/components/DeviceAction/rendering";
@@ -220,6 +221,31 @@ export function Confirmation({
   const swapAction = useInitSwapDeviceAction();
 
   const { t } = useTranslation();
+
+  // Check for NanoS + ThorSwap incompatibility
+  if (
+    deviceMeta?.device?.modelId === DeviceModelId.nanoS &&
+    provider &&
+    ["thorswap"].includes(provider.toLowerCase())
+  ) {
+    return (
+      <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
+        <ModalBottomAction
+          footer={
+            <View style={styles.footerContainer}>
+              <HardwareUpdate
+                t={t}
+                device={deviceMeta.device}
+                i18nKeyTitle="transfer.swap2.wrongDevice.title"
+                i18nKeyDescription="transfer.swap2.wrongDevice.description"
+                i18nKeyValues={{ provider: getProviderName(provider) }}
+              />
+            </View>
+          }
+        />
+      </QueuedDrawer>
+    );
+  }
 
   const keys = getIncompatibleCurrencyKeys(exchange);
 

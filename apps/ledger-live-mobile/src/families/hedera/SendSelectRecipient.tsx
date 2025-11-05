@@ -1,5 +1,5 @@
 import React from "react";
-import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/logic";
+import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/utils";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";

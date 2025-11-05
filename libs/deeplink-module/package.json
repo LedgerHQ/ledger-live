@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-deeplink-module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Wallet-API Deeplink Module for Ledger Live",
   "license": "Apache-2.0",
   "keywords": [
@@ -34,8 +34,8 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.10.0",
-    "@ledgerhq/wallet-api-core": "^1.22.0"
+    "@ledgerhq/wallet-api-client": "^1.12.3",
+    "@ledgerhq/wallet-api-core": "^1.25.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.10"

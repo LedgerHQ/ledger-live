@@ -1,36 +1,34 @@
 import expect from "expect";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  containsSubstringInEvent,
-  getDelegateEvents,
-  getSpeculosModel,
-} from "../speculos";
+import { containsSubstringInEvent, getDelegateEvents, getSendEvents } from "../speculos";
+import { isTouchDevice } from "../speculosAppVersion";
+import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
+import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { Transaction } from "../models/Transaction";
 import { Delegate } from "../models/Delegate";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export async function delegateSolana(delegatingAccount: Delegate) {
   await getDelegateEvents(delegatingAccount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }
 
 export async function sendSolana(tx: Transaction) {
-  const events =
-    getSpeculosModel() !== DeviceModelId.nanoS
-      ? await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION)
-      : await pressUntilTextFound(DeviceLabels.APPROVE);
+  const events = await getSendEvents(tx);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
-  if (process.env.SPECULOS_DEVICE !== Device.LNS) {
-    const isAddressCorrect = containsSubstringInEvent(
-      tx.accountToCredit.parentAccount?.address ?? tx.accountToCredit.address,
-      events,
-    );
+  if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
+    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
   }
 
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }

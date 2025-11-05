@@ -133,9 +133,9 @@ export function runSwapWithDifferentSeedTest(
       await app.common.disableSynchronizationForiOS();
       await app.common.selectKnownDevice();
       if (errorMessage) {
+        await app.common.enableSynchronization();
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
-        await app.common.selectKnownDevice();
         await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
         await app.swap.verifyDeviceActionLoadingNotVisible();
         await app.swap.waitForSuccessAndContinue();
@@ -396,6 +396,7 @@ export function runSwapWithSendMaxTest(
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await app.common.selectKnownDevice();
+      await app.common.enableSynchronization();
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
@@ -428,7 +429,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       );
       await app.swapLiveApp.switchYouSendAndYouReceive();
       await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "-");
     });
   });
 }

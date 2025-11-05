@@ -194,6 +194,7 @@ const deriveTokenTransferCommandDescriptor = async (
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -345,6 +346,7 @@ async function getTokenRecipient(
         walletAddress: recipientAddress,
         shouldCreateAsAssociatedTokenAccount,
         tokenAccAddress: recipientAssociatedTokenAccountAddress,
+        userInputType: "sol",
       },
       recipientAccInfo: associatedTokenAccount,
     };
@@ -361,6 +363,7 @@ async function getTokenRecipient(
       walletAddress: recipientTokenAccount.owner.toBase58(),
       shouldCreateAsAssociatedTokenAccount: false,
       tokenAccAddress: recipientAddress,
+      userInputType: "ata",
     },
     recipientAccInfo: recipientTokenAccount,
   };
@@ -505,6 +508,7 @@ async function deriveCreateApproveCommandDescriptor(
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient

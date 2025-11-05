@@ -4,7 +4,7 @@ const userRefusesTransactionSwapTestConfig = {
   fromAccount: Account.ETH_1,
   toAccount: Account.SOL_1,
   tmsLinks: ["B2CQA-2212"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runUserRefusesTransactionTest(

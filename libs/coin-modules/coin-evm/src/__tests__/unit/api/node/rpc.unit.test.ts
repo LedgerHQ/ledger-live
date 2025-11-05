@@ -219,6 +219,7 @@ describe("EVM Family", () => {
           gasPrice: "789",
           gasUsed: "122",
           value: "456",
+          status: 1,
         });
       });
     });

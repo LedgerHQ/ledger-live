@@ -23,7 +23,7 @@ import {
   toOperationExtraRaw,
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape, sync } from "./synchronization";
+import { getAccountShape, postSync, sync } from "./synchronization";
 import tronCoinConfig, { type TronCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
@@ -32,6 +32,7 @@ function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): Currency
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     getAddressFn: getAddressWrapper(getAddress),
+    postSync,
   });
 
   return {

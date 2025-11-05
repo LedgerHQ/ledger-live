@@ -186,10 +186,14 @@ const Header = ({
       logs
         .slice(0)
         .reverse()
-        .filter(l => l.type === "apdu" || (l.type === "live-dmk-tracer" && l.message.startsWith("[exchange]")))
+        .filter(
+          l =>
+            l.type === "apdu" ||
+            (l.type === "live-dmk-logger" && l.message.startsWith("[exchange]")),
+        )
         // filter out live-dmk-tracer logs that are not APDUs
         .map(l => {
-          if (l.type === "live-dmk-tracer") {
+          if (l.type === "live-dmk-logger") {
             l.message = l.message.replace(/^\[exchange\] /, ""); // remove `[exchange] ` prefix
           }
           return l;

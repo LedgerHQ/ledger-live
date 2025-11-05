@@ -212,6 +212,10 @@ export default function EvmFeesStrategy({
     return <InfiniteLoader size={32} />;
   }
 
+  if (transaction.sponsored) {
+    return null;
+  }
+
   /**
    * If no gasOptions available, this means this currency does not have a
    * gasTracker. Hence, we do not display the fee fields.

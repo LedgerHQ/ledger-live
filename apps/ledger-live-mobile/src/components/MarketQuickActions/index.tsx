@@ -7,8 +7,7 @@ import { track } from "~/analytics";
 import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 const stakeLabel = getStakeLabelLocaleBased();
 export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
@@ -16,16 +15,9 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const { quickActionsList } = useQuickActions(quickActionsProps);
-  const supportedCurrencies = listSupportedCurrencies();
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const isAcceptedCurrency = useAcceptedCurrency();
 
-  const baseCurrencyId =
-    quickActionsProps.currency.type === "TokenCurrency"
-      ? quickActionsProps.currency.parentCurrency.id
-      : quickActionsProps.currency.id;
-  const isCurrencySupported =
-    !deactivatedCurrencyIds.has(baseCurrencyId) &&
-    supportedCurrencies.some(currency => currency.id === baseCurrencyId);
+  const isCurrencySupported = isAcceptedCurrency(quickActionsProps.currency);
   const hideQuickActions = !isCurrencySupported;
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
@@ -43,7 +35,11 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           children: t(prop.name),
           onPress: () => {
             track("button_clicked", { button: prop.analytics, page: router.name });
-            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            if (quickActionsItem.customHandler) {
+              quickActionsItem.customHandler();
+            } else if (quickActionsItem.route) {
+              navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            }
           },
           disabled: quickActionsItem.disabled,
         };

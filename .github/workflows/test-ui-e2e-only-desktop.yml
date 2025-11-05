@@ -50,9 +50,21 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+          - stax
+          - flex
         default: nanoSP
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: false
+        type: string
+        default: "1.4.1"
+
   workflow_call:
     inputs:
+      ref:
+        description: "The branch which triggered this workflow"
+        required: false
+        type: string
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
@@ -78,9 +90,12 @@ on:
         default: testing
       speculos_device:
         description: "Device to be used"
-        required: false
+        required: true
         type: string
-        default: nanoSP
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -97,6 +112,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
+      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -104,7 +120,18 @@ jobs:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup caches
         id: caches
@@ -121,13 +148,6 @@ jobs:
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Retrieving coin apps
         uses: actions/checkout@v4
@@ -161,6 +181,7 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}

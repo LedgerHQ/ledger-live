@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { GenericTransaction } from "./types";
+import { GenericTransaction, OperationCommon } from "./types";
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
@@ -27,6 +27,30 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === "string");
+}
+
+export function cleanedOperation(operation: OperationCommon): OperationCommon {
+  if (!operation.extra) return operation;
+
+  const extraToClean = new Set([
+    "assetReference",
+    "assetAmount",
+    "assetOwner",
+    "assetSenders",
+    "assetRecipients",
+    "parentSenders",
+    "parentRecipients",
+    "ledgerOpType",
+  ]);
+  const cleanedExtra = Object.fromEntries(
+    Object.entries(operation.extra).filter(([key]) => !extraToClean.has(key)),
+  );
+
+  return { ...operation, extra: cleanedExtra };
+}
+
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const opType = op.type as OperationType;
 
@@ -34,6 +58,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     assetReference?: string;
     assetOwner?: string;
     assetAmount?: string | undefined;
+    assetSenders?: string[];
+    assetRecipients?: string[];
+    parentSenders?: string[];
+    parentRecipients?: string[];
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
   } = {};
@@ -44,6 +72,22 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 
   if (op.details?.assetAmount !== undefined) {
     extra.assetAmount = op.details.assetAmount as string;
+  }
+
+  if (isStringArray(op.details?.assetSenders)) {
+    extra.assetSenders = op.details?.assetSenders;
+  }
+
+  if (isStringArray(op.details?.assetRecipients)) {
+    extra.assetRecipients = op.details?.assetRecipients;
+  }
+
+  if (isStringArray(op.details?.parentSenders)) {
+    extra.parentSenders = op.details?.parentSenders;
+  }
+
+  if (isStringArray(op.details?.parentRecipients)) {
+    extra.parentRecipients = op.details?.parentRecipients;
   }
 
   if (op.asset?.type !== "native") {
@@ -67,11 +111,11 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
-    senders: op.senders,
-    recipients: op.recipients,
+    senders: extra.parentSenders ?? op.senders,
+    recipients: extra.parentRecipients ?? op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    hasFailed: (op.details as unknown as { status?: string })?.status === "failed",
+    hasFailed: op.details?.status === "failed",
     extra,
   };
 
@@ -197,11 +241,12 @@ export const buildOptimisticOperation = (
   const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
+  const parentType = subAccountId ? "FEES" : type;
 
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, "", parentType),
     hash: "",
-    type: type,
+    type: parentType,
     value: subAccountId ? new BigNumber(fees.toString()) : transaction.amount, // match old behavior
     fee: new BigNumber(fees.toString()),
     blockHash: null,
@@ -222,9 +267,9 @@ export const buildOptimisticOperation = (
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
-        id: `${subAccountId}--OUT`,
+        id: `${subAccountId}--${type}`,
         hash: "",
-        type: "OUT",
+        type,
         value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,

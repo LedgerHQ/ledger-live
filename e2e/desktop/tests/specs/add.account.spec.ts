@@ -31,12 +31,11 @@ for (const currency of currencies) {
       userdata: "skip-onboarding",
       speculosApp: currency.currency.speculosApp,
     });
-    let firstAccountName = "NO ACCOUNT NAME YET";
 
     test(
       `[${currency.currency.name}] Add account`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: currency.xrayTicket,
@@ -44,6 +43,7 @@ for (const currency of currencies) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        const firstAccountName = `${currency.currency.name} 1`;
 
         await app.portfolio.openAddAccountModal();
         const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
@@ -51,15 +51,15 @@ for (const currency of currencies) {
           await app.modularDrawer.validateAssetsDrawerItems();
           await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
           await app.modularDrawer.selectNetwork(currency.currency);
-          await app.addAccount.expectAccountModalToBeVisible();
+          await app.scanAccountsDrawer.selectFirstAccount();
+          await app.scanAccountsDrawer.clickCloseButton();
         } else {
           await app.addAccount.expectModalVisibility();
           await app.addAccount.selectCurrency(currency.currency);
+          await app.addAccount.addAccounts();
+          await app.addAccount.done();
         }
-        firstAccountName = await app.addAccount.getFirstAccountName();
 
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
         await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
         await app.layout.goToAccounts();

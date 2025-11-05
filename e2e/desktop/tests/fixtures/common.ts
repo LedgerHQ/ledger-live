@@ -110,6 +110,7 @@ export const test = base.extend<TestFixtures>({
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);
+      setEnv("E2E_NANO_APP_VERSION_PATH", "tests/artifacts/appVersion/nano-app-catalog.json");
       if (IS_NOT_MOCK && speculosApp) {
         setEnv("MOCK", "");
         process.env.MOCK = "";

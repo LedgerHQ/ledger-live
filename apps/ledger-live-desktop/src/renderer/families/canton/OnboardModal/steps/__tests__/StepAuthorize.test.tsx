@@ -188,7 +188,7 @@ describe("StepAuthorize", () => {
     const { container: container2 } = render(
       <StepAuthorizeFooter
         {...defaultProps}
-        onRetry={onRetry}
+        onRetryPreapproval={onRetry}
         authorizeStatus={AuthorizeStatus.ERROR}
       />,
     );

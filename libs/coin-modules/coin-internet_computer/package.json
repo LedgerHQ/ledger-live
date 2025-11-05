@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -84,31 +84,25 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@dfinity/agent": "^0.21.0",
-    "@dfinity/candid": "^0.21.0",
-    "@dfinity/principal": "^0.15.6",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "big-integer": "^1.6.51",
+    "@zondax/ledger-live-icp": "1.4.0",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1",
-    "simple-cbor": "^0.4.1"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/semver": "^7.5.8",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },

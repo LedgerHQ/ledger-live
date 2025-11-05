@@ -7,8 +7,6 @@ import { useTranslation } from "react-i18next";
 import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useLocale } from "~/context/Locale";
-import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowItem.styled";
 import { counterValueFormatter, getDateFormatter } from "LLM/features/Market/utils";
 import DeltaVariation from "../../components/DeltaVariation";
 import MarketStats from "./components/MarketStats";
@@ -29,6 +27,7 @@ import {
 } from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
+import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowItem.styled";
 
 interface ViewProps {
   loading: boolean;
@@ -75,28 +74,19 @@ function View({
   const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} isFlex>
+    <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <ScrollContainerHeader
         TopLeftSection={<BackButton />}
         MiddleSection={
           <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
-            {internalCurrency ? (
-              <CircleCurrencyIcon
-                size={32}
-                currency={internalCurrency}
-                color={undefined}
-                sizeRatio={0.9}
-              />
-            ) : (
-              image && (
-                <StyledIconContainer>
-                  <Image
-                    source={{ uri: image }}
-                    style={{ width: 32, height: 32 }}
-                    resizeMode="contain"
-                  />
-                </StyledIconContainer>
-              )
+            {image && (
+              <StyledIconContainer>
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 32, height: 32 }}
+                  resizeMode="contain"
+                />
+              </StyledIconContainer>
             )}
             <Text ml={3} variant="large" fontSize={22}>
               {name}

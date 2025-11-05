@@ -58,7 +58,7 @@ export type CreateAccountsCountAndApy = (args: {
   type?: ApyType;
 }) => ReactNode;
 
-export type NetworkWithCount = CryptoOrTokenCurrency & {
+export type NetworkWithCount = {
   leftElement?: ReactNode;
   count: number;
 };
@@ -70,7 +70,7 @@ export type AccountDataItem = {
 };
 
 export type AccountModuleParams = {
-  assets: CryptoOrTokenCurrency[];
+  networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
@@ -79,14 +79,16 @@ export type CreateAccountsCount = (args: { label: string }) => ReactNode;
 export type UseAccountData = (params: AccountModuleParams) => AccountDataItem[];
 
 export type NetworkHookParams = {
-  assets: CryptoOrTokenCurrency[];
   networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
-// Network hook type that returns currency properties spread at top level
-export type NetworkHook = (
-  params: NetworkHookParams,
-) => Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }>;
+// Network hook type that returns additional properties to be merged with currencies
+export type NetworkHook = (params: NetworkHookParams) => Array<{
+  balanceData?: BalanceUI;
+  count?: number;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
+}>;
 
 export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
@@ -96,8 +98,8 @@ export type NetworkConfigurationDeps = {
   balanceItem: CreateBalanceItem;
 };
 
-export type LeftElementKind = "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
-export type RightElementKind = "balance" | "undefined";
+export type NetworkLeftElementKind = "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+export type NetworkRightElementKind = "balance" | "undefined";
 
 export type Network = {
   name: string;

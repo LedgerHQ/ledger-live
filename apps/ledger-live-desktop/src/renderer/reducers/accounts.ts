@@ -57,7 +57,7 @@ const handlers: AccountsHandlers = {
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as AccountsHandlers<false>,
+  handlers as AccountsHandlers<false>,
   state,
 );
 
@@ -67,8 +67,19 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
-const accountHash = (a: AccountLike) =>
-  `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
+const accountHash = (a: AccountLike) => {
+  const baseHash = `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
+  // Include Canton-specific data in hash to ensure selector detects changes to cantonResources
+  // Without this, when Canton accounts are synced and cantonResources is updated (e.g., instrumentUtxoCounts),
+  // the selector returns stale data because the hash doesn't change, causing components to miss
+  // important Canton-specific data like UTXO counts needed for transaction validation
+  // See: libs/coin-modules/coin-canton/src/bridge/sync.ts
+  if (a.type === "Account" && a.currency.family === "canton" && "cantonResources" in a) {
+    const cantonHash = `-cantonResources(${JSON.stringify(a.cantonResources)})`;
+    return baseHash + cantonHash;
+  }
+  return baseHash;
+};
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );

@@ -80,6 +80,7 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     gasPrice: ledgerTransaction.gas_price,
     gasUsed: ledgerTransaction.gas_used,
     value: ledgerTransaction.value,
+    status: ledgerTransaction.status,
   };
 };
 
@@ -267,15 +268,18 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
+  const params: Record<string, boolean> = {
+    mevProtected: Boolean(broadcastConfig?.mevProtected),
+    sponsored: Boolean(broadcastConfig?.sponsored),
+  };
+
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
     method: "POST",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
-    params: {
-      mevProtected: Boolean(broadcastConfig?.mevProtected),
-    },
+    params,
   });
   return hash;
 };
