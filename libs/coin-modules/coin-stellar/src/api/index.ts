@@ -12,6 +12,8 @@ import {
   Reward,
   TransactionIntent,
   CraftedTransaction,
+  Direction,
+  AccountTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
@@ -53,11 +55,20 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block> {
+    getBlock(_height): Promise<Block<StellarMemo>> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getTransactions(
+      _address: string,
+      _direction?: Direction,
+      _minHeight?: number,
+      _maxHeight?: number,
+      _cursor?: Cursor,
+    ): Promise<Page<AccountTransaction<StellarMemo>>> {
+      throw new Error("getTransactions is not supported");
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");

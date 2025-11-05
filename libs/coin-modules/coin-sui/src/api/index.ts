@@ -12,6 +12,7 @@ import {
   getStakes,
   getRewards,
   getValidators as logicGetValidators,
+  getTransactions as logicGetTransactions,
 } from "../logic";
 import {
   AlpacaApi,
@@ -41,6 +42,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
     getBlock,
     getBlockInfo,
     listOperations: logicListOperations,
+    getTransactions: logicGetTransactions,
     getStakes,
     getRewards,
     getValidators: logicGetValidators,

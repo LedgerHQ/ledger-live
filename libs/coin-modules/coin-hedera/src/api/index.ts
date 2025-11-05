@@ -1,7 +1,12 @@
 import type {
+  AccountTransaction,
   Api,
+  Block,
+  BlockInfo,
   CraftedTransaction,
   Cursor,
+  Direction,
+  MemoNotSupported,
   Operation,
   Page,
   Reward,
@@ -138,6 +143,21 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
+    },
+    getBlock: async (_height): Promise<Block<HederaMemo>> => {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo: async (_height): Promise<BlockInfo> => {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getTransactions(
+      _address: string,
+      _direction?: Direction,
+      _minHeight?: number,
+      _maxHeight?: number,
+      _cursor?: Cursor,
+    ): Promise<Page<AccountTransaction<HederaMemo>>> {
+      throw new Error("getTransactions is not supported");
     },
     getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
       throw new Error("getStakes is not supported");

@@ -18,16 +18,21 @@ import {
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
-import type {
-  Block,
-  BlockInfo,
-  BlockTransaction,
-  BlockOperation,
-  Operation as Op,
-  Page,
-  Stake,
-  StakeState,
-  AssetInfo,
+import {
+  type Block,
+  type BlockInfo,
+  type BlockTransaction,
+  type BlockOperation,
+  type Operation as Op,
+  type Page,
+  type Stake,
+  type StakeState,
+  type AssetInfo,
+  type BalanceDelta,
+  type TransactionEvent,
+  type TransactionEventType,
+  type AccountTransaction,
+  deduceFees,
 } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
@@ -452,28 +457,84 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
   return info;
 }
 
+export function toAccountTransaction(transaction: SuiTransactionBlockResponse): AccountTransaction {
+  const tx = toBlockTransaction(transaction);
+  return {
+    ...tx,
+    block: {
+      height: Number.parseInt(transaction.checkpoint || "0"),
+      time: tx.time!,
+    },
+  };
+}
+
 /**
  * Convert a SUI RPC transaction block response to a {@link BlockTransaction}.
  *
  * Notes:
- *  - transfers are generated from balance changes rather than effects,
- * therefore the peer is not populated.
- *  - all other operation types are ignored
+ *  - transfers are generated from balance changes rather than effects, therefore peer is not populated
+ *  - no memo in SUI
+ *  - no transaction level details are set
  *
  * @param transaction SUI RPC transaction block response
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
-  const operationFee = getOperationFee(transaction);
+  const feeEvent = toFeeEvent(transaction);
+  const transactionEvent = toTransactionEvent(transaction, feeEvent);
   return {
-    hash: transaction.digest,
+    id: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
-    operations:
-      transaction.balanceChanges?.flatMap(change =>
-        toBlockOperation(transaction, change, operationFee),
-      ) || [],
-    fees: BigInt(operationFee.toString()),
-    feesPayer: transaction.transaction?.data.sender || "",
+    events: [feeEvent, transactionEvent],
+    time: getOperationDate(transaction),
   };
+}
+
+export function toFeeEvent(transaction: SuiTransactionBlockResponse): TransactionEvent {
+  const gas = transaction.effects!.gasUsed;
+  const computationCost = BigInt(gas.computationCost);
+  const storageCost = BigInt(gas.storageCost);
+  const storageRebate = BigInt(gas.storageRebate);
+  return {
+    type: "FEE",
+    balanceDeltas: [
+      {
+        address: transaction.transaction?.data.sender || "",
+        asset: toSuiAsset(DEFAULT_COIN_TYPE),
+        delta: -computationCost - storageCost + storageRebate,
+      },
+    ],
+    details: { computationCost, storageCost, storageRebate },
+  };
+}
+
+export function toTransactionEvent(
+  transaction: SuiTransactionBlockResponse,
+  feeEvent: TransactionEvent,
+): TransactionEvent {
+  const balanceDeltasWithFees = transaction.balanceChanges?.flatMap(toBalanceDelta) ?? [];
+
+  const balanceDeltas = deduceFees(balanceDeltasWithFees, feeEvent.balanceDeltas);
+
+  if (isStaking(transaction.transaction?.data.transaction))
+    // TODO: add details (see getOperationExtra)
+    return { type: "DELEGATE", balanceDeltas };
+
+  if (isUnstaking(transaction.transaction?.data.transaction))
+    // TODO: add details (see getOperationExtra)
+    return { type: "UNDELEGATE", balanceDeltas };
+
+  return { type: "TRANSFER", balanceDeltas };
+}
+
+export function toBalanceDelta(change: BalanceChange): BalanceDelta[] {
+  if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
+  return [
+    {
+      address: change.owner.AddressOwner,
+      asset: toSuiAsset(change.coinType),
+      delta: BigInt(change.amount),
+    },
+  ];
 }
 
 export function removeFeesFromAmountForNative(change: BalanceChange, fees: BigNumber): BigNumber {
@@ -482,69 +543,7 @@ export function removeFeesFromAmountForNative(change: BalanceChange, fees: BigNu
 }
 
 /**
- * Convert a SUI RPC transaction balance change to a {@link BlockOperation}.
- *
- * @param transaction
- * @param change balance change
- * @param fees transaction fees to be deducted from the amount if applicable
- */
-export function toBlockOperation(
-  transaction: SuiTransactionBlockResponse,
-  change: BalanceChange,
-  fees: BigNumber,
-): BlockOperation[] {
-  if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
-  const address = change.owner.AddressOwner;
-  const operationType = getOperationType(address, transaction);
-
-  function transferOp(peer: string | undefined, amount: bigint): BlockOperation {
-    const op: BlockOperation = {
-      type: "transfer",
-      address: address,
-      asset: toSuiAsset(change.coinType),
-      amount: amount,
-    };
-    if (peer) op.peer = peer;
-    return op;
-  }
-
-  switch (operationType) {
-    case "IN":
-      return [
-        transferOp(getOperationSenders(transaction.transaction?.data).at(0), BigInt(change.amount)),
-      ];
-    case "OUT":
-      return [
-        transferOp(
-          getOperationRecipients(transaction.transaction?.data).at(0),
-          BigInt(removeFeesFromAmountForNative(change, fees).toString()),
-        ),
-      ];
-    case "DELEGATE":
-    case "UNDELEGATE":
-      return [
-        {
-          type: "other",
-          operationType: operationType,
-          address: change.owner.AddressOwner,
-          asset: toSuiAsset(change.coinType),
-          amount: BigInt(removeFeesFromAmountForNative(change, fees).toString()),
-        },
-      ];
-    default:
-      return [
-        {
-          type: "transfer",
-          address: address,
-          asset: toSuiAsset(change.coinType),
-          amount: BigInt(change.amount),
-        },
-      ];
-  }
-}
-
-/**
- * Convert a SUI coin type to a {@link SuiAsset}.
+ * Convert a SUI coin type to a {@link AssetInfo}.
  *
  * @param coinType coin type, as returned from SUI RPC
  */

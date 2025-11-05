@@ -5,6 +5,7 @@ export { combine } from "./combine";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { getBlock, getBlockInfo } from "./getBlock";
+export { getTransactions } from "./getTransactions";
 export { listOperations } from "./listOperations";
 export { getStakes, getRewards } from "./staking";
 export { canStake } from "./stake";

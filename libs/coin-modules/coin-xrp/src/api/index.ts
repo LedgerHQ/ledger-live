@@ -12,6 +12,8 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  Direction,
+  AccountTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
@@ -45,7 +47,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent,
-    getBlock(_height): Promise<Block> {
+    getBlock(_height): Promise<Block<XrpMapMemo>> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -54,6 +56,15 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     getSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
       return BigInt(accountInfo.sequence);
+    },
+    getTransactions(
+      _address: string,
+      _direction?: Direction,
+      _minHeight?: number,
+      _maxHeight?: number,
+      _cursor?: Cursor,
+    ): Promise<Page<AccountTransaction<XrpMapMemo>>> {
+      throw new Error("getTransactions is not supported");
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");

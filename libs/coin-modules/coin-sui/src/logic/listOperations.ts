@@ -1,10 +1,6 @@
-import { Operation, Pagination } from "@ledgerhq/coin-framework/lib/api/types";
-import { getListOperations, withApi } from "../network/sdk";
+import { toListOperations } from "@ledgerhq/coin-framework/lib/api/index";
+import { getTransactions } from "./getTransactions";
 
-export const listOperations = async (
-  address: string,
-  { lastPagingToken, order }: Pagination,
-): Promise<[Operation[], string]> => {
-  const ops = await getListOperations(address, order ?? "asc", withApi, lastPagingToken);
-  return [ops.items, ops.next || ""];
-};
+// Note: temporary, for backward compatibility. This will be removed as soon as all clients have been updated to use
+// getTransactions directly.
+export const listOperations = toListOperations(getTransactions);

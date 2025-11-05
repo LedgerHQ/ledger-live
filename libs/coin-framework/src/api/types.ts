@@ -80,7 +80,7 @@ export type Transaction = {
 /**
  * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
  */
-export type Block = {
+export type Block<MemoType extends Memo = MemoNotSupported> = {
   /** The block metadata. */
   info: BlockInfo;
 
@@ -90,71 +90,161 @@ export type Block = {
    * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
    * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
    */
-  transactions: BlockTransaction[];
+  transactions: BlockTransaction<MemoType>[];
 };
 
-/**
- * A transaction belonging to a {@link Block}, not specific to a particular account/address.
- */
-export type BlockTransaction = {
-  /** The transaction hash/digest (globally unique identifier). */
-  hash: string;
+/** A transaction returned by {@link AlpacaApi#getBlock}. */
+export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
+  /** The transaction globally unique identifier (typically hash/digest). */
+  id: string;
 
-  /** If the transaction has been failed, fees have been paid but other balance changes are not effective.*/
+  /** Transaction date. */
+  time?: Date;
+
+  /**
+   * Indicates the transaction has been published in a block, but its instructions have not been executed.
+   *
+   * If failed, only events with type <code>FEE</code> have been executed. All other event types should be ignored when
+   * computing balances.
+   */
   failed: boolean;
+
+  /**
+   * Optional memo associated with the operation.
+   * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
+   * Defaults to `MemoNotSupported`.
+   */
+  memo?: MemoType;
 
   /**
    * The operations/instructions included in this transaction.
    *
-   * It should include at least all operations where an EOA is involved, however it is OK to ignore other types of
-   * operations that cannot cause balance changes (eg: validator vote instructions on Solana).
-   *
-   * Note that fees are accounted for separately, so operations must not represent fees.
+   * It must include at least all events that caused a balance change. Ignoring other events or not is implementation
+   * specific.
    */
-  operations: BlockOperation[];
+  events: TransactionEvent[];
 
   /** Network specific details for this transaction. */
   details?: Record<string, unknown>;
-
-  /** The fee amount paid for this transaction, in base unit of the network native coin, always positive or zero.  */
-  fees: bigint;
-
-  /** The address that paid for this transaction's fees. */
-  feesPayer: string;
 };
 
-/** An operation belonging to a {@link BlockTransaction}. */
-export type BlockOperation = TransferBlockOperation | OtherBlockOperation;
+/** A transaction returned by {@link AlpacaApi#getTransactions}. */
+export type AccountTransaction<MemoType extends Memo = MemoNotSupported> =
+  BlockTransaction<MemoType> & {
+    /** The block metadata. */
+    block: BlockInfo;
+  };
 
-/** An asset transfer that occurred in a {@link BlockTransaction}. */
-export type TransferBlockOperation = {
-  /** Operation type discriminator. */
-  type: "transfer";
+/**
+ * An event that occurred as part of a {@link Transaction}.
+ *
+ * Definition of transaction events is blockchain dependent, it could be based on either:
+ *  - transaction operations in the technical sense (eg: "1 instruction == 1 event" on Solana)
+ *  - transaction operations in the functional sense (eg: "create staking account" on Solana, which involves several
+ *    instructions)
+ *
+ * Similarly, since each event can contain multiple balance deltas, some transactions can be represented in several ways.
+ * For instance, a batch transfer can be represented as:
+ *  - 1 event with N balance deltas
+ *  - N events with 1 balance delta
+ *
+ * Another example is UTXO based chains, either:
+ *  - 1 event per input or output: this allows providing details of each UTXO being spent
+ *  - 1 event per transaction: in this case, balance deltas would be aggregated
+ *
+ * The implementation guideline is to:
+ *  - use the most concise representation of the transaction: for instance, in a batch transfer, if it makes no sense to
+ *    attach metadata to each balance delta, then using a single event with N balance deltas is preferable.
+ *  - do not loose information: in the batch transfer example, if each balance delta has a specific operation identifier,
+ *    then it makes more sense using N events.
+ */
+export type TransactionEvent = {
+  /** The event classification.*/
+  type: TransactionEventType;
 
+  /** Balance deltas caused by this event, if any. */
+  balanceDeltas: BalanceDelta[];
+
+  /** Network specific details for this event. */
+  details?: Record<string, unknown>;
+};
+
+export type TransactionEventType =
+  // COMMON
+  | "UNKNOWN" // default/fallback
+  | "TRANSFER" // default type for send/receive
+  | "FEE" // fee payment
+  | "CREATE"
+  | "REVEAL"
+  // COSMOS
+  | "DELEGATE"
+  | "UNDELEGATE"
+  | "REDELEGATE"
+  | "REWARD"
+  // TRON
+  | "FEES"
+  | "FREEZE"
+  | "UNFREEZE"
+  | "WITHDRAW_EXPIRE_UNFREEZE"
+  | "UNDELEGATE_RESOURCE"
+  | "LEGACY_UNFREEZE"
+  // POLKADOT
+  | "VOTE"
+  | "REWARD_PAYOUT"
+  | "BOND"
+  | "UNBOND"
+  | "WITHDRAW_UNBONDED"
+  | "SET_CONTROLLER"
+  | "SLASH"
+  | "NOMINATE"
+  | "CHILL"
+  // ETHEREUM
+  | "APPROVE"
+  // ALGORAND
+  | "OPT_IN"
+  | "OPT_OUT"
+  // CELO
+  | "LOCK"
+  | "UNLOCK"
+  | "WITHDRAW"
+  | "REVOKE"
+  | "ACTIVATE"
+  | "REGISTER"
+  // NFT
+  | "NFT_IN"
+  | "NFT_OUT"
+  // NEAR
+  | "STAKE"
+  | "UNSTAKE"
+  | "WITHDRAW_UNSTAKED"
+  // SOLANA
+  | "BURN"
+  // HEDERA
+  | "ASSOCIATE_TOKEN"
+  // CANTON
+  | "PRE_APPROVAL";
+
+/**
+ * A change on an address balance that occurred as part of a {@link TransactionEvent}.
+ *
+ * A simple transfer can be represented by two symmetrical {@link BalanceDelta}.
+ */
+export type BalanceDelta = {
   /** The impacted address (can be sender or recipient based on signum of <code>amount</code>). */
   address: string;
 
-  /** The peer participant in the transfer (optional as it may be not known). */
+  /** The address of the peer participant in the transfer (optional as it may not always be known). */
   peer?: string;
 
   /** The transferred asset. */
   asset: AssetInfo;
 
   /**
-   * The signed amount of the transfer, i.e. impact of the transfer on <code>address</code> balance (positive for
-   * incoming, negative for outgoing).
+   * The signed amount of the balance change, i.e. impact of the event on <code>address</code> balance (positive for
+   * incoming, negative for outgoing), in base unit of {@link asset}.
    */
-  amount: bigint;
+  delta: bigint;
 };
-
-/**
- * An unclassified type of operation that occurred in a {@link BlockTransaction}.
- *
- * Implementations are free to partially/completely omit this kind of operations.
- */
-export type OtherBlockOperation = {
-  type: "other";
-} & Record<string, unknown>;
 
 // Other coins take different parameters What do we want to do ?
 export type Account = {
@@ -402,6 +492,7 @@ export type Pagination = {
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
 export type Cursor = string;
+export type Direction = "asc" | "desc";
 
 /** A paginated response. */
 export type Page<T> = {
@@ -467,8 +558,42 @@ export type AlpacaApi<
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;
-  getBlock: (height: number) => Promise<Block>;
+  getBlock: (height: number) => Promise<Block<MemoType>>;
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
+
+  /**
+   * Get transactions where a specific address is involved.
+   *
+   * This must include all transactions where the address has at least one {@link BalanceDelta}. Depending on blockchain
+   * specifics, this can also include other transactions where address is involved (eg: as a signer or observer).
+   *
+   * Implementation must only return transactions included in a block, and not pending transactions.
+   *
+   * Results should be immutable, i.e. two calls with the same parameters should return the same results, with the
+   * exception of block reorganizations: it is caller's responsibility to handle this case (by re-fetching recent
+   * transactions according to a confirmation threshold). Apart from that, implementation must guarantee immutable
+   * responses, and for instance raise an error if an API is unavailable rather that returning partial results.
+   *
+   * @param address address to get transactions for
+   * @param direction order of transactions to return, either ascending or descending. Default direction order is
+   *        implementation dependent, caller must specify the parameter if it matters. Implementation must throw an
+   *        error if the direction is not supported.
+   * @param minHeight minimum block height to include transactions from (inclusive). Implementation must throw an
+   *        error if filtering by minimum height is not supported.
+   * @param maxHeight maximum block height to include transactions from (inclusive). Implementation must throw an
+   *        error if filtering by maximum height is not supported.
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *               i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *               a date or transaction hash)
+   * @returns a page of transactions
+   */
+  getTransactions: (
+    address: string,
+    direction?: Direction,
+    minHeight?: number,
+    maxHeight?: number,
+    cursor?: Cursor,
+  ) => Promise<Page<AccountTransaction<MemoType>>>;
 
   /**
    * Get staking positions owned by an address/account.
@@ -511,8 +636,10 @@ export type AlpacaApi<
    * @see getStakes
    */
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
+
   /**
    * Get the list of validators available on the network.
+   *
    * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
    *         i.e. it can be used long after the last request and still provide consistent results - for instance,
    *         a date or transaction hash).
