@@ -17,6 +17,7 @@ import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "react-redux";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -34,6 +35,11 @@ function ZeroBalanceDisabledModalContent({
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
+
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    sourceScreenName: "zero-balance-disabled-modal",
+    currency,
+  });
 
   const goToBuy = useCallback(() => {
     if (readOnlyModeEnabled && !hasOrderedNano) {
@@ -73,6 +79,8 @@ function ZeroBalanceDisabledModalContent({
             parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
         },
       });
+    } else if (isModularDrawerEnabled) {
+      handleOpenReceiveDrawer();
     } else {
       navigation.navigate(NavigatorName.ReceiveFunds, {
         screen: ScreenName.ReceiveSelectAccount,
@@ -91,6 +99,8 @@ function ZeroBalanceDisabledModalContent({
     navigation,
     actionCurrency,
     parentAccount?.id,
+    isModularDrawerEnabled,
+    handleOpenReceiveDrawer,
   ]);
 
   return (

@@ -1,21 +1,37 @@
 import React from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "~/const";
 import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const Stack = createStackNavigator();
 
-const usdcCurrency = findTokenById("ethereum/erc20/usd__coin");
-if (!usdcCurrency) throw new Error("USDC token not found");
 const moneroCurrency = getCryptoCurrencyById("monero");
 const kaspaCurrency = getCryptoCurrencyById("kaspa");
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
+
+export const usdcCurrency: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd__coin",
+  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  parentCurrency: ethereumCurrency,
+  tokenType: "erc20",
+  name: "USD Coin",
+  ticker: "USDC",
+  units: [
+    {
+      name: "USD Coin",
+      code: "USDC",
+      magnitude: 6,
+    },
+  ],
+};
 
 const bitcoinAccount = genAccount("bitcoin-account", { currency: bitcoinCurrency });
 const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });

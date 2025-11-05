@@ -1,4 +1,3 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
@@ -85,7 +84,6 @@ export type MarketCurrencyData = {
   ledgerIds: string[];
   name: string;
   image?: string;
-  internalCurrency?: CryptoOrTokenCurrency;
   marketcap?: number;
   marketcapRank: number;
   totalVolume: number;
