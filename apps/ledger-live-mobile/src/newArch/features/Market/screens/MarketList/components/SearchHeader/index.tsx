@@ -8,10 +8,10 @@ import { LIMIT } from "~/reducers/market";
 
 type Props = {
   search?: string;
-  refresh: (params: MarketListRequestParams) => void;
+  updateMarketParams: (params: MarketListRequestParams) => void;
 };
 
-function SearchHeader({ search, refresh }: Props) {
+function SearchHeader({ search, updateMarketParams }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
   const debouncedSearch = useDebounce(inputSearch, 300);
   const { t } = useTranslation();
@@ -20,13 +20,13 @@ function SearchHeader({ search, refresh }: Props) {
     track("Page Market Query", {
       currencyName: debouncedSearch,
     });
-    refresh({
+    updateMarketParams({
       search: debouncedSearch ? debouncedSearch.trim() : "",
       starred: [],
       liveCompatible: false,
       limit: LIMIT,
     });
-  }, [debouncedSearch, refresh]);
+  }, [debouncedSearch, updateMarketParams]);
 
   useEffect(() => {
     setInputSearch(search);

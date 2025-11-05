@@ -30,7 +30,7 @@ import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowIte
 interface ViewProps {
   loading: boolean;
   loadingChart: boolean;
-  refresh: (param?: MarketCurrencyChartDataRequestParams) => void;
+  updateMarketParams: (param?: MarketCurrencyChartDataRequestParams) => void;
   toggleStar: () => void;
   isStarred: boolean;
   accounts: AccountLike[];
@@ -39,12 +39,13 @@ interface ViewProps {
   range: string;
   dataChart?: MarketCoinDataChart;
   currency?: MarketCurrencyData;
+  refetch: () => void;
 }
 
 function View({
   loading,
   loadingChart,
-  refresh,
+  refetch,
   toggleStar,
   currency,
   dataChart,
@@ -53,19 +54,17 @@ function View({
   counterCurrency,
   allAccounts,
   range,
+  updateMarketParams,
 }: ViewProps) {
   const { name, image, internalCurrency, price } = currency || {};
 
-  const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
+  const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refetch });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
 
-  const dateRangeFormatter = useMemo(
-    () => getDateFormatter(locale, range as string),
-    [locale, range],
-  );
+  const dateRangeFormatter = useMemo(() => getDateFormatter(locale, range), [locale, range]);
 
   const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
@@ -136,7 +135,7 @@ function View({
         <MarketGraph
           setHoverItem={setHoverItem}
           isLoading={loadingChart}
-          refreshChart={refresh}
+          refreshChart={updateMarketParams}
           chartData={dataChart}
           range={range}
           currency={internalCurrency}
