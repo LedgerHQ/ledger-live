@@ -212,7 +212,7 @@ export default function ReceiveFundsNavigator() {
         options={({ route }) => ({
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
-          headerLeft: () => <NavigationHeaderBackButton />,
+          headerLeft: () => (route.params?.hideBackButton ? null : <NavigationHeaderBackButton />),
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedWithdrawBanner && (
