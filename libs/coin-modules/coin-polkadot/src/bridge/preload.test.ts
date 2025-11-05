@@ -43,7 +43,7 @@ describe("preload", () => {
     const currency = getCryptoCurrencyById(account.currency.id);
     const result = await preload(currency);
     expect(result.staking).toEqual({
-      electionClosed: false,
+      electionClosed: true,
       activeEra: 0,
       maxNominatorRewardedPerValidator: 128,
       bondingDuration: 28,

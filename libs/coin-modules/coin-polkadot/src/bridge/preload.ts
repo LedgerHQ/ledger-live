@@ -88,7 +88,7 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
     currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
   } catch (e) {
     currentStakingProgress = {
-      electionClosed: false,
+      electionClosed: true,
       activeEra: 0,
       maxNominatorRewardedPerValidator: 128,
       bondingDuration: 28,
