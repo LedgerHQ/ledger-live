@@ -102,13 +102,13 @@ export const mapRosettaTxnToOperation = async (
       const type = "OUT";
       ops.push({
         ...op,
-        value: value.minus(accountCreationFee).plus(fee),
+        value: value.minus(accountCreationFee),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
       // delegate change
-      const type = "REDELEGATE";
+      const type = "DELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),

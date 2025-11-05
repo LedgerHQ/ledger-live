@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network";
+import { getCoinConfig } from "../config";
 
 export type ValidatorInfo = {
   address: string;
@@ -74,6 +75,11 @@ export type GetValidatorsResponse = {
   empty: boolean;
 };
 
+const getBlockberryUrl = (route: string): string => {
+  const currencyConfig = getCoinConfig();
+  return `${currencyConfig.infra.API_BLOCKBERRY_BASE_URL}/${route}`;
+};
+
 export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
   const validators: ValidatorInfoFromAPI[] = [];
 
@@ -81,12 +87,12 @@ export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
   let hasMore = true;
 
   while (hasMore) {
-    const baseUrl = "https://api.blockberry.one/mina-mainnet/v1/validators";
+    const baseUrl = `${getBlockberryUrl("mina-mainnet/v1/validators")}`;
     const { data } = await network<GetValidatorsResponse>({
       method: "GET",
       url: `${baseUrl}?page=${currentPage}&size=50&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
       headers: {
-        "x-api-key": "Qta8WAFdWOOKa2mNqJAUK7B7qugVE5",
+        "x-api-key": "",
       },
     });
 
