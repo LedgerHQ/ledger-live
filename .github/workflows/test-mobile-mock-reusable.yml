@@ -212,6 +212,7 @@ jobs:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
@@ -371,6 +372,7 @@ jobs:
     name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8

@@ -40,6 +40,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -77,6 +78,7 @@ jobs:
 
   unit-tests:
     name: "Desktop Unit Tests"
+    timeout-minutes: 40
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3

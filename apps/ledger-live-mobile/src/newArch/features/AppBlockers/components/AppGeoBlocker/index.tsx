@@ -1,28 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
 import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppBlocker from "../AppBlocker";
 import { Button } from "@ledgerhq/native-ui";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
+  const { blocked } = useContext(InitialQueriesContext).ofacResult;
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { blocked, isLoading } = useOFACGeoBlockCheck({
-    geoBlockingFeatureFlagKey: "llmOfacGeoBlocking",
-  });
   const localizedUrl = useLocalizedUrl(urls.geoBlock.learnMore);
   const handleLearnMore = () => {
     Linking.openURL(localizedUrl);
   };
-
-  if (isLoading) {
-    return null;
-  } // don't show children while loading
 
   return (
     <AppBlocker

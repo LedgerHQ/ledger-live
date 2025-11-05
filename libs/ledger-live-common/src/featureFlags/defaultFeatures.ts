@@ -113,6 +113,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  nanoOnboardingFundWallet: DEFAULT_FEATURE,
   welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
@@ -656,8 +657,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
-  llmOfacGeoBlocking: DEFAULT_FEATURE,
-  lldOfacGeoBlocking: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
     params: {
