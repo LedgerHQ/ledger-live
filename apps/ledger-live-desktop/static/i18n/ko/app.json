@@ -41,26 +41,26 @@
       },
       "banner" : {
         "title" : "Live 앱 카탈로그 살펴보기",
-        "description" : "Ledger Live를 통해 DeFi와 NFT 등을 더욱 안전하게 이용할 수 있도록 노력하고 있습니다!"
+        "description" : "Ledger Wallet에서 바로 DeFi와 NFT 등을 더욱 안전하게 이용할 수 있도록 노력하고 있습니다!"
       },
       "twitterBanner" : {
-        "description" : "Ledger Live에서 또 어떤 서비스를 만나고 싶은지 해시태그로 알려주세요",
+        "description" : "또 어떤 서비스를 Ledger Wallet에서 만나고 싶은지 해시태그로 알려주세요",
         "tweetText" : "다음으로 만나볼 수 있는 Ledger 앱은..."
       },
       "pollCTA" : {
         "title" : "설문조사",
-        "description" : "Ledger Live에서 가장 만나고 싶은 서비스는 무엇인가요?",
+        "description" : "Ledger Wallet에서 가장 만나고 싶은 서비스는 무엇인가요?",
         "button" : "투표해주세요!"
       },
       "developerCTA" : {
         "title" : "개발자용",
-        "description" : "Ledger Live로 애플리케이션을 통합하는 데 필요한 모든 정보입니다.",
+        "description" : "Ledger Wallet으로 애플리케이션을 통합하는 데 필요한 모든 정보입니다.",
         "button" : "포털로 이동"
       },
       "warnings" : {
         "notFound" : "찾을 수 없음",
         "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
-        "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요."
+        "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Wallet 외부에서 <Link>{{search}}</Link>을 열어 주세요."
       }
     },
     "disclaimer" : {
@@ -73,7 +73,7 @@
   },
   "common" : {
     "never" : "절대",
-    "new" : "신규",
+    "new" : "New",
     "skip" : "건너뛰기",
     "apply" : "적용",
     "done" : "완료",
@@ -306,7 +306,7 @@
   "bridge" : {
     "modalTitle" : "장치 브릿지(Device Bridge)",
     "openHeader" : "장치 브릿지는 더 이상 사용할 수 없습니다",
-    "openDescription" : "브라우저 지갑 확장 프로그램에서 Ledger Live 대신 WebHID를 사용하도록 구성하세요.",
+    "openDescription" : "브라우저 지갑 확장 프로그램에서 Ledger Wallet 대신 WebHID를 사용하도록 구성하세요.",
     "closeButton" : "종료"
   },
   "swap2" : {
@@ -377,7 +377,7 @@
       "disclaimer" : "스왑 히스토리에 트랜잭션이 보이지 않을 수 있으나 안전하게 처리됩니다. 내 계정의 '최신 활동 상세 정보'에서 모든 트랜잭션을 확인하세요",
       "empty" : {
         "title" : "과거 스왑 내역이 여기에 표시됩니다",
-        "description" : "아직 스왑을 하지 않았거나 그동안 Ledger Live가 리셋되었습니다."
+        "description" : "아직 스왑을 하지 않았거나 그동안 Ledger Wallet이 초기화되었을 수 있습니다."
       },
       "export" : "거래 내보내기",
       "exporting" : "내보내기 중...",
@@ -420,10 +420,10 @@
       "history" : "내역"
     },
     "history" : {
-      "disclaimer" : "스왑 데스크탑 트랜잭션이 Ledger Live 모바일 애플리케이션과 동기화되지 않았습니다",
+      "disclaimer" : "스왑 데스크탑 트랜잭션이 Ledger Wallet 모바일 애플리케이션과 동기화되지 않았습니다",
       "empty" : {
         "title" : "과거 스왑 내역이 여기에 표시됩니다",
-        "description" : "아직 스왑을 하지 않았거나 그동안 Ledger Live가 리셋되었습니다."
+        "description" : "아직 스왑을 하지 않았거나 그동안 Ledger Wallet이 초기화되었을 수 있습니다."
       }
     },
     "landing" : {
@@ -443,7 +443,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-      "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, 또는 Ledger Flex™로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
+      "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -473,7 +473,9 @@
       "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
       "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
-      "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
+      "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+      "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
+      "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -593,7 +595,7 @@
     "noFundsModal" : {
       "title" : "{{actions, list(type: disjunction)}}",
       "text" : "스테이킹에 이용 가능한 {{coin}} 잔액이 충분하지 않습니다",
-      "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Live에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
+      "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Wallet에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
       "options" : {
         "buy" : {
           "title" : "구매",
@@ -612,7 +614,7 @@
     },
     "getFundsModal" : {
       "text" : "{{coin}} 코인을 스테이킹하세요",
-      "description" : "Ledger Live를 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
+      "description" : "Ledger Wallet을 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
     }
   },
   "lottieDebugger" : {
@@ -627,7 +629,7 @@
   "vaultSigner" : {
     "modal" : {
       "title" : "Ledger Vault 연결하기",
-      "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Live에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
+      "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Wallet에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
       "info_link" : "자세히 알아보기",
       "host" : {
         "title" : "URL 엔드포인트",
@@ -669,7 +671,7 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "노드 파라미터를 입력하세요",
-              "disclaimer" : "반드시 풀 노드 동기화가 완전히 완료된 후에 Ledger Live에 연결해야 합니다.",
+              "disclaimer" : "Ledger Wallet에 연결하기 전에 풀 노드를 완전히 동기화해야 합니다.",
               "fields" : {
                 "nodeHost" : {
                   "title" : "호스트",
@@ -727,8 +729,8 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Ledger SatStack을 다운로드하여 실행하세요",
-              "description" : "Ledgger SatStack은 Ledger Live와 풀 노드의 소통을 가능하게 하는 소규모 애플리케이션입니다. 다운로드하여 실행한 후 계속하세요.",
-              "disclaimer" : "Ledger Live가 풀 노드에 연결되려면 SatStack이 실행 중 이어야 합니다.  컴퓨터 부팅 시 자동 실행되도록 설정해 보세요",
+              "description" : "Ledger SatStack은 Ledger Wallet과 풀 노드의 소통을 가능하게 하는 소규모 애플리케이션입니다. 앱을 다운로드하여 실행한 다음 계속 진행하세요.",
+              "disclaimer" : "Ledger Wallet이 풀 노드에 연결되려면 SatStack이 실행 중이어야 합니다.  컴퓨터 부팅 시 자동 실행되도록 설정해 보세요.",
               "cta" : "SatStack 다운로드"
             },
             "satstack-disconnected" : {
@@ -779,8 +781,8 @@
       "drawer" : {
         "title" : "{{family}} 통합",
         "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
-        "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
-        "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
+        "description" : "Ledger Wallet은 오픈 소스 플랫폼입니다.",
+        "description2" : "전 세계 어디에서나 개발자가 Ledger Wallet과 통합할 수 있습니다.",
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
@@ -806,8 +808,8 @@
       "support" : "지원"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "{{deprecatedDate}}부터 Ledger Live에서 {{currencyName}} 지원이 중단됩니다. 단, 해당 암호화폐는 Ledger 하드웨어 지갑에서 여전히 안전하게 보호됩니다. 더 자세한 내용은 아래 링크를 통해 지원 센터 관련 안내를 읽어 주세요.",
-      "learnMore" : "자세히 알아보기"
+      "title" : "효율성을 최적화하기 위해 {{deprecatedDate}}부터 Ledger Wallet에서 {{currencyName}} 지원이 중단됩니다. 그러나 Ledger 장치에서는 계속 지원되며, 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 문의"
     },
     "lastOperations" : "최신 운영",
     "contractAddress" : "계약:",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "{{deviceName}} 장치를 준비합니다",
+      "titleTwoStep" : "시작하기",
+      "titleFirstStepDone" : "{{deviceName}} 장치가 준비되었습니다",
+      "successStepTitle" : "이제 {{deviceName}} 장치에서 암호화폐를 안전하게 보호하세요",
+      "secureCryptoTitle" : "소중한 암호화폐를 안전하게",
+      "secureCryptoDoneTitle" : "블록체인 앱이 설치되었습니다.",
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
         "title" : "{{deviceName}}는 정품입니다",
@@ -1279,7 +1286,7 @@
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "selectionNewSeedTitle" : "비밀 복구 문구",
         "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
-        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이 문구를 분실하는 경우 Ledger가 대신 복구해드립니다.",
+        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 분실 시 Ledger에서도 이를 복구해 드릴 수 없습니다.",
         "selectionNewSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "restoreDescription" : "복구에 사용할 백업 수단을 선택하세요.",
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "PIN 보호 기능과 보안 칩이 탑재된 카드에 새로운 백업을 생성해 보세요.   탭 몇 번이면 자산에 다시 액세스할 수 있어요.",
         "backupCharonCta" : "자세히 알아보기 또는 구매",
         "backupCharonContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
+      },
+      "secureCrypto" : {
+        "description" : "모든 거래소와 지갑에서 Ledger Wallet으로 암호화폐를 안전하게 옮기고 최고 수준의 보안을 누려보세요.",
+        "depositButton" : "자산 보호 시작하기",
+        "skipButton" : "다음에 결정하기"
       },
       "backup" : {
         "title" : "비밀 복구 문구 백업",
@@ -1319,8 +1331,8 @@
           "completed" : "Ledger 정품 확인"
         },
         "exitWarningDrawer" : {
-          "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
-          "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
+          "title" : "Ledger 정품 확인 및 OS 업데이트 확인을 취소하시겠습니까?",
+          "description" : "Ledger Wallet 앱으로 {{productName}} 설정을 계속하려면 Ledger 정품 확인이 필수입니다.",
           "cancelCheckCTA" : "확인 취소",
           "resumeCheckCTA" : "확인 재개"
         },
@@ -1330,7 +1342,7 @@
           "retryCTA" : "다시 시도하세요",
           "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요",
           "notFoundEntityError" : {
-            "title" : "정품 확인을 다시 시작하세요",
+            "title" : "Ledger 정품 확인을 다시 시작합니다",
             "description" : "먼저 “My Ledger 공급자({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 공급자\"를 끕니다."
           },
           "deviceNotGenuineError" : {
@@ -1338,20 +1350,20 @@
             "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
           }
         },
-        "whyPerformChecksLink" : "정품 확인 자세히 알아보기",
+        "whyPerformChecksLink" : "Ledger 정품 확인에 대해 자세히 알아보기",
         "startChecksCTA" : "{{modelName}} 확인하기",
         "continueCTA" : "설정 계속하기",
         "genuineCheck" : {
           "title" : {
             "active" : "Ledger 정품 확인",
             "completed" : "{{modelName}}는 정품입니다",
-            "cancelled" : "정품 확인이 거부되었습니다"
+            "cancelled" : "Ledger 정품 확인 거부됨"
           },
           "subtitle" : {
             "active" : "이를 통해 사용 중인 {{modelName}} 제품이 공식 Ledger 제품임을 확인합니다.",
-            "cancelled" : "Ledger Live 앱을 사용해 {{modelName}} 설정을 계속 진행하려면 이 확인이 필수입니다."
+            "cancelled" : "Ledger Wallet 앱을 사용해 {{modelName}} 설정을 계속 진행하려면 이 확인이 필수입니다."
           },
-          "resumeCTA" : "정품 확인 재개"
+          "resumeCTA" : "Ledger 정품 확인 재개"
         },
         "firmwareUpdate" : {
           "title" : {
@@ -1383,7 +1395,7 @@
         "titleCompleted" : "{{deviceName}} 장치가 준비되었습니다."
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "정품 확인을 시작하려면 \"허용\"을 탭하세요."
+        "title" : "Ledger 정품 확인을 시작하려면 \"Allow(허용)\"을 탭하세요."
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "장치를 잠금 해제하세요"
@@ -1434,6 +1446,12 @@
         "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
         "actionCompletedPopupLabel" : "자산 이체 완료"
       },
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "actionCompletedPopupLabel" : "계정이 동기화 완료"
+      },
       "recover" : {
         "title" : "Ledger Recover 구독하기",
         "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
@@ -1446,11 +1464,11 @@
       "title" : "실험적 설정을 변경하려면 캐시 삭제가 필요합니다",
       "cta" : "캐시 삭제"
     },
-    "migrate" : "Ledger Live 계정을 업데이트할 수 있습니다",
+    "migrate" : "Ledger Wallet 계정을 업데이트할 수 있습니다",
     "genericTerminatedCrypto" : "{{coinName}}은(는) 더 이상 지원되지 않습니다",
     "valentine" : {
       "title" : "발렌타인 데이",
-      "description" : "감사의 표시로, Ledger에서 Ledger Live의 구매 및 판매 수수료를 인하합니다"
+      "description" : "감사의 표시로, Ledger에서 Ledger Wallet의 구매 및 판매 수수료를 인하합니다"
     },
     "ledgerAcademy" : {
       "title" : "Ledger 아카데미",
@@ -1474,11 +1492,11 @@
     },
     "polkaStake" : {
       "title" : "Polkadot(폴카닷) 스테이킹",
-      "description" : "이제 Ledger Live에서 DOT을 곧바로 스테이킹, 보관, 관리할 수 있습니다 "
+      "description" : "이제 Ledger Wallet에서 DOT을 곧바로 스테이킹, 보관, 관리할 수 있습니다"
     },
     "sell" : {
       "title" : "암호화폐 판매",
-      "description" : "본사 파트너와 함께 Ledger Live에서 비트코인을 판매하세요"
+      "description" : "Ledger Wallet을 지원하는 서비스 제공업체를 통해 비트코인을 편리하게 매도하세요."
     },
     "stakeAlgorand" : {
       "title" : "Algorand로 스테이킹",
@@ -1486,7 +1504,7 @@
     },
     "swap" : {
       "title" : "암호화폐 스왑",
-      "description" : "당사 파트너와 함께 Ledger Live에서 한 가지 암호화폐를 다른 종류로 교환해보세요"
+      "description" : "Ledger Wallet을 지원하는 서비스 제공업체를 통해 암호화폐를 자유롭게 교환해 보세요."
     },
     "lending" : {
       "title" : "암호화폐 대출",
@@ -1494,7 +1512,7 @@
     },
     "blackfriday" : {
       "title" : "블랙 프라이데이 ",
-      "description" : "프로모션 코드(BLACKFRIDAY20)로 Ledger 하드웨어 지갑을 40% 할인가에 구매하세요"
+      "description" : "프로모션 코드(BLACKFRIDAY20)로 Ledger 장치를 40% 할인가에 만나보세요"
     },
     "referralProgram" : {
       "title" : "추천하고 $10를 받으세요",
@@ -1647,7 +1665,7 @@
       "title" : "필터",
       "show" : "보기",
       "all" : "전체",
-      "isLedgerCompatible" : "Ledger Live 호환",
+      "isLedgerCompatible" : "Ledger Wallet과 호환",
       "isFavorite" : "별표 표시된 자산",
       "applyFilters" : "필터 적용",
       "clearAll" : "모두 지우기"
@@ -1672,7 +1690,7 @@
       "circulatingSupply" : "유통량",
       "totalSupply" : "총 공급량",
       "maxSupply" : "최대 공급량",
-      "assetNotSupportedOnLedgerLive" : "이 자산은 Ledger Live에서 지원되지 않습니다.",
+      "assetNotSupportedOnLedgerLive" : "Ledger Wallet에서 지원되지 않는 자산입니다.",
       "supportedCoinsAndTokens" : "지원되는 코인 및 토큰"
     },
     "range" : {
@@ -1694,7 +1712,7 @@
     },
     "warnings" : {
       "connectionError" : "연결 오류",
-      "ledgerUnableToRetrieveData" : "Ledger Live는 데이터를 검색할 수 없습니다.",
+      "ledgerUnableToRetrieveData" : "Ledger Wallet에서 데이터를 불러올 수 없습니다.",
       "checkInternetAndReload" : "인터넷 연결을 확인하고 이 페이지를 새로고침하세요.",
       "reload" : "새로고침",
       "noCryptosFound" : "발견된 코인이 없습니다",
@@ -1893,6 +1911,7 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
+      "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
       "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 승인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 \n간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, \n이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 직접 문의해야 합니다.",
@@ -1935,7 +1954,7 @@
       "capacity" : "용량",
       "used" : "사용됨",
       "OSVersion" : "OS 버전",
-      "genuine" : "정품 확인",
+      "genuine" : "Ledger 정품 확인",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -1947,7 +1966,7 @@
       "filter" : {
         "title" : "보기",
         "all" : "전체",
-        "supported" : "Live에서 지원",
+        "supported" : "Ledger Wallet 지원",
         "installed" : "설치됨",
         "not_installed" : "설치되지 않음"
       },
@@ -1984,7 +2003,7 @@
         "updated" : "업데이트됨",
         "uninstall" : "제거",
         "notEnoughSpace" : "저장 용량이 부족합니다",
-        "supported" : "Ledger Live 지원됨",
+        "supported" : "Ledger Wallet 지원",
         "not_supported" : "타사 지갑 필요",
         "addAccount" : "계정 추가",
         "addAccountTooltip" : "{{appName}} 계정 추가",
@@ -2105,7 +2124,7 @@
         "boot" : "{{option}}(이)가 표시될 때까지 길게 누르세요",
         "recoveryMode" : "{{mode}} 모드를 탭하세요. 대시보드가 나타날 때까지 기다려 주세요.",
         "third" : "3. 모든 앱 제거",
-        "openLive" : "Ledger Live에서 내 Ledger를 엽니다.",
+        "openLive" : "Ledger Wallet에서 내 Ledger를 실행합니다.",
         "uninstall" : "회색 휴지통 아이콘을 설치하여 현재 {{deviceName}}에 설치된 모든 앱을 표시하세요. 그러면 펌웨어 설치자를 위한 공간이 생깁니다.",
         "disclaimer" : "참고: 사용자의 자금은 이 거래의 영향을 받지 않으며, 블록체인의 사용자 암호화폐에 대한 접근 권한을 주는 개인 키는 복구 시트에 안전하게 있습니다."
       }
@@ -2430,7 +2449,7 @@
   },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
-    "version" : "Ledger Live {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}"
   },
   "troubleshootNetwork" : {
     "title" : "네트워크 문제 해결",
@@ -2446,7 +2465,7 @@
   "systemLanguageAvailable" : {
     "title" : "앱의 언어를 변경하시겠습니까?",
     "description" : {
-      "newSupport" : "좋은 소식입니다! 좋은 소식입니다! 당사 팀은 항상 최선을 다해 노력해왔으며 Ledger Live는 이제 {{language}}를 지원합니다.",
+      "newSupport" : "좋은 소식입니다! 최선을 다해 준비한 결과, 드디어 Ledger Wallet에서 {{language}}를 지원합니다.",
       "advice" : "나중에 설정에서 언제든지 언어를 다시 변경할 수 있습니다."
     },
     "switchButton" : "{{language}}로 전환",
@@ -2480,7 +2499,7 @@
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}}에서 언어를 {{language}}로 변경하시겠어요?",
-      "description" : "{{deviceName}}와 Ledger Live 앱을 동일한 언어로 사용하시겠어요?"
+      "description" : "{{deviceName}} 장치와 Ledger Wallet 앱을 동일한 언어로 사용하시겠어요?"
     },
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
@@ -2517,7 +2536,7 @@
     "header" : "계정 배분 ({{count}})"
   },
   "elrond" : {
-    "guardedAccountWarning" : "계정에 보호자가 설정되어 있으면 Ledger Live를 통해 트랜잭션을 전송할 수 없습니다.",
+    "guardedAccountWarning" : "계정에 보호자 설정이 되어 있으면 Ledger Wallet을 통해 트랜잭션을 전송할 수 없습니다.",
     "summary" : {
       "availableBalanceTooltip" : "이체 가능한 금액입니다.",
       "availableBalance" : "이용 가능 잔액",
@@ -2531,8 +2550,8 @@
         "cardTitle" : "MultiversX 제공",
         "moreInfo" : "자세한 정보",
         "drawerTitle" : "MultiversX 통합",
-        "title" : "이제 Ledger Live에서 MultiversX eGold(EGLD) 토큰을 이용할 수 있습니다.",
-        "description" : "이제 Ledger Live로 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
+        "title" : "이제 Ledger Wallet에서 MultiversX eGold(EGLD) 토큰을 이용할 수 있습니다.",
+        "description" : "이제 Ledger Wallet을 통해 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
         "description2" : "MultiversX eGold(EGLD) 토큰은 MultiversX 네트워크의 네이티브 토큰으로, 트랜잭션, 스테이킹, 스마트 계약, 거버넌스, 검증인 보상 등 모든 분야에 사용됩니다.",
         "description3" : "본사는 스테이킹, 네이티브 ESDT(엘론드 스탠다드 디지털 토큰) 지원 등의 다양한 기능을 추가하기 위해 MultiversX 팀과 활발히 협업 중입니다.",
         "website" : "인터넷 스케일 블록체인"
@@ -2879,8 +2898,8 @@
         "cardTitle" : "Powered by Figment",
         "moreInfo" : "자세한 정보",
         "drawerTitle" : "Powered by Figment",
-        "title" : "이제 Ledger Live에서 셀로 토큰을 사용할 수 있습니다.",
-        "description" : "이제 Ledger Live로 셀로 토큰을 관리하고 안전하게 보호할 수 있습니다.",
+        "title" : "이제 Ledger Wallet에서 CELO 토큰을 사용할 수 있습니다.",
+        "description" : "이제 Ledger Wallet으로 셀로 토큰을 관리하고 안전하게 보호할 수 있습니다.",
         "description2" : "셀로 토큰은 셀로 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
         "website" : "Powered by Figment"
       }
@@ -3404,9 +3423,9 @@
       "electionOpen" : "현재 새 검증인 선출이 진행 중입니다. 따라서 약 15분 동안 스테이킹 거래를 이용할 수 없습니다.",
       "electionOpenTooltip" : "검증인 선출 중에는 이 거래를 이용할 수 없습니다.",
       "externalControllerTooltip" : "이 계정은 다른 계정에서 관리됩니다.",
-      "externalControllerUnsupported" : "<0>이 스태시 계정은 별도의 계정(주소: <0>{{controllerAddress}}</0>에 관리됩니다. </0><1>Ledger Live로 스테이킹 하려면, 이 스태시 계정을 관리자로 설정해야 합니다.</1>",
+      "externalControllerUnsupported" : "<0>이 스태시 계정은 별도의 계정(주소: <0>{{controllerAddress}}</0>에 관리됩니다. Ledger Wallet으로 스테이킹 하려면, 이 스태시 계정을 관리자로 설정해야 합니다.</1>",
       "externalStashTooltip" : "이 계정은 다른 계정을 관리합니다.",
-      "externalStashUnsupported" : "<0>이 계정은 별도 스태시 계정(주소: <0>{{stashAddress}}</0>의 관리자입니다. </0><1>Ledger Live로 스테이킹 하려면, 이 스태시 계정을 관리자로 설정해야 합니다.</1>",
+      "externalStashUnsupported" : "<0>이 계정은 별도 스태시 계정(주소: <0>{{stashAddress}}</0>의 관리자입니다. Ledger Wallet으로 스테이킹 하려면, 이 스태시 계정을 관리자로 설정해야 합니다.</1>",
       "showInactiveNominations" : "모든 지명자를 보여줍니다 ({{count}})",
       "hideInactiveNominations" : "활성 지명만 보여주기",
       "noActiveNominations" : "활성 지명이 없습니다.",
@@ -3593,7 +3612,7 @@
         "setController" : {
           "title" : "관리자 변경",
           "description" : "Ledger 계정을 관리자로 설정하세요",
-          "info" : "Ledger Live는 별도 스태시 계정과 관리 계정의 거래를 지원하지 않습니다."
+          "info" : "Ledger Wallet은 별도 스태시 계정과 관리 계정의 거래를 지원하지 않습니다."
         }
       },
       "steps" : {
@@ -3997,7 +4016,7 @@
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "ETH 보유량 늘리기",
-      "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
+      "subTitle" : "Ledger Wallet에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
       "tagMinimum" : "{{min}} ETH 필요",
       "kiln_pooling" : {
         "title" : "Kiln 스테이킹 풀",
@@ -4032,7 +4051,7 @@
       "category" : {
         "all" : {
           "name" : "전체",
-          "description" : "Ledger Live에서 이용 가능한 이더리움 스테이킹 업체 목록."
+          "description" : "Ledger Wallet에서 이용 가능한 모든 이더리움 스테이킹 업체."
         },
         "liquid" : {
           "name" : "리퀴드(Liquid)",
@@ -4111,7 +4130,7 @@
         "cardTitle" : "Figment 기반",
         "moreInfo" : "자세한 정보",
         "drawerTitle" : "Figment 기반",
-        "title" : "이제 Ledger Live에서 니어 토큰을 사용할 수 있습니다.",
+        "title" : "이제 Ledger Wallet에서 니어 토큰을 사용할 수 있습니다.",
         "description" : "이제 Ledger Live로 니어 토큰을 관리하고 안전하게 보호할 수 있습니다.",
         "description2" : "니어 토큰은 니어 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
         "website" : "Figment 기반"
@@ -4246,8 +4265,8 @@
         "cardTitle" : "Powered by Figment",
         "moreInfo" : "자세한 정보",
         "drawerTitle" : "Powered by Figment",
-        "title" : "이제 Ledger Live에서 SUI 토큰을 사용할 수 있습니다.",
-        "description" : "Ledger Live에서 SUI 토큰을 관리하고 안전하게 보호하세요.",
+        "title" : "이제 Ledger Wallet에서 SUI 토큰을 사용할 수 있습니다.",
+        "description" : "이제 Ledger Wallet으로 SUI 토큰을 관리하고 안전하게 보호할 수 있습니다.",
         "description2" : "SUI 토큰은 SUI 체인의 네이티브 토큰입니다. 트랜잭션과 스테이킹뿐 아니라, 앞으로 도입될 다양한 서비스에 활용될 예정입니다.",
         "website" : "Powered by Figment"
       }
@@ -4267,6 +4286,8 @@
         "header" : "스테이킹 포지션",
         "stake" : "추가",
         "staked" : "위임됨",
+        "estimatedReward" : "받은 보상",
+        "rewardTooltip" : "Sui 보상은 에포크(24시간) 주기로 배분되며, 자동으로 복리가 적용되어 위임된 지분에 추가됩니다.",
         "pending" : "보류 중인 릴리스",
         "available" : "출금 가능"
       },
@@ -4452,7 +4473,7 @@
       "modal" : {
         "button" : "완료",
         "title" : "모바일로 내보내려면 스캔해주세요",
-        "listTitle" : "Ledger Live 모바일 앱에서:",
+        "listTitle" : "Ledger Wallet 모바일 앱에서,",
         "step1" : "메인 화면의 <highlight>계정 추가</highlight> 또는 <highlight>모든 자산 보기</highlight>를 탭하고 <highlight><icon>+</icon></highlight> 버튼을 누르세요.",
         "step2" : "<highlight>데스크탑 계정 가져오기</highlight>를 탭하세요",
         "step3" : "100% 로딩될 때까지 <highlight>LiveQR 코드</highlight> 를 스캔하세요"
@@ -4460,7 +4481,7 @@
     },
     "display" : {
       "language" : "언어 표시하기",
-      "languageDesc" : "Ledger Live에 표시되는 언어를 설정하세요.",
+      "languageDesc" : "Ledger Wallet에 표시되는 언어를 설정합니다.",
       "theme" : "테마",
       "themeDesc" : "테마를 선택하세요.",
       "counterValue" : "선호 통화",
@@ -4470,7 +4491,7 @@
       "stock" : "지역 시장 지표",
       "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
       "walletSync" : "Ledger 동기화",
-      "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
+      "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
@@ -4598,6 +4619,54 @@
         "title" : "Modular Drawer Dev Tool",
         "description" : "Modular Drawer를 간편하게 테스트할 수 있는 개발자 도구입니다."
       },
+      "cryptoAssetsList" : {
+        "title" : "암호화폐 목록",
+        "description" : "Crypto Assets List(CAL) 서비스를 통해 암호화폐를 탐색하고 관리하세요.",
+        "openTokenList" : "토큰 목록 열기",
+        "drawer" : {
+          "title" : "토큰 목록 구성",
+          "description" : "Crypto Assets List 서비스를 통해 다양한 토큰을 구성하고 탐색할 수 있습니다. 블록체인 유형을 선택하고 이용 가능한 토큰을 확인하세요.",
+          "options" : "옵션",
+          "blockchainFamily" : "블록체인 유형",
+          "selectFamily" : "블록체인 유형 선택",
+          "pageSize" : "페이지 크기",
+          "useStaging" : "스테이징 환경 사용",
+          "useStagingDesc" : "프로덕션 대신 스테이징 환경을 사용하세요",
+          "outputFields" : "출력 항목",
+          "refresh" : "새로고침",
+          "loading" : "로딩 중",
+          "close" : "닫기",
+          "availableTokens" : "이용 가능 토큰({{count}})",
+          "noTokens" : "{{family}} 토큰을 찾을 수 없습니다",
+          "error" : "토큰 로드에 실패했습니다",
+          "tokenId" : "ID",
+          "contractAddress" : "컨트랙트 주소",
+          "tokenType" : "토큰 유형",
+          "parentCurrency" : "기준 통화",
+          "ledgerSignature" : "Ledger Signature",
+          "units" : "단위",
+          "delisted" : "상장 폐지됨",
+          "copy" : "ID 복사",
+          "loadMore" : "더 보기",
+          "searchAndFilters" : "검색 & 필터링",
+          "maxResults" : "최대 결과값",
+          "maxResultsPlaceholder" : "무제한",
+          "pagination" : "페이지네이션",
+          "advanced" : "고급",
+          "calReference" : "CAL 참조",
+          "calReferencePlaceholder" : "예시: branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Default: branch:main",
+          "selectAll" : "전체",
+          "selectNone" : "없음",
+          "reset" : "재설정",
+          "tokens" : "토큰",
+          "resultsCount" : "결과 {{count}}개",
+          "collapseAll" : "모두 접기",
+          "noTokensFound" : "토큰을 찾을 수 없습니다",
+          "hide" : "숨기기",
+          "show" : "보기"
+        }
+      },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
       "mockAppUpdate" : "모의 앱 업데이트",
@@ -4613,7 +4682,7 @@
       "customLockScreen" : "맞춤식 잠금 화면 자산",
       "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
       "customLockScreenCTA" : "실행",
-      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsTitle" : "Ledger Wallet에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
@@ -4659,17 +4728,17 @@
     },
     "profile" : {
       "password" : "패스워드 잠금",
-      "passwordDesc" : "패스워드를 설정해 계정 이름, 잔금, 트랜잭션, 공개 주소를 포함한 Ledger Live 데이터를 컴퓨터에 안전하게 보관하세요.",
+      "passwordDesc" : "패스워드를 설정하여 계정 이름, 잔액, 트랜잭션, 공개 주소를 포함한 Ledger Wallet 데이터를 컴퓨터에 안전하게 보관하세요.",
       "passwordAutoLock" : "자동 잠금",
-      "passwordAutoLockDesc" : "활성화 상태가 아닐 때 Ledger Live가 자동 잠깁니다.",
+      "passwordAutoLockDesc" : "활성화 상태가 아닐 때 Ledger Wallet이 자동으로 잠깁니다.",
       "changePassword" : "암호 변경",
       "softResetTitle" : "캐시 삭제",
-      "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Live 캐시를 지우세요.",
+      "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Wallet 캐시를 지우세요.",
       "softReset" : "삭제",
       "resetThirdPartyData" : "타사 데이터 재설정",
       "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
-      "hardResetTitle" : "Ledger Live 리셋",
-      "hardResetDesc" : "계정, 트랜잭션 내역, 설정을 포함하여 컴퓨터에 저장된 모든 Ledger Live 데이터를 삭제합니다.",
+      "hardResetTitle" : "Ledger Wallet 리셋",
+      "hardResetDesc" : "계정, 트랜잭션 내역, 설정을 포함하여 컴퓨터에 저장된 모든 Ledger Wallet 데이터를 삭제합니다.",
       "hardReset" : "재설정",
       "analytics" : "애널리틱스",
       "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요. 해당 기능에는 클릭, 페이지 방문, 페이지 이동, 조치(전송, 수령, 잠금 등), 페이지 스크롤 종료, 설치 (삭제), 앱 버전, 계정 수, 암호화 자산 및 거래, 세션 시간, Ledger 장치 유형, 펌웨어가 포함됩니다.",
@@ -4684,9 +4753,9 @@
       "termsBtn" : "읽기",
       "faq" : "Ledger 지원",
       "chatbot" : "Ledger 챗봇",
-      "faqDesc" : "문제가 있다면, 하드웨어 지갑으로 Ledger Live 이용 방법에 관한 도움을 받으세요.",
+      "faqDesc" : "문제가 있다면 Ledger 장치에서 Ledger Wallet 사용 방법에 대한 도움을 받아보세요.",
       "terms" : "이용 약관",
-      "termsDesc" : "Ledger Live를 사용함으로써 귀하는 당사 이용 약관에 동의하는 것으로 간주됩니다.",
+      "termsDesc" : "Ledger Wallet을 사용함으로써 귀하는 당사 이용 약관에 동의하는 것으로 간주됩니다.",
       "privacy" : "개인 정보 보호 정책",
       "privacyDesc" : "당사가 수집하는 개인 정보, 수집 이유 및 이용 방식에 관한 자세한 내용은 개인 정보 보호 정책을 참고하세요."
     },
@@ -4731,12 +4800,12 @@
         },
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
-          "description" : "Ledger Live에서 사용되는 모든 애니메이션 테스트",
+          "description" : "Ledger Wallet에서 사용되는 모든 애니메이션 테스트",
           "longDesc" : "이것은 팀이 앱에서 사용된 Lottie 애니메이션을 검증할 수 있도록 그대로 제공되는 도구입니다."
         },
         "testStories" : {
           "title" : "Storyly 스토리 테스트",
-          "description" : "Ledger Live의 모든 스토리 테스트",
+          "description" : "Ledger Wallet에서 사용되는 모든 스토리 테스트",
           "longDesc" : "이것은 팀이 앱에서 사용된 Storyly 스토리를 검증할 수 있도록 그대로 제공되는 도구입니다."
         },
         "testStaxPostonboarding" : {
@@ -4774,9 +4843,9 @@
       }
     },
     "hardResetModal" : {
-      "title" : "Ledger Live 리셋",
-      "desc" : "사용자 컴퓨터의 모든 설정과 계정을 삭제하시려면 Ledger Live를 리셋하세요. 그런 다음 원하는 패스워드를 선택하고 Ledger 장치로 계정을 다시 추가할 수 있습니다. 암호화 자산에 액세스 할 수 있는 개인 키는 Ledger 장치에 안전하게 보관되며 복구 문구로 백업됩니다.",
-      "warning" : "Ledger Live를 리셋하면 계정의 스왑 트랜잭션 내역이 삭제됩니다."
+      "title" : "Ledger Wallet 리셋",
+      "desc" : "Ledger Wallet을 리셋하여 컴퓨터의 모든 설정 및 계정을 삭제하세요. 그런 다음 원하는 패스워드를 선택하고 Ledger 장치로 계정을 다시 추가할 수 있습니다. 암호화폐에 액세스 할 수 있는 개인 키는 Ledger 장치에 안전하게 보관되며 복구 문구로 백업됩니다.",
+      "warning" : "Ledger Wallet을 리셋하면 계정의 스왑 트랜잭션 내역이 삭제됩니다."
     },
     "softResetModal" : {
       "title" : "캐시 삭제",
@@ -4809,7 +4878,7 @@
     },
     "exportLogs" : {
       "title" : "로그 저장",
-      "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
+      "desc" : "문제 해결을 위해 Ledger Wallet 로그가 필요할 수 있습니다.",
       "btn" : "저장"
     },
     "troubleshootNetwork" : {
@@ -4857,20 +4926,20 @@
     "setPassword" : {
       "title" : "패스워드 잠금",
       "subTitle" : "패스워드 설정",
-      "desc" : "패스워드를 안전하게 보호하세요. 패스워드를 분실하면 Ledger Live를 리셋하고 계정을 다시 추가해야 합니다."
+      "desc" : "패스워드를 안전하게 보호하세요. 패스워드를 분실하면 Ledger Wallet을 리셋하고 계정을 다시 로드해야 합니다."
     },
     "disablePassword" : {
       "title" : "암호 잠금 비활성화",
-      "desc" : "Ledger Live 데이터가 암호화되지 않고 컴퓨터에 저장됩니다. 여기에는 계정 이름, 거래 및 공용 주소가 포함됩니다."
+      "desc" : "Ledger Wallet 데이터가 암호화되지 않고 컴퓨터에 저장됩니다. 여기에는 계정 이름, 거래 및 공용 주소가 포함됩니다."
     }
   },
   "update" : {
     "downloadInProgress" : "업데이트 다운로드 중...",
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
-    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Live가 자동으로 설치되고 다시 시작됩니다",
+    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Wallet이 자동으로 설치되고 다시 시작됩니다.",
     "quitAndInstall" : "지금 설치하고 다시 시작하기",
-    "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
+    "updateAvailable" : "Ledger Wallet {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
     "nightlyWarning" : "이 버전은 자동 업데이트되지 않습니다. 최신 버전을 수동으로 설치하세요"
@@ -4949,35 +5018,35 @@
     },
     "serviceStatus" : {
       "statusOk" : {
-        "title" : "Ledger Live가 실행 중입니다",
+        "title" : "Ledger Wallet이 실행 중입니다",
         "description" : "문제가 있나요? <0>지원 페이지</0>로 이동"
       },
       "statusNotOk" : {
-        "title" : "Ledger Live에 문제가 있습니다",
+        "title" : "Ledger Wallet에 문제가 있습니다",
         "learnMore" : "자세히 알아보기"
       }
     },
     "announcement" : {
       "emptyState" : {
         "title" : "새로운 뉴스 없음",
-        "desc" : "Ledger 및 Ledger Live와 관련된 모든 뉴스를 여기에서 확인할 수 있습니다"
+        "desc" : "여기에서 Ledger 및 Ledger Wallet과 관련된 모든 뉴스를 확인할 수 있습니다"
       }
     }
   },
   "onboarding" : {
     "drawers" : {
       "pinHelp" : {
-        "title" : "PIN 코드 보호하기",
-        "intro" : "설정 과정에서 Pin 코드를 선택했습니다.",
+        "title" : "PIN 보호",
+        "intro" : "설정 과정에서 PIN을 선택합니다.",
         "rules" : {
-          "1" : "Pin 코드는 <0>항상</0> 직접 선택하세요.",
-          "2" : "<0>항상<0> Pin 코드는 눈에 띄지 않는 곳에 두세요.",
-          "3" : "필요한 경우, Pin 코드를 변경할 수 있습니다.",
-          "4" : "Pin 코드를 연속으로 잘못 입력하면 장치가 리셋됩니다.",
-          "5" : "<0>절대</0> 쉬운 Pin 코드(0000, 123456, 55555555 등)를 사용하지 마세요.",
-          "6" : "<0>절대</0> Pin 코드를 타인과 공유하지 마세요. Ledger도 예외는 아닙니다.",
-          "7" : "<0>절대</0> 귀하가 직접 선택하지 않은 Pin 코드를 이용하지 마세요.",
-          "8" : "<0>절대</0> 컴퓨터나 휴대폰에 Pin 코드를 저장하지 마세요."
+          "1" : "PIN은 <0>항상</0> 직접 선택하세요.",
+          "2" : "<0>항상</0> 다른 사람의 시선을 피해 PIN을 입력하세요.",
+          "3" : "필요한 경우 PIN을 변경할 수 있습니다.",
+          "4" : "PIN을 연속으로 세 번 잘못 입력하면 장치가 재설정됩니다.",
+          "5" : "<0>절대</0> 0000, 123456 또는 55555555와 같이 쉬운 PIN은 사용하지 마세요.",
+          "6" : "절대 PIN을 타인과 공유하지 마세요. Ledger도 예외는 아닙니다.",
+          "7" : "직접 선택하지 않은 PIN은 <0>절대</0> 사용하지 마세요.",
+          "8" : "<0>절대</0> 컴퓨터나 휴대폰에 PIN을 저장하지 마세요."
         }
       },
       "recoverySeed" : {
@@ -4989,7 +5058,7 @@
         "paragraph3" : "걱정하지 말고 다음 단계를 따르세요",
         "paragraph4" : "모든 지갑이 귀하의 복구 문구에서 동일한 개인 키를 산출할 수 있어, 암호화폐에 대한 액세스 권한을 복원할 수 있습니다.",
         "points" : {
-          "1" : "새 하드웨어 지갑을 구합니다.",
+          "1" : "새로운 Ledger 장치를 구입하세요.",
           "2" : "Ledger 앱에서 \"새 장치에서 복구 문구 복원하기\"를 선택합니다.",
           "3" : "새 장치에 복구 문구를 입력하여 귀하의 암호화폐에 대한 액세스 권한을 되찾습니다."
         }
@@ -5010,7 +5079,7 @@
         "contactSupportCTA" : "지원 부서 문의",
         "continueCTA" : "계속",
         "title" : "박스 내용물을 확인하세요",
-        "description" : "{{device}}의 Pin 코드 또는 복구 문구가 이미 지정된 경우, 사용하기에 안전하지 않으며 Ledger 지원 부서에 문의해야 합니다.",
+        "description" : "{{device}}가 PIN 또는 복구 문구와 함께 제공된 경우, 사용하기에 안전하지 않으므로 Ledger 지원팀에 문의해야 합니다.",
         "alert" : "장치 설정 시에 화면에 표시된 복구 문구만 사용하세요"
       }
     },
@@ -5029,13 +5098,13 @@
     "screens" : {
       "welcome" : {
         "videos" : {
-          "buySell" : "사용자에게 온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
+          "buySell" : "온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
           "thousandsCrypto" : "보내기, 받기, 스왑, 스테이킹까지, 수천 가지의 암호화폐를 자유롭게 거래하세요",
           "secureWallet" : "안심하고 모든 트랜잭션을 직접 확인하세요"
         },
         "notice" : "계속 진행하는 것으로 Ledger의 <Link1>이용약관</Link1> 및 <Link2>개인 정보 보호 정책</Link2>에 동의하게 됩니다. Ledger는 재정 자문을 제공하지 않습니다.\n스왑 및 스테이킹 서비스는 제3자 공급업체에서 제공합니다.",
         "title" : "가장 안전한 암호화폐 및 NFT 지갑",
-        "description" : "Ledger Live에서 암호화폐 및 NFT를 안전하게 관리, 구매 및 성장시키세요.",
+        "description" : "Ledger Wallet에서 암호화폐 및 NFT를 안전하게 구매, 관리, 활용해 보세요.",
         "nextButton" : "시작하기",
         "noDevice" : "장치가 없나요?",
         "buyLink" : "장치가 없나요? Ledger 구매",
@@ -5058,7 +5127,7 @@
           },
           "3" : {
             "title" : "트랜잭션 검증",
-            "desc" : "Ledger Live를 통해 안전하게 암호화폐를 구매, 판매, 관리, 교환 및 수익 창출을 할 수 있습니다.\n모든 암호화폐 트랜잭션은 Nano 장치를 통해 검증됩니다"
+            "desc" : "Ledger Wallet을 사용하면 탁월한 보안은 물론 암호화폐 구매부터 판매, 관리, 교환과 리워드 획득까지 모두 누릴 수 있습니다.모든 암호화폐 트랜잭션은 Nano 장치를 통해 검증됩니다"
           },
           "4" : {
             "title" : "Nano 설정을 시작합니다",
@@ -5095,7 +5164,7 @@
       "tutorial" : {
         "steps" : {
           "getStarted" : "시작하기",
-          "pinCode" : "Pin 코드",
+          "pinCode" : "PIN",
           "recoveryPhrase" : "복구 문구",
           "hideRecoveryPhrase" : "복구 문구 숨기기",
           "pairNano" : "Nano 연결하기"
@@ -5103,7 +5172,7 @@
         "screens" : {
           "importYourRecoveryPhrase" : {
             "title" : "복구 문구로 복원하기",
-            "paragraph1" : "복구 문구로 Nano를 복원하고, Ledger 하드웨어 지갑을 교체하거나 백업해 주세요.",
+            "paragraph1" : "복구 문구로 Nano를 복원하여 Ledger를 복구, 교체 또는 백업하세요.",
             "paragraph2" : "Nano가 귀하의 개인 키를 복원하여, 다시 암호화폐 접근과 관리가 가능해집니다.",
             "buttons" : {
               "next" : "네, 준비되었습니다!",
@@ -5142,7 +5211,7 @@
             },
             "follow" : {
               "title" : "지시를 따라주세요",
-              "descr" : "여기로 다시 돌아와서 PIN 코드에 대한 지시 사항을 따라주세요."
+              "descr" : "여기로 다시 돌아와서 PIN에 대한 안내를 따라주세요."
             },
             "buttons" : {
               "next" : "다음 단계",
@@ -5170,7 +5239,7 @@
             },
             "follow" : {
               "title" : "지시를 따라주세요",
-              "descr" : "여기로 다시 돌아와서 PIN 코드에 대한 지시 사항을 따라주세요."
+              "descr" : "여기로 다시 돌아와서 PIN에 대한 안내를 따라주세요."
             },
             "buttons" : {
               "next" : "다음 단계",
@@ -5183,11 +5252,11 @@
             }
           },
           "pinCode" : {
-            "title" : "PIN 코드",
-            "paragraph" : "PIN 코드는 첫 번째 보안 단계입니다. 개인 키와 Nano에 대한 접근을 물리적으로 안전하게 지킵니다. PIN 코드는 4-8자리여야 합니다.",
-            "disclaimer" : "나의 PIN 코드를 직접 선택하고 공유하지 않아야 한다는 것을 이해합니다.",
+            "title" : "PIN",
+            "paragraph" : "PIN은 보안의 첫 단계이며, 물리적으로 개인 키와 Nano에 대한 액세스를 안전하게 지켜줍니다. PIN은 4~8자리여야 합니다.",
+            "disclaimer" : "PIN은 직접 선택해야 하며, 누구와도 공유해서는 안된다는 사실을 잘 이해합니다.",
             "buttons" : {
-              "next" : "PIN 코드 설정",
+              "next" : "PIN 설정",
               "prev" : "이전 단계",
               "help" : "도움 요청"
             },
@@ -5219,12 +5288,12 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "Pin 코드 선택",
-              "descr" : "왼쪽이나 오른쪽 버튼을 눌러 숫자를 변경하세요. 양쪽 버튼을 눌러 숫자를 확인하세요. <0></0>(을)를 선택하여 Pin 코드를 확인하세요. <1></1>(을)를 선택하여 숫자를 삭제하세요."
+              "title" : "PIN 선택",
+              "descr" : "왼쪽이나 오른쪽 버튼을 눌러 숫자를 변경하세요. 양쪽 버튼을 눌러 선택한 숫자를 승인하세요 <1></1>을 선택하여 PIN을 승인하세요. <1></1>를 선택하여 숫자를 삭제하세요."
             },
             "confirm" : {
-              "title" : "Pin 코드를 승인해 주세요",
-              "descr" : "Pin 코드를 재입력하여 확인해 주세요."
+              "title" : "PIN 승인",
+              "descr" : "PIN을 다시 입력하고 승인합니다."
             },
             "buttons" : {
               "next" : "다음 단계",
@@ -5257,7 +5326,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "복구 문구를 입력하세요",
-            "paragraph1" : "복구 문구는 귀하가 처음 지갑을 설정할 때 백업해 둔 시크릿 단어 리스트입니다.",
+            "paragraph1" : "복구 문구는 Ledger 장치를 처음 설정할 때 백업해 둔 비밀 단어 목록입니다.",
             "paragraph2" : "Ledger는 귀하의 복구 문구 복사본을 보관하지 않습니다.",
             "disclaimer" : "복구 문구를 분실할 경우, Nano에 액세스 할 수 없을 때 내 암호 화폐에 대한 액세스도 불가능함을 잘 인지하고 있습니다.",
             "buttons" : {
@@ -5267,7 +5336,7 @@
             },
             "warning" : {
               "title" : "본인이 생성하지 않은 복구 문구를 사용하지 마세요.",
-              "desc" : "Ledger 하드웨어 지갑의 핀 코드와 복구 문구는 본인이 직접 초기화해야 합니다. 기존 시드 단어가 있는 장치나 이미 초기화된 Pin 코드가 존재하는 장치를 수령한 경우, 제품을 사용하지 말고 고객 지원 부서로 문의 주시기 바랍니다.",
+              "desc" : "Ledger 장치의 PIN과 복구 문구는 본인이 직접 초기화해야 합니다. 기존 시드 단어가 있거나 이미 초기화된 PIN이 있는 장치를 받은 경우 제품을 사용하지 말고 고객 지원팀으로 문의하세요.",
               "supportLink" : "고객 지원 문의"
             }
           },
@@ -5355,7 +5424,7 @@
           "genuineCheck" : {
             "success" : {
               "title" : "확인되었습니다!",
-              "desc" : "사용자의 Ledger {{deviceName}}는 정품이며 Ledger Live와 바로 사용할 수 있습니다"
+              "desc" : "사용자의 Ledger {{deviceName}} 는 정품이며 Ledger Wallet을 바로 사용할 수 있습니다"
             },
             "buttons" : {
               "next" : "계속",
@@ -5366,7 +5435,7 @@
           "hideRecoveryPhrase" : {
             "title" : "복구 문구를 숨겨두세요",
             "paragraph" : "Nano를 이용할 수 없는 경우, 복구 문구는 귀하의 암호 화폐에 액세스할 수 있는 유일한 방법이기에, 반드시 안전한 곳에 보관해야 합니다.",
-            "keepItOffline" : "복구 문구는 컴퓨터나 스마트폰이 아닌 하드웨어 지갑에만 입력하세요.",
+            "keepItOffline" : "복구 문구는 컴퓨터나 스마트폰이 아닌 Ledger 장치에만 입력하세요.",
             "neverShowToAnyone" : "24개의 단어는 Ledger를 포함하는 누구와도 절대 공유하지 마세요.",
             "buttons" : {
               "next" : "모두 완료했습니다!",
@@ -5380,7 +5449,7 @@
             }
           },
           "pairMyNano" : {
-            "title" : "정품 확인",
+            "title" : "Ledger 정품 확인",
             "paragraph" : "사용자의 Nano 장치의 정품 여부를 확인하겠습니다. 빠르고 간단하게 처리됩니다!",
             "buttons" : {
               "next" : "내 Nano 확인하기",
@@ -5412,7 +5481,7 @@
         },
         "validateTransactions" : {
           "title" : "트랜잭션 검증",
-          "description" : "Ledger Live를 통해 안전하게 암호화폐를 구매, 판매, 관리, 교환 및 수익 창출을 할 수 있습니다. 모든 암호화폐 트랜잭션은 Nano 장치를 통해 검증됩니다."
+          "description" : "Ledger Wallet으로 탁월한 보안은 물론 암호화폐 매수, 매도, 관리, 교환과 보상 수익까지 모두 누리며, Ledger 장치로 모든 암호화폐 트랜잭션을 직접 검증하세요."
         },
         "setUpNanoWallet" : {
           "title" : "Nano 설정을 시작합니다!",
@@ -5424,7 +5493,7 @@
     "quizz" : {
       "heading" : "퀴즈",
       "title" : "이제 게임을 시작하겠습니다!",
-      "descr" : "세 가지 간단한 질문에 답하여 사람들이 흔히 잘못 알고 있는 하드웨어 지갑 상식에 대해 알아보세요.",
+      "descr" : "세 가지 간단한 질문에 답하여 사람들이 Ledger에 대해 흔히 잘못 알고 있는 진실을 알아보세요.",
       "buttons" : {
         "start" : "퀴즈를 풀어보세요",
         "next" : "다음 문제",
@@ -5440,11 +5509,11 @@
           "results" : {
             "success" : {
               "title" : "축하합니다!",
-              "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 하드웨어 지갑은 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다."
+              "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 Ledger 장치는 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다."
             },
             "fail" : {
               "title" : "오답!",
-              "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 하드웨어 지갑은 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다."
+              "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 Ledger 장치는 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다."
             }
           }
         },
@@ -5466,7 +5535,7 @@
           }
         },
         "3" : {
-          "text" : "내 Ledger Nano를 Ledger Live 앱에 연결할 때, 내 개인 키는...",
+          "text" : "Ledger Nano를 Ledger Wallet 앱에 연결할 때, 내 개인 키는...",
           "answers" : {
             "1" : "여전히 오프라인 상태입니다",
             "2" : "잠시 인터넷에 연결됩니다"
@@ -5474,11 +5543,11 @@
           "results" : {
             "success" : {
               "title" : "축하합니다!",
-              "text" : "개인 키는 언제나 하드웨어 지갑에 오프라인으로 저장됩니다. Nano에 연결되어 있을 때도 Ledger 앱은 개인 키에 접근할 수 없습니다. 귀하는 장치에서 모든 트랜잭션을 물리적으로 승인해야 합니다."
+              "text" : "개인 키는 항상 Ledger 장치에 오프라인으로 보관됩니다. Nano에 연결되어 있을 때도 Ledger 앱은 개인 키에 접근할 수 없으며, 사용자가 직접 장치에서 모든 트랜잭션을 물리적으로 승인해야 합니다."
             },
             "fail" : {
               "title" : "오답!",
-              "text" : "개인 키는 언제나 하드웨어 지갑에 오프라인으로 저장됩니다. Nano에 연결되어 있을 때도 Ledger 앱은 개인 키에 접근할 수 없습니다. 귀하는 장치에서 모든 트랜잭션을 물리적으로 승인해야 합니다."
+              "text" : "개인 키는 항상 Ledger 장치에 오프라인으로 보관됩니다. Nano에 연결되어 있을 때도 Ledger 앱은 개인 키에 접근할 수 없으며, 사용자가 직접 장치에서 모든 트랜잭션을 물리적으로 승인해야 합니다."
             }
           }
         }
@@ -5506,10 +5575,10 @@
       },
       "1" : {
         "windows" : {
-          "title" : "Ledger Live를 관리자로 실행하기",
+          "title" : "Ledger Wallet을 관리자 권한으로 실행",
           "bullets" : {
-            "0" : "Ledger Live 중단하기",
-            "1" : "Ledger Live 앱을 오른쪽 클릭하세요.",
+            "0" : "Ledger Wallet을 종료합니다.",
+            "1" : "Ledger Wallet 앱을 오른쪽 클릭하세요.",
             "2" : "'관리자로 실행'을 선택하세요.",
             "3" : "장치 연결 후 잠금 해제하여 검색이 되는지 확인하세요."
           }
@@ -5545,7 +5614,7 @@
           "title" : "컴퓨터를 재시작하세요.",
           "bullets" : {
             "0" : "컴퓨터를 재시작하세요.",
-            "1" : "Ledger Live를 시작하세요.",
+            "1" : "Ledger Wallet을 시작합니다.",
             "2" : "장치 연결 후 잠금 해제하여 검색이 되는지 확인하세요."
           }
         },
@@ -5554,13 +5623,13 @@
           "bullets" : {
             "0" : "모든 안티바이러스, 방화벽, VPN 소프트웨어를 꺼 주세요.",
             "1" : "장치 연결 후 잠금 해제하여 검색이 되는지 확인하세요.",
-            "2" : "제대로 작동한다면 Ledger Live를 화이트리스트에 추가해주세요."
+            "2" : "제대로 작동한다면 Ledger Wallet을 화이트리스트에 추가하세요."
           }
         },
         "anotherComputer" : {
           "title" : "다른 컴퓨터에서 시도하세요",
           "bullets" : {
-            "0" : "다른 컴퓨터에서 <0>{{link}}</0>로 이동하여 Ledger Live를 다운로드하고 설치하세요.",
+            "0" : "다른 컴퓨터에서 <0>{{link}}</0> 로 이동하여 Ledger Wallet을 다운로드하고 설치하세요.",
             "1" : "장치 연결 후 잠금 해제하여 검색이 되는지 확인하세요."
           }
         }
@@ -5581,7 +5650,7 @@
               "0" : "\"시스템 환경설정\"을 열어주세요.",
               "1" : "\"보안 및 프라이버시\"로 이동하세요.",
               "2" : "\"프라이버시\" 탭 왼쪽 줄의 \"전체 디스크 액세스\"로 이동하세요.",
-              "3" : "\"Ledger Live\"를 추가하세요.",
+              "3" : "\"Ledger Wallet\"을 추가하세요.",
               "4" : "장치 연결 후 잠금 해제하여 검색이 되는지 확인하세요."
             }
           },
@@ -5625,7 +5694,7 @@
     "messageHash" : "메시지 해시",
     "message" : "메시지",
     "title" : "Ledger {{wording}}에서 계속하세요",
-    "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+    "description" : "보안 스크린에 표시된 안내를 따라주세요."
   },
   "TransactionConfirm" : {
     "title" : "거래를 장치에서 확인하고 완료하세요",
@@ -5696,7 +5765,7 @@
   "updatedTerms" : {
     "title" : "이용약관 업데이트",
     "body" : {
-      "intro" : "안녕하세요! 보다 Ledger Live 이용약관을 제공하고 새롭게 선보이는 Ledger Live의 서비스 및 기능을 반영하기 위해 Ledger Live 이용약관이 업데이트되었습니다. 다음 사항을 중심으로 업데이트가 이루어졌습니다.",
+      "intro" : "안녕하세요! Ledger Wallet 이용 약관이 업데이트되었습니다. 이번 업데이트에서는 약관을 보다 명확하게 다듬고 Ledger Wallet에 새롭게 추가된 서비스 및 기능을 반영했습니다. 다음 사항을 중심으로 업데이트가 이루어졌습니다.",
       "bulletPoints" : ["이용 가능한 서비스와 그 작동 방법의 명확한 설명", "서비스 수수료 운영 방식 설명", "공지 프로세스를 개선하여 이용약관의 새로운 변경 사항을 사용자에게 적절하게 알림"],
       "agreement" : "\"계속\"을 클릭하면 아래 이용약관을 읽고 동의하는 것으로 간주합니다."
     },
@@ -5731,6 +5800,7 @@
           "onboarded" : "온보딩한 계정",
           "success" : "새 Canton 계정을 생성하여 온보딩했습니다.",
           "error" : "새로운 계정 온보딩에 실패했습니다. 다시 시도해 주세요.",
+          "error429" : "현재 캔톤(Canton) 네트워크에서는 하루에 생성할 수 있는 계정 수가 제한됩니다. 나중에 다시 시도해 주세요.",
           "status" : {
             "prepare" : "계정 온보딩 준비 중...",
             "submit" : "계정 온보딩 중...",
@@ -5748,6 +5818,13 @@
         "finish" : {
           "title" : "확인"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "조치 필요: 다수의 UTXO가 감지됨",
+        "description" : "계정에 작은 단위의 UTXO가 너무 많아 송금이 제한됩니다. 작은 단위를 병합하여 누적된 보유 수수료로 인한 만료를 방지하고 송금 기능을 활성화하세요.",
+        "quickFix" : "빠른 해결책: 본인 주소로 자산을 추가로 송금하여 UTXO를 병합하세요.",
+        "warning" : "현재 계정에 작은 단위의 UTXO가 너무 많습니다. 자산 일부를 본인 주소로 송금하여 병합하세요.",
+        "consolidate" : "병합"
       }
     },
     "stellar" : {
@@ -5828,7 +5905,7 @@
       "title" : "필요 금액"
     },
     "NoAccessToCamera" : {
-      "title" : "귀하의 시스템에 다른 애플리케이션에서 사용되지 않는 카메라가 있는지 확인하시고 Ledger Live가 해당 카메라를 사용할 수 있도록 허용해주세요.",
+      "title" : "귀하의 시스템에 다른 애플리케이션에서 사용되지 않는 카메라가 있는지 확인하시고 Ledger Wallet이 해당 카메라를 사용할 수 있도록 허용해주세요.",
       "description" : ""
     },
     "CeloAllFundsWarning" : {
@@ -5935,7 +6012,7 @@
     },
     "DeviceNotOnboarded" : {
       "title" : "귀하의 장치가 아직 사용될 준비가 되지 않았습니다",
-      "description" : "Ledger Live와 함께 사용하기 전에 장치를 설정하세요."
+      "description" : "Ledger Wallet을 사용하기 전에 먼저 장치 설정을 완료하세요."
     },
     "DeviceSocketFail" : {
       "title" : "Ledger 장치를 재시작하고 다시 시도해 주세요",
@@ -5947,7 +6024,7 @@
     },
     "DisconnectedDevice" : {
       "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "description" : "Ledger Wallet을 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
     "EConnReset" : {
       "title" : "Ledger 애플리케이션 스토어에 연결할 수 없습니다.",
@@ -5971,7 +6048,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
-      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다.",
       "goToSettingsCTA" : "설정으로 이동"
     },
     "HardResetFail" : {
@@ -6285,7 +6362,7 @@
     },
     "WrongDeviceForAccount" : {
       "title" : "문제가 발생했습니다",
-      "description" : "선택한 계정에 연결된 복구 문구 또는 패스프레이즈로 하드웨어 지갑을 설정했는지 확인해 주세요."
+      "description" : "선택한 계정에 연결된 복구 문구 또는 패스프레이즈로 Ledger 장치를 설정했는지 확인해 주세요."
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "문제가 발생했습니다",
@@ -6489,7 +6566,7 @@
       "description" : "확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "GenuineCheckFailed" : {
-      "title" : "정품 확인 실패",
+      "title" : "Ledger 정품 확인 실패",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "EthAppPleaseEnableContractData" : {
@@ -6691,6 +6768,10 @@
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "유효하지 않은 주소 검사합",
+      "description" : "입력한 주소의 검사합이 유효하지 않습니다."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
       "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
@@ -6871,23 +6952,23 @@
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "장치 연결 실패",
-      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "description" : "장치와 Ledger Wallet 연결에 실패했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "장치 연결 실패",
-      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "description" : "장치와 Ledger Wallet 연결에 실패했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DisconnectError" : {
       "title" : "장치 연결 실패",
-      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "description" : "장치와 Ledger Wallet 연결에 실패했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DeviceSessionNotFound" : {
       "title" : "장치 연결 실패",
-      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "description" : "장치와 Ledger Wallet 연결에 실패했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "장치 연결 실패",
-      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "description" : "장치와 Ledger Wallet 연결에 실패했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "TransportNotSupportedError" : {
       "title" : "연결 방법 오류",
@@ -6927,7 +7008,7 @@
     },
     "UnsupportedFirmwareDAError" : {
       "title" : "지원되지 않는 운영체제",
-      "description" : "이 장치의 운영체제는 현재 지원되지 않습니다. Ledger Live를 통해 업데이트해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+      "description" : "이 장치의 운영체제는 현재 지원되지 않습니다. Ledger Wallet을 통해 업데이트해 주세요. 도움이 필요하시면 Ledger 지원팀으로 문의하세요."
     },
     "InvalidBatteryStatusTypeError" : {
       "title" : "배터리 오류",
@@ -6951,15 +7032,15 @@
     },
     "DeviceNotRecognizedError" : {
       "title" : "장치 인식 실패",
-      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+      "description" : "Ledger Wallet에서 장치를 인식할 수 없습니다. 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
     },
     "DeviceAlreadyDiscoveredError" : {
       "title" : "장치 인식 실패",
-      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+      "description" : "Ledger Wallet에서 장치를 인식할 수 없습니다. 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
     },
     "UnknownDeviceError" : {
       "title" : "장치 인식 실패",
-      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+      "description" : "Ledger Wallet에서 장치를 인식할 수 없습니다. 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
     },
     "ReceiverApduError" : {
       "title" : "통신 오류",
@@ -7115,8 +7196,8 @@
     },
     "progress" : {
       "loading" : "로딩 중...",
-      "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
-      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
+      "progress" : "앱을 설치하는 동안 Ledger Wallet을 종료하지 마세요.",
+      "disclaimer" : "Ledger Wallet에서 언제든지 앱을 추가하거나 제거하세요.",
       "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
       "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다",
       "app" : "{{appName}} 앱"
@@ -7137,7 +7218,7 @@
     "title" : "신원 확인을 통해\n 키 복구하기",
     "description" : "비밀 복구 문구가 항상 사용자의 손이 닿는 곳에 있는 것은 아닙니다.\nLedger Nano X 전용 소프트 런칭. 2023년 6월 30일까지 무료 구독",
     "cta" : "구독이 왜 필요한가요?",
-    "downloadLLM" : "Ledger Live 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
+    "downloadLLM" : "Ledger Wallet 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
   },
   "webview" : {
     "networkError" : {
@@ -7156,10 +7237,10 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
-      "whatWeTrack" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
+      "description" : "Ledger Wallet 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
+      "whatWeTrack" : "사용자의 동의 하에 Ledger는 사용자가 Ledger Wallet을 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
       "whatWeTrackList" : {
-        "1" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
+        "1" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선(분석)하는 것이 목적입니다.",
         "2" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
       },
       "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 수집하지 않습니다.",
@@ -7173,7 +7254,7 @@
       "accept" : "모두 수락",
       "analyticsData" : {
         "title" : "애널리틱스",
-        "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
+        "description" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
       },
       "personalizationData" : {
         "title" : "개인 맞춤화",
@@ -7185,7 +7266,7 @@
       "accept" : "수락",
       "refuse" : "거부",
       "analytics" : {
-        "description" : "공유해 주신 Ledger Live 분석 데이터는 고객이 어떤 방식으로 Ledger Live를 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
+        "description" : "공유해 주신 Ledger Wallet 분석 데이터는 고객이 어떤 방식으로 Ledger Wallet을 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
         "details" : {
           "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
           "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
@@ -7194,7 +7275,7 @@
       },
       "personalRecommendations" : {
         "title" : "맞춤화된 고객 경험을 즐겨보세요",
-        "description" : "공유해 주신 Ledger Live 개인화 데이터는 고객 선호에 맞는 콘텐츠를 제시하는 데 사용됩니다.",
+        "description" : "공유해 주신 Ledger Wallet 개인 설정 데이터를 바탕으로 고객님의 선호도에 맞는 콘텐츠를 표시할 수 있습니다.",
         "details" : {
           "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
           "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
@@ -7210,7 +7291,7 @@
       "personalizedExp" : "맞춤화된 경험",
       "analytics" : "애널리틱스",
       "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
-      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+      "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
     }
   },
   "walletSync" : {
@@ -7238,22 +7319,22 @@
         "cta" : "Ledger 동기화 켜기"
       },
       "onboarding" : {
-        "title" : "다른 Ledger Live 앱과 동기화"
+        "title" : "다른 Ledger Wallet 앱과 동기화"
       }
     },
     "manage" : {
       "cta" : "관리",
       "synchronize" : {
-        "label" : "다른 Ledger Live 앱과 동기화",
-        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화"
+        "label" : "다른 Ledger Wallet 앱과 동기화",
+        "description" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화"
       },
       "backup" : {
         "label" : "동기화 삭제",
-        "description" : "여러 Ledger Live 앱에서 동기화된 암호화폐 계정의 동기화가 중지됩니다."
+        "description" : "여러 Ledger Wallet 앱에서 동기화된 암호화폐 계정의 동기화가 중지됩니다."
       },
       "instance" : {
-        "label" : "1개 Ledger Live 앱 동기화",
-        "label_other" : "{{count}} Ledger Live 앱 동기화",
+        "label" : "1개 Ledger Wallet 앱 동기화",
+        "label_other" : "{{count}} Ledger Wallet 앱 동기화 완료",
         "cta" : "관리"
       }
     },
@@ -7292,24 +7373,24 @@
     },
     "success" : {
       "backup" : {
-        "title" : "이 컴퓨터에서 Ledger Live에 대한 Ledger 동기화가 켜짐"
+        "title" : "이 컴퓨터에서 Ledger Wallet에 대한 Ledger 동기화가 켜짐"
       },
       "synch" : {
         "title" : "동기화 성공",
-        "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대전화와 컴퓨터의 Ledger Live 앱에 자동으로 표시됩니다. "
+        "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대폰과 컴퓨터의 Ledger Wallet 앱에 자동으로 표시됩니다. "
       },
-      "synchAnother" : "다른 Ledger Live 앱과 동기화",
+      "synchAnother" : "다른 Ledger Wallet 앱과 동기화",
       "close" : "닫기"
     },
     "manageBackup" : {
       "deleteBackup" : {
         "title" : "정말 동기화를 삭제하시겠습니까?",
-        "description" : "여러 휴대폰 및 컴퓨터에서 Ledger Live 앱을 사용하는 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다. ",
+        "description" : "여러 휴대폰 및 컴퓨터에서 Ledger Wallet 앱을 사용하는 암호화폐 계정은 더 이상 동기화되지 않습니다. 귀하의 자금에는 전혀 영향이 없습니다. ",
         "delete" : "네, 삭제하겠습니다",
         "cancel" : "동기화 유지"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ledger Live 앱이 더 이상 동기화되지 않습니다",
+        "title" : "Ledger Wallet 앱이 더 이상 동기화되지 않습니다",
         "description" : "언제든지 동기화를 다시 켤 수 있습니다."
       },
       "deleteBackupError" : {
@@ -7319,7 +7400,7 @@
     "synchronize" : {
       "chooseMethod" : {
         "title" : "동기화 방법 선택",
-        "description" : "Ledger 장치로 직접 동기화하거나 Ledger Live에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
+        "description" : "Ledger 장치로 직접 동기화하거나 Ledger Wallet에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
         "scan" : {
           "title" : "QR 코드 표시",
           "description" : "QR 코드를 스캔하여 동기화합니다"
@@ -7330,25 +7411,25 @@
         }
       },
       "qrCode" : {
-        "title" : "Ledger Live 앱 동기화",
+        "title" : "Ledger Wallet 앱 동기화",
         "options" : {
           "mobile" : "휴대전화와 동기화",
           "desktop" : "컴퓨터와 동기화"
         },
         "mobile" : {
-          "description" : "다른 전화기에서 Ledger Live와 동기화",
+          "description" : "다른 휴대폰에서 Ledger Wallet 앱과 동기화",
           "steps" : {
             "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
-            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "동기화하려는 Ledger Wallet 앱을 실행합니다.",
             "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>QR 표시</0>로 차례로 이동하세요",
             "step4" : "QR 코드를 스캔합니다."
           }
         },
         "desktop" : {
-          "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
+          "description" : "내 계정을 다른 Ledger Wallet 앱과 동기화",
           "steps" : {
             "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
-            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step2" : "동기화하려는 Ledger Wallet 앱을 실행합니다.",
             "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>내 Ledger 사용</0>으로 차례로 이동하세요",
             "step4" : "Ledger를 연결합니다."
           }
@@ -7356,27 +7437,27 @@
       },
       "unbackedError" : {
         "title" : "동기화가 감지되지 않음",
-        "description" : "이 Ledger Live 또는 동기화하려는 Ledger Live에서 Ledger 동기화를 켭니다.",
+        "description" : "이 Ledger Wallet 또는 동기화하려는 Ledger Wallet에서 Ledger 동기화 기능을 켜주세요.",
         "cta" : "Ledger 동기화 켜기"
       },
       "pinCode" : {
         "title" : "Ledger 동기화 코드",
-        "description" : "두 Ledger Live 앱 모두에서 암호화폐 계정을 동기화하려면 휴대폰의 Ledger Live에 이 코드를 입력하세요.",
+        "description" : "두 Ledger Wallet 앱 모두에서 암호화폐 계정을 동기화하려면 휴대폰의 Ledger Wallet에 이 코드를 입력하세요.",
         "error" : {
           "title" : "코드가 일치하지 않습니다.",
-          "description" : "입력한 코드가 다른 Ledger Live 인스턴스에 표시된 코드와 일치하는지 확인해 주세요."
+          "description" : "입력한 코드가 다른 Ledger Wallet 인스턴스에 표시된 코드와 일치하는지 확인합니다."
         }
       }
     },
     "manageInstances" : {
-      "title" : "Ledger Live가 다음에서 동기화됨",
+      "title" : "Ledger Wallet이 다음에서 동기화됨",
       "remove" : "제거",
-      "deleteInstanceSuccess" : "{{instanceName}}의 Ledger Live 앱이 더 이상 Ledger 동기화에 연결되어 있지 않습니다.",
+      "deleteInstanceSuccess" : "{{instanceName}}의 Ledger Wallet 앱이 Ledger 동기화에서 연결 해제되었습니다",
       "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
-      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+      "description" : "Ledger 보안 스크린에 표시되는 안내를 따라주세요."
     }
   },
   "lnsUpsell" : {
@@ -7445,7 +7526,7 @@
     "connectYourDevice" : {
       "title" : "장치를 연결하고 잠금을 해제하세요"
     },
-    "searchPlaceholder" : "검색",
+    "searchPlaceholder" : "이름 또는 주소로 검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
@@ -7476,14 +7557,14 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
-    "title" : "Ledger Live 업데이트 필요",
+    "title" : "Ledger Wallet 업데이트 필요",
     "errorTitle" : "업데이트 실패",
     "errorDescription" : "업데이트를 완료하지 못했습니다. 아래 링크를 눌러 Ledger Live 최신 버전을 직접 다운로드해 주세요. ",
-    "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
+    "description" : "사용 중인 Ledger Wallet 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다.  원활한 사용을 위해 지금 바로 업데이트하세요.",
     "restart" : "재시작",
     "downloadOnLedger" : "Ledger.com에서 다운로드",
     "downloadProgress" : "다운로드 중... {{ progress }}%"
