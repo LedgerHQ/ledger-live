@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-kaspa
 
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
 ## 1.3.2-next.0
 
 ### Patch Changes

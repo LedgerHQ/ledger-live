@@ -1,5 +1,20 @@
 # @ledgerhq/hw-app-btc
 
+## 10.12.0
+
+### Minor Changes
+
+- [#12272](https://github.com/LedgerHQ/ledger-live/pull/12272) [`8a10c49`](https://github.com/LedgerHQ/ledger-live/commit/8a10c49645bced4611808468bd2fc9132e7787ed) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat[zcash]: support nu6.1
+
+- [#12321](https://github.com/LedgerHQ/ledger-live/pull/12321) [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump axios version to 1.12.2
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.13
+
 ## 10.12.0-next.0
 
 ### Minor Changes

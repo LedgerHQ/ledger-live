@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-bolos",
-  "version": "6.32.9-next.0",
+  "version": "6.32.9",
   "description": "List of commands for Ledger Hardware Wallet OS",
   "keywords": [
     "Ledger",

@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.30.0
+
+### Minor Changes
+
+- [#12277](https://github.com/LedgerHQ/ledger-live/pull/12277) [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make CryptoCurrency dynamically loadable.
+
 ## 7.30.0-next.0
 
 ### Minor Changes

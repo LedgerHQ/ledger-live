@@ -1,5 +1,27 @@
 # @ledgerhq/icons-ui
 
+## 1.22.0
+
+### Minor Changes
+
+- [#11370](https://github.com/LedgerHQ/ledger-live/pull/11370) [`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3) Thanks [@EduardoFromTheFuture](https://github.com/EduardoFromTheFuture)! - Add logo for RIZE token to ledger live. Token is already listed.
+
+  Contract address (Base):
+  RIZE - 0x9818B6c09f5ECc843060927E8587c427C7C93583
+
+  Contract address (BSC):
+  RIZE - 0xaedaff046601beb063b647845dfb21841f32d6a4
+
+  Contract address (Ethereum):
+  RIZE - 0x9F1E8F87c6321b84baD7DDa7DfB86D5115A47605
+
+  Contract address (Polygon):
+  RIZE - 0x9F1E8F87c6321b84baD7DDa7DfB86D5115A47605
+
+- [#12420](https://github.com/LedgerHQ/ledger-live/pull/12420) [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d) Thanks [@semeano](https://github.com/semeano)! - Add Monad currency
+
+- [#12520](https://github.com/LedgerHQ/ledger-live/pull/12520) [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6) Thanks [@semeano](https://github.com/semeano)! - Fix Monad icon
+
 ## 1.22.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-canton
 
+## 0.7.0
+
+### Minor Changes
+
+- [#12173](https://github.com/LedgerHQ/ledger-live/pull/12173) [`f4965d6`](https://github.com/LedgerHQ/ledger-live/commit/f4965d6dfc64949b0afa765cc9e4b24324b5df1d) Thanks [@ishaba](https://github.com/ishaba)! - add canton full transaction signing support
+
+- [#12405](https://github.com/LedgerHQ/ledger-live/pull/12405) [`0a5188a`](https://github.com/LedgerHQ/ledger-live/commit/0a5188aecac545b677cd5d4e8256bbb97081d269) Thanks [@ishaba](https://github.com/ishaba)! - add challenge support for canton onboarding request
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
 ## 0.7.0-next.0
 
 ### Minor Changes

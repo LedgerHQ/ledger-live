@@ -1,5 +1,16 @@
 # @ledgerhq/devices
 
+## 8.7.0
+
+### Minor Changes
+
+- [#12449](https://github.com/LedgerHQ/ledger-live/pull/12449) [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update Apex assets
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+
 ## 8.7.0-next.0
 
 ### Minor Changes
