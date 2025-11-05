@@ -199,7 +199,9 @@ export const getSubAccounts = async ({
       token,
       balance,
       spendableBalance: balance,
-      creationDate: isERC20 ? new Date() : new Date(parseFloat(rawToken.created_timestamp) * 1000),
+      creationDate: isERC20
+        ? new Date()
+        : new Date(Number.parseFloat(rawToken.created_timestamp) * 1000),
       operations: [],
       operationsCount: 0,
       pendingOperations: [],
@@ -465,7 +467,7 @@ const buildERC20OperationFields = ({
   const blockHeight = 5;
   const blockHash = erc20Operation.thirdwebTransaction.blockHash;
   const consensusTimestamp = erc20Operation.mirrorTransaction.consensus_timestamp;
-  const timestamp = new Date(parseInt(consensusTimestamp.split(".")[0], 10) * 1000);
+  const timestamp = new Date(Number.parseInt(consensusTimestamp.split(".")[0], 10) * 1000);
   const fee = BigNumber(erc20Operation.mirrorTransaction.charged_tx_fee);
   const value = BigNumber(decodedParams.value);
   const senderAddress = fromEVMAddress(decodedParams.from) ?? decodedParams.from;
