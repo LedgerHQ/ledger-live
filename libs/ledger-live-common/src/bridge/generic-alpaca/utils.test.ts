@@ -158,6 +158,12 @@ describe("Alpaca utils", () => {
           amount: new BigNumber(50),
           fees: new BigNumber(12),
           recipient: "recipient-address",
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
           ...params,
         } as GenericTransaction,
       );
@@ -176,6 +182,12 @@ describe("Alpaca utils", () => {
           amount: expected.subType ? "0" : expected.parentValue.toFixed(),
           fees: "12",
           recipient: expected.parentRecipient,
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
         },
         ...(expected.subType
           ? {
