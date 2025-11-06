@@ -59,7 +59,13 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
           children: t(prop.name),
           onPress: () => {
             trackQuickAction(prop, quickActionsProps);
-            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            if (quickActionsItem.customHandler) {
+              quickActionsItem.customHandler();
+              return;
+            }
+            if (quickActionsItem.route) {
+              navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            }
           },
           disabled: quickActionsItem.disabled,
         };

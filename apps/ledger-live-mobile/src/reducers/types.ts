@@ -34,6 +34,7 @@ import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { LLMRTKApiState } from "~/context/rtkQueryApi";
+import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -390,6 +391,7 @@ export type State = LLMRTKApiState & {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
+  receiveOptionsDrawer: ReceiveOptionsDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
