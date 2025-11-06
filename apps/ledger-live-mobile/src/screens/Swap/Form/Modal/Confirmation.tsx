@@ -263,7 +263,6 @@ export function Confirmation({
                   exchange,
                   exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
-                  provider: exchangeRate.current.provider,
                 }}
                 onResult={result => {
                   const { initSwapResult, initSwapError, swapId } = result as UnionToIntersection<
@@ -291,7 +290,6 @@ export function Confirmation({
                   account: fromAccount as AccountLike,
                   transaction: swapData.transaction,
                   appName: "Exchange",
-                  provider: exchangeRate.current.provider,
                 }}
                 onResult={result => {
                   const { transactionSignError, signedOperation, swapId } =
