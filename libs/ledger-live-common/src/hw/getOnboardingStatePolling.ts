@@ -28,6 +28,7 @@ export type GetOnboardingStatePollingResult = Observable<OnboardingStatePollingR
 
 export type GetOnboardingStatePollingArgs = {
   deviceId: string;
+  deviceName: string | null;
   pollingPeriodMs: number;
   transportAbortTimeoutMs?: number;
   safeGuardTimeoutMs?: number;
@@ -51,15 +52,17 @@ export type GetOnboardingStatePollingArgs = {
  */
 export const getOnboardingStatePolling = ({
   deviceId,
+  deviceName,
   pollingPeriodMs,
   transportAbortTimeoutMs = pollingPeriodMs - 100,
   safeGuardTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
   allowedErrorChecks = [],
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
   const getOnboardingStateOnce = (): Observable<OnboardingStatePollingResult> => {
-    return withDevice(deviceId, { openTimeoutMs: transportAbortTimeoutMs })(t =>
-      from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs })),
-    ).pipe(
+    return withDevice(deviceId, {
+      openTimeoutMs: transportAbortTimeoutMs,
+      matchDeviceByName: deviceName ?? undefined,
+    })(t => from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs }))).pipe(
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {

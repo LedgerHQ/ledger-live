@@ -27,6 +27,7 @@ import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState
 
 export type Input = {
   deviceId: string;
+  deviceName: string | null;
   request: ManagerRequest | null | undefined;
 };
 
@@ -159,13 +160,19 @@ export default function connectManagerFactory(
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
-    return ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
-      withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
+    return ({ deviceId, deviceName, request }: Input): Observable<ConnectManagerEvent> =>
+      withDevice(
+        deviceId,
+        deviceName ? { matchDeviceByName: deviceName } : undefined,
+      )(transport => cmd(transport, { deviceId, deviceName, request }));
   }
-  return ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
-    withDevice(deviceId)(transport => {
+  return ({ deviceId, deviceName, request }: Input): Observable<ConnectManagerEvent> =>
+    withDevice(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(transport => {
       if (!isDmkTransport(transport)) {
-        return cmd(transport, { deviceId, request });
+        return cmd(transport, { deviceId, deviceName, request });
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new PrepareConnectManagerDeviceAction({
@@ -179,6 +186,6 @@ export default function connectManagerFactory(
       });
       return new PrepareConnectManagerEventMapper(observable)
         .map()
-        .pipe(concatWith(cmd(transport, { deviceId, request })));
+        .pipe(concatWith(cmd(transport, { deviceId, deviceName, request })));
     });
 }

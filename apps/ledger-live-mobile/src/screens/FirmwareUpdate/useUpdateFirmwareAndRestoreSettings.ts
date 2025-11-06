@@ -124,7 +124,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     fetchImageRequest,
   );
 
-  // TODO: pass device name here so update is able to resume
   const { updateState: updateActionState, triggerUpdate } = useUpdateFirmware({
     deviceId: device.deviceId ?? "",
     deviceName: device.deviceName ?? null,
@@ -136,7 +135,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     [deviceInfo.languageId],
   );
 
-  // TODO: pass device name here so update is able to resume
   const installLanguageState = installLanguageAction.useHook(
     updateStep === "languageRestore" ? device : null,
     installLanguageRequest,
@@ -153,7 +151,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         : undefined,
     [fetchImageState.hexImage, device.modelId],
   );
-  // TODO: pass device name here so update is able to resume
   const loadImageState = loadImageAction.useHook(
     updateStep === "imageRestore" && fetchImageState.hexImage ? device : null,
     loadImageRequest,
@@ -170,7 +167,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   );
 
   const connectAppAction = useAppDeviceAction();
-  // TODO: pass device name here so update is able to resume
   const restoreAppsState = connectAppAction.useHook(
     updateStep === "appsRestore" ? device : null,
     restoreAppsRequest,
@@ -243,10 +239,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToImageBackup();
         }
         break;
-
-      // TODO: Implement apps data backup
-      // case "appsDataBackup":
-      //   break;
 
       case "imageBackup":
         hasUnrecoverableError =
