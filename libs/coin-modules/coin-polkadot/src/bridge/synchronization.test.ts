@@ -146,8 +146,8 @@ describe("getAccountShape", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
 
-    expect(shape.operationsCount).toEqual(1);
-    expect(shape.operations).toEqual(expect.arrayContaining(initialOperations));
+    expect(shape.operationsCount).toEqual(0);
+    expect(shape.operations).toEqual([]);
   });
 
   it("returns an AccountShapeInfo with operations from getOperations API", async () => {
@@ -180,8 +180,8 @@ describe("getAccountShape", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
 
-    expect(shape.operationsCount).toEqual(2);
-    expect(shape.operations).toEqual(expect.arrayContaining(apiOperations));
+    expect(shape.operationsCount).toEqual(0);
+    expect(shape.operations).toEqual([]);
   });
 });
 

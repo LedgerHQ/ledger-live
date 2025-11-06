@@ -22,7 +22,7 @@ const SIGNED_TRANSACTION: SignedOperation = {
     date: new Date("2021-08-24T12:33:40.584Z"),
     value: new BigNumber("1"),
     fee: new BigNumber("2091600000000000"),
-    transactionSequenceNumber: 15,
+    transactionSequenceNumber: BigNumber(15),
   },
   signature:
     "0xf8640f850f75bf9800827b0c943f87926741ecaXXXXXXXXXXXXXXXXXXXXXXXXXXX018025a058693cad6ee2299f034ffa04287faba5e777b30659e5bb29bcefdb8284285c97a022169e3ec2a894a35c6edf4223ca6cb3c24453cea78d474d29d1252a236e132b",
@@ -42,7 +42,7 @@ const RAW_SIGNED_TRANSACTION: SignedOperationRaw = {
     date: "2021-08-24T12:33:40.584Z",
     value: "1",
     fee: "2091600000000000",
-    transactionSequenceNumber: 15,
+    transactionSequenceNumber: "15",
   },
   signature:
     "0xf8640f850f75bf9800827b0c943f87926741ecaXXXXXXXXXXXXXXXXXXXXXXXXXXX018025a058693cad6ee2299f034ffa04287faba5e777b30659e5bb29bcefdb8284285c97a022169e3ec2a894a35c6edf4223ca6cb3c24453cea78d474d29d1252a236e132b",

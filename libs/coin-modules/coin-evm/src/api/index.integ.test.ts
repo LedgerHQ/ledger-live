@@ -49,13 +49,13 @@ describe.each([
 
   describe("getSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
         await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
-      ).toBeGreaterThanOrEqual(17);
+      ).toBeGreaterThanOrEqual(17n);
     });
   });
 

@@ -13,12 +13,14 @@ type Props = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
   navigationOverride?: RootNavigation;
+  hideBackButton?: boolean;
 };
 export function useOpenReceiveDrawer({
   currency,
   sourceScreenName,
   onClick,
   navigationOverride,
+  hideBackButton,
 }: Props) {
   const defaultNavigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
@@ -56,12 +58,12 @@ export function useOpenReceiveDrawer({
           screen: ScreenName.ReceiveConfirmation,
           params: {
             ...confirmationParams,
-            hideBackButton: true,
+            hideBackButton: hideBackButton ?? true,
           },
         });
       }
     },
-    [defaultNavigation, navigationOverride],
+    [defaultNavigation, navigationOverride, hideBackButton],
   );
 
   const handleOnclick = useCallback(() => {

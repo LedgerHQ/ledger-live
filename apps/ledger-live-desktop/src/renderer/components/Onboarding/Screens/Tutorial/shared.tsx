@@ -26,7 +26,14 @@ export const IllustrationContainer: StyledComponent<
 `;
 
 export const Title = (props: TextProps & { children?: React.ReactNode }) => (
-  <Text variant="h2" mb={12} {...props} />
+  <Text
+    variant="h2Inter"
+    fontWeight="semiBold"
+    textTransform="none"
+    style={{ letterSpacing: "-0.05em" }}
+    mb={12}
+    {...props}
+  />
 );
 
 export const SubTitle = (props: TextProps & { children?: React.ReactNode }) => (

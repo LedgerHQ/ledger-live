@@ -44,7 +44,9 @@ export const getTxToBroadcast = async (
     network: StacksNetwork[network],
     publicKey: xpub,
     fee: BigNumber(fee).toFixed(),
-    nonce: operation.transactionSequenceNumber ?? 0,
+    nonce: operation.transactionSequenceNumber
+      ? BigInt(operation.transactionSequenceNumber.toString())
+      : 0n,
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -94,7 +96,7 @@ export const mapPendingTxToOps =
       accountId: accountID,
       senders: [sender_address],
       recipients: [token_transfer.recipient_address],
-      transactionSequenceNumber: nonce,
+      transactionSequenceNumber: new BigNumber(nonce),
       value: new BigNumber(token_transfer.amount).plus(feeToUse),
       date,
       extra: {
@@ -165,7 +167,7 @@ export const mapTxToOps =
         fee: feeToUse,
         accountId: accountID,
         senders: [sender_address],
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         date,
         extra: {
           memo,
@@ -243,9 +245,7 @@ export const findNextNonce = async (
   let nextNonce = BigNumber(0);
 
   for (const op of pendingOps) {
-    const nonce = op.transactionSequenceNumber
-      ? new BigNumber(op.transactionSequenceNumber)
-      : new BigNumber(0);
+    const nonce = op.transactionSequenceNumber ? op.transactionSequenceNumber : new BigNumber(0);
 
     if (nonce.gt(nextNonce)) {
       nextNonce = nonce;

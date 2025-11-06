@@ -1,5 +1,37 @@
 # @ledgerhq/types-live
 
+## 6.88.0
+
+### Minor Changes
+
+- [#12420](https://github.com/LedgerHQ/ledger-live/pull/12420) [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d) Thanks [@semeano](https://github.com/semeano)! - Add Monad currency
+
+- [#12197](https://github.com/LedgerHQ/ledger-live/pull/12197) [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Adding sponsored transactions to evm based swap transactions
+
+- [#12463](https://github.com/LedgerHQ/ledger-live/pull/12463) [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add FF for devnet/testnet canton
+
+- [#12285](https://github.com/LedgerHQ/ledger-live/pull/12285) [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lldSyncOnboardingIncr1 feature flag
+
+- [#12382](https://github.com/LedgerHQ/ledger-live/pull/12382) [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce CryptoAssetStore#getTokensSyncHash function
+
+- [#12202](https://github.com/LedgerHQ/ledger-live/pull/12202) [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37) Thanks [@sergiubreban](https://github.com/sergiubreban)! - earn modular drawer config based on ff
+
+## 6.88.0-next.0
+
+### Minor Changes
+
+- [#12420](https://github.com/LedgerHQ/ledger-live/pull/12420) [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d) Thanks [@semeano](https://github.com/semeano)! - Add Monad currency
+
+- [#12197](https://github.com/LedgerHQ/ledger-live/pull/12197) [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Adding sponsored transactions to evm based swap transactions
+
+- [#12463](https://github.com/LedgerHQ/ledger-live/pull/12463) [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add FF for devnet/testnet canton
+
+- [#12285](https://github.com/LedgerHQ/ledger-live/pull/12285) [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lldSyncOnboardingIncr1 feature flag
+
+- [#12382](https://github.com/LedgerHQ/ledger-live/pull/12382) [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce CryptoAssetStore#getTokensSyncHash function
+
+- [#12202](https://github.com/LedgerHQ/ledger-live/pull/12202) [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37) Thanks [@sergiubreban](https://github.com/sergiubreban)! - earn modular drawer config based on ff
+
 ## 6.87.0
 
 ### Minor Changes

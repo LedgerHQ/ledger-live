@@ -49,7 +49,7 @@ describe("index", () => {
   describe("craftRawTransaction", () => {
     it("should throw an error when pubkey is %s", () => {
       const api = generateApi();
-      expect(() => api.craftRawTransaction("", "", "", 0)).toThrow(
+      expect(() => api.craftRawTransaction("", "", "", BigInt(0))).toThrow(
         "craftRawTransaction is not supported",
       );
     });

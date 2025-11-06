@@ -119,7 +119,7 @@ export const genericSignOperation =
           // Enrich with memo and asset information
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
-          if (typeof transactionIntent.sequence !== "number") {
+          if (typeof transactionIntent.sequence !== "bigint") {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
             const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;

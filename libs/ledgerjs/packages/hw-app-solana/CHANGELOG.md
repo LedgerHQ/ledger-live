@@ -1,5 +1,29 @@
 # @ledgerhq/hw-app-solana
 
+## 7.6.0
+
+### Minor Changes
+
+- [#12199](https://github.com/LedgerHQ/ledger-live/pull/12199) [`2a67525`](https://github.com/LedgerHQ/ledger-live/commit/2a67525bfce19b673126ce6dddfca240559b10db) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(solana): new P2 field user input type ATA/SOL
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
+## 7.6.0-next.0
+
+### Minor Changes
+
+- [#12199](https://github.com/LedgerHQ/ledger-live/pull/12199) [`2a67525`](https://github.com/LedgerHQ/ledger-live/commit/2a67525bfce19b673126ce6dddfca240559b10db) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(solana): new P2 field user input type ATA/SOL
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+
 ## 7.5.5
 
 ### Patch Changes

@@ -59,7 +59,7 @@ export const getBlankOperation = (
   accountId: id,
   date: new Date(parseInt(tx.timestamp) / 1000),
   extra: { version: tx.version },
-  transactionSequenceNumber: parseInt(tx.sequence_number),
+  transactionSequenceNumber: new BigNumber(parseInt(tx.sequence_number)),
   hasFailed: false,
 });
 

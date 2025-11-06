@@ -1,5 +1,45 @@
 # @ledgerhq/coin-framework
 
+## 1.4.0
+
+### Minor Changes
+
+- [#12356](https://github.com/LedgerHQ/ledger-live/pull/12356) [`8dcf52d`](https://github.com/LedgerHQ/ledger-live/commit/8dcf52db10a0fa9095970034b3cb3899829b68c8) Thanks [@semeano](https://github.com/semeano)! - fix: Kaspa tests extended for possible mining TXs on address
+
+- [#12340](https://github.com/LedgerHQ/ledger-live/pull/12340) [`8d7c1f7`](https://github.com/LedgerHQ/ledger-live/commit/8d7c1f7a92489647399b0e780d4bb926508e8554) Thanks [@gre-ledger](https://github.com/gre-ledger)! - migrate getDeviceTransactionConfig to async
+
+### Patch Changes
+
+- Updated dependencies [[`b4ceaff`](https://github.com/LedgerHQ/ledger-live/commit/b4ceaff2ecf68d8a14e09801c76ab0b014c45286), [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c), [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`607e4be`](https://github.com/LedgerHQ/ledger-live/commit/607e4be33145c102debce1606224b08579888aa8), [`c96d73f`](https://github.com/LedgerHQ/ledger-live/commit/c96d73fed0a75a9c208f78d51c34b742703a7dda), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`f8d904d`](https://github.com/LedgerHQ/ledger-live/commit/f8d904de5607c103549f247428b5a4079f28c1c0), [`eb176c2`](https://github.com/LedgerHQ/ledger-live/commit/eb176c201d711f1d28f74de831c4a6cd0c2d4a50), [`a731c4c`](https://github.com/LedgerHQ/ledger-live/commit/a731c4cd492a968eb7baa981fdd8aaddedd21f25), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705), [`36e5168`](https://github.com/LedgerHQ/ledger-live/commit/36e5168397eaec2a5f425038392a4400f60571d0), [`6ccabef`](https://github.com/LedgerHQ/ledger-live/commit/6ccabef8f3c4e8cc042299d531684595ebadcc55), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`d9305e8`](https://github.com/LedgerHQ/ledger-live/commit/d9305e8a4d8364366aaba05dd698396d28b539dc), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/cryptoassets@13.32.0
+  - @ledgerhq/types-cryptoassets@7.30.0
+  - @ledgerhq/coin-framework@6.8.0
+  - @ledgerhq/live-network@2.1.0
+  - @ledgerhq/live-env@2.20.0
+  - @ledgerhq/types-live@6.88.0
+  - @ledgerhq/devices@8.7.0
+  - @ledgerhq/errors@6.27.0
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#12356](https://github.com/LedgerHQ/ledger-live/pull/12356) [`8dcf52d`](https://github.com/LedgerHQ/ledger-live/commit/8dcf52db10a0fa9095970034b3cb3899829b68c8) Thanks [@semeano](https://github.com/semeano)! - fix: Kaspa tests extended for possible mining TXs on address
+
+- [#12340](https://github.com/LedgerHQ/ledger-live/pull/12340) [`8d7c1f7`](https://github.com/LedgerHQ/ledger-live/commit/8d7c1f7a92489647399b0e780d4bb926508e8554) Thanks [@gre-ledger](https://github.com/gre-ledger)! - migrate getDeviceTransactionConfig to async
+
+### Patch Changes
+
+- Updated dependencies [[`b4ceaff`](https://github.com/LedgerHQ/ledger-live/commit/b4ceaff2ecf68d8a14e09801c76ab0b014c45286), [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c), [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`607e4be`](https://github.com/LedgerHQ/ledger-live/commit/607e4be33145c102debce1606224b08579888aa8), [`c96d73f`](https://github.com/LedgerHQ/ledger-live/commit/c96d73fed0a75a9c208f78d51c34b742703a7dda), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`f8d904d`](https://github.com/LedgerHQ/ledger-live/commit/f8d904de5607c103549f247428b5a4079f28c1c0), [`eb176c2`](https://github.com/LedgerHQ/ledger-live/commit/eb176c201d711f1d28f74de831c4a6cd0c2d4a50), [`a731c4c`](https://github.com/LedgerHQ/ledger-live/commit/a731c4cd492a968eb7baa981fdd8aaddedd21f25), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705), [`36e5168`](https://github.com/LedgerHQ/ledger-live/commit/36e5168397eaec2a5f425038392a4400f60571d0), [`6ccabef`](https://github.com/LedgerHQ/ledger-live/commit/6ccabef8f3c4e8cc042299d531684595ebadcc55), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`d9305e8`](https://github.com/LedgerHQ/ledger-live/commit/d9305e8a4d8364366aaba05dd698396d28b539dc), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/cryptoassets@13.32.0-next.0
+  - @ledgerhq/types-cryptoassets@7.30.0-next.0
+  - @ledgerhq/coin-framework@6.8.0-next.0
+  - @ledgerhq/live-network@2.1.0-next.0
+  - @ledgerhq/live-env@2.20.0-next.0
+  - @ledgerhq/types-live@6.88.0-next.0
+  - @ledgerhq/devices@8.7.0-next.0
+  - @ledgerhq/errors@6.27.0-next.0
+
 ## 1.3.0
 
 ### Minor Changes

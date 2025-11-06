@@ -158,7 +158,7 @@ export const buildSignOperation =
           recipients,
           accountId,
           date: new Date(),
-          transactionSequenceNumber: sequence,
+          transactionSequenceNumber: new BigNumber(sequence),
         };
 
         o.next({

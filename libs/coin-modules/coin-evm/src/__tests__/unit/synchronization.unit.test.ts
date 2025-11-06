@@ -433,7 +433,7 @@ describe("EVM Family", () => {
               nftOperations: [],
               internalOperations: [internalOperations[2]],
               date: internalOperations[2].date,
-              transactionSequenceNumber: 0,
+              transactionSequenceNumber: new BigNumber(0),
               extra: {},
             },
           ]);
@@ -553,7 +553,7 @@ describe("EVM Family", () => {
                 nftOperations: [],
                 internalOperations: [internalOperations[2]],
                 date: internalOperations[2].date,
-                transactionSequenceNumber: 0,
+                transactionSequenceNumber: new BigNumber(0),
                 extra: {},
               },
             ],
@@ -912,7 +912,7 @@ describe("EVM Family", () => {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
-          transactionSequenceNumber: 123,
+          transactionSequenceNumber: new BigNumber(123),
         };
 
         const operationStatus = await synchronization.getOperationStatus(currency, {
@@ -956,7 +956,7 @@ describe("EVM Family", () => {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
-          transactionSequenceNumber: 123,
+          transactionSequenceNumber: new BigNumber(123),
         };
 
         const operationStatus = await synchronization.getOperationStatus(currency, {
