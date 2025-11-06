@@ -27,6 +27,10 @@ describe("genericSignOperation", () => {
     amount: 100_000n,
     fees: 500n,
     tag: 1234,
+    recipientDomain: {
+      domain: "recipient.gen",
+      address: "recipient-address",
+    },
   } as any;
 
   const deviceId = "mockDevice";
@@ -38,7 +42,7 @@ describe("genericSignOperation", () => {
     },
   };
 
-  const unsignedTx = "unsignedTx";
+  const unsignedTx = { transaction: "unsignedTx" };
   const signedTx = "signedTx";
   const pubKey = "pubKey";
 
@@ -84,6 +88,10 @@ describe("genericSignOperation", () => {
       });
 
       expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined);
+      expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
+        domain: "recipient.gen",
+        address: "recipient-address",
+      });
       expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
     });
 

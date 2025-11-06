@@ -327,6 +327,10 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     raw.gasOptions = transaction.gasOptions && toGasOptionRaw(transaction.gasOptions);
   }
 
+  if ("recipientDomain" in transaction) {
+    raw.recipientDomain = transaction.recipientDomain;
+  }
+
   return raw;
 }
 
