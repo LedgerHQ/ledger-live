@@ -3,39 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "balance": "341065018",
-=======
-    "balance": "341065020",
->>>>>>> 73ca98d526 (update stellar snapshot)
-=======
     "balance": "341065021",
->>>>>>> 0eb3e14a4d (update snapshots)
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "operationsCount": 139,
-    "pendingOperations": [],
-    "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064918",
-=======
-    "operationsCount": 141,
-    "pendingOperations": [],
-    "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064920",
->>>>>>> 73ca98d526 (update stellar snapshot)
-=======
     "operationsCount": 142,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "311064921",
->>>>>>> 0eb3e14a4d (update snapshots)
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -158,11 +136,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
       ],
-<<<<<<< HEAD
       "transactionSequenceNumber": "255106510328173820",
-=======
-      "transactionSequenceNumber": 255106510328173820,
->>>>>>> 73ca98d526 (update stellar snapshot)
       "type": "IN",
       "value": "1",
     },
@@ -211,30 +185,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "253749111684082893",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "ca4be44c225480dfc277457fb7550e45abcb569e783a9790694febdd1e630d53",
-      "blockHeight": 59139538,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "NXR is future earn XLM! 205%",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "060cdef7b0883afb0c119463c0d9b86fee291971c8c8473497c45290b77a269b",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-060cdef7b0883afb0c119463c0d9b86fee291971c8c8473497c45290b77a269b-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684082880,
       "type": "IN",
       "value": "1",
     },
@@ -307,30 +257,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
       ],
       "transactionSequenceNumber": "255106510328175843",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "dd24b25d54608554fa644fe9edc61885a046f700757fe262476fb873ecfffa58",
-      "blockHeight": 59466675,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "08955ba7a99a7a9a2f6eeb07172aa64afc927f9e78378131cbe6cafeffcf3642",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-08955ba7a99a7a9a2f6eeb07172aa64afc927f9e78378131cbe6cafeffcf3642-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328175840,
       "type": "IN",
       "value": "1",
     },
@@ -451,30 +377,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "254381597158020189",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "3bf534e222ec6938a90fc5fde973ab225da00e9dd6a2776d7b9a0b378ba125da",
-      "blockHeight": 59249470,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "0e53d6fd8e1f0ba0771aface2790273ddc65d2ee08d40efb8bb15890d1647580",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0e53d6fd8e1f0ba0771aface2790273ddc65d2ee08d40efb8bb15890d1647580-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254381597158020200,
       "type": "IN",
       "value": "1",
     },
@@ -648,30 +550,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "17e9c7b41f5104e38fba5614949b5f644e08a2736ad40c1f09b93ff81f360447",
-      "blockHeight": 59170427,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "14ef6011727059c61585dc660eb2a6de33c331d546c8338e1d8573e11d9964c3",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-14ef6011727059c61585dc660eb2a6de33c331d546c8338e1d8573e11d9964c3-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111898800,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "369368b05c1ed908969f6fda396bd9a8bc505a2c5ef5290b70528c778b804840",
       "blockHeight": 57835213,
       "extra": {
@@ -763,54 +641,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "253749111684084901",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "5381dd585cc6721e617babe8b880e0e37412e7689dad6a83a573fc751a13aa2f",
-      "blockHeight": 59441669,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "19aac7401dbc8b186b74c336faf905b8626ee7ace7b931f427417580736221a3",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-19aac7401dbc8b186b74c336faf905b8626ee7ace7b931f427417580736221a3-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328171800,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "44afcde1991192a6de8c37ece9a22e0e85c9cc1996c2e658b05ad46c7da4e8b1",
-      "blockHeight": 59144984,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "NXR is future earn XLM! 205%",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "1a6057383ff676e962f7d783136ecedeefbce8b52c52d7bf2bc6ef54c43ff6f8",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-1a6057383ff676e962f7d783136ecedeefbce8b52c52d7bf2bc6ef54c43ff6f8-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684084900,
       "type": "IN",
       "value": "1",
     },
@@ -1152,30 +982,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "50d8661081972afa222fcf5a1730e7f920f222dfcde462ab4d5e84044b38476b",
-      "blockHeight": 59517786,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "334399a680a0c6107dfb0ed0bf21d3d1c6c8702ee0532a83eaf9dadc3e5d23ec",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-334399a680a0c6107dfb0ed0bf21d3d1c6c8702ee0532a83eaf9dadc3e5d23ec-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328181920,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "d36d670013ed47c7223e58ab411d8c61d0a22fbf1ee70508bcfbaff088ecfabe",
       "blockHeight": 56663480,
       "extra": {
@@ -1267,30 +1073,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "254381597158016199",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "60e1f6c6d78f59e16298192dff9acf9923bafff80324b9a20ff787e4de1940ef",
-      "blockHeight": 59231811,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "3b4c370cea46323810d13a3b64d32a32351520725e7fe9ac20f551efebe0354e",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3b4c370cea46323810d13a3b64d32a32351520725e7fe9ac20f551efebe0354e-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254381597158016200,
       "type": "IN",
       "value": "1",
     },
@@ -1416,54 +1198,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "df4c9f620ce7fde0573e16d1dd9e00316a7ec9973a544b9634f53ba65be1f1c9",
-      "blockHeight": 59004464,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "claim your NXR airdrop",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "4160f4ff1bfb3a47a097cfa8fbedf57dac8e5f1f5afd4a6953a74d45ed5fbcc9",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4160f4ff1bfb3a47a097cfa8fbedf57dac8e5f1f5afd4a6953a74d45ed5fbcc9-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCCTLJSZ2N6PDNP3NL6GAJKWFOHJRJM7V5QXACJDNBA2BKANHJ2FECY3",
-      ],
-      "transactionSequenceNumber": 253311312782692380,
-      "type": "IN",
-      "value": "3",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "a2a8dbbaaebdd546eefe73dcfe324590484fe6e3d8c95d44b70505d425b346ab",
-      "blockHeight": 59110432,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "NXR is future earn XLM! 205%",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "418be2e7fbd2d108b39c3ef8594f57b68d4649e712ea37701c1cfb4b5b42093a",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-418be2e7fbd2d108b39c3ef8594f57b68d4649e712ea37701c1cfb4b5b42093a-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684078620,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "efcc63183454f122b3294185e0f9c9c2f90bb1f270343265241f734af1c7f652",
       "blockHeight": 59718249,
       "extra": {
@@ -1482,7 +1216,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
       ],
-      "transactionSequenceNumber": 256247545699767500,
+      "transactionSequenceNumber": "256247545699767499",
       "type": "IN",
       "value": "1",
     },
@@ -1632,102 +1366,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "e266e1458961ba02d65bfc7a017f819269dcdbc740e8419a9ec4ec03c9546ec6",
-      "blockHeight": 59084713,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "48e6b6716f61eb48673bca77506c6dedc7c2c5bea303db2536e3a4b7aed0a54f",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-48e6b6716f61eb48673bca77506c6dedc7c2c5bea303db2536e3a4b7aed0a54f-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684072600,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "c4d2729265aa28268857840a4591afa6eeda47a6dd1c8fe64fba618dfb5b67cd",
-      "blockHeight": 59264937,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "4aa7dcd79c760a86680355d8489a66a2af809bf9c0275c3d0b051069efe02f60",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4aa7dcd79c760a86680355d8489a66a2af809bf9c0275c3d0b051069efe02f60-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254381597158022180,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "00ee1e2f2c8ba0f409d105e63fa3720decab280a7b8f75ca8d13aa3c52a38cb5",
-      "blockHeight": 59187129,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "4b1a40a89cd3f0c7d28313c0f27564eb8bfaeb0f33a85b2f3e8db677edfa8a6c",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4b1a40a89cd3f0c7d28313c0f27564eb8bfaeb0f33a85b2f3e8db677edfa8a6c-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111902850,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "1f7eff985515d5a163723d03b3db9eed4cd32bf399e4495689da194eb84ca389",
-      "blockHeight": 59096216,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "4bf8cfdff1dac3776b3fe85015dac1479f1e6af94a8a872913e3f6c3cd795b81",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4bf8cfdff1dac3776b3fe85015dac1479f1e6af94a8a872913e3f6c3cd795b81-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684074600,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "4491a4493bf5e72eadb67b3290bb47752e81af90d1951cf78c66b2a20c50906b",
       "blockHeight": 55310780,
       "extra": {
@@ -1800,30 +1438,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "96775ae2a59c0f7d9732c3cdfa8f999f3f2c8fcdb42161c5292971a323e1552a",
-      "blockHeight": 59123402,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "NXR is future earn XLM! 205%",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "561e73d908c55ddb6493c7152758a097f6f1ece8653589df3c3d4d0575fc875f",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-561e73d908c55ddb6493c7152758a097f6f1ece8653589df3c3d4d0575fc875f-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684080600,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "250ef44a3f04e815230c83a2fb76c03421e70ea1dcb13d28c9b9d631c1e7178b",
       "blockHeight": 58167129,
       "extra": {
@@ -1872,30 +1486,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "52ed657483f824f9b7ba26bf08038331dd49a17494f2757bad6f2d0a0f72bf76",
-      "blockHeight": 59222479,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "574bdcca803f74f2075b6084c7fbb4ce16f712c1f90eac7dc58861820d19fee0",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-574bdcca803f74f2075b6084c7fbb4ce16f712c1f90eac7dc58861820d19fee0-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111910900,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "f189110af0c6400ca9011ab95beb30d67d9aa3fceb1b73a5417fd1a72d87cea2",
       "blockHeight": 53858883,
       "extra": {
@@ -1938,11 +1528,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GCCTLJSZ2N6PDNP3NL6GAJKWFOHJRJM7V5QXACJDNBA2BKANHJ2FECY3",
       ],
-<<<<<<< HEAD
       "transactionSequenceNumber": "253311312782695061",
-=======
-      "transactionSequenceNumber": 253311312782695070,
->>>>>>> 73ca98d526 (update stellar snapshot)
       "type": "IN",
       "value": "3",
     },
@@ -2110,7 +1696,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
       ],
-      "transactionSequenceNumber": 256247545699765470,
+      "transactionSequenceNumber": "256247545699765483",
       "type": "IN",
       "value": "1",
     },
@@ -2236,54 +1822,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "d8b6a3f706da91fb6bc9c15927c1d3b271ca42b45401b24e83bf63cbcae4c964",
-      "blockHeight": 59502980,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "7be9dbeec69850c53740a15039c23b881a052be61356fe46310021645748e8aa",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-7be9dbeec69850c53740a15039c23b881a052be61356fe46310021645748e8aa-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328179900,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "f709efa1d9df0acb710db0120bc70583dd788d718c25d511f1069ef2c4df054d",
-      "blockHeight": 59022174,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "7d3d19af154c25a4c71355f8acee766dfd50973150f39183c0c27a5154cd28e7",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-7d3d19af154c25a4c71355f8acee766dfd50973150f39183c0c27a5154cd28e7-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
-      ],
-      "transactionSequenceNumber": 253311312782699260,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "ab38853af055dcd240de504370b0068d1c3ef5fc02ec958492105687f87456e8",
       "blockHeight": 57538076,
       "extra": {
@@ -2327,30 +1865,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "253749111684076607",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "7b535afb0482d3360d817d60624fe2261cfc1e7bad2c34c5c801cb98c0b0138f",
-      "blockHeight": 59102418,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "NXR is future earn XLM! 205%",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "8160d9da00a0572a075fde83c1e0788055778c8219c1a7e2acb39a1f9a0c24cf",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8160d9da00a0572a075fde83c1e0788055778c8219c1a7e2acb39a1f9a0c24cf-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684076600,
       "type": "IN",
       "value": "1",
     },
@@ -2548,30 +2062,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "4f43de175924ff0cc71e92e2ea6dbd29b907a19c0df7a55d22603e6e6e5757c6",
-      "blockHeight": 59215996,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "88c88cc0aceebf06ce4068d865f67f3768c8f7009cea9968f626a2ee77f16d48",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-88c88cc0aceebf06ce4068d865f67f3768c8f7009cea9968f626a2ee77f16d48-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111908900,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "efc4b41d6fc9032353a18eb50792a4a0d398493dbb7dbf871acbaec3f3dc8c4c",
       "blockHeight": 58684097,
       "extra": {
@@ -2711,30 +2201,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
       ],
       "transactionSequenceNumber": "253311312782696531",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "27659cceec423cfe0541799a7db506cd9700e5766fd5569a037662b9d1a6d0c9",
-      "blockHeight": 59012248,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "914ba344e3135303a3f336015b5e72265d3cc554a24a390fa64289dcc94b3abf",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-914ba344e3135303a3f336015b5e72265d3cc554a24a390fa64289dcc94b3abf-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
-      ],
-      "transactionSequenceNumber": 253311312782696540,
       "type": "IN",
       "value": "1",
     },
@@ -2932,30 +2398,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "68237d5241456dd451ccf70fd2926892c914159fd1f313704827ef74a7c3e9eb",
-      "blockHeight": 59033259,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "9bdc140e914182b119fc091c4f02d3ee542ee143294d7fb5d339f9a7612c2e31",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9bdc140e914182b119fc091c4f02d3ee542ee143294d7fb5d339f9a7612c2e31-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
-      ],
-      "transactionSequenceNumber": 253311312782702000,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "cad562350c5ecb9219f0add77487e6f14a73f917a9dfa9aac638382ad115d149",
       "blockHeight": 58584512,
       "extra": {
@@ -3095,78 +2537,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
       ],
       "transactionSequenceNumber": "253311312782704780",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "f31fa11bed4af6845e6bb134024492d99390af280400301d86de7680afb067ea",
-      "blockHeight": 59160011,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "9fe7cc2654d5d2f02fa284090d818838d71d02fdd61cc68b8f3a44ed7f52dd38",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9fe7cc2654d5d2f02fa284090d818838d71d02fdd61cc68b8f3a44ed7f52dd38-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 253749111684087040,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "d2835f248abf922447d622f2710db0b46a067e91480651af31060428fd4ac14d",
-      "blockHeight": 59414017,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "a1e0606080043d7f930f9aa358ed74e1c8901b6e9a076a0cffb5bfcec4cec8b8",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a1e0606080043d7f930f9aa358ed74e1c8901b6e9a076a0cffb5bfcec4cec8b8-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328169800,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "efafa9397ca98f2e36e96b7acd4d22c40e7ecf6609188331c2091b9310986751",
-      "blockHeight": 59046427,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "a276970009f65844cb3c6f516c1fbbcfb6bedcb4ebea8fe28b187d4a99d66d04",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a276970009f65844cb3c6f516c1fbbcfb6bedcb4ebea8fe28b187d4a99d66d04-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
-      ],
-      "transactionSequenceNumber": 253311312782704770,
       "type": "IN",
       "value": "1",
     },
@@ -3484,30 +2854,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "c92e6a83d48e1646874599bf8378adce9acf23e1838803b62d3f36a222afb4fc",
-      "blockHeight": 59006674,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "b445fae70b398289ef5e631d5a1ddeac40956a5c2c5c865ade98843e46ff2e96",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b445fae70b398289ef5e631d5a1ddeac40956a5c2c5c865ade98843e46ff2e96-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
-      ],
-      "transactionSequenceNumber": 253311312782694340,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "1f73791626d8fee0e7168d3eff26f7ad820b2405feaa06130cb412c61c900a69",
       "blockHeight": 59691993,
       "extra": {
@@ -3526,7 +2872,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
       ],
-      "transactionSequenceNumber": 256247545699763460,
+      "transactionSequenceNumber": "256247545699763472",
       "type": "IN",
       "value": "1",
     },
@@ -3652,54 +2998,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "eb37b1c29e772f2771db2bdd2f690fbda1bff1e13f7cbd0e9c0850dd5114ca1f",
-      "blockHeight": 59175913,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "c10e68e95d09f237276d30a7fc2d6cbcd094d06a60a8fbe257002c4099c9b97c",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c10e68e95d09f237276d30a7fc2d6cbcd094d06a60a8fbe257002c4099c9b97c-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111900830,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "4ea443ad8728c87a9fd183f67b48e59076b4b19fac359a173014b32703bf356b",
-      "blockHeight": 59239297,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "c2a22d8c30a539e76c5cb97ba4a00a49ea007849fe74bc57fb8ac025e8c60269",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c2a22d8c30a539e76c5cb97ba4a00a49ea007849fe74bc57fb8ac025e8c60269-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254381597158018200,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "8f68f0addea549eda470a8c96546740579902270ab9e442ece6ced4ac490fdee",
       "blockHeight": 58441157,
       "extra": {
@@ -3791,30 +3089,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
       ],
       "transactionSequenceNumber": "255106510328177872",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "6eb78e902ecc290b25216c0afae3a354b9b3bf723510c8aa3162f801635b0f35",
-      "blockHeight": 59476584,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy XEN Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "ca9086d934a5e84b85556864649116150081481f270021c3c40c160af3f0318b",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-ca9086d934a5e84b85556864649116150081481f270021c3c40c160af3f0318b-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
-      ],
-      "transactionSequenceNumber": 255106510328177860,
       "type": "IN",
       "value": "1",
     },
@@ -3983,54 +3257,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": "254122370111904858",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "dcbd362b8934c2b0d650d60266f837163973cfef069d4a31da1b8f7edba97428",
-      "blockHeight": 59200612,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "daf378618a375b2c1d9afcd28b2d3646857a0351c44e30844ab3217c37cd40ba",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-daf378618a375b2c1d9afcd28b2d3646857a0351c44e30844ab3217c37cd40ba-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111906880,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "2ab1b16d40f0ef2de7ab6b92c9ccd06d807bc1176123f5c0624db90856160e15",
-      "blockHeight": 59192758,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "dde15564e156afb77bd0e2c681b932908ce124e3818000c639933943e57ad779",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-dde15564e156afb77bd0e2c681b932908ce124e3818000c639933943e57ad779-IN",
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
-      ],
-      "transactionSequenceNumber": 254122370111904860,
       "type": "IN",
       "value": "1",
     },
@@ -4492,30 +3718,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
-      "blockHash": "4007fa7c7a0139571b152ab97066e715dcce039d262a8dbbe51a8d109b165bd9",
-      "blockHeight": 59026441,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "1167f99f2e9a3efb13aa0c268f307142fff2a3d2f767639f6b1f59754e2df9ec",
-      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-1167f99f2e9a3efb13aa0c268f307142fff2a3d2f767639f6b1f59754e2df9ec-IN",
-      "recipients": [
-        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
-      ],
-      "senders": [
-        "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
-      ],
-      "transactionSequenceNumber": 253311312782702140,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "a503209c6c00b8266962e78a5737d64cf055b5fa4ed0b8ee9837cbd85a4aa1ae",
       "blockHeight": 56007260,
       "extra": {
@@ -4631,30 +3833,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
       ],
       "transactionSequenceNumber": "253311312782699183",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
-      "blockHash": "a9b78a8cb022008c89eb7acffed596304294e4afc3e4f7e110115e77c07defe9",
-      "blockHeight": 59016638,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "2b60531e811ffff40e061a1c6a02dbbd09b120d51998780081d54f002c333c00",
-      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-2b60531e811ffff40e061a1c6a02dbbd09b120d51998780081d54f002c333c00-IN",
-      "recipients": [
-        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
-      ],
-      "senders": [
-        "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
-      ],
-      "transactionSequenceNumber": 253311312782699170,
       "type": "IN",
       "value": "1",
     },
@@ -4866,11 +4044,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "senders": [
         "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
       ],
-<<<<<<< HEAD
       "transactionSequenceNumber": "253311312782705076",
-=======
-      "transactionSequenceNumber": 253311312782705100,
->>>>>>> 73ca98d526 (update stellar snapshot)
       "type": "IN",
       "value": "1",
     },
@@ -5543,30 +4717,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
-      "blockHash": "f696e89e3726c52fa5c665a9f8be3874cc2915d975e2de5889e39ca21b47ed07",
-      "blockHeight": 59009206,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "3a004db29886a402c29399fdf098311290dcb624ea95bdf5efd9b85a0a923c64",
-      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-3a004db29886a402c29399fdf098311290dcb624ea95bdf5efd9b85a0a923c64-IN",
-      "recipients": [
-        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-      ],
-      "senders": [
-        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
-      ],
-      "transactionSequenceNumber": 253311312782696130,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "b3e8116a49827ada541e4dbbcb201f288c12a45188ede995d87c0944adb966d3",
       "blockHeight": 55699404,
       "extra": {
@@ -5686,30 +4836,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
-      "blockHash": "9d75c969660d192c7cffc6d60c5410382e7b3788bf944b8c5f5c8d792052a869",
-      "blockHeight": 59035759,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "60acd1aae35b94545d005f6c9c84f1e12d33a289a606933d364dcdc0467af7bf",
-      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-60acd1aae35b94545d005f6c9c84f1e12d33a289a606933d364dcdc0467af7bf-IN",
-      "recipients": [
-        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-      ],
-      "senders": [
-        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
-      ],
-      "transactionSequenceNumber": 253311312782704500,
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "fb3194849fbdb434e8a40ed48118a9e33999499caec01d910cfc5921569fcc74",
       "blockHeight": 55965218,
       "extra": {
@@ -5753,30 +4879,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
       ],
       "transactionSequenceNumber": "253311312782698399",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
-      "blockHash": "7077241543113e42575e589c9d69304c51ffd9e878747d8a7b0493bfc75a6a7b",
-      "blockHeight": 59014443,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "75d9f0f12309f474140e0475d937d1ddd4952157f312adfc5114330183c9b612",
-      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-75d9f0f12309f474140e0475d937d1ddd4952157f312adfc5114330183c9b612-IN",
-      "recipients": [
-        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-      ],
-      "senders": [
-        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
-      ],
-      "transactionSequenceNumber": 253311312782698400,
       "type": "IN",
       "value": "1",
     },
@@ -6276,30 +5378,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
       ],
       "transactionSequenceNumber": "253311312782701450",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
-      "blockHash": "cb465996eda5b826c03ce9e6e045be27dcea6b6dc089c4d0d3cecb7f02dd602d",
-      "blockHeight": 59024474,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy NXR Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "efa13d1e4757b0714fb79724cffe211c0de13935b76c665a787ddd2a85560e4a",
-      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-efa13d1e4757b0714fb79724cffe211c0de13935b76c665a787ddd2a85560e4a-IN",
-      "recipients": [
-        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-      ],
-      "senders": [
-        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
-      ],
-      "transactionSequenceNumber": 253311312782701440,
       "type": "IN",
       "value": "1",
     },
