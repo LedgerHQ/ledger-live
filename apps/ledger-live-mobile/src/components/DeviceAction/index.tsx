@@ -59,10 +59,10 @@ import {
   renderLoading,
   renderRequestQuitApp,
   renderRequiresAppInstallation,
-  renderThorSwapIncompatibility,
   renderWarningOutdated,
   RequiredFirmwareUpdate,
 } from "./rendering";
+import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
@@ -463,13 +463,15 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const isNanoS = device?.modelId === DeviceModelId.nanoS;
 
   if (completeExchangeStarted && completeExchangeError && isNanoS && isThorSwap) {
-    return renderThorSwapIncompatibility({
-      t,
-      device: selectedDevice,
-      provider: provider!,
-      theme,
-      onClose,
-    });
+    return (
+      <ThorSwapIncompatibility
+        t={t}
+        device={selectedDevice}
+        provider={provider}
+        theme={theme}
+        onClose={onClose}
+      />
+    );
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {

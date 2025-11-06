@@ -52,7 +52,6 @@ import GenericErrorView from "../GenericErrorView";
 import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
-import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -505,29 +504,6 @@ export function renderLockedDeviceError({
         ) : null}
       </Flex>
     </Wrapper>
-  );
-}
-
-export function renderThorSwapIncompatibility({
-  t,
-  device,
-  provider,
-  theme,
-  onClose,
-}: RawProps & {
-  device: Device;
-  provider: string;
-  theme: "light" | "dark";
-  onClose?: () => void;
-}) {
-  return (
-    <ThorSwapIncompatibility
-      t={t}
-      device={device}
-      provider={provider}
-      theme={theme}
-      onClose={onClose}
-    />
   );
 }
 
