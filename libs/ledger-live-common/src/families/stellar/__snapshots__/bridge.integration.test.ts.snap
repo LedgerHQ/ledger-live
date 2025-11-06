@@ -4,16 +4,21 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "balance": "341065018",
 =======
     "balance": "341065020",
 >>>>>>> 73ca98d526 (update stellar snapshot)
+=======
+    "balance": "341065021",
+>>>>>>> 0eb3e14a4d (update snapshots)
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
+<<<<<<< HEAD
 <<<<<<< HEAD
     "operationsCount": 139,
     "pendingOperations": [],
@@ -25,6 +30,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "311064920",
 >>>>>>> 73ca98d526 (update stellar snapshot)
+=======
+    "operationsCount": 142,
+    "pendingOperations": [],
+    "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
+    "spendableBalance": "311064921",
+>>>>>>> 0eb3e14a4d (update snapshots)
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -1448,6 +1459,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAHIDY6RULBETBEAL56BXF6OXW5GPY2ZNILOUDGTTKARFCDULPJPMDDA",
       ],
       "transactionSequenceNumber": 253749111684078620,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "efcc63183454f122b3294185e0f9c9c2f90bb1f270343265241f734af1c7f652",
+      "blockHeight": 59718249,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "471a25da25321bc15a540fae113a2926bf6387a60ace32d00261a866170602ab",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-471a25da25321bc15a540fae113a2926bf6387a60ace32d00261a866170602ab-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": 256247545699767500,
       "type": "IN",
       "value": "1",
     },
