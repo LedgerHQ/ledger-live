@@ -5978,12 +5978,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: 'catalog:'
-        version: 1.12.2
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       invariant:
         specifier: '2'
         version: 2.2.4
@@ -5997,9 +5991,6 @@ importers:
       '@testing-library/react':
         specifier: 14.2.2
         version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/bs58check':
-        specifier: ^2.1.0
-        version: 2.1.2
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12

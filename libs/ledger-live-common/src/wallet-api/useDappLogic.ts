@@ -9,7 +9,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";

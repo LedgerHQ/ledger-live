@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { ERC20Token } from "@ledgerhq/cryptoassets/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { ERC20Token } from "../../types/erc20";
 import { makeOperation } from "./common.fixtures";
 import "./cryptoAssetsStore.fixtures";
 

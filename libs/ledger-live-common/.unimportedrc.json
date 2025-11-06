@@ -312,7 +312,8 @@
     "src/modularDrawer/hooks/useDetailedAccountsCore.ts",
     "src/modularDrawer/types/detailedAccount.ts",
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
-    "src/modularDrawer/index.ts"
+    "src/modularDrawer/index.ts",
+    "src/test-helpers/cryptoAssetsStore.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [

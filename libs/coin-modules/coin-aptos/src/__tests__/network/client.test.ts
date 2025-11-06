@@ -28,10 +28,6 @@ let mockedHex: jest.Mocked<any>;
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
-jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
-  findTokenByAddressInCurrency: jest.fn().mockReturnValue("token-name"),
-}));
-
 describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);

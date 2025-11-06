@@ -16,7 +16,7 @@ import type {
 import type { AlgorandOptInFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import invariant from "invariant";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useTokenById } from "@ledgerhq/cryptoassets/hooks";
 
 type Props = BaseComposite<
   StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInValidationSuccess>
@@ -41,7 +41,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   invariant(transaction, "Transaction should be present");
 
-  const { useTokenById } = cryptoAssetsHooks;
   const { token, loading } = useTokenById(transaction.assetId!);
 
   return (

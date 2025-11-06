@@ -5,8 +5,6 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { makeRe } from "minimatch";
-import { listTokens } from "@ledgerhq/cryptoassets";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 
 export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {
   return currency.type === "CryptoCurrency";
@@ -18,18 +16,6 @@ export function isTokenCurrency(currency: Currency): currency is TokenCurrency {
 
 export function isUTXOCompliant(currencyFamily: string): boolean {
   return currencyFamily === "bitcoin" || currencyFamily === "cardano";
-}
-
-export function listCurrencies(includeTokens: boolean): CryptoOrTokenCurrency[] {
-  const currencies = listSupportedCurrencies();
-
-  if (!includeTokens) {
-    return currencies;
-  }
-
-  const allTokens = listTokens();
-
-  return [...currencies, ...allTokens];
 }
 
 export type CurrencyFilters = {

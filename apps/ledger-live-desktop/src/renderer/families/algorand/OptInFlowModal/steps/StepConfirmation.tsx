@@ -12,8 +12,8 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
 import invariant from "invariant";
+import { useTokenById } from "@ledgerhq/cryptoassets/hooks";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -28,7 +28,6 @@ const Container = styled(Box).attrs(() => ({
 function StepConfirmation({ optimisticOperation, error, signed, transaction }: StepProps) {
   invariant(transaction, "Transaction should be present");
 
-  const { useTokenById } = cryptoAssetsHooks;
   const { token, loading } = useTokenById(transaction.assetId!);
 
   if (optimisticOperation) {

@@ -1,18 +1,14 @@
 import { fromAccountRaw } from "../../account/serialization";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (_: string) => undefined,
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
-} as unknown as CryptoAssetsStore);
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "test_hash",
+});
 
 const mockAccountRaw = {
   id: "js:2:tron:TRON_ID:",

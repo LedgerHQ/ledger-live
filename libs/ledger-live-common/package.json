@@ -26,6 +26,9 @@
       ],
       "lib-es/*": [
         "lib-es/*"
+      ],
+      "test-helpers/*": [
+        "lib/test-helpers/*"
       ]
     }
   },
@@ -61,6 +64,16 @@
     "./featureFlags": {
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
+    },
+    "./test-helpers/cryptoAssetsStore": {
+      "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
+      "require": "./lib/test-helpers/cryptoAssetsStore.js",
+      "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
+    },
+    "./test-helpers/*": {
+      "types": "./lib/test-helpers/*.d.ts",
+      "require": "./lib/test-helpers/*.js",
+      "default": "./lib-es/test-helpers/*.js"
     },
     "./package.json": "./package.json"
   },

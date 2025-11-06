@@ -4,7 +4,7 @@ import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
 import invariant from "invariant";
 import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";

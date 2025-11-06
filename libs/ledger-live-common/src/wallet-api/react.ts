@@ -20,7 +20,7 @@ import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandle
 
 import { getMainAccount, getParentAccount } from "../account";
 import { listCryptoCurrencies, findCryptoCurrencyById, getCryptoCurrencyById } from "../currencies";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,

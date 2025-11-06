@@ -6,7 +6,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { firstValueFrom, from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";

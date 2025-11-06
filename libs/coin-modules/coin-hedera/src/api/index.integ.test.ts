@@ -1,6 +1,5 @@
 import invariant from "invariant";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   AccountId,
   Hbar,
@@ -16,7 +15,8 @@ import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
   beforeAll(() => {
-    setCryptoAssetsStore(legacyCryptoAssetsStore);
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
   });
   const api = createApi({});
 

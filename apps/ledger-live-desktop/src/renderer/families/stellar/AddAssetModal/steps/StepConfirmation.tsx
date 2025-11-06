@@ -12,7 +12,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 import invariant from "invariant";
 
 const Container = styled(Box).attrs(() => ({
@@ -28,7 +28,6 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   invariant(account, "Account should be present");
   invariant(transaction, "Transaction should be present");
 
-  const { useTokenByAddressInCurrency } = cryptoAssetsHooks;
   const { token, loading } = useTokenByAddressInCurrency(
     transaction.assetOwner!,
     account.currency.id,

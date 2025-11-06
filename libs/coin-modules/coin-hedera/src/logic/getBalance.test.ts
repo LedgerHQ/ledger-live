@@ -1,10 +1,12 @@
 import { getBalance } from "./getBalance";
 import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("../network/api");
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+
+setupMockCryptoAssetsStore();
 
 describe("getBalance", () => {
   beforeEach(() => {
@@ -56,30 +58,47 @@ describe("getBalance", () => {
         balance: "10000",
       },
     ];
-    const mockToken1 = {
+    const mockToken1: TokenCurrency = {
+      type: "TokenCurrency",
       id: "token1",
       contractAddress: "0.0.7890",
       tokenType: "hts",
       name: "Test Token 1",
+      ticker: "TT1",
+      parentCurrency: mockCurrency,
       units: [{ name: "TT1", code: "tt1", magnitude: 6 }],
+      delisted: false,
+      disableCountervalue: false,
     };
-    const mockToken2 = {
+    const mockToken2: TokenCurrency = {
+      type: "TokenCurrency",
       id: "token2",
       contractAddress: "0.0.9876",
       tokenType: "hts",
       name: "Test Token 2",
+      ticker: "TT2",
+      parentCurrency: mockCurrency,
       units: [{ name: "TT2", code: "tt2", magnitude: 8 }],
+      delisted: false,
+      disableCountervalue: false,
     };
+
+    const findTokenByAddressInCurrencyMock = jest
+      .fn()
+      .mockImplementation(
+        async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          if (tokenId === "0.0.7890") return mockToken1;
+          if (tokenId === "0.0.9876") return mockToken2;
+          return undefined;
+        },
+      );
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
+    });
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
-    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenByAddressInCurrency: jest.fn().mockImplementation(tokenId => {
-        if (tokenId === "0.0.7890") return mockToken1;
-        if (tokenId === "0.0.9876") return mockToken2;
-        return null;
-      }),
-    });
 
     const result = await getBalance(mockCurrency, address);
 
@@ -87,10 +106,9 @@ describe("getBalance", () => {
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
-    const store = (cryptoAssets.getCryptoAssetsStore as jest.Mock)();
-    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
-    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.9876", "hedera");
+    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(2);
+    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
+    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.9876", "hedera");
     expect(result).toHaveLength(3);
     expect(result).toEqual(
       expect.arrayContaining([
@@ -140,22 +158,34 @@ describe("getBalance", () => {
         balance: "10000",
       },
     ];
-    const mockToken1 = {
+    const mockToken1: TokenCurrency = {
+      type: "TokenCurrency",
       id: "token1",
       contractAddress: "0.0.7890",
       tokenType: "hts",
       name: "Test Token 1",
+      ticker: "TT1",
+      parentCurrency: mockCurrency,
       units: [{ name: "TT1", code: "tt1", magnitude: 6 }],
+      delisted: false,
+      disableCountervalue: false,
     };
+
+    const findTokenByAddressInCurrencyMock = jest
+      .fn()
+      .mockImplementation(
+        async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+          if (tokenId === "0.0.7890") return mockToken1;
+          return undefined;
+        },
+      );
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
+    });
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
-    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenByAddressInCurrency: jest.fn().mockImplementation(tokenId => {
-        if (tokenId === "0.0.7890") return mockToken1;
-        return null;
-      }),
-    });
 
     const result = await getBalance(mockCurrency, address);
 
