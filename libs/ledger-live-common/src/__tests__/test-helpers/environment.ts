@@ -125,6 +125,7 @@ setSupportedCurrencies([
   "kaspa",
   "monad",
   "somnia",
+  "zero_gravity",
 ]);
 LiveConfig.setConfig(liveConfig);
 

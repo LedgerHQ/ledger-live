@@ -958,6 +958,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_zero_gravity: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://evmrpc.0g.ai",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
 };
 
 export { evmConfig };

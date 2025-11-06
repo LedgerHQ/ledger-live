@@ -122,4 +122,5 @@ setSupportedCurrencies([
   "kaspa",
   "monad",
   "somnia",
+  "zero_gravity",
 ]);

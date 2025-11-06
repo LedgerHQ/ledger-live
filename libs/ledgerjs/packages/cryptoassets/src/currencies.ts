@@ -4858,6 +4858,27 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://explorer.somnia.network/tx/$hash",
         address: "https://explorer.somnia.network/address/$address",
+        },
+    ],
+  },
+  zero_gravity: {
+    type: "CryptoCurrency",
+    id: "zero_gravity",
+    coinType: CoinType.ETH,
+    name: "0G",
+    managerAppName: "Ethereum",
+    ticker: "0G",
+    scheme: "zero_gravity",
+    color: "#9200E1",
+    family: "evm",
+    units: ethereumUnits("0G", "0G"),
+    ethereumLikeInfo: {
+      chainId: 16661,
+    },
+    explorerViews: [
+      {
+        tx: "https://chainscan.0g.ai/tx/$hash",
+        address: "https://chainscan.0g.ai/address/$address",
       },
     ],
   },

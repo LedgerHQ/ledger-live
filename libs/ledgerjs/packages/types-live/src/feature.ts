@@ -150,6 +150,7 @@ export type CurrencyFeatures = {
   currencyPolkadot: DefaultFeature;
   currencyMonad: DefaultFeature;
   currencySomnia: DefaultFeature;
+  currencyZeroGravity: DefaultFeature;
 };
 
 /**

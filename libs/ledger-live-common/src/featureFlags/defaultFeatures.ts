@@ -107,6 +107,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAssetHubWestend: DEFAULT_FEATURE,
   currencyMonad: DEFAULT_FEATURE,
   currencySomnia: DEFAULT_FEATURE,
+  currencyZeroGravity: DEFAULT_FEATURE,
 };
 
 /**
