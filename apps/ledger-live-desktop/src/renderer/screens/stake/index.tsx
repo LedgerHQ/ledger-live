@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { listCryptoCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistory } from "react-router-dom";
@@ -130,7 +131,7 @@ const useStakeFlow = () => {
       dispatch(setFlowValue(DRAWER_FLOW));
       dispatch(setSourceValue(source || ""));
 
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
+      const cryptoCurrencies = filterCurrencies(listCryptoCurrencies(), {
         currencies: currencies || list,
       });
 
