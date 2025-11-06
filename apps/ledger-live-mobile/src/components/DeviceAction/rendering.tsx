@@ -52,7 +52,7 @@ import GenericErrorView from "../GenericErrorView";
 import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -521,39 +521,13 @@ export function renderThorSwapIncompatibility({
   onClose?: () => void;
 }) {
   return (
-    <ScrollView>
-      <Wrapper width="100%" mt="30%" mb="10%">
-        <Wrapper rowGap={16} mr="16px" ml="16px">
-          <AnimationContainer marginTop="16px">
-            <Animation
-              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
-              style={getDeviceAnimationStyles(device.modelId)}
-            />
-          </AnimationContainer>
-          <TitleText>
-            {t("transfer.swap2.wrongDevice.title", { provider: getProviderName(provider) })}
-          </TitleText>
-          <Flex mt={4}>
-            <CenteredText color="neutral.c70">
-              {t("transfer.swap2.wrongDevice.description", { provider })}
-            </CenteredText>
-          </Flex>
-        </Wrapper>
-      </Wrapper>
-
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => Linking.openURL("https://shop.ledger.com/pages/hardware-wallet")}
-        alignSelf="stretch"
-      >
-        {t("transfer.swap2.wrongDevice.explore_compatible_devices")}
-      </Button>
-
-      <Button outline={true} type="main" onPress={onClose} mt={4} alignSelf="stretch">
-        {t("transfer.swap2.wrongDevice.swapWithAnotherProvider")}
-      </Button>
-    </ScrollView>
+    <ThorSwapIncompatibility
+      t={t}
+      device={device}
+      provider={provider}
+      theme={theme}
+      onClose={onClose}
+    />
   );
 }
 
