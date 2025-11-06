@@ -1,3 +1,4 @@
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
@@ -41,8 +42,8 @@ export function matchDeviceByName({
   oldDevice,
   newDevice,
 }: {
-  oldDevice: DeviceBaseInfo;
-  newDevice: DeviceBaseInfo;
+  oldDevice: { deviceName?: string | null | undefined };
+  newDevice: { deviceName?: string | null | undefined };
 }): boolean {
   const { deviceName: oldDeviceName } = oldDevice;
   const { deviceName: newDeviceName } = newDevice;
@@ -119,3 +120,26 @@ export function findMatchingOldDevice(
     null
   );
 }
+
+export const findMatchingDiscoveredDevice = (
+  deviceId: string,
+  deviceName: string | undefined,
+  discoveredDevices: DiscoveredDevice[],
+): DiscoveredDevice | null => {
+  let matchByName: DiscoveredDevice | null = null;
+  for (const discoveredDevice of discoveredDevices) {
+    if (discoveredDevice.id === deviceId) {
+      return discoveredDevice;
+    }
+    if (
+      deviceName &&
+      matchDeviceByName({
+        oldDevice: { deviceName },
+        newDevice: { deviceName: discoveredDevice.name },
+      })
+    ) {
+      matchByName = discoveredDevice;
+    }
+  }
+  return matchByName;
+};

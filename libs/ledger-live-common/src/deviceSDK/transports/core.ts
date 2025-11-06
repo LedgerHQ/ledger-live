@@ -63,7 +63,10 @@ export type JobArgs = {
  *  job: the job to execute with the transport. It takes:
  *   - transportRef: a reference to the transport that can be updated by calling a transportRef.refreshTransport()
  */
-export const withTransport = (deviceId: string, options?: { openTimeoutMs?: number }) => {
+export const withTransport = (
+  deviceId: string,
+  options?: { openTimeoutMs?: number; matchDeviceByName?: string },
+) => {
   return <T>(job: ({ transportRef }: JobArgs) => Observable<T>): Observable<T> =>
     new Observable(subscriber => {
       const queuedJobManager = DeviceQueuedJobsManager.getInstance();
@@ -149,7 +152,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
             close(transportRef.current, deviceId)
               // Silently ignore errors on transport close
               .catch(() => {})
-              .then(async () => open(deviceId, options?.openTimeoutMs, tracer.getContext()))
+              .then(async () => open(deviceId, options, tracer.getContext()))
               .then(async newTransport => {
                 await setupTransport(transportRef.current);
 
@@ -176,7 +179,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
             currentJobId: jobId,
           });
 
-          return open(deviceId, options?.openTimeoutMs, tracer.getContext());
+          return open(deviceId, options, tracer.getContext());
         })
         .then(transport => {
           return buildRefreshableTransport(transport);

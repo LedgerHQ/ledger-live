@@ -17,6 +17,7 @@ import { SharedTaskEvent } from "../tasks/core";
 
 export type GetLatestAvailableFirmwareActionArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
 };
 
 // Union of all the tasks specific errors
@@ -65,6 +66,7 @@ export const initialState: GetLatestAvailableFirmwareActionState = {
  */
 export function getLatestAvailableFirmwareAction({
   deviceId,
+  deviceName,
 }: GetLatestAvailableFirmwareActionArgs): Observable<GetLatestAvailableFirmwareActionState> {
   const observable = new Observable<
     | (GetLatestFirmwareTaskEvent & {
@@ -81,7 +83,7 @@ export function getLatestAvailableFirmwareAction({
       status: "ongoing",
     });
 
-    getDeviceInfoTask({ deviceId })
+    getDeviceInfoTask({ deviceId, deviceName })
       .pipe(
         switchMap(event => {
           if (event.type !== "data") {
@@ -99,7 +101,10 @@ export function getLatestAvailableFirmwareAction({
           });
 
           // Keeps `deviceInfo` in the next event
-          return forkJoin([getLatestFirmwareTask({ deviceId, deviceInfo }), of(deviceInfo)]).pipe(
+          return forkJoin([
+            getLatestFirmwareTask({ deviceId, deviceName, deviceInfo }),
+            of(deviceInfo),
+          ]).pipe(
             // Creating a new "event"-like object, extending it with `deviceInfo`
             switchMap(([event, deviceInfo]) => {
               return of({

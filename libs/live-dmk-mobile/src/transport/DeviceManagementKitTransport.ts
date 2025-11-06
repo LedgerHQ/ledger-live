@@ -23,7 +23,7 @@ import {
   timer,
   Subscription,
 } from "rxjs";
-import { first, filter, tap, timeout, retry } from "rxjs/operators";
+import { first, filter, tap, timeout, retry, map } from "rxjs/operators";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import type {
   Observer as TransportObserver,
@@ -34,6 +34,7 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { findMatchingDiscoveredDevice } from "../utils/matchDevicesByNameOrId";
 
 export const tracer = new LocalTracer("live-dmk-tracer", {
   function: "DeviceManagementKitTransport",
@@ -117,13 +118,24 @@ export class DeviceManagementKitTransport extends Transport {
 
   static async open(
     deviceOrId: DiscoveredDevice | string,
-    _timeoutMs?: number,
+    _timeoutMs?: number, // FIXME: this should probably be used
     _context?: TraceContext,
+    options?: { matchDeviceByName?: string },
   ): Promise<DeviceManagementKitTransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
     tracer.trace(
       "[DMKTransport] [open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
+      { options },
+    );
+
+    console.log(
+      "DMKTransport [open] activeSessionId: " +
+        activeSessionId +
+        " and deviceId: " +
+        deviceOrId +
+        " and matchDeviceByName: " +
+        options?.matchDeviceByName?.toString(),
     );
 
     if (activeSessionId) {
@@ -160,24 +172,26 @@ export class DeviceManagementKitTransport extends Transport {
       tracer.trace("[DMKTransport] [open] listen to available devices");
 
       const subscription = devicesObs.pipe(
-        first(devices => devices.some(device => device.id === deviceOrId)),
-        switchMap(async devices => {
-          const found = devices.find(device => device.id === deviceOrId)!;
-
-          tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
+        map(discoveredDevices =>
+          findMatchingDiscoveredDevice(deviceOrId, options?.matchDeviceByName, discoveredDevices),
+        ),
+        first((device): device is DiscoveredDevice => device !== null),
+        switchMap(async discoveredDevice => {
+          tracer.trace(`[DMKTransport] [open] device found ${discoveredDevice.id}`);
 
           await getDeviceManagementKit().close();
           const sessionId = await getDeviceManagementKit()
             .connect({
-              device: found,
+              device: discoveredDevice,
               sessionRefresherOptions: { isRefresherDisabled: true },
             })
             .catch(error => {
               if (isPeerRemovedPairingError(error)) {
                 // NB: remapping this error here because we need the device model info
                 throw new PeerRemovedPairing(undefined, {
-                  productName: getDeviceModel(dmkToLedgerDeviceIdMap[found.deviceModel.model])
-                    ?.productName,
+                  productName: getDeviceModel(
+                    dmkToLedgerDeviceIdMap[discoveredDevice.deviceModel.model],
+                  )?.productName,
                 });
               }
               throw error;

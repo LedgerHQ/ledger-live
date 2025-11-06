@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
-import { Device } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   UpdateFirmwareActionState,
   updateFirmwareActionArgs,
@@ -124,8 +124,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     fetchImageRequest,
   );
 
+  // TODO: pass device name here so update is able to resume
   const { updateState: updateActionState, triggerUpdate } = useUpdateFirmware({
-    deviceId: device?.deviceId ?? "",
+    deviceId: device.deviceId ?? "",
+    deviceName: device.deviceName ?? null,
     updateFirmwareAction,
   });
 
@@ -133,19 +135,25 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     () => ({ language: idsToLanguage[deviceInfo.languageId ?? 0] }),
     [deviceInfo.languageId],
   );
+
+  // TODO: pass device name here so update is able to resume
   const installLanguageState = installLanguageAction.useHook(
     updateStep === "languageRestore" ? device : null,
     installLanguageRequest,
   );
 
   const loadImageRequest = useMemo(
-    () => ({
-      hexImage: fetchImageState.hexImage ?? "",
-      padImage: false, // this is because the picture we fetch from the device already has the padding
-      deviceModelId: device.modelId,
-    }),
+    () =>
+      isCustomLockScreenSupported(device.modelId)
+        ? {
+            hexImage: fetchImageState.hexImage ?? "",
+            padImage: false, // this is because the picture we fetch from the device already has the padding
+            deviceModelId: device.modelId,
+          }
+        : undefined,
     [fetchImageState.hexImage, device.modelId],
   );
+  // TODO: pass device name here so update is able to resume
   const loadImageState = loadImageAction.useHook(
     updateStep === "imageRestore" && fetchImageState.hexImage ? device : null,
     loadImageRequest,
@@ -162,7 +170,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   );
 
   const connectAppAction = useAppDeviceAction();
-
+  // TODO: pass device name here so update is able to resume
   const restoreAppsState = connectAppAction.useHook(
     updateStep === "appsRestore" ? device : null,
     restoreAppsRequest,

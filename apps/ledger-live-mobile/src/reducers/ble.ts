@@ -12,10 +12,7 @@ import type {
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { BleActionTypes } from "../actions/types";
-import {
-  DeviceBaseInfo,
-  findMatchingOldDevice,
-} from "~/components/SelectDevice2/matchDevicesByNameOrId";
+import { type DeviceBaseInfo, findMatchingOldDevice } from "@ledgerhq/live-dmk-mobile";
 
 export const INITIAL_STATE = {
   knownDevices: [],

@@ -148,6 +148,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 

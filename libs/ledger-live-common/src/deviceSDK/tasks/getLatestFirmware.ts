@@ -10,6 +10,7 @@ import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLat
 
 export type GetLatestFirmwareTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   deviceInfo: DeviceInfo;
 };
 
@@ -27,10 +28,14 @@ export type GetLatestFirmwareTaskEvent =
 
 function internalGetLatestFirmwareTask({
   deviceId,
+  deviceName,
   deviceInfo,
 }: GetLatestFirmwareTaskArgs): Observable<GetLatestFirmwareTaskEvent> {
   return new Observable(subscriber => {
-    return withDevice(deviceId)(transport =>
+    return withDevice(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(transport =>
       quitApp(transport).pipe(
         switchMap(() => {
           return from(getLatestFirmwareForDeviceUseCase(deviceInfo));
