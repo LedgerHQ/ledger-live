@@ -8,15 +8,13 @@ type PostOnboardingActionHandlers = {
 };
 
 export function usePostOnboardingActionHandlers(): PostOnboardingActionHandlers {
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "post-onboarding",
   });
 
   return {
-    [PostOnboardingActionId.assetsTransfer]: isModularDrawerEnabled
-      ? () => {
-          handleOpenReceiveDrawer();
-        }
-      : undefined,
+    [PostOnboardingActionId.assetsTransfer]: () => {
+      handleOpenReceiveDrawer();
+    },
   };
 }
