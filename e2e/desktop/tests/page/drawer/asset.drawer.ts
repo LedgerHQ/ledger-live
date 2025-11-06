@@ -1,5 +1,5 @@
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 

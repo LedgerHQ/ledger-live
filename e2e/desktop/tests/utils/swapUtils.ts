@@ -1,5 +1,5 @@
-import test from "../fixtures/common";
-import { Application } from "../page";
+import test from "tests/fixtures/common";
+import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";

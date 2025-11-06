@@ -1,11 +1,11 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { addBugLink, addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 import { expect } from "@playwright/test";
-import { LedgerSyncCliHelper } from "../utils/ledgerSyncCliUtils";
-import { accountNames, accounts } from "../testdata/ledgerSyncTestData";
+import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
+import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const app: AppInfos = AppInfos.LS;

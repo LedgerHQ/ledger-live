@@ -1,5 +1,5 @@
 import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 
 export class LockscreenPage extends AppPage {
   readonly container = this.page.getByTestId("lockscreen-container");
