@@ -54,6 +54,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";
 import { useToastsActions } from "~/actions/toast";
 import { getFreshAccountAddress } from "~/utils/address";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -94,19 +95,29 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
   const [isUserAddressSanctioned, setIsUserAddressSanctioned] = useState(false);
 
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
   const { pushToast } = useToastsActions();
 
-  const onClose = useCallback(() => {
-    const mainAccount = account && getMainAccount(account, parentAccount);
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    sourceScreenName: "receive_confirmation",
+    currency: mainAccount?.currency,
+    hideBackButton: false,
+  });
 
+  const onClose = useCallback(() => {
     if (mainAccount) {
-      navigation.navigate(ScreenName.ReceiveSelectAccount, {
-        currency: mainAccount.currency,
-      });
+      if (isModularDrawerEnabled) {
+        handleOpenReceiveDrawer();
+      } else {
+        navigation.navigate(ScreenName.ReceiveSelectAccount, {
+          currency: mainAccount.currency,
+        });
+      }
     }
-  }, [account, navigation, parentAccount]);
+  }, [mainAccount, isModularDrawerEnabled, handleOpenReceiveDrawer, navigation]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -121,9 +132,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
   const QRContainerSize = QRSize + 16 * 4;
-
-  const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const network = useMemo(() => {
     if (currency && currency.type === "TokenCurrency") {
