@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -25,7 +24,9 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
-  const options = account && listTokensForCryptoCurrency(account.currency);
+  // TODO: listTokensForCryptoCurrency() was deprecated and removed. This feature was using listTokensForCryptoCurrency().
+  // Temporarily inlining empty array - this should be updated to use the new async token API (cryptoassetsstore functions)
+  const options = account ? [] : undefined;
   const token = useMemo(
     () =>
       transaction &&
