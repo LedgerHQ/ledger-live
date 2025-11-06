@@ -16,7 +16,7 @@ import { SuiOperationExtra, SuiAccount } from "../types";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 /**
  * Get the shape of the account including its operations and balance.

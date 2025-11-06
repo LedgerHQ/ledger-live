@@ -282,16 +282,27 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    const unsub = await api.tx.balances
-      .transferAllowDeath(
-        polkadotScenarioAccountPair.address,
-        parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
-      )
-      .signAndSend(alice, result => {
-        if (result.status.isFinalized) {
-          unsub();
-        }
-      });
+    // Wait for the transfer to be finalized
+    await new Promise<void>((resolve, reject) => {
+      api.tx.balances
+        .transferAllowDeath(
+          polkadotScenarioAccountPair.address,
+          parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
+        )
+        .signAndSend(alice, result => {
+          if (result.status.isFinalized) {
+            resolve();
+          } else if (
+            result.status.type === "Dropped" ||
+            result.status.type === "Invalid" ||
+            result.status.type === "Usurped" ||
+            result.status.type === "FinalityTimeout"
+          ) {
+            reject(new Error(`Transaction failed: ${result.status.type}`));
+          }
+        })
+        .catch(reject);
+    });
 
     const account = makeAccount(polkadotScenarioAccountPair.address, polkadot);
 

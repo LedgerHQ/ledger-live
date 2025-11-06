@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getCryptoAssetsStore } from "../../../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const useSelectableCurrencies = ({

@@ -8,7 +8,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   MessageSignParams,

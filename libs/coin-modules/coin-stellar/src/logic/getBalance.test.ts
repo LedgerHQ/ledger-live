@@ -1,17 +1,20 @@
 import { getBalance } from "./getBalance";
 import { fetchAccount } from "../network";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 jest.mock("../network", () => ({
   fetchAccount: jest.fn(),
 }));
 
 beforeAll(() => {
-  initializeLegacyTokens(addTokensLegacy);
-  setCryptoAssetsStore(legacyCryptoAssetsStore);
+  // Setup mock store for unit tests
+  const mockStore: CryptoAssetsStore = {
+    findTokenById: async () => undefined,
+    findTokenByAddressInCurrency: async () => undefined,
+    getTokensSyncHash: async () => "",
+  };
+  setCryptoAssetsStore(mockStore);
 });
 
 describe("getBalance", () => {

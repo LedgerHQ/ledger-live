@@ -1,8 +1,8 @@
 import { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getCryptoAssetsStore } from "../crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getSyncHash } from "./sync";
 
-jest.mock("../crypto-assets");
+jest.mock("@ledgerhq/cryptoassets/state");
 
 const mockedGetTokensSyncHash = jest.fn();
 jest.mocked(getCryptoAssetsStore).mockImplementation(

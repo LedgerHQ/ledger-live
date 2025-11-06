@@ -6,7 +6,8 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { setCryptoAssetsStore, getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -32,7 +33,6 @@ import { getCoinConfig } from "../../config";
 import * as logic from "../../logic";
 import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
 import usdcTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
-import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -49,8 +49,38 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  let mockStore: CryptoAssetsStore;
+
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    mockStore = {
+      findTokenById: async (id: string) => {
+        if (id === "ethereum/erc20/usd__coin") {
+          return tokenCurrencies[0];
+        }
+        if (id === "ethereum/erc20/usd_tether__erc20_") {
+          return tokenCurrencies[1];
+        }
+        return undefined;
+      },
+      findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+        const normalizedAddress = address.toLowerCase();
+        if (
+          normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
+          currencyId === "ethereum"
+        ) {
+          return tokenCurrencies[0];
+        }
+        if (
+          normalizedAddress === "0xdac17f958d2ee523a2206206994597c13d831ec7" &&
+          currencyId === "ethereum"
+        ) {
+          return tokenCurrencies[1];
+        }
+        return undefined;
+      },
+      getTokensSyncHash: async () => "",
+    };
+    setCryptoAssetsStore(mockStore);
   });
 
   beforeEach(() => {
@@ -691,10 +721,11 @@ describe("EVM Family", () => {
     describe("getSubAccounts", () => {
       beforeEach(() => {
         jest.spyOn(nodeApi, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
-          switch (contractAddress) {
-            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+          const normalizedAddress = contractAddress.toLowerCase();
+          switch (normalizedAddress) {
+            case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": // usdc
               return new BigNumber(1);
-            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+            case "0xdac17f958d2ee523a2206206994597c13d831ec7": // usdt
               return new BigNumber(2);
             default:
               return new BigNumber(0);
@@ -706,10 +737,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -790,10 +818,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts when CAL has changed", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
 
         findTokenByAddressInCurrency.mockImplementation(
           (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
@@ -991,10 +1016,7 @@ describe("EVM Family", () => {
       });
 
       it("should return no subAccounts when CAL do not return tokens", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
 
         findTokenByAddressInCurrency.mockImplementation(
           (_address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
@@ -1082,10 +1104,11 @@ describe("EVM Family", () => {
     describe("getSubAccountShape", () => {
       beforeEach(() => {
         jest.spyOn(nodeApi, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
-          switch (contractAddress) {
-            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+          const normalizedAddress = contractAddress.toLowerCase();
+          switch (normalizedAddress) {
+            case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": // usdc
               return new BigNumber(1);
-            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+            case "0xdac17f958d2ee523a2206206994597c13d831ec7": // usdt
               return new BigNumber(2);
             default:
               return new BigNumber(0);

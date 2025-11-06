@@ -9,7 +9,7 @@ import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
 import Section from "~/screens/OperationDetails/Section";
 import { urls } from "~/utils/urls";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 
 interface OperationDetailsPostAccountSectionProps {
   operation: HederaOperation;
@@ -19,15 +19,11 @@ function OperationDetailsPostAccountSection({
   operation,
 }: Readonly<OperationDetailsPostAccountSectionProps>) {
   const { t } = useTranslation();
+  const { token } = useTokenByAddressInCurrency(operation.extra.associatedTokenId || "", "hedera");
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
   }
-
-  const { token } = cryptoAssetsHooks.useTokenByAddressInCurrency(
-    operation.extra.associatedTokenId || "",
-    "hedera",
-  );
 
   if (!token) {
     return null;
@@ -48,18 +44,13 @@ interface OperationDetailsExtraProps {
 
 function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDetailsExtraProps>) {
   const navigation = useNavigation();
+  const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  const associatedTokenId = extra?.associatedTokenId;
+  const { token } = useTokenByAddressInCurrency(associatedTokenId || "", "hedera");
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
   }
-
-  const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const associatedTokenId = extra?.associatedTokenId;
-
-  const { token } = cryptoAssetsHooks.useTokenByAddressInCurrency(
-    associatedTokenId || "",
-    "hedera",
-  );
 
   if (!token) {
     return null;

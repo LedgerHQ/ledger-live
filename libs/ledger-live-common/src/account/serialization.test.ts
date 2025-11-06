@@ -3,7 +3,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/mocks/acco
 import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import solanaSplTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,7 +17,7 @@ const Solana = getCryptoCurrencyById("solana");
 const USDC = solanaSplTokenData as TokenCurrency;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
+setCryptoAssetsStore({
   findTokenById: async (id: string) => {
     if (id === "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v") {
       return USDC;

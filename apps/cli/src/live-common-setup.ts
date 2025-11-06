@@ -18,12 +18,7 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-
-initializeLegacyTokens(addTokens);
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -157,5 +152,5 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
-//TODO update when CAL is avalaible
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+// Setup CAL client store for CLI (automatically set as global store)
+setupCalClientStore();

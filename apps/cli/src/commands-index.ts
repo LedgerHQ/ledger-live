@@ -50,7 +50,6 @@ import proxy from "./commands/device/proxy";
 import reinstallConfigurationConsent from "./commands/device/reinstallConfigurationConsent";
 import repl from "./commands/device/repl";
 import speculosList from "./commands/device/speculosList";
-import backtestTokens from "./commands/live/backtestTokens";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
@@ -116,7 +115,6 @@ export default {
   reinstallConfigurationConsent,
   repl,
   speculosList,
-  backtestTokens,
   balanceHistory,
   countervalues,
   envs,
