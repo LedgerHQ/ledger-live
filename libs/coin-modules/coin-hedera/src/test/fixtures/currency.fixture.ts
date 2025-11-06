@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
@@ -34,10 +33,11 @@ export const getTokenCurrencyFromCAL = (
   index: number,
   overrides?: Partial<TokenCurrency>,
 ): TokenCurrency => {
-  const hedera = getCryptoCurrencyById("hedera");
-  const token = listTokensForCryptoCurrency(hedera)[index];
+  // Use empty array as fallback - tokens should be provided via tokensData option
+  const tokens: TokenCurrency[] = [];
+  const token = tokens[index];
 
-  invariant(token, `token not found in CAL list on ${index} position`);
+  invariant(token, `token not found on ${index} position`);
 
   return {
     ...token,
