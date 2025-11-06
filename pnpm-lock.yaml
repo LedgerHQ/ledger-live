@@ -27,6 +27,9 @@ catalogs:
     axios:
       specifier: 1.12.2
       version: 1.12.2
+    electron:
+      specifier: 38.2.0
+      version: 38.2.0
     i18next:
       specifier: 23.10.1
       version: 23.10.1
@@ -871,8 +874,8 @@ importers:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
       electron:
-        specifier: 38.0.0
-        version: 38.0.0
+        specifier: 'catalog:'
+        version: 38.2.0
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -1921,8 +1924,8 @@ importers:
         specifier: 4.17.16
         version: 4.17.16
       electron:
-        specifier: 38.0.0
-        version: 38.0.0
+        specifier: 'catalog:'
+        version: 38.2.0
       playwright:
         specifier: 1.51.1
         version: 1.51.1
@@ -24597,8 +24600,8 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@38.0.0:
-    resolution: {integrity: sha512-egljptiPJqbL/oamFCEY+g3RNeONWTVxZSGeyLqzK8xq106JhzuxnhJZ3sxt4DzJFaofbGyGJA37Oe9d+gVzYw==}
+  electron@38.2.0:
+    resolution: {integrity: sha512-Cw5Mb+N5NxsG0Hc1qr8I65Kt5APRrbgTtEEn3zTod30UNJRnAE1xbGk/1NOaDn3ODzI/MYn6BzT9T9zreP7xWA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -59517,7 +59520,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@38.0.0:
+  electron@38.2.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.10.10

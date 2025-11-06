@@ -31,6 +31,7 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-ble": 1.2.0
   # DMK
   "@ledgerhq/device-management-kit": 0.10.0
+  electron: 38.2.0
 
 overrides:
   node-abi: ^4.9.0
