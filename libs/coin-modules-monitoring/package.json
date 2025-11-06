@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
   "scripts": {

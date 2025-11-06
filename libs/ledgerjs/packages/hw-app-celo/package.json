@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "6.35.1",
+  "version": "6.35.2",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",

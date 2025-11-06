@@ -1,5 +1,19 @@
 # @ledgerhq/errors
 
+## 6.27.0
+
+### Minor Changes
+
+- [#12222](https://github.com/LedgerHQ/ledger-live/pull/12222) [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: handle addresses with checksum
+  chore: move custom errors to coin-module
+
+## 6.27.0-next.0
+
+### Minor Changes
+
+- [#12222](https://github.com/LedgerHQ/ledger-live/pull/12222) [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: handle addresses with checksum
+  chore: move custom errors to coin-module
+
 ## 6.26.0
 
 ### Minor Changes
