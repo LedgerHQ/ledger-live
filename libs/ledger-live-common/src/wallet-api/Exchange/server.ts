@@ -4,10 +4,9 @@ import {
   getParentAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import {
   createAccountNotFound,
@@ -768,9 +767,14 @@ async function getToCurrency(
     toAccount.currency.id === "solana" && // the target account must be a SOL Account
     tokenAddress !== toAccount.freshAddress
   ) {
-    const splTokenCurrency = listTokensForCryptoCurrency(toAccount.currency).find(
+    // Use empty array as fallback - this should be updated to use the async token API
+    const splTokens: TokenCurrency[] = [];
+    const splTokenCurrency = splTokens.find(
       tk => tk.tokenType === "spl" && tk.ticker === currencyTo,
-    )!;
+    );
+    if (!splTokenCurrency) {
+      throw new Error(`SPL token with ticker ${currencyTo} not found`);
+    }
     return splTokenCurrency;
   }
 

@@ -19,7 +19,7 @@ import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 
 import { getMainAccount, getParentAccount } from "../account";
-import { listCurrencies, findCryptoCurrencyById, getCryptoCurrencyById } from "../currencies";
+import { listCryptoCurrencies, findCryptoCurrencyById, getCryptoCurrencyById } from "../currencies";
 import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { TrackingAPI } from "./tracking";
 import {
@@ -74,7 +74,7 @@ export function useWalletAPIAccounts(
 
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
+    return listCryptoCurrencies().reduce<WalletAPICurrency[]>((filtered, currency) => {
       if (isWalletAPISupportedCurrency(currency)) {
         filtered.push(currencyToWalletAPICurrency(currency));
       }

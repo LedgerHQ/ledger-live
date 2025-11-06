@@ -1,5 +1,5 @@
 import { makeRe } from "minimatch";
-import { isCryptoCurrency, isTokenCurrency, listCurrencies } from "../currencies";
+import { isCryptoCurrency, isTokenCurrency, listCryptoCurrencies } from "../currencies";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import {
   PlatformCurrency,
@@ -73,7 +73,8 @@ export function listAndFilterCurrencies({
 }: CurrencyFilters): CryptoOrTokenCurrency[] {
   // We removed the filtering with `isPlatformSupportedCurrency`
   // As we want to show all the currencies in the requestAccount drawer
-  const allCurrencies = listCurrencies(includeTokens);
+  // Note: includeTokens is ignored as tokens are now accessed via async API
+  const allCurrencies = listCryptoCurrencies();
 
   return filterCurrencies(allCurrencies, {
     includeTokens,

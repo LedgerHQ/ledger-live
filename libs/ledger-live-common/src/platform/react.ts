@@ -16,7 +16,7 @@ import {
   PlatformAccount,
 } from "./types";
 import { getParentAccount } from "../account";
-import { listCurrencies } from "../currencies";
+import { listCryptoCurrencies } from "../currencies";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 /**
@@ -77,7 +77,7 @@ export function useListPlatformAccounts(
 
 export function usePlatformCurrencies(): PlatformCurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<PlatformCurrency[]>((filtered, currency) => {
+    return listCryptoCurrencies().reduce<PlatformCurrency[]>((filtered, currency) => {
       if (isPlatformSupportedCurrency(currency)) {
         filtered.push(currencyToPlatformCurrency(currency));
       }
