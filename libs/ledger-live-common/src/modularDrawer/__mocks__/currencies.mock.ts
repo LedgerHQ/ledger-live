@@ -83,7 +83,7 @@ export const maticBsc: TokenCurrency = {
 };
 export const findCryptoCurrencyById = (id: string) =>
   [mockBtcCryptoCurrency, mockEthCryptoCurrency, mockArbitrumCryptoCurrency].find(a => a.id === id);
-export const getTokenOrCryptoCurrencyById = (id: string) =>
+export const getTokenOrCryptoCurrencyById = async (id: string) =>
   [
     mockBtcCryptoCurrency,
     mockEthCryptoCurrency,

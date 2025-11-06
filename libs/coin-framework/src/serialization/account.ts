@@ -28,7 +28,10 @@ export type FromFamiliyRaw = {
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"];
 };
 
-export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw): Account {
+export async function fromAccountRaw(
+  rawAccount: AccountRaw,
+  fromRaw?: FromFamiliyRaw,
+): Promise<Account> {
   const {
     id,
     seedIdentifier,
@@ -55,24 +58,33 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     nfts,
   } = rawAccount;
 
+  const store = getCryptoAssetsStore();
+
+  // Track if any token lookup fails. Because we need to gracefully degrade to a full synchronization
+  let hasTokenLookupFailure = false;
+
+  const subAccounts = subAccountsRaw
+    ? await Promise.all(
+        subAccountsRaw.map(async ta => {
+          if (ta.type === "TokenAccountRaw") {
+            // When we load AccountRaw from the DB, we don't want to fail in case bad things happen asynchronously. therefore, we will drop the TokenAccount temporarily to not drop the main account and it will be recovered later.
+            const token = await store.findTokenById(ta.tokenId).catch(() => undefined);
+            if (token) {
+              return await fromTokenAccountRaw(ta);
+            } else {
+              hasTokenLookupFailure = true;
+            }
+          }
+        }),
+      ).then(results => results.filter(Boolean))
+    : undefined;
+
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
-  const store = getCryptoAssetsStore();
-  const subAccounts =
-    subAccountsRaw &&
-    subAccountsRaw
-      .map(ta => {
-        if (ta.type === "TokenAccountRaw") {
-          if (store.findTokenById(ta.tokenId)) {
-            return fromTokenAccountRaw(ta);
-          }
-        }
-      })
-      .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || store.findTokenById(feesCurrencyId)
+    ? findCryptoCurrencyById(feesCurrencyId) || (await store.findTokenById(feesCurrencyId))
     : undefined;
 
   const res: Account = {
@@ -89,9 +101,10 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     creationDate: new Date(creationDate || Date.now()),
     balance: new BigNumber(balance),
     spendableBalance: new BigNumber(spendableBalance || balance),
-    operations: (operations || []).map(convertOperation),
+    // If a token lookup failed, set operations to empty to gracefully degrade
+    operations: hasTokenLookupFailure ? [] : (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
-    pendingOperations: (pendingOperations || []).map(convertOperation),
+    pendingOperations: hasTokenLookupFailure ? [] : (pendingOperations || []).map(convertOperation),
     currency,
     feesCurrency,
     lastSyncDate: new Date(lastSyncDate || 0),
@@ -238,10 +251,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
 //-- TokenAccount
 
-function fromTokenAccountRaw(
+async function fromTokenAccountRaw(
   raw: TokenAccountRaw,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
-): TokenAccount {
+): Promise<TokenAccount> {
   const {
     id,
     parentId,
@@ -255,7 +268,7 @@ function fromTokenAccountRaw(
     swapHistory,
   } = raw;
   const store = getCryptoAssetsStore();
-  const token = store.findTokenById(tokenId);
+  const token = await store.findTokenById(tokenId);
   invariant(token, `Token with id ${tokenId} not found`);
 
   const convertOperation = (op: OperationRaw) =>

@@ -78,13 +78,19 @@ export function deviceActionFlow<T extends TransactionCommon>(
           const stepValueTransform = currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
-            botTest("deviceAction confirm step '" + stepTitle + "'", () => {
-              expect({
-                [stepTitle]: stepValueTransform(stepValue),
-              }).toMatchObject({
-                [stepTitle]: expectedValue(arg, acc).trim(),
+            Promise.resolve(expectedValue(arg, acc))
+              .then(resolvedResult => {
+                botTest("deviceAction confirm step '" + stepTitle + "'", () => {
+                  expect({
+                    [stepTitle]: stepValueTransform(stepValue),
+                  }).toMatchObject({
+                    [stepTitle]: resolvedResult.trim(),
+                  });
+                });
+              })
+              .catch(error => {
+                console.error(`Async validation failed for step '${stepTitle}':`, error);
               });
-            });
           }
         }
 

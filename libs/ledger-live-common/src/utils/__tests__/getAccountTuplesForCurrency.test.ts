@@ -1,8 +1,12 @@
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;
@@ -66,9 +70,16 @@ describe("getAccountTuplesForCurrency", () => {
   });
 
   describe("TokenCurrency", () => {
-    const token = findTokenById("ethereum/erc20/aave");
-    if (!token) throw new Error("AAVE token not found");
-    const aaveToken = token;
+    const aaveToken = {
+      type: "TokenCurrency" as const,
+      id: "ethereum/erc20/aave",
+      name: "Aave Token",
+      ticker: "AAVE",
+      units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
+      contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+      parentCurrency: getCryptoCurrencyById("ethereum"),
+      tokenType: "erc20" as const,
+    };
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [

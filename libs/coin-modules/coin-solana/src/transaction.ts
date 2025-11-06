@@ -54,7 +54,7 @@ const lamportsToSOL = (account: Account, amount: number) => {
   });
 };
 
-export const formatTransaction = (tx: Transaction, mainAccount: Account): string => {
+export const formatTransaction = async (tx: Transaction, mainAccount: Account): Promise<string> => {
   if (tx.model.commandDescriptor === undefined) {
     throw new Error("can not format unprepared transaction");
   }
@@ -63,17 +63,21 @@ export const formatTransaction = (tx: Transaction, mainAccount: Account): string
   if (Object.keys(commandDescriptor.errors).length > 0) {
     throw new Error("can not format invalid transaction");
   }
-  return formatCommand(mainAccount, tx, commandDescriptor.command);
+  return await formatCommand(mainAccount, tx, commandDescriptor.command);
 };
 
-function formatCommand(mainAccount: Account, tx: Transaction, command: Command) {
+async function formatCommand(
+  mainAccount: Account,
+  tx: Transaction,
+  command: Command,
+): Promise<string> {
   switch (command.kind) {
     case "transfer":
       return formatTransfer(mainAccount, tx, command);
     case "token.transfer":
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
-      return formatCreateATA(mainAccount, command);
+      return await formatCreateATA(mainAccount, command);
     case "token.approve":
       return formatCreateApprove(mainAccount, tx, command);
     case "token.revoke":
@@ -152,8 +156,11 @@ function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: Tok
   return "\n" + str;
 }
 
-function formatCreateATA(mainAccount: Account, command: TokenCreateATACommand) {
-  const token = getCryptoAssetsStore().findTokenByAddressInCurrency(
+async function formatCreateATA(
+  mainAccount: Account,
+  command: TokenCreateATACommand,
+): Promise<string> {
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
     command.mint,
     mainAccount.currency.id,
   );

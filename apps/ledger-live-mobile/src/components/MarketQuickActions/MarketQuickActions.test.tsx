@@ -7,31 +7,26 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+initializeLegacyTokens(addTokens);
 
 const Stack = createStackNavigator();
 
+let usdcCurrency: TokenCurrency;
 const moneroCurrency = getCryptoCurrencyById("monero");
 const kaspaCurrency = getCryptoCurrencyById("kaspa");
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
-export const usdcCurrency: TokenCurrency = {
-  type: "TokenCurrency",
-  id: "ethereum/erc20/usd__coin",
-  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrency: ethereumCurrency,
-  tokenType: "erc20",
-  name: "USD Coin",
-  ticker: "USDC",
-  units: [
-    {
-      name: "USD Coin",
-      code: "USDC",
-      magnitude: 6,
-    },
-  ],
-};
+beforeAll(async () => {
+  const usdc = await legacyCryptoAssetsStore.findTokenById("ethereum/erc20/usd__coin");
+  if (!usdc) throw new Error("USDC token not found");
+  usdcCurrency = usdc;
+});
 
 const bitcoinAccount = genAccount("bitcoin-account", { currency: bitcoinCurrency });
 const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });
