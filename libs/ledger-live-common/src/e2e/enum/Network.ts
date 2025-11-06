@@ -34,4 +34,5 @@ export enum Network {
   KASPA = "Kaspa",
   HEDERA = "Hedera",
   SUI = "Sui",
+  VECHAIN = "Vechain",
 }

@@ -529,6 +529,20 @@ export class Account {
     1,
   );
 
+  static readonly VET_1 = new Account(
+    Currency.VET,
+    "Vet 1",
+    "0x6644c1ce77c5e5ef8d8bd3ae2a4e18239e5d418a5e0800ed5037818399e3a7f6",
+    1,
+  );
+
+  static readonly VET_2 = new Account(
+    Currency.VET,
+    "Vet 2",
+    "0x6644c1ce77c5e5ef8d8bd3ae2a4e18239e5d418a5e0800ed5037818399e3a7f6",
+    1,
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 

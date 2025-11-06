@@ -66,4 +66,6 @@ export class AppInfos {
   static readonly HEDERA = new AppInfos("Hedera");
 
   static readonly SUI = new AppInfos("Sui");
+
+  static readonly VECHAIN = new AppInfos("Vechain");
 }
