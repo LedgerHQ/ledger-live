@@ -215,7 +215,7 @@
     "@datadog/datadog-ci": "3.11.0",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
-    "@react-native-community/cli": "15.1.0",
+    "@react-native-community/cli": "20.0.0",
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
     "@ton/crypto": "^3.3.0",
