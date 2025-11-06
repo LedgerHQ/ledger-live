@@ -28,7 +28,6 @@ import {
   postSwapAccepted,
   postSwapCancelled,
 } from "@ledgerhq/live-common/exchange/swap/index";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { HardwareUpdate, renderLoading } from "~/components/DeviceAction/rendering";
@@ -222,31 +221,6 @@ export function Confirmation({
 
   const { t } = useTranslation();
 
-  // Check for NanoS + ThorSwap incompatibility
-  if (
-    deviceMeta?.device?.modelId === DeviceModelId.nanoS &&
-    provider &&
-    ["thorswap"].includes(provider.toLowerCase())
-  ) {
-    return (
-      <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
-        <ModalBottomAction
-          footer={
-            <View style={styles.footerContainer}>
-              <HardwareUpdate
-                t={t}
-                device={deviceMeta.device}
-                i18nKeyTitle="transfer.swap2.wrongDevice.title"
-                i18nKeyDescription="transfer.swap2.wrongDevice.description"
-                i18nKeyValues={{ provider: getProviderName(provider) }}
-              />
-            </View>
-          }
-        />
-      </QueuedDrawer>
-    );
-  }
-
   const keys = getIncompatibleCurrencyKeys(exchange);
 
   if (deviceMeta?.device?.modelId === DeviceModelId.nanoS && keys) {
@@ -289,6 +263,7 @@ export function Confirmation({
                   exchange,
                   exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
+                  provider: exchangeRate.current.provider,
                 }}
                 onResult={result => {
                   const { initSwapResult, initSwapError, swapId } = result as UnionToIntersection<
@@ -301,6 +276,7 @@ export function Confirmation({
                   }
                 }}
                 onError={error => onError({ error })}
+                onClose={onCancel}
                 analyticsPropertyFlow="swap"
                 location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
@@ -315,6 +291,7 @@ export function Confirmation({
                   account: fromAccount as AccountLike,
                   transaction: swapData.transaction,
                   appName: "Exchange",
+                  provider: exchangeRate.current.provider,
                 }}
                 onResult={result => {
                   const { transactionSignError, signedOperation, swapId } =
@@ -326,6 +303,7 @@ export function Confirmation({
                   }
                 }}
                 onError={error => onError({ error })}
+                onClose={onCancel}
                 analyticsPropertyFlow="swap"
                 location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
