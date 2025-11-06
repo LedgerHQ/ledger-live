@@ -109,6 +109,7 @@ export default async function setup(): Promise<void> {
     messages: {},
     e2eBridgeServer: new Subject<ServerData>(),
   };
+  global.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
   // Assign utilities and enums
   global.Account = Account;

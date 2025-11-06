@@ -12,7 +12,6 @@ import {
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type CliCommand = (
   userdataPath?: string,
@@ -299,24 +298,6 @@ export class InitializationManager {
           backendEnvironment: "PROD",
         },
       },
-      ptxSwapLiveAppMobile: {
-        enabled: true,
-        params: {
-          manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
-        },
-      },
-      llmAnalyticsOptInPrompt: {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-          entryPoints: [],
-        },
-      },
-      llmMarketQuickActions: {
-        enabled: true,
-      },
-      llmAccountListUI: { enabled: true },
     });
   }
 }

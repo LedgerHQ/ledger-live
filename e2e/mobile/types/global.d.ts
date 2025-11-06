@@ -35,6 +35,8 @@ declare global {
     e2eBridgeServer: Subject<ServerData>;
   };
 
+  var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
+
   var app: Application;
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;

@@ -176,7 +176,7 @@ export function runAddSubAccountTest(
             await app.portfolio.addAccount();
           }
 
-          const isModularDrawer = true;
+          const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
 
           if (isModularDrawer) {
             await app.common.disableSynchronizationForiOS();

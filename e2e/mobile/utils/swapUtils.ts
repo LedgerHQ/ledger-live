@@ -13,7 +13,7 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-  if (await app.modularDrawer.isModularDrawerVisible()) {
+  if (await app.modularDrawer.isFlowEnabled("live_app")) {
     await app.modularDrawer.selectAsset(account);
   } else {
     await app.common.performSearch(account.currency.id);
