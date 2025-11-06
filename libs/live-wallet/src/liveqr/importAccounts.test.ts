@@ -1,7 +1,6 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   importAccountsReduce,
   type ImportItem,
@@ -9,13 +8,9 @@ import {
   type SyncNewAccountsOutput,
 } from "./importAccounts";
 
-// Mock crypto assets store for testing
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({
-  findTokenById: async (_: string) => undefined,
-  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
-  getTokensSyncHash: () => Promise.resolve("0"),
-} as unknown as CryptoAssetsStore);
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "0",
+});
 
 // Mock account factory using fromAccountRaw for proper Account structure
 const createMockAccount = async (

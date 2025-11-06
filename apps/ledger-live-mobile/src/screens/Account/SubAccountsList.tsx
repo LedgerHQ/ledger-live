@@ -7,7 +7,6 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "~/const";
@@ -73,7 +72,7 @@ export default function SubAccountsList({
   const Placeholder = specific && specific.Placeholder;
 
   const isToken = useMemo(
-    () => listTokenTypesForCryptoCurrency(parentAccount.currency).length > 0,
+    () => (parentAccount.currency.tokenTypes || []).length > 0,
     [parentAccount],
   );
 

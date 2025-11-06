@@ -6,7 +6,7 @@ import {
 import keyBy from "lodash/keyBy";
 import groupBy from "lodash/groupBy";
 import BigNumber from "bignumber.js";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

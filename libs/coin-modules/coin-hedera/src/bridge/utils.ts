@@ -10,7 +10,7 @@ import {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { estimateFees } from "../logic/estimateFees";

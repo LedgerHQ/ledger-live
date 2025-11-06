@@ -6,10 +6,7 @@ import {
   importCountervalues,
 } from "./logic";
 import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import {
-  getCryptoAssetsStore,
-  setCryptoAssetsStore,
-} from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "./mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -17,12 +14,15 @@ import Prando from "prando";
 import api from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { pairId } from "./helpers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-initializeLegacyTokens(addTokens);
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+// Only setup if live-common is available (for integration tests)
+try {
+  // Setup CAL client store (automatically set as global store)
+  setupCalClientStore();
+} catch {
+  // live-common not available, skip setup
+}
 
 const value = "ll-ci/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);

@@ -1,6 +1,6 @@
 import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { apiClient } from "../network/api";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {

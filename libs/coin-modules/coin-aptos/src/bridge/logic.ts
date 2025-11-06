@@ -7,7 +7,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   APTOS_ASSET_ID,
   OP_TYPE,

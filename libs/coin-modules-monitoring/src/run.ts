@@ -1,10 +1,8 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { firstValueFrom, reduce } from "rxjs";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -12,8 +10,6 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import currencies, { AccountInfo, AccountType } from "./currencies";
 import { LogEntry, submitLogs } from "./datadog";
 import { Dist, measureCalls } from "./measure";
-
-initializeLegacyTokens(addTokens);
 
 interface RunResult {
   entries: LogEntry[];
@@ -120,7 +116,9 @@ function getSync(currency: CryptoCurrency) {
 
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   LiveConfig.setConfig(liveConfig);
-  setup(legacyCryptoAssetsStore);
+
+  // Setup CAL client store for monitoring (automatically set as global store)
+  setupCalClientStore();
   const result: RunResult = {
     entries: [],
     failed: false,

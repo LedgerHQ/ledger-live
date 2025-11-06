@@ -47,7 +47,7 @@ import {
 import { OpenDrawer } from "LLM/features/ModularDrawer/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 export function useWebView(
   {
     manifest,

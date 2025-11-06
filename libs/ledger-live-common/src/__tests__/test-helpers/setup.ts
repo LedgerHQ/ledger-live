@@ -1,11 +1,9 @@
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupMockCryptoAssetsStore } from "../../test-helpers/cryptoAssetsStore";
 import "./environment";
 import BigNumber from "bignumber.js";
 
-initializeLegacyTokens(addTokens);
+// Unit tests use mock store
+setupMockCryptoAssetsStore();
 
 jest.setTimeout(360000);
 
@@ -17,6 +15,3 @@ expect.extend({
     return { message, pass };
   },
 });
-
-// Use legacyCryptoAssetsStore for integration tests so tokens can be found
-setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);

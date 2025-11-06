@@ -1,7 +1,7 @@
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
@@ -53,7 +53,8 @@ const getRandomAssetId = (account: Account): string | undefined => {
 
     return old;
   }, []);
-  const ASAs = listTokensForCryptoCurrency(account.currency).map(asa => asa.id);
+  // Use empty array as fallback - tokens should be provided via tokensData option in genAccount
+  const ASAs: string[] = [];
   const diff = ASAs?.filter(asa => !optedInASA?.includes(asa));
   invariant(diff && diff.length > 0, "already got all optin");
   return sample(diff);

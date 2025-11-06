@@ -81,7 +81,7 @@ import { TokenAccountInfo } from "./network/chain/account/token";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,

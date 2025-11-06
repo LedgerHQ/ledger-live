@@ -2,16 +2,14 @@ import { faker } from "@faker-js/faker";
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
 import { getAccountShape } from "./synchronisation";
 import { Operation } from "@ledgerhq/types-live";
-
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
@@ -35,55 +33,26 @@ describe("scanAccounts", () => {
   const currency = getCryptoCurrencyById("vechain");
 
   beforeAll(() => {
-    // Initialize legacy tokens
-    initializeLegacyTokens(addTokens);
-
-    // Mock the crypto assets store
-    const vthoToken = {
+    const vthoToken: TokenCurrency = {
       type: "TokenCurrency",
       id: "vechain/vip180/vtho",
       contractAddress: "0x0000000000000000000000000000456E65726779",
-      parentCurrency: {
-        type: "CryptoCurrency",
-        id: "vechain",
-        coinType: 818,
-        name: "Vechain",
-        managerAppName: "VeChain",
-        ticker: "VET",
-        scheme: "vechain",
-        color: "#82BE00",
-        family: "vechain",
-        blockAvgTime: 10,
-        tokenTypes: ["vip180"],
-        units: [
-          { name: "VET", code: "VET", magnitude: 18 },
-          { name: "Gwei", code: "Gwei", magnitude: 9 },
-          { name: "Mwei", code: "Mwei", magnitude: 6 },
-          { name: "Kwei", code: "Kwei", magnitude: 3 },
-          { name: "wei", code: "wei", magnitude: 0 },
-        ],
-        explorerViews: [
-          {
-            tx: "https://explore.vechain.org/transactions/$hash",
-            address: "https://explore.vechain.org/accounts/$address",
-          },
-        ],
-      },
+      parentCurrency: currency,
       tokenType: "vip180",
-      name: "Vethor",
+      name: "VeThor",
       ticker: "VTHO",
+      delisted: false,
       disableCountervalue: false,
-      units: [{ name: "Vethor", code: "VTHO", magnitude: 18 }],
+      units: [{ name: "VeThor", code: "VTHO", magnitude: 18 }],
     };
 
-    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenById: jest.fn().mockImplementation((id: string) => {
+    setupMockCryptoAssetsStore({
+      findTokenById: async (id: string) => {
         if (id === "vechain/vip180/vtho") {
-          return Promise.resolve(vthoToken);
+          return vthoToken;
         }
-        return Promise.resolve(null);
-      }),
-      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
+        return undefined;
+      },
     });
 
     setupServer().listen({ onUnhandledRequest: "error" });

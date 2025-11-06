@@ -1,5 +1,6 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
@@ -12,9 +13,7 @@ import { createBridges } from "./index";
 import { getAccountShape } from "./synchronization";
 import { setupServer } from "msw/node";
 import { AccountTronAPI } from "../network/types";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -183,21 +182,24 @@ describe("sync", () => {
       },
     };
 
-    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenById: jest.fn().mockImplementation((id: string) => {
-        return Promise.resolve(mockTokens[id as keyof typeof mockTokens] || null);
-      }),
-      findTokenByAddressInCurrency: jest
-        .fn()
-        .mockImplementation((address: string, currencyId: string) => {
-          if (currencyId === "tron") {
-            const token = Object.values(mockTokens).find(
-              token => token.contractAddress.toLowerCase() === address.toLowerCase(),
-            );
-            return Promise.resolve(token || null);
-          }
-          return Promise.resolve(null);
-        }),
+    setupMockCryptoAssetsStore({
+      findTokenById: async (id: string): Promise<TokenCurrency | undefined> => {
+        return (
+          (mockTokens[id as keyof typeof mockTokens] as TokenCurrency | undefined) || undefined
+        );
+      },
+      findTokenByAddressInCurrency: async (
+        address: string,
+        currencyId: string,
+      ): Promise<TokenCurrency | undefined> => {
+        if (currencyId === "tron") {
+          const token = Object.values(mockTokens).find(
+            token => token.contractAddress.toLowerCase() === address.toLowerCase(),
+          );
+          return (token as TokenCurrency | undefined) || undefined;
+        }
+        return undefined;
+      },
     });
 
     const signer = jest.fn();
@@ -248,11 +250,7 @@ describe("scanAccounts", () => {
   beforeAll(() => {
     spyGetTronAccountNetwork = jest.spyOn(tronNetwork, "getTronAccountNetwork");
 
-    // Mock the crypto assets store for scanAccounts tests - same as sync tests
-    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenById: jest.fn().mockResolvedValue(null),
-      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
-    });
+    setupMockCryptoAssetsStore();
 
     coinConfig.setCoinConfig(() => ({
       status: {

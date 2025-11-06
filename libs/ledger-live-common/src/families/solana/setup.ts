@@ -19,8 +19,6 @@ import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
-
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) =>
   new LegacySignerSolana(transport);
 
@@ -31,7 +29,6 @@ const getCurrencyConfig = () => {
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,
-  getCryptoAssetsStore,
 );
 
 const messageSigner = {

@@ -13,14 +13,12 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { CryptoAssetsStoreGetter } from "@ledgerhq/types-live";
 import type { Observable } from "rxjs";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as EvmTransaction } from "../types/index";
 import { setCoinConfig, type CoinConfig } from "../config";
 import type { EvmSigner } from "../types/signer";
 import resolver from "../hw-getAddress";
-import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { getAccountShape, postSync, sync } from "./synchronization";
@@ -78,10 +76,8 @@ export function buildAccountBridge(
 export function createBridges(
   signerContext: SignerContext<EvmSigner>,
   coinConfig: CoinConfig,
-  cryptoAssetsStoreGetter: CryptoAssetsStoreGetter,
 ): Bridge<EvmTransaction> {
   setCoinConfig(coinConfig);
-  setCryptoAssetsStoreGetter(cryptoAssetsStoreGetter);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),

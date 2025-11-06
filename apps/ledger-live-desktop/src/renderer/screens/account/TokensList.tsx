@@ -2,7 +2,6 @@ import React, { useCallback, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -63,7 +62,7 @@ function TokensList({ account }: Props) {
 
   const { currency } = account;
   const family = currency.family;
-  const tokenTypes = listTokenTypesForCryptoCurrency(currency);
+  const tokenTypes = currency.tokenTypes || [];
   const isTokenAccount = tokenTypes.length > 0;
   const isEmpty = subAccounts.length === 0;
   const shouldSliceList = subAccounts.length >= 5;
