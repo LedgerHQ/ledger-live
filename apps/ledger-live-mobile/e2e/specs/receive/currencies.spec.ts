@@ -13,6 +13,25 @@ describe("Receive different currency", () => {
     await app.init({
       userdata: "skip-onboarding",
       knownDevices: [knownDevice],
+      featureFlags: {
+        llmModularDrawer: {
+          enabled: true,
+          params: {
+            add_account: false,
+            live_app: false,
+            live_apps_allowlist: [],
+            live_apps_blocklist: [],
+            receive_flow: true,
+            send_flow: false,
+            enableModularization: false,
+            searchDebounceTime: 300,
+            backendEnvironment: "STAGING",
+          },
+        },
+        noah: {
+          enabled: false,
+        },
+      },
     });
     deviceAction = new DeviceAction(knownDevice);
 
@@ -36,15 +55,17 @@ describe("Receive different currency", () => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
 
-    await app.receive.openViaDeeplink();
-    await app.common.performSearch(currencyName);
-    await app.receive.selectCurrency(currency.id);
-    if (network) await app.receive.selectNetwork(network);
+    await app.portfolio.openViaDeeplink();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.transferMenu.open();
+    await app.transferMenu.navigateToReceive();
+    await app.modularDrawer.performSearchByTicker(currency.ticker);
+    await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+    await app.modularDrawer.selectNetworkIfAsked(currency.name);
+    await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.addAccount.addAccountAtIndex(currency.name, network || currency.id, 1);
-    await app.addAccount.tapAddFunds();
-    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });
