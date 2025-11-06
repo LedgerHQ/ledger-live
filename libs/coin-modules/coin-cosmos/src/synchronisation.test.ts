@@ -21,7 +21,7 @@ const baseAccountInfoMock = {
   delegations: [],
   unbondings: [],
   balances: new BigNumber(0),
-  accountInfo: { sequence: 0, accountNumber: 0 },
+  accountInfo: { sequence: 0n, accountNumber: 0 },
 };
 
 describe("scanAccounts", () => {
@@ -32,11 +32,11 @@ describe("scanAccounts", () => {
   it.each([
     {
       balances: new BigNumber(100),
-      accountInfo: { sequence: 0, accountNumber: 0 },
+      accountInfo: { sequence: 0n, accountNumber: 0 },
     },
     {
       balances: new BigNumber(0),
-      accountInfo: { sequence: 1, accountNumber: 0 },
+      accountInfo: { sequence: 1n, accountNumber: 0 },
     },
   ])("returns an account flagged as used", async ({ balances, accountInfo }) => {
     // Given

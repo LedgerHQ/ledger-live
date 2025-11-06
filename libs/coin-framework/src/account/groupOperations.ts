@@ -42,9 +42,8 @@ function compareOps(op1: Operation, op2: Operation): boolean {
 
   const seq1 = op1.transactionSequenceNumber;
   const seq2 = op2.transactionSequenceNumber;
-
   if (seq1 !== undefined && seq2 !== undefined) {
-    return seq1 > seq2;
+    return seq1.gt(seq2);
   }
 
   if (seq1 !== undefined && seq2 === undefined) return true;

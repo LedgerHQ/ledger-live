@@ -129,7 +129,15 @@ export function useListHeaderComponents({
     .filter(pendingOperation => {
       return isEditableOperation({ account: mainAccount, operation: pendingOperation });
     })
-    .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
+    .sort((a, b) => {
+      if (a.transactionSequenceNumber!.isLessThan(b.transactionSequenceNumber!)) {
+        return -1;
+      }
+      if (a.transactionSequenceNumber!.isGreaterThan(b.transactionSequenceNumber!)) {
+        return 1;
+      }
+      return 0;
+    });
 
   const isOperationStuck =
     oldestEditableOperation &&

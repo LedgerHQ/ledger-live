@@ -34,7 +34,7 @@ export async function craftTransaction(
   const unsignedTransaction: TransactionLike = {
     type,
     to,
-    nonce,
+    nonce: Number(nonce),
     gasLimit: BigInt(gasLimit.toFixed(0)),
     data,
     value,

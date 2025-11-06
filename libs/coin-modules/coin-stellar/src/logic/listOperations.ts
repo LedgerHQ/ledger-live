@@ -49,7 +49,7 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
       date: operation.date,
     },
     details: {
-      sequence: operation.transactionSequenceNumber,
+      sequence: operation.transactionSequenceNumber?.toString(),
       ledgerOpType: operation.extra.ledgerOpType,
       assetAmount: operation.extra.assetAmount
         ? operation.extra.assetAmount

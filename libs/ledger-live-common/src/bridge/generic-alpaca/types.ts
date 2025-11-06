@@ -47,7 +47,7 @@ export type GenericTransaction = TransactionCommon & {
     parameters: { fees?: BigNumber | null };
   };
   tag?: number | null | undefined;
-  nonce?: number | null | undefined;
+  nonce?: BigNumber | null | undefined;
   feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
@@ -81,7 +81,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
     parameters: { fees?: string | null };
   };
   tag?: number | null | undefined;
-  nonce?: number | null | undefined;
+  nonce?: string | null | undefined;
   feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;

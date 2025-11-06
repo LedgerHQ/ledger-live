@@ -155,12 +155,17 @@ export const isElectionOpen = (): boolean => {
  */
 export const getNonce = (a: PolkadotAccount): number => {
   const lastPendingOp = a.pendingOperations[0];
-  const nonce = Math.max(
-    a.polkadotResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
-      : 0,
-  );
+  const seq = lastPendingOp?.transactionSequenceNumber;
+  const nextSeq = BigNumber.isBigNumber(seq)
+    ? seq.isNaN()
+      ? 0
+      : seq.plus(1).toNumber()
+    : typeof seq === "number" && Number.isFinite(seq)
+      ? seq + 1
+      : 0;
+
+  const nonce = Math.max(a.polkadotResources?.nonce ?? 0, nextSeq);
+
   return nonce;
 };
 

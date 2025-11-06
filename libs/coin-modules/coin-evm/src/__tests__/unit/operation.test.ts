@@ -204,13 +204,13 @@ describe("EVM Family", () => {
             blockHeight: null,
             value: new BigNumber(0),
             date: new Date(1986, 0, 1),
-            transactionSequenceNumber: 0,
+            transactionSequenceNumber: new BigNumber(0),
           };
           account.pendingOperations.push(pendingOperation);
 
           const res = getStuckAccountAndOperation(account, undefined);
 
-          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(account.id);
           expect(res?.parentAccount).toBe(undefined);
         });
@@ -229,15 +229,15 @@ describe("EVM Family", () => {
             blockHeight: null,
             value: new BigNumber(0),
             date: new Date(1986, 0, 1),
-            transactionSequenceNumber: 1,
+            transactionSequenceNumber: new BigNumber(1),
           };
           const pendingOperation2 = {
             ...pendingOperation1,
-            transactionSequenceNumber: 0,
+            transactionSequenceNumber: new BigNumber(0),
           };
           const pendingOperation3 = {
             ...pendingOperation1,
-            transactionSequenceNumber: 2,
+            transactionSequenceNumber: new BigNumber(2),
           };
           account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
 
@@ -245,7 +245,7 @@ describe("EVM Family", () => {
 
           const res = getStuckAccountAndOperation(account, undefined);
 
-          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account.id).toBe(account.id);
           expect(res?.parentAccount).toBe(undefined);
         });
@@ -268,13 +268,13 @@ describe("EVM Family", () => {
             blockHeight: null,
             value: new BigNumber(0),
             date: new Date(1986, 0, 1),
-            transactionSequenceNumber: 0,
+            transactionSequenceNumber: new BigNumber(0),
           };
           account.pendingOperations.push(pendingOperation);
 
           const res = getStuckAccountAndOperation(tokenAccount, account);
 
-          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(tokenAccount.id);
           expect(res?.parentAccount?.id).toBe(account.id);
         });
@@ -295,15 +295,15 @@ describe("EVM Family", () => {
             blockHeight: null,
             value: new BigNumber(0),
             date: new Date(1986, 0, 1),
-            transactionSequenceNumber: 1,
+            transactionSequenceNumber: new BigNumber(1),
           };
           const pendingOperation2 = {
             ...pendingOperation1,
-            transactionSequenceNumber: 0,
+            transactionSequenceNumber: new BigNumber(0),
           };
           const pendingOperation3 = {
             ...pendingOperation1,
-            transactionSequenceNumber: 2,
+            transactionSequenceNumber: new BigNumber(2),
           };
           account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
 
@@ -311,7 +311,7 @@ describe("EVM Family", () => {
 
           const res = getStuckAccountAndOperation(tokenAccount, account);
 
-          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(tokenAccount.id);
           expect(res?.parentAccount?.id).toBe(account.id);
         });

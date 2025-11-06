@@ -113,7 +113,7 @@ describe("EVM Family", () => {
               senders: [account.freshAddress],
               recipients: [transactionEIP1559.recipient],
               accountId: account.id,
-              transactionSequenceNumber: 1,
+              transactionSequenceNumber: new BigNumber(1),
               date: expect.any(Date),
               subOperations: [],
               nftOperations: [],

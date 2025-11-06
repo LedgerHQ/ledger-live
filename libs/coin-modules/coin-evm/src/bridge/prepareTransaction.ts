@@ -264,7 +264,7 @@ export const prepareForSignOperation = async ({
 
   const nonce = isValidNonce
     ? transaction.nonce
-    : await getSequence(account.currency, account.freshAddress);
+    : Number(await getSequence(account.currency, account.freshAddress));
 
   if (isNftTransaction(transaction)) {
     return {
@@ -272,7 +272,7 @@ export const prepareForSignOperation = async ({
       amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
       recipient: transaction.nft.contract, // recipient is then the NFT smart contract
       // data as already been added by the `prepareTokenTransaction` method
-      nonce,
+      nonce: nonce,
     };
   }
 
