@@ -75,9 +75,9 @@ export type GetValidatorsResponse = {
   empty: boolean;
 };
 
-const getBlockberryUrl = (route: string): string => {
+const getBlockberryUrl = (): string => {
   const currencyConfig = getCoinConfig();
-  return `${currencyConfig.infra.API_BLOCKBERRY_BASE_URL}/${route}`;
+  return `${currencyConfig.infra.API_VALIDATORS_BASE_URL}`;
 };
 
 export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
@@ -87,13 +87,10 @@ export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
   let hasMore = true;
 
   while (hasMore) {
-    const baseUrl = `${getBlockberryUrl("mina-mainnet/v1/validators")}`;
+    const baseUrl = `${getBlockberryUrl()}`;
     const { data } = await network<GetValidatorsResponse>({
       method: "GET",
       url: `${baseUrl}?page=${currentPage}&size=50&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
-      headers: {
-        "x-api-key": "",
-      },
     });
 
     validators.push(...data.content);

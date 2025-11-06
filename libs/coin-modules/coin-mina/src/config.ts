@@ -2,7 +2,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type MinaCoinConfig = () => CurrencyConfig & {
   infra: {
-    API_BLOCKBERRY_BASE_URL: string;
+    API_VALIDATORS_BASE_URL: string;
     API_MINA_ROSETTA_NODE: string;
     API_MINA_GRAPHQL_NODE: string;
   };
