@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
@@ -37,8 +36,10 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
   const token = useMemo(() => {
+    // TODO: listTokensForCryptoCurrency() was deprecated and removed. This feature was using listTokensForCryptoCurrency().
+    // Temporarily inlining empty array - this should be updated to use the new async token API (cryptoassetsstore functions)
     const options =
-      account && account.type === "Account" ? listTokensForCryptoCurrency(account.currency) : [];
+      account && account.type === "Account" ? [] : [];
     return options.find(
       ({ tokenType, contractAddress }) =>
         tokenType === transaction.assetReference && contractAddress === transaction.assetOwner,
