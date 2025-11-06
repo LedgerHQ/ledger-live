@@ -87,9 +87,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveProvider}
         component={ReceiveProvider}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerTitle: "",
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+          headerShown: false,
         }}
       />
 
