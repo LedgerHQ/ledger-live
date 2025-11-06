@@ -40,11 +40,6 @@ export const INITIAL_STATE = {
     settings: {
       ...state.settings,
       readOnlyModeEnabled: false,
-      overriddenFeatureFlags: {
-        llmAccountListUI: {
-          enabled: true,
-        },
-      },
     },
   }),
 };

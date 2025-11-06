@@ -9,7 +9,6 @@ import { track } from "~/analytics";
 import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
 import { AccountsListNavigator } from "./screens/AccountsList/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
@@ -36,7 +35,6 @@ type NavigationProps = BaseComposite<
 export default function Navigator() {
   const { colors } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
-  const accountListUIFF = useFeature("llmAccountListUI");
   const navigation = useNavigation<StackNavigatorNavigation<AddAccountsNavigatorParamList>>();
 
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
@@ -110,19 +108,17 @@ export default function Navigator() {
         }}
         initialParams={route.params}
       />
-      {accountListUIFF?.enabled && (
-        <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
-          options={{
-            headerTitle: "",
-            headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
-            headerRight: () => (
-              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
-            ),
-          }}
-        />
-      )}
+      <Stack.Screen
+        name={ScreenName.AccountsList}
+        component={AccountsList}
+        options={{
+          headerTitle: "",
+          headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+          headerRight: () => (
+            <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
+          ),
+        }}
+      />
       <Stack.Screen
         name={ScreenName.AddAccountsSuccess}
         component={AddAccountsSuccess}

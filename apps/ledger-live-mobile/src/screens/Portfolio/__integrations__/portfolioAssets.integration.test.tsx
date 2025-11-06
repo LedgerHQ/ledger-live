@@ -32,7 +32,7 @@ describe("portfolioAssets", () => {
   it("should render quick actions", async () => {
     const { getByText } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -48,7 +48,7 @@ describe("portfolioAssets", () => {
   it("should track click on tab account", async () => {
     const { getByText, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -67,7 +67,7 @@ describe("portfolioAssets", () => {
   it("should not track the same tab account click", async () => {
     const { getByText, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -84,7 +84,7 @@ describe("portfolioAssets", () => {
   it("should track click on tab assets", async () => {
     const { getByText, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -104,7 +104,7 @@ describe("portfolioAssets", () => {
   it("should not track the same tab assets click", async () => {
     const { getByText, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -120,7 +120,7 @@ describe("portfolioAssets", () => {
   it("should render assets list screen", async () => {
     const { getByText, getAllByText, getByTestId } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -148,7 +148,7 @@ describe("portfolioAssets", () => {
   it("should render see all assets button", async () => {
     const { getByText, getByTestId, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -171,7 +171,7 @@ describe("portfolioAssets", () => {
   it("should not render see all assets button", async () => {
     const { queryByText } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={true} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={true} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -186,7 +186,7 @@ describe("portfolioAssets", () => {
   it("should render see all accounts button", async () => {
     const { getByText, getByTestId, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -216,7 +216,7 @@ describe("portfolioAssets", () => {
   it("should not render see all accounts button", async () => {
     const { queryByText } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={true} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={true} />
       </TestNavigator>,
       {
         overrideInitialState: (state: State) => ({
@@ -231,7 +231,7 @@ describe("portfolioAssets", () => {
   it("should render accounts list", async () => {
     const { getByText, getByTestId, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );
@@ -267,7 +267,7 @@ describe("portfolioAssets", () => {
   it("should navigate to Assets screen", async () => {
     const { getByText, getAllByText, user } = render(
       <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        <PortfolioAssets hideEmptyTokenAccount={false} />
       </TestNavigator>,
       { ...INITIAL_STATE },
     );

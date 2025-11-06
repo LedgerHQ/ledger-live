@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationProp } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   title: React.ReactNode;
@@ -39,7 +38,6 @@ const SectionTitle = ({
   testID,
 }: Props) => {
   const { t } = useTranslation();
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const onLinkPress = useCallback(() => {
     if (onSeeAllPress) {
       onSeeAllPress();
@@ -60,7 +58,7 @@ const SectionTitle = ({
       <Text variant="small" fontWeight="semiBold" color="neutral.c70" uppercase flexShrink={1}>
         {title}
       </Text>
-      {(onSeeAllPress || navigatorName) && !llmAccountListUI?.enabled ? (
+      {onSeeAllPress || navigatorName ? (
         <StyledTouchableOpacity onPress={onLinkPress}>
           <TextLink onPress={onLinkPress} type={"color"}>
             {seeMoreText || t("common.seeAll")}

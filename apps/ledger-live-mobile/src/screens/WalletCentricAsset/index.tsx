@@ -204,7 +204,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
         <AccountsSection
           accounts={accounts}
           currencyId={currency.id}
-          currencyTicker={currency.ticker}
           onAddAccount={onAddAccount}
           isAddAccountCtaDisabled={isAddAccountCtaDisabled}
         />

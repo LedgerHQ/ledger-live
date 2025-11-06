@@ -14,9 +14,6 @@ async function navigateToSendScreen(accountName: string) {
 const beforeAllFunction = async (transaction: TransactionType) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
-    featureFlags: {
-      llmAccountListUI: { enabled: true },
-    },
     cliCommands: [
       (userdataPath?: string) => {
         return CLI.liveData({

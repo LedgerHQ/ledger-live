@@ -19,7 +19,6 @@ import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
 import { NavigationProp, NavigationState, useNavigation, useRoute } from "@react-navigation/native";
@@ -45,7 +44,6 @@ const isParamsType = (value: unknown): value is ParamsType =>
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
-  const accountListUIFF = useFeature("llmAccountListUI");
   const route = useRoute();
   const navigation = useNavigation();
 
@@ -91,19 +89,17 @@ export default function AccountsNavigator() {
           headerShown: false,
         }}
       />
-      {accountListUIFF?.enabled && (
-        <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
-          options={{
-            headerTitle: "",
-            headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
-            headerRight: () => (
-              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
-            ),
-          }}
-        />
-      )}
+      <Stack.Screen
+        name={ScreenName.AccountsList}
+        component={AccountsList}
+        options={{
+          headerTitle: "",
+          headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+          headerRight: () => (
+            <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
+          ),
+        }}
+      />
       <Stack.Screen
         name={ScreenName.Asset}
         component={readOnlyModeEnabled ? ReadOnlyAsset : Asset}

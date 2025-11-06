@@ -18,9 +18,6 @@ const getInitialState = (state: State) => ({
     ...state.settings,
     readOnlyModeEnabled: false,
     overriddenFeatureFlags: {
-      llmAccountListUI: {
-        enabled: true,
-      },
       llmWalletSync: {
         enabled: true,
         params: {

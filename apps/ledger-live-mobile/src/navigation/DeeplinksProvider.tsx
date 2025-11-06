@@ -344,16 +344,12 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const modularDrawer = useFeature("llmModularDrawer");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
-  const AccountsListScreenName = llmAccountListUI?.enabled
-    ? ScreenName.AccountsList
-    : ScreenName.Accounts;
 
   const modularDrawerFlowConfigs = getDrawerFlowConfigs(modularDrawer);
 
@@ -382,21 +378,19 @@ export const DeeplinksProvider = ({
                       ...modularDrawerFlowConfigs.classicReceive,
 
                       /** "ledgerlive://assets will open assets screen. */
-                      ...(llmAccountListUI?.enabled && {
-                        [NavigatorName.Assets]: {
-                          screens: {
-                            /**
-                             * @params ?showHeader: boolean
-                             * @params ?isSyncEnabled: boolean
-                             * @params ?sourceScreenName: string
-                             * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
-                             * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
-                             * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
-                             */
-                            [ScreenName.AssetsList]: "assets",
-                          },
+                      [NavigatorName.Assets]: {
+                        screens: {
+                          /**
+                           * @params ?showHeader: boolean
+                           * @params ?isSyncEnabled: boolean
+                           * @params ?sourceScreenName: string
+                           * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
+                           * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
+                           * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
+                           */
+                          [ScreenName.AssetsList]: "assets",
                         },
-                      }),
+                      },
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {
@@ -406,16 +400,6 @@ export const DeeplinksProvider = ({
 
                           [NavigatorName.Portfolio]: {
                             screens: {
-                              ...(!llmAccountListUI?.enabled && {
-                                [NavigatorName.PortfolioAccounts]: {
-                                  screens: {
-                                    /**
-                                     * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                                     */
-                                    [ScreenName.Accounts]: "accounts",
-                                  },
-                                },
-                              }),
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
@@ -481,7 +465,6 @@ export const DeeplinksProvider = ({
                            * "ledgerlive://accounts" opens the main portfolio screen of accounts.
                            */
                           /**
-                           * if llmAccountListUI is enabled
                            * @params ?showHeader: boolean
                            * @params ?canAddAccount: boolean
                            * @params ?isSyncEnabled: boolean
@@ -491,7 +474,7 @@ export const DeeplinksProvider = ({
                            * ie "ledgerlive://accounts?isSyncEnabled=true will open accounts screen with sync enabled
                            * ie "ledgerlive://accounts?sourceScreenName=Portfolio will open accounts screen with source screen name Portfolio for tracking inside the screen
                            */
-                          [AccountsListScreenName]: "accounts",
+                          [ScreenName.AccountsList]: "accounts",
                           /**
                            * @params ?currency: string
                            * @params ?address: string
@@ -704,8 +687,6 @@ export const DeeplinksProvider = ({
   }, [
     hasCompletedOnboarding,
     modularDrawerFlowConfigs,
-    llmAccountListUI?.enabled,
-    AccountsListScreenName,
     userAcceptedTerms,
     buySellUiManifestId,
     dispatch,

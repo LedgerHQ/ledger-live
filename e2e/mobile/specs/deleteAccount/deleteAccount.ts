@@ -9,9 +9,6 @@ export function runDeleteAccountTest(
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          llmAccountListUI: { enabled: true },
-        },
         cliCommands: [
           async (userdataPath?: string) =>
             CLI.liveData({

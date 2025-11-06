@@ -113,7 +113,6 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const noah = useFeature("noah");
 
   return (
@@ -607,13 +606,11 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
 
-        {llmAccountListUI?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.Assets}
-            component={AssetsListNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+        <Stack.Screen
+          name={NavigatorName.Assets}
+          component={AssetsListNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </>
   );
