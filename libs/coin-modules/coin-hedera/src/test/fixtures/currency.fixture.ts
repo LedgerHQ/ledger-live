@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
@@ -30,14 +29,55 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
   };
 };
 
+const HARDCODED_HEDERA_TOKENS: TokenCurrency[] = [
+  {
+    type: "TokenCurrency",
+    id: "hedera/hts/0.0.456858",
+    contractAddress: "0.0.456858",
+    parentCurrency: getMockedCurrency(),
+    tokenType: "hts",
+    name: "USDC",
+    ticker: "USDC",
+    delisted: false,
+    disableCountervalue: false,
+    units: [
+      {
+        name: "USDC",
+        code: "USDC",
+        magnitude: 6,
+      },
+    ],
+  },
+  {
+    type: "TokenCurrency",
+    id: "hedera/hts/0.0.7243470",
+    contractAddress: "0.0.7243470",
+    parentCurrency: getMockedCurrency(),
+    tokenType: "hts",
+    name: "HBARX",
+    ticker: "HBARX",
+    delisted: false,
+    disableCountervalue: false,
+    units: [
+      {
+        name: "HBARX",
+        code: "HBARX",
+        magnitude: 8,
+      },
+    ],
+  },
+];
+
 export const getTokenCurrencyFromCAL = (
   index: number,
   overrides?: Partial<TokenCurrency>,
 ): TokenCurrency => {
-  const hedera = getCryptoCurrencyById("hedera");
-  const token = listTokensForCryptoCurrency(hedera)[index];
+  invariant(
+    index >= 0 && index < HARDCODED_HEDERA_TOKENS.length,
+    `Token index ${index} out of range (available: 0-${HARDCODED_HEDERA_TOKENS.length - 1})`,
+  );
 
-  invariant(token, `token not found in CAL list on ${index} position`);
+  const token = HARDCODED_HEDERA_TOKENS[index];
 
   return {
     ...token,

@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -142,7 +141,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
     accountError,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const tokenTypes = mainAccount ? listTokenTypesForCryptoCurrency(mainAccount.currency) : [];
+  const tokenTypes = mainAccount?.currency.tokenTypes ?? [];
 
   // Nb in the context of LL-6449 (nft integration) simplified the wording for the warning.
   const tokenType =

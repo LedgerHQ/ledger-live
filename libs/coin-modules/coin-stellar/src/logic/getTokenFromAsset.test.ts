@@ -1,13 +1,34 @@
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
 beforeAll(() => {
-  initializeLegacyTokens(addTokensLegacy);
-  setCryptoAssetsStore(legacyCryptoAssetsStore);
+  // Setup mock store for unit tests
+  const mockStore: CryptoAssetsStore = {
+    findTokenById: async (id: string) => {
+      // Return USDC token for the test
+      if (id === "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN") {
+        return {
+          type: "TokenCurrency",
+          id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          parentCurrency: getCryptoCurrencyById("stellar"),
+          tokenType: "stellar",
+          name: "USDC",
+          ticker: "USDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDC", code: "USDC", magnitude: 7 }],
+        } as TokenCurrency;
+      }
+      return undefined;
+    },
+    findTokenByAddressInCurrency: async () => undefined,
+    getTokensSyncHash: async () => "",
+  };
+  setCryptoAssetsStore(mockStore);
 });
 
 describe("getTokenFromAsset", () => {

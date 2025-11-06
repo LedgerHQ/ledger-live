@@ -3,7 +3,7 @@ import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 import * as ETHERSCAN_API from "../../../../network/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
@@ -22,19 +22,10 @@ import {
   etherscanOperationToOperations,
 } from "../../../../adapters";
 import { getCoinConfig } from "../../../../config";
-import { setCryptoAssetsStoreGetter } from "../../../../cryptoAssetsStore";
 
-setCryptoAssetsStoreGetter(
-  () =>
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    ({
-      findTokenById: async (_id: string) => undefined,
-      findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
-        return undefined;
-      },
-      getTokensSyncHash: (_: string) => Promise.resolve("0"),
-    }) as CryptoAssetsStore,
-);
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "0",
+});
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");

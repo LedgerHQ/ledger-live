@@ -2,7 +2,7 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";

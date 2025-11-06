@@ -20,8 +20,6 @@ import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
-
 const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
   if (isDmkTransport(transport)) {
     return new DmkSignerEth(transport.dmk, transport.sessionId);
@@ -48,7 +46,6 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
 const bridge: Bridge<EvmTransaction> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,
-  getCryptoAssetsStore,
 );
 
 const messageSigner = {

@@ -10,8 +10,8 @@ import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Transaction as EvmTransaction, TransactionStatus } from "./types";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 type DeviceTransactionField = CommonDeviceTransactionField;
 

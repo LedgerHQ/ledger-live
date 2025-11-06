@@ -6,7 +6,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_API from "../../../../network/explorer/ledger";
 import {
@@ -17,22 +17,16 @@ import {
 } from "../../../fixtures/explorer/ledger.fixtures";
 import { getCoinConfig } from "../../../../config";
 import tokenData from "../../../../__fixtures__/ethereum-erc20-usd__coin.json";
-import { setCryptoAssetsStoreGetter } from "../../../../cryptoAssetsStore";
 
-setCryptoAssetsStoreGetter(
-  () =>
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    ({
-      findTokenById: async (_id: string) => undefined,
-      findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
-        if (_address === tokenData.contractAddress.toLowerCase()) {
-          return tokenData;
-        }
-        return undefined;
-      },
-      getTokensSyncHash: (_: string) => Promise.resolve("0"),
-    }) as CryptoAssetsStore,
-);
+setupMockCryptoAssetsStore({
+  findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
+    if (_address === tokenData.contractAddress.toLowerCase()) {
+      return tokenData;
+    }
+    return undefined;
+  },
+  getTokensSyncHash: async () => "0",
+});
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");

@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { apiClient } from "../network/api";

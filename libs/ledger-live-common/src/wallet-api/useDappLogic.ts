@@ -16,7 +16,7 @@ import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 type MessageId = number | string | null;
 

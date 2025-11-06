@@ -1,12 +1,6 @@
 import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client";
-import { createCryptoAssetsHooks } from "@ledgerhq/cryptoassets/hooks";
-import { setCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { StoreType } from "../context/store";
-
-export const cryptoAssetsHooks = createCryptoAssetsHooks({
-  useCALBackend: true,
-});
 
 export function setupCryptoAssetsStore(store: StoreType) {
   const cryptoAssetsStore = createRtkCryptoAssetsStore(cryptoAssetsApi, async <T>(action: T) => {
@@ -14,6 +8,6 @@ export function setupCryptoAssetsStore(store: StoreType) {
     return store.dispatch(action as Parameters<typeof store.dispatch>[0]) as unknown;
   });
 
+  // Set as global store in cryptoassets (single source of truth)
   setCryptoAssetsStore(cryptoAssetsStore);
-  setCryptoAssetsStoreForCoinFramework(cryptoAssetsStore);
 }

@@ -13,7 +13,6 @@ import { getCurrencyConfiguration } from "../../config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
@@ -55,7 +54,6 @@ const getCurrencyConfig = () =>
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(getSolanaSignerInstance),
   getCurrencyConfig,
-  getCryptoAssetsStore,
 );
 
 const messageSigner = {

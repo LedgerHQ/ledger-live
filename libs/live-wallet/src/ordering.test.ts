@@ -1,13 +1,11 @@
 // TODO rewrite the test
 
 import type { AccountRaw } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 setSupportedCurrencies(["ethereum"]);
 
@@ -88,12 +86,10 @@ const raws: AccountRaw[] = [
     balance: "4000000000000000000",
   },
 ];
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({
-  findTokenById: async (): Promise<TokenCurrency | undefined> => undefined,
-  findTokenByAddressInCurrency: async (): Promise<TokenCurrency | undefined> => undefined,
-  getTokensSyncHash: () => Promise.resolve("0"),
-} as CryptoAssetsStore);
+
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "0",
+});
 
 let accounts: Awaited<ReturnType<typeof fromAccountRaw>>[];
 const walletState: WalletState = {

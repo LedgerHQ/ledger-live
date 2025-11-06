@@ -16,7 +16,7 @@ import type {
 import type { StellarAddAssetFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import invariant from "invariant";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 
 type Props = BaseComposite<
   StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidationSuccess>
@@ -43,7 +43,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
 
-  const { useTokenByAddressInCurrency } = cryptoAssetsHooks;
   const { token, loading } = useTokenByAddressInCurrency(
     transaction.assetOwner!,
     account.currency.id,
