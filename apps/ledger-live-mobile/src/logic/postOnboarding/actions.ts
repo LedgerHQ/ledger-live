@@ -12,15 +12,7 @@ export const assetsTransferAction: PostOnboardingAction = {
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  getNavigationParams: () => [
-    NavigatorName.ReceiveFunds,
-    {
-      screen: ScreenName.ReceiveSelectCrypto,
-      params: {
-        device: null,
-      },
-    },
-  ],
+  getNavigationParams: () => [undefined],
 };
 
 export const buyCryptoAction: PostOnboardingAction = {

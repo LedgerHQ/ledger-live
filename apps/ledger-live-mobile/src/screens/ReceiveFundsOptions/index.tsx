@@ -15,10 +15,7 @@ import { useOpenReceiveDrawer } from "LLM/features/Receive";
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
-type EntryScreens =
-  | ScreenName.ReceiveSelectCrypto
-  | ScreenName.ReceiveSelectAccount
-  | ScreenName.ReceiveConfirmation;
+type EntryScreens = ScreenName.ReceiveConfirmation;
 
 type EntryScreenProps = {
   [K in EntryScreens]: StackNavigatorProps<ReceiveFundsStackParamList, K>;
@@ -87,28 +84,6 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
 
 function typesafeNavigation({ route, navigation }: EntryScreenProps) {
   switch (route.name) {
-    case ScreenName.ReceiveSelectCrypto: {
-      if (!isReceiveSelectCryptoParams(route.params)) {
-        return;
-      }
-      navigation.navigate(ScreenName.ReceiveSelectCrypto, {
-        ...route.params,
-        fromMenu: true,
-      });
-      break;
-    }
-
-    case ScreenName.ReceiveSelectAccount: {
-      if (!isReceiveSelectAccountParams(route.params)) {
-        return;
-      }
-      navigation.navigate(ScreenName.ReceiveSelectAccount, {
-        ...route.params,
-        fromMenu: true,
-      });
-      break;
-    }
-
     case ScreenName.ReceiveConfirmation: {
       if (!isReceiveConfirmationParams(route.params)) {
         return;
@@ -120,23 +95,6 @@ function typesafeNavigation({ route, navigation }: EntryScreenProps) {
       break;
     }
   }
-}
-
-function isReceiveSelectAccountParams(
-  params: unknown,
-): params is ReceiveFundsStackParamList[ScreenName.ReceiveSelectAccount] {
-  return isObject(params) && isCryptoOrTokenCurrency(params["currency"]);
-}
-
-function isReceiveSelectCryptoParams(
-  params: unknown,
-): params is ReceiveFundsStackParamList[ScreenName.ReceiveSelectCrypto] {
-  if (params === undefined) return true;
-  if (!isObject(params)) return false;
-  if (params["filterCurrencyIds"] !== undefined && !Array.isArray(params["filterCurrencyIds"]))
-    return false;
-  if (params["currency"] !== undefined && typeof params["currency"] !== "string") return false;
-  return true;
 }
 
 function isReceiveConfirmationParams(

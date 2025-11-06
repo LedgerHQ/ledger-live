@@ -42,13 +42,6 @@ describe("getDrawerFlowConfigs", () => {
             },
           },
         },
-        classicReceive: {
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              [ScreenName.ReceiveSelectCrypto]: "receive",
-            },
-          },
-        },
       });
     });
 
@@ -61,13 +54,6 @@ describe("getDrawerFlowConfigs", () => {
           [NavigatorName.AssetSelection]: {
             screens: {
               [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-        },
-        classicReceive: {
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
         },
@@ -90,13 +76,6 @@ describe("getDrawerFlowConfigs", () => {
           },
         },
         classicAddAccount: {},
-        classicReceive: {
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              [ScreenName.ReceiveSelectCrypto]: "receive",
-            },
-          },
-        },
       });
     });
 
@@ -154,13 +133,6 @@ describe("getDrawerFlowConfigs", () => {
           [NavigatorName.AssetSelection]: {
             screens: {
               [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-        },
-        classicReceive: {
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
         },
