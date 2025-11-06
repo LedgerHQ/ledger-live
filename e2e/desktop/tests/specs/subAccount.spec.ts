@@ -106,7 +106,10 @@ for (const token of subAccountReceive) {
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
         await app.account.clickAddToken();
-        await app.receive.selectToken(token.account);
+        if (token.shouldSelectTokenOnReceiveFlow) {
+          // e.g. for Hedera. This works together with the fact a family activate or not the receiveTokensConfig
+          await app.receive.selectToken(token.account);
+        }
 
         await app.receive.continue();
 

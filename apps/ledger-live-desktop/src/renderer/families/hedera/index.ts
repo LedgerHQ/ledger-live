@@ -23,6 +23,9 @@ const family: HederaFamily = {
   NoAssociatedAccounts,
   getTransactionExplorer,
   sendRecipientCanNext,
+  receiveTokensConfig: {
+    networkFamily: "hedera",
+  },
 };
 
 export default family;
