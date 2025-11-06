@@ -19,7 +19,6 @@ import { ScreenName } from "~/const";
 // TODO: FIX THE StackScreenProps<{ [key: string]: object }>
 type SelectDeviceNav =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
-  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
   | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 
 // Called from a bunch of different navigators with different params…

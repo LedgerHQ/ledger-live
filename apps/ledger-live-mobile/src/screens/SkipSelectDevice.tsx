@@ -14,7 +14,6 @@ import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection
 
 type Navigation =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
-  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
   | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>
   | StackNavigatorProps<DeviceSelectionNavigatorParamsList, ScreenName.SelectDevice>;
 
