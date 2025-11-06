@@ -1,35 +1,35 @@
 import { useCallback } from "react";
-import { useModularDrawerController, useModularDrawerVisibility } from "../ModularDrawer";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useModularDrawerController } from "../ModularDrawer";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
+import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
 
 type Props = {
-  onClick?: () => void;
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
   navigationOverride?: RootNavigation;
   hideBackButton?: boolean;
+  fromMenu?: boolean;
 };
 export function useOpenReceiveDrawer({
   currency,
   sourceScreenName,
-  onClick,
   navigationOverride,
   hideBackButton,
+  fromMenu,
 }: Props) {
   const defaultNavigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
+  const { openDrawer: openReceiveOptionsDrawer } = useReceiveOptionsDrawerController();
 
-  const isModularDrawerEnabled = isModularDrawerVisible({
-    location: ModularDrawerLocation.RECEIVE_FLOW,
+  const { showNoahMenu } = useReceiveNoahEntry({
+    currency: currency,
+    fromMenu: fromMenu,
   });
 
   const openReceiveConfirmation = useCallback(
@@ -66,30 +66,37 @@ export function useOpenReceiveDrawer({
     [defaultNavigation, navigationOverride, hideBackButton],
   );
 
-  const handleOnclick = useCallback(() => {
-    if (isModularDrawerEnabled) {
-      return openDrawer({
-        currencies: currency ? [currency.id] : [],
-        flow: "receive_flow",
-        source: sourceScreenName,
-        areCurrenciesFiltered: !!currency,
-        enableAccountSelection: true,
-        onAccountSelected: openReceiveConfirmation,
-      });
-    } else {
-      return onClick?.();
-    }
-  }, [
-    currency,
-    isModularDrawerEnabled,
-    onClick,
-    openDrawer,
-    sourceScreenName,
-    openReceiveConfirmation,
-  ]);
+  const handleOnclick = useCallback(
+    (fromReceiveOptionsDrawer: boolean = false) => {
+      if (showNoahMenu && !fromReceiveOptionsDrawer) {
+        openReceiveOptionsDrawer({
+          currency: currency,
+          sourceScreenName: sourceScreenName,
+          fromMenu: fromMenu,
+        });
+      } else {
+        return openDrawer({
+          currencies: currency ? [currency.id] : [],
+          flow: "receive_flow",
+          source: sourceScreenName,
+          areCurrenciesFiltered: !!currency,
+          enableAccountSelection: true,
+          onAccountSelected: openReceiveConfirmation,
+        });
+      }
+    },
+    [
+      currency,
+      openDrawer,
+      sourceScreenName,
+      openReceiveConfirmation,
+      showNoahMenu,
+      openReceiveOptionsDrawer,
+      fromMenu,
+    ],
+  );
 
   return {
     handleOpenReceiveDrawer: handleOnclick,
-    isModularDrawerEnabled,
   };
 }

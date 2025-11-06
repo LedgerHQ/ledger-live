@@ -16,19 +16,15 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "portfolio",
   });
 
   const goToReceiveFunds = useCallback(() => {
     track("button_clicked", { button: "Receive" });
 
-    if (isModularDrawerEnabled) {
-      handleOpenReceiveDrawer();
-    } else {
-      navigation.navigate(NavigatorName.ReceiveFunds, { screen: ScreenName.ReceiveSelectCrypto });
-    }
-  }, [navigation, handleOpenReceiveDrawer, isModularDrawerEnabled]);
+    handleOpenReceiveDrawer();
+  }, [handleOpenReceiveDrawer]);
 
   const goToBuyCrypto = useCallback(() => {
     track("button_clicked", {

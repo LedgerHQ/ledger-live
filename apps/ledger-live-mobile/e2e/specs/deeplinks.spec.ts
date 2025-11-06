@@ -4,8 +4,6 @@ $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
-  const arbitrumLong = "arbitrum";
-  const bobaLong = "boba";
 
   beforeAll(async () => {
     await app.init({
@@ -75,15 +73,6 @@ describe("DeepLinks Tests", () => {
     await app.send.sendViaDeeplink(ethereumLong);
     await app.send.expectFirstStep();
     await app.common.expectSearch(ethereumLong);
-  });
-
-  it("should open Receive pages", async () => {
-    await app.receive.openViaDeeplink();
-    await app.receive.expectFirstStep();
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStepNetworks([ethereumLong, arbitrumLong, bobaLong]);
   });
 
   it("should open Asset page for Bitcoin", async () => {
