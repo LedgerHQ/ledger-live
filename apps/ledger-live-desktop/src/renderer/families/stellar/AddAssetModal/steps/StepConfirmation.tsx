@@ -26,17 +26,17 @@ const Container = styled(Box).attrs(() => ({
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   // TODO: listTokensForCryptoCurrency() was deprecated and removed. This feature was using listTokensForCryptoCurrency().
   // Temporarily inlining empty array - this should be updated to use the new async token API (cryptoassetsstore functions)
-  const options = account ? [] : undefined;
-  const token = useMemo(
-    () =>
+  const token = useMemo(() => {
+    const options = account ? [] : undefined;
+    return (
       transaction &&
       options &&
       options.find(({ id }) => {
         const { assetCode, assetIssuer } = getAssetObject(id);
         return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
-      }),
-    [options, transaction],
-  );
+      })
+    );
+  }, [account, transaction]);
   if (optimisticOperation) {
     return (
       <Container>

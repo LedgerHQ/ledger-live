@@ -7,14 +7,10 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupCalClientStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
-
-initializeLegacyTokens(addTokens);
 
 describe.each([
   [
@@ -43,6 +39,7 @@ describe.each([
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
+    setupCalClientStore();
     setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
     module = createApi(config as EvmConfig, "ethereum");
   });
@@ -282,7 +279,8 @@ describe("EVM Api (SEI Network)", () => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    setupCalClientStore();
+    setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
     const config = {
       node: {
         type: "external",

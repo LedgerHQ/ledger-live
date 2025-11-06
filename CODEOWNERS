@@ -54,9 +54,8 @@ libs/ledger-live-common/src/families/                    @ledgerhq/coin-integrat
 libs/ledger-services/                                    @ledgerhq/coin-integration
 
 ### ... cryptoassets ongoing rework => the lib will eventually belong to live-hub (and we lift up to libs folder) ... ###
-libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
-libs/ledgerjs/packages/cryptoassets/src/hooks*           @ledgerhq/live-hub
-libs/ledgerjs/packages/cryptoassets/src/cal-client/      @ledgerhq/live-hub
+libs/ledgerjs/packages/cryptoassets                      @ledgerhq/live-hub
+libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration

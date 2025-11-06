@@ -2,8 +2,9 @@ import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
@@ -16,8 +17,31 @@ enum NFT_CONTRACTS {
 }
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = tokensById["ethereum/erc20/usd__coin"];
-if (!tokenCurrency) throw new Error("USDC token not found");
+
+// Hardcoded USDC token for tests
+const tokenCurrency: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd__coin",
+  contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  parentCurrency: currency,
+  tokenType: "erc20",
+  name: "USD Coin",
+  ticker: "USDC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+// Setup mock store with USDC token
+setupMockCryptoAssetsStore({
+  findTokenById: async (id: string) => {
+    if (id === "ethereum/erc20/usd__coin") {
+      return tokenCurrency;
+    }
+    return undefined;
+  },
+});
+
 const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
 const account = makeAccount("0xkvn", currency, [tokenAccount]);
 const accountWithNfts: Account = Object.freeze({

@@ -39,8 +39,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const token = useMemo(() => {
     // TODO: listTokensForCryptoCurrency() was deprecated and removed. This feature was using listTokensForCryptoCurrency().
     // Temporarily inlining empty array - this should be updated to use the new async token API (cryptoassetsstore functions)
-    const options =
-      account && account.type === "Account" ? [] : [];
+    const options = account && account.type === "Account" ? [] : [];
     return options.find(({ id }) => id === transaction.assetId);
   }, [account, transaction]);
   return (

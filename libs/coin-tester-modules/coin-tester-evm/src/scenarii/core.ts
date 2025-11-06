@@ -4,7 +4,6 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transact
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -13,13 +12,9 @@ import { killAnvil, spawnAnvil } from "../anvil";
 import { VITALIK, core, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { defaultNanoApp } from "../constants";
+import { STCORE_ON_CORE } from "../tokenFixtures";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
-
-const stcoreOnCore =
-  tokensById["core/erc20/liquid_staked_core_0xb3a8f0f0da9ffc65318aa39e55079796093029ad"];
-if (!stcoreOnCore) throw new Error("stCORE on Core token not found");
-const STCORE_ON_CORE = stcoreOnCore;
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
   const scenarioSendSTransaction: CoreScenarioTransaction = {

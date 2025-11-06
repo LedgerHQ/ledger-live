@@ -1,6 +1,4 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
@@ -15,9 +13,10 @@ import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
 import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
 
-// Initialize legacy tokens for tests
-initializeLegacyTokens(addTokens);
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;

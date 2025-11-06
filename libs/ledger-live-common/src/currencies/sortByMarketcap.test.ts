@@ -1,19 +1,30 @@
 import { sortCurrenciesByIds } from "./sortByMarketcap";
-import { listCryptoCurrencies, listTokens } from ".";
+import { listCryptoCurrencies } from ".";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { setup } from "../bridge/impl";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
-initializeLegacyTokens(addTokens);
-setup(legacyCryptoAssetsStore);
+// Setup a mock store for tests
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async (_id: string) => {
+    // Return undefined for tokens not found - the test will handle this
+    return undefined;
+  },
+  findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
+    return undefined;
+  },
+  getTokensSyncHash: async (_currencyId: string) => {
+    return "";
+  },
+};
+
+setup(mockStore);
 
 test("sortCurrenciesByIds snapshot", async () => {
-  const list = [...listCryptoCurrencies(), ...listTokens()];
+  const list = listCryptoCurrencies();
   const ids: string[] = [];
   for (const k in getBTCValues()) {
     const c =

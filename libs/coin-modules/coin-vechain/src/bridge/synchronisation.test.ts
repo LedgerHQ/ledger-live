@@ -3,8 +3,7 @@ import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
@@ -35,8 +34,26 @@ describe("scanAccounts", () => {
   const currency = getCryptoCurrencyById("vechain");
 
   beforeAll(() => {
-    // Initialize legacy tokens
-    initializeLegacyTokens(addTokens);
+    // Setup mock store with VTHO token
+    setupMockCryptoAssetsStore({
+      findTokenById: async (id: string) => {
+        if (id === "vechain/vip180/vtho") {
+          return {
+            type: "TokenCurrency",
+            id: "vechain/vip180/vtho",
+            contractAddress: "0x0000000000000000000000000000456E65726779",
+            parentCurrency: currency,
+            tokenType: "vip180",
+            name: "VeThor",
+            ticker: "VTHO",
+            delisted: false,
+            disableCountervalue: false,
+            units: [{ name: "VeThor", code: "VTHO", magnitude: 18 }],
+          } as any;
+        }
+        return undefined;
+      },
+    });
 
     // Mock the crypto assets store
     const vthoToken = {

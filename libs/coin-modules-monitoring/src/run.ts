@@ -1,8 +1,8 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { setupCalClientStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { firstValueFrom, reduce } from "rxjs";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -116,7 +116,10 @@ function getSync(currency: CryptoCurrency) {
 
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   LiveConfig.setConfig(liveConfig);
-  setup(legacyCryptoAssetsStore);
+
+  // Setup CAL client store for monitoring
+  const cryptoAssetsStore = setupCalClientStore();
+  setup(cryptoAssetsStore);
   const result: RunResult = {
     entries: [],
     failed: false,

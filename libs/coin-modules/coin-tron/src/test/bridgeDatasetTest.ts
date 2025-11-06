@@ -24,10 +24,17 @@ import {
 import { ACTIVATION_FEES } from "../logic/constants";
 import { fromTransactionRaw } from "../bridge/transaction";
 import type { Transaction, TronAccountRaw } from "../types";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
-initializeLegacyTokens(addTokens);
+// Setup minimal mock store for unit tests
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+};
+
+setCryptoAssetsStore(mockStore);
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";

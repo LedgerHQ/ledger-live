@@ -62,6 +62,10 @@
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
+    "./test-helpers/*": {
+      "require": "./lib/test-helpers/*.js",
+      "default": "./lib-es/test-helpers/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",

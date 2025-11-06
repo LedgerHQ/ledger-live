@@ -1,26 +1,62 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStoreGetter } from "@ledgerhq/coin-solana/cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
-initializeLegacyTokens(addTokens);
-
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");
-const solanaUsdc = tokensById["solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v"];
-if (!solanaUsdc) throw new Error("Solana USDC token not found");
-export const SOLANA_USDC = solanaUsdc;
-const solanaCwif = tokensById["solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1"];
-if (!solanaCwif) throw new Error("Solana CWIF token not found");
-export const SOLANA_CWIF = solanaCwif;
+
+// Hardcoded tokens for tests
+export const SOLANA_USDC: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+  contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+  name: "USD Coin",
+  ticker: "USDC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+export const SOLANA_CWIF: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1",
+  contractAddress: "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+  name: "Catwifhat",
+  ticker: "CWIF",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "CWIF", code: "CWIF", magnitude: 2 }],
+} as TokenCurrency;
+
+// Setup mock store with hardcoded tokens
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async (id: string) => {
+    if (id === SOLANA_USDC.id) return SOLANA_USDC;
+    if (id === SOLANA_CWIF.id) return SOLANA_CWIF;
+    return undefined;
+  },
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+};
+
+setCryptoAssetsStore(mockStore);
+
+// Also set it for coin-solana
+setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
 export const SOLANA_VIRTUAL: TokenCurrency = {
   type: "TokenCurrency",
   id: "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y",

@@ -3,18 +3,36 @@ import { initialState, loadCountervalues, calculate } from "./logic";
 import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 import api from "./api";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
-// Initialize legacy tokens
-initializeLegacyTokens(addTokens);
+// Setup mock store with DAI token for tests
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async (id: string) => {
+    if (id === "ethereum/erc20/dai_stablecoin_v2_0") {
+      return {
+        type: "TokenCurrency",
+        id: "ethereum/erc20/dai_stablecoin_v2_0",
+        contractAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
+        parentCurrency: getCryptoCurrencyById("ethereum"),
+        tokenType: "erc20",
+        name: "Dai Stablecoin",
+        ticker: "DAI",
+        delisted: false,
+        disableCountervalue: false,
+        units: [{ name: "DAI", code: "DAI", magnitude: 18 }],
+      } as TokenCurrency;
+    }
+    return undefined;
+  },
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+};
 
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+setCryptoAssetsStore(mockStore);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
@@ -142,7 +160,7 @@ test("mock load with btc-eth to track", async () => {
   ).toBe(1.4890024626718706e21);
 });
 test("DAI EUR latest price", async () => {
-  const dai = tokensById["ethereum/erc20/dai_stablecoin_v2_0"];
+  const dai = await mockStore.findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
   if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
@@ -166,7 +184,7 @@ test("DAI EUR latest price", async () => {
   ).toBeUndefined();
 });
 test("calculate(now()) is calculate(null)", async () => {
-  const dai = tokensById["ethereum/erc20/dai_stablecoin_v2_0"];
+  const dai = await mockStore.findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
   if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [

@@ -1,18 +1,47 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
 import { getCryptoCurrencyById } from "../currencies/index";
 import { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupMockCryptoAssetsStore } from "../test-helpers/cryptoAssetsStore";
 
-initializeLegacyTokens(addTokens);
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 
 const ETH = getCryptoCurrencyById("ethereum");
+
+// Create mock tokens for tests
+const ZRX_TOKEN: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/0x_project",
+  contractAddress: "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+  parentCurrency: ETH,
+  tokenType: "erc20",
+  name: "0x Project",
+  ticker: "ZRX",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "ZRX", code: "ZRX", magnitude: 18 }],
+};
+
+const REP_TOKEN: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/augur",
+  contractAddress: "0x1985365e9f78359a9B6AD760e32412f4a445E862",
+  parentCurrency: ETH,
+  tokenType: "erc20",
+  name: "Augur",
+  ticker: "REP",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "REP", code: "REP", magnitude: 18 }],
+};
 
 const mockedAccounts: Account[] = [
   genAccount("mocked-account-2", {
     currency: ETH,
+    tokensData: [ZRX_TOKEN, REP_TOKEN],
   }),
 ];
 

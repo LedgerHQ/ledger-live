@@ -12,7 +12,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -39,7 +39,7 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
   const newOperations = await getOperations(accountId, address, startAt);
 
   //Get last token operations
-  const vthoToken = tokensById["vechain/vip180/vtho"];
+  const vthoToken = await getCryptoAssetsStore().findTokenById("vechain/vip180/vtho");
   if (!vthoToken) throw new Error("VTHO token not found");
   const vthoAccountId = encodeTokenAccountId(accountId, vthoToken);
   const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 1); // from parameter must be 1 otherwise the response is empty

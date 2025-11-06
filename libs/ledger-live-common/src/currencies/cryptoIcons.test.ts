@@ -1,11 +1,30 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupMockCryptoAssetsStore } from "../test-helpers/cryptoAssetsStore";
 import { inferCryptoCurrencyIcon } from "./cryptoIcons";
 import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 
 beforeAll(() => {
-  initializeLegacyTokens(addTokensLegacy);
+  // Setup mock store for unit tests
+  setupMockCryptoAssetsStore({
+    findTokenById: async (id: string) => {
+      // Return a mock token for the test
+      if (id === "ethereum/erc20/usd_tether__erc20_") {
+        return {
+          type: "TokenCurrency",
+          id: "ethereum/erc20/usd_tether__erc20_",
+          contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          parentCurrency: getCryptoCurrencyById("ethereum"),
+          tokenType: "erc20",
+          name: "Tether USD",
+          ticker: "USDT",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+        } as any;
+      }
+      return undefined;
+    },
+  });
 });
 
 describe("inferCryptoCurrencyIcon", () => {

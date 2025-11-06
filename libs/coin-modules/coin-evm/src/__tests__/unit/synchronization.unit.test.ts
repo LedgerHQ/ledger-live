@@ -6,7 +6,8 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/live-common/test-helpers/cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -49,8 +50,11 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  let mockStore: ReturnType<typeof setupMockCryptoAssetsStore>;
+
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    mockStore = setupMockCryptoAssetsStore();
+    setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
   });
 
   beforeEach(() => {
@@ -706,10 +710,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -790,10 +791,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts when CAL has changed", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
 
         findTokenByAddressInCurrency.mockImplementation(
           (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
@@ -991,10 +989,7 @@ describe("EVM Family", () => {
       });
 
       it("should return no subAccounts when CAL do not return tokens", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
 
         findTokenByAddressInCurrency.mockImplementation(
           (_address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {

@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
+// Hardcoded token data for fixtures - these tokens are used in tests
 import { getCoinConfig } from "../../config";
 import {
   makeAccount,
@@ -53,11 +53,45 @@ export const swapHistory = [
   },
 ];
 
-export const tokenCurrencies = [
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  tokensById["ethereum/erc20/usd__coin"] as TokenCurrency,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  tokensById["ethereum/erc20/usd_tether__erc20_"] as TokenCurrency,
+// Hardcoded token currencies for test fixtures
+// These match the token IDs used in the test operations
+export const tokenCurrencies: TokenCurrency[] = [
+  {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usd__coin",
+    contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    parentCurrency: currency,
+    tokenType: "erc20",
+    name: "USD Coin",
+    ticker: "USDC",
+    delisted: false,
+    disableCountervalue: false,
+    units: [
+      {
+        name: "USDC",
+        code: "USDC",
+        magnitude: 6,
+      },
+    ],
+  } as TokenCurrency,
+  {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usd_tether__erc20_",
+    contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    parentCurrency: currency,
+    tokenType: "erc20",
+    name: "Tether USD",
+    ticker: "USDT",
+    delisted: false,
+    disableCountervalue: false,
+    units: [
+      {
+        name: "USDT",
+        code: "USDT",
+        magnitude: 6,
+      },
+    ],
+  } as TokenCurrency,
 ];
 
 export const tokenAccount = {
