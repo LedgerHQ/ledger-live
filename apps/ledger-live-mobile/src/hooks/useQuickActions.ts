@@ -21,7 +21,7 @@ import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export type QuickAction = {
   disabled: boolean;
-  route: EntryOf<BaseNavigatorStackParamList>;
+  route?: EntryOf<BaseNavigatorStackParamList>;
   customHandler?: () => void;
   icon: IconType;
 };
@@ -45,7 +45,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const hasCurrencyAccounts = currency ? !!accounts?.length : hasAnyAccounts;
   const hasFunds = !useSelector(areAccountsEmptySelector) && hasAnyAccounts;
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
@@ -82,12 +81,10 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       sourceScreenName: route.name,
     });
 
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
-    useOpenReceiveDrawer({
-      currency,
-      sourceScreenName: route.name,
-    });
-  const noah = useFeature("noah");
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    currency,
+    sourceScreenName: route.name,
+  });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -104,25 +101,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       },
       RECEIVE: {
         disabled: readOnlyModeEnabled,
-        route: [
-          NavigatorName.ReceiveFunds,
-          !currency
-            ? { screen: ScreenName.ReceiveSelectCrypto }
-            : {
-                screen: hasCurrencyAccounts
-                  ? ScreenName.ReceiveSelectAccount
-                  : ScreenName.ReceiveAddAccountSelectDevice,
-                params: {
-                  currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
-                },
-              },
-        ],
-        // We have two features getting enabled at the same time that change the entry point of receive funds
-        // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
-        // if modular drawer is enabled but noah is not then go there
-        // if neither is enabled we'll go through the old flow
-        customHandler:
-          isModularDrawerEnabledReceive && !noah?.enabled ? handleOpenReceiveDrawer : undefined,
+        customHandler: handleOpenReceiveDrawer,
         icon: IconsLegacy.ArrowBottomMedium,
       },
       SWAP: {
@@ -226,8 +205,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     readOnlyModeEnabled,
     hasCurrency,
     currency,
-    hasCurrencyAccounts,
-    isModularDrawerEnabledReceive,
     handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
@@ -239,7 +216,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     route,
     isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
-    noah,
   ]);
 
   return { quickActionsList };
