@@ -199,7 +199,7 @@ describe("craftTransaction", () => {
       {
         transactionIntent: {
           intentType: "transaction",
-          sequence: 15,
+          sequence: 15n,
           type: "send-legacy",
           recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
           amount: 10n,

@@ -62,7 +62,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-22632"]);
+      await addBugLink(["LIVE-22920"]);
 
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCount(0);

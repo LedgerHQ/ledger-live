@@ -26,7 +26,7 @@ export const buildOptimisticOperation = (
     blockHash: null,
     blockHeight: null,
     date: new Date(),
-    transactionSequenceNumber: transaction.nonce?.toNumber() || 0,
+    transactionSequenceNumber: transaction.nonce ?? new BigNumber(0),
     extra: {
       memo: transaction.memo,
     },

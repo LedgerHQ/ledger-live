@@ -160,7 +160,7 @@ export async function estimateFees(
   const unsignedTransaction: TransactionLike = {
     type: finalType,
     to,
-    nonce,
+    nonce: nonce !== undefined ? Number(nonce) : nonce,
     gasLimit: BigInt(gasLimit.toFixed(0)),
     data,
     value,

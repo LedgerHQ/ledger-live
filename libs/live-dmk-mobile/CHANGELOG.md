@@ -1,5 +1,37 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.14.0
+
+### Minor Changes
+
+- [#12369](https://github.com/LedgerHQ/ledger-live/pull/12369) [`f9a0abe`](https://github.com/LedgerHQ/ledger-live/commit/f9a0abe8575d186ba8b0f5dd1a3e1ef79918e293) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix BLE Scanning and OS update issues
+
+- [#12452](https://github.com/LedgerHQ/ledger-live/pull/12452) [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update DMK, Signers and Transports versions
+
+### Patch Changes
+
+- Updated dependencies [[`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/devices@8.7.0
+  - @ledgerhq/live-dmk-shared@0.15.0
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#12369](https://github.com/LedgerHQ/ledger-live/pull/12369) [`f9a0abe`](https://github.com/LedgerHQ/ledger-live/commit/f9a0abe8575d186ba8b0f5dd1a3e1ef79918e293) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix BLE Scanning and OS update issues
+
+- [#12452](https://github.com/LedgerHQ/ledger-live/pull/12452) [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update DMK, Signers and Transports versions
+
+### Patch Changes
+
+- Updated dependencies [[`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/devices@8.7.0-next.0
+  - @ledgerhq/live-dmk-shared@0.15.0-next.0
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+
 ## 0.13.0
 
 ### Minor Changes

@@ -145,6 +145,20 @@ jest.mock("@react-native-firebase/messaging", () => ({
   })),
 }));
 
+/*
+ * Mock `@react-native-firebase/remote-config` because importing causes:
+ * SyntaxError: Cannot use import statement outside a module
+ */
+jest.mock("@react-native-firebase/remote-config", () => {
+  const rc = {
+    getValue: jest.fn().mockReturnValue(),
+    setConfigSettings: jest.fn().mockResolvedValue(null),
+    setDefaults: jest.fn().mockResolvedValue(null),
+    fetchAndActivate: jest.fn().mockResolvedValue(null),
+  };
+  return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
+});
+
 jest.mock("@braze/react-native-sdk", () => ({}));
 
 jest.mock("react-native-webview", () => jest.fn());

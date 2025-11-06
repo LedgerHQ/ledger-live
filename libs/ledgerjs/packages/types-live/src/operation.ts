@@ -89,7 +89,7 @@ export type Operation<Extra = OperationExtra> = {
   // the hash of the block the operation is in
   blockHash: string | null | undefined;
   // if available, this is the sequence number of the transaction in blockchains (aka "nonce" in Ethereum)
-  transactionSequenceNumber?: number | undefined;
+  transactionSequenceNumber?: BigNumber | undefined;
   // the account id. available for convenient reason
   accountId: string;
   // --------------------------------------------- properties related to NFTs
@@ -130,7 +130,7 @@ export type OperationRaw<ExtraRaw = OperationExtraRaw> = {
   recipients: string[];
   blockHeight: number | null | undefined;
   blockHash: string | null | undefined;
-  transactionSequenceNumber?: number;
+  transactionSequenceNumber?: string;
   accountId: string;
   hasFailed?: boolean;
   // --------------------------------------------- properties related to NFTs

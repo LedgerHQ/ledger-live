@@ -336,7 +336,7 @@ export type TransactionIntent<
   useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
   senderPublicKey?: string;
-  sequence?: number;
+  sequence?: bigint;
   expiration?: number;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
@@ -459,7 +459,7 @@ export type AlpacaApi<
     transaction: string,
     sender: string,
     publicKey: string,
-    sequence: number,
+    sequence: bigint,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
@@ -534,7 +534,7 @@ export type BridgeApi<
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<number>;
+  getSequence: (address: string) => Promise<bigint>;
   getChainSpecificRules?: () => ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;

@@ -25,4 +25,13 @@ export default class AssetAccountsPage {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
+
+  async openAssetPageViaDeeplink(currencyId: string) {
+    await openDeeplink(`asset/${currencyId}`);
+  }
+
+  async expectAssetPage(currencyId?: string) {
+    const currency = currencyId?.toLowerCase() || "bitcoin";
+    await waitForElementById(this.accountAssetId(currency));
+  }
 }

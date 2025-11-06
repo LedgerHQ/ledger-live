@@ -59,7 +59,7 @@ export const ledgerOperationToOperations = (
         recipients: [to],
         blockHeight: ledgerOp.block.height,
         blockHash: ledgerOp.block.hash,
-        transactionSequenceNumber: ledgerOp.nonce_value,
+        transactionSequenceNumber: new BigNumber(ledgerOp.nonce_value),
         accountId,
         date,
         subOperations: [],

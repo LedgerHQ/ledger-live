@@ -1,11 +1,10 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { setupServer } from "msw/node";
+import { getEnv } from "@ledgerhq/live-env";
+import { HttpResponse, http } from "tests/server";
+import { waitFor, render, screen } from "tests/testSetup";
 import { AppGeoBlocker } from "../index";
-import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
 
-jest.mock("@ledgerhq/live-common/hooks/useOFACGeoBlockCheck", () => ({
-  useOFACGeoBlockCheck: jest.fn(),
-}));
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
@@ -17,58 +16,77 @@ jest.mock("../../AppBlocker", () => ({
     blocked ? null : children,
 }));
 
+const ofacResponse = jest.fn();
+const windowApi = {
+  appDirname: "",
+  appLoaded: jest.fn(),
+  reloadRenderer: jest.fn(),
+  openWindow: jest.fn(),
+};
+
 describe("AppGeoBlocker", () => {
+  const server = setupServer(
+    http.get(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/markets`, ofacResponse),
+    http.all("*", () => HttpResponse.json({})),
+  );
+  server.listen();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    window.api = windowApi;
   });
 
-  it("renders children when not blocked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: false });
-    render(
-      <AppGeoBlocker>
-        <div data-testid="child">Visible</div>
-      </AppGeoBlocker>,
-    );
-    expect(screen.getByTestId("child")).toBeInTheDocument();
-  });
-
-  it("renders geoblocking UI when blocked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: true });
-    render(
-      <AppGeoBlocker>
-        <div data-testid="child">Should not be visible</div>
-      </AppGeoBlocker>,
-    );
-    expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-  });
-
-  it("calls window.api.appLoaded on finish if window.api exists", () => {
-    const appLoaded = jest.fn();
-    window.api = {
-      appDirname: "",
-      appLoaded,
-      reloadRenderer: jest.fn(),
-      openWindow: jest.fn(),
-    };
-    let onFinish: () => void = () => {};
-    (useOFACGeoBlockCheck as jest.Mock).mockImplementation(({ onFinish: cb }) => {
-      onFinish = cb;
-      return { blocked: false };
-    });
+  it("calls window.api.appLoaded on finish if window.api exists", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 200 }));
     render(
       <AppGeoBlocker>
         <div>child</div>
       </AppGeoBlocker>,
     );
-    onFinish();
-    expect(appLoaded).toHaveBeenCalled();
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
   });
 
-  it("does not throw if window.api is undefined", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockImplementation(({ onFinish }) => {
-      if (onFinish) onFinish();
-      return { blocked: false };
-    });
+  it("renders children when not blocked", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 200 }));
+    render(
+      <AppGeoBlocker>
+        <div data-testid="child">Visible</div>
+      </AppGeoBlocker>,
+    );
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+
+    expect(screen.getByTestId("child")).toBeInTheDocument();
+  });
+
+  it("renders geoblocking UI when blocked", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 451 }));
+    render(
+      <AppGeoBlocker>
+        <div data-testid="child">Should not be visible</div>
+      </AppGeoBlocker>,
+    );
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+
+    expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+  });
+
+  it("renders children when API fails (graceful fallback)", async () => {
+    ofacResponse.mockRejectedValueOnce(new Error("Network error"));
+    render(
+      <AppGeoBlocker>
+        <div data-testid="child">Visible despite error</div>
+      </AppGeoBlocker>,
+    );
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+
+    expect(screen.getByTestId("child")).toBeInTheDocument();
+  });
+
+  it("does not throw if window.api is undefined", async () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    window.api = undefined as never;
+
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 200 }));
     expect(() =>
       render(
         <AppGeoBlocker>
@@ -78,19 +96,23 @@ describe("AppGeoBlocker", () => {
     ).not.toThrow();
   });
 
-  it("renders nothing if children is null and not blocked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: false });
+  it("renders nothing if children is null and not blocked", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 200 }));
     const { container } = render(<AppGeoBlocker>{null}</AppGeoBlocker>);
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders custom children when not blocked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: false });
+  it("renders custom children when not blocked", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 200 }));
     render(
       <AppGeoBlocker>
         <span>Custom Content</span>
       </AppGeoBlocker>,
     );
+    await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+
     expect(screen.getByText("Custom Content")).toBeInTheDocument();
   });
 });

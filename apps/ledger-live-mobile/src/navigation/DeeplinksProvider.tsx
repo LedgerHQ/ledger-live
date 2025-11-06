@@ -499,6 +499,11 @@ export const DeeplinksProvider = ({
                            * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
                            */
                           [ScreenName.Accounts]: "account",
+                          /**
+                           * @params currencyId: string (path parameter)
+                           * ie: "ledgerlive://asset/bitcoin" will open the Bitcoin Asset screen.
+                           */
+                          [ScreenName.Asset]: "asset/:currencyId",
                         },
                       },
                     },

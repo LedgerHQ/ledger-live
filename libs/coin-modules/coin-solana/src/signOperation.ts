@@ -42,9 +42,9 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
   const lastOpSeqNumber =
     account.pendingOperations[0]?.transactionSequenceNumber ??
     account.operations[0]?.transactionSequenceNumber ??
-    0;
+    new BigNumber(0);
 
-  optimisticOp.transactionSequenceNumber = lastOpSeqNumber + 1;
+  optimisticOp.transactionSequenceNumber = lastOpSeqNumber.plus(1);
 
   return optimisticOp;
 };

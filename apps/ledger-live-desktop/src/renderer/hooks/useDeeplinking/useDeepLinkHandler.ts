@@ -378,6 +378,11 @@ export function useDeepLinkHandler() {
             navigate(`/market`);
           }
           break;
+        case "asset":
+          if (path) {
+            navigate(`/asset/${path}`);
+          }
+          break;
         case "recover":
           navigate(`/recover/${path}`, undefined, search);
           break;

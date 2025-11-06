@@ -124,7 +124,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "OUT",
       "value": "34721890000",
     },
@@ -211,7 +211,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "OUT",
       "value": "50154000000",
     },
@@ -292,7 +292,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 13,
+      "transactionSequenceNumber": "13",
       "type": "OUT",
       "value": "154000014",
     },
@@ -316,7 +316,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 2,
+      "transactionSequenceNumber": "2",
       "type": "OUT",
       "value": "11388560000",
     },
@@ -378,7 +378,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 25,
+      "transactionSequenceNumber": "25",
       "type": "OUT",
       "value": "11157681946",
     },
@@ -402,7 +402,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 16,
+      "transactionSequenceNumber": "16",
       "type": "OUT",
       "value": "7156000015",
     },
@@ -464,7 +464,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 2,
+      "transactionSequenceNumber": "2",
       "type": "OUT",
       "value": "149000000",
     },
@@ -618,7 +618,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 11,
+      "transactionSequenceNumber": "11",
       "type": "NOMINATE",
       "value": "448000050",
     },
@@ -661,7 +661,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 7,
+      "transactionSequenceNumber": "7",
       "type": "OUT",
       "value": "12499000000",
     },
@@ -742,7 +742,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 24,
+      "transactionSequenceNumber": "24",
       "type": "OUT",
       "value": "157562913",
     },
@@ -880,7 +880,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 14,
+      "transactionSequenceNumber": "14",
       "type": "OUT",
       "value": "10156000014",
     },
@@ -961,7 +961,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 3,
+      "transactionSequenceNumber": "3",
       "type": "BOND",
       "value": "155000000",
     },
@@ -1002,7 +1002,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 10,
+      "transactionSequenceNumber": "10",
       "type": "BOND",
       "value": "123000035",
     },
@@ -1026,7 +1026,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 8,
+      "transactionSequenceNumber": "8",
       "type": "OUT",
       "value": "20154000000",
     },
@@ -1059,7 +1059,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 6,
+      "transactionSequenceNumber": "6",
       "type": "NOMINATE",
       "value": "469000000",
     },
@@ -1119,7 +1119,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 15,
+      "transactionSequenceNumber": "15",
       "type": "UNBOND",
       "value": "123000115",
     },
@@ -1333,7 +1333,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 17,
+      "transactionSequenceNumber": "17",
       "type": "OUT",
       "value": "254000015",
     },
@@ -1394,7 +1394,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 19,
+      "transactionSequenceNumber": "19",
       "type": "NOMINATE",
       "value": "151000095",
     },
@@ -1517,7 +1517,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 22,
+      "transactionSequenceNumber": "22",
       "type": "OUT",
       "value": "155562913",
     },
@@ -1676,7 +1676,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "OUT",
       "value": "154000000",
     },
@@ -1759,7 +1759,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 23,
+      "transactionSequenceNumber": "23",
       "type": "WITHDRAW_UNBONDED",
       "value": "135782765",
     },
@@ -1781,7 +1781,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 5,
+      "transactionSequenceNumber": "5",
       "type": "UNBOND",
       "value": "121000000",
     },
@@ -1805,7 +1805,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "OUT",
       "value": "153000000",
     },
@@ -1827,7 +1827,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 18,
+      "transactionSequenceNumber": "18",
       "type": "BOND",
       "value": "123000107",
     },
@@ -1851,7 +1851,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 9,
+      "transactionSequenceNumber": "9",
       "type": "OUT",
       "value": "10156000014",
     },
@@ -1912,7 +1912,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 4,
+      "transactionSequenceNumber": "4",
       "type": "NOMINATE",
       "value": "629000000",
     },
@@ -1936,7 +1936,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 12,
+      "transactionSequenceNumber": "12",
       "type": "OUT",
       "value": "154000014",
     },
@@ -1977,7 +1977,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 20,
+      "transactionSequenceNumber": "20",
       "type": "UNBOND",
       "value": "123000115",
     },
@@ -2001,7 +2001,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
       ],
-      "transactionSequenceNumber": 21,
+      "transactionSequenceNumber": "21",
       "type": "OUT",
       "value": "156562913",
     },
@@ -2163,7 +2163,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "NOMINATE",
       "value": "629000000",
     },
@@ -2549,7 +2549,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
       ],
-      "transactionSequenceNumber": 3,
+      "transactionSequenceNumber": "3",
       "type": "OUT",
       "value": "10035619149",
     },
@@ -3417,7 +3417,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
       ],
-      "transactionSequenceNumber": 2,
+      "transactionSequenceNumber": "2",
       "type": "OUT",
       "value": "16879125817",
     },
@@ -3540,7 +3540,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "BOND",
       "value": "155000000",
     },
@@ -3650,7 +3650,7 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 2`] = `
       "senders": [
         "13rdR5srvWF53VkNeJuz5WkGkG6FSXQQA7ZB5QBGig4ATCs9",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "OUT",
       "value": "29070125817",
     },
