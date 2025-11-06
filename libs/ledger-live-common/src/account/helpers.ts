@@ -15,7 +15,7 @@ import { isAccountEmpty as isVechainAccountEmpty } from "@ledgerhq/coin-vechain/
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { isAccountDelegating } from "../families/tezos/staking";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // TODO: remove this export and prefer import from root file.
 export {

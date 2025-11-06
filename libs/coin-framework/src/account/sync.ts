@@ -1,5 +1,5 @@
 import hash from "imurmurhash";
-import { getCryptoAssetsStore } from "../crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getSyncHash(
   currencyId: string,

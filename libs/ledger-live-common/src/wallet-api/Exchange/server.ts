@@ -4,7 +4,7 @@ import {
   getParentAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";

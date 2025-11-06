@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { asDerivationMode } from "../derivation";
 import type { AccountIdParams } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "../crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(!value.includes(":"), "AccountId '%s' component must not use colon", ctx);

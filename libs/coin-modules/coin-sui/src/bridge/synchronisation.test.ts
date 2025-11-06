@@ -9,23 +9,9 @@ import { getAccountShape } from "./synchronisation";
 import coinConfig from "../config";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import * as networkModule from "../network";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-// Mock findTokenById
-jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
-  findTokenById: async (coinType: string) => ({
-    id: coinType,
-    ticker: "TEST",
-    name: "Test Token",
-    countervalueTicker: "TEST",
-    standard: "SUI-20",
-    tokenType: "sui",
-    parentCurrency: { id: "sui" },
-    contract: "0x123",
-  }),
-}));
 
 jest.mock("../network", () => {
   const mockGetAccountBalances = jest.fn();

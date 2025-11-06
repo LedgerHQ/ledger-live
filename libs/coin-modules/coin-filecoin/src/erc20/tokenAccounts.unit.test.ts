@@ -2,15 +2,12 @@ import { erc20TxnToOperation } from "./tokenAccounts";
 import { createMockERC20Transfer, TEST_ADDRESSES } from "../test/fixtures";
 import BigNumber from "bignumber.js";
 import { TxStatus } from "../types";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+
+setupMockCryptoAssetsStore();
 
 jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index", () => ({
-  getCryptoAssetsStore: () => ({
-    findTokenByAddress: jest.fn(),
-  }),
 }));
 
 describe("erc20/tokenAccounts", () => {

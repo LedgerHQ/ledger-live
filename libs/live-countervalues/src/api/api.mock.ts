@@ -4,7 +4,7 @@ import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
 import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 const DAY = 24 * 60 * 60 * 1000;
 

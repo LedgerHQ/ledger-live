@@ -55,7 +55,7 @@ import {
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 

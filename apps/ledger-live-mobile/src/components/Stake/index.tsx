@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { NavigatorName, ScreenName } from "~/const";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";

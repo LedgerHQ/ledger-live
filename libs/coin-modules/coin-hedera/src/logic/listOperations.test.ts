@@ -5,9 +5,9 @@ import { listOperations } from "./listOperations";
 import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import * as utils from "./utils";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+setupMockCryptoAssetsStore();
 jest.mock("@ledgerhq/coin-framework/account/accountId");
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../network/api");
@@ -163,8 +163,10 @@ describe("listOperations", () => {
       transactions: mockTransactions,
       nextCursor: null,
     });
-    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockToken),
+
+    const findTokenByAddressInCurrencyMock = jest.fn().mockResolvedValue(mockToken);
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
     });
 
     const result = await listOperations({
@@ -290,8 +292,10 @@ describe("listOperations", () => {
       transactions: mockTransactions,
       nextCursor: null,
     });
-    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenByAddressInCurrency: jest.fn().mockReturnValue(null),
+
+    const findTokenByAddressInCurrencyMock = jest.fn().mockResolvedValue(null);
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
     });
 
     const result = await listOperations({

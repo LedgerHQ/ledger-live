@@ -20,9 +20,7 @@ import {
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
+// Removed: stores are now managed globally by @ledgerhq/cryptoassets/cal-client/store
 
 const alpacaized = {
   xrp: true,
@@ -105,10 +103,8 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   return wrapAccountBridge(jsBridge.accountBridge);
 }
 
-export function setup(store: CryptoAssetsStore) {
-  setCryptoAssetsStore(store);
-  setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
-}
+// Removed: setup() is no longer needed. The store is now managed globally by @ledgerhq/cryptoassets/cal-client/store.
+// Use setupCalClientStore() or setupMockCryptoAssetsStore() from @ledgerhq/cryptoassets/cal-client/test-helpers instead.
 
 function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,

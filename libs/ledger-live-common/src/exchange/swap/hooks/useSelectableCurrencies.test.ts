@@ -5,6 +5,10 @@ import { renderHook, waitFor } from "@testing-library/react";
 
 import { useSelectableCurrencies } from "./useSelectableCurrencies";
 import { getCryptoCurrencyById } from "../../../currencies";
+import { setupMockCryptoAssetsStore } from "../../../test-helpers/cryptoAssetsStore";
+
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 
 describe("useSelectableCurrencies", () => {
   test("returns an empty array when empty list are passed", async () => {

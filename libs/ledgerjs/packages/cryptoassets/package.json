@@ -36,17 +36,14 @@
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "catalog:",
     "@ledgerhq/logs": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
-    "bs58check": "^2.1.2",
     "invariant": "2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@testing-library/react": "14.2.2",
-    "@types/bs58check": "^2.1.0",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "@types/react": "^18.0.0",
@@ -84,6 +81,14 @@
     "./cal-client": {
       "require": "./lib/cal-client/index.js",
       "default": "./lib-es/cal-client/index.js"
+    },
+    "./cal-client/test-helpers": {
+      "require": "./lib/cal-client/test-helpers.js",
+      "default": "./lib-es/cal-client/test-helpers.js"
+    },
+    "./state": {
+      "require": "./lib/state.js",
+      "default": "./lib-es/state.js"
     },
     "./*": {
       "require": "./lib/*.js",

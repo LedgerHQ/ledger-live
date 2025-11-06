@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 type NavigationProps = StackNavigatorProps<{
   [key: string]: { currencyId: string };
@@ -9,7 +9,7 @@ type NavigationProps = StackNavigatorProps<{
 const useCurrency = () => {
   const route = useRoute<NavigationProps["route"]>();
   const { currencyId } = route.params;
-  const { currency } = cryptoAssetsHooks.useCurrencyById(currencyId || "");
+  const { currency } = useCurrencyById(currencyId || "");
 
   if (!currency) {
     throw new Error(`currency with id "${currencyId}" not found`);

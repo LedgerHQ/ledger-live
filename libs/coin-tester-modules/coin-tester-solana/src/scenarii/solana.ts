@@ -31,7 +31,6 @@ import {
 } from "../connection";
 import { Config, getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
 global.console = require("console");
 jest.setTimeout(100_000);
@@ -454,7 +453,6 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
     await createSplAccount(account.freshAddress, SOLANA_USDC, 5, "spl-token");
     await createSplAccount(account.freshAddress, SOLANA_CWIF, 5, "spl-token-2022");
     // Token not supported on LL as of 09/06/2025
-    addTokens([SOLANA_VIRTUAL]);
     await createSplAccount(account.freshAddress, SOLANA_VIRTUAL, 5, "spl-token");
     await initVoteAccount();
     await initStakeAccount(account.freshAddress, WITHDRAWABLE_AMOUNT);

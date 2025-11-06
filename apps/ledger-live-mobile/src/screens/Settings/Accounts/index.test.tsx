@@ -10,7 +10,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 const mockNavigate = jest.fn();
 const mockFindTokenById = jest.fn();
 
-jest.mock("@ledgerhq/live-common/bridge/crypto-assets/index", () => ({
+jest.mock("@ledgerhq/cryptoassets/state", () => ({
   getCryptoAssetsStore: () => ({
     findTokenById: mockFindTokenById,
   }),

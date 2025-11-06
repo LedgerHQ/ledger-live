@@ -50,7 +50,7 @@ import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
 import { tryParseAsMintAccount } from "./network/chain/account";
 import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getAccount(
   address: string,

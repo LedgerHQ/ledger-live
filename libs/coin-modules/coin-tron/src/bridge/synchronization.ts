@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/coin-framework/account";
 import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";

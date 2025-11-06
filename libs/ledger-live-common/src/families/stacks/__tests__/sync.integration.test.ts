@@ -1,7 +1,7 @@
 import { mapTxToOps } from "@ledgerhq/coin-stacks/bridge/utils/misc";
 import { fetchFullTxs } from "@ledgerhq/coin-stacks/network/api";
 import flatMap from "lodash/flatMap";
-import "../../../__tests__/test-helpers/setup";
+import "../../../__tests__/test-helpers/setup.integration";
 import { encodeAccountId } from "../../../account";
 
 describe("sync for token transfers", () => {
