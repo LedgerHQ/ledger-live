@@ -1,6 +1,7 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { retryUntilTimeout } from "utils/retry";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -38,6 +39,7 @@ export default class SwapLiveAppPage {
 
   @Step("Check if the from currency is already selected")
   async getFromCurrencyTexts() {
+    await waitWebElementByTestId(this.fromSelector);
     return await getWebElementText(this.fromSelector);
   }
 
@@ -105,12 +107,33 @@ export default class SwapLiveAppPage {
           this.specificQuoteCardProviderName(provider.name),
           provider.uiName,
         );
+        await this.waitForQuotesStable();
         await tapWebElementByElement(selectedProvider);
 
         return provider;
       }
     }
     throw new Error("No providers without KYC found");
+  }
+
+  @Step("Wait for quotes countdown to be stable")
+  async waitForQuotesStable(timeout: number = 20000) {
+    await retryUntilTimeout(async () => {
+      const countdownText = await getWebElementText(this.quotesCountDown);
+      const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
+
+      if (Number.isNaN(currentSeconds)) {
+        throw new TypeError(`Could not parse countdown value: ${countdownText}`);
+      }
+
+      if (currentSeconds < 2 || currentSeconds > 19) {
+        const errorMsg = `Countdown is ${currentSeconds}s, waiting for value between 2-19s`;
+        console.log(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      return currentSeconds;
+    }, timeout);
   }
 
   @Step("Tap execute swap button")
@@ -155,6 +178,7 @@ export default class SwapLiveAppPage {
     const provider: string = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
     await waitWebElementByTestId(baseProviderLocator + "amount-label");
+    await this.waitForQuotesStable();
     await tapWebElementByTestId(baseProviderLocator + "amount-label");
 
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
@@ -296,6 +320,7 @@ export default class SwapLiveAppPage {
     const providerName = Provider.getNameByUiName(provider);
     const providerTestId = this.specificQuoteCardProviderName(providerName);
     await waitWebElementByTestId(providerTestId);
+    await this.waitForQuotesStable();
     await tapWebElementByTestId(providerTestId);
   }
 
