@@ -101,7 +101,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
   const { pushToast } = useToastsActions();
 
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "receive_confirmation",
     currency: mainAccount?.currency,
     hideBackButton: false,
@@ -109,15 +109,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const onClose = useCallback(() => {
     if (mainAccount) {
-      if (isModularDrawerEnabled) {
-        handleOpenReceiveDrawer();
-      } else {
-        navigation.navigate(ScreenName.ReceiveSelectAccount, {
-          currency: mainAccount.currency,
-        });
-      }
+      handleOpenReceiveDrawer();
     }
-  }, [mainAccount, isModularDrawerEnabled, handleOpenReceiveDrawer, navigation]);
+  }, [mainAccount, handleOpenReceiveDrawer]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {

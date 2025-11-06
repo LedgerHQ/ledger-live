@@ -82,12 +82,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
       sourceScreenName: "asset_action",
       currencies: currency ? [currency.id] : undefined,
     });
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
-    useOpenReceiveDrawer({
-      sourceScreenName: "asset",
-      currency,
-    });
-  const noah = useFeature("noah");
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "asset",
+    currency,
+  });
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -201,23 +199,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "receive",
               label: t("transfer.receive.title"),
               Icon: iconReceive,
-              navigationParams: [
-                NavigatorName.ReceiveFunds,
-                {
-                  screen: ScreenName.ReceiveSelectAccount,
-                  params: {
-                    currency,
-                  },
-                },
-              ] as const,
-              // We have two features getting enabled at the same time that change the entry point of receive funds
-              // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
-              // if modular drawer is enabled but noah is not then go there
-              // if neither is enabled we'll go through the old flow
-              customHandler:
-                isModularDrawerEnabledReceive && !noah?.enabled
-                  ? handleOpenReceiveDrawer
-                  : undefined,
+              customHandler: handleOpenReceiveDrawer,
             },
             {
               id: "send",
@@ -287,9 +269,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     route,
     isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
-    isModularDrawerEnabledReceive,
     handleOpenReceiveDrawer,
-    noah,
   ]);
 
   return {
