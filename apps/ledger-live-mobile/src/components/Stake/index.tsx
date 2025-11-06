@@ -2,7 +2,8 @@
 import { useMemo, useLayoutEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { listCryptoCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
@@ -22,7 +23,7 @@ const StakeFlow = ({ route }: Props) => {
   const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
 
   const cryptoCurrencies = useMemo(() => {
-    return filterCurrencies(listCurrencies(true), {
+    return filterCurrencies(listCryptoCurrencies(), {
       currencies: currencies || [],
     });
   }, [currencies]);
