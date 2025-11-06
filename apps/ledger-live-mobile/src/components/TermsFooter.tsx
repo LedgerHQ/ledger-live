@@ -37,8 +37,6 @@ const TermsFooter: React.FC<{
   const providerUrls = providerName && urls.swap.providers[providerName];
 
   const { acceptTerms, urlsArray } = useMemo(() => {
-    //we need to check if the provider is changelly
-    //This helps to display specific message and urls for changelly
     const isChangelly = providerName === CHANGELLY_PROVIDER;
     const isNearIntents = providerName === NEAR_INTENTS_PROVIDER;
 
