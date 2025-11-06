@@ -106,11 +106,9 @@ export default class StakePage {
 
   @Step("Verify choose asset page is visible")
   async verifyChooseAssetPage() {
-    // Faire un methode pour detecter le mad
-    const isModularDrawer = true;
+    const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
     if (isModularDrawer) {
       console.log("MAD");
-      await app.common.disableSynchronizationForiOS();
       await waitForElementById(this.madSearchBarId);
       await detoxExpect(getElementById(this.madSearchBarId)).toBeVisible();
     } else {

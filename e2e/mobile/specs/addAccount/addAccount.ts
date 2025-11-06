@@ -18,11 +18,9 @@ export function runAddAccountTest(
     tags.forEach(tag => $Tag(tag));
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
-
-      const isModularDrawer = await app.modularDrawer.isModularDrawerVisible();
-      await app.common.disableSynchronizationForiOS();
       await app.addAccount.importWithYourLedger();
 
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
       if (isModularDrawer) {
         await app.modularDrawer.performSearchByTicker(currency.ticker);
         await app.modularDrawer.selectCurrencyByTicker(currency.ticker);

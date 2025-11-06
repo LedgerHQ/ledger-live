@@ -4,11 +4,12 @@ import { getFeature, DEFAULT_FEATURES } from "../featureFlags";
 
 export const getAllFeatureFlags = (
   appLanguage?: string,
+  localOverrides?: { [key in FeatureId]?: Feature | undefined },
 ): Partial<{ [key in FeatureId]: Feature }> => {
   const res: Partial<{ [key in FeatureId]: Feature }> = {};
   Object.keys(DEFAULT_FEATURES).forEach(k => {
     const key = k as keyof typeof DEFAULT_FEATURES;
-    const value = getFeature({ key, appLanguage });
+    const value = getFeature({ key, appLanguage, localOverrides });
     if (value !== null) res[key] = value;
   });
   return res;

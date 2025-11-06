@@ -1,3 +1,5 @@
+import { Feature_ModularDrawer } from "@ledgerhq/types-live";
+import { getFlags } from "../../bridge/server";
 import { delay } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
@@ -13,9 +15,17 @@ export default class ModularDrawer {
   assetItem = (addressOrId: string) => new RegExp(`asset-item-${addressOrId}`, "i");
   networkItemIdMAD = (networkId: string) => new RegExp(`network-item-${networkId}`, "i");
 
-  async isModularDrawerVisible(): Promise<boolean> {
-    //return await IsIdVisible(this.searchBarId, 2000);
-    return true;
+  private flags: Feature_ModularDrawer | null = null;
+
+  private async loadFlags(): Promise<void> {
+    this.flags ??= JSON.parse(await getFlags()).llmModularDrawer;
+  }
+
+  async isFlowEnabled<K extends keyof NonNullable<Feature_ModularDrawer["params"]>>(
+    flow: K,
+  ): Promise<boolean> {
+    await this.loadFlags();
+    return this.flags!.enabled && Boolean(this.flags!.params?.[flow]);
   }
 
   @Step("Select first account in modular drawer")

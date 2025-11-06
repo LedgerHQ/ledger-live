@@ -54,10 +54,12 @@ export default class BuySellPage {
   @Step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
-    await app.modularDrawer.selectAsset(account);
-    // FIXME: add condition when not modular drawer
-    // await this.selectCurrency(account.currency.id);
-    // await app.common.selectAccount(account);
+    if (await app.modularDrawer.isFlowEnabled("live_app")) {
+      await app.modularDrawer.selectAsset(account);
+    } else {
+      await this.selectCurrency(account.currency.id);
+      await app.common.selectAccount(account);
+    }
     jestExpect(await getWebElementText(this.cryptoCurrencySelector)).toBe(account.currency.ticker);
     jestExpect(await getWebElementText(this.cryptoAccountSelector)).toBe(
       `${getParentAccountName(account)}${account.tokenType ? ` (${account.currency.ticker})` : ""}`,
