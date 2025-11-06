@@ -1,4 +1,4 @@
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
  * In this file, we define the rules to establish a match between a known device and a scanned device.
@@ -9,7 +9,17 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
  *
  * The first change means that we cannot anymore rely solely only on deviceId (which is the BLE address) because it will change.
  * So we also try to match the device name.
+ *
+ * So for instance, we will try to match
+ * - an "old" device named "Ledger Nano X 123A" with a "new" device named "123A"
+ * - an "old" device named "Custom Device Name" with a "new" device named "Custom Device Name"
  */
+
+export type DeviceBaseInfo = {
+  deviceId: string;
+  deviceName?: string | null | undefined; // shitty typing for compatibility
+  modelId: DeviceModelId;
+};
 
 export function isFormattedAsOldDeviceDefaultBleName(name: string): boolean {
   /**
@@ -31,8 +41,8 @@ export function matchDeviceByName({
   oldDevice,
   newDevice,
 }: {
-  oldDevice: Device;
-  newDevice: Device;
+  oldDevice: DeviceBaseInfo;
+  newDevice: DeviceBaseInfo;
 }): boolean {
   const { deviceName: oldDeviceName } = oldDevice;
   const { deviceName: newDeviceName } = newDevice;
@@ -55,13 +65,13 @@ export function matchDeviceByDeviceId({
   deviceA,
   deviceB,
 }: {
-  deviceA: Device;
-  deviceB: Device;
+  deviceA: DeviceBaseInfo;
+  deviceB: DeviceBaseInfo;
 }): boolean {
   return deviceA.deviceId === deviceB.deviceId;
 }
 
-export function isMatchingDeviceModel(deviceA: Device, deviceB: Device): boolean {
+export function isMatchingDeviceModel(deviceA: DeviceBaseInfo, deviceB: DeviceBaseInfo): boolean {
   return deviceA.modelId === deviceB.modelId;
 }
 
@@ -69,7 +79,10 @@ export function isMatchingDeviceModel(deviceA: Device, deviceB: Device): boolean
  * For a given old device, find the matching new device in the list of new devices.
  * First try to find a matching device by deviceId, then if not found, try to find a matching device by name.
  */
-export function findMatchingNewDevice(oldDevice: Device, newDevices: Device[]): Device | null {
+export function findMatchingNewDevice(
+  oldDevice: DeviceBaseInfo,
+  newDevices: DeviceBaseInfo[],
+): DeviceBaseInfo | null {
   return (
     newDevices.find(
       newDevice =>
@@ -89,7 +102,10 @@ export function findMatchingNewDevice(oldDevice: Device, newDevices: Device[]): 
  * For a given new device, find the matching old device in the list of old devices.
  * First try to find a matching device by deviceId, then if not found, try to find a matching device by name.
  */
-export function findMatchingOldDevice(newDevice: Device, oldDevices: Device[]): Device | null {
+export function findMatchingOldDevice(
+  newDevice: DeviceBaseInfo,
+  oldDevices: DeviceBaseInfo[],
+): DeviceBaseInfo | null {
   return (
     oldDevices.find(
       oldDevice =>

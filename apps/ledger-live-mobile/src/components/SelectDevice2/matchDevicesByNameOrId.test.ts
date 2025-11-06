@@ -5,15 +5,14 @@ import {
   isFormattedAsNewDeviceDefaultBleName,
   isFormattedAsOldDeviceDefaultBleName,
   findMatchingOldDevice,
+  type DeviceBaseInfo,
 } from "./matchDevicesByNameOrId";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-const makeDevice = (overrides: Partial<Device> = {}): Device => ({
+const makeDevice = (overrides: Partial<DeviceBaseInfo> = {}): DeviceBaseInfo => ({
   deviceId: "device-123",
   deviceName: undefined,
   modelId: DeviceModelId.nanoX,
-  wired: false,
   ...overrides,
 });
 
@@ -114,7 +113,7 @@ describe("findMatchingNewDevice", () => {
   describe("finding a match", () => {
     test("returns matching device by deviceId when found", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: "Device 1" });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 2" }),
         makeDevice({ deviceId: "device-123", deviceName: "Device 3" }),
         makeDevice({ deviceId: "device-789", deviceName: "Device 1" }),
@@ -126,7 +125,7 @@ describe("findMatchingNewDevice", () => {
 
     test("returns matching device by name when deviceId does not match", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: "Custom Device Name" });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 1" }),
         makeDevice({ deviceId: "device-789", deviceName: "Custom Device Name" }),
       ];
@@ -140,7 +139,7 @@ describe("findMatchingNewDevice", () => {
         deviceId: "device-123",
         deviceName: "Ledger Nano X ABCD",
       });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 2" }),
         makeDevice({ deviceId: "device-789", deviceName: "ABCD" }),
       ];
@@ -151,7 +150,7 @@ describe("findMatchingNewDevice", () => {
 
     test("prioritizes deviceId match over name match", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: "Device 1" });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 1" }),
         makeDevice({ deviceId: "device-123", deviceName: "Different Name" }),
       ];
@@ -162,7 +161,7 @@ describe("findMatchingNewDevice", () => {
 
     test("returns first matching device by name when multiple name matches exist", () => {
       const device = makeDevice({ deviceId: "device-999", deviceName: "Device 1" });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 1" }),
         makeDevice({ deviceId: "device-789", deviceName: "Device 1" }),
       ];
@@ -175,7 +174,7 @@ describe("findMatchingNewDevice", () => {
   describe("no match found", () => {
     test("returns null when no match is found", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: "Device 1" });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Device 2" }),
         makeDevice({ deviceId: "device-789", deviceName: "Device 3" }),
       ];
@@ -186,7 +185,7 @@ describe("findMatchingNewDevice", () => {
 
     test("returns null when newDevices array is empty", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: "Device 1" });
-      const newDevices: Device[] = [];
+      const newDevices: DeviceBaseInfo[] = [];
 
       const result = findMatchingNewDevice(device, newDevices);
       expect(result).toBe(null);
@@ -194,7 +193,9 @@ describe("findMatchingNewDevice", () => {
 
     test("returns null when device has no deviceName and no deviceId match", () => {
       const device = makeDevice({ deviceId: "device-123", deviceName: null });
-      const newDevices: Device[] = [makeDevice({ deviceId: "device-456", deviceName: "Device 1" })];
+      const newDevices: DeviceBaseInfo[] = [
+        makeDevice({ deviceId: "device-456", deviceName: "Device 1" }),
+      ];
 
       const result = findMatchingNewDevice(device, newDevices);
       expect(result).toBe(null);
@@ -208,7 +209,7 @@ describe("findMatchingNewDevice", () => {
         deviceName: "Device 1",
         modelId: DeviceModelId.nanoX,
       });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-123",
           deviceName: "Device 1",
@@ -226,7 +227,7 @@ describe("findMatchingNewDevice", () => {
         deviceName: "Device 1",
         modelId: DeviceModelId.nanoX,
       });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-456",
           deviceName: "Device 1",
@@ -244,7 +245,7 @@ describe("findMatchingNewDevice", () => {
         deviceName: "Ledger (Nano X) ABCD",
         modelId: DeviceModelId.nanoX,
       });
-      const newDevices: Device[] = [
+      const newDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-456",
           deviceName: "ABCD",
@@ -262,7 +263,7 @@ describe("findMatchingOldDevice", () => {
   describe("finding a match", () => {
     test("returns matching device by deviceId when found", () => {
       const newDevice = makeDevice({ deviceId: "device-123", deviceName: "ABCD" });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X EFGH" }),
         makeDevice({ deviceId: "device-123", deviceName: "Ledger Nano X ABCD" }),
         makeDevice({ deviceId: "device-789", deviceName: "Ledger Nano X ABCD" }),
@@ -277,7 +278,7 @@ describe("findMatchingOldDevice", () => {
         deviceId: "device-123",
         deviceName: "Custom Device Name",
       });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X EFGH" }),
         makeDevice({ deviceId: "device-789", deviceName: "Custom Device Name" }),
       ];
@@ -291,7 +292,7 @@ describe("findMatchingOldDevice", () => {
         deviceId: "device-123",
         deviceName: "ABCD",
       });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X EFGH" }),
         makeDevice({ deviceId: "device-789", deviceName: "Ledger Nano X ABCD" }),
       ];
@@ -302,7 +303,7 @@ describe("findMatchingOldDevice", () => {
 
     test("prioritizes deviceId match over name match", () => {
       const newDevice = makeDevice({ deviceId: "device-123", deviceName: "ABCD" });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X ABCD" }),
         makeDevice({ deviceId: "device-123", deviceName: "Ledger Nano X EFGH" }),
       ];
@@ -313,7 +314,7 @@ describe("findMatchingOldDevice", () => {
 
     test("returns first matching device by name when multiple name matches exist", () => {
       const newDevice = makeDevice({ deviceId: "device-999", deviceName: "ABCD" });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X ABCD" }),
         makeDevice({ deviceId: "device-789", deviceName: "Ledger Nano X ABCD" }),
       ];
@@ -326,7 +327,7 @@ describe("findMatchingOldDevice", () => {
   describe("no match found", () => {
     test("returns null when no match is found", () => {
       const newDevice = makeDevice({ deviceId: "device-123", deviceName: "ABCD" });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X EFGH" }),
         makeDevice({ deviceId: "device-789", deviceName: "Ledger Nano X EFGH" }),
       ];
@@ -337,7 +338,7 @@ describe("findMatchingOldDevice", () => {
 
     test("returns null when oldDevices array is empty", () => {
       const newDevice = makeDevice({ deviceId: "device-123", deviceName: "ABCD" });
-      const oldDevices: Device[] = [];
+      const oldDevices: DeviceBaseInfo[] = [];
 
       const result = findMatchingOldDevice(newDevice, oldDevices);
       expect(result).toBe(null);
@@ -345,7 +346,7 @@ describe("findMatchingOldDevice", () => {
 
     test("returns null when device has no deviceName and no deviceId match", () => {
       const newDevice = makeDevice({ deviceId: "device-123", deviceName: null });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({ deviceId: "device-456", deviceName: "Ledger Nano X ABCD" }),
       ];
 
@@ -361,7 +362,7 @@ describe("findMatchingOldDevice", () => {
         deviceName: "ABCD",
         modelId: DeviceModelId.nanoX,
       });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-123",
           deviceName: "Ledger Nano X ABCD",
@@ -379,7 +380,7 @@ describe("findMatchingOldDevice", () => {
         deviceName: "ABCD",
         modelId: DeviceModelId.nanoX,
       });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-456",
           deviceName: "Ledger Nano X ABCD",
@@ -397,7 +398,7 @@ describe("findMatchingOldDevice", () => {
         deviceName: "ABCD",
         modelId: DeviceModelId.nanoX,
       });
-      const oldDevices: Device[] = [
+      const oldDevices: DeviceBaseInfo[] = [
         makeDevice({
           deviceId: "device-456",
           deviceName: "Ledger Nano X ABCD",

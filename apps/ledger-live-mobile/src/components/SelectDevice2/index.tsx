@@ -12,7 +12,7 @@ import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName } from "~/actions/ble";
+import { saveBleDeviceName, updateKnownDevice } from "~/actions/ble";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
@@ -33,7 +33,6 @@ import {
   useBleDevicesScanning,
   filterScannedDevice,
   useDeviceManagementKitEnabled,
-  ScannedDevice,
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
@@ -42,6 +41,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
+import { DeviceBaseInfo, findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -73,6 +73,10 @@ type Props = {
   children?: React.ReactNode;
 };
 
+/**
+ * FIXME: we should completely rebuild this component ASAP,
+ * it has grown overly complex and is very difficult to maintain.
+ */
 export default function SelectDevice({
   onSelect,
   requestToSetHeaderOptions,
@@ -97,7 +101,7 @@ export default function SelectDevice({
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
 
-  const knownDevices = useSelector(bleDevicesSelector);
+  const bleKnownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const isLDMKEnabled = useDeviceManagementKitEnabled();
@@ -161,6 +165,15 @@ export default function SelectDevice({
       dispatch(setHasConnectedDevice(true));
       onSelect(device);
       dispatch(setReadOnlyMode(false));
+      if (!device.wired) {
+        dispatch(
+          updateKnownDevice({
+            id: device.deviceId,
+            name: device.deviceName ?? "",
+            modelId: device.modelId,
+          }),
+        );
+      }
     },
     [dispatch, onSelect],
   );
@@ -181,11 +194,12 @@ export default function SelectDevice({
         setIsBleRequired(true);
       } else {
         setIsBleRequired(false);
+        notifyDeviceSelected(device);
       }
 
       setIsPairingDevices(false);
     },
-    [dispatch, setIsBleRequired],
+    [dispatch, setIsBleRequired, notifyDeviceSelected],
   );
 
   /**
@@ -193,12 +207,9 @@ export default function SelectDevice({
    * The availability of the device might change after the user selects it.
    * This hook is used to get the dynamic information about the device.
    */
-  const availableDeviceMatchingSelectedBleDevice = useMemo<ScannedDevice | null>(() => {
+  const availableDeviceMatchingSelectedBleDevice = useMemo<DeviceBaseInfo | null>(() => {
     if (!selectedBleDevice) return null;
-    const availableDevice = scannedDevices.find(
-      ({ deviceId }) => deviceId === selectedBleDevice.deviceId,
-    );
-    return availableDevice ?? null;
+    return findMatchingNewDevice(selectedBleDevice, scannedDevices) ?? null;
   }, [selectedBleDevice, scannedDevices]);
 
   useEffect(() => {
@@ -207,7 +218,7 @@ export default function SelectDevice({
     if (showSelectedBleDeviceNotAvailableDrawer && availableDeviceMatchingSelectedBleDevice) {
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
-      notifyDeviceSelected(availableDeviceMatchingSelectedBleDevice);
+      notifyDeviceSelected({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
       return;
     }
     // Once all the bluetooth requirements are respected, the device selection is triggered
@@ -217,7 +228,7 @@ export default function SelectDevice({
         setShowSelectedBleDeviceNotAvailableDrawer(true);
         return;
       }
-      notifyDeviceSelected(selectedBleDevice);
+      notifyDeviceSelected({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
     }
@@ -256,18 +267,22 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
-    const devices: DisplayedDevice[] = knownDevices
+    const devices: DisplayedDevice[] = bleKnownDevices
       .map(device => {
-        const equivalentScannedDevice = filteredScannedDevices.find(
-          ({ deviceId }) => device.id === deviceId,
+        const matchingScannedDevice = findMatchingNewDevice(
+          {
+            deviceId: device.id,
+            deviceName: device.name,
+            modelId: device.modelId,
+          },
+          filteredScannedDevices,
         );
-
         return {
           ...device,
           wired: false,
-          deviceId: device.id,
-          deviceName: equivalentScannedDevice?.deviceName ?? device.name,
-          available: Boolean(equivalentScannedDevice),
+          deviceId: matchingScannedDevice?.deviceId ?? device.id,
+          deviceName: matchingScannedDevice?.deviceName ?? device.name,
+          available: Boolean(matchingScannedDevice),
         };
       })
       .sort((a, b) => Number(b.available) - Number(a.available));
@@ -282,13 +297,18 @@ export default function SelectDevice({
     return filterByDeviceModelId
       ? devices.filter(d => d.modelId === filterByDeviceModelId)
       : devices;
-  }, [knownDevices, filteredScannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
+  }, [bleKnownDevices, filteredScannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
-    knownDevices.forEach(knownDevice => {
-      const equivalentScannedDevice = filteredScannedDevices.find(
-        ({ deviceId }) => knownDevice.id === deviceId,
+    bleKnownDevices.forEach(knownDevice => {
+      const equivalentScannedDevice = findMatchingNewDevice(
+        {
+          deviceId: knownDevice.id,
+          deviceName: knownDevice.name,
+          modelId: knownDevice.modelId,
+        },
+        filteredScannedDevices,
       );
 
       if (
@@ -303,7 +323,7 @@ export default function SelectDevice({
         );
       }
     });
-  }, [dispatch, knownDevices, filteredScannedDevices]);
+  }, [dispatch, bleKnownDevices, filteredScannedDevices]);
 
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
