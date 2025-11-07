@@ -77,6 +77,7 @@ import type {
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -167,6 +168,7 @@ export const INITIAL_STATE: SettingsState = {
   mevProtection: true,
   selectedTabPortfolioAssets: "Assets",
   isOnboardingFlow: false,
+  isOnboardingFlowReceiveSuccess: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -292,6 +294,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       isOnboardingFlow: !!payload,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS]: (state, action) => {
+    const payload = (action as Action<SettingsIsOnboardingFlowReceiveSuccessPayload>).payload;
+    return {
+      ...state,
+      isOnboardingFlowReceiveSuccess: !!payload,
     };
   },
 
@@ -739,6 +749,8 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
 export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
+export const isOnboardingFlowReceiveSuccessSelector = (state: State) =>
+  state.settings.isOnboardingFlowReceiveSuccess;
 export const hasInstalledAnyAppSelector = (state: State) => state.settings.hasInstalledAnyApp;
 export const countervalueFirstSelector = (state: State) => state.settings.graphCountervalueFirst;
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
