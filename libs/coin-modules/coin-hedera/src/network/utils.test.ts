@@ -1,12 +1,8 @@
 import BigNumber from "bignumber.js";
 import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { apiClient } from "./api";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import {
-  getMockedERC20TokenCurrency,
-  getMockedHTSTokenCurrency,
-} from "../test/fixtures/currency.fixture";
+import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import {
   createMirrorCoinTransfer,
   createMirrorTokenTransfer,
@@ -187,38 +183,36 @@ describe("network utils", () => {
   });
 
   describe("getERC20BalancesForAccount", () => {
-    it("returns balances only for available ERC20 tokens and calls apiClient.getERC20Balance accordingly", async () => {
+    it("returns balances only for supported ERC20 tokens and calls apiClient.getERC20Balance accordingly", async () => {
       const mockAccount = getMockedAccount();
+      const mockedSupportedTokenIds = ["0/erc20/0x0", "0/erc20/0x1", "0/erc20/0x2"];
       const erc20Token = getMockedERC20TokenCurrency();
-      const htsToken = getMockedHTSTokenCurrency();
 
-      (listTokensForCryptoCurrency as jest.Mock).mockImplementation(() => [erc20Token, htsToken]);
-      (apiClient.getERC20Balance as jest.Mock).mockResolvedValueOnce(new BigNumber(123));
+      const mockedResponse = Array.from({ length: mockedSupportedTokenIds.length }, () => ({
+        token: erc20Token,
+        balance: new BigNumber(123),
+      }));
+
+      (apiClient.getERC20Balance as jest.Mock).mockResolvedValue(new BigNumber(123));
+      (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+        findTokenById: jest.fn().mockReturnValue(erc20Token),
+      });
 
       const res = await getERC20BalancesForAccount(mockAccount.freshAddress);
 
-      expect(listTokensForCryptoCurrency).toHaveBeenCalledTimes(1);
-      expect(apiClient.getERC20Balance).toHaveBeenCalledTimes(1);
+      expect(apiClient.getERC20Balance).toHaveBeenCalledTimes(mockedSupportedTokenIds.length);
       expect(apiClient.getERC20Balance).toHaveBeenCalledWith(
         mockAccount.freshAddress,
         erc20Token.contractAddress,
       );
 
-      expect(res).toHaveLength(1);
-      expect(res).toMatchObject([
-        {
-          token: erc20Token,
-          balance: new BigNumber(123),
-        },
-      ]);
+      expect(res).toHaveLength(mockedSupportedTokenIds.length);
+      expect(res).toMatchObject(mockedResponse);
     });
 
-    it("returns empty array when there are no ERC20 tokens", async () => {
-      const htsToken = getMockedHTSTokenCurrency();
-
-      (listTokensForCryptoCurrency as jest.Mock).mockImplementation(() => [htsToken]);
-
-      const res = await getERC20BalancesForAccount("0xaccount");
+    it("returns empty array when there are no supported ERC20 tokens", async () => {
+      const supportedTokenIds: string[] = [];
+      const res = await getERC20BalancesForAccount("0xaccount", supportedTokenIds);
 
       expect(res).toEqual([]);
       expect(apiClient.getERC20Balance).not.toHaveBeenCalled();
