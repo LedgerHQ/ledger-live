@@ -15,8 +15,6 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import {
   OperationDetails,
   PendingOperation,
-  SelectAccount,
-  SelectCurrency,
   SelectFees,
   SelectProvider,
   SwapLoading,
@@ -31,6 +29,8 @@ import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
+import { SelectCurrency } from "~/screens/Swap/SubScreens/SelectCurrency";
+import { SelectAccount } from "~/screens/Swap/SubScreens/SelectAccount";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {

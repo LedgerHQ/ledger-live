@@ -23,11 +23,6 @@ describe("DeepLinks Tests", () => {
     await app.accounts.waitForAccountsPageToLoad();
   });
 
-  it("should open Add Account drawer", async () => {
-    await app.addAccount.openViaDeeplink();
-    await app.receive.selectCurrencyByName(bitcoinLong);
-  });
-
   it("should open ETH Account Asset page when given currency param", async () => {
     await app.assetAccountsPage.openViaDeeplink(ethereumLong);
     await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);

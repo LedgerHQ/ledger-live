@@ -5982,7 +5982,7 @@
 
 - [#8560](https://github.com/LedgerHQ/ledger-live/pull/8560) [`013e3ac`](https://github.com/LedgerHQ/ledger-live/commit/013e3ac458936ce9de93cd277766f68e1de8d099) Thanks [@Canestin](https://github.com/Canestin)! - internet computer coin modularization
 
-- [#8668](https://github.com/LedgerHQ/ledger-live/pull/8668) [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update groupCurrenciesByProvider to get Coins instead of token when it's relevant
+- [#8668](https://github.com/LedgerHQ/ledger-live/pull/8668) [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update groupCurrenciesByAsset to get Coins instead of token when it's relevant
 
 ### Patch Changes
 
@@ -6091,7 +6091,7 @@
 
 - [#8560](https://github.com/LedgerHQ/ledger-live/pull/8560) [`013e3ac`](https://github.com/LedgerHQ/ledger-live/commit/013e3ac458936ce9de93cd277766f68e1de8d099) Thanks [@Canestin](https://github.com/Canestin)! - internet computer coin modularization
 
-- [#8668](https://github.com/LedgerHQ/ledger-live/pull/8668) [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update groupCurrenciesByProvider to get Coins instead of token when it's relevant
+- [#8668](https://github.com/LedgerHQ/ledger-live/pull/8668) [`bd67aa1`](https://github.com/LedgerHQ/ledger-live/commit/bd67aa14cdb85f387ffd9939b46f562ad580dbcd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update groupCurrenciesByAsset to get Coins instead of token when it's relevant
 
 ### Patch Changes
 

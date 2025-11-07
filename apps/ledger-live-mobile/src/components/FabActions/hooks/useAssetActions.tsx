@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useModularDrawerController } from "~/newArch/features/ModularDrawer";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -86,6 +87,17 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     sourceScreenName: "asset",
     currency,
   });
+
+  const { openDrawer } = useModularDrawerController();
+
+  const handleOpenAddAccountDrawer = useCallback(() => {
+    openDrawer({
+      currencies: currency ? [currency.id] : [],
+      flow: "add_account",
+      source: "asset_action",
+      areCurrenciesFiltered: !!currency,
+    });
+  }, [currency, openDrawer]);
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -236,15 +248,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     id: "add_account",
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
-                    navigationParams: [
-                      NavigatorName.AddAccounts,
-                      {
-                        screen: ScreenName.AddAccountsSelectCrypto,
-                        params: {
-                          filterCurrencyIds: currency ? [currency.id] : undefined,
-                        },
-                      },
-                    ] as const,
+                    customHandler: handleOpenAddAccountDrawer,
                   },
                 ]
               : []),
@@ -270,6 +274,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
     handleOpenReceiveDrawer,
+    handleOpenAddAccountDrawer,
   ]);
 
   return {

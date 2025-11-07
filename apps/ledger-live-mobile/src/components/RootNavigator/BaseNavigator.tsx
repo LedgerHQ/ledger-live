@@ -89,7 +89,6 @@ import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
@@ -591,12 +590,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
           component={DeviceSelectionNavigator}
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name={NavigatorName.AssetSelection}
-          component={AssetSelectionNavigator}
           options={{ headerShown: false }}
         />
 

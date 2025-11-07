@@ -1,7 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetData } from "./type";
 
-export const groupCurrenciesByProvider = (assetsSorted: AssetData[]) => {
+export const groupCurrenciesByAsset = (assetsSorted: AssetData[]) => {
   const assetMap = new Map<
     string,
     { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
@@ -10,12 +10,12 @@ export const groupCurrenciesByProvider = (assetsSorted: AssetData[]) => {
   if (assetsSorted) {
     for (const item of assetsSorted) {
       const {
-        asset: { id: providerId },
+        asset: { id: assetId },
         networks = [],
       } = item;
       if (networks?.length > 0) {
-        const mainCurrency = networks.find(c => c.id === providerId) ?? networks[0];
-        assetMap.set(providerId, {
+        const mainCurrency = networks.find(c => c.id === assetId) ?? networks[0];
+        assetMap.set(assetId, {
           mainCurrency,
           currencies: networks,
         });
