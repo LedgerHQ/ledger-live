@@ -31,7 +31,10 @@ const getFilecoinURL = (version?: string, path?: string): string => {
   return `${baseUrl}${version ? version : ""}${path ? path : ""}`;
 };
 
-const fetch = async <T>(path: string, version: string) => {
+type FetchProps = {
+  version?: string;
+};
+const fetch = async <T>(path: string, { version }: FetchProps) => {
   const url = getFilecoinURL(version, path);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
@@ -50,7 +53,11 @@ const fetch = async <T>(path: string, version: string) => {
 };
 
 type sendDataType = EstimatedFeesRequest | BroadcastTransactionRequest;
-const send = async <T>(path: string, version: string, data: sendDataType) => {
+type sendProps = {
+  version: string;
+  data: sendDataType;
+};
+const send = async <T>(path: string, { version, data }: sendProps): Promise<T> => {
   const url = getFilecoinURL(version, path);
 
   const opts: LiveNetworkRequest<string> = {
@@ -70,14 +77,19 @@ const send = async <T>(path: string, version: string, data: sendDataType) => {
 };
 
 export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
-  const data = await fetch<BalanceResponse>(`/addresses/${addr}/balance`, currentVersion);
+  const data = await fetch<BalanceResponse>(`/addresses/${addr}/balance`, {
+    version: currentVersion,
+  });
   return data; // TODO Validate if the response fits this interface
 };
 
 export const fetchEstimatedFees = makeLRUCache(
   async (request: EstimatedFeesRequest): Promise<EstimatedFeesResponse> => {
     try {
-      const data = await send<EstimatedFeesResponse>(`/fees/estimate`, currentVersion, request);
+      const data = await send<EstimatedFeesResponse>(`/fees/estimate`, {
+        version: currentVersion,
+        data: request,
+      });
       return data; // TODO Validate if the response fits this interface
     } catch (e) {
       log("error", "filecoin fetchEstimatedFees", e);
@@ -91,7 +103,9 @@ export const fetchEstimatedFees = makeLRUCache(
 );
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
-  const data = await fetch<NetworkStatusResponse>("/network/status", currentVersion);
+  const data = await fetch<NetworkStatusResponse>("/network/status", {
+    version: currentVersion,
+  });
   return data; // TODO Validate if the response fits this interface
 };
 
@@ -103,7 +117,9 @@ export const fetchTxs = async (
 ): Promise<TransactionsResponse> => {
   const response = await fetch<TransactionsResponse>(
     `/addresses/${addr}/transactions?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
-    currentVersion,
+    {
+      version: currentVersion,
+    },
   );
   return response; // TODO Validate if the response fits this interface
 };
@@ -130,11 +146,10 @@ export const fetchTxsWithPages = async (
 export const broadcastTx = async (
   message: BroadcastTransactionRequest,
 ): Promise<BroadcastTransactionResponse> => {
-  const response = await send<BroadcastTransactionResponse>(
-    `/transaction/broadcast`,
-    currentVersion,
-    message,
-  );
+  const response = await send<BroadcastTransactionResponse>(`/transaction/broadcast`, {
+    version: currentVersion,
+    data: message,
+  });
   return response; // TODO Validate if the response fits this interface
 };
 
@@ -144,7 +159,9 @@ export const fetchERC20TokenBalance = async (
 ): Promise<string> => {
   const res = await fetch<ERC20BalanceResponse>(
     `/contract/${contractAddr}/address/${ethAddr}/balance/erc20`,
-    currentVersion,
+    {
+      version: currentVersion,
+    },
   );
 
   if (res.data.length) {
@@ -162,7 +179,9 @@ export const fetchERC20Transactions = async (
 ): Promise<FetchERC20TransactionsResponse> => {
   const res = await fetch<FetchERC20TransactionsResponse>(
     `/addresses/${ethAddr}/transactions/erc20?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
-    currentVersion,
+    {
+      version: currentVersion,
+    },
   );
   return res;
 };

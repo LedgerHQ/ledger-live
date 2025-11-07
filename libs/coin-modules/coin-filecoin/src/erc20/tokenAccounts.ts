@@ -120,7 +120,10 @@ export async function buildTokenAccounts(
     for (const [contractAddr, txns] of Object.entries(transfersByContract)) {
       processedContracts.add(contractAddr);
 
-      const token = getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddr, "filecoin");
+      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        contractAddr,
+        "filecoin",
+      );
       if (!token) {
         log("error", `filecoin token not found, addr: ${contractAddr}`);
         continue;
