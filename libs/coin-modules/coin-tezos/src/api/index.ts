@@ -278,7 +278,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       // {"kind":"permanent","id":"proto.023-PtSeouLo.contract.manager.inconsistent_hash","public_key":"sppk7aMmdpDZc9KHjJBWac53NVoK4kfYbTC39EbmEzpZizjENonbHQD","expected_hash":"tz2BHzkaizWwCmhYswwTQCycgT8mXFH8QTL5","provided_hash":"tz2R3ynJBBzFZYtbx1Ywmvd8n6z2ZH3rXAQ6"}
       // it's not clear why this happens, it couldn't be further investigated
       // so we fallback to make an estimation without the public key
-      // there is a test that covers this, see "fallback to an estimation without the public key" index.integ.test.ts
+      // there is a test that covers this, see "fallback to an estimation without the public key" index-mainnet.integ.test.ts
       log("estimate-error", "error estimating fees, trying without pubkey", { error });
       estimation = await logicEstimate();
     }
