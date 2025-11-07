@@ -81,7 +81,6 @@ function OnboardingPreQuizModalNavigator(
 }
 
 const modalOptions: Partial<NativeStackNavigationOptions> = {
-  presentation: "transparentModal",
   headerShown: false,
   animation: "slide_from_bottom",
 };
@@ -91,7 +90,6 @@ const infoModalOptions = ({ theme }: { theme: Theme }): Partial<NativeStackNavig
     backgroundColor: theme.colors.background.drawer,
   },
   headerShown: true,
-  presentation: "transparentModal",
 });
 
 export default function OnboardingNavigator() {
@@ -209,7 +207,7 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingInfoModal}
         component={OnboardingInfoModal}
-        options={{ presentation: "transparentModal", animation: "slide_from_bottom" }}
+        options={{ animation: "slide_from_bottom" }}
       />
 
       <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
