@@ -5,6 +5,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components/native";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
 import Animation from "../Animation";
 import Button from "../Button";
 
@@ -45,31 +47,31 @@ type Props = {
 };
 
 export function ThorSwapIncompatibility({ t, device, provider, theme, onClose }: Props) {
+  const hardwareWalletUrl = useLocalizedUrl(urls.hardwareWallet);
+
   return (
     <ScrollView>
-      <Wrapper width="100%" mt="30%" mb="10%">
-        <Wrapper rowGap={16} mr="16px" ml="16px">
-          <AnimationContainer marginTop="16px">
-            <Animation
-              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
-              style={getDeviceAnimationStyles(device.modelId)}
-            />
-          </AnimationContainer>
-          <TitleText>
-            {t("transfer.swap2.wrongDevice.title", { provider: getProviderName(provider) })}
-          </TitleText>
-          <Flex mt={4}>
-            <CenteredText color="neutral.c70">
-              {t("transfer.swap2.wrongDevice.description", { provider })}
-            </CenteredText>
-          </Flex>
-        </Wrapper>
+      <Wrapper width="100%" mt="30%" mb="10%" rowGap={16} pr="16px" pl="16px">
+        <AnimationContainer marginTop="16px">
+          <Animation
+            source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+            style={getDeviceAnimationStyles(device.modelId)}
+          />
+        </AnimationContainer>
+        <TitleText>
+          {t("transfer.swap2.wrongDevice.title", { provider: getProviderName(provider) })}
+        </TitleText>
+        <Flex mt={4}>
+          <CenteredText color="neutral.c70">
+            {t("transfer.swap2.wrongDevice.description", { provider })}
+          </CenteredText>
+        </Flex>
       </Wrapper>
 
       <Button
         type="main"
         outline={false}
-        onPress={() => Linking.openURL("https://shop.ledger.com/pages/hardware-wallet")}
+        onPress={() => Linking.openURL(hardwareWalletUrl)}
         alignSelf="stretch"
       >
         {t("transfer.swap2.wrongDevice.explore_compatible_devices")}
