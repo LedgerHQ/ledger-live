@@ -85,6 +85,7 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
 
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+      await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
       await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
