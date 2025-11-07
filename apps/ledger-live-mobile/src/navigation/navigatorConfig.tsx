@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import React from "react";
 import { DefaultTheme } from "styled-components/native";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
@@ -7,6 +6,7 @@ import styles from "./styles";
 import { Theme } from "../colors";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import CustomNavigationHeader from "LLM/components/CustomNavigationHeader";
 
 export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerStyle: styles.header,
@@ -16,6 +16,7 @@ export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerLargeTitleShadowVisible: false,
   headerShadowVisible: false,
   headerBackVisible: false,
+  header: props => <CustomNavigationHeader {...props} />,
 };
 
 type ColorV2 = Theme["colors"];
