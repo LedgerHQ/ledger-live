@@ -34,7 +34,7 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { findMatchingDiscoveredDevice } from "../utils/matchDevicesByNameOrId";
+import { findMatchingDiscoveredDevice, matchDeviceByName } from "../utils/matchDevicesByNameOrId";
 
 export const tracer = new LocalTracer("live-dmk-tracer", {
   function: "DeviceManagementKitTransport",
@@ -152,16 +152,35 @@ export class DeviceManagementKitTransport extends Transport {
         sessionId: activeSessionId,
       });
 
+      const isSameDeviceId = connectedDevice.id === deviceOrId;
+      const isSameDeviceNameButDifferentId =
+        !isSameDeviceId &&
+        matchDeviceByName({
+          oldDevice: { deviceName: options?.matchDeviceByName },
+          newDevice: { deviceName: connectedDevice.name },
+        });
+
       if (
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
         activeDeviceSessionSubject.value?.transport &&
-        connectedDevice.id === deviceOrId
+        (isSameDeviceId || isSameDeviceNameButDifferentId)
       ) {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
         );
 
         return activeDeviceSessionSubject.value.transport;
+      } else {
+        tracer.trace("[DMKTransport] [open] not reusing existing session", {
+          data: {
+            isSameDeviceId,
+            isSameDeviceNameButDifferentId,
+            status: deviceSessionState?.deviceStatus,
+            transport: activeDeviceSessionSubject.value?.transport,
+            oldDevice: { deviceName: options?.matchDeviceByName },
+            newDevice: { deviceName: connectedDevice.name },
+          },
+        });
       }
     }
 
@@ -179,7 +198,6 @@ export class DeviceManagementKitTransport extends Transport {
         switchMap(async discoveredDevice => {
           tracer.trace(`[DMKTransport] [open] device found ${discoveredDevice.id}`);
 
-          await getDeviceManagementKit().close();
           const sessionId = await getDeviceManagementKit()
             .connect({
               device: discoveredDevice,
