@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { AccountId } from "@hashgraph/sdk";
-import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { apiClient } from "./api";
@@ -12,6 +11,8 @@ import type {
   OperationERC20,
   HederaERC20TokenBalance,
 } from "../types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { SUPPORTED_ERC20_TOKEN_IDS } from "../constants";
 
 function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
   if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
@@ -69,12 +70,18 @@ export function parseTransfers(
 
 export async function getERC20BalancesForAccount(
   evmAccountId: string,
+  supportedTokenIds = SUPPORTED_ERC20_TOKEN_IDS,
 ): Promise<HederaERC20TokenBalance[]> {
-  const currency = getCryptoCurrencyById("hedera");
-  const availableTokens = listTokensForCryptoCurrency(currency);
-  const availableERC20Tokens = availableTokens.filter(t => t.tokenType === "erc20");
+  const availableTokens: TokenCurrency[] = [];
+  for (const erc20TokenId of supportedTokenIds) {
+    const calToken = await getCryptoAssetsStore().findTokenById(erc20TokenId);
 
-  const promises = availableERC20Tokens.map(async erc20token => {
+    if (calToken) {
+      availableTokens.push(calToken);
+    }
+  }
+
+  const promises = availableTokens.map(async erc20token => {
     const balance = await apiClient.getERC20Balance(evmAccountId, erc20token.contractAddress);
 
     return {
