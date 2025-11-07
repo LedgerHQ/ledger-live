@@ -124,7 +124,6 @@ export default function BaseNavigator() {
           component={BuyDeviceNavigator}
           options={{
             headerShown: false,
-            presentation: "transparentModal",
             animation: "slide_from_bottom",
           }}
         />
@@ -138,7 +137,6 @@ export default function BaseNavigator() {
           component={PostBuyDeviceSetupNanoWallScreen}
           options={{
             headerShown: false,
-            presentation: "transparentModal",
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
@@ -332,7 +330,6 @@ export default function BaseNavigator() {
               headerLeft: () => <NavigationHeaderBackButton />,
               headerRight: () =>
                 route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null,
-              presentation: "transparentModal",
               animation: "slide_from_bottom",
             };
           }}
@@ -361,7 +358,6 @@ export default function BaseNavigator() {
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
-            presentation: "transparentModal",
           }}
         />
         <Stack.Screen
@@ -380,7 +376,6 @@ export default function BaseNavigator() {
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
-            presentation: "transparentModal",
             animation: "slide_from_bottom",
           }}
         />
