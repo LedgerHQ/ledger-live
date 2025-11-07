@@ -1,4 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
@@ -8,6 +8,7 @@ import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
+import type { Account } from "@ledgerhq/types-live";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -52,14 +53,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
+    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
 
     // Calculate minHeight for pagination
-    let minHeight: number = 0;
-    if (oldOps.length > 0 && initialAccount?.blockHeight !== 0) {
-      minHeight = (oldOps[0].blockHeight ?? 0) + 1;
-    }
+    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationParams: Pagination = { minHeight, order: "asc" };
-    if (lastPagingToken) {
+    if (lastPagingToken && !syncFromScratch) {
       paginationParams.lastPagingToken = lastPagingToken;
     }
 
@@ -81,7 +81,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: newAssetOperations,
       getTokenFromAsset: alpacaApi.getTokenFromAsset,
     });
-    const subAccounts = mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
+    const subAccounts = syncFromScratch
+      ? newSubAccounts
+      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
     const newOpsWithSubs = newOps.map(op => {
       const subOperations = inferSubOperations(op.hash, newSubAccounts);
@@ -95,12 +97,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       alpacaApi.refreshOperations && initialAccount?.pendingOperations.length
         ? await alpacaApi.refreshOperations(initialAccount.pendingOperations)
         : [];
-    const operations = mergeOps(oldOps, [
-      ...confirmedOperations,
-      ...newOpsWithSubs,
-    ]) as OperationCommon[];
+    const newOperations = [...confirmedOperations, ...newOpsWithSubs];
+    const operations = syncFromScratch
+      ? newOperations
+      : (mergeOps(oldOps, newOperations) as OperationCommon[]);
 
-    const res = {
+    const res: Partial<Account> = {
       id: accountId,
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
@@ -109,6 +111,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations,
       subAccounts,
       operationsCount: operations.length,
+      syncHash,
     };
     return res;
   };
