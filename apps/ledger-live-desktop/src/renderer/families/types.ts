@@ -24,7 +24,6 @@ import {
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
-import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 
 export type AddressCellProps<O extends Operation> = {
   operation: O;
@@ -361,9 +360,10 @@ export type LLDCoinFamily<
   }>;
 
   /**
-   * It was for Hedera specifc, when we do not find any account it show a specific component
+   * Component to show when no associated accounts are found during account scanning.
+   * If provided, the flow will navigate to a warning screen when no accounts can be imported or created.
    */
-  NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
+  NoAssociatedAccounts?: React.ComponentType<{ t: (key: string) => string }>;
 
   /**
    * Component banner before Account body header

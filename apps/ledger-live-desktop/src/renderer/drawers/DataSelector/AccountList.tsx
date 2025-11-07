@@ -4,11 +4,10 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
-import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
@@ -21,6 +20,8 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 
 const AddIconContainer = styled.div`
   border-radius: 50%;
@@ -40,7 +41,6 @@ type Props = {
 };
 
 export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
@@ -48,13 +48,15 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
   const accountTuples = useMemo(() => {
     return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
   }, [nestedAccounts, currency, accountIds]);
+
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "dataSelector",
+  );
+
   const openAddAccounts = useCallback(() => {
-    dispatch(
-      openModal("MODAL_ADD_ACCOUNTS", {
-        currency,
-      }),
-    );
-  }, [dispatch, currency]);
+    openAddAccountFlow(currency, true);
+  }, [currency, openAddAccountFlow]);
 
   return (
     <>

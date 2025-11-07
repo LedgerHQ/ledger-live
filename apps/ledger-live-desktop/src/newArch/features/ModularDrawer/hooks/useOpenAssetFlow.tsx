@@ -1,5 +1,3 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
@@ -51,7 +49,6 @@ export function useOpenAssetFlow(
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const featureNetworkBasedAddAccount = useFeature("lldNetworkBasedAddAccount");
 
   const handleClose = useCallback(() => {
     setDrawer();
@@ -84,57 +81,37 @@ export function useOpenAssetFlow(
           dispatch(openModal(modalNameToReopen, undefined));
         }
       };
-      if (featureNetworkBasedAddAccount?.enabled) {
-        setDrawer(
-          ModularDrawerAddAccountFlowManager,
-          {
-            currency,
-            onAccountSelected: modalNameToReopen
-              ? onFlowFinishedWithModalReopen
-              : onAccountSelected,
-          },
-          { closeButtonComponent: CloseButton, onRequestClose: onClose },
-        );
-      } else {
-        const cryptoCurrency =
-          currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
-        autoCloseDrawer && setDrawer();
-        dispatch(
-          openModal("MODAL_ADD_ACCOUNTS", {
-            currency: cryptoCurrency,
-            newModalName: modalNameToReopen,
-          }),
-        );
+
+      if (autoCloseDrawer) {
+        setDrawer();
       }
+
+      setDrawer(
+        ModularDrawerAddAccountFlowManager,
+        {
+          currency,
+          onAccountSelected: modalNameToReopen ? onFlowFinishedWithModalReopen : onAccountSelected,
+        },
+        { closeButtonComponent: CloseButton, onRequestClose: onClose },
+      );
     },
-    [
-      dispatch,
-      featureNetworkBasedAddAccount?.enabled,
-      modalNameToReopen,
-      source,
-      trackModularDrawerEvent,
-    ],
+    [dispatch, modalNameToReopen, source, trackModularDrawerEvent],
   );
 
   const openAssetFlow = useCallback(
     (drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
-      if (isModularDrawerVisible(modularDrawerVisibleParams)) {
-        dispatch(setFlowValue(modularDrawerVisibleParams.location));
-        dispatch(setSourceValue(source));
-        selectCurrency(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
-      } else {
-        dispatch(
-          openModal("MODAL_ADD_ACCOUNTS", {
-            newModalName: modalNameToReopen,
-          }),
-        );
-      }
+      const flowValue = isModularDrawerVisible(modularDrawerVisibleParams)
+        ? modularDrawerVisibleParams.location
+        : "add account";
+
+      dispatch(setFlowValue(flowValue));
+      dispatch(setSourceValue(source));
+      selectCurrency(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
     },
     [
       dispatch,
       handleClose,
       isModularDrawerVisible,
-      modalNameToReopen,
       modularDrawerVisibleParams,
       openAddAccountFlow,
       source,

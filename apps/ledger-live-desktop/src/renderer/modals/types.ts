@@ -13,7 +13,6 @@ import { Params as SignTransactionData } from "./SignTransaction/Body";
 import { Params as SignRawTransactionData } from "./SignRawTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
-import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
 import { Language } from "~/config/languages";
@@ -49,7 +48,6 @@ export type GlobalModalData = {
     acceptTerms: () => void;
   };
   MODAL_STUB: undefined;
-  MODAL_ADD_ACCOUNTS: undefined | AddAccountProps;
   MODAL_BLACKLIST_TOKEN: {
     token: TokenCurrency;
   };

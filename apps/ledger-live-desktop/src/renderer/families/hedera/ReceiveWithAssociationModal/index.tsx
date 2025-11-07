@@ -3,13 +3,15 @@ import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import Body from "./Body";
 import type { StepId } from "./types";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 
 type State = {
   stepId: StepId;
@@ -67,14 +69,15 @@ const ReceiveWithAssociationModal = () => {
 
   const hasAccounts = !!accounts.length;
 
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "receive",
+  );
+
   const openAddAccounts = useCallback(() => {
     dispatch(closeModal("MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION"));
-    dispatch(
-      openModal("MODAL_ADD_ACCOUNTS", {
-        currency: null,
-      }),
-    );
-  }, [dispatch]);
+    openAssetFlow();
+  }, [dispatch, openAssetFlow]);
 
   useEffect(() => {
     if (!hasAccounts) {

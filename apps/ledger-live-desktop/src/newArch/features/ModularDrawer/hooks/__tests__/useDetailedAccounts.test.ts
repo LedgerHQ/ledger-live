@@ -6,8 +6,12 @@ import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 import { mockDispatch } from "../../../__tests__/shared";
 import { useDetailedAccounts } from "../useDetailedAccounts";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+jest.mock("~/renderer/drawers/Provider", () => ({
+  setDrawer: jest.fn(),
+}));
 
 describe("useDetailedAccounts", () => {
   it("should return formatted accounts for a crypto currency", () => {
@@ -38,7 +42,7 @@ describe("useDetailedAccounts", () => {
     ]);
   });
 
-  it('should return onAddAccountClick function that dispatches "ADD_ACCOUNT" action', () => {
+  it('should return onAddAccountClick function that opens the drawer', () => {
     const asset = ethereumCurrency;
     const { result } = renderHook(() => useDetailedAccounts(asset), {
       ...INITIAL_STATE,
@@ -51,15 +55,7 @@ describe("useDetailedAccounts", () => {
     const onAddAccountClick = result.current.onAddAccountClick;
     expect(onAddAccountClick).toBeDefined();
     onAddAccountClick();
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: asset,
-        },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
+    expect(setDrawer).toHaveBeenCalled();
   });
 
   it("should return accounts for a token currency", () => {

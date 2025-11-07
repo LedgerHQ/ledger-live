@@ -4,7 +4,6 @@ import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
 import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
-import MODAL_ADD_ACCOUNTS from "./AddAccounts";
 import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
@@ -40,7 +39,6 @@ const globalModals: GlobalModals = {
   MODAL_EXPORT_OPERATIONS,
   MODAL_PASSWORD,
   MODAL_DISABLE_PASSWORD,
-  MODAL_ADD_ACCOUNTS,
   MODAL_RECEIVE,
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,

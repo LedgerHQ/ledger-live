@@ -5,6 +5,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
+import type { Dispatch } from "redux";
 import { Subscription } from "rxjs";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import {
@@ -21,7 +22,7 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { type Step } from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
@@ -32,12 +33,16 @@ import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import { OnboardingResult, StepId, StepProps } from "./types";
 import { AxiosError } from "axios";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import ModularDrawerAddAccountFlowManager from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import { CloseButton } from "LLD/features/ModularDrawer/components/CloseButton";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 export type Props = {
   t: TFunction;
   closeModal: typeof closeModal;
-  openModal: typeof openModal;
   addAccountsAction: typeof addAccountsAction;
+  dispatch: Dispatch;
 } & UserProps;
 
 export type UserProps = {
@@ -53,11 +58,11 @@ const mapStateToProps = createStructuredSelector({
   existingAccounts: accountsSelector,
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   closeModal,
-  openModal,
   addAccountsAction,
-};
+  dispatch,
+});
 
 type State = {
   stepId: StepId;
@@ -143,12 +148,28 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAddMore = () => {
-    const { closeModal, openModal, currency } = this.props;
+    const { closeModal, currency, dispatch } = this.props;
     this.handleAddAccounts();
     closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
-    openModal("MODAL_ADD_ACCOUNTS", {
-      currency,
-    });
+    if (currency) {
+      dispatch(setFlowValue("add account"));
+      dispatch(setSourceValue("canton"));
+
+      const onClose = () => {
+        setDrawer();
+      };
+
+      setDrawer(
+        ModularDrawerAddAccountFlowManager,
+        {
+          currency,
+        },
+        {
+          closeButtonComponent: CloseButton,
+          onRequestClose: onClose,
+        },
+      );
+    }
   };
 
   handleAddAccounts = () => {

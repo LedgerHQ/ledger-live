@@ -27,9 +27,14 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
+
+jest.mock("~/renderer/drawers/Provider", () => ({
+  setDrawer: jest.fn(),
 }));
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
@@ -178,7 +183,6 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   });
 
   it("should trigger add account with corresponding currency", async () => {
-    const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDrawerFlowManager
@@ -191,17 +195,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     await user.click(screen.getByText(/add new or existing account/i));
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: bitcoinCurrencyResult,
-        },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
-
-    useDispatchSpy.mockRestore();
+    expect(setDrawer).toHaveBeenCalled();
   });
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
