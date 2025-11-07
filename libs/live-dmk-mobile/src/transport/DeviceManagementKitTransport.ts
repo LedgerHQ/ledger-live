@@ -156,8 +156,9 @@ export class DeviceManagementKitTransport extends Transport {
       const isSameDeviceNameButDifferentId =
         !isSameDeviceId &&
         matchDeviceByName({
+          // FIXME: this does not work for now because connectedDevice.name is always the model name (Ledger Stax)... this should be fixed on DMK side
           oldDevice: { deviceName: options?.matchDeviceByName },
-          newDevice: { deviceName: connectedDevice.name },
+          newDevice: { deviceName: deviceSessionState?.deviceName },
         });
 
       if (
@@ -178,7 +179,7 @@ export class DeviceManagementKitTransport extends Transport {
             status: deviceSessionState?.deviceStatus,
             transport: activeDeviceSessionSubject.value?.transport,
             oldDevice: { deviceName: options?.matchDeviceByName },
-            newDevice: { deviceName: connectedDevice.name },
+            newDevice: { deviceName: deviceSessionState?.deviceName },
           },
         });
       }
