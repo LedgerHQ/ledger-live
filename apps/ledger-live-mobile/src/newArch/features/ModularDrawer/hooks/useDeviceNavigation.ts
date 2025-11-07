@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
 import { useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import type { ModularDrawerProps } from "../ModularDrawer";
@@ -20,7 +19,7 @@ export function useDeviceNavigation({
   resetSelection,
   onAccountSelected,
 }: UseDeviceNavigationParams) {
-  const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+  const navigation = useNavigation();
   const { flow } = useSelector(modularDrawerStateSelector);
 
   const isInline = flow !== "add_account";

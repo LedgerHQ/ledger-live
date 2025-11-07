@@ -257,7 +257,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
           state={state}
           dispatch={dispatch}
           device={device}
-          navigation={navigation}
           setStorageWarning={setStorageWarning}
           deviceId={deviceId}
           initialDeviceName={deviceName}

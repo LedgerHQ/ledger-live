@@ -6,7 +6,6 @@ import {
   SwapLiveError,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SwapFormNavigatorParamList } from "./SwapFormNavigator";
 
 import type {
@@ -44,17 +43,16 @@ import type {
 } from "@ledgerhq/live-common/families/kaspa/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
   SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
+  Target,
 } from "~/screens/Swap/types";
-
-type Target = "from" | "to";
 
 export type SwapNavigatorParamList = {
   [ScreenName.SwapTab]:
@@ -335,9 +333,6 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [NavigatorName.AssetSelection]?: Partial<
-    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
-  >;
   [ScreenName.SwapCustomError]: {
     error?: SwapLiveError | Error;
   };

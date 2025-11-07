@@ -52,7 +52,6 @@ import {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
-  SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
@@ -209,10 +208,7 @@ export const setNeverClickedOnAllowNotificationsButton =
   createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
     SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
   );
-export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
-  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
-);
-export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =

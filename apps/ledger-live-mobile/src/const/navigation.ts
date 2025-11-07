@@ -5,7 +5,6 @@ export enum ScreenName {
   AccountSettingsMain = "AccountSettingsMain",
   AccountsSettings = "AccountsSettings",
   AddAccountsAccounts = "AddAccountsAccounts",
-  AddAccountsSelectCrypto = "AddAccountsSelectCrypto",
   AddAccountsSelectDevice = "AddAccountsSelectDevice",
   AddAccountsSuccess = "AddAccountsSuccess",
   AddAccountsTokenCurrencyDisclaimer = "AddAccountsTokenCurrencyDisclaimer",
@@ -134,6 +133,8 @@ export enum ScreenName {
   SignSummary = "SignSummary",
   SignValidationError = "SignValidationError",
   Swap = "Swap",
+  SwapSelectAccount = "SelectAccount",
+  SwapSelectCurrency = "SelectCurrency",
   SwapCustomError = "SwapCustomError",
   SwapForm = "SwapForm",
   SwapLiveApp = "SwapLiveApp",
@@ -141,8 +142,6 @@ export enum ScreenName {
   SwapLoading = "SwapLoading",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
-  SwapSelectAccount = "SelectAccount",
-  SwapSelectCurrency = "SelectCurrency",
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
@@ -524,9 +523,7 @@ export enum ScreenName {
   Web3HubApp = "Web3HubApp",
 
   // Add Accountv2 / Receive shared screens
-  SelectNetwork = "SelectNetwork",
   SelectDevice = "SelectDevice",
-  SelectAccounts = "SelectAccounts",
   ScanDeviceAccounts = "ScanDeviceAccounts",
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
@@ -650,7 +647,6 @@ export enum NavigatorName {
 
   WalletSync = "WalletSync",
   ModularDrawer = "ModularDrawer",
-  AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
 }

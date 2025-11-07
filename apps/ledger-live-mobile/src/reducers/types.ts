@@ -276,7 +276,6 @@ export type SettingsState = {
   hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
-    hasClosedNetworkBanner: boolean;
     hasClosedWithdrawBanner: boolean;
   };
   userNps: number | null;
