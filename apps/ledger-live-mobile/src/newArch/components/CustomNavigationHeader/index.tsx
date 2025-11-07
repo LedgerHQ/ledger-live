@@ -30,13 +30,8 @@ export default function CustomNavigationHeader({ options }: NativeStackHeaderPro
   const renderTitle = () => {
     if (HeaderTitleComponent) {
       if (typeof HeaderTitleComponent === "function") {
-        const isDefaultHeaderTitle =
-          HeaderTitleComponent === HeaderTitle || HeaderTitleComponent.name === "HeaderTitle";
-        if (isDefaultHeaderTitle) {
-          const title = options.title !== undefined ? options.title : "";
-          return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
-        }
-        return <HeaderTitleComponent />;
+        const title = options.title !== undefined ? options.title : "";
+        return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
       }
       return HeaderTitleComponent;
     }
