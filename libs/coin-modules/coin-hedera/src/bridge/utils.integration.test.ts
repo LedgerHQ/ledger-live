@@ -21,9 +21,10 @@ import { toEVMAddress } from "../logic/utils";
 import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
 import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
+initializeLegacyTokens(addTokens);
+
 describe("bridge utils", () => {
   beforeAll(() => {
-    initializeLegacyTokens(addTokens);
     setCryptoAssetsStore(legacyCryptoAssetsStore);
   });
 
