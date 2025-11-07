@@ -16,7 +16,7 @@ const NAVIGATION_HEADER_HEIGHT = 56;
  * - headerShadowVisible (border bottom)
  * - title (fallback for headerTitle)
  */
-export default function CustomNavigationHeader({ options }: NativeStackHeaderProps) {
+export default function CustomNavigationHeader({ options, route }: NativeStackHeaderProps) {
   const insets = useSafeAreaInsets();
   const hasExperimentalHeader = useExperimental();
 
@@ -30,12 +30,12 @@ export default function CustomNavigationHeader({ options }: NativeStackHeaderPro
   const renderTitle = () => {
     if (HeaderTitleComponent) {
       if (typeof HeaderTitleComponent === "function") {
-        const title = options.title !== undefined ? options.title : "";
+        const title = options.title !== undefined ? options.title : route.name;
         return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
       }
       return HeaderTitleComponent;
     }
-    const title = options.title !== undefined ? options.title : "";
+    const title = options.title !== undefined ? options.title : route.name;
     return <HeaderTitle>{title}</HeaderTitle>;
   };
 
