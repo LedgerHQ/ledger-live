@@ -26,7 +26,7 @@ describe("Tezos Api - Mainnet", () => {
         minRevealGasLimit: 300,
         minStorageLimit: 0,
         minFees: 500,
-        minEstimatedFees: 500,  
+        minEstimatedFees: 500,
       },
     });
   });
