@@ -38,6 +38,8 @@ import {
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
+import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
+import { log } from "@ledgerhq/logs";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -245,24 +247,41 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
     };
   }
 
+  const accountBase: CoreAccountInfo = {
+    address: transactionIntent.sender,
+    revealed: senderAccountInfo.revealed,
+    balance: BigInt(senderAccountInfo.balance),
+  };
+
+  const transaction: CoreTransactionInfo = {
+    mode: mapIntentTypeToTezosMode(transactionIntent.type),
+    recipient: transactionIntent.recipient,
+    amount: transactionIntent.amount,
+    useAllAmount: !!transactionIntent.useAllAmount,
+  };
+
+  async function logicEstimate(xpub?: string): Promise<EstimatedFees> {
+    // needed by the compiler (it can assume it's a "user" account with respective fields)
+    if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
+    const account = xpub ? { ...accountBase, xpub } : accountBase;
+    return await estimateFees({ account, transaction });
+  }
+  const xpub = transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey;
+
   try {
-    const estimation = await estimateFees({
-      account: {
-        address: transactionIntent.sender,
-        revealed: senderAccountInfo.revealed,
-        balance: BigInt(senderAccountInfo.balance),
-        // try intent public key first and fallback to tzkt public key
-        xpub: transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey,
-      },
-      transaction: {
-        // reuse the same mapping as craft
-        mode: mapIntentTypeToTezosMode(transactionIntent.type),
-        recipient: transactionIntent.recipient,
-        amount: transactionIntent.amount,
-        // legacy estimator needs this flag to pre-estimate fees
-        useAllAmount: !!transactionIntent.useAllAmount,
-      },
-    });
+    // try intent public key first and fallback to tzkt public key
+    let estimation;
+    try {
+      estimation = await logicEstimate(xpub);
+    } catch (error) {
+      // for some unknown reason, on some address the estimation fails with that error:
+      // {"kind":"permanent","id":"proto.023-PtSeouLo.contract.manager.inconsistent_hash","public_key":"sppk7aMmdpDZc9KHjJBWac53NVoK4kfYbTC39EbmEzpZizjENonbHQD","expected_hash":"tz2BHzkaizWwCmhYswwTQCycgT8mXFH8QTL5","provided_hash":"tz2R3ynJBBzFZYtbx1Ywmvd8n6z2ZH3rXAQ6"}
+      // it's not clear why this happens, it couldn't be further investigated
+      // so we fallback to make an estimation without the public key
+      // there is a test that covers this, see "fallback to an estimation without the public key" index.integ.test.ts
+      log("estimate-error", "error estimating fees, trying without pubkey", { error });
+      estimation = await logicEstimate();
+    }
 
     if (
       estimation.taquitoError &&
