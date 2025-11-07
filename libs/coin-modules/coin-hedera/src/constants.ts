@@ -54,3 +54,16 @@ export const BASE_USD_FEE_BY_OPERATION_TYPE = {
   [HEDERA_OPERATION_TYPES.TokenAssociate]: 0.05 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.ContractCall]: 0, // Contract call fees are based on gas used and are handled separately
 } as const satisfies Record<HEDERA_OPERATION_TYPES, number>;
+
+/**
+ * Array of supported ERC20 token IDs for Hedera.
+ *
+ * This is a temporary solution to allow bypassing deprecated methods.
+ * It is essential to update this list in the future to ensure support
+ * for other erc20 tokens.
+ */
+export const SUPPORTED_ERC20_TOKEN_IDS = [
+  "hedera/erc20/weth_0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+  "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+  "hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
+];
