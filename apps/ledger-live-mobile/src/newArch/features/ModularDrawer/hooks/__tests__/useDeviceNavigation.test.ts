@@ -36,8 +36,8 @@ describe("useDeviceNavigation", () => {
 
     expect(onClose).toHaveBeenCalled();
     expect(resetSelection).toHaveBeenCalled();
-    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
     expect(mockNavigate).toHaveBeenCalled();
+    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
   });
 
   it("navigates to device with a token currency (uses parent)", () => {
