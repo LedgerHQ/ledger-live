@@ -3,8 +3,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
 
-  await app.common.disableSynchronizationForiOS();
-
   if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }

@@ -179,7 +179,6 @@ export function runAddSubAccountTest(
           const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
 
           if (isModularDrawer) {
-            await app.common.disableSynchronizationForiOS();
             await app.addAccount.importWithYourLedger();
             await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
             await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);

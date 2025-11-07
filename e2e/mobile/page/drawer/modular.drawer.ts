@@ -1,6 +1,5 @@
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { getFlags } from "../../bridge/server";
-import { delay } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class ModularDrawer {
@@ -37,14 +36,12 @@ export default class ModularDrawer {
   async performSearch(searchText: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), searchText);
-    await delay(500);
   }
 
   @Step("Perform search on modular drawer by ticker")
   async performSearchByTicker(ticker: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), ticker);
-    await delay(500);
   }
 
   @Step("Select currency in receive list")
@@ -53,7 +50,6 @@ export default class ModularDrawer {
     if (!(await IsIdVisible(assetItemId))) {
       await scrollToId(assetItemId, this.selectCryptoScrollViewId);
     }
-    await delay(500);
     await tapById(assetItemId, 0);
   }
 
@@ -64,13 +60,11 @@ export default class ModularDrawer {
     if (!(await IsIdVisible(assetItemId))) {
       await scrollToId(assetItemId, this.selectCryptoScrollViewId);
     }
-    await delay(500);
     await tapById(assetItemId, 0);
   }
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
-    await delay(1000);
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
       await this.selectNetwork(networkName);
     }
@@ -84,7 +78,6 @@ export default class ModularDrawer {
     if (!(await IsIdVisible(id))) {
       await scrollToId(id, this.networkSelectionScrollViewId);
     }
-    await delay(500);
     await tapById(id, 0);
   }
 
