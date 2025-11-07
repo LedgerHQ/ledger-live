@@ -68,7 +68,7 @@ export const NetworkItem = ({
       style={({ pressed }) => ({
         opacity: pressed ? 0.7 : 1,
       })}
-      testID={`network-item-${id}`}
+      testID={`network-item-${name}`}
     >
       <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper tokens={tokens}>
