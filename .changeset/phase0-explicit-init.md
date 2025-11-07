@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/cryptoassets": minor
-"@ledgerhq/ledger-live-common": minor
+"@ledgerhq/live-common": minor
 "@ledgerhq/live-cli": minor
 ---
 

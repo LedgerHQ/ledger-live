@@ -6,7 +6,7 @@
 "@ledgerhq/coin-multiversx": minor
 "@ledgerhq/coin-solana": minor
 "@ledgerhq/coin-evm": minor
-"@ledgerhq/ledger-live-common": minor
+"@ledgerhq/live-common": minor
 "@ledgerhq/live-cli": minor
 "@ledgerhq/live-wallet": minor
 "@ledgerhq/live-countervalues": minor
