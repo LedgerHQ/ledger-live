@@ -132,6 +132,7 @@ export const findMatchingDiscoveredDevice = (
       return discoveredDevice;
     }
     if (
+      !matchByName &&
       deviceName &&
       matchDeviceByName({
         oldDevice: { deviceName },

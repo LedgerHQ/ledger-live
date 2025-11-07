@@ -5,9 +5,11 @@ import {
   isFormattedAsNewDeviceDefaultBleName,
   isFormattedAsOldDeviceDefaultBleName,
   findMatchingOldDevice,
+  findMatchingDiscoveredDevice,
   type DeviceBaseInfo,
 } from "./matchDevicesByNameOrId";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 const makeDevice = (overrides: Partial<DeviceBaseInfo> = {}): DeviceBaseInfo => ({
   deviceId: "device-123",
@@ -15,6 +17,15 @@ const makeDevice = (overrides: Partial<DeviceBaseInfo> = {}): DeviceBaseInfo => 
   modelId: DeviceModelId.nanoX,
   ...overrides,
 });
+
+const makeDiscoveredDevice = (overrides: Partial<DiscoveredDevice> = {}): DiscoveredDevice =>
+  ({
+    id: "device-123",
+    name: "Test Device",
+    deviceModel: { model: "nanoX" },
+    transport: "ble",
+    ...overrides,
+  }) as DiscoveredDevice;
 
 describe("isFormattedAsOldDeviceDefaultBleName", () => {
   test.each([
@@ -407,6 +418,128 @@ describe("findMatchingOldDevice", () => {
       ];
 
       const result = findMatchingOldDevice(newDevice, oldDevices);
+      expect(result).toBe(null);
+    });
+  });
+});
+
+describe("findMatchingDiscoveredDevice", () => {
+  describe("finding a match", () => {
+    test("returns matching device by deviceId when found", () => {
+      const deviceId = "device-123";
+      const deviceName = "My Device";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "Device 1" }),
+        makeDiscoveredDevice({ id: "device-123", name: "Device 2" }),
+        makeDiscoveredDevice({ id: "device-789", name: "My Device" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[1]);
+    });
+
+    test("returns matching device by name when deviceId does not match", () => {
+      const deviceId = "device-999";
+      const deviceName = "Custom Device Name";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "Device 1" }),
+        makeDiscoveredDevice({ id: "device-789", name: "Custom Device Name" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[1]);
+    });
+
+    test("returns matching device by old-to-new format when deviceId does not match", () => {
+      const deviceId = "device-999";
+      const deviceName = "Ledger Nano X ABCD";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "Device 1" }),
+        makeDiscoveredDevice({ id: "device-789", name: "ABCD" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[1]);
+    });
+
+    test("prioritizes deviceId match over name match", () => {
+      const deviceId = "device-123";
+      const deviceName = "My Device";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "My Device" }),
+        makeDiscoveredDevice({ id: "device-123", name: "Different Name" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[1]);
+    });
+
+    test("returns first matching device by name when multiple name matches exist", () => {
+      const deviceId = "device-999";
+      const deviceName = "My Device";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "My Device" }),
+        makeDiscoveredDevice({ id: "device-789", name: "My Device" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[0]);
+    });
+
+    test("returns first matching device when multiple old-to-new format matches exist", () => {
+      const deviceId = "device-999";
+      const deviceName = "Ledger Nano X ABCD";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "ABCD" }),
+        makeDiscoveredDevice({ id: "device-789", name: "ABCD" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toEqual(discoveredDevices[0]);
+    });
+  });
+
+  describe("no match found", () => {
+    test("returns null when no match is found", () => {
+      const deviceId = "device-999";
+      const deviceName = "My Device";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "Device 1" }),
+        makeDiscoveredDevice({ id: "device-789", name: "Device 2" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toBe(null);
+    });
+
+    test("returns null when discoveredDevices array is empty", () => {
+      const deviceId = "device-123";
+      const deviceName = "My Device";
+      const discoveredDevices: DiscoveredDevice[] = [];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toBe(null);
+    });
+
+    test("returns null when deviceName is undefined and no deviceId match", () => {
+      const deviceId = "device-999";
+      const deviceName = undefined;
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "Device 1" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
+      expect(result).toBe(null);
+    });
+
+    test("returns null when old format does not match new format with different hex", () => {
+      const deviceId = "device-999";
+      const deviceName = "Ledger Nano X ABCD";
+      const discoveredDevices: DiscoveredDevice[] = [
+        makeDiscoveredDevice({ id: "device-456", name: "EFGH" }),
+      ];
+
+      const result = findMatchingDiscoveredDevice(deviceId, deviceName, discoveredDevices);
       expect(result).toBe(null);
     });
   });
