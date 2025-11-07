@@ -4,6 +4,7 @@ import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import {
   getAccounts,
   getCountervalues,
@@ -127,7 +128,15 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       store.dispatch(importSettings(settingsData));
-      store.dispatch(importAccountsRaw(accountsData));
+
+      // Handle account import with error recovery for async issues
+      try {
+        store.dispatch(await importAccountsRaw(accountsData));
+      } catch (error) {
+        console.error("Failed to import accounts during initialization:", error);
+        // Continue with app initialization even if account import fails
+        // This prevents blocking deeplink navigation
+      }
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -170,7 +179,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     init();
   }, [init]);
 
-  return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
+  return (
+    <Provider store={store}>
+      <InitialQueriesProvider>{children(ready, initialCountervalues)}</InitialQueriesProvider>
+    </Provider>
+  );
 };
 
 export default LedgerStoreProvider;

@@ -1,5 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
+import { access, readFile } from "fs/promises";
+import { join } from "path";
 
 interface AppJson {
   data?: {
@@ -12,15 +12,15 @@ export async function getAccountAddressesFromAppJson(userDataDir: string): Promi
     throw new Error("userDataDir must be a non-empty string");
   }
 
-  const appJsonPath = path.join(userDataDir, "app.json");
+  const appJsonPath = join(userDataDir, "app.json");
 
   try {
-    await fs.access(appJsonPath);
+    await access(appJsonPath);
   } catch {
     throw new Error(`File not found: "${appJsonPath}"`);
   }
 
-  const raw = await fs.readFile(appJsonPath, "utf-8");
+  const raw = await readFile(appJsonPath, "utf-8");
   let parsed: AppJson;
   try {
     parsed = JSON.parse(raw);

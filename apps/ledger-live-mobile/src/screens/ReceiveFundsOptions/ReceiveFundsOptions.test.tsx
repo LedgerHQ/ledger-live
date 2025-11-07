@@ -3,15 +3,24 @@ import { render } from "@tests/test-renderer";
 import ReceiveFundsOptions from "./";
 import { ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/core";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 const mockReplace = jest.fn();
+const mockHandleOpenReceiveDrawer = jest.fn();
 
 // needed because the screen only uses the drawer that needs the safe area insets
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: jest.fn().mockReturnValue({}),
 }));
+
+// Mock the useOpenReceiveDrawer hook
+jest.mock("LLM/features/Receive", () => ({
+  useOpenReceiveDrawer: jest.fn(),
+}));
+
+const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 
 function renderComponent(
   route: RouteProp<ParamListBase, ScreenName> = {
@@ -33,6 +42,10 @@ function renderComponent(
 describe("ReceiveFundsOptions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseOpenReceiveDrawer.mockReturnValue({
+      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+      isModularDrawerEnabled: false,
+    });
   });
 
   it("renders title and buttons", () => {
@@ -108,6 +121,21 @@ describe("ReceiveFundsOptions", () => {
       const { getByText, user } = renderComponent(route);
       await user.press(getByText("Via crypto address"));
 
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Modular drawer behavior", () => {
+    it("opens modular drawer instead of navigating when enabled", async () => {
+      mockUseOpenReceiveDrawer.mockReturnValueOnce({
+        handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+        isModularDrawerEnabled: true,
+      });
+
+      const { getByText, user } = renderComponent();
+      await user.press(getByText("Via crypto address"));
+
+      expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

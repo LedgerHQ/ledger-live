@@ -1,5 +1,8 @@
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  getStablecoinYieldSetting,
+  getBitcoinYieldSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
@@ -34,6 +37,7 @@ import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
+import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -161,6 +165,7 @@ const getPtxAttributes = () => {
       ? Object.keys(stakePrograms.params.redirects)
       : "flag not loaded";
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
@@ -169,6 +174,7 @@ const getPtxAttributes = () => {
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
     stablecoinYield,
+    bitcoinYield,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };
@@ -199,6 +205,8 @@ const extraProperties = (store: ReduxStore) => {
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
   const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
+  const { postOnboardingInProgress } = hubStateSelector(state);
+
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
@@ -269,6 +277,7 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     // For tracking receive flow events during onboarding
     ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
+    ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
   };
 };
 

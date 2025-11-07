@@ -6,6 +6,7 @@ export type NearCoinConfig = () => CurrencyConfig & {
     API_NEAR_PRIVATE_NODE: string;
     API_NEAR_PUBLIC_NODE: string;
     API_NEAR_INDEXER: string;
+    API_NEARBLOCKS_INDEXER: string;
   };
 };
 

@@ -56,7 +56,7 @@ const txInfoToOperationAdapter =
       senders,
       recipients,
       date: new Date(transaction_timestamp),
-      transactionSequenceNumber: height,
+      transactionSequenceNumber: new BigNumber(height),
       extra: {
         uid,
         memo,

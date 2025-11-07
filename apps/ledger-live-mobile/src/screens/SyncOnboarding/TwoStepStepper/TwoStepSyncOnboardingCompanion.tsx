@@ -27,6 +27,7 @@ import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { COMPANION_STATE, CompanionStep, SEED_STATE } from "./types";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 /*
  * Constants
@@ -115,6 +116,11 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   useKeepScreenAwake(isFocused);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    sourceScreenName: "sync-onboarding-companion",
+    navigationOverride: baseNavigation,
+  });
+
   const twoStepDesync = useTwoStepDesync({
     onLostDevice,
     onShouldHeaderBeOverlaid,
@@ -148,45 +154,79 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       } else if (companionStep === SEED_STATE.NEW_SEED) {
         handleOnboardingDoneState();
         dispatchRedux(setIsOnboardingFlow(true));
-        baseNavigation.reset({
-          index: 1,
-          routes: [
-            {
-              name: NavigatorName.BaseOnboarding,
-              state: {
-                routes: [
-                  {
-                    name: NavigatorName.SyncOnboarding,
-                    state: {
-                      routes: [
-                        {
-                          name: ScreenName.SyncOnboardingCompletion,
-                          params: {
-                            device,
-                            seedConfiguration: analyticsSeedConfiguration.current,
+
+        if (isModularDrawerEnabled) {
+          // Navigate to completion screen first with tracking params
+          // No genericity or extraction because we will remove the other code block once we fully migrate to the modular drawer.
+          baseNavigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.BaseOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.SyncOnboarding,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.SyncOnboardingCompletion,
+                            params: {
+                              device,
+                              seedConfiguration: analyticsSeedConfiguration.current,
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
-                  },
-                  {
-                    name: NavigatorName.ReceiveFunds,
-                    state: {
-                      routes: [
-                        {
-                          name: ScreenName.ReceiveSelectCrypto,
-                          params: {
-                            device,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                ],
+                  ],
+                },
               },
-            },
-          ],
-        });
+            ],
+          });
+          // Then open the receive drawer on top
+          handleOpenReceiveDrawer();
+        } else {
+          baseNavigation.reset({
+            index: 1,
+            routes: [
+              {
+                name: NavigatorName.BaseOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.SyncOnboarding,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.SyncOnboardingCompletion,
+                            params: {
+                              device,
+                              seedConfiguration: analyticsSeedConfiguration.current,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      name: NavigatorName.ReceiveFunds,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.ReceiveSelectCrypto,
+                            params: {
+                              device,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          });
+        }
       } else {
         setCompanionStep(COMPANION_STATE.EXIT);
       }
@@ -199,6 +239,8 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       handleOnboardingDone,
       handleOnboardingDoneState,
       dispatchRedux,
+      isModularDrawerEnabled,
+      handleOpenReceiveDrawer,
     ],
   );
   /*

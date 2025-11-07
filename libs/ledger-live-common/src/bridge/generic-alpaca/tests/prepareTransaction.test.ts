@@ -92,81 +92,34 @@ describe("genericPrepareTransaction", () => {
     expect(result).toBe(baseTransaction); // still same reference
   });
 
-  it("propagates storageLimit from second estimation", async () => {
-    const estimatedFee = new BigNumber(491);
+  it.each([
+    ["type", 2, 2],
+    ["storageLimit", 300n, new BigNumber(300)],
+  ])(
+    "propagates %s from estimation parameters",
+    async (parameterName, parameterValue, expectedValue) => {
+      (getAlpacaApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({
+          value: new BigNumber(491),
+          parameters: { [parameterName]: parameterValue },
+        }),
+      });
 
-    const estimateFeesFirstCall = jest.fn().mockResolvedValue({
-      value: estimatedFee,
-      parameters: { storageLimit: 300 },
-    });
+      const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
+      const prepareTransaction = genericPrepareTransaction(network, kind);
+      const result = await prepareTransaction(account, txWithoutCustomFees);
 
-    const estimateFeesSecondCall = jest.fn().mockResolvedValue({
-      value: estimatedFee,
-      parameters: { storageLimit: 0 },
-    });
-
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest
-        .fn()
-        .mockImplementationOnce(() => estimateFeesFirstCall())
-        .mockImplementationOnce(() => estimateFeesSecondCall()),
-    });
-
-    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
-    const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(account, txWithoutCustomFees);
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        fees: estimatedFee,
-        storageLimit: new BigNumber(0),
-        customFees: {
-          parameters: {
-            fees: undefined,
+      expect(result).toEqual(
+        expect.objectContaining({
+          fees: new BigNumber(491),
+          [parameterName]: expectedValue,
+          customFees: {
+            parameters: {
+              fees: undefined,
+            },
           },
-        },
-      }),
-    );
-
-    expect((getAlpacaApi as jest.Mock)().estimateFees).toHaveBeenCalledTimes(2);
-  });
-
-  it("propagates storageLimit showing new account scenario", async () => {
-    const estimatedFee = new BigNumber(491);
-
-    const estimateFeesFirstCall = jest.fn().mockResolvedValue({
-      value: estimatedFee,
-      parameters: { storageLimit: 300 },
-    });
-
-    const estimateFeesSecondCall = jest.fn().mockResolvedValue({
-      value: estimatedFee,
-      parameters: { storageLimit: 277 },
-    });
-
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest
-        .fn()
-        .mockImplementationOnce(() => estimateFeesFirstCall())
-        .mockImplementationOnce(() => estimateFeesSecondCall()),
-    });
-
-    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
-    const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(account, txWithoutCustomFees);
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        fees: estimatedFee,
-        storageLimit: new BigNumber(277),
-        customFees: {
-          parameters: {
-            fees: undefined,
-          },
-        },
-      }),
-    );
-
-    expect((getAlpacaApi as jest.Mock)().estimateFees).toHaveBeenCalledTimes(2);
-  });
+        }),
+      );
+    },
+  );
 });

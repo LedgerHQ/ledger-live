@@ -152,6 +152,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
+  const lldModularDrawerFF = useFeature("lldModularDrawer");
+  const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
@@ -543,6 +545,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
+            isModularDrawer: isLldModularDrawer ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

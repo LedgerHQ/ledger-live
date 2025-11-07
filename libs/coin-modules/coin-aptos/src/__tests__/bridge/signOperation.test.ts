@@ -21,7 +21,7 @@ jest.mock("../../network/client", () => {
 
 jest.mock("../../logic/buildTransaction", () => {
   return () => ({
-    sequence_number: "789",
+    sequence_number: 789,
   });
 });
 
@@ -105,7 +105,7 @@ describe("buildSignOperation", () => {
             recipients: [transaction.recipient],
             accountId: "js:2:aptos:0x000:",
             date,
-            transactionSequenceNumber: 789,
+            transactionSequenceNumber: new BigNumber(789),
             subOperations: [],
           },
           signature: "7369676e65645478",
@@ -164,7 +164,7 @@ describe("buildSignOperation", () => {
             recipients: [transaction.recipient],
             accountId: "js:2:aptos:0x000:",
             date,
-            transactionSequenceNumber: 789,
+            transactionSequenceNumber: new BigNumber(789),
             subOperations: [],
           },
           signature: "7369676e65645478",
@@ -287,7 +287,7 @@ describe("buildSignOperation", () => {
             recipients: [transaction.recipient],
             accountId: "js:2:aptos:0x000:",
             date,
-            transactionSequenceNumber: 789,
+            transactionSequenceNumber: new BigNumber(789),
             subOperations: [
               {
                 accountId: "subAccountId",

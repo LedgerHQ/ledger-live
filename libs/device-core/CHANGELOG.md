@@ -1,5 +1,27 @@
 # @ledgerhq/device-core
 
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/live-network@2.1.0
+  - @ledgerhq/types-live@6.88.0
+  - @ledgerhq/devices@8.7.0
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
+## 0.6.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/live-network@2.1.0-next.0
+  - @ledgerhq/types-live@6.88.0-next.0
+  - @ledgerhq/devices@8.7.0-next.0
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+
 ## 0.6.6
 
 ### Patch Changes

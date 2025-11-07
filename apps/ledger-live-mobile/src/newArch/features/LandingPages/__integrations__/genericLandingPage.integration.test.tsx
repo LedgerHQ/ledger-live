@@ -1,7 +1,13 @@
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
 import { fakeCategoryContentCards, landingPageStickyCtaCard, classicCards } from "./shared";
-import { LandingPageStickyCtaContentCard, LandingPageUseCase } from "~/dynamicContent/types";
+import {
+  LandingPageStickyCtaContentCard,
+  LandingPageUseCase,
+  ContentCardsType,
+} from "~/dynamicContent/types";
+import VerticalCard from "~/contentCards/cards/vertical";
+import { ContentCardMetadata } from "~/contentCards/cards/types";
 import { GenericView } from "../screens/GenericLandingPage";
 import { State } from "~/reducers/types";
 
@@ -90,5 +96,58 @@ describe("GenericLandingPage", () => {
     });
     expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/signup");
     expect(logClickCard).toHaveBeenCalledWith("stickyCta001");
+  });
+});
+
+describe("Content cards clickability", () => {
+  const createVerticalCard = (metadata: ContentCardMetadata, id: string) => {
+    return (
+      <VerticalCard
+        title="Test Card"
+        description="desc"
+        size="L"
+        media="https://example.com/img.png"
+        metadata={metadata}
+        id={id}
+        createdAt={Date.now() / 1000}
+        viewed={false}
+        widthFactor={1}
+        type={ContentCardsType.bigSquare}
+      />
+    );
+  };
+
+  const testCardClickability = async (isClickable: boolean) => {
+    const onClick = jest.fn();
+    const metadata = isClickable
+      ? { id: "vcard-clickable", actions: { onClick } }
+      : { id: "vcard-non-clickable", actions: {} };
+
+    const component = createVerticalCard(
+      metadata,
+      `test-vertical-${isClickable ? "clickable" : "non-clickable"}`,
+    );
+    const { user } = render(component);
+
+    const card = await screen.findByTestId("content-card-container");
+    expect(card).toBeOnTheScreen();
+
+    await user.press(card);
+
+    if (isClickable) {
+      expect(onClick).toHaveBeenCalled();
+      expect(card.props.accessibilityRole).toBe("button");
+    } else {
+      expect(onClick).not.toHaveBeenCalled();
+      expect(card.props.accessibilityRole).toBeUndefined();
+    }
+  };
+
+  test("Vertical card is clickable when onClick provided", async () => {
+    await testCardClickability(true);
+  });
+
+  test("Vertical card is not clickable when onClick is missing", async () => {
+    await testCardClickability(false);
   });
 });

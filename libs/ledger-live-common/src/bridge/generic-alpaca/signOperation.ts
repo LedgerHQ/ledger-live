@@ -119,9 +119,11 @@ export const genericSignOperation =
           // Enrich with memo and asset information
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
-          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
-          transactionIntent.sequence = sequenceNumber;
+          if (typeof transactionIntent.sequence !== "bigint") {
+            // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+            const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
+            transactionIntent.sequence = sequenceNumber;
+          }
 
           /* Craft unsigned blob via Alpaca */
           const { transaction: unsigned } = await alpacaApi.craftTransaction(transactionIntent, {
@@ -131,7 +133,11 @@ export const genericSignOperation =
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
-          const txnSig = await signer.signTransaction(derivationPath, unsigned);
+          const txnSig = await signer.signTransaction(
+            derivationPath,
+            unsigned,
+            transaction.recipientDomain,
+          );
           return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
         });
 

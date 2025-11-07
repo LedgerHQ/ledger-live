@@ -84,6 +84,7 @@ jobs:
     name: "Android Build Native"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     if: ${{ inputs.build-android-native == true }}
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -166,6 +167,7 @@ jobs:
   build-android-js:
     name: "Android Build JS"
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
         js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}

@@ -1,5 +1,19 @@
 # next.js-example
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45), [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df)]:
+  - @ledgerhq/react-ui@0.41.0
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45), [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df)]:
+  - @ledgerhq/react-ui@0.41.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

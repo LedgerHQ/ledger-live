@@ -3,8 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
+  findCryptoCurrencyById,
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -20,7 +22,6 @@ import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetF
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -273,55 +274,61 @@ export function useDeepLinkHandler() {
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          let foundCurrency;
-          try {
-            foundCurrency = getTokenOrCryptoCurrencyById(
-              typeof currency === "string" ? currency : "",
-            );
-          } catch (error) {
-            foundCurrency = null;
-          }
+          async function handleSendDeepLink() {
+            let foundCurrency;
+            try {
+              const currencyId = typeof currency === "string" ? currency : "";
+              foundCurrency =
+                findCryptoCurrencyById(currencyId) ||
+                (await getCryptoAssetsStore().findTokenById(currencyId)) ||
+                null;
+            } catch (error) {
+              foundCurrency = null;
+            }
 
-          const openModalWithAccount = (
-            account: Account | TokenAccount,
-            parentAccount?: Account,
-          ) => {
-            setDrawer();
-            dispatch(
-              openModal(modal, {
-                recipient,
-                account,
-                parentAccount,
-                amount:
-                  amount && typeof amount === "string" && foundCurrency
-                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
-                    : undefined,
-              }),
-            );
-          };
+            const openModalWithAccount = (
+              account: Account | TokenAccount,
+              parentAccount?: Account,
+            ) => {
+              setDrawer();
+              dispatch(
+                openModal(modal, {
+                  recipient,
+                  account,
+                  parentAccount,
+                  amount:
+                    amount && typeof amount === "string" && foundCurrency
+                      ? parseCurrencyUnit(foundCurrency.units[0], amount)
+                      : undefined,
+                }),
+              );
+            };
 
-          if (!currency || !foundCurrency) {
-            // we fallback to default add account flow with asset selection
-            openAssetFlow();
-            return;
-          }
-          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+            if (!currency || !foundCurrency) {
+              // we fallback to default add account flow with asset selection
+              openAssetFlow();
+              return;
+            }
+            const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
-          if (!found.length) {
-            openAddAccountFlow(foundCurrency, true, openModalWithAccount);
-            return;
-          }
+            if (!found.length) {
+              openAddAccountFlow(foundCurrency, true, openModalWithAccount);
+              return;
+            }
 
-          const [chosen] = found;
-          dispatch(closeAllModal());
-          if (chosen?.type === "Account") {
-            openModalWithAccount(chosen);
-          } else {
-            const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
-            if (parentAccount && chosen) {
-              openModalWithAccount(chosen, parentAccount);
+            const [chosen] = found;
+            dispatch(closeAllModal());
+            if (chosen?.type === "Account") {
+              openModalWithAccount(chosen);
+            } else {
+              const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
+              if (parentAccount && chosen) {
+                openModalWithAccount(chosen, parentAccount);
+              }
             }
           }
+
+          handleSendDeepLink();
           break;
         }
         case "settings": {
@@ -376,6 +383,11 @@ export function useDeepLinkHandler() {
             navigate(`/market/${path}`);
           } else {
             navigate(`/market`);
+          }
+          break;
+        case "asset":
+          if (path) {
+            navigate(`/asset/${path}`);
           }
           break;
         case "recover":

@@ -77,13 +77,19 @@ export default class BuySellPage {
 
   @Step("Verify quick amount buttons functionality")
   async verifyQuickAmountButtonsFunctionality() {
-    const amounts = ["400", "800", "1600"] as const;
-    for (const amount of amounts) {
-      await tapWebElementByTestId(this.buyQuickAmountButtonId(amount));
+    const amountTests = [
+      { button: "400", expected: "400" },
+      { button: "800", expected: "800" },
+      { button: "1600", expected: "1,600" },
+    ] as const;
+
+    for (const { button, expected } of amountTests) {
+      await tapWebElementByTestId(this.buyQuickAmountButtonId(button));
       const value = await getValueByWebTestId(this.amountInputSectionId());
-      jestExpect(normalizeText(value)).toBe(amount);
+      jestExpect(normalizeText(value)).toBe(expected);
     }
   }
+
   @Step("Set amount to pay")
   async setAmountToPay(amount: string) {
     await typeTextByWebTestId(this.amountInputSectionId(), amount);

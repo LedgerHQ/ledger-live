@@ -61,6 +61,7 @@ export enum DeviceLabels {
   VERIFY_ETHEREUM = "Verify Ethereum",
   VERIFY_POLYGON = "Verify Polygon",
   VERIFY_COSMOS = "Verify Cosmos",
+  VERIFY_POLKADOT = "Verify Polkadot",
   VERIFY_SOLANA_ADDRESS = "Verify Solana address",
   VIEW_ACTION = "View action",
   VIEW_HEADER = "View Header",
@@ -68,4 +69,7 @@ export enum DeviceLabels {
   CONFIRM_HEADER = "Confirm header",
   CONFIRM_CHANGE = "Confirm change",
   TAP_TO_CONTINUE = "Tap to continue",
+  PROVIDE_PUBLIC_KEY = "Provide Public Key",
+  YES_REJECT = "Yes, reject",
+  CONTINUE_ANYWAY = "Continue anyway",
 }

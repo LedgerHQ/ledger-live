@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.51.0",
+  "version": "34.52.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -50,6 +50,10 @@
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
     },
+    "./hooks": {
+      "require": "./lib/hooks/index.js",
+      "default": "./lib-es/hooks/index.js"
+    },
     "./e2e": {
       "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"
@@ -96,7 +100,7 @@
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
     "react-native-svg": ">=12.1.1",
-    "react-redux": "^7.2.9",
+    "react-redux": "catalog:",
     "redux-actions": "2.6.5"
   },
   "peerDependenciesMeta": {
@@ -258,7 +262,7 @@
     "xstate": "^5.19.2",
     "yargs": "^17.0.0",
     "zod": "^3.22.4",
-    "react-redux": "^7.2.9"
+    "react-redux": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-react": "workspace:^",

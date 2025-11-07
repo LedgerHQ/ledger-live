@@ -1,5 +1,5 @@
-import test from "../fixtures/common";
-import { Application } from "../page";
+import test from "tests/fixtures/common";
+import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -130,7 +130,7 @@ export async function handleSwapErrorOrSuccess(
     );
   } else {
     await app.swap.waitForPageDomContentLoadedState();
-    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
     await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
   }
 }

@@ -113,6 +113,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  nanoOnboardingFundWallet: DEFAULT_FEATURE,
   welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
@@ -551,7 +552,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
-  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
   llmLedgerSyncEntryPoints: {
     ...DEFAULT_FEATURE,
@@ -568,6 +568,7 @@ export const DEFAULT_FEATURES: Features = {
       accounts: true,
       settings: true,
       onboarding: true,
+      postOnboarding: true,
     },
   },
   lldNanoSUpsellBanners: {
@@ -656,8 +657,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
-  llmOfacGeoBlocking: DEFAULT_FEATURE,
-  lldOfacGeoBlocking: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
     params: {
@@ -692,6 +691,7 @@ export const DEFAULT_FEATURES: Features = {
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
+  newSendFlow: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

@@ -48,17 +48,17 @@ export default function StepOptions(props: Readonly<StepProps>) {
   const { eventType, transitionTo, closeModal } = props;
   const history = useHistory();
 
-  function handleGoToReceiveProvider() {
+  function handleGoToBankProvider() {
     closeModal();
     history.push({
-      pathname: "/receive",
+      pathname: "/bank",
     });
   }
 
   return (
     <Box>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
-      <Option onClick={handleGoToReceiveProvider}>
+      <Option onClick={handleGoToBankProvider}>
         <IconWrapper>
           <Icons.Bank size={"M"} />
         </IconWrapper>

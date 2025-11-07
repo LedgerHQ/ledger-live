@@ -19,7 +19,7 @@ export function useMarket() {
   const marketParams = useSelector(marketParamsSelector);
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
 
-  const refresh = useCallback(
+  const updateMarketParams = useCallback(
     (payload?: MarketListRequestParams) => {
       dispatch(setMarketRequestParams(payload ?? {}));
     },
@@ -28,7 +28,7 @@ export function useMarket() {
 
   return {
     dispatch,
-    refresh,
+    updateMarketParams,
     starredMarketCoins,
     filterByStarredCurrencies,
     marketParams,

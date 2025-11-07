@@ -16,6 +16,7 @@ function main(ref: string) {
     "coin-tester\\/([^/]+)", // coin-tester
     "coin-tester-modules\\/([^/]+)", // coin-tester-modules/<coin>
   ];
+  const coins = new Set<string>();
 
   const combinedRegex = new RegExp(`(${patterns.join(")|(")})`);
   exec(
@@ -37,6 +38,9 @@ function main(ref: string) {
               const m = line.match(combinedRegex);
               if (m) {
                 const [first, second, third] = m;
+                if (first.startsWith("coin-modules/")) {
+                  coins.add(first.replace(/^.*coin-/, ""));
+                }
                 if (second === "families") {
                   // in case of coin implementations, we will stop at the coin family level
                   return `${second}/${third}`;
@@ -56,6 +60,7 @@ function main(ref: string) {
 
       core.setOutput("is-affected", String(list.length > 0));
       core.setOutput("paths", list.join(" "));
+      core.setOutput("coins", Array.from(coins).join(" "));
       if (list.length > 0) {
         core.info(`${list.length} paths affected since ${ref}: ${list.join(" ")}`);
       } else {

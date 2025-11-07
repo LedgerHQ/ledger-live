@@ -157,6 +157,7 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
+  nanoOnboardingFundWallet: DefaultFeature;
   welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
@@ -222,7 +223,6 @@ export type Features = CurrencyFeatures & {
   llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
-  llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
@@ -237,8 +237,6 @@ export type Features = CurrencyFeatures & {
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
-  llmOfacGeoBlocking: DefaultFeature;
-  lldOfacGeoBlocking: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
     params: Partial<{
@@ -270,6 +268,7 @@ export type Features = CurrencyFeatures & {
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
+  newSendFlow: DefaultFeature;
 };
 
 /**
@@ -633,6 +632,7 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+  postOnboarding: boolean;
 }>;
 
 export type Feature_LlNftEntryPoint = Feature<{

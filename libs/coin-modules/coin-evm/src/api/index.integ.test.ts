@@ -49,13 +49,13 @@ describe.each([
 
   describe("getSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
         await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
-      ).toBeGreaterThanOrEqual(17);
+      ).toBeGreaterThanOrEqual(17n);
     });
   });
 
@@ -215,6 +215,7 @@ describe.each([
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -232,6 +233,7 @@ describe.each([
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -351,6 +353,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -368,6 +371,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
