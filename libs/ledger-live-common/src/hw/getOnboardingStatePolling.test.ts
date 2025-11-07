@@ -79,6 +79,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -107,6 +108,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -135,6 +137,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -164,6 +167,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
           safeGuardTimeoutMs,
         }).subscribe({
@@ -192,6 +196,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           error: error => {
@@ -221,6 +226,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -248,6 +254,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -281,6 +288,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
         safeGuardTimeoutMs: pollingPeriodMs * 10,
       }).subscribe({
@@ -310,6 +318,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -322,6 +331,31 @@ describe("getOnboardingStatePolling", () => {
           } catch (expectError) {
             done(expectError);
           }
+        },
+      });
+
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
+    });
+  });
+
+  describe("When deviceName is provided", () => {
+    it("should pass deviceName to withDevice", done => {
+      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+      const device = aDevice;
+
+      getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: "My Device",
+        pollingPeriodMs,
+      }).subscribe({
+        next: () => {
+          expect(mockedWithDevice).toHaveBeenCalledWith(
+            device.deviceId,
+            expect.objectContaining({ matchDeviceByName: "My Device" }),
+          );
+          done();
         },
       });
 

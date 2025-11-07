@@ -70,6 +70,7 @@ describe("getLatestAvailableFirmwareAction", () => {
 
       getLatestAvailableFirmwareAction({
         deviceId: "A_DEVICE_ID",
+        deviceName: null,
       }).subscribe({
         next: ({
           firmwareUpdateContext,
@@ -124,6 +125,7 @@ describe("getLatestAvailableFirmwareAction", () => {
 
       getLatestAvailableFirmwareAction({
         deviceId: "A_DEVICE_ID",
+        deviceName: null,
       }).subscribe({
         next: ({
           firmwareUpdateContext,
@@ -188,6 +190,7 @@ describe("getLatestAvailableFirmwareAction", () => {
       let step = 1;
       getLatestAvailableFirmwareAction({
         deviceId: "A_DEVICE_ID",
+        deviceName: null,
       }).subscribe({
         next: ({
           firmwareUpdateContext,
@@ -265,6 +268,7 @@ describe("getLatestAvailableFirmwareAction", () => {
       let step = 1;
       getLatestAvailableFirmwareAction({
         deviceId: "A_DEVICE_ID",
+        deviceName: null,
       }).subscribe({
         next: ({
           firmwareUpdateContext,
@@ -318,6 +322,33 @@ describe("getLatestAvailableFirmwareAction", () => {
             done(expectError);
           }
           step += 1;
+        },
+      });
+    });
+  });
+
+  describe("When deviceName is provided", () => {
+    it("should pass deviceName to the underlying tasks", done => {
+      mockedInternalGetDeviceInfoTask.mockReturnValue(
+        of({ type: "data", deviceInfo: aDeviceInfo }),
+      );
+
+      mockedGetLatestFirmwareTask.mockReturnValue(
+        of({ type: "data", firmwareUpdateContext: aLatestFirmwareContext }),
+      );
+
+      getLatestAvailableFirmwareAction({
+        deviceId: "A_DEVICE_ID",
+        deviceName: "My Device",
+      }).subscribe({
+        complete: () => {
+          expect(mockedInternalGetDeviceInfoTask).toHaveBeenCalledWith(
+            expect.objectContaining({ deviceName: "My Device" }),
+          );
+          expect(mockedGetLatestFirmwareTask).toHaveBeenCalledWith(
+            expect.objectContaining({ deviceName: "My Device" }),
+          );
+          done();
         },
       });
     });
