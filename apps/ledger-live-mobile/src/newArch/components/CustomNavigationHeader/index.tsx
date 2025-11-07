@@ -21,23 +21,26 @@ export default function CustomNavigationHeader({ options, route }: NativeStackHe
   const hasExperimentalHeader = useExperimental();
 
   // When ExperimentalHeader is visible, don't add status bar padding (it's already handled)
-  // Note: The gap issue is more visible on Android but this applies to both platforms
   const topPadding = hasExperimentalHeader ? 0 : insets.top;
 
   const HeaderLeft = options.headerLeft;
   const HeaderTitleComponent = options.headerTitle;
   const HeaderRight = options.headerRight;
 
-  // Render the title - can be a custom component or default HeaderTitle
   const renderTitle = () => {
     if (HeaderTitleComponent) {
       if (typeof HeaderTitleComponent === "function") {
-        const title = options.title !== undefined ? options.title : route.name;
-        return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
+        const isDefaultHeaderTitle =
+          HeaderTitleComponent === HeaderTitle || HeaderTitleComponent.name === "HeaderTitle";
+        if (isDefaultHeaderTitle) {
+          const title = options.title !== undefined ? options.title : "";
+          return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
+        }
+        return <HeaderTitleComponent />;
       }
       return HeaderTitleComponent;
     }
-    const title = options.title !== undefined ? options.title : route.name;
+    const title = options.title !== undefined ? options.title : "";
     return <HeaderTitle>{title}</HeaderTitle>;
   };
 
