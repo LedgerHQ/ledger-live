@@ -458,5 +458,23 @@ describe("Alpaca utils", () => {
 
       expect(result.value.toString()).toEqual("50");
     });
+
+    it("shows fees in value when transaction has failed", () => {
+      const failedOp = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(100),
+        tx: { ...baseOp.tx, fees: BigInt(25) },
+        details: { status: "failed" },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, failedOp);
+
+      expect(result).toMatchObject({
+        hasFailed: true,
+        value: new BigNumber(25),
+        fee: new BigNumber(25),
+      });
+    });
   });
 });
