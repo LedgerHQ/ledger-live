@@ -3,10 +3,11 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 
 export default class AccountsPage extends CommonPage {
-  private baseLink = "accounts";
-  private listTitle = "accounts-list-title";
+  private readonly baseLink = "accounts";
+  private readonly listTitle = "accounts-list-title";
 
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
+  accountByName = (name: string) => `account-row-name-${name}`;
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
@@ -43,5 +44,10 @@ export default class AccountsPage extends CommonPage {
   async expectNoAccount() {
     const el = this.emptyAccountDisplay();
     await detoxExpect(el).toBeVisible();
+  }
+
+  @Step("Select account by name")
+  async selectAccountByName(name: string) {
+    await tapById(this.accountByName(name));
   }
 }

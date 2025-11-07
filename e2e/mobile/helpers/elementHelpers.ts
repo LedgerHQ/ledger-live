@@ -1,12 +1,29 @@
 /* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web } from "detox";
-import { delay, isAndroid } from "./commonHelpers";
+import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
+}
+interface WebElementWithMatcher extends WebElement {
+  matcher?: {
+    predicate?: unknown;
+    type?: string;
+    value?: string;
+  };
+  _call?: {
+    value?: unknown;
+  };
+}
+
+function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
+  return (
+    (isIos() && typeof obj === "object" && obj !== null && "matcher" in obj) ||
+    (isAndroid() && typeof obj === "object" && obj !== null && "_call" in obj)
+  );
 }
 
 const scroller = new PageScroller();
@@ -298,9 +315,23 @@ export const WebElementHelpers = {
   },
 
   async scrollToWebElement(element: WebElement) {
-    await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+    try {
+      await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+    } catch (error) {
+      throw new Error(
+        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${error}`,
+      );
+    }
   },
 
+  getWebElementMatcher(webElement: WebElement): string {
+    if (hasMatcherProperty(webElement)) {
+      return isIos()
+        ? JSON.stringify(webElement.matcher?.predicate || webElement.matcher, null, 2)
+        : JSON.stringify(webElement._call?.value || webElement._call, null, 2);
+    }
+    return "{}";
+  },
   async getCurrentWebviewUrl(): Promise<string> {
     let url = "";
     try {
