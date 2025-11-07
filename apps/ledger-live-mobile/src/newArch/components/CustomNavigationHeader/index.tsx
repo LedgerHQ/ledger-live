@@ -16,7 +16,7 @@ const NAVIGATION_HEADER_HEIGHT = 56;
  * - headerShadowVisible (border bottom)
  * - title (fallback for headerTitle)
  */
-export default function CustomNavigationHeader({ options, route }: NativeStackHeaderProps) {
+export default function CustomNavigationHeader({ options }: NativeStackHeaderProps) {
   const insets = useSafeAreaInsets();
   const hasExperimentalHeader = useExperimental();
 
