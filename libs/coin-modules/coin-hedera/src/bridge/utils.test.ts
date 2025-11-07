@@ -20,6 +20,10 @@ import {
   prepareOperations,
   removeDuplicatedContractCallOperations,
 } from "./utils";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 describe("bridge utils", () => {
   beforeAll(() => {

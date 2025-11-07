@@ -14,6 +14,10 @@ import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { getSyntheticBlock } from "../logic/utils";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 describe("createApi", () => {
   const api = createApi({});
