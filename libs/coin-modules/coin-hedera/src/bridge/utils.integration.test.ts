@@ -18,9 +18,12 @@ import type { EstimateFeesResult } from "../types";
 import { calculateAmount, getSubAccounts, integrateERC20Operations } from "./utils";
 import { apiClient } from "../network/api";
 import { toEVMAddress } from "../logic/utils";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
 describe("bridge utils", () => {
   beforeAll(() => {
+    initializeLegacyTokens(addTokens);
     setCryptoAssetsStore(legacyCryptoAssetsStore);
   });
 
