@@ -26,7 +26,7 @@ import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "~/screens/ReceiveFunds/HelpButton";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   hasClosedNetworkBannerSelector,
   hasClosedWithdrawBannerSelector,
@@ -35,6 +35,7 @@ import {
 import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
 import { useReceiveNoahEntry } from "~/hooks/useNoahEntryPoint";
+import { setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -44,6 +45,7 @@ export default function ReceiveFundsNavigator() {
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const receiveNoahEntry = useReceiveNoahEntry();
+  const dispatchRedux = useDispatch();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -78,7 +80,9 @@ export default function ReceiveFundsNavigator() {
       button: "HeaderRight Close",
       page: ScreenName.ReceiveConfirmation,
     });
-  }, []);
+
+    dispatchRedux(setIsOnboardingFlowReceiveSuccess(true));
+  }, [dispatchRedux]);
 
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
