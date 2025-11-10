@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui/index";
@@ -6,7 +6,11 @@ import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { OptionButton } from "./OptionButton";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  StackNavigatorProps,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { isObject } from "LLM/utils/isObject";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -59,11 +63,23 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
     setIsOpen(false);
   }
 
+  const handleModalHide = useCallback(() => {
+    if (isNavigatingRef.current && !isModularDrawerEnabled) {
+      return;
+    }
+
+    const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+    if (parent && "pop" in parent && parent.canGoBack()) {
+      parent.pop();
+    }
+  }, [navigation, isModularDrawerEnabled]);
+
   return (
     <QueuedDrawerGorhom
       isRequestingToBeOpened={isOpen}
       snapPoints={["35%", "55%"]}
       onClose={handleClose}
+      onModalHide={handleModalHide}
     >
       <TrackScreen category="Deposit" name="Options" />
       <Text textAlign="center" fontSize={24} mb={5}>
