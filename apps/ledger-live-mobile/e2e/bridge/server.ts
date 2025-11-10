@@ -6,11 +6,15 @@ import merge from "lodash/merge";
 
 import { NavigatorName } from "../../src/const";
 import { BleState, DeviceLike } from "../../src/reducers/types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw, FeatureId } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log as detoxLog } from "detox";
+import {
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+} from "~/actions/types";
 
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
@@ -44,6 +48,13 @@ function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
   const randomString = Math.random().toString(36).slice(2, 7); // Generate random string
   return timestamp + randomString; // Concatenate timestamp and random string
+}
+
+function isFeatureId(
+  key: string,
+  flags: SettingsSetOverriddenFeatureFlagsPlayload,
+): key is FeatureId {
+  return key in flags;
 }
 
 export function init(port = 8099, onConnection?: () => void) {
@@ -187,6 +198,18 @@ export async function open() {
 
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
+}
+
+export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
+  for (const id in flags) {
+    if (isFeatureId(id, flags)) {
+      await setFeatureFlag({ id, value: flags[id] });
+    }
+  }
+}
+
+export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
+  postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
 }
 
 function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
