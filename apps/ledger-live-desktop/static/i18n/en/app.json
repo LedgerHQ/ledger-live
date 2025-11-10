@@ -7090,6 +7090,12 @@
     "UnknownDeviceExchangeError": {
       "title": "Communication error",
       "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "ReducedAmountUtxoWarning": {
+      "title": "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError": {
+      "title": "Amount too large for UTXO constraints."
     }
   },
   "cryptoOrg": {

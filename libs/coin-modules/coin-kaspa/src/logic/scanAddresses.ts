@@ -10,8 +10,6 @@ const INITIAL_BALANCE = BigNumber(0);
 const GAP_LIMIT = 20;
 const SCAN_BATCH_SIZE = 200;
 
-const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size with 2 outputs) ) / 1_118 (per_input))
-
 /**
  * Scans the addresses for an account and retrieves information such as used addresses and the total balance.
  *
@@ -87,16 +85,8 @@ export async function scanAddresses(
     }
   }
 
-  const spendableBalance = [
-    ...accountAddresses.usedChangeAddresses,
-    ...accountAddresses.usedReceiveAddresses,
-  ]
-    .sort((a, b) => b.balance.minus(a.balance).toNumber())
-    .slice(0, MAX_TX_INPUTS)
-    .map(utxo => utxo.balance)
-    .reduce((acc, v) => acc.plus(v), BigNumber(0));
-
-  accountAddresses.spendableBalance = spendableBalance;
+  // Assume all the balance could be sent, there are not "locked" coins.
+  accountAddresses.spendableBalance = accountAddresses.totalBalance;
 
   return accountAddresses;
 }
