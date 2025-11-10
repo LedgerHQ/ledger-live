@@ -58,7 +58,7 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { getMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
+
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -155,7 +155,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
 
-  const distinctId = getMixpanelDistinctId();
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -547,7 +546,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
             isModularDrawer: isLldModularDrawer ? "true" : "false",
-            distinctId,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

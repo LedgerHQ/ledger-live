@@ -587,9 +587,6 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
-      mixpanel-browser:
-        specifier: 2.71.1
-        version: 2.71.1
       prando:
         specifier: 5.1.2
         version: 5.1.2
@@ -14871,6 +14868,9 @@ packages:
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
+  '@ledgerhq/errors@6.22.0':
+    resolution: {integrity: sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ==}
+
   '@ledgerhq/errors@6.25.0':
     resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
 
@@ -14991,21 +14991,6 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
-
-  '@mixpanel/rrdom@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-vX/tbnS14ZzzatC7vOyvAm9tOLU8tof0BuppBlphzEx1YHTSw8DQiAmyAc0AmXidchLV0W+cUHV/WsehPLh2hQ==}
-
-  '@mixpanel/rrweb-snapshot@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-2kSnjZZ3QZ9zOz/isOt8s54mXUUDgXk/u0eEi/rE0xBWDeuA0NHrBcqiMc+w4F/yWWUpo5F5zcuPeYpc6ufAsw==}
-
-  '@mixpanel/rrweb-types@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-ucIYe1mfJ2UksvXW+d3bOySTB2/0yUSqQJlUydvbBz6OO2Bhq3nJHyLXV9ExkgUMZm1ZyDcvvmNUd1+5tAXlpA==}
-
-  '@mixpanel/rrweb-utils@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-OomKIB6GTx5xvCLJ7iic2khT/t/tnCJUex13aEqsbSqIT/UzUUsqf+LTrgUK5ex+f6odmkCNjre2y5jvpNqn+g==}
-
-  '@mixpanel/rrweb@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-J3dVTEu6Z4p8di7y9KKvUooNuBjX97DdG6XGWoPEPi07A9512h9M8MEtvlY3mK0PGfuC0Mz5Pv/Ws6gjGYfKQg==}
 
   '@mswjs/interceptors@0.29.1':
     resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
@@ -19882,9 +19867,6 @@ packages:
   '@types/crypto-js@4.2.2':
     resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
 
-  '@types/css-font-loading-module@0.0.7':
-    resolution: {integrity: sha512-nl09VhutdjINdWyXxHWN/w9zlNCfr60JUqJbd24YXUuCwgeL0TpFSdElCwb6cxfB6ybE19Gjj4g0jsgkXxKv1Q==}
-
   '@types/d3-array@2.3.0':
     resolution: {integrity: sha512-eBQLBDq0bcXW9K14ktZDL/oeTzhS7BIoyEb0ZQb7gq4kTI/nZD+OISrpmxFll9LIXp7gOmYk+yPPoxt3GeXtQg==}
 
@@ -21146,9 +21128,6 @@ packages:
     resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
     engines: {node: '>=16.0.0'}
 
-  '@xstate/fsm@1.6.5':
-    resolution: {integrity: sha512-b5o1I6aLNeYlU/3CPlj/Z91ybk1gUsKT+5NAJI+2W4UjvS5KLG28K9v5UvNoFVjHV8PajVZ00RH3vnjyQO7ZAw==}
-
   '@xstate/react@5.0.3':
     resolution: {integrity: sha512-Zdnn0VTPcVdoaAiW0OX6Nkvdoe7SNGjfaZqM61NKhjt2aNULqiicmDu2tOd1ChzlRWYDxGTdbzVqqVyMLpoHJw==}
     peerDependencies:
@@ -21823,6 +21802,9 @@ packages:
   axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
+  axios@1.10.0:
+    resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
+
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
@@ -22061,10 +22043,6 @@ packages:
 
   base64-arraybuffer@0.2.0:
     resolution: {integrity: sha512-7emyCsu1/xiBXgQZrscw/8KPRT44I4Yq9Pe6EGs3aPRTsWuggML1/1DTuZUuIaJPIm1FTDUVXl4x/yW8s0kQDQ==}
-    engines: {node: '>= 0.6.0'}
-
-  base64-arraybuffer@1.0.2:
-    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
     engines: {node: '>= 0.6.0'}
 
   base64-js@1.5.1:
@@ -22668,10 +22646,6 @@ packages:
   chai@4.4.1:
     resolution: {integrity: sha512-13sOfMv2+DWduEU+/xbun3LScLoqN17nBeTLUsmDfKdoiC1fr0n9PU4guu4AhRcOVFk/sW8LyZWHuhWtQZiF+g==}
     engines: {node: '>=4'}
-
-  chai@5.1.2:
-    resolution: {integrity: sha512-aGtmf24DW6MLHHG5gCx4zaI3uBq3KRtxeVs0DjFH6Z0rDNbsvTxFASFvdj79pxjxZ8/5u3PIiN3IwEIQkiiuPw==}
-    engines: {node: '>=12'}
 
   chai@5.2.0:
     resolution: {integrity: sha512-mCuXncKXk5iCLhfhwTc0izo0gtEmpz5CtG2y8GiOINBlMVS6v8TMRc5TaLWKS6692m9+dVVfzgeVxR5UxWHTYw==}
@@ -29106,9 +29080,6 @@ packages:
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
 
-  loupe@3.1.2:
-    resolution: {integrity: sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg==}
-
   loupe@3.1.3:
     resolution: {integrity: sha512-kkIp7XSkP78ZxJEsSxW3712C6teJVoeHHwgo9zJ380de7IYyJ2ISlxojcH2pC5OFLewESmnRi/+XCDIEEVyoug==}
 
@@ -29883,12 +29854,6 @@ packages:
 
   miscreant@0.3.2:
     resolution: {integrity: sha512-fL9KxsQz9BJB2KGPMHFrReioywkiomBiuaLk6EuChijK0BsJsIKJXdVomR+/bPj5mvbFD6wM0CM3bZio9g7OHA==}
-
-  mitt@3.0.1:
-    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
-
-  mixpanel-browser@2.71.1:
-    resolution: {integrity: sha512-TKE+3PhhyPHgkgosAtESs6g++waMmm99G0f/jGLPVGTyY4Wi3BwmqsFaxrvm6rsKt4JY6L1vkdHhoMnfG8+juA==}
 
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
@@ -40481,7 +40446,7 @@ snapshots:
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
       '@ledgerhq/domain-service': 1.2.12
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.22.0
       '@ledgerhq/evm-tools': 1.3.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
@@ -41383,7 +41348,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.12.2
+      axios: 1.10.0
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -45312,7 +45277,7 @@ snapshots:
 
   '@ledgerhq/domain-service@1.2.12':
     dependencies:
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.22.0
       '@ledgerhq/logs': 6.12.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
@@ -45323,6 +45288,8 @@ snapshots:
   '@ledgerhq/errors@5.50.0': {}
 
   '@ledgerhq/errors@6.19.1': {}
+
+  '@ledgerhq/errors@6.22.0': {}
 
   '@ledgerhq/errors@6.25.0': {}
 
@@ -45340,7 +45307,7 @@ snapshots:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets': 6.37.0
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.22.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
       '@ledgerhq/logs': 6.12.0
@@ -45511,29 +45478,6 @@ snapshots:
       '@types/mdx': 2.0.12
       '@types/react': 18.2.73
       react: 18.3.1
-
-  '@mixpanel/rrdom@2.0.0-alpha.18.2':
-    dependencies:
-      '@mixpanel/rrweb-snapshot': 2.0.0-alpha.18.2
-
-  '@mixpanel/rrweb-snapshot@2.0.0-alpha.18.2':
-    dependencies:
-      postcss: 8.5.1
-
-  '@mixpanel/rrweb-types@2.0.0-alpha.18.2': {}
-
-  '@mixpanel/rrweb-utils@2.0.0-alpha.18.2': {}
-
-  '@mixpanel/rrweb@2.0.0-alpha.18.2':
-    dependencies:
-      '@mixpanel/rrdom': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-snapshot': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-types': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-utils': 2.0.0-alpha.18.2
-      '@types/css-font-loading-module': 0.0.7
-      '@xstate/fsm': 1.6.5
-      base64-arraybuffer: 1.0.2
-      mitt: 3.0.1
 
   '@mswjs/interceptors@0.29.1':
     dependencies:
@@ -52997,7 +52941,7 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
@@ -53035,7 +52979,7 @@ snapshots:
 
   '@types/bs58@4.0.4':
     dependencies:
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       base-x: 3.0.9
 
   '@types/bs58check@2.1.2':
@@ -53127,8 +53071,6 @@ snapshots:
       '@types/node': 20.12.12
 
   '@types/crypto-js@4.2.2': {}
-
-  '@types/css-font-loading-module@0.0.7': {}
 
   '@types/d3-array@2.3.0': {}
 
@@ -53267,7 +53209,7 @@ snapshots:
 
   '@types/eslint@8.56.6':
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
       '@types/json-schema': 7.0.15
 
   '@types/estree@0.0.39': {}
@@ -54437,7 +54379,7 @@ snapshots:
   '@vitest/coverage-istanbul@3.0.7(vitest@2.1.9(@types/node@22.10.10)(jsdom@25.0.1))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
-      debug: 4.4.0
+      debug: 4.4.1
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-instrument: 6.0.3
       istanbul-lib-report: 3.0.1
@@ -54467,7 +54409,7 @@ snapshots:
     dependencies:
       '@vitest/spy': 2.1.9
       '@vitest/utils': 2.1.9
-      chai: 5.1.2
+      chai: 5.2.0
       tinyrainbow: 1.2.0
 
   '@vitest/expect@3.1.1':
@@ -54989,8 +54931,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  '@xstate/fsm@1.6.5': {}
 
   '@xstate/react@5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)':
     dependencies:
@@ -55830,6 +55770,12 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.11
 
+  axios@1.10.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+
   axios@1.12.2:
     dependencies:
       follow-redirects: 1.15.11
@@ -56355,8 +56301,6 @@ snapshots:
   base32.js@0.1.0: {}
 
   base64-arraybuffer@0.2.0: {}
-
-  base64-arraybuffer@1.0.2: {}
 
   base64-js@1.5.1: {}
 
@@ -57175,14 +57119,6 @@ snapshots:
       loupe: 2.3.7
       pathval: 1.1.1
       type-detect: 4.0.8
-
-  chai@5.1.2:
-    dependencies:
-      assertion-error: 2.0.1
-      check-error: 2.1.1
-      deep-eql: 5.0.2
-      loupe: 3.1.2
-      pathval: 2.0.0
 
   chai@5.2.0:
     dependencies:
@@ -60652,7 +60588,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
 
   esutils@2.0.3: {}
 
@@ -63652,7 +63588,7 @@ snapshots:
 
   istanbul-lib-source-maps@5.0.6:
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/trace-mapping': 0.3.31
       debug: 4.3.4
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
@@ -66424,13 +66360,13 @@ snapshots:
       cssstyle: 4.2.1
       data-urls: 5.0.0
       decimal.js: 10.4.3
-      form-data: 4.0.0
+      form-data: 4.0.4
       html-encoding-sniffer: 4.0.0
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       is-potential-custom-element-name: 1.0.1
       nwsapi: 2.2.16
-      parse5: 7.1.2
+      parse5: 7.2.1
       rrweb-cssom: 0.7.1
       saxes: 6.0.0
       symbol-tree: 3.2.4
@@ -67285,8 +67221,6 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
-  loupe@3.1.2: {}
-
   loupe@3.1.3: {}
 
   lower-case@2.0.2:
@@ -67437,8 +67371,8 @@ snapshots:
 
   magicast@0.3.5:
     dependencies:
-      '@babel/parser': 7.28.3
-      '@babel/types': 7.27.0
+      '@babel/parser': 7.28.4
+      '@babel/types': 7.28.4
       source-map-js: 1.2.1
 
   make-dir@2.1.0:
@@ -68538,12 +68472,6 @@ snapshots:
       minipass: 7.1.2
 
   miscreant@0.3.2: {}
-
-  mitt@3.0.1: {}
-
-  mixpanel-browser@2.71.1:
-    dependencies:
-      '@mixpanel/rrweb': 2.0.0-alpha.18.2
 
   mkdirp-classic@0.5.3: {}
 
@@ -72535,7 +72463,7 @@ snapshots:
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.28.4
+      '@babel/runtime': 7.24.1
 
   redux@5.0.1: {}
 
@@ -76771,7 +76699,7 @@ snapshots:
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.1
-      rollup: 4.24.0
+      rollup: 4.44.1
     optionalDependencies:
       '@types/node': 22.10.10
       fsevents: 2.3.3
@@ -76780,7 +76708,7 @@ snapshots:
     dependencies:
       esbuild: 0.24.2
       postcss: 8.5.1
-      rollup: 4.24.0
+      rollup: 4.44.1
     optionalDependencies:
       '@types/node': 22.10.10
       fsevents: 2.3.3
@@ -76803,8 +76731,8 @@ snapshots:
       '@vitest/snapshot': 2.1.9
       '@vitest/spy': 2.1.9
       '@vitest/utils': 2.1.9
-      chai: 5.1.2
-      debug: 4.4.0
+      chai: 5.2.0
+      debug: 4.4.1
       expect-type: 1.1.0
       magic-string: 0.30.17
       pathe: 1.1.2
