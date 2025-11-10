@@ -66,6 +66,7 @@ export async function runInlineAddAccountTest(
           account.currency.id,
           0,
         );
+        await app.common.selectFirstAccount();
       }
 
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");

@@ -13,7 +13,7 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   if (await app.modularDrawer.isFlowEnabled("live_app")) {
     await app.modularDrawer.selectAsset(account);
   } else {
-    await app.common.performSearch(account.currency.id);
+    await app.common.performSearch(account.currency.name);
     await app.stake.selectCurrency(account.currency.id);
     await app.common.selectFirstAccount();
   }

@@ -5,10 +5,10 @@ import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 export default class ModularDrawer {
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
-  selectCryptoScrollViewId = "select-crypto-scrollView";
+  selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
   networkBasedTitleIdMAD = "modular-drawer-Network-title";
   assetBasedTitleIdMAD = "modular-drawer-Asset-title";
-  networkSelectionScrollViewId = "network-selection-scrollView";
+  networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
   accountTitleIdMAD = "modular-drawer-Account-title";
   addNewOrExistingAccountButton = "add-new-account-button";
   drawerCloseButtonId = "drawer-close-button";
@@ -95,9 +95,7 @@ export default class ModularDrawer {
 
   @Step("Tap on add new or existing account button")
   async tapAddNewOrExistingAccountButtonMAD(): Promise<void> {
-    if (await IsIdVisible(this.accountTitleIdMAD)) {
-      await tapById(this.addNewOrExistingAccountButton);
-    }
+    await tapById(this.addNewOrExistingAccountButton);
   }
 
   @Step("Expect (Select Asset) page")
