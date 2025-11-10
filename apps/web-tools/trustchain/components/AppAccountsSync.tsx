@@ -554,6 +554,7 @@ function appForCurrency<T>(
 ): Observable<T> {
   return connectApp()({
     deviceId,
+    deviceName: null,
     request: {
       appName: currency.managerAppName,
       allowPartialDependencies: false,
