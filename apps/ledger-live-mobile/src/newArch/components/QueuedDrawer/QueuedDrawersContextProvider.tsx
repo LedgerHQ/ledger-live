@@ -73,7 +73,7 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
     logDrawer("closeAllDrawers");
     if (queueRef.current.length === 0) return;
     queueRef.current.forEach(queueItem => queueItem.setDrawerOpenedCallback(false));
-    queueRef.current = [{ ...queueRef.current[0], markedForClose: true }];
+    queueRef.current = [];
     logQueueLength();
   }, [logQueueLength]);
 
