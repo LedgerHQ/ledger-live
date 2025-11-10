@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
-
   if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
@@ -30,7 +29,6 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);
-
   if (continueToQuotes) {
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();

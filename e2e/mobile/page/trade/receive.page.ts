@@ -17,12 +17,9 @@ export default class ReceivePage {
   receivePageScrollViewId = "receive-screen-scrollView";
   receiveConnectDeviceHeaderId = "receive-connect-device-header";
   selectCryptoScrollViewId = "select-crypto-scrollView";
-  //networkSelectionScrollViewId = "network-selection-scrollView";
 
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
-  //currencyNameIdMAD = (currencyId: string) => `asset-item-${currencyId}`;
-  //networkItemIdMAD = (networkId: string) => `network-item-${networkId}`;
   currencyNameIdByRegex = (type: string) => new RegExp(`big-currency-name-.*\\/${type}\\/.*`);
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
@@ -59,10 +56,7 @@ export default class ReceivePage {
 
   @Step("Select currency in receive list")
   async selectCurrency(currencyName: string): Promise<void> {
-    //not MAD:
     const id = this.currencyNameId(currencyName.toLowerCase());
-    // MAD:
-    //const id = this.currencyNameIdMAD(currencyNameId);
     if (!(await IsIdVisible(id))) {
       await scrollToId(id, this.selectCryptoScrollViewId);
     }
@@ -72,7 +66,6 @@ export default class ReceivePage {
   @Step("Select currency in receive list")
   async selectCurrencyByType(currencyType: TokenType): Promise<void> {
     const id = this.currencyNameIdByRegex(currencyType.toLowerCase());
-    console.log("id: ", id);
     if (!(await IsIdVisible(id))) {
       await scrollToId(id, this.selectCryptoScrollViewId);
     }
@@ -87,13 +80,7 @@ export default class ReceivePage {
 
   @Step("Select network")
   async selectNetwork(networkId: string): Promise<void> {
-    //not MAD:
     const id = this.currencyNameId(networkId);
-    //Mad:
-    //const id = this.networkItemIdMAD(networkId);
-    // if (!(await IsIdVisible(id))) {
-    //   await scrollToId(id, this.networkSelectionScrollViewId);
-    // }
     await tapById(id);
   }
 
@@ -105,10 +92,7 @@ export default class ReceivePage {
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkId: string): Promise<void> {
-    //not MAD:
     const id = this.networkBasedStep2HeaderTitleId;
-    //MAD:
-    //const id = this.networkBasedTitleIdMAD;
     if (await IsIdVisible(id)) {
       await this.selectNetwork(networkId);
     }

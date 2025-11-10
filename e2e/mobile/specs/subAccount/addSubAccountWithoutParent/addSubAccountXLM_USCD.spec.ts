@@ -13,5 +13,3 @@ runAddSubAccountTest(
   testConfig.tags,
   testConfig.withParentAccount,
 );
-
-//pas ok - probleme de scroll

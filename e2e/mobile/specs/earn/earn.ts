@@ -45,10 +45,29 @@ export async function runInlineAddAccountTest(
     it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
       await app.transferMenuDrawer.open();
       await app.transferMenuDrawer.navigateToStake();
-      await app.stake.selectCurrency(account.currency.id);
-      await app.common.tapProceedButton();
-      await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
-      await app.common.selectFirstAccount();
+
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
+
+      if (isModularDrawer) {
+        await app.modularDrawer.performSearchByTicker(account.currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+        await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+        await app.addAccount.addAccountAtIndex(
+          `${account.currency.name} 1`,
+          account.currency.id,
+          0,
+        );
+        await app.common.enableSynchronization();
+      } else {
+        await app.stake.selectCurrency(account.currency.id);
+        await app.common.tapProceedButton();
+        await app.addAccount.addAccountAtIndex(
+          `${account.currency.name} 1`,
+          account.currency.id,
+          0,
+        );
+      }
+
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
     });
   });
