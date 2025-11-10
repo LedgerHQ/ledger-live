@@ -28,10 +28,15 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
+import { SettingsState } from "~/reducers/types";
 
 interface Props {
   onInitFinished: () => void;
-  children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => ReactNode;
+  children: (props: {
+    ready: boolean;
+    initialCountervalues?: CounterValuesStateRaw;
+    currencyInitialized: boolean;
+  }) => ReactNode;
   store: Store;
 }
 
@@ -56,14 +61,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   const [initialCountervalues, setInitialCountervalues] = useState<
     CounterValuesStateRaw | undefined
   >(undefined);
+  const [currencyInitialized, setCurrencyInitialized] = useState(false);
 
   const init = useCallback(async () => {
     try {
       const [
         bleData,
         settingsData,
-        cachedCurrencyIds,
-        supportedFiats,
         accountsData,
         postOnboardingState,
         marketState,
@@ -75,8 +79,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
-        retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY),
-        retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
@@ -88,44 +90,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       ]);
 
       store.dispatch(importBle(bleData));
-
-      // hydrate the store with the bridge/cache
-      // Promise.allSettled doesn't exist in RN
-      await Promise.all(
-        cachedCurrencyIds
-          .map(id => {
-            const currency = findCryptoCurrencyById?.(id);
-            return currency ? hydrateCurrency(currency) : Promise.reject();
-          })
-          .map(promise =>
-            promise
-              .then((value: unknown) => ({ status: "fulfilled", value }))
-              .catch((reason: unknown) => ({ status: "rejected", reason })),
-          ),
-      );
-
-      const bitcoin = getCryptoCurrencyById("bitcoin");
-      const ethereum = getCryptoCurrencyById("ethereum");
-      const possibleIntermediaries = [bitcoin, ethereum];
-
-      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-        .map(currency => ({
-          value: currency.ticker,
-          ticker: currency.ticker,
-          label: `${currency.name} - ${currency.ticker}`,
-          currency,
-        }))
-        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-
-      store.dispatch(setSupportedCounterValues(supportedCounterValues));
-
-      if (
-        settingsData &&
-        settingsData.counterValue &&
-        !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
-      ) {
-        settingsData.counterValue = settingsState.counterValue;
-      }
 
       store.dispatch(importSettings(settingsData));
 
@@ -166,6 +130,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setInitialCountervalues(initialCountervalues);
       setReady(true);
       onInitFinished();
+
+      await Promise.all([
+        hydrateCurrencies(),
+        updateSupportedCountervalues(store, settingsData),
+      ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
         error instanceof Error
@@ -181,9 +150,57 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   return (
     <Provider store={store}>
-      <InitialQueriesProvider>{children(ready, initialCountervalues)}</InitialQueriesProvider>
+      <InitialQueriesProvider>
+        {children({ ready, initialCountervalues, currencyInitialized })}
+      </InitialQueriesProvider>
     </Provider>
   );
 };
 
 export default LedgerStoreProvider;
+
+async function hydrateCurrencies() {
+  const cachedCurrencyIds = await retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY);
+
+  // hydrate the store with the bridge/cache
+  // Promise.allSettled doesn't exist in RN
+  await Promise.all(
+    cachedCurrencyIds
+      .map(id => {
+        const currency = findCryptoCurrencyById?.(id);
+        return currency ? hydrateCurrency(currency) : Promise.reject();
+      })
+      .map(promise =>
+        promise
+          .then((value: unknown) => ({ status: "fulfilled", value }))
+          .catch((reason: unknown) => ({ status: "rejected", reason })),
+      ),
+  );
+}
+
+async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+  const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const ethereum = getCryptoCurrencyById("ethereum");
+  const possibleIntermediaries = [bitcoin, ethereum];
+
+  const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+    .map(currency => ({
+      value: currency.ticker,
+      ticker: currency.ticker,
+      label: `${currency.name} - ${currency.ticker}`,
+      currency,
+    }))
+    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+
+  store.dispatch(setSupportedCounterValues(supportedCounterValues));
+
+  if (
+    settingsData?.counterValue &&
+    !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue) &&
+    settingsData.counterValue !== settingsState.counterValue
+  ) {
+    settingsData.counterValue = settingsState.counterValue;
+    store.dispatch(importSettings(settingsData));
+  }
+}

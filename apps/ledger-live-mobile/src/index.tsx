@@ -18,6 +18,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
+import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
@@ -300,7 +301,7 @@ export default class Root extends Component {
   render() {
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {(ready, initialCountervalues) =>
+        {({ ready, initialCountervalues, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -326,8 +327,10 @@ export default class Root extends Component {
                                   <AppProviders initialCountervalues={initialCountervalues}>
                                     <AppGeoBlocker>
                                       <AppVersionBlocker>
-                                        <WaitForAppReady>
-                                          <App />
+                                        <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                          <BridgeSyncProvider>
+                                            <App />
+                                          </BridgeSyncProvider>
                                         </WaitForAppReady>
                                       </AppVersionBlocker>
                                     </AppGeoBlocker>
