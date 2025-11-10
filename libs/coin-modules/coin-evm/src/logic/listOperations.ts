@@ -60,6 +60,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
+      failed: op.hasFailed ?? false,
     },
     details: {
       sequence: op.transactionSequenceNumber,

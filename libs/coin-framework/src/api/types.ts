@@ -64,6 +64,9 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
     block: BlockInfo; // block metadata
     fees: bigint; // network fees paid
     date: Date; // tx date (may differ from block time)
+
+    /** If the transaction has failed, fees have been paid but other balance changes are not effective.*/
+    failed: boolean;
   };
 };
 

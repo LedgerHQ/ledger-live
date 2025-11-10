@@ -47,6 +47,7 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
       },
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
+      failed: operation.hasFailed ?? false,
     },
     details: {
       sequence: operation.transactionSequenceNumber?.toString(),

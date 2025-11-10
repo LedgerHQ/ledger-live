@@ -81,6 +81,7 @@ describe("get operations", () => {
         time: new Date(),
       },
       date: new Date(),
+      failed: false,
     },
     type: "transaction",
     value: BigInt(1000),

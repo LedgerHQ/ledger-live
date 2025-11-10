@@ -138,7 +138,7 @@ function convertOperation(
     normalizedType = "OUT";
   }
 
-  // Tezos uses "applied" for every sucess operation (something else=failed )
+  // Tezos uses "applied" for every success operation (something else=failed )
   const hasFailed = operation.status && operation.status !== "applied";
 
   return {
@@ -155,6 +155,7 @@ function convertOperation(
         time: new Date(operation.timestamp),
       },
       date: new Date(operation.timestamp),
+      failed: hasFailed ?? false,
     },
     type: normalizedType,
     value: amount,

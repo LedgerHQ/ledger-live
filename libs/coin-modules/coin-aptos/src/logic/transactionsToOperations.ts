@@ -76,6 +76,7 @@ export function transactionsToOperations(
         block: { height: 0 },
         fees: BigInt(0),
         date: new Date(parseInt(tx.timestamp) / 1000),
+        failed: !tx.success,
       },
     };
 
