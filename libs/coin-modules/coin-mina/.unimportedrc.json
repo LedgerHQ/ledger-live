@@ -15,7 +15,9 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnimported": [
-    "src/test/fixtures.ts"
+    "src/test/fixtures.ts",
+    "src/bridge/getFeesForTransaction.ts",
+    "src/test/speculos-deviceActions.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": [
