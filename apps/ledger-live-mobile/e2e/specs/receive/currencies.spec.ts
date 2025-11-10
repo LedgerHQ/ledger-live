@@ -30,7 +30,7 @@ describe("Receive different currency", () => {
     ["tron"],
     ["avalanche_c_chain"],
     ["polygon", "polygon"],
-    ["polkadot"],
+    ["assethub_polkadot"],
     ["cosmos", "cosmos"],
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);

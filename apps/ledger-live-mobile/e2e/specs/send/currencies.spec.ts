@@ -18,7 +18,7 @@ describe("Send flow", () => {
     //"tron", // TOFIX Error during flow
     //"avalanche_c_chain", // TOFIX Error during flow
     "polygon",
-    "polkadot",
+    "assethub_polkadot",
     "cosmos",
   ];
   const knownDevice = knownDevices.nanoX;
