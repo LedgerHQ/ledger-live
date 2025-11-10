@@ -121,6 +121,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
       } = query;
 
       trackDeeplinkingEvent({
@@ -136,6 +137,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
         url,
       });
 

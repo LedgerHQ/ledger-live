@@ -557,6 +557,7 @@ export const DeeplinksProvider = ({
             deeplinkChannel,
             deeplinkMedium,
             deeplinkCampaign,
+            deeplinkLocation,
           } = query;
 
           if (!ajsPropSource && !Config.MOCK) {
@@ -579,6 +580,7 @@ export const DeeplinksProvider = ({
               currency,
               installApp,
               appName,
+              deeplinkLocation,
               ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
             });
           } else
@@ -589,6 +591,7 @@ export const DeeplinksProvider = ({
               deeplinkChannel,
               deeplinkMedium,
               deeplinkCampaign,
+              deeplinkLocation,
             });
 
           const platform = pathname.split("/")[1];
