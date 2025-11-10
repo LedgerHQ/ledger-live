@@ -401,7 +401,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 528,
+      "transactionSequenceNumber": "528",
       "type": "IN",
       "value": "0",
     },
@@ -422,7 +422,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 529,
+      "transactionSequenceNumber": "529",
       "type": "IN",
       "value": "0",
     },
@@ -443,7 +443,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 384,
+      "transactionSequenceNumber": "384",
       "type": "IN",
       "value": "0",
     },
@@ -464,7 +464,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 426,
+      "transactionSequenceNumber": "426",
       "type": "IN",
       "value": "0",
     },
@@ -485,7 +485,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 381,
+      "transactionSequenceNumber": "381",
       "type": "IN",
       "value": "0",
     },
@@ -506,7 +506,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 377,
+      "transactionSequenceNumber": "377",
       "type": "IN",
       "value": "0",
     },
@@ -547,7 +547,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 437,
+      "transactionSequenceNumber": "437",
       "type": "IN",
       "value": "0",
     },
@@ -568,7 +568,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 379,
+      "transactionSequenceNumber": "379",
       "type": "IN",
       "value": "0",
     },
@@ -675,7 +675,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP37WY4NQKAWSCSFTZZ7CPYRDKA1F08FP44SYSMCT",
       ],
-      "transactionSequenceNumber": 27,
+      "transactionSequenceNumber": "27",
       "type": "IN",
       "value": "0",
     },
@@ -696,7 +696,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 388,
+      "transactionSequenceNumber": "388",
       "type": "IN",
       "value": "0",
     },
@@ -717,7 +717,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 378,
+      "transactionSequenceNumber": "378",
       "type": "IN",
       "value": "0",
     },
@@ -758,7 +758,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 380,
+      "transactionSequenceNumber": "380",
       "type": "IN",
       "value": "0",
     },
@@ -779,7 +779,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 527,
+      "transactionSequenceNumber": "527",
       "type": "IN",
       "value": "0",
     },
@@ -800,7 +800,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 387,
+      "transactionSequenceNumber": "387",
       "type": "IN",
       "value": "0",
     },
@@ -821,7 +821,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 434,
+      "transactionSequenceNumber": "434",
       "type": "IN",
       "value": "0",
     },
@@ -842,7 +842,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 430,
+      "transactionSequenceNumber": "430",
       "type": "IN",
       "value": "0",
     },
@@ -863,7 +863,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 383,
+      "transactionSequenceNumber": "383",
       "type": "IN",
       "value": "0",
     },
@@ -884,7 +884,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP3N0TH3N7BDG4WBSYV6FE2ASSAPEGWK47EEWD9TV",
       ],
-      "transactionSequenceNumber": 327,
+      "transactionSequenceNumber": "327",
       "type": "IN",
       "value": "0",
     },
@@ -905,7 +905,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 386,
+      "transactionSequenceNumber": "386",
       "type": "IN",
       "value": "0",
     },
@@ -926,7 +926,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 443,
+      "transactionSequenceNumber": "443",
       "type": "IN",
       "value": "0",
     },
@@ -947,7 +947,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 432,
+      "transactionSequenceNumber": "432",
       "type": "IN",
       "value": "0",
     },
@@ -968,7 +968,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 373,
+      "transactionSequenceNumber": "373",
       "type": "IN",
       "value": "0",
     },
@@ -989,7 +989,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 385,
+      "transactionSequenceNumber": "385",
       "type": "IN",
       "value": "0",
     },
@@ -1010,7 +1010,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 446,
+      "transactionSequenceNumber": "446",
       "type": "IN",
       "value": "0",
     },
@@ -1031,7 +1031,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 420,
+      "transactionSequenceNumber": "420",
       "type": "IN",
       "value": "0",
     },
@@ -1052,7 +1052,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 415,
+      "transactionSequenceNumber": "415",
       "type": "IN",
       "value": "0",
     },
@@ -1073,7 +1073,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 376,
+      "transactionSequenceNumber": "376",
       "type": "IN",
       "value": "0",
     },
@@ -1114,7 +1114,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 440,
+      "transactionSequenceNumber": "440",
       "type": "IN",
       "value": "0",
     },
@@ -1137,7 +1137,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP37WY4NQKAWSCSFTZZ7CPYRDKA1F08FP44SYSMCT",
       ],
-      "transactionSequenceNumber": 27,
+      "transactionSequenceNumber": "27",
       "type": "IN",
       "value": "2142",
     },
@@ -1158,7 +1158,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 386,
+      "transactionSequenceNumber": "386",
       "type": "IN",
       "value": "10000",
     },
@@ -1181,7 +1181,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP3N0TH3N7BDG4WBSYV6FE2ASSAPEGWK47EEWD9TV",
       ],
-      "transactionSequenceNumber": 327,
+      "transactionSequenceNumber": "327",
       "type": "IN",
       "value": "1",
     },
@@ -1204,7 +1204,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 529,
+      "transactionSequenceNumber": "529",
       "type": "IN",
       "value": "12000",
     },
@@ -1227,7 +1227,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 528,
+      "transactionSequenceNumber": "528",
       "type": "IN",
       "value": "13",
     },
@@ -1250,7 +1250,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 527,
+      "transactionSequenceNumber": "527",
       "type": "IN",
       "value": "9",
     },
@@ -1273,7 +1273,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 446,
+      "transactionSequenceNumber": "446",
       "type": "IN",
       "value": "210000",
     },
@@ -1296,7 +1296,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 443,
+      "transactionSequenceNumber": "443",
       "type": "IN",
       "value": "310",
     },
@@ -1319,7 +1319,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 440,
+      "transactionSequenceNumber": "440",
       "type": "IN",
       "value": "116512",
     },
@@ -1342,7 +1342,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 437,
+      "transactionSequenceNumber": "437",
       "type": "IN",
       "value": "144220",
     },
@@ -1365,7 +1365,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 434,
+      "transactionSequenceNumber": "434",
       "type": "IN",
       "value": "14",
     },
@@ -1388,7 +1388,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 378,
+      "transactionSequenceNumber": "378",
       "type": "IN",
       "value": "10000",
     },
@@ -1409,7 +1409,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 432,
+      "transactionSequenceNumber": "432",
       "type": "IN",
       "value": "10000",
     },
@@ -1432,7 +1432,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 430,
+      "transactionSequenceNumber": "430",
       "type": "IN",
       "value": "3000000",
     },
@@ -1455,7 +1455,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 426,
+      "transactionSequenceNumber": "426",
       "type": "IN",
       "value": "8009",
     },
@@ -1478,7 +1478,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 420,
+      "transactionSequenceNumber": "420",
       "type": "IN",
       "value": "10000",
     },
@@ -1501,7 +1501,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 415,
+      "transactionSequenceNumber": "415",
       "type": "IN",
       "value": "1002",
     },
@@ -1524,7 +1524,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 388,
+      "transactionSequenceNumber": "388",
       "type": "IN",
       "value": "12341100",
     },
@@ -1547,7 +1547,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 387,
+      "transactionSequenceNumber": "387",
       "type": "IN",
       "value": "20000",
     },
@@ -1570,7 +1570,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 385,
+      "transactionSequenceNumber": "385",
       "type": "IN",
       "value": "202000",
     },
@@ -1593,7 +1593,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 384,
+      "transactionSequenceNumber": "384",
       "type": "IN",
       "value": "1000000",
     },
@@ -1616,7 +1616,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 383,
+      "transactionSequenceNumber": "383",
       "type": "IN",
       "value": "22000000",
     },
@@ -1639,7 +1639,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 381,
+      "transactionSequenceNumber": "381",
       "type": "IN",
       "value": "1000000000",
     },
@@ -1662,7 +1662,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 380,
+      "transactionSequenceNumber": "380",
       "type": "IN",
       "value": "10000000",
     },
@@ -1685,7 +1685,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 379,
+      "transactionSequenceNumber": "379",
       "type": "IN",
       "value": "5000",
     },
@@ -1708,7 +1708,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 377,
+      "transactionSequenceNumber": "377",
       "type": "IN",
       "value": "500",
     },
@@ -1731,7 +1731,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 376,
+      "transactionSequenceNumber": "376",
       "type": "IN",
       "value": "500000000",
     },
@@ -1754,7 +1754,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "senders": [
         "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
       ],
-      "transactionSequenceNumber": 373,
+      "transactionSequenceNumber": "373",
       "type": "IN",
       "value": "611",
     },

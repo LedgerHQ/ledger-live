@@ -76,7 +76,7 @@ export const getTxToBroadcast = async (
       network: StacksNetwork[network],
       publicKey: xpub,
       fee: fee.toFixed(),
-      nonce: operation.transactionSequenceNumber ?? 0,
+      nonce: operation.transactionSequenceNumber?.toString() ?? "0",
       postConditions: [
         {
           type: StacksMessageType.PostCondition,
@@ -103,7 +103,7 @@ export const getTxToBroadcast = async (
       network: StacksNetwork[network],
       publicKey: xpub,
       fee: BigNumber(fee).toFixed(),
-      nonce: operation.transactionSequenceNumber ?? 0,
+      nonce: operation.transactionSequenceNumber?.toString() ?? "0",
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -332,7 +332,7 @@ export const sip010TxnToOperation = (
       accountId,
       senders,
       recipients,
-      transactionSequenceNumber: nonce,
+      transactionSequenceNumber: BigNumber(nonce),
       date,
       value,
       hasFailed,

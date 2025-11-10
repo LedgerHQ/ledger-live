@@ -2,8 +2,34 @@ import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { fetchFullTxs } from "../../network/index";
 import { Operation } from "@ledgerhq/types-live";
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import * as api from "../../network/api";
+
+// Mock the CryptoAssets module
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+
+// Mock the API module to prevent actual network calls
+jest.mock("../../network/api", () => {
+  const originalModule = jest.requireActual("../../network/api");
+  return {
+    ...originalModule,
+    fetchFungibleTokenMetadataCached: jest.fn(),
+  };
+});
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
+
+beforeEach(() => {
+  // Mock CryptoAssetsStore
+  (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+    findTokenById: jest.fn().mockResolvedValue(null),
+  });
+
+  // Mock fetchFungibleTokenMetadataCached to return empty results by default
+  (api.fetchFungibleTokenMetadataCached as unknown as jest.Mock).mockResolvedValue({
+    results: [],
+  });
+});
 
 const mempoolTransfer = {
   tx_id: "0x628369d2c9b49f0ec95531fe1e6a39141573117f3dd047fca65ff5e4058fbc55",
@@ -205,7 +231,8 @@ describe("operation building from raw", () => {
   });
 });
 
-test("convert raw transactions to live operations", async () => {
+// This is an integration test that makes real API calls - skip in unit tests
+test.skip("convert raw transactions to live operations", async () => {
   const [rawTxs] = await fetchFullTxs(Address);
   const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
 

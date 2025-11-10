@@ -5,6 +5,10 @@ import {
   extractContractTransactions,
 } from "./transformers";
 import * as api from "./api";
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+
+// Mock the CryptoAssets module
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 // Mock the API module to prevent actual network calls
 jest.mock("./api", () => {
@@ -163,6 +167,11 @@ describe("Stacks API Transformers", () => {
     beforeEach(() => {
       // Reset all mocks before each test
       jest.clearAllMocks();
+
+      // Mock CryptoAssetsStore
+      (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+        findTokenById: jest.fn().mockResolvedValue(null),
+      });
 
       // Mock fetchFungibleTokenMetadataCached to return empty results by default
       // This prevents actual network calls and simulates tokens not found in metadata

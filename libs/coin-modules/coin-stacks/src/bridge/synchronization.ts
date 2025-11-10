@@ -23,7 +23,7 @@ import {
   sip010OpToParentOp,
 } from "./utils/misc";
 import { log } from "@ledgerhq/logs";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
 
@@ -48,16 +48,16 @@ export function calculateSpendableBalance(
 /**
  * Creates a token account for a specific token
  */
-export function createTokenAccount(
+export async function createTokenAccount(
   address: string,
   parentAccountId: string,
   tokenId: string,
   tokenBalance: string,
   transactionsList: TransactionResponse[],
   initialAccount?: Account,
-): TokenAccount | null {
+): Promise<TokenAccount | null> {
   try {
-    const token = findTokenById(TokenPrefix + tokenId);
+    const token = await getCryptoAssetsStore().findTokenById(TokenPrefix + tokenId);
     if (!tokenId || !token) {
       log("error", `stacks token not found, addr: ${tokenId}`);
       return null;
@@ -121,7 +121,7 @@ export async function buildTokenAccounts(
     // Process all tokens that have transactions
     for (const [tokenId, transactions] of Object.entries(tokenTxs)) {
       const balance = tokenBalances[tokenId] || "0";
-      const tokenAccount = createTokenAccount(
+      const tokenAccount = await createTokenAccount(
         address,
         parentAccountId,
         tokenId,
@@ -143,7 +143,7 @@ export async function buildTokenAccounts(
       // Skip zero balances
       if (new BigNumber(balance).isZero()) continue;
 
-      const tokenAccount = createTokenAccount(
+      const tokenAccount = await createTokenAccount(
         address,
         parentAccountId,
         tokenId,

@@ -67,7 +67,7 @@ describe("buildOptimisticOperation", () => {
         fee: new BigNumber(100),
         blockHash: null,
         blockHeight: null,
-        transactionSequenceNumber: 5,
+        transactionSequenceNumber: new BigNumber(5),
         extra: {
           memo: "Test transaction",
         },
@@ -93,7 +93,7 @@ describe("buildOptimisticOperation", () => {
         fee: new BigNumber(100),
         blockHash: null,
         blockHeight: null,
-        transactionSequenceNumber: 5,
+        transactionSequenceNumber: new BigNumber(5),
         extra: {
           memo: "Test transaction",
         },
@@ -121,7 +121,7 @@ describe("buildOptimisticOperation", () => {
 
     const operation = buildOptimisticOperation(mockAccount, transactionWithoutNonce);
 
-    expect(operation.transactionSequenceNumber).toEqual(0);
+    expect(operation.transactionSequenceNumber).toEqual(new BigNumber(0));
   });
 
   it("should use the provided operation type", () => {

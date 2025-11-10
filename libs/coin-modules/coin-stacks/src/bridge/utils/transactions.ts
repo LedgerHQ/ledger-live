@@ -336,7 +336,7 @@ export const getTxToBroadcast = async (
       network: StacksNetwork[network],
       publicKey: xpub,
       fee: fee.toFixed(),
-      nonce: operation.transactionSequenceNumber ?? 0,
+      nonce: operation.transactionSequenceNumber?.toString() ?? "0",
       postConditions,
     });
 
