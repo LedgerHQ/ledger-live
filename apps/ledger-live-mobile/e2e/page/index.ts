@@ -100,7 +100,7 @@ export class Application {
           send_flow: false,
           enableModularization: false,
           searchDebounceTime: 300,
-          backendEnvironment: "PROD",
+          backendEnvironment: "STAGING",
         },
       },
     });

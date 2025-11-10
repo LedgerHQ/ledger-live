@@ -169,7 +169,7 @@ const AssetSelection = ({
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loadNext ? <InfiniteLoader mock={!!Config.DETOX} size={20} /> : null}
-        testID="select-crypto-scrollView"
+        testID="modular-drawer-select-crypto-scrollView"
       />
     );
   };

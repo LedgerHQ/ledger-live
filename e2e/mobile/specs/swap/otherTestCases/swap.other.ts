@@ -393,7 +393,6 @@ export function runSwapWithSendMaxTest(
     tags.forEach(tag => $Tag(tag));
     it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-      console.log("1");
 
       const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
       if (isModularDrawer) {

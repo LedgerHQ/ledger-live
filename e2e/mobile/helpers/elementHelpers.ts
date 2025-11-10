@@ -83,17 +83,6 @@ export const NativeElementHelpers = {
     }
   },
 
-  async isTextVisible(text: string | RegExp, timeout: number = 1_000): Promise<boolean> {
-    try {
-      await waitFor(element(by.text(text)))
-        .toBeVisible()
-        .withTimeout(timeout);
-      return true;
-    } catch {
-      return false;
-    }
-  },
-
   async tapById(id: string | RegExp, index = 0) {
     return await NativeElementHelpers.getElementById(id, index).tap();
   },
