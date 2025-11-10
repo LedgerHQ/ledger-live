@@ -13,4 +13,3 @@ runAddSubAccountTest(
   testConfig.tags,
   testConfig.withParentAccount,
 );
-//pas ok - probleme de id - bsc a la place de BNB Binance ...

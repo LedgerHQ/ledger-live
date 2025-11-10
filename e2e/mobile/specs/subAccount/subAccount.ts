@@ -186,7 +186,6 @@ export function runAddSubAccountTest(
               asset?.parentAccount === undefined
                 ? asset.currency.speculosApp.name
                 : asset?.parentAccount?.currency.name;
-            console.log("networkName: ", networkName);
             await app.modularDrawer.selectNetworkIfAsked(networkName);
           } else {
             await app.addAccount.importWithYourLedger();
@@ -204,8 +203,6 @@ export function runAddSubAccountTest(
                 : asset?.parentAccount?.currency.id;
             await app.receive.selectNetworkIfAsked(networkId);
           }
-
-          await app.common.enableSynchronization();
 
           const accountId = await app.addAccount.addAccountAtIndex(
             asset?.parentAccount === undefined

@@ -15,5 +15,11 @@ describe("Wallet Page", () => {
   testConfig.tags.forEach(tag => $Tag(tag));
   it("Portfolio Accounts Tab - LLM", async () => {
     await app.portfolio.checkAccountsSection();
+    const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
+    if (isModularDrawer) {
+      await app.modularDrawer.checkSelectAssetPage();
+    } else {
+      await app.portfolio.checkSelectAssetPage();
+    }
   });
 });

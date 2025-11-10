@@ -108,11 +108,9 @@ export default class StakePage {
   async verifyChooseAssetPage() {
     const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
     if (isModularDrawer) {
-      console.log("MAD");
       await waitForElementById(this.madSearchBarId);
       await detoxExpect(getElementById(this.madSearchBarId)).toBeVisible();
     } else {
-      console.log("NOT MAD");
       await waitForElementById(this.selectAssetTitle);
       await detoxExpect(app.common.searchBar()).toBeVisible();
     }

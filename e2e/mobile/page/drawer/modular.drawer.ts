@@ -9,6 +9,9 @@ export default class ModularDrawer {
   networkBasedTitleIdMAD = "modular-drawer-Network-title";
   assetBasedTitleIdMAD = "modular-drawer-Asset-title";
   networkSelectionScrollViewId = "network-selection-scrollView";
+  accountTitleIdMAD = "modular-drawer-Account-title";
+  addNewOrExistingAccountButton = "add-new-account-button";
+  drawerCloseButtonId = "drawer-close-button";
 
   searchBar = () => getElementById(this.searchBarId);
   assetItem = (addressOrId: string) => new RegExp(`asset-item-${addressOrId}`, "i");
@@ -56,7 +59,6 @@ export default class ModularDrawer {
   @Step("Select currency in receive list by ticker")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
     const assetItemId = this.assetItem(ticker);
-    console.log("assetItemId: ", assetItemId);
     if (!(await IsIdVisible(assetItemId))) {
       await scrollToId(assetItemId, this.selectCryptoScrollViewId);
     }
@@ -73,8 +75,6 @@ export default class ModularDrawer {
   @Step("Select network")
   async selectNetwork(networkName: string): Promise<void> {
     const id = this.networkItemIdMAD(networkName);
-    console.log("id a trouver dans le code: ", id);
-    // pour bnb related coins = network-item-bsc
     if (!(await IsIdVisible(id))) {
       await scrollToId(id, this.networkSelectionScrollViewId);
     }
@@ -83,11 +83,33 @@ export default class ModularDrawer {
 
   @Step("Select currency $0 in modular drawer")
   async selectAsset(account: Account): Promise<void> {
-    await this.performSearch(account.currency.name);
-    await this.selectCurrency(account.currency.contractAddress ?? account.currency.id);
-    await this.selectNetworkIfAsked(
-      account.parentAccount ? account.parentAccount.currency.name : account.currency.name,
-    );
+    await this.performSearchByTicker(account.currency.ticker);
+    await this.selectCurrencyByTicker(account.currency.ticker);
+    const networkName =
+      account?.parentAccount === undefined
+        ? account.currency.speculosApp.name
+        : account?.parentAccount?.currency.name;
+    await this.selectNetworkIfAsked(networkName);
     await this.selectFirstAccount();
+  }
+
+  @Step("Tap on add new or existing account button")
+  async tapAddNewOrExistingAccountButtonMAD(): Promise<void> {
+    if (await IsIdVisible(this.accountTitleIdMAD)) {
+      await tapById(this.addNewOrExistingAccountButton);
+    }
+  }
+
+  @Step("Expect (Select Asset) page")
+  async checkSelectAssetPage() {
+    await waitForElementById(this.assetBasedTitleIdMAD);
+    await detoxExpect(getElementById(this.assetBasedTitleIdMAD)).toBeVisible();
+    await detoxExpect(this.searchBar()).toBeVisible();
+  }
+
+  @Step("Tap on drawer close button")
+  async tapDrawerCloseButton() {
+    await waitForElementById(this.drawerCloseButtonId);
+    await tapById(this.drawerCloseButtonId);
   }
 }

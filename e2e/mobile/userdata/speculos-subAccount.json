@@ -10,7 +10,7 @@
       "counterValue": "USD",
       "language": "en",
       "locale": "en-US",
-      "theme": "dark",
+      "theme": "light",
       "region": null,
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
