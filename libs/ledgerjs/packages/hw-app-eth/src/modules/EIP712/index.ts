@@ -390,7 +390,12 @@ async function sendFilteringInfo(
       if (isTokenAddress && coinRef !== undefined) {
         const { token, deviceTokenIndex } = coinRefsTokensMap[coinRef];
         if (deviceTokenIndex === undefined) {
-          const payload = await byContractAddressAndChainId(token, chainId, erc20SignaturesBlob);
+          const payload = await byContractAddressAndChainId(
+            token,
+            chainId,
+            erc20SignaturesBlob,
+            loadConfig,
+          );
           if (payload) {
             enum PROVIDE_TOKEN_INFOS_APDU_FIELDS {
               CLA = 0xe0,
@@ -522,14 +527,21 @@ export const signEIP712Message = async (
     P2_full = 0x01,
   }
   const { primaryType, types: unsortedTypes, domain, message } = typedMessage;
-  const { calServiceURL } = getLoadConfig(loadConfig);
+  const { calServiceURL, staticEIP712SignaturesV1, staticEIP712SignaturesV2 } =
+    getLoadConfig(loadConfig);
   // Types are sorted by alphabetical order in order to get the same schema hash no matter the JSON format
   const types = sortObjectAlphabetically(unsortedTypes) as EIP712MessageTypes;
 
   const { version } = await getAppAndVersion(transport);
   const shouldUseV1Filters = !semver.gte(version, "1.11.1-0", { includePrerelease: true });
   const shouldUseDiscardedFields = semver.gte(version, "1.12.0-0", { includePrerelease: true });
-  const filters = await getFiltersForMessage(typedMessage, shouldUseV1Filters, calServiceURL);
+  const filters = await getFiltersForMessage(
+    typedMessage,
+    shouldUseV1Filters,
+    calServiceURL,
+    staticEIP712SignaturesV1,
+    staticEIP712SignaturesV2,
+  );
   const coinRefsTokensMap = getCoinRefTokensMap(filters, shouldUseV1Filters, typedMessage);
 
   const typeEntries = Object.entries(types) as [
