@@ -37,9 +37,11 @@ export default function BleDeviceNotAvailableDrawer({
   const theme = useTheme();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setShowHelp(true);
     }, SHOW_HELP_TIMEOUT);
+
+    return () => clearTimeout(timeout);
   }, [setShowHelp]);
 
   return (
