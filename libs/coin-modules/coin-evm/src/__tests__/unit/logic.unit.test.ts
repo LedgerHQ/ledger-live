@@ -654,11 +654,34 @@ describe("EVM Family", () => {
     describe("attachOperations", () => {
       it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
         setupMockCryptoAssetsStore({
-          findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
-            if (address === "0xTokenContract" && currencyId === "ethereum")
-              return { id: "ethereum/erc20/usd__coin" };
-            if (address === "0xOtherTokenContract" && currencyId === "ethereum")
-              return { id: "ethereum/erc20/usd__coin" };
+          findTokenByAddressInCurrency: async (
+            address: string,
+            currencyId: string,
+          ): Promise<TokenCurrency | undefined> => {
+            if (address === "0xTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
+            if (address === "0xOtherTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xOtherTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
             return undefined;
           },
           getTokensSyncHash: async () => "0",

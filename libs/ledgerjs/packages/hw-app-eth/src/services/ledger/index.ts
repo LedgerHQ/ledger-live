@@ -66,6 +66,7 @@ const getAdditionalDataForContract = async (
       contractAddress,
       chainIdUint32,
       erc20SignaturesBlob,
+      loadConfig,
     );
 
     if (erc20Info) {

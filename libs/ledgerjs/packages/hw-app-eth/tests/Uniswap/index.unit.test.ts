@@ -14,13 +14,6 @@ import {
 } from "../../src/modules/Uniswap";
 
 nock.disableNetConnect();
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
-  get signatures() {
-    return {
-      1: SignatureCALEth,
-    };
-  },
-}));
 
 describe("Uniswap", () => {
   describe("index", () => {
@@ -153,7 +146,7 @@ describe("Uniswap", () => {
           chainId: 1,
         };
 
-        const res = await loadInfosForUniswap(transaction, 1);
+        const res = await loadInfosForUniswap(transaction, 1, { staticERC20Signatures: { 1: SignatureCALEth } });
         expect(res).toEqual({
           pluginData: Buffer.from(
             "07556e69737761703fc91a3afd70395cd496c647d5a6cc9d4b2b7fad3593564c3044022014391e8f355867a57fe88f6a5a4dbcb8bf8f888a9db3ff3449caf72d120396bd02200c13d9c3f79400fe0aa0434ac54d59b79503c9964a4abc3e8cd22763e0242935",

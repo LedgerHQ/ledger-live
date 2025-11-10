@@ -7,6 +7,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_API from "../../../../network/explorer/ledger";
 import {
@@ -19,9 +20,15 @@ import { getCoinConfig } from "../../../../config";
 import tokenData from "../../../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 setupMockCryptoAssetsStore({
-  findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
+  findTokenByAddressInCurrency: async (
+    _address: string,
+    _currencyId: string,
+  ): Promise<TokenCurrency | undefined> => {
     if (_address === tokenData.contractAddress.toLowerCase()) {
-      return tokenData;
+      return {
+        ...tokenData,
+        type: "TokenCurrency" as const,
+      } as TokenCurrency;
     }
     return undefined;
   },

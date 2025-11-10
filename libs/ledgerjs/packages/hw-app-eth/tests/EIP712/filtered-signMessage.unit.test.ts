@@ -14,14 +14,6 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
   }
 };
 
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712", () => v1);
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2", () => v2);
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
-  signatures: {
-    1: "AAAAZwRVU0RDoLhpkcYhizbB0Z1KLp6wzjYG60gAAAAGAAAAATBEAiBT0S5lTL5ipustFl3sP7dsPLF2QWaAyaXg3iWQsLnNigIgUEdqFpFVhGEAxiwzjHZ5FC0GD/VU92W8nBjTHrsy42AAAABoBFdFVEjAKqo5siP+jQoOXE8n6tkIPHVswgAAABIAAAABMEUCIQDGNSQY0A9zJrjwtmxxxdCfMG4OzgBJPLqeqOoXe0pI7QIgZGYxocaD2s6sFSA355FC7owyjNN8g6eOy4BeE44/Ovc=",
-    137: "AAAAZwRVU0RDJ5G8ofLeRmHtiKMMmaepRJqoQXQAAAAGAAAAiTBEAiBjxSGrC/C4mPSUtg6cVMGpgokwZmVNpdnc0rkfhL2c1gIgD+CqcDL9MWCffzbolbi1oWATL/5P3F1YWPvrLGaLG00AAABnBFdFVEh86yP9a8Ct1Z5irCVXgnDP8bn2GQAAABIAAACJMEQCIFBR0vbDO+KtsBq864UEM6P8+6U9jtZ80MCzRJi9MCpsAiAiSy+Re8z4tNPMwJh778qv04NadWUdQK8kfzY2EkC+WgAAAGkGV01BVElDDVALHY6O8x4hyZ0duaZETTrfEnAAAAASAAAAiTBEAiAzUzhabCGosL5APk2DKlMgGkrJxI8WmHeZ0xNKbrSHGQIgQIeT1ugsoIZD7J/5HZf6WmJ9yG/CRdvi88LrccoM9Bc=",
-  },
-}));
 nock.disableNetConnect();
 
 describe("EIP712", () => {
@@ -39,7 +31,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -57,7 +49,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -75,7 +67,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -93,7 +85,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -111,7 +103,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -129,7 +121,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -147,7 +139,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -165,7 +157,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -183,7 +175,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -201,7 +193,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -219,7 +211,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -237,7 +229,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -255,7 +247,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -273,7 +265,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -291,7 +283,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -309,7 +301,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -329,7 +321,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -349,7 +341,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -369,7 +361,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -389,7 +381,7 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport);
+      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -401,92 +393,6 @@ describe("EIP712", () => {
   });
 
   describe("SignEIP712Message with filters v2", () => {
-    describe("from version 1.11.1", () => {
-      let nanoAppVersionApdus;
-      beforeAll(async () => {
-        nanoAppVersionApdus = await fs.readFile(getFilePath("apdu", "version-1.11.1"), "utf-8");
-      });
-
-      it("should sign correctly the 15-permit.json sample message", async () => {
-        const apdusBuffer = await fs.readFile(getFilePath("apdu", "15-filtered-v2"), "utf-8");
-        const message = await fs
-          .readFile(getFilePath("message", "15-permit"), "utf-8")
-          .then(JSON.parse);
-
-        const transport = await openTransportReplayer(
-          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-        );
-
-        const eth = new Eth(transport);
-        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
-
-        expect(result).toEqual({
-          r: "9573c40857d73d28b43120231886cf4199b1456e00da8887a508d576b6985a6f",
-          s: "18515302ca7809f9d36b95c8ea91509b602adc3c1653be0255ac5726969307bd",
-          v: 28,
-        });
-      });
-
-      it("should sign correctly the 16-permit2.json sample message", async () => {
-        const apdusBuffer = await fs.readFile(getFilePath("apdu", "16-filtered-v2"), "utf-8");
-        const message = await fs
-          .readFile(getFilePath("message", "16-permit2"), "utf-8")
-          .then(JSON.parse);
-
-        const transport = await openTransportReplayer(
-          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-        );
-
-        const eth = new Eth(transport);
-        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
-
-        expect(result).toEqual({
-          r: "ce7c4941157899c0db37c4363c773d919c896ddef669c878e856573659bb3655",
-          s: "0fed0222b941702c2fd5611ac13ac0217ed889586a56b047b0d5bf0566edbbb7",
-          v: 27,
-        });
-      });
-
-      it("should sign correctly the 17-uniswapx.json sample message", async () => {
-        const apdusBuffer = await fs.readFile(getFilePath("apdu", "17-filtered-v2"), "utf-8");
-        const message = await fs
-          .readFile(getFilePath("message", "17-uniswapx"), "utf-8")
-          .then(JSON.parse);
-
-        const transport = await openTransportReplayer(
-          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-        );
-
-        const eth = new Eth(transport);
-        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
-
-        expect(result).toEqual({
-          r: "63e951154de94e9f81ecefa38c0f11c2e4a9bfbaa3524b6c9744161211d6cc3b",
-          s: "62480171ceb1f39f2c41ff06a2ecd483c0faaaf459063b278c09803b8bef3e4d",
-          v: 27,
-        });
-      });
-
-      it("should sign correctly the 18-1inch-fusion.json sample message", async () => {
-        const apdusBuffer = await fs.readFile(getFilePath("apdu", "18-filtered-v2"), "utf-8");
-        const message = await fs
-          .readFile(getFilePath("message", "18-1inch-fusion"), "utf-8")
-          .then(JSON.parse);
-
-        const transport = await openTransportReplayer(
-          RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
-        );
-
-        const eth = new Eth(transport);
-        const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
-
-        expect(result).toEqual({
-          r: "6f07ba3bb7fa9369ee9b5e4cc3bdc8545d75e3527fa242a5e4d23ead9d232af8",
-          s: "412a55401fe955b996125682ad0a47277d3ce1b314ee3962956ae643b71166cb",
-          v: 27,
-        });
-      });
-    });
     describe("from version 1.12.0", () => {
       let nanoAppVersionApdus;
       beforeAll(async () => {
@@ -506,7 +412,10 @@ describe("EIP712", () => {
           RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
         );
 
-        const eth = new Eth(transport);
+        const eth = new Eth(transport, "w0w", {
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
         const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
         expect(result).toEqual({
@@ -529,7 +438,10 @@ describe("EIP712", () => {
           RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
         );
 
-        const eth = new Eth(transport);
+        const eth = new Eth(transport, "w0w", {
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
         const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
         expect(result).toEqual({
