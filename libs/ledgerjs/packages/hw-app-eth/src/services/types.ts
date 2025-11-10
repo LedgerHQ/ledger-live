@@ -29,6 +29,18 @@ export type LoadConfig = {
   extraPlugins?: any | null;
   cryptoassetsBaseURL?: string | null;
   calServiceURL?: string | null;
+  // Static ERC20 signatures fallback (base64 encoded blobs by chainId)
+  // Can be provided from @ledgerhq/cryptoassets-evm-signatures/data/evm/index
+  // Example: { 1: "base64blob...", 137: "base64blob..." }
+  staticERC20Signatures?: Record<number, string> | null;
+  // Static EIP712 signatures fallback (v1 format)
+  // Can be provided from @ledgerhq/cryptoassets-evm-signatures/data/eip712
+  // Example: { "1:0xcontract:hash": { fields: [...] }, ... }
+  staticEIP712SignaturesV1?: Record<string, any> | null;
+  // Static EIP712 signatures fallback (v2 format)
+  // Can be provided from @ledgerhq/cryptoassets-evm-signatures/data/eip712_v2
+  // Example: { "1:0xcontract:hash": { fields: [...] }, ... }
+  staticEIP712SignaturesV2?: Record<string, any> | null;
 };
 
 /**
