@@ -20,6 +20,7 @@ import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
+import { Operation } from "@ledgerhq/types-live";
 
 import CompleteExchange, {
   Data as CompleteExchangeData,
@@ -98,7 +99,10 @@ export const LiveAppDrawer = () => {
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
 
+  const [exchangeCompleted, setExchangeCompleted] = React.useState(false);
+
   const onCloseExchangeComplete = useCallback(() => {
+    setExchangeCompleted(true);
     dispatch(closePlatformAppDrawer());
   }, [dispatch]);
 
@@ -206,10 +210,20 @@ export const LiveAppDrawer = () => {
         }
         return null;
       }
-      case "EXCHANGE_COMPLETE":
-        return data && isCompleteExchangeData(data) ? (
-          <CompleteExchange data={data} onClose={onCloseExchangeComplete} />
-        ) : null;
+      case "EXCHANGE_COMPLETE": {
+        if (data && isCompleteExchangeData(data)) {
+          // Wrap onResult to track completion
+          const wrappedData = {
+            ...data,
+            onResult: (operation: Operation) => {
+              setExchangeCompleted(true);
+              data.onResult(operation);
+            },
+          };
+          return <CompleteExchange data={wrappedData} onClose={onCloseExchangeComplete} />;
+        }
+        return null;
+      }
       default:
         return null;
     }
@@ -222,6 +236,7 @@ export const LiveAppDrawer = () => {
     device?.modelId,
     action,
     dispatch,
+    setExchangeCompleted,
   ]);
 
   return (
@@ -229,12 +244,17 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
-        payload?.data?.onCancel?.({
-          error: new DrawerClosedError("User closed the drawer"),
-          name: "DrawerClosedError",
-          message: "User closed the drawer",
-        });
+        // Only call onCancel if exchange hasn't completed successfully
+        if (!exchangeCompleted) {
+          payload?.data?.onCancel?.({
+            error: new DrawerClosedError("User closed the drawer"),
+            name: "DrawerClosedError",
+            message: "User closed the drawer",
+          });
+        }
         dispatch(closePlatformAppDrawer());
+        // Reset state for next time
+        setExchangeCompleted(false);
       }}
       direction="left"
     >
