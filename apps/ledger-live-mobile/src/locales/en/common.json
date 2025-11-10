@@ -1224,6 +1224,12 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning": {
+      "title": "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError": {
+      "title": "Amount too large for UTXO constraints."
     }
   },
   "crash": {
