@@ -10,6 +10,9 @@
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Atrás",
+    "fee" : "Fee",
+    "stake" : "Stake",
+    "validator" : "Validator",
     "delete" : "Borrar",
     "paste" : "Pegar",
     "yes" : "Sí",
@@ -4458,6 +4461,7 @@
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
@@ -4752,7 +4756,7 @@
       "all" : "Todas",
       "installed" : "Aplicaciones",
       "not_installed" : "No instaladas",
-      "supported" : "Compatible con Ledger Wallet",
+      "supported" : "Compatibles con Ledger Wallet",
       "updatable" : "Actualizable",
       "apply" : "Aplicar"
     },
@@ -5973,6 +5977,45 @@
       "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Address copied!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Earn rewards with MINA",
+      "altTitle" : "Manage your MINA delegation",
+      "description" : "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription" : "Change your delegation settings or undelegate your MINA tokens. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegated to",
+      "stakedBalance" : "Staked Balance",
+      "producerAddress" : "Producer Address",
+      "delegatedToTooltip" : "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip" : "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip" : "Public address of the block producer you are delegating to"
+    },
+    "delegators" : "Delegators",
+    "memoPlaceholder" : "Memo opcional",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choose Validator",
+        "connectDevice" : "Connect Device",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Stake MINA",
+      "help" : "Select a validator from the list below to delegate your MINA tokens.",
+      "success" : {
+        "title" : "Transaction successfully broadcasted",
+        "description" : "Your delegation change request has been broadcasted."
+      },
+      "error" : {
+        "title" : "An error occurred while broadcasting the transaction"
+      }
+    }
+  },
   "stellar" : {
     "token" : "Activos",
     "memo" : {
@@ -6376,9 +6419,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -7090,7 +7130,7 @@
       },
       "order" : {
         "topGainers" : "Máximos Ganadores",
-        "topLosers" : "Máximos perdedores",
+        "topLosers" : "Máximos Perdedores",
         "marketCap" : "Puesto",
         "asc" : "Posición (capitalización) asc.",
         "desc" : "Posición (capitalización) desc."
@@ -7102,7 +7142,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
