@@ -4,11 +4,12 @@ import { importStacksSip010Tokens } from ".";
 
 const stacksSip010 = [
   {
-    contract_address: "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4",
-    name: "sbtc-token",
+    contract_address: "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc",
+    name: "sBTC Token",
     ticker: "sBTC",
     decimals: 8,
     delisted: false,
+    live_signature: "abc123",
   },
 ];
 
@@ -31,10 +32,13 @@ describe("import stacks Sip010 tokens", () => {
   it("should output the file in the correct format", async () => {
     const expectedFile = `export type StacksSip010Token = [
   string, // contractAddress
-  string, // name
+  string, // contractName
+  string, // assetName
+  string, // displayName
   string, // ticker
   number, // decimals
   boolean, // delisted
+  string, // live_signature
 ];
 
 import tokens from "./stacks-sip010.json";
@@ -53,7 +57,7 @@ export default tokens as StacksSip010Token[];
       {
         params: {
           blockchain_name: "stacks",
-          output: "contract_address,name,ticker,decimals,delisted",
+          output: "contract_address,name,ticker,decimals,delisted,live_signature",
         },
       },
     );
@@ -61,7 +65,7 @@ export default tokens as StacksSip010Token[];
       1,
       "stacks-sip010.json",
       JSON.stringify([
-        ["SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4", "sbtc-token", "sBTC", 8, false],
+        ["SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4", "sbtc-token", "sbtc", "sBTC Token", "sBTC", 8, false, "abc123"],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(

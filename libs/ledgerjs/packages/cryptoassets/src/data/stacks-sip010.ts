@@ -6,6 +6,7 @@ export type StacksSip010Token = [
   string, // ticker
   number, // decimals
   boolean, // delisted
+  string, // live_signature
 ];
 
 import tokens from "./stacks-sip010.json";

@@ -4,11 +4,34 @@ import { fetchTokensFromCALService } from "../../fetch";
 
 type StacksSip010Token = [
   string, // contractAddress
-  string, // name
+  string, // contractName
+  string, // assetName
+  string, // displayName
   string, // ticker
   number, // decimals
   boolean, // delisted
+  string, // live_signature
 ];
+
+export const convertCALContractAddressToStacksSip010 = (fullIdentifier: string) => {
+  let actualContractAddress = "";
+  let contractName = "";
+  let assetName = "";
+
+  console.log(fullIdentifier);
+  const dotIndex = fullIdentifier.lastIndexOf(".");
+  if (dotIndex !== -1) {
+    actualContractAddress = fullIdentifier.substring(0, dotIndex);
+    const bothNames = fullIdentifier.substring(dotIndex + 1).split("::");
+    contractName = bothNames[0];
+    assetName = bothNames[1];
+  } else {
+    // Fallback if no dot found
+    actualContractAddress = fullIdentifier;
+  }
+
+  return { actualContractAddress, contractName, assetName };
+};
 
 export const importStacksSip010Tokens = async (outputDir: string) => {
   try {
@@ -19,14 +42,26 @@ export const importStacksSip010Tokens = async (outputDir: string) => {
       "ticker",
       "decimals",
       "delisted",
+      "live_signature",
     ]);
-    const sip010Tokens: StacksSip010Token[] = tokens.map(token => [
-      token.contract_address,
-      token.name,
-      token.ticker,
-      token.decimals,
-      token.delisted,
-    ]);
+    const sip010Tokens: StacksSip010Token[] = tokens.map(token => {
+      // Eg: SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc::bridged-btc
+      const fullIdentifier = token.contract_address || "";
+
+      const { actualContractAddress, assetName, contractName } =
+        convertCALContractAddressToStacksSip010(fullIdentifier);
+
+      return [
+        actualContractAddress,
+        contractName,
+        assetName,
+        token.name,
+        token.ticker,
+        token.decimals,
+        token.delisted,
+        token.live_signature,
+      ];
+    });
 
     const filePath = path.join(outputDir, "stacks-sip010");
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(sip010Tokens));
@@ -38,10 +73,13 @@ export const importStacksSip010Tokens = async (outputDir: string) => {
       `${filePath}.ts`,
       `export type StacksSip010Token = [
   string, // contractAddress
-  string, // name
+  string, // contractName
+  string, // assetName
+  string, // displayName
   string, // ticker
   number, // decimals
   boolean, // delisted
+  string, // live_signature
 ];
 
 import tokens from "./stacks-sip010.json";
