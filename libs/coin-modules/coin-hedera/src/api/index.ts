@@ -116,6 +116,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             block: {
               height: liveOp.blockHeight ?? 10,
             },
+            failed: liveOp.hasFailed ?? false,
           },
         } satisfies Operation;
       });

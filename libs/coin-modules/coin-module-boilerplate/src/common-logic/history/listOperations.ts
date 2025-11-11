@@ -50,6 +50,7 @@ const convertToCoreOperation =
         hash,
         fees: feeValue,
         date: new Date(date),
+        failed: false,
         block: {
           height: inLedger,
           hash,

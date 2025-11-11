@@ -38,6 +38,7 @@ import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import mixpanel from "mixpanel-browser";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -223,6 +224,7 @@ const extraProperties = (store: ReduxStore) => {
   const marketWidgetAttributes = getMarketWidgetAnalytics(state);
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
+  const sessionReplayProperties = mixpanel.get_session_recording_properties?.();
 
   const deviceInfo = device
     ? {
@@ -278,6 +280,7 @@ const extraProperties = (store: ReduxStore) => {
     // For tracking receive flow events during onboarding
     ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
+    ...sessionReplayProperties,
   };
 };
 

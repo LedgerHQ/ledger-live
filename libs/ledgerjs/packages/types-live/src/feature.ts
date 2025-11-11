@@ -158,6 +158,7 @@ export type CurrencyFeatures = {
  */
 export type Features = CurrencyFeatures & {
   nanoOnboardingFundWallet: DefaultFeature;
+  mixpanelAnalytics: DefaultFeature;
   welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
@@ -269,6 +270,7 @@ export type Features = CurrencyFeatures & {
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
   newSendFlow: DefaultFeature;
+  lldSessionReplay: Feature_LldSessionReplay;
 };
 
 /**
@@ -737,3 +739,7 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
+
+export type Feature_LldSessionReplay = Feature<{
+  sampling: number;
+}>;

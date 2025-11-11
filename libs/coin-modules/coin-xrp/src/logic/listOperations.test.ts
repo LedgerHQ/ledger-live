@@ -153,7 +153,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tesSUCCESS",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -169,7 +172,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tecAMM_ACCOUNT",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -186,7 +192,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tesSUCCESS",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -229,6 +238,7 @@ describe("listOperations", () => {
               time: new Date("2000-01-01T00:00:01Z"),
             },
             date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            failed: false,
           },
           type: expectedType,
           value: expectedValue,
@@ -258,6 +268,7 @@ describe("listOperations", () => {
               height: 1,
               time: new Date("2000-01-01T00:00:01Z"),
             },
+            failed: true,
           },
           type: expectedType,
           value: expectedValue,
@@ -282,6 +293,7 @@ describe("listOperations", () => {
               time: new Date("2000-01-01T00:00:01Z"),
             },
             date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            failed: false,
           },
           details: {
             sequence: 1,

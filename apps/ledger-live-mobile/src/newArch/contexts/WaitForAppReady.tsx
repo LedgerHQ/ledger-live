@@ -2,9 +2,16 @@ import React, { useContext } from "react";
 import { InitialQueriesContext } from "./InitialQueriesContext";
 import LoadingApp from "~/components/LoadingApp";
 
-export function WaitForAppReady({ children }: React.PropsWithChildren) {
+export function WaitForAppReady({
+  children,
+  currencyInitialized,
+}: React.PropsWithChildren<{ currencyInitialized: boolean }>) {
   const initialQueries = useContext(InitialQueriesContext);
-  if (!initialQueries.firebaseIsReady || initialQueries.ofacResult.isLoading) {
+  if (
+    !currencyInitialized ||
+    !initialQueries.firebaseIsReady ||
+    initialQueries.ofacResult.isLoading
+  ) {
     return <LoadingApp />;
   }
 

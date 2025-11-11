@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341065018",
+    "balance": "341065021",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 139,
+    "operationsCount": 142,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064918",
+    "spendableBalance": "311064921",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -1198,6 +1198,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "efcc63183454f122b3294185e0f9c9c2f90bb1f270343265241f734af1c7f652",
+      "blockHeight": 59718249,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "471a25da25321bc15a540fae113a2926bf6387a60ace32d00261a866170602ab",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-471a25da25321bc15a540fae113a2926bf6387a60ace32d00261a866170602ab-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": "256247545699767499",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "552f8b8f9a5a237f3426497c071e141388d9a50bbe7ac7dfca04dbbd8058bcf5",
       "blockHeight": 57811358,
       "extra": {
@@ -1649,6 +1673,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
       "transactionSequenceNumber": "242646183137262602",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d36bfe52924033397bdb89574feb1d4bdf2f063420d204c54d3cf7b829bd571f",
+      "blockHeight": 59704517,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6e84f6c557a041c188f4716fa0c61bd9fc249a299b5d91c0174b8a61cddb1e42",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6e84f6c557a041c188f4716fa0c61bd9fc249a299b5d91c0174b8a61cddb1e42-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": "256247545699765483",
       "type": "IN",
       "value": "1",
     },
@@ -2801,6 +2849,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
       ],
       "transactionSequenceNumber": "253311312782694345",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "1f73791626d8fee0e7168d3eff26f7ad820b2405feaa06130cb412c61c900a69",
+      "blockHeight": 59691993,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b77350dd5ee187c615825910e80223775d2c473bc6d5a98f364b304be0993fad",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b77350dd5ee187c615825910e80223775d2c473bc6d5a98f364b304be0993fad-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": "256247545699763472",
       "type": "IN",
       "value": "1",
     },
