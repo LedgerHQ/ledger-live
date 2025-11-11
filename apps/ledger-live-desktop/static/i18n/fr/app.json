@@ -152,7 +152,8 @@
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
-    }
+    },
+    "stake" : "Stake"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -443,7 +444,7 @@
     },
     "wrongDevice" : {
       "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
-      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Wallet.",
+      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges interchaînes sur {{provider}} via Ledger Wallet.",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -1446,6 +1447,12 @@
         "description" : "Directement depuis la plateforme d’échange ou le wallet de votre choix vers votre Ledger.",
         "actionCompletedPopupLabel" : "Actifs transférés"
       },
+      "syncAccounts" : {
+        "title" : "Synchroniser vos comptes crypto",
+        "titleCompleted" : "Vos comptes sont synchronisés",
+        "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
+        "actionCompletedPopupLabel" : "Comptes synchronisés"
+      },
       "recover" : {
         "title" : "Vous abonner à Ledger Recover",
         "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
+      "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
       "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
       "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et\nsa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant,\nvous devez contacter l’<2>assistance clientèle</2> de Changelly.",
@@ -2279,6 +2287,7 @@
         "label" : "Compte à créditer",
         "parentAccount" : "1. Sélectionnez le compte {{currencyName}}.",
         "token" : "2. Sélectionnez un token.",
+        "errorLoadingTokens" : "Erreur lors du chargement des tokens",
         "verifyTokenType" : "Vérifiez que <0>{{token}}</0> est bien un token <0>{{tokenType}}</0>. Tout autre crypto-actif envoyé sur un compte {{currency}} risque d’être perdu.",
         "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu.",
         "depositFromCexBannerTitle" : "Recevoir des cryptos de votre compte Coinbase"
@@ -7060,6 +7069,46 @@
     "memo" : "Mémo",
     "memoPlaceholder" : "Saisissez le tag/mémo",
     "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Fee",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Change Delegation",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Earn rewards with MINA",
+      "altTitle" : "Manage your MINA delegation",
+      "description" : "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription" : "Change your delegation settings or undelegate your MINA tokens. ",
+      "changeCTA" : "Change"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegated to",
+      "stakedBalance" : "Staked Balance",
+      "producerAddress" : "Producer Address",
+      "delegatedToTooltip" : "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip" : "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip" : "Public address of the block producer you are delegating to"
+    },
+    "delegators" : "Delegators",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choose Validator",
+        "connectDevice" : "Connect Device",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Stake MINA",
+      "help" : "Select a validator from the list below to delegate your MINA tokens.",
+      "success" : {
+        "title" : "Transaction successfully broadcasted",
+        "description" : "Your delegation change request has been broadcasted."
+      },
+      "error" : {
+        "title" : "An error occurred while broadcasting the transaction"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
