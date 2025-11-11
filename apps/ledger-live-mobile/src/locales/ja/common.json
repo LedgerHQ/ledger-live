@@ -10,6 +10,9 @@
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
+    "fee" : "Fee",
+    "stake" : "Stake",
+    "validator" : "Validator",
     "delete" : "削除",
     "paste" : "貼り付け",
     "yes" : "はい",
@@ -4458,6 +4461,7 @@
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションに署名すると、<0><0>{{provider}}</0>の利用規約</0>に同意したことになります。",
+      "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、その際には、取引の完了に影響する可能性があります。そのような場合は、Changellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -5973,6 +5977,45 @@
       "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Address copied!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Earn rewards with MINA",
+      "altTitle" : "Manage your MINA delegation",
+      "description" : "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription" : "Change your delegation settings or undelegate your MINA tokens. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegated to",
+      "stakedBalance" : "Staked Balance",
+      "producerAddress" : "Producer Address",
+      "delegatedToTooltip" : "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip" : "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip" : "Public address of the block producer you are delegating to"
+    },
+    "delegators" : "Delegators",
+    "memoPlaceholder" : "任意のメモ",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choose Validator",
+        "connectDevice" : "Connect Device",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Stake MINA",
+      "help" : "Select a validator from the list below to delegate your MINA tokens.",
+      "success" : {
+        "title" : "Transaction successfully broadcasted",
+        "description" : "Your delegation change request has been broadcasted."
+      },
+      "error" : {
+        "title" : "An error occurred while broadcasting the transaction"
+      }
+    }
+  },
   "stellar" : {
     "token" : "資産",
     "memo" : {
@@ -6376,9 +6419,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "任意のメモ"
   },
   "near" : {
     "info" : {
