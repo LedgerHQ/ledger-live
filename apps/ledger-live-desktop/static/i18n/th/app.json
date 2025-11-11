@@ -152,7 +152,8 @@
     "quote" : "โควตราคา",
     "memoTag" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
-    }
+    },
+    "stake" : "Stake"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1446,6 +1447,12 @@
         "description" : "จาก Exchange หรือ Wallet ต่าง ๆ ไปยังบัญชี Ledger ของคุณโดยตรง",
         "actionCompletedPopupLabel" : "สินทรัพย์ที่โอน"
       },
+      "syncAccounts" : {
+        "title" : "Sync your crypto accounts",
+        "titleCompleted" : "Your accounts are synchronized",
+        "description" : "Activate Ledger Sync to sync your crypto accounts",
+        "actionCompletedPopupLabel" : "Accounts synced"
+      },
       "recover" : {
         "title" : "สมัครใช้งาน Ledger Recover",
         "description" : "กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Payout Fees",
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
       "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ\n<1>นโยบาย AML/KYC</1> ของ Changelly Changelly อาจใช้กระบวนการ AML/KYC \nซึ่งอาจส่งผลกระทบต่อการทำธุรกรรมของคุณในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
@@ -2279,6 +2287,7 @@
         "label" : "บัญชีที่จะเครดิต",
         "parentAccount" : "1. เลือกบัญชี {{currencyName}}",
         "token" : "2. เลือกโทเคน",
+        "errorLoadingTokens" : "Error loading tokens",
         "verifyTokenType" : "โปรดยืนยันว่า <0>{{token}}</0> เป็นโทเคนประเภท <0>{{tokenType}}</0> สินทรัพย์คริปโตอื่นที่ถูกส่งไปยังบัญชี {{currency}} อาจสูญหาย",
         "warningTokenType" : "โปรดส่งเฉพาะ <0>{{ticker}}</0> หรือโทเคน <0>{{tokenType}}</0> ไปยังบัญชี {{currency}} การส่งสินทรัพย์คริปโตอื่น ๆ อาจส่งผลให้สูญเสียเงินทุนอย่างถาวร",
         "depositFromCexBannerTitle" : "ฝากคริปโตจากบัญชี Coinbase ของคุณ"
@@ -7060,6 +7069,46 @@
     "memo" : "Memo",
     "memoPlaceholder" : "ป้อน Tag/Memo",
     "memoWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Fee",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Change Delegation",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Earn rewards with MINA",
+      "altTitle" : "Manage your MINA delegation",
+      "description" : "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription" : "Change your delegation settings or undelegate your MINA tokens. ",
+      "changeCTA" : "Change"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegated to",
+      "stakedBalance" : "Staked Balance",
+      "producerAddress" : "Producer Address",
+      "delegatedToTooltip" : "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip" : "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip" : "Public address of the block producer you are delegating to"
+    },
+    "delegators" : "Delegators",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choose Validator",
+        "connectDevice" : "Connect Device",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Stake MINA",
+      "help" : "Select a validator from the list below to delegate your MINA tokens.",
+      "success" : {
+        "title" : "Transaction successfully broadcasted",
+        "description" : "Your delegation change request has been broadcasted."
+      },
+      "error" : {
+        "title" : "An error occurred while broadcasting the transaction"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
