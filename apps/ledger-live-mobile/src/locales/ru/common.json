@@ -10,6 +10,9 @@
     "seeAll" : "Просмотреть все",
     "seeAllWithNumber" : "Посмотреть все ({{number}})",
     "back" : "Назад",
+    "fee" : "Комиссия",
+    "stake" : "Стейкать",
+    "validator" : "Валидатор",
     "delete" : "Удалить",
     "paste" : "Вставить",
     "yes" : "Да",
@@ -4458,6 +4461,7 @@
         "provider" : "Перед отправкой проверьте детали обмена на устройстве. {{providerName}} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
       },
       "acceptTerms" : "Подписывая эту транзакцию, я принимаю <0>Условия использования <0>{{provider}}</0></0>",
+      "nearIntentsAcceptTerms" : "Подтверждая эту транзакцию,\n я принимаю <0>Условия использования SwapKit</0>, технологии в основе NEAR Intents",
       "changellySimplifiedAcceptTerms" : "Подтверждая эту транзакцию, вы соглашаетесь с <0>Условиями использования</0> Changelly и её <1>Политикой AML/KYC</1>. Changelly может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC), которые в некоторых случаях могут повлиять на итог ваших транзакций. Если это произойдёт, обращайтесь в <2>Поддержку Changelly</2>.",
       "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки."
     },
@@ -5529,7 +5533,7 @@
               "cta" : "Подробности"
             },
             "pending" : {
-              "title" : "Трансляция транзакции..."
+              "title" : "Транслируем транзакцию..."
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
           }
@@ -5973,6 +5977,45 @@
       "newAddressTRC20" : "Для активации адреса на него сначала нужно отправить не менее 0,1 TRX."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Адрес скопирован!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Переделегировать",
+      "earn" : "Приумножить"
+    },
+    "stakeBanner" : {
+      "title" : "Earn rewards with MINA",
+      "altTitle" : "Manage your MINA delegation",
+      "description" : "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription" : "Change your delegation settings or undelegate your MINA tokens. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Делегировано кому:",
+      "stakedBalance" : "Стейкается",
+      "producerAddress" : "Producer Address",
+      "delegatedToTooltip" : "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip" : "Total amount of MINA currently staked with this validator",
+      "producerAddressTooltip" : "Public address of the block producer you are delegating to"
+    },
+    "delegators" : "Delegators",
+    "memoPlaceholder" : "Опциональное примечание/memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choose Validator",
+        "connectDevice" : "Подключение устройства",
+        "confirmation" : "Подтверждение"
+      },
+      "title" : "Stake MINA",
+      "help" : "Select a validator from the list below to delegate your MINA tokens.",
+      "success" : {
+        "title" : "Transaction successfully broadcasted",
+        "description" : "Your delegation change request has been broadcasted."
+      },
+      "error" : {
+        "title" : "An error occurred while broadcasting the transaction"
+      }
+    }
+  },
   "stellar" : {
     "token" : "Активы",
     "memo" : {
@@ -6376,9 +6419,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Опциональное примечание/memo"
   },
   "near" : {
     "info" : {
