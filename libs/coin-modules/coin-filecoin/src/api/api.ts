@@ -24,7 +24,7 @@ const txsPerPageLimit = 1000;
 const currentVersion = "/v2";
 const fromHeightQueryParam = "from_height";
 
-const getFilecoinURL = (version?: string, path?: string): string => {
+const getFilecoinURL = (version: string = currentVersion, path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
@@ -54,7 +54,7 @@ const fetch = async <T>(path: string, { version }: FetchProps) => {
 
 type sendDataType = EstimatedFeesRequest | BroadcastTransactionRequest;
 type sendProps = {
-  version: string;
+  version?: string;
   data: sendDataType;
 };
 const send = async <T>(path: string, { version, data }: sendProps): Promise<T> => {
