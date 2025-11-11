@@ -102,7 +102,6 @@ export const LiveAppDrawer = () => {
   const [exchangeCompleted, setExchangeCompleted] = React.useState(false);
 
   const onCloseExchangeComplete = useCallback(() => {
-    setExchangeCompleted(true);
     dispatch(closePlatformAppDrawer());
   }, [dispatch]);
 
