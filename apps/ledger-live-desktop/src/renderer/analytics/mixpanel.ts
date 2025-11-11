@@ -21,8 +21,12 @@ export function initMixpanel(sampling: number = 100) {
 }
 
 export function getMixpanelDistinctId(): string | undefined {
-  if (!mixpanel || !mixpanel.get_distinct_id) {
+  try {
+    if (!mixpanel || !mixpanel.get_distinct_id) {
+      return undefined;
+    }
+    return mixpanel.get_distinct_id();
+  } catch (error) {
     return undefined;
   }
-  return mixpanel.get_distinct_id();
 }
