@@ -31,11 +31,13 @@ function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: View
         title={t("transfer.receive.menu.fiat.title")}
         subtitle={t("transfer.receive.menu.fiat.description")}
         Icon={Icons.Bank}
+        testID="option-button-content-fiat"
       />
       <OptionButton
         onPress={handleGoToCrypto}
         title={t("transfer.receive.menu.crypto.title")}
         subtitle={t("transfer.receive.menu.crypto.description")}
+        testID="option-button-content-crypto"
         Icon={Icons.CoinsCrypto}
       />
     </QueuedDrawerGorhom>

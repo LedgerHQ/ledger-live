@@ -372,6 +372,7 @@
     "src/e2e/enum/Network.ts",
     "src/e2e/enum/OperationType.ts",
     "src/e2e/enum/Provider.ts",
+    "src/e2e/enum/ReceiveFundsOptions.ts",
     "src/e2e/enum/TokenType.ts",
     "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/models/BuySell.ts",
