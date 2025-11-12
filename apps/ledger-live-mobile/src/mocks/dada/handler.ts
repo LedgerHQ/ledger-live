@@ -4,7 +4,27 @@ import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.moc
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;
   const search = searchParams.get("search")?.toLowerCase().trim();
+  const currencyIds = searchParams.get("currencyIds");
 
+  // Handle currencyIds parameter (used by useLazyLedgerCurrency)
+  if (currencyIds) {
+    const requestedIds = currencyIds.split(",");
+    const filteredCryptoAssets = Object.fromEntries(
+      Object.entries(mockData.cryptoAssets).filter(([id]) => requestedIds.includes(id)),
+    );
+    const filteredCryptoOrTokenCurrencies = Object.fromEntries(
+      Object.entries(mockData.cryptoOrTokenCurrencies).filter(([id]) => requestedIds.includes(id)),
+    );
+
+    const response = {
+      ...mockData,
+      cryptoAssets: filteredCryptoAssets,
+      cryptoOrTokenCurrencies: filteredCryptoOrTokenCurrencies,
+    };
+    return HttpResponse.json(response);
+  }
+
+  // Handle search parameter
   if (search) {
     const filteredEntries = Object.entries(mockData.cryptoAssets).filter(([, asset]) => {
       const name = asset.name?.toLowerCase() ?? "";
