@@ -238,13 +238,13 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
 
             return concat(
               initialEvent,
-              !device
-                ? EMPTY
-                : task({
+              device
+                ? task({
                     deviceId: device.deviceId,
                     deviceName: device.deviceName ?? null,
                     request,
-                  }),
+                  })
+                : EMPTY,
             );
           }),
           catchError((error: Error) =>

@@ -118,7 +118,7 @@ export class DeviceManagementKitTransport extends Transport {
 
   static async open(
     deviceOrId: DiscoveredDevice | string,
-    _timeoutMs?: number, // FIXME: this should probably be used
+    _timeoutMs?: number,
     _context?: TraceContext,
     options?: { matchDeviceByName?: string },
   ): Promise<DeviceManagementKitTransport> {

@@ -18,7 +18,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type DeviceBaseInfo = {
   deviceId: string;
-  deviceName?: string | null | undefined; // shitty typing for compatibility
+  deviceName?: string | null;
   modelId: DeviceModelId;
 };
 
@@ -42,8 +42,8 @@ export function matchDeviceByName({
   oldDevice,
   newDevice,
 }: {
-  oldDevice: { deviceName?: string | null | undefined };
-  newDevice: { deviceName?: string | null | undefined };
+  oldDevice: { deviceName?: string | null };
+  newDevice: { deviceName?: string | null };
 }): boolean {
   const { deviceName: oldDeviceName } = oldDevice;
   const { deviceName: newDeviceName } = newDevice;

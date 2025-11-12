@@ -29,18 +29,18 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
 
   const scanningEnabled = dmk !== null && enabled && BleStatesToAllowScanning.includes(bleState);
 
+  const setRetryTimeout = () =>
+    setTimeout(() => {
+      // If scanning is still enabled (user still searching for his device), this is an unexpected completion - retry
+      // This can happen when a connected device is disconnected during scanning, and probably in some other edge cases
+      log("useBleDevicesScanning", " still enabled after timeout, retrying...");
+      setRetryCount(prev => prev + 1);
+    }, RETRY_DELAY_MS);
+
   useEffect(() => {
     if (!scanningEnabled) return;
 
     let retryTimeout: ReturnType<typeof setTimeout> | null = null;
-    const setRetryTimeout = () => {
-      retryTimeout = setTimeout(() => {
-        // If scanning is still enabled (user still searching for his device), this is an unexpected completion - retry
-        // This can happen when a connected device is disconnected during scanning, and probably in some other edge cases
-        log("useBleDevicesScanning", " still enabled after timeout, retrying...");
-        setRetryCount(prev => prev + 1);
-      }, RETRY_DELAY_MS);
-    };
 
     setIsScanning(true);
     setScanningBleError(null);
@@ -68,7 +68,7 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           dmk.stopDiscovering();
           setIsScanning(false);
           setScannedDevices([]);
-          setRetryTimeout();
+          retryTimeout = setRetryTimeout();
         },
         complete: () => {
           log("useBleDevicesScanning", " complete -> unsubscribing and stopping discovery");
@@ -76,7 +76,7 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           dmk.stopDiscovering();
           setIsScanning(false);
           setScannedDevices([]);
-          setRetryTimeout();
+          retryTimeout = setRetryTimeout();
         },
       });
     return () => {

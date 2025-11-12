@@ -31,8 +31,10 @@ import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
 import {
-  useBleDevicesScanning,
+  DeviceBaseInfo,
   filterScannedDevice,
+  findMatchingNewDevice,
+  useBleDevicesScanning,
   useDeviceManagementKitEnabled,
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
@@ -42,7 +44,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
-import { DeviceBaseInfo, findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -306,7 +307,7 @@ export default function SelectDevice({
 
   // update device name on store when needed
   useEffect(() => {
-    bleKnownDevices.forEach(knownDevice => {
+    for (const knownDevice of bleKnownDevices) {
       const equivalentScannedDevice = findMatchingNewDevice(
         {
           deviceId: knownDevice.id,
@@ -327,7 +328,7 @@ export default function SelectDevice({
           }),
         );
       }
-    });
+    }
   }, [dispatch, bleKnownDevices, filteredScannedDevices]);
 
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
