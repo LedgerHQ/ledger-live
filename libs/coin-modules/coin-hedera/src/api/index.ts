@@ -24,7 +24,7 @@ import {
   getTokenFromAsset,
   lastBlock,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue, getHederaTransactionBodyBytes } from "../logic/utils";
 import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
@@ -39,10 +39,10 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     combine,
     craftTransaction: async (txIntent, customFees) => {
-      const { serializedTx } = await craftTransaction(txIntent, customFees);
+      const { tx } = await craftTransaction(txIntent, customFees);
 
       return {
-        transaction: serializedTx,
+        transaction: getHederaTransactionBodyBytes(tx),
       };
     },
     craftRawTransaction: (
