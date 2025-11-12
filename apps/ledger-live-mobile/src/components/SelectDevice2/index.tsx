@@ -8,6 +8,7 @@ import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getEnv } from "@ledgerhq/live-env";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -188,8 +189,12 @@ export default function SelectDevice({
         connectionType: wired ? "USB" : "BLE",
       });
 
-      // If neither wired nor proxy-debug device, bluetooth is required
-      if (!wired && !deviceId.includes("httpdebug")) {
+      // Skip bluetooth requirements in mock/test environments or for proxy-debug devices
+      const isMockEnv = getEnv("MOCK");
+      const isProxyDebug = deviceId.includes("httpdebug");
+
+      // If neither wired nor in mock/debug mode, bluetooth is required
+      if (!wired && !isMockEnv && !isProxyDebug) {
         setSelectedBleDevice(device);
         setIsBleRequired(true);
       } else {
