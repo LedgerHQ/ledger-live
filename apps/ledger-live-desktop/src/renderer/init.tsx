@@ -54,9 +54,16 @@ import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
+import { track } from "./analytics/segment";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
+
+function onAppClose() {
+  console.log("app-close message received");
+  track("app_close");
+  window.close();
+}
 
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
@@ -223,6 +230,8 @@ async function init() {
     // This event is triggered when we reload the app, we want it to forget what it knows
     reload();
   });
+
+  ipcRenderer.addListener("app-close", onAppClose);
 
   document.addEventListener(
     "dragover",

@@ -33,6 +33,7 @@ import {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
+
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -194,6 +195,23 @@ app.on("ready", async () => {
     typeof applyWindowParams
   >[0];
   await applyWindowParams(windowParams, settings);
+
+  let status: number = 0;
+  window.on("close", e => {
+    if (status === 0) {
+      e.preventDefault();
+      getMainWindowAsync()
+        .then(w => {
+          status = 1;
+          if (w && "send" in w.webContents) {
+            w.webContents.send("app-close");
+          } else {
+            w.close();
+          }
+        })
+        .catch((err: unknown) => console.log(err));
+    }
+  });
 
   // Setup window event handlers
   window.on(
