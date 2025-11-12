@@ -50,8 +50,10 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
     xpubOrAddress: address,
     derivationMode,
   });
-  const findToken = async (contractAddress: string): Promise<TokenCurrency | undefined> =>
-    getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, currency.id);
+  const findToken = async (contractAddress: string): Promise<TokenCurrency | undefined> => {
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, currency.id);
+    return token?.delisted ? undefined : token;
+  };
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
