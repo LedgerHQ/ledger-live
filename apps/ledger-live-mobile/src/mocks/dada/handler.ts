@@ -1,10 +1,33 @@
 import { http, HttpResponse } from "msw";
-import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
+import { mockData, mockDataCosmos } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;
   const search = searchParams.get("search")?.toLowerCase().trim();
+  const currencyIds = searchParams.get("currencyIds");
 
+  if (currencyIds) {
+    const mockedData = currencyIds.includes("cosmos") ? mockDataCosmos : mockData;
+
+    const requestedIds = currencyIds.split(",");
+    const filteredCryptoAssets = Object.fromEntries(
+      Object.entries(mockedData.cryptoAssets).filter(([id]) => requestedIds.includes(id)),
+    );
+    const filteredCryptoOrTokenCurrencies = Object.fromEntries(
+      Object.entries(mockedData.cryptoOrTokenCurrencies).filter(([id]) =>
+        requestedIds.includes(id),
+      ),
+    );
+
+    const response = {
+      ...mockedData,
+      cryptoAssets: filteredCryptoAssets,
+      cryptoOrTokenCurrencies: filteredCryptoOrTokenCurrencies,
+    };
+    return HttpResponse.json(response);
+  }
+
+  // Handle search parameter
   if (search) {
     const filteredEntries = Object.entries(mockData.cryptoAssets).filter(([, asset]) => {
       const name = asset.name?.toLowerCase() ?? "";

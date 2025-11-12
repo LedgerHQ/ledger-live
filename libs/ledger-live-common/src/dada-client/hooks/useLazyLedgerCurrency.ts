@@ -42,5 +42,29 @@ export function useLazyLedgerCurrency(
     }
   }, [currency, devMode, options, triggerGetAssetData]);
 
-  return { getLedgerCurrency };
+  const getLedgerCurrencies = useCallback(
+    async (currencyIds: string[]) => {
+      if (!currencyIds || currencyIds.length === 0) return undefined;
+
+      try {
+        const result = await triggerGetAssetData(
+          {
+            currencyIds,
+            product: options.product,
+            version: options.version,
+            isStaging: false,
+            includeTestNetworks: devMode,
+          },
+          true, // prefer cached data
+        ).unwrap();
+
+        return Object.values(result.cryptoOrTokenCurrencies);
+      } catch {
+        return undefined;
+      }
+    },
+    [devMode, options, triggerGetAssetData],
+  );
+
+  return { getLedgerCurrency, getLedgerCurrencies };
 }

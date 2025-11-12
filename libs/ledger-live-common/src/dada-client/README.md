@@ -93,7 +93,7 @@ const MarketComponent = () => {
 import { useLazyLedgerCurrency } from '@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency';
 
 const CurrencyComponent = ({ currency }) => {
-  const { getLedgerCurrency } = useLazyLedgerCurrency(
+  const { getLedgerCurrency, getLedgerCurrencies } = useLazyLedgerCurrency(
     {
       product: 'lld',
       version: '2.0.0',
@@ -108,10 +108,23 @@ const CurrencyComponent = ({ currency }) => {
     }
   };
 
+  const handleFetchMultipleCurrencies = async () => {
+    const currencyIds = ['bitcoin', 'ethereum', 'polygon'];
+    const currencies = await getLedgerCurrencies(currencyIds);
+    if (currencies) {
+      console.log('Fetched currencies:', currencies);
+    }
+  };
+
   return (
-    <button onClick={handleFetchCurrency}>
-      Fetch Currency Data
-    </button>
+    <>
+      <button onClick={handleFetchCurrency}>
+        Fetch Currency Data
+      </button>
+      <button onClick={handleFetchMultipleCurrencies}>
+        Fetch Multiple Currencies
+      </button>
+    </>
   );
 };
 ```

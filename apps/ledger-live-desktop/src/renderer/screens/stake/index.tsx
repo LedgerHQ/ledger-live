@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistory } from "react-router-dom";
@@ -18,6 +17,7 @@ import {
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 
 const DRAWER_FLOW = "stake";
 
@@ -118,8 +118,17 @@ const useStakeFlow = () => {
     });
   }, [history.location.pathname]);
 
+  const { getLedgerCurrencies } = useLazyLedgerCurrency({
+    product: "lld",
+    version: __APP_VERSION__,
+  });
+
+  /**
+   * LIVE-23210: Remove legacy currency handling when MAD is fully enabled
+   * This function contains legacy code that should be removed once MAD fully enabled.
+   */
   return useCallback(
-    ({
+    async ({
       currencies,
       shouldRedirect = true,
       alwaysShowNoFunds = false,
@@ -130,10 +139,7 @@ const useStakeFlow = () => {
       dispatch(setFlowValue(DRAWER_FLOW));
       dispatch(setSourceValue(source || ""));
 
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || list,
-      });
-
+      const listCurrencies = currencies || list;
       trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
         page: history.location.pathname,
@@ -158,14 +164,17 @@ const useStakeFlow = () => {
           ? earnDrawerConfigurationFlag.params
           : {};
         openAssetAndAccountDrawer({
-          currencies: cryptoCurrencies.map(c => c.id),
+          currencies: listCurrencies,
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
-          areCurrenciesFiltered: cryptoCurrencies.length > 0,
+          areCurrenciesFiltered: listCurrencies.length > 0,
           drawerConfiguration: earnDrawerConfiguration,
         });
       } else {
+        // TO REMOVE when MAD enabled and we remove legacy currencies
+        const cryptoCurrencies = (await getLedgerCurrencies(listCurrencies)) ?? [];
+
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
@@ -191,12 +200,13 @@ const useStakeFlow = () => {
     },
     [
       dispatch,
-      earnDrawerConfigurationFlag,
-      handleAccountSelected,
-      handleRequestClose,
-      history.location.pathname,
+      getLedgerCurrencies,
       list,
+      history.location.pathname,
       modularDrawerVisible,
+      handleAccountSelected,
+      earnDrawerConfigurationFlag,
+      handleRequestClose,
     ],
   );
 };

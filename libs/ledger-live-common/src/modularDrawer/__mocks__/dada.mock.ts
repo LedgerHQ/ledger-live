@@ -3898,3 +3898,108 @@ export const mockData = {
     ],
   },
 };
+
+export const expectedAssetsSortedCosmos = [
+  {
+    id: "cosmos",
+    metaCurrencyId: "cosmos",
+    ticker: "ATOM",
+    name: "Cosmos",
+    assetsIds: {
+      cosmos: "cosmos",
+    },
+  },
+];
+
+export const mockDataCosmos = {
+  cryptoAssets: {
+    cosmos: {
+      id: "cosmos",
+      ticker: "ATOM",
+      name: "Cosmos",
+    },
+  },
+  cryptoOrTokenCurrencies: {
+    cosmos: {
+      type: "crypto_currency",
+      id: "cosmos",
+      name: "Cosmos",
+      ticker: "ATOM",
+      units: [
+        {
+          code: "uatom",
+          name: "microAtom",
+          magnitude: 0,
+        },
+        {
+          code: "ATOM",
+          name: "atom",
+          magnitude: 6,
+        },
+      ],
+      chainId: "cosmoshub-4",
+      confirmationsNeeded: 6,
+      symbol: "ATOM",
+      coinType: 118,
+      family: "cosmos",
+      hasSegwit: false,
+      hasTokens: false,
+      hrp: "cosmos",
+      disableCountervalue: false,
+    },
+  },
+  currenciesOrder: {
+    key: "marketCap",
+    order: "desc",
+    currenciesIds: ["cosmos"],
+    metaCurrencyIds: ["urn:crypto:meta-currency:cosmos"],
+  },
+  interestRates: {
+    cosmos: {
+      currencyId: "cosmos",
+      rate: 0.20693370904598615,
+      type: "APY",
+      fetchAt: "2025-11-13T10:45:42.256277Z",
+    },
+  },
+  markets: {
+    cosmos: {
+      currencyId: "cosmos",
+      marketCap: 1406699754,
+      fullyDilutedValuation: 1406699754,
+      totalVolume: 71298222,
+      high24h: 3.1,
+      low24h: 2.87,
+      price: 2.94,
+      priceChange24h: -0.10024691133266428,
+      priceChangePercentage1h: 0.18320165862712914,
+      priceChangePercentage24h: -3.2931392524183805,
+      priceChangePercentage7d: 13.842728397085319,
+      priceChangePercentage30d: -12.950215241936824,
+      priceChangePercentage1y: -40.28459028854743,
+      marketCapChange24h: -47828451.77188063,
+      marketCapChangePercentage24h: -3.28825,
+      circulatingSupply: 477850069.445996,
+      totalSupply: 477850069.445996,
+      allTimeHigh: 44.45,
+      allTimeLow: 1.16,
+      allTimeHighDate: "2022-01-17T00:34:41.497Z",
+      allTimeLowDate: "2020-03-13T02:27:44.591Z",
+      sparkline: [
+        2.585907, 2.620035, 2.6116526, 2.6660142, 2.692097, 2.7307487, 2.7436738, 2.7664137,
+        3.0016065, 3.133514, 3.0913327, 3.0124567, 2.9650724, 2.9671705, 2.93731, 2.9369273,
+        2.932851, 2.8720174, 2.85868, 2.914176, 2.9476519, 2.9748003, 2.9814937, 3.0179718,
+        3.0468328, 3.086391, 3.0545623, 3.0684726, 3.099343, 3.0492456, 3.026066, 3.0183995,
+        3.0542982, 2.9538598, 2.9777746, 2.98152, 3.0539138, 3.1041682, 2.9070349, 2.918785,
+        2.9312763, 2.9999173,
+      ],
+      fetchAt: "2025-11-13T10:45:42.256277Z",
+    },
+  },
+  networks: {
+    cosmos: {
+      id: "cosmos",
+      name: "Cosmos",
+    },
+  },
+};
