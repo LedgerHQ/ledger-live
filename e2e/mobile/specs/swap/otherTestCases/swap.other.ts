@@ -58,12 +58,11 @@ export function runSwapWithoutAccountTest(
   const handleAssetSwap = async (asset: Account, hasAccount: boolean) => {
     const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
     if (isModularDrawer) {
-      await app.modularDrawer.performSearch(asset.currency.name);
+      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-      const networkName =
-        asset?.parentAccount === undefined
-          ? asset.currency.speculosApp.name
-          : asset?.parentAccount?.currency.name;
+      const networkName = asset?.parentAccount
+        ? asset.parentAccount.currency.name
+        : asset.currency.speculosApp.name;
       await app.modularDrawer.selectNetworkIfAsked(networkName);
 
       if (hasAccount) {
@@ -396,21 +395,19 @@ export function runSwapWithSendMaxTest(
 
       const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
       if (isModularDrawer) {
-        await app.modularDrawer.performSearch(fromAccount.currency.name);
+        await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
         await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
-        let networkName =
-          fromAccount?.parentAccount === undefined
-            ? fromAccount.currency.speculosApp.name
-            : fromAccount?.parentAccount?.currency.name;
+        let networkName = fromAccount?.parentAccount
+          ? fromAccount.parentAccount.currency.name
+          : fromAccount.currency.speculosApp.name;
         await app.modularDrawer.selectNetworkIfAsked(networkName);
         await app.modularDrawer.selectFirstAccount();
         await app.swapLiveApp.tapToCurrency();
-        await app.modularDrawer.performSearch(toAccount.currency.name);
+        await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
         await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
-        networkName =
-          toAccount?.parentAccount === undefined
-            ? toAccount.currency.speculosApp.name
-            : toAccount?.parentAccount?.currency.name;
+        networkName = toAccount?.parentAccount
+          ? toAccount.parentAccount.currency.name
+          : toAccount.currency.speculosApp.name;
         await app.modularDrawer.selectNetworkIfAsked(networkName);
         await app.modularDrawer.selectFirstAccount();
       } else {

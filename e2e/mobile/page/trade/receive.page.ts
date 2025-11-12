@@ -13,7 +13,6 @@ export default class ReceivePage {
   buttonContinueId = "add-accounts-continue-button";
   step2HeaderTitleId = "receive-header-step2-title";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
-  networkBasedTitleIdMAD = "modular-drawer-Network-title";
   receivePageScrollViewId = "receive-screen-scrollView";
   receiveConnectDeviceHeaderId = "receive-connect-device-header";
   selectCryptoScrollViewId = "select-crypto-scrollView";
