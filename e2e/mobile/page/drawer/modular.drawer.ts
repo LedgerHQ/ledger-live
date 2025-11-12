@@ -35,25 +35,10 @@ export default class ModularDrawer {
     await tapById(this.accountItem, 0);
   }
 
-  @Step("Perform search on modular drawer")
-  async performSearch(searchText: string) {
-    await waitForElementById(this.searchBarId);
-    await typeTextByElement(this.searchBar(), searchText);
-  }
-
   @Step("Perform search on modular drawer by ticker")
   async performSearchByTicker(ticker: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), ticker);
-  }
-
-  @Step("Select currency in receive list")
-  async selectCurrency(addressOrId: string): Promise<void> {
-    const assetItemId = this.assetItem(addressOrId);
-    if (!(await IsIdVisible(assetItemId))) {
-      await scrollToId(assetItemId, this.selectCryptoScrollViewId);
-    }
-    await tapById(assetItemId, 0);
   }
 
   @Step("Select currency in receive list by ticker")
@@ -68,17 +53,12 @@ export default class ModularDrawer {
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
-      await this.selectNetwork(networkName);
+      const id = this.networkItemIdMAD(networkName);
+      if (!(await IsIdVisible(id))) {
+        await scrollToId(id, this.networkSelectionScrollViewId);
+      }
+      await tapById(id, 0);
     }
-  }
-
-  @Step("Select network")
-  async selectNetwork(networkName: string): Promise<void> {
-    const id = this.networkItemIdMAD(networkName);
-    if (!(await IsIdVisible(id))) {
-      await scrollToId(id, this.networkSelectionScrollViewId);
-    }
-    await tapById(id, 0);
   }
 
   @Step("Select currency $0 in modular drawer")

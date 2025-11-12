@@ -57,7 +57,6 @@ export async function runInlineAddAccountTest(
           account.currency.id,
           0,
         );
-        await app.common.enableSynchronization();
       } else {
         await app.stake.selectCurrency(account.currency.id);
         await app.common.tapProceedButton();

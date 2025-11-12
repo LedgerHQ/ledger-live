@@ -31,8 +31,6 @@ export function runAddAccountTest(
         await app.receive.selectNetworkIfAsked(currency.id);
       }
 
-      await app.common.enableSynchronization();
-
       const accountId = await app.addAccount.addAccountAtIndex(
         `${currency.name} 1`,
         currency.id,
