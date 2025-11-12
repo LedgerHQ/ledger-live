@@ -429,14 +429,17 @@ export default class BtcNew {
 
     await this.signPsbt(psbt, walletPolicy, () => {});
 
-    if (options?.finalizePsbt) {
-      finalize(psbt);
-      const serializedTx = extract(psbt);
+    const psbtNotFinalized = new PsbtV2();
+    psbt.copy(psbtNotFinalized);
 
-      return { psbt: psbt.serialize(), tx: serializedTx.toString("hex") };
-    }
+    // we finalize here in case we want to broadcast the tx later
+    finalize(psbt);
+    const serializedTx = extract(psbt);
 
-    return { psbt: psbt.serialize() };
+    return {
+      psbt: psbtNotFinalized.serialize(),
+      tx: serializedTx.toString("hex"),
+    };
   }
 
   /**
