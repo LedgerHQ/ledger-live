@@ -129,15 +129,6 @@ export class DeviceManagementKitTransport extends Transport {
       { options },
     );
 
-    console.log(
-      "DMKTransport [open] activeSessionId: " +
-        activeSessionId +
-        " and deviceId: " +
-        deviceOrId +
-        " and matchDeviceByName: " +
-        options?.matchDeviceByName?.toString(),
-    );
-
     if (activeSessionId) {
       tracer.trace(`[DMKTransport] [open] checking existing session ${activeSessionId}`);
 
@@ -156,9 +147,8 @@ export class DeviceManagementKitTransport extends Transport {
       const isSameDeviceNameButDifferentId =
         !isSameDeviceId &&
         matchDeviceByName({
-          // FIXME: this does not work for now because connectedDevice.name is always the model name (Ledger Stax)... this should be fixed on DMK side
           oldDevice: { deviceName: options?.matchDeviceByName },
-          newDevice: { deviceName: deviceSessionState?.deviceName },
+          newDevice: { deviceName: connectedDevice.name },
         });
 
       if (
@@ -168,6 +158,16 @@ export class DeviceManagementKitTransport extends Transport {
       ) {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
+          {
+            data: {
+              isSameDeviceId,
+              isSameDeviceNameButDifferentId,
+              status: deviceSessionState?.deviceStatus,
+              transport: activeDeviceSessionSubject.value?.transport,
+              oldDevice: { deviceName: options?.matchDeviceByName },
+              newDevice: { deviceName: connectedDevice.name },
+            },
+          },
         );
 
         return activeDeviceSessionSubject.value.transport;
@@ -179,7 +179,7 @@ export class DeviceManagementKitTransport extends Transport {
             status: deviceSessionState?.deviceStatus,
             transport: activeDeviceSessionSubject.value?.transport,
             oldDevice: { deviceName: options?.matchDeviceByName },
-            newDevice: { deviceName: deviceSessionState?.deviceName },
+            newDevice: { deviceName: connectedDevice.name },
           },
         });
       }
