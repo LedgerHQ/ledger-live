@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
 import { BigNumber } from "bignumber.js";
 import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
@@ -8,6 +9,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getOperationExtra } from "@ledgerhq/coin-sui/getOperationExtra";
 import { OperationType } from "@ledgerhq/types-live";
+import { fetchSuiBannerConfig } from "./api";
 
 export function useSuiMappedStakingPositions(account: SuiAccount) {
   const { validators } = getCurrentSuiPreloadData();
@@ -118,3 +120,41 @@ export const mapStakingPositions = (
     };
   });
 };
+
+/**
+ * Hook to check if the Sui staking boost banner should be displayed
+ * Returns true if the banner should be shown, false otherwise
+ *
+ * Uses React Query for caching with 1 hour stale time
+ * Defaults to false while loading or on error (fail-safe)
+ */
+export function useShouldShowSuiStakingBoostBanner(): boolean {
+  const { data } = useQuery({
+    queryKey: ["sui", "banner-config"],
+    queryFn: fetchSuiBannerConfig,
+    staleTime: 60 * 60 * 1000, // 1 hour
+    refetchInterval: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+  });
+
+  return data?.showBoostBanner ?? false;
+}
+
+/**
+ * Hook to check if the Sui staking incentive banner should be displayed
+ * Returns true if the banner should be shown, false otherwise
+ *
+ * Uses React Query for caching with 1 hour stale time
+ * Defaults to false while loading or on error (fail-safe)
+ */
+export function useShouldShowSuiStakingIncentiveBanner(): boolean {
+  const { data } = useQuery({
+    queryKey: ["sui", "banner-config"],
+    queryFn: fetchSuiBannerConfig,
+    staleTime: 60 * 60 * 1000, // 1 hour
+    refetchInterval: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+  });
+
+  return data?.showIncentiveBanner ?? false;
+}

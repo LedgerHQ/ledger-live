@@ -5,6 +5,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -13,6 +14,7 @@ import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SuiStakingFlowParamList } from "./types";
+import Alert from "~/components/Alert";
 
 type Props = StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidatorSelect>;
 
@@ -57,6 +59,11 @@ export default function SelectValidator({ navigation, route }: Props) {
       <View style={styles.header}>
         <ValidatorHead />
       </View>
+      <View style={styles.alertContainer}>
+        <Alert type="primary">
+          <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
+        </Alert>
+      </View>
       <FlatList
         contentContainerStyle={styles.list}
         data={validators}
@@ -73,6 +80,10 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
+  },
+  alertContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   list: {
     paddingHorizontal: 16,

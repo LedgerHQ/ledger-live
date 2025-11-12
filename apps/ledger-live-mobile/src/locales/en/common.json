@@ -6603,7 +6603,11 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
-            "cta": "Continue"
+            "cta": "Continue",
+            "boostAlert": "Stake at least 100$ to be eligible for the APY boost"
+          },
+          "validator": {
+            "boostAlert": "Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th"
           },
           "verification": {
             "success": {
@@ -6611,6 +6615,18 @@
               "text": "Your account balance will be updated once the network confirms the transaction."
             }
           }
+        }
+      },
+      "banner": {
+        "boost": {
+          "title": "Sui x Ledger Stake boost",
+          "description": "Stake Sui with Ledger validator and get 60% boosted rewards during 60 days",
+          "howItWorks": "How it works",
+          "stakeWithLedger": "Stake with Ledger"
+        },
+        "incentive": {
+          "description": "Your stake is eligible to the staking incentive programs. Extra rewards will be distributed at the end of the staking period",
+          "cta": "Learn more"
         }
       }
     }

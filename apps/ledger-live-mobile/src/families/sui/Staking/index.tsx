@@ -21,6 +21,7 @@ import { rgba } from "../../../colors";
 import LabelRight from "./LabelRight";
 import StakingPositionRow from "./Row";
 import ValidatorImageWrapper from "./ValidatorImageWrapper";
+import StakeBanner from "../StakeBanner";
 
 const UnstakeActionIcon =
   ({ alertColor }: { alertColor: string }) =>
@@ -187,6 +188,8 @@ function StakingPositions({ account }: Props) {
 
   return (
     <View style={styles.root}>
+      <StakeBanner account={account} />
+
       <DelegationDrawer
         isOpen={data && data.length > 0}
         onClose={onCloseDrawer}

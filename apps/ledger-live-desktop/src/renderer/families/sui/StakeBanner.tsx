@@ -43,7 +43,7 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = () => {
             }}
             content={{
               message: (
-                <Box>
+                <Box shrink>
                   <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c100">
                     Sui x Ledger Stake boost
                   </Text>
@@ -58,6 +58,7 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = () => {
                     color="neutral.c100"
                     fontSize={4}
                     fontWeight="medium"
+                    pl={2}
                     onClick={handleHowItWorksClick}
                   >
                     How it works

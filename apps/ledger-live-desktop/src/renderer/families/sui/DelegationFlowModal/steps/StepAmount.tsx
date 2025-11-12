@@ -10,6 +10,7 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import Alert from "~/renderer/components/Alert";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { StepProps } from "../types";
 const StepAmount = ({
   t,
@@ -52,9 +53,11 @@ const StepAmount = ({
             bridgePending={bridgePending}
             t={t}
           />
-          <Alert type="primary" mt={4}>
-            Stake at least 100$ to be eligible for the APY boost
-          </Alert>
+          {transaction.recipient === P2P_SUI_VALIDATOR_ADDRESS && (
+            <Alert type="primary" mt={4}>
+              Stake at least 100$ to be eligible for the APY boost
+            </Alert>
+          )}
         </Fragment>
       )}
     </Box>

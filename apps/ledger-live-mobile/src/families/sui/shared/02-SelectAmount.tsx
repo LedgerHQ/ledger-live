@@ -194,6 +194,13 @@ function StakingAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
+              {transaction.mode === "delegate" && (
+                <View style={styles.alertContainer}>
+                  <Alert type="primary">
+                    <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
+                  </Alert>
+                </View>
+              )}
               <Button
                 disabled={!!bridgePending || !!error}
                 pending={bridgePending}
@@ -281,6 +288,9 @@ const styles = StyleSheet.create({
   },
   amountWrapper: {
     flex: 1,
+  },
+  alertContainer: {
+    paddingBottom: 16,
   },
 });
 

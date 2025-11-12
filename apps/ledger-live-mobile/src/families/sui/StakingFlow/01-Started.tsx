@@ -66,7 +66,12 @@ export default function StakingStarted({ navigation, route }: Props) {
         </View>
       </NavigationScrollView>
       <View style={[styles.footer]}>
-        <View>
+        <View style={styles.alertContainer}>
+          <Alert type="info">
+            <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
+          </Alert>
+        </View>
+        <View style={styles.alertContainer}>
           <Alert type="info" title={t("sui.staking.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6} testID="sui-delegation-start-button">
@@ -122,5 +127,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     borderTopWidth: 1,
+  },
+  alertContainer: {
+    marginBottom: 12,
   },
 });
