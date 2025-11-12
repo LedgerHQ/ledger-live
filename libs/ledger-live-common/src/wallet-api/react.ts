@@ -686,83 +686,158 @@ export function useWalletAPIServer({
   }, [server, uiStorageSet]);
 
   useEffect(() => {
-    if (!uiSignPsbt) return;
+    if (!uiTxSignRaw) return;
 
     server.setHandler("bitcoin.signPsbt", async ({ account, psbt, broadcast }) => {
-      const signedOperation = await craftPsbtTransactionLogic(
+      const signedOperation = await signRawTransactionLogic(
         { manifest, accounts, tracking },
         account.id,
-        { psbt, finalizePsbt: broadcast },
-        (account, liveTx) => {
-          return new Promise((resolve, reject) => {
+        psbt,
+        (account, parentAccount, tx) =>
+          new Promise((resolve, reject) => {
             let done = false;
-            return uiSignPsbt({
+            return uiTxSignRaw({
               account,
-              liveTx,
+              parentAccount,
+              transaction: tx,
+              options: undefined,
               onSuccess: signedOperation => {
                 if (done) return;
                 done = true;
-                tracking.signTransactionSuccess(manifest);
+                tracking.signRawTransactionSuccess(manifest);
                 resolve(signedOperation);
               },
               onError: error => {
                 if (done) return;
                 done = true;
-                tracking.signTransactionFail(manifest);
+                tracking.signRawTransactionFail(manifest);
                 reject(error);
               },
             });
-          });
-        },
+          }),
       );
 
       const psbtSigned = signedOperation.rawData!.psbtSigned as string;
 
-      if (!broadcast) return { psbtSigned };
+      if (broadcast) {
+        const txHash = await broadcastTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          signedOperation,
+          async (account, parentAccount, signedOperation) => {
+            const bridge = getAccountBridge(account, parentAccount);
+            const mainAccount = getMainAccount(account, parentAccount);
 
-      const txHash = await broadcastTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        signedOperation,
-        async (account, parentAccount, signedOperation) => {
-          const bridge = getAccountBridge(account, parentAccount);
-          const mainAccount = getMainAccount(account, parentAccount);
+            let optimisticOperation: Operation = signedOperation.operation;
 
-          let optimisticOperation: Operation = signedOperation.operation;
-
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-            try {
-              optimisticOperation = await bridge.broadcast({
-                account: mainAccount,
-                signedOperation,
-                broadcastConfig: { mevProtected: !!config.mevProtected },
-              });
-              tracking.broadcastSuccess(manifest);
-            } catch (error) {
-              tracking.broadcastFail(manifest);
-              throw error;
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              try {
+                optimisticOperation = await bridge.broadcast({
+                  account: mainAccount,
+                  signedOperation,
+                  broadcastConfig: { mevProtected: !!config.mevProtected },
+                });
+                tracking.broadcastSuccess(manifest);
+              } catch (error) {
+                tracking.broadcastFail(manifest);
+                throw error;
+              }
             }
-          }
 
-          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+            uiTxBroadcast &&
+              uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
 
-          return optimisticOperation.hash;
-        },
-        undefined,
-      );
+            return optimisticOperation.hash;
+          },
+        );
 
-      return { psbtSigned, txHash };
+        return { psbtSigned, txHash };
+      }
+
+      return { psbtSigned };
     });
-  }, [
-    accounts,
-    config.mevProtected,
-    manifest,
-    server,
-    tracking,
-    uiSignPsbt,
-    uiTxBroadcast,
-    uiTxSign,
-  ]);
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+
+  // useEffect(() => {
+  //   if (!uiTxSignRaw) return;
+
+  //   server.setHandler("bitcoin.signPsbt", async ({ account, psbt, broadcast }) => {
+  //     const signedOperation = await craftPsbtTransactionLogic(
+  //       { manifest, accounts, tracking },
+  //       account.id,
+  //       { psbt, finalizePsbt: broadcast },
+  //       (account, liveTx) => {
+  //         return new Promise((resolve, reject) => {
+  //           let done = false;
+  //           return uiTxSignRaw({
+  //             account,
+  //             parentAccount: undefined,
+  //             transaction: psbt,
+  //             options: undefined,
+  //             onSuccess: signedOperation => {
+  //               if (done) return;
+  //               done = true;
+  //               tracking.signRawTransactionSuccess(manifest);
+  //               resolve(signedOperation);
+  //             },
+  //             onError: error => {
+  //               if (done) return;
+  //               done = true;
+  //               tracking.signRawTransactionFail(manifest);
+  //               reject(error);
+  //             },
+  //           });
+  //         });
+  //       },
+  //     );
+
+  //     const psbtSigned = signedOperation.rawData!.psbtSigned as string;
+
+  //     if (!broadcast) return { psbtSigned };
+
+  //     const txHash = await broadcastTransactionLogic(
+  //       { manifest, accounts, tracking },
+  //       account.id,
+  //       signedOperation,
+  //       async (account, parentAccount, signedOperation) => {
+  //         const bridge = getAccountBridge(account, parentAccount);
+  //         const mainAccount = getMainAccount(account, parentAccount);
+
+  //         let optimisticOperation: Operation = signedOperation.operation;
+
+  //         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+  //           try {
+  //             optimisticOperation = await bridge.broadcast({
+  //               account: mainAccount,
+  //               signedOperation,
+  //               broadcastConfig: { mevProtected: !!config.mevProtected },
+  //             });
+  //             tracking.broadcastSuccess(manifest);
+  //           } catch (error) {
+  //             tracking.broadcastFail(manifest);
+  //             throw error;
+  //           }
+  //         }
+
+  //         uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+  //         return optimisticOperation.hash;
+  //       },
+  //       undefined,
+  //     );
+
+  //     return { psbtSigned, txHash };
+  //   });
+  // }, [
+  //   accounts,
+  //   config.mevProtected,
+  //   manifest,
+  //   server,
+  //   tracking,
+  //   uiSignPsbt,
+  //   uiTxBroadcast,
+  //   uiTxSign,
+  // ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
