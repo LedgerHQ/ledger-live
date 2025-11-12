@@ -101,6 +101,7 @@ setSupportedCurrencies([
   "ton",
   "mina",
   "monad",
+  "monad_testnet",
   "somnia",
   "zero_gravity",
 ]);

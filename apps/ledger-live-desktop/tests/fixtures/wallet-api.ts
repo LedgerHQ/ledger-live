@@ -1149,6 +1149,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "monad_testnet",
+    ticker: "MON",
+    name: "Monad Testnet",
+    family: "ethereum",
+    color: "#836EF9",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "somnia",
     ticker: "SOMI",
     name: "Somnia",

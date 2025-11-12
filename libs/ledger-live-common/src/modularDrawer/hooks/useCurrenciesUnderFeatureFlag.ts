@@ -80,6 +80,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
   const polkadot = useFeature("currencyPolkadot");
   const monad = useFeature("currencyMonad");
+  const monadTestnet = useFeature("currencyMonadTestnet");
   const somnia = useFeature("currencySomnia");
   const zeroGravity = useFeature("currencyZeroGravity");
 
@@ -158,6 +159,7 @@ export function useCurrenciesUnderFeatureFlag() {
       assethub_polkadot: assetHubPolkadot,
       polkadot,
       monad,
+      monad_testnet: monadTestnet,
       somnia,
       zero_gravity: zeroGravity,
     }),
@@ -233,6 +235,7 @@ export function useCurrenciesUnderFeatureFlag() {
       assetHubPolkadot,
       polkadot,
       monad,
+      monadTestnet,
       somnia,
       zeroGravity,
     ],
