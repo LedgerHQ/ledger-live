@@ -92,6 +92,9 @@ export default class Touchable extends Component<
 
     return (
       <Pressable
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.5 : 1,
+        })}
         unstable_pressDelay={50}
         onPress={this.onPress}
         disabled={disabled}
