@@ -65,16 +65,17 @@ describe("coin-framework", () => {
     });
 
     describe("decodeTokenAccountId", () => {
-      it("should return an accountId and a token", () => {
+      it("should return an accountId and a token", async () => {
         jest
           .spyOn(cryptoAssets, "getCryptoAssetsStore")
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           .mockReturnValue({
-            findTokenById: (_: unknown) => TOKEN,
+            findTokenById: (_: unknown) => Promise.resolve(TOKEN),
+            findTokenByAddressInCurrency: (_: unknown, __: unknown) => Promise.resolve(TOKEN),
           } as CryptoAssetsStore);
 
         expect(
-          decodeTokenAccountId(
+          await decodeTokenAccountId(
             "js:2:0xkvn:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~dai~!underscore!~token",
           ),
         ).toEqual({

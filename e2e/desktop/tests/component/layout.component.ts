@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { step } from "../misc/reporters/step";
-import { Component } from "../page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
+import { Component } from "tests/page/abstractClasses";
 
 export class Layout extends Component {
   readonly renderError = this.page.getByTestId("render-error");

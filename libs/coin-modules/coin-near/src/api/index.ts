@@ -8,5 +8,4 @@ export {
   broadcastTransaction,
   getStakingPositions,
   getValidators,
-  getCommission,
 } from "./node";

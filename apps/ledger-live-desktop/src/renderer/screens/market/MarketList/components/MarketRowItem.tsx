@@ -80,7 +80,9 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   );
 
   const hasActions =
-    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+    currency?.ledgerIds &&
+    currency?.ledgerIds.length > 0 &&
+    (availableOnBuy || availableOnSwap || availableOnStake);
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];

@@ -7,10 +7,11 @@ import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Signature } from "ethers";
+import type { DomainServiceResolution } from "@ledgerhq/types-live";
 
 export type Signer = {
   getAddress: (path: string) => Promise<EvmAddress>;
-  signTransaction: (path: string, tx: string) => Promise<string>;
+  signTransaction: (path: string, tx: string, domain?: DomainServiceResolution) => Promise<string>;
 };
 
 const isDmkTransport = (
@@ -37,13 +38,14 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
 
   return {
     getAddress: signer.getAddress.bind(signer),
-    signTransaction: async (path, tx) => {
+    signTransaction: async (path, tx, domain) => {
       // Configure type of resolutions necessary for the clear signing
       const resolutionConfig: ResolutionConfig = {
         externalPlugins: true,
         erc20: true,
         nft: false,
         uniswapV3: true,
+        domains: domain && [domain],
       };
       const loadConfig: LoadConfig = {
         cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),

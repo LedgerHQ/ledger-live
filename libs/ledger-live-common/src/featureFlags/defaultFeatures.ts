@@ -113,6 +113,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  nanoOnboardingFundWallet: DEFAULT_FEATURE,
   welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
@@ -133,6 +134,10 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
+  mixpanelAnalytics: initFeature({
+    enabled: false,
+    params: { record_sessions_percent: 100 },
+  }),
 
   ptxSwapDetailedView: initFeature({
     enabled: false,
@@ -656,8 +661,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
-  llmOfacGeoBlocking: DEFAULT_FEATURE,
-  lldOfacGeoBlocking: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
     params: {
@@ -693,6 +696,12 @@ export const DEFAULT_FEATURES: Features = {
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
   newSendFlow: DEFAULT_FEATURE,
+  lldSessionReplay: {
+    ...DEFAULT_FEATURE,
+    params: {
+      sampling: 100,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

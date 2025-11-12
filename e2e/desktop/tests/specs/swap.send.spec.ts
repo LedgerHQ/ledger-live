@@ -1,12 +1,12 @@
-import test from "../fixtures/common";
+import test from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
+import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 

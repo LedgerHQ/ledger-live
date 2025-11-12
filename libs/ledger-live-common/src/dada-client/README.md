@@ -24,6 +24,14 @@ const { data, isLoading, error } = useAssetsData({
   search: "bitcoin",
 });
 
+// You can control the fetching with the skip parameter
+const { data, isLoading, error } = useAssetsData({
+  product: "llm",
+  version: "1.0.0",
+  search: "bitcoin",
+  skip: true, // true: no fetch
+});
+
 // Get interest rates for currencies
 const currencies = [bitcoinCurrency, ethereumCurrency];
 const interestRates = useInterestRatesByCurrencies(currencies);
@@ -79,6 +87,35 @@ const MarketComponent = () => {
 };
 ```
 
+### Lazy Currency Fetching
+
+```typescript
+import { useLazyLedgerCurrency } from '@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency';
+
+const CurrencyComponent = ({ currency }) => {
+  const { getLedgerCurrency } = useLazyLedgerCurrency(
+    {
+      product: 'lld',
+      version: '2.0.0',
+    },
+    currency
+  );
+
+  const handleFetchCurrency = async () => {
+    const ledgerCurrency = await getLedgerCurrency();
+    if (ledgerCurrency) {
+      console.log('Ledger currency data:', ledgerCurrency);
+    }
+  };
+
+  return (
+    <button onClick={handleFetchCurrency}>
+      Fetch Currency Data
+    </button>
+  );
+};
+```
+
 ## API Reference
 
 ### Hooks
@@ -87,6 +124,7 @@ const MarketComponent = () => {
 - `useAssetData()` - Fetch specific asset data
 - `useInterestRatesByCurrencies()` - Get interest rates for currencies
 - `useMarketByCurrencies()` - Get market data for currencies
+- `useLazyLedgerCurrency()` - Lazy hook to fetch ledger currency data on demand
 
 ## Integration
 

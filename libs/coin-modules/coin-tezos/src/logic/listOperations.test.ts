@@ -115,6 +115,7 @@ describe("listOperations", () => {
             },
             date: new Date(operation.timestamp),
             hash: operation.hash,
+            failed: false,
             fees: BigInt(
               (operation.allocationFee ?? 0) +
                 (operation.bakerFee ?? 0) +

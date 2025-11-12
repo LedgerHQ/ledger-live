@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-solana",
-  "version": "7.5.5",
+  "version": "7.6.0",
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
     "Ledger",

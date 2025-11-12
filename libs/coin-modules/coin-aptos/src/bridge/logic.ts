@@ -8,7 +8,13 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { APTOS_ASSET_ID, OP_TYPE, DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import {
+  APTOS_ASSET_ID,
+  OP_TYPE,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  APTOS_ASSET_FUNGIBLE_ID,
+} from "../constants";
 import type { AptosTransaction, Transaction } from "../types";
 import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
 import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
@@ -53,7 +59,7 @@ export const getBlankOperation = (
   accountId: id,
   date: new Date(parseInt(tx.timestamp) / 1000),
   extra: { version: tx.version },
-  transactionSequenceNumber: parseInt(tx.sequence_number),
+  transactionSequenceNumber: new BigNumber(parseInt(tx.sequence_number)),
   hasFailed: false,
 });
 
@@ -109,7 +115,7 @@ export const txsToOps = async (
         ops.push(op);
         opsStaking.push(op);
       } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
-        if (coin_id === APTOS_ASSET_ID) {
+        if (coin_id === APTOS_ASSET_ID || coin_id === APTOS_ASSET_FUNGIBLE_ID) {
           ops.push(op);
         } else {
           const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(

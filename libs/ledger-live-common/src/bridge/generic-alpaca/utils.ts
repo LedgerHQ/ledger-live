@@ -107,23 +107,36 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.memo = op.details.memo as string;
   }
   const bnFees = new BigNumber(op.tx.fees.toString());
+  const hasFailed = op.details?.status === "failed";
+
+  let value: BigNumber;
+  if (hasFailed) {
+    value = bnFees;
+  } else if (
+    op.asset.type === "native" &&
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+  ) {
+    value = new BigNumber(op.value.toString()).plus(bnFees);
+  } else {
+    value = new BigNumber(op.value.toString());
+  }
+
   const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value:
-      op.asset.type === "native" && ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
-        ? new BigNumber(op.value.toString()).plus(bnFees)
-        : new BigNumber(op.value.toString()),
+    value,
     fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
     senders: extra.parentSenders ?? op.senders,
     recipients: extra.parentRecipients ?? op.recipients,
     date: op.tx.date,
-    transactionSequenceNumber: op.details?.sequence as number,
-    hasFailed: op.details?.status === "failed",
+    transactionSequenceNumber: op.details?.sequence
+      ? new BigNumber(op.details?.sequence.toString())
+      : undefined,
+    hasFailed,
     extra,
   };
 
@@ -197,7 +210,10 @@ export function transactionToIntent(
     data: Buffer.isBuffer(transaction.data)
       ? { type: "buffer", value: transaction.data }
       : { type: "none" },
-    sequence: transaction.nonce ?? undefined,
+    sequence:
+      transaction.nonce !== null && transaction.nonce !== undefined
+        ? BigInt(transaction.nonce.toString())
+        : undefined,
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
@@ -265,7 +281,7 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     }
   }
 
-  const numberFieldsToPropagate = ["tag", "nonce", "type", "chainId"] as const;
+  const numberFieldsToPropagate = ["tag", "type", "chainId"] as const;
   for (const field of numberFieldsToPropagate) {
     if (field in transaction) {
       raw[field] = transaction[field];
@@ -275,6 +291,7 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
   const bigNumberFieldsToPropagate = [
     "fees",
     "storageLimit",
+    "nonce",
     "gasLimit",
     "gasPrice",
     "maxFeePerGas",
@@ -321,13 +338,17 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     raw.gasOptions = transaction.gasOptions && toGasOptionRaw(transaction.gasOptions);
   }
 
+  if ("recipientDomain" in transaction) {
+    raw.recipientDomain = transaction.recipientDomain;
+  }
+
   return raw;
 }
 
 export const buildOptimisticOperation = (
   account: Account,
   transaction: GenericTransaction,
-  sequenceNumber?: number,
+  sequenceNumber?: bigint,
 ): Operation => {
   let type: OperationType;
   switch (transaction.mode) {
@@ -362,12 +383,12 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
-    transactionSequenceNumber: sequenceNumber ?? 0,
+    transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
     accountId: account.id,
     date: new Date(),
     transactionRaw: toGenericTransactionRaw({
       ...transaction,
-      nonce: sequenceNumber,
+      nonce: sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
       ...(tokenAccount
         ? { recipient: tokenAccount.token.contractAddress, amount: new BigNumber(0) }
         : {}),
@@ -395,7 +416,8 @@ export const buildOptimisticOperation = (
         date: new Date(),
         transactionRaw: toGenericTransactionRaw({
           ...transaction,
-          nonce: sequenceNumber,
+          nonce:
+            sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
         }),
         extra: {
           ledgerOpType: type,

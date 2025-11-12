@@ -176,7 +176,7 @@ function ScanDeviceAccounts() {
           );
         })}
       </NavigationScrollView>
-      {!!scannedAccounts.length && (
+      {sections.some(s => s.data.length > 0) && (
         <ScanDeviceAccountsFooter
           isScanning={scanning}
           canRetry={

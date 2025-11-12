@@ -1,4 +1,4 @@
-import { findTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
@@ -103,7 +103,7 @@ async function getDeviceTransactionConfig({
       }
 
       if (assetId) {
-        const token = findTokenById(assetId);
+        const token = await getCryptoAssetsStore().findTokenById(assetId);
         fields.push({
           type: "text",
           label: "Asset ID",

@@ -3,6 +3,7 @@ export {
   decodeAccountId,
   encodeTokenAccountId,
   decodeTokenAccountId,
+  decodeTokenAccountIdSync,
 } from "./accountId";
 export {
   createEmptyHistoryCache,

@@ -205,17 +205,13 @@ describe("useMarketPerformanceWidget", () => {
   describe("filterAvailableBuyOrSwapCurrency", () => {
     it("should return true when the currency is in the ledger and available", () => {
       const elem = { id: "btc", ledgerIds: ["btc"] } as MarketItemPerformer;
-      const result = filterAvailableBuyOrSwapCurrency(elem, new Set(["btc"]), (_id, _type) => true);
+      const result = filterAvailableBuyOrSwapCurrency(elem, (_id, _type) => true);
       expect(result).toBeTruthy();
     });
 
     it("should return false when the currency is not available", () => {
       const elem = { id: "btc", ledgerIds: ["btc"] } as MarketItemPerformer;
-      const result = filterAvailableBuyOrSwapCurrency(
-        elem,
-        new Set(["btc"]),
-        (_id, _type) => false,
-      );
+      const result = filterAvailableBuyOrSwapCurrency(elem, (_id, _type) => false);
       expect(result).toBeFalsy();
     });
   });

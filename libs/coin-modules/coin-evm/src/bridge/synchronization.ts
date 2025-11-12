@@ -256,7 +256,7 @@ export const getOperationStatus = async (
 
     return {
       ...op,
-      transactionSequenceNumber: nonce,
+      transactionSequenceNumber: new BigNumber(nonce),
       blockHash,
       blockHeight,
       date,
@@ -264,14 +264,14 @@ export const getOperationStatus = async (
       value: new BigNumber(value).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         blockHash,
         blockHeight,
         date,
       })),
       nftOperations: op.nftOperations?.map(nftOp => ({
         ...nftOp,
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         blockHash,
         blockHeight,
         date,
@@ -289,7 +289,7 @@ export const getOperationStatus = async (
 export const postSync = (initial: Account, synced: Account): Account => {
   // Get the latest nonce from the synced account
   const lastOperation = synced.operations.find(op => ["OUT", "FEES", "NFT_OUT"].includes(op.type));
-  const latestNonce = lastOperation?.transactionSequenceNumber || -1;
+  const latestNonce = lastOperation?.transactionSequenceNumber || new BigNumber(-1);
   // Set of ids from the already existing subAccount from previous sync
   const initialSubAccountsIds = new Set();
   for (const subAccount of initial.subAccounts || []) {

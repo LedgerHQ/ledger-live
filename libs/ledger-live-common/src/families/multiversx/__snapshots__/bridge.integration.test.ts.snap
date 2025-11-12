@@ -89,7 +89,7 @@ exports[`elrond currency bridge scanAccounts multiversx seed 1 2`] = `
       "senders": [
         "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
       ],
-      "transactionSequenceNumber": 2,
+      "transactionSequenceNumber": "2",
       "type": "OUT",
       "value": "150000000000000",
     },
@@ -110,7 +110,7 @@ exports[`elrond currency bridge scanAccounts multiversx seed 1 2`] = `
       "senders": [
         "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "OUT",
       "value": "50000000000000",
     },
@@ -131,7 +131,7 @@ exports[`elrond currency bridge scanAccounts multiversx seed 1 2`] = `
       "senders": [
         "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "OUT",
       "value": "9950000000000000",
     },

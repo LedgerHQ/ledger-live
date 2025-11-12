@@ -5,7 +5,10 @@ import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
+initializeLegacyTokens(addTokens);
 setSupportedCurrencies(["ethereum", "ripple"]);
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

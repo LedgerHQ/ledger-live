@@ -215,8 +215,13 @@ export const getAccountShapeWithAPI = async (
   )();
 
   // all token accounts
-  const supportedOnChainTokenAccounts = onChainTokenAccounts.filter(({ info: { mint } }) =>
-    tokenIsListedOnLedger(currency.id, mint.toBase58()),
+  const supportedOnChainTokenAccounts = await Promise.all(
+    onChainTokenAccounts.map(async account => {
+      const isListed = await tokenIsListedOnLedger(currency.id, account.info.mint.toBase58());
+      return isListed ? account : null;
+    }),
+  ).then(results =>
+    results.filter((account): account is NonNullable<typeof account> => account !== null),
   );
   const supportedOnChainTokenAccountsByMint = groupBy(
     supportedOnChainTokenAccounts,
@@ -334,7 +339,7 @@ export const getAccountShapeWithAPI = async (
 
   const newMainAccTxs = await getTransactions(mainAccAddress, mainAccountLastTxSignature, api);
 
-  const lastOpSeqNumber = mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0;
+  const lastOpSeqNumber = Number(mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0);
   const newOpsCount = newMainAccTxs.length;
 
   const newMainAccOps = newMainAccTxs
@@ -372,18 +377,17 @@ export const getAccountShapeWithAPI = async (
     unstakeReserve = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
   }
 
-  const nextNfts = onChainTokenAccounts.reduce((nfts, tokenAccount) => {
-    if (
-      !tokenIsListedOnLedger(currency.id, tokenAccount.info.mint.toBase58()) &&
-      tokenAccountIsNFT(tokenAccount)
-    ) {
+  const nextNfts: ProtoNFT[] = [];
+  for (const tokenAccount of onChainTokenAccounts) {
+    const isListed = await tokenIsListedOnLedger(currency.id, tokenAccount.info.mint.toBase58());
+    if (!isListed && tokenAccountIsNFT(tokenAccount)) {
       const mint = tokenAccount.info.mint.toBase58();
       // A fake tokenId is used as the mint address for the contract field with NMS
       // because we don't have the collection with the node data
       // We would need to fetch the metaplex metdata associated to this account
       const tokenId = "0";
       const id = encodeNftId(mainAccountId, tokenId, mint, currency.id);
-      nfts.push({
+      nextNfts.push({
         id,
         contract: mint,
         tokenId: tokenId,
@@ -392,8 +396,7 @@ export const getAccountShapeWithAPI = async (
         currencyId: currency.id,
       });
     }
-    return nfts;
-  }, [] as ProtoNFT[]);
+  }
 
   const shape: Partial<SolanaAccount> = {
     nfts: nextNfts,
@@ -438,7 +441,7 @@ async function newSubAcc({
   const creationDate = new Date((lastTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
   const mint = assocTokenAcc.info.mint.toBase58();
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
 
   if (!tokenCurrency) {
     throw new Error(`token for mint "${mint}" not found`);
@@ -627,7 +630,7 @@ function txToMainAccOperation(
     date: txDate,
     value: opValue,
     fee: opFee,
-    transactionSequenceNumber: txSeqNumber,
+    transactionSequenceNumber: new BigNumber(txSeqNumber),
   };
 }
 

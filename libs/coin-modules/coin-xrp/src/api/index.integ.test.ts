@@ -84,6 +84,25 @@ describe("Xrp Api (testnet)", () => {
         txDesc[txDesc.length - 1].tx.block.height,
       );
     });
+
+    it("returns operations with correct status", async () => {
+      // When
+      const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
+      const FAILED_TRANSACTIONS = new Set([
+        "8C0D8EF7C52BE287F951ECDF01526D2ABF3BF189C56D0B59607DE1A192E72511",
+      ]);
+      const [operations] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+        minHeight: 200,
+        order: "desc",
+      });
+      expect(operations.length).toBeGreaterThanOrEqual(200);
+
+      // Then
+      // Check if status matches reference
+      for (const operation of operations) {
+        expect(operation.tx.failed).toBe(FAILED_TRANSACTIONS.has(operation.tx.hash));
+      }
+    });
   });
 
   describe("lastBlock", () => {

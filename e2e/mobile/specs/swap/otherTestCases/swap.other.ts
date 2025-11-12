@@ -130,10 +130,8 @@ export function runSwapWithDifferentSeedTest(
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
-      await app.common.disableSynchronizationForiOS();
       await app.common.selectKnownDevice();
       if (errorMessage) {
-        await app.common.enableSynchronization();
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
         await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);

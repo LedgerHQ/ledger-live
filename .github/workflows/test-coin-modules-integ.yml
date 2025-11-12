@@ -94,9 +94,16 @@ jobs:
           FILTER: ${{ needs.is-affected.outputs.coins }}
           VERBOSE_FILE: logs.txt
         run: |
-          for coin in $FILTER; do
-            pnpm coin:$coin test-integ
-          done
+          if [ -z $FILTER ]; then
+            echo "No coin module affected"
+          else
+            cmd="pnpm --no-bail"
+            for coin in $FILTER; do
+              cmd="$cmd --filter=@ledgerhq/coin-$coin"
+            done
+            cmd="$cmd test-integ"
+            $cmd
+          fi
 
       - name: Test (Scheduled)
         if: ${{ github.event_name == 'schedule' }}

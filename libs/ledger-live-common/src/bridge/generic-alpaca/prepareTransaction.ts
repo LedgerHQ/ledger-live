@@ -48,7 +48,7 @@ export function genericPrepareTransaction(
       kind,
     );
     const { assetReference, assetOwner } = getAssetFromToken
-      ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
     const estimation: FeeEstimation = customParametersFees
@@ -104,16 +104,16 @@ export function genericPrepareTransaction(
   };
 }
 
-export function getAssetInfos(
+export async function getAssetInfos(
   tr: GenericTransaction,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
-): {
+): Promise<{
   assetReference: string;
   assetOwner: string;
-} {
+}> {
   if (tr.subAccountId) {
-    const { token } = decodeTokenAccountId(tr.subAccountId);
+    const { token } = await decodeTokenAccountId(tr.subAccountId);
 
     if (!token) return assetInfosFallback(tr);
 

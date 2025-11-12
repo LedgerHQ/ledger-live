@@ -1,5 +1,5 @@
-import { Component } from "../page/abstractClasses";
-import { step } from "../misc/reporters/step";
+import { Component } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class Drawer extends Component {

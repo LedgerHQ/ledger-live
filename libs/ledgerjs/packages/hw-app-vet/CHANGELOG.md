@@ -1,5 +1,31 @@
 # @ledgerhq/hw-app-vet
 
+## 0.7.0
+
+### Minor Changes
+
+- [#12208](https://github.com/LedgerHQ/ledger-live/pull/12208) [`3916357`](https://github.com/LedgerHQ/ledger-live/commit/391635724781d7dae6da8d1cf2f7fac25e517237) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused cryptoassets dep
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+  - @ledgerhq/hw-transport-mocker@6.29.13
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#12208](https://github.com/LedgerHQ/ledger-live/pull/12208) [`3916357`](https://github.com/LedgerHQ/ledger-live/commit/391635724781d7dae6da8d1cf2f7fac25e517237) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused cryptoassets dep
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.13-next.0
+
 ## 0.6.2
 
 ### Patch Changes

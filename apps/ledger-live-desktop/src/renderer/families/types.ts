@@ -320,6 +320,17 @@ export type LLDCoinFamily<
   StepReceiveAccountCustomAlert?: React.ComponentType<ReceiveStepProps & { account: AccountLike }>;
 
   /**
+   * Configuration for receive tokens mode using cal-client
+   * When present, the receive flow will use useTokensData hook instead of listTokensForCryptoCurrency
+   */
+  receiveTokensConfig?: {
+    /**
+     * The network family to pass to useTokensData hook (e.g. "hedera")
+     */
+    networkFamily: string;
+  };
+
+  /**
    * Change Receive funds with this component (example: Hedera)
    */
   StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;

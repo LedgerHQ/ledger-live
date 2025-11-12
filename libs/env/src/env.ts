@@ -557,6 +557,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
+  MIXPANEL_API_HOST: {
+    def: "https://api.mixpanel.com",
+    parser: stringParser,
+    desc: "Mixpanel API host URL",
+  },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
     parser: stringParser,
