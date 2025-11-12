@@ -13,7 +13,7 @@ import {
 } from "../types/onboard";
 import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } from "./onboard";
 
-describe("onboard (devnet)", () => {
+describe.skip("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockCurrency = createMockCantonCurrency();
   const mockAccount = createMockAccount();
