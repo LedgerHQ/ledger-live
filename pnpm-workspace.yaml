@@ -23,17 +23,16 @@ catalog:
   axios: 1.12.2
   ethers: 6.15.0
   "@reduxjs/toolkit": 2.8.2
+  electron: 38.2.0
   # Signers
   "@ledgerhq/context-module": 1.10.0
   "@ledgerhq/device-signer-kit-ethereum": 1.9.1
   # Transports
   "@ledgerhq/device-transport-kit-web-hid": 1.2.1
   "@ledgerhq/device-transport-kit-react-native-ble": 1.2.0
+  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.1
   # DMK
   "@ledgerhq/device-management-kit": 0.10.0
-  electron: 38.2.0
-  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.0
-  # Singers, Transports and DMK
 
 overrides:
   node-abi: ^4.9.0
