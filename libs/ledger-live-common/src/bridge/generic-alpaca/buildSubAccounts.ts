@@ -106,14 +106,14 @@ export function mergeSubAccounts(
     return newSubAccounts;
   }
 
-  const oldSubAccountsById = Object.fromEntries(
-    oldSubAccounts.map(account => [account.id, account]),
+  const oldSubAccountsByTokenId = Object.fromEntries(
+    oldSubAccounts.map(account => [account.token.id, account]),
   );
 
   const newSubAccountsToAdd: Array<TokenAccount> = [];
 
   for (const newSubAccount of newSubAccounts) {
-    const existingSubAccount = oldSubAccountsById[newSubAccount.id];
+    const existingSubAccount = oldSubAccountsByTokenId[newSubAccount.token.id];
 
     if (!existingSubAccount) {
       // New sub account does not exist yet. Just add it as is.
@@ -123,7 +123,7 @@ export function mergeSubAccounts(
 
     // New sub account is already known, probably outdated
     const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
-    oldSubAccountsById[newSubAccount.id] = {
+    oldSubAccountsByTokenId[newSubAccount.token.id] = {
       ...existingSubAccount,
       balance: newSubAccount.balance,
       spendableBalance: newSubAccount.spendableBalance,
@@ -132,7 +132,7 @@ export function mergeSubAccounts(
     };
   }
 
-  const updatedOldSubAccounts = Object.values(oldSubAccountsById);
+  const updatedOldSubAccounts = Object.values(oldSubAccountsByTokenId);
 
   return [...updatedOldSubAccounts, ...newSubAccountsToAdd];
 }
