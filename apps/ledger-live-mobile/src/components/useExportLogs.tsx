@@ -1,11 +1,8 @@
 import { useCallback, useRef } from "react";
-import Share from "react-native-share";
-import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
-import { getEnv } from "@ledgerhq/live-env";
-import { sendFile } from "../../e2e/bridge/client";
+import { exportFile } from "LLM/utils/exportFile";
 
 const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {
   const ancestors: unknown[] = [];
@@ -52,30 +49,20 @@ export default function useExportLogs() {
 
     try {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs, getJSONStringifyReplacer(), 2)).toString(
-        "base64",
-      );
+      const jsonString = JSON.stringify(logs, getJSONStringifyReplacer(), 2);
 
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
       const humanReadableName = `ledgerwallet-mob-${version}-${date}-logs.txt`;
-      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
-      await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
-      const options = {
-        failOnCancel: false,
-        saveToFiles: true,
+      await exportFile({
+        content: jsonString,
+        filename: humanReadableName,
+
         type: "text/plain",
-        url: `file://${filePath}`,
-      };
-
-      if (getEnv("DETOX")) {
-        const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
-        sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
-      } else {
-        await Share.open(options);
-      }
+        detoxFileName: "ledgerwallet-logs.txt",
+      });
     } catch (err) {
       if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
         logger.critical(err as Error);
