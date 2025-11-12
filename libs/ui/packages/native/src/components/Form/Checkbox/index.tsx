@@ -32,7 +32,7 @@ const Checkbox = ({ checked, onChange, disabled, label }: CheckboxProps): JSX.El
   const { colors, space } = useTheme();
 
   return (
-    <Pressable onPress={onChange} disabled={disabled}>
+    <Pressable onPressIn={onChange} disabled={disabled}>
       <Flex flexDirection="row" alignItems="center">
         <Square checked={checked}>
           {checked ? <CheckAlone size={13} color={colors.neutral.c00} /> : null}
