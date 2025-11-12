@@ -1893,23 +1893,23 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
       '@playwright/test':
-        specifier: ^1.51.0
-        version: 1.51.1
+        specifier: ^1.56.1
+        version: 1.56.1
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
       allure-js-commons:
-        specifier: ^3.2.1
-        version: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
+        specifier: ^3.4.2
+        version: 3.4.2(allure-playwright@3.4.2(@playwright/test@1.56.1))
       allure-playwright:
-        specifier: ^3.2.1
-        version: 3.2.1(@playwright/test@1.51.1)
+        specifier: ^3.4.2
+        version: 3.4.2(@playwright/test@1.56.1)
       axios:
         specifier: 'catalog:'
         version: 1.12.2
       dotenv:
-        specifier: ^16.4.7
-        version: 16.4.7
+        specifier: ^17.2.3
+        version: 17.2.3
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -1917,8 +1917,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
+        specifier: ^7.8.2
+        version: 7.8.2
     devDependencies:
       '@types/invariant':
         specifier: 2.2.37
@@ -15676,13 +15676,13 @@ packages:
     deprecated: Please update to the latest version of Playwright to test up-to-date browsers.
     hasBin: true
 
-  '@playwright/test@1.51.1':
-    resolution: {integrity: sha512-nM+kEaTSAoVlXmMPH10017vn3FSiFqr/bh4fKg9vmAdMfd9SDqRZNvPSiAHADc/itWak+qPvMPZQOPwCBW7k7Q==}
+  '@playwright/test@1.55.0':
+    resolution: {integrity: sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==}
     engines: {node: '>=18'}
     hasBin: true
 
-  '@playwright/test@1.55.0':
-    resolution: {integrity: sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==}
+  '@playwright/test@1.56.1':
+    resolution: {integrity: sha512-vSMYtL/zOcFpvJCW71Q/OEGQb7KYBPAdKh35WNSkaZA75JlAO8ED8UN6GUNTm3drWomcbcqRPFqQbLae8yBTdg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -21412,10 +21412,10 @@ packages:
   allure-js-commons@2.15.1:
     resolution: {integrity: sha512-5V/VINplbu0APnfSZOkYpKOzucO36Q2EtTD1kqjWjl7n6tj7Hh+IHCZsH3Vpk/LXRDfj9RuXugBBvwYKV5YMJw==}
 
-  allure-js-commons@3.2.1:
-    resolution: {integrity: sha512-VGLv6u3I9NIm649dYmGpG3X5sOnI0tt7K1WYTVZPiEpnsxBbFEfDr6yAI7q509WWw/5g0VBCEtGEspd6AoYOqA==}
+  allure-js-commons@3.4.2:
+    resolution: {integrity: sha512-bWzqduvU/LzSTI4wJKzWbHWe64xluF30pDxFfSP+jlloQx9F1Vytdqrit5oAgNj+czzdA+Nocv3Dh6d4COCTvA==}
     peerDependencies:
-      allure-playwright: 3.2.1
+      allure-playwright: 3.4.2
     peerDependenciesMeta:
       allure-playwright:
         optional: true
@@ -21423,10 +21423,10 @@ packages:
   allure-playwright@2.15.1:
     resolution: {integrity: sha512-P1Uu1j/ptDHdYp3V5ZAeBZyt33+L+OQu0otUIEl/zkOcv0KRycHqlHwC0GEJmpgnLKvVP7s+K37LcLoSUUj3Cg==}
 
-  allure-playwright@3.2.1:
-    resolution: {integrity: sha512-IO0lDDz007hlaHH8hZzrvyaw0NR6ZOGBEPI/ANUGbBizFOXcDf9J/nHDCdsNrt/Qa13H4AGGU7sDjtng1evYgA==}
+  allure-playwright@3.4.2:
+    resolution: {integrity: sha512-M2addk0XCD5mJW9GyuJ37lddxhQw9oqff+Z3hN8D4u73pJqKYOEkL4JwYbc9CPRq0l1OrakmMoJ+CtVF4ifaTg==}
     peerDependencies:
-      '@playwright/test': '>=1.36.0'
+      '@playwright/test': '>=1.53.0'
 
   anser@1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
@@ -24523,6 +24523,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
   dotenv@8.6.0:
@@ -31041,6 +31045,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.56.1:
+    resolution: {integrity: sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.40.1:
     resolution: {integrity: sha512-2eHI7IioIpQ0bS1Ovg/HszsN/XKNwEG1kbzSDDmADpclKc7CyqkHw7Mg2JCz/bbCxg25QUPcjksoMW7JcIFQmw==}
     engines: {node: '>=16'}
@@ -31053,6 +31062,11 @@ packages:
 
   playwright@1.55.0:
     resolution: {integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.56.1:
+    resolution: {integrity: sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -42781,7 +42795,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       debug: 4.3.4
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       dotenv-expand: 11.0.6
       getenv: 1.0.0
     transitivePeerDependencies:
@@ -42791,7 +42805,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       debug: 4.3.4
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       dotenv-expand: 11.0.6
       getenv: 1.0.0
     transitivePeerDependencies:
@@ -42905,7 +42919,7 @@ snapshots:
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
       debug: 4.3.4
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       dotenv-expand: 11.0.6
       getenv: 1.0.0
       glob: 10.4.5
@@ -45351,7 +45365,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 6.12.0
-      rxjs: 7.8.1
+      rxjs: 7.8.2
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
@@ -45375,7 +45389,7 @@ snapshots:
 
   '@ledgerhq/live-env@2.4.1':
     dependencies:
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       utility-types: 3.11.0
 
   '@ledgerhq/logs@5.50.0': {}
@@ -45391,7 +45405,7 @@ snapshots:
   '@ledgerhq/types-live@6.53.1':
     dependencies:
       bignumber.js: 9.1.2
-      rxjs: 7.8.1
+      rxjs: 7.8.2
 
   '@ledgerhq/ui-shared@0.2.2': {}
 
@@ -45437,13 +45451,25 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
+  '@ledgerhq/wallet-api-server@1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)':
+    dependencies:
+      '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
+      bignumber.js: 9.1.2
+      picomatch: 4.0.3
+      rxjs: 7.8.2
+    optionalDependencies:
+      react: 18.3.1
+    transitivePeerDependencies:
+      - '@ton/crypto'
+      - encoding
+
   '@ledgerhq/wallet-api-simulator@1.2.19(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/wallet-api-client': 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-server': 1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
-      rxjs: 7.8.1
+      '@ledgerhq/wallet-api-server': 1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)
+      rxjs: 7.8.2
       ws: 8.18.3
     transitivePeerDependencies:
       - '@ton/crypto'
@@ -46406,13 +46432,13 @@ snapshots:
     dependencies:
       playwright: 1.40.1
 
-  '@playwright/test@1.51.1':
-    dependencies:
-      playwright: 1.51.1
-
   '@playwright/test@1.55.0':
     dependencies:
       playwright: 1.55.0
+
+  '@playwright/test@1.56.1':
+    dependencies:
+      playwright: 1.56.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2)(webpack@5.94.0)':
     dependencies:
@@ -46533,13 +46559,13 @@ snapshots:
       '@polkadot-api/utils': 0.0.1
     optional: true
 
-  '@polkadot-api/observable-client@0.1.0(rxjs@7.8.1)':
+  '@polkadot-api/observable-client@0.1.0(rxjs@7.8.2)':
     dependencies:
       '@polkadot-api/metadata-builders': 0.0.1
       '@polkadot-api/substrate-bindings': 0.0.1
       '@polkadot-api/substrate-client': 0.0.1
       '@polkadot-api/utils': 0.0.1
-      rxjs: 7.8.1
+      rxjs: 7.8.2
     optional: true
 
   '@polkadot-api/substrate-bindings@0.0.1':
@@ -46575,7 +46601,7 @@ snapshots:
       '@polkadot/rpc-core': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/util': 12.6.2
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -46592,7 +46618,7 @@ snapshots:
       '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -46616,7 +46642,7 @@ snapshots:
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       eventemitter3: 5.0.1
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -46653,7 +46679,7 @@ snapshots:
       '@polkadot/rpc-provider': 11.2.1
       '@polkadot/types': 11.2.1
       '@polkadot/util': 12.6.2
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -46722,7 +46748,7 @@ snapshots:
       '@polkadot/types-create': 11.2.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       tslib: 2.6.2
 
   '@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2)':
@@ -52494,11 +52520,11 @@ snapshots:
     dependencies:
       '@polkadot-api/json-rpc-provider': 0.0.1
       '@polkadot-api/json-rpc-provider-proxy': 0.0.1
-      '@polkadot-api/observable-client': 0.1.0(rxjs@7.8.1)
+      '@polkadot-api/observable-client': 0.1.0(rxjs@7.8.2)
       '@polkadot-api/substrate-client': 0.0.1
       '@substrate/connect-extension-protocol': 2.0.0
       '@substrate/connect-known-chains': 1.1.6
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       smoldot: 2.0.22
     optional: true
 
@@ -55378,21 +55404,21 @@ snapshots:
       properties: 1.2.1
       strip-ansi: 5.2.0
 
-  allure-js-commons@3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1)):
+  allure-js-commons@3.4.2(allure-playwright@3.4.2(@playwright/test@1.56.1)):
     dependencies:
       md5: 2.3.0
     optionalDependencies:
-      allure-playwright: 3.2.1(@playwright/test@1.51.1)
+      allure-playwright: 3.4.2(@playwright/test@1.56.1)
 
   allure-playwright@2.15.1:
     dependencies:
-      '@playwright/test': 1.55.0
+      '@playwright/test': 1.56.1
       allure-js-commons: 2.15.1
 
-  allure-playwright@3.2.1(@playwright/test@1.51.1):
+  allure-playwright@3.4.2(@playwright/test@1.56.1):
     dependencies:
-      '@playwright/test': 1.51.1
-      allure-js-commons: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
+      '@playwright/test': 1.56.1
+      allure-js-commons: 3.4.2(allure-playwright@3.4.2(@playwright/test@1.56.1))
 
   anser@1.4.10: {}
 
@@ -55477,7 +55503,7 @@ snapshots:
       config-file-ts: 0.2.8-rc1
       debug: 4.3.4
       dmg-builder: 26.0.1(lodash@4.17.21)
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       dotenv-expand: 11.0.6
       ejs: 3.1.10
       electron-publish: 26.0.1
@@ -57671,7 +57697,7 @@ snapshots:
       chalk: 4.1.2
       date-fns: 2.30.0
       lodash: 4.17.21
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       shell-quote: 1.8.1
       spawn-command: 0.0.2
       supports-color: 8.1.1
@@ -59420,7 +59446,7 @@ snapshots:
 
   dotenv-expand@11.0.6:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.4.5
 
   dotenv-expand@5.1.0: {}
 
@@ -59429,6 +59455,8 @@ snapshots:
   dotenv@16.4.5: {}
 
   dotenv@16.4.7: {}
+
+  dotenv@17.2.3: {}
 
   dotenv@8.6.0: {}
 
@@ -63155,7 +63183,7 @@ snapshots:
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       string-width: 4.2.3
       strip-ansi: 6.0.1
       through: 2.3.8
@@ -66826,7 +66854,7 @@ snapshots:
   lazy-universal-dotenv@4.0.0:
     dependencies:
       app-root-dir: 1.0.2
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       dotenv-expand: 10.0.0
 
   lazy-val@1.0.5: {}
@@ -69940,6 +69968,8 @@ snapshots:
 
   playwright-core@1.55.0: {}
 
+  playwright-core@1.56.1: {}
+
   playwright@1.40.1:
     dependencies:
       playwright-core: 1.40.1
@@ -69955,6 +69985,12 @@ snapshots:
   playwright@1.55.0:
     dependencies:
       playwright-core: 1.55.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.56.1:
+    dependencies:
+      playwright-core: 1.56.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -70795,7 +70831,7 @@ snapshots:
       bottleneck: 2.19.5
       commander: 12.1.0
       deepmerge: 4.3.1
-      dotenv: 16.4.7
+      dotenv: 16.4.5
       eventsource: 2.0.2
       express: 4.19.2
       ioredis: 5.3.2
@@ -70806,7 +70842,7 @@ snapshots:
       pino-http: 10.1.0
       pkg-conf: 3.1.0
       resolve: 1.22.8
-      update-dotenv: 1.1.1(dotenv@16.4.7)
+      update-dotenv: 1.1.1(dotenv@16.4.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -76417,9 +76453,9 @@ snapshots:
       registry-auth-token: 3.3.2
       registry-url: 3.1.0
 
-  update-dotenv@1.1.1(dotenv@16.4.7):
+  update-dotenv@1.1.1(dotenv@16.4.5):
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.4.5
 
   uri-js@4.4.1:
     dependencies:

@@ -18,15 +18,15 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-devices": "6.27.0",
     "@ledgerhq/types-live": "workspace:^",
-    "@playwright/test": "^1.51.0",
+    "@playwright/test": "^1.56.1",
     "@types/node": "22.10.10",
-    "allure-js-commons": "^3.2.1",
-    "allure-playwright": "^3.2.1",
+    "allure-js-commons": "^3.4.2",
+    "allure-playwright": "^3.4.2",
     "axios": "catalog:",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.2.3",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",
