@@ -52,28 +52,32 @@ export default function useExportLogs() {
 
     try {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs, getJSONStringifyReplacer(), 2)).toString(
-        "base64",
-      );
+      const jsonString = JSON.stringify(logs, getJSONStringifyReplacer(), 2);
 
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
       const humanReadableName = `ledgerwallet-mob-${version}-${date}-logs.txt`;
-      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
-      await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
-      const options = {
-        failOnCancel: false,
-        saveToFiles: true,
-        type: "text/plain",
-        url: `file://${filePath}`,
-      };
+      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
+      await RNFetchBlob.fs.writeFile(filePath, jsonString, "utf8");
 
       if (getEnv("DETOX")) {
-        const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
+        const fileContent = await RNFetchBlob.fs.readFile(filePath, "utf8");
         sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
       } else {
+        const fileExists = await RNFetchBlob.fs.exists(filePath);
+        if (!fileExists) {
+          throw new Error("Failed to create log file");
+        }
+
+        const options = {
+          failOnCancel: false,
+          saveToFiles: true,
+          type: "text/plain",
+          filename: humanReadableName,
+          url: filePath,
+        };
         await Share.open(options);
       }
     } catch (err) {
