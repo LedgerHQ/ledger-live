@@ -47,7 +47,6 @@ import {
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
-  craftPsbtTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
@@ -112,12 +111,6 @@ export interface UiHook {
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
-  }) => void;
-  "bitcoin.signPsbt": (params: {
-    account: AccountLike;
-    liveTx: Partial<Transaction>;
-    onSuccess: (signedOperation: SignedOperation) => void;
-    onError: (error: Error) => void;
   }) => void;
   "storage.get": WalletHandlers["storage.get"];
   "storage.set": WalletHandlers["storage.set"];
@@ -290,7 +283,6 @@ export function useWalletAPIServer({
   uiHook: {
     "account.request": uiAccountRequest,
     "account.receive": uiAccountReceive,
-    "bitcoin.signPsbt": uiSignPsbt,
     "message.sign": uiMessageSign,
     "storage.get": uiStorageGet,
     "storage.set": uiStorageSet,
