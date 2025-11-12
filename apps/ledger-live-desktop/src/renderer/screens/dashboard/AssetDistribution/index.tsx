@@ -51,7 +51,12 @@ export default function AssetDistribution() {
     list: { length: totalRowCount },
   } = distribution;
   const almostAll = initialRowCount + 3 > totalRowCount;
-  const filteredList = list.filter(elem => !blacklistedTokenIds.includes(elem.currency.id));
+  const filteredList = list.filter(
+    elem =>
+      !blacklistedTokenIds
+        .concat(["celo/erc20/celo_native_asset_0x471ece3750da237f93b8e339c536989b8978a438"])
+        .includes(elem.currency.id),
+  );
 
   const subList = showAll || almostAll ? filteredList : filteredList.slice(0, initialRowCount);
 

@@ -178,9 +178,14 @@ function getBalanceHistoryWithChanges(
 
   for (let i = 0; i < balanceHistory.length; i++) {
     const { date, value } = balanceHistory[i];
-    const countervalue = counterValues[i];
+    let countervalue = counterValues[i];
     if (countervalue !== undefined && countervalue !== null) {
       countervalueAvailable = true;
+    }
+
+    if (currency.id === "celo/erc20/celo_native_asset_0x471ece3750da237f93b8e339c536989b8978a438") {
+      countervalueAvailable = false;
+      countervalue = null;
     }
     history.push({
       date,
