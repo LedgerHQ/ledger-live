@@ -6,11 +6,11 @@ import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
-import { calculateFees } from "./cache";
+// import { calculateFees } from "./cache";
 import { getWalletAccount } from "./wallet-btc";
 import { SignerContext } from "./signer";
 import { feeFromPsbtBase64 } from "./psbtFees";
-import { craftPsbtTransaction } from "./craftTransaction";
+// import { craftPsbtTransaction } from "./craftTransaction";
 
 export const buildSignRawOperation =
   (signerContext: SignerContext): AccountBridge<Transaction>["signRawOperation"] =>
@@ -23,9 +23,9 @@ export const buildSignRawOperation =
         log("hw", `signRawTransaction ${currency.id} for account ${account.id}`);
 
         // Pre-compute (used by regular flow and as fallback in PSBT flow)
-        let senders = new Set<string>();
-        let recipients: string[] = [];
-        let fee = new BigNumber(0);
+        // let senders = new Set<string>();
+        // let recipients: string[] = [];
+        // let fee = new BigNumber(0);
 
         // const txInfo = craftPsbtTransaction({ psbt });
 
@@ -77,7 +77,6 @@ export const buildSignRawOperation =
         );
 
         if (!psbtResult) {
-          // TODO: find proper name, also, do we want to really throw here or handle it differently
           throw new Error("Invalid PSBT: couldn't sign");
         }
 
