@@ -6,6 +6,7 @@ import {
   importSettings,
   setLastConnectedDevice,
   setOverriddenFeatureFlags,
+  setOverriddenFeatureFlag,
 } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -18,7 +19,11 @@ import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import {
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+} from "~/actions/types";
+import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -111,6 +116,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         );
         break;
       }
+      case "overrideFeatureFlag": {
+        store.dispatch(
+          setOverriddenFeatureFlag(msg.payload as SettingsSetOverriddenFeatureFlagPlayload),
+        );
+        break;
+      }
       case "navigate":
         navigate(msg.payload, {});
         break;
@@ -126,7 +137,8 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "getFlags": {
-        const payload = JSON.stringify(getAllFeatureFlags("en"));
+        const localOverrides = overriddenFeatureFlagsSelector(store.getState());
+        const payload = JSON.stringify(getAllFeatureFlags("en", localOverrides));
         postMessage({
           type: "appFlags",
           payload,

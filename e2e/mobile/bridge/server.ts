@@ -6,10 +6,13 @@ import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
 import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import {
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+} from "~/actions/types";
+import { FeatureId } from "@ledgerhq/types-live";
 import { log as detoxLog } from "detox";
 
-let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
 
 export async function findFreePort(): Promise<number> {
@@ -41,6 +44,13 @@ function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
   const randomString = Math.random().toString(36).slice(2, 7); // Generate random string
   return timestamp + randomString; // Concatenate timestamp and random string
+}
+
+function isFeatureId(
+  key: string,
+  flags: SettingsSetOverriddenFeatureFlagsPlayload,
+): key is FeatureId {
+  return key in flags;
 }
 
 export function init(port = 8099, onConnection?: () => void) {
@@ -85,6 +95,10 @@ export function close() {
     });
   }
   webSocket.messages = {};
+
+  if (global.pendingCallbacks) {
+    global.pendingCallbacks.clear();
+  }
 }
 
 export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
@@ -108,7 +122,15 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 }
 
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
-  postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
+  for (const id in flags) {
+    if (isFeatureId(id, flags)) {
+      await setFeatureFlag({ id, value: flags[id] });
+    }
+  }
+}
+
+export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
+  postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
 }
 
 async function navigate(name: string) {
@@ -147,14 +169,18 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
+      global.pendingCallbacks?.delete(message.type);
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
     }, timeout);
 
-    clientResponse = (data: string) => {
-      clearTimeout(timeoutId);
-      resolve(data);
-    };
+    global.pendingCallbacks.set(message.type, {
+      callback: (data: string) => {
+        clearTimeout(timeoutId);
+        global.pendingCallbacks?.delete(message.type);
+        resolve(data);
+      },
+    });
   });
 }
 
@@ -182,17 +208,46 @@ function onMessage(messageStr: string) {
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);
       break;
-    case "appLogs":
-    case "appFlags":
-    case "appEnvs":
-      clientResponse(msg.payload);
+    case "appLogs": {
+      const pending = global.pendingCallbacks?.get("getLogs");
+      if (pending) {
+        global.pendingCallbacks.delete("getLogs");
+        pending.callback(msg.payload);
+      }
       break;
-    case "swapLiveAppReady":
-      clientResponse("Swap Live App is ready");
+    }
+    case "appFlags": {
+      const pending = global.pendingCallbacks?.get("getFlags");
+      if (pending) {
+        global.pendingCallbacks.delete("getFlags");
+        pending.callback(msg.payload);
+      }
       break;
-    case "earnLiveAppReady":
-      clientResponse("Earn Live App is ready");
+    }
+    case "appEnvs": {
+      const pending = global.pendingCallbacks?.get("getEnvs");
+      if (pending) {
+        global.pendingCallbacks.delete("getEnvs");
+        pending.callback(msg.payload);
+      }
       break;
+    }
+    case "swapLiveAppReady": {
+      const pending = global.pendingCallbacks?.get("waitSwapReady");
+      if (pending) {
+        global.pendingCallbacks.delete("waitSwapReady");
+        pending.callback("Swap Live App is ready");
+      }
+      break;
+    }
+    case "earnLiveAppReady": {
+      const pending = global.pendingCallbacks?.get("waitEarnReady");
+      if (pending) {
+        global.pendingCallbacks.delete("waitEarnReady");
+        pending.callback("Earn Live App is ready");
+      }
+      break;
+    }
     case "appFile":
       try {
         const { fileName, fileContent }: { fileName: string; fileContent: string } = JSON.parse(

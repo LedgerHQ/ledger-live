@@ -109,6 +109,7 @@ export default async function setup(): Promise<void> {
     messages: {},
     e2eBridgeServer: new Subject<ServerData>(),
   };
+  global.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
   // Assign utilities and enums
   global.Account = Account;
@@ -134,6 +135,7 @@ export default async function setup(): Promise<void> {
   global.getIdOfElement = NativeElementHelpers.getIdOfElement;
   global.getTextOfElement = NativeElementHelpers.getTextOfElement;
   global.IsIdVisible = NativeElementHelpers.isIdVisible;
+  global.IsTextVisible = NativeElementHelpers.isTextVisible;
   global.scrollToId = NativeElementHelpers.scrollToId;
   global.scrollToText = NativeElementHelpers.scrollToText;
   global.tapByElement = NativeElementHelpers.tapByElement;
