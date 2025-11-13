@@ -62,7 +62,8 @@
     "src/test/cli.ts",
     "src/transaction.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/test/index.ts"
+    "src/test/index.ts",
+    "src/logic/constants.ts"
   ],
   "ignoreUnresolved": ["follow-redirects"],
   "ignoreUnused": [

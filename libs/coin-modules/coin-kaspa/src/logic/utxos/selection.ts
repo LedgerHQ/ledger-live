@@ -1,13 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 import { calcComputeMass, calcStorageMass } from "../massCalcluation";
-import { calcMaxSpendableAmount, sumUtxoAmounts } from "./lib";
-
-const MASS_LIMIT_PER_TX = 100_000; // TX mass must not exceed 100k gram.
-const MASS_PER_INPUT: number = 1118; // Per selected utxo as input, mass increases by this value.
-const MASS_PER_OUTPUT: number = 412; // Per selected utxo as input, mass increases by this value.
-const MAX_UTXOS_PER_TX: number = 88; // 88 is the maximum of utxo inputs in one TX.
-const MAX_DISCARD: number = 2000_0000; // Throw error, if discarded value is higher than this.
+import { calcMaxSpendableAmount, sortUtxos, sumUtxoAmounts } from "./lib";
+import {
+  MASS_LIMIT_PER_TX,
+  MASS_PER_INPUT,
+  MASS_PER_OUTPUT,
+  MAX_DISCARD,
+  MAX_UTXOS_PER_TX,
+} from "../constants";
 
 export const selectUtxos = (
   utxos: KaspaUtxo[],
@@ -17,19 +18,17 @@ export const selectUtxos = (
 ): { changeAmount: BigNumber; fee: BigNumber; utxos: KaspaUtxo[] } => {
   // always sort utxos
   sortUtxos(utxos);
-  // Max UTXO count is 88. More don't fit into a regular TX
-  if (utxos.length > MAX_UTXOS_PER_TX) {
-    throw new Error(`UTXO count exceeds the limit of ${MAX_UTXOS_PER_TX} for a TX.`);
-  }
+  // UTXOs are already sorted (FIFO), but need to be sliced, as 88 is the maximum for a transaction.
+  const utxoSubset = utxos.slice(0, MAX_UTXOS_PER_TX);
 
-  // First check in general, if there is enough amount in the UTXOs.
-  if (calcMaxSpendableAmount(utxos, isEcdsaRecipient, feerate).isLessThan(amount)) {
+  // Now check in general, if there is enough amount in the UTXOs.
+  if (calcMaxSpendableAmount(utxoSubset, isEcdsaRecipient, feerate).isLessThan(amount)) {
     throw new Error(`UTXO total amount is not sufficient for sending amount ${amount}`);
   }
 
   // Find a sufficient slice.
-  for (let i = 0; i < utxos.length; i++) {
-    const selectedUtxos = utxos.slice(0, i + 1);
+  for (let i = 0; i < utxoSubset.length; i++) {
+    const selectedUtxos = utxoSubset.slice(0, i + 1);
     const selectedUtxoAmount = sumUtxoAmounts(selectedUtxos);
     // calculate absolute min fee for regular TX with 1 outputs and the given feerate.
     const minMass = calcComputeMass(i + 1, false, isEcdsaRecipient);
@@ -85,16 +84,4 @@ export const selectUtxos = (
   }
   // Throw an error, if UTXOs can't be determined to fulfill the requirement.
   throw new Error("UTXOs can't be determined to fulfill the specified amount");
-};
-
-const sortUtxos = (utxos: KaspaUtxo[]) => {
-  utxos.sort((a, b) => {
-    const transactionComparison = a.utxoEntry.blockDaaScore.localeCompare(
-      b.utxoEntry.blockDaaScore,
-    );
-    if (transactionComparison !== 0) {
-      return transactionComparison;
-    }
-    return a.utxoEntry.amount.minus(b.utxoEntry.amount).toNumber();
-  });
 };
