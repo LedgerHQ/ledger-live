@@ -16,10 +16,6 @@ const mockDiscoverDevices = discoverDevices as jest.Mock;
   addListener: jest.fn(),
 });
 
-jest.mock("@ledgerhq/live-common/deposit/index", () => ({
-  useGroupedCurrenciesByProvider: jest.fn(),
-}));
-
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),

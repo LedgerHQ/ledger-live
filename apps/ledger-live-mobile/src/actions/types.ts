@@ -308,7 +308,6 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING = "SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
-  SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
@@ -374,7 +373,6 @@ export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
-export type SettingsSetClosedNetworkBannerPayload = boolean;
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
@@ -468,7 +466,6 @@ export type SettingsPayload =
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt

@@ -5,7 +5,7 @@
 import React from "react";
 import { renderHook } from "@testing-library/react";
 import { mockEthCryptoCurrency } from "../../__mocks__/currencies.mock";
-import { groupCurrenciesByProvider } from "../../utils";
+import { groupCurrenciesByAsset } from "../../utils";
 import createAssetConfigurationHook from "../createAssetConfiguration";
 import { BigNumber } from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
@@ -114,7 +114,7 @@ const assetConfigurationDeps = {
   ApyIndicator,
   MarketPercentIndicator,
   MarketPriceIndicator,
-  assetsMap: groupCurrenciesByProvider([
+  assetsMap: groupCurrenciesByAsset([
     {
       asset: {
         id: "ethereum",

@@ -32,11 +32,9 @@ function View({
   syncPending,
   sourceScreenName,
   specificAccounts,
-  isAddAccountCtaDisabled,
   currencyToTrack,
   currency,
   ticker,
-  onClick,
 }: ViewProps) {
   const { t } = useTranslation();
 
@@ -62,12 +60,7 @@ function View({
           </Flex>
         )}
         {canAddAccount && (
-          <AddAccountButton
-            disabled={isAddAccountCtaDisabled}
-            sourceScreenName={pageTrackingEvent}
-            currency={currency}
-            onClick={onClick}
-          />
+          <AddAccountButton sourceScreenName={pageTrackingEvent} currency={currency} />
         )}
         {hasNoAccount ? (
           <>
