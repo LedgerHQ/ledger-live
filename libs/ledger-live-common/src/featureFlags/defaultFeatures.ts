@@ -106,6 +106,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
   currencyMonad: DEFAULT_FEATURE,
+  currencySomnia: DEFAULT_FEATURE,
 };
 
 /**

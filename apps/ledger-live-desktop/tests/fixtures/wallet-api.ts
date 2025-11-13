@@ -1147,4 +1147,13 @@ export const expectedCurrencyList = [
     color: "#836EF9",
     decimals: 18,
   },
+  {
+    type: "CryptoCurrency",
+    id: "somnia",
+    ticker: "SOMI",
+    name: "Somnia",
+    family: "ethereum",
+    color: "#6F0191",
+    decimals: 18,
+  },
 ];

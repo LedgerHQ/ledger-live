@@ -942,6 +942,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_somnia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://somnia-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
 };
 
 export { evmConfig };

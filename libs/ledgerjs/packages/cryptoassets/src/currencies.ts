@@ -4840,6 +4840,27 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  somnia: {
+    type: "CryptoCurrency",
+    id: "somnia",
+    coinType: CoinType.ETH,
+    name: "Somnia",
+    managerAppName: "Ethereum",
+    ticker: "SOMI",
+    scheme: "somnia",
+    color: "#6F0191",
+    family: "evm",
+    units: ethereumUnits("SOMI", "SOMI"),
+    ethereumLikeInfo: {
+      chainId: 5031,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.somnia.network/tx/$hash",
+        address: "https://explorer.somnia.network/address/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
