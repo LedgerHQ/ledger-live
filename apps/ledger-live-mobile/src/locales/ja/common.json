@@ -1089,6 +1089,10 @@
       "title" : "トークンの関連付けを確認できませんでした",
       "description" : "送付先アカウントがこのトークンを受け取れるか確認できませんでしたアドレスが無効であるか、ネットワークまたはサービスの問題が発生している可能性があります。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVMアドレスの検証が必要です",
+      "description" : "承認する前に、Ledgerデバイスに表示されているEVMアドレスを検証してください。"
+    },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
     },
@@ -2751,7 +2755,8 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "ASSOCIATE_TOKEN" : "トークンの関連付け"
+      "ASSOCIATE_TOKEN" : "トークンの関連付け",
+      "CONTRACT_CALL" : "コントラクトコール"
     }
   },
   "operationDetails" : {
@@ -4458,6 +4463,7 @@
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションに署名すると、<0><0>{{provider}}</0>の利用規約</0>に同意したことになります。",
+      "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、その際には、取引の完了に影響する可能性があります。そのような場合は、Changellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -7216,6 +7222,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "詳細はこちら"
+        },
+        "evmVerificationRequired" : {
+          "text" : "ERC-20トークンを送信しようとしています。このタイプのトランザクションでは、LedgerデバイスにアカウントIDではなく、送信者のEVMアドレスが表示されます。\n承認する前に、<0>こちらのガイド</0>に従い、アドレスが正しいことを確認してください。"
         }
       }
     },
