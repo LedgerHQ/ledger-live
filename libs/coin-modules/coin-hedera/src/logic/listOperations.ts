@@ -63,7 +63,13 @@ async function processTokenTransfers({
 
   const tokenId = tokenTransfers[0].token_id;
   const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
-  if (!token) return null;
+  if (!token) {
+    // DEBUG: Log missing tokens to identify which ones are not in CAL backend
+    console.warn(
+      `[Hedera listOperations] Token not found in CAL backend: ${tokenId} (tx hash: ${commonData.hash}, consensus: ${commonData.extra.consensusTimestamp})`,
+    );
+    return null;
+  }
 
   const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
   const { type, value, senders, recipients } = parseTransfers(tokenTransfers, address);
