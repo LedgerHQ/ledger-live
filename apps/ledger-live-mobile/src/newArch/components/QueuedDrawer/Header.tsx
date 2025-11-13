@@ -56,7 +56,7 @@ const Header = ({
             {hookOnBack && (
               <Pressable
                 testID="drawer-back-button"
-                onPress={hookOnBack}
+                onPressIn={hookOnBack}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 style={{
                   display: "flex",
@@ -77,7 +77,7 @@ const Header = ({
           {!noCloseButton && !areDrawersLocked && (
             <Pressable
               testID="modal-close-button"
-              onPress={handleCloseUserEvent}
+              onPressIn={handleCloseUserEvent}
               style={({ pressed }: { pressed: boolean }) => ({
                 borderRadius: 999,
                 backgroundColor: pressed ? colors.opacityDefault.c10 : colors.opacityDefault.c05,
