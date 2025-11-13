@@ -1089,6 +1089,10 @@
       "title" : "Tokenzuordnung kann nicht verifiziert werden",
       "description" : "Wir konnten nicht überprüfen, ob das Zielkonto dieses Token empfangen kann. Möglicherweise ist die Adresse ungültig oder es liegt ein Problem mit dem Netzwerk oder dem Service vor."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM-Adressverifizierung erforderlich",
+      "description" : "Bitte kontrolliere vor der Bestätigung die EVM-Adresse, die auf deinem Ledger-Gerät angezeigt wird."
+    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -2751,7 +2755,8 @@
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "ASSOCIATE_TOKEN" : "Token zuordnen"
+      "ASSOCIATE_TOKEN" : "Token zuordnen",
+      "CONTRACT_CALL" : "Vertragsaufruf"
     }
   },
   "operationDetails" : {
@@ -4458,6 +4463,7 @@
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Signieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen von <0>{{provider}}</0></0> zu.",
+      "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie der <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, die in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
     },
@@ -7216,6 +7222,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Weitere Informationen"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Du sendest ein ERC20-Token. Bei dieser Transaktionsart zeigt dein Ledger-Gerät nicht die Konto-ID, sondern die EVM-Adresse des Absenders an.\nBitte überprüfe <0>wie in dieser Anleitung beschrieben</0>, ob die Adresse korrekt ist, bevor du die Bestätigung abgibst."
         }
       }
     },
@@ -7304,11 +7313,11 @@
         "description" : "Wähle eine beliebige digitale Grafik oder ein Bild für den Sperrbildschirm deines {{productName}}-Geräts aus.",
         "popupLabel" : "Sperrbildschirm erfolgreich angepasst"
       },
-      "recover" : {
-        "title" : "Ledger Recover abonnieren",
-        "titleCompleted" : "Ledger Recover abonniert",
-        "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
-        "popupLabel" : "Du hast erfolgreich Ledger Recover abonniert"
+      "syncAccounts" : {
+        "title" : "Deine Kryptokonten synchronisieren",
+        "titleCompleted" : "Deine Konten sind synchronisiert",
+        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
+        "popupLabel" : "Konten synchronisiert"
       }
     }
   },
