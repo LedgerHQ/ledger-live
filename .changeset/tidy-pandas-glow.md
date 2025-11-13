@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-internet_computer": patch
-"@ledgerhq/live-cli": patch
+"@ledgerhq/coin-internet_computer": minor
+"@ledgerhq/live-cli": minor
 ---
 
 bump dependency to latest for solving socket warning

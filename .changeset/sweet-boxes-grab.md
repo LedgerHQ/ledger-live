@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-sui": minor
 ---
 
 Remove mock of deprecated function
