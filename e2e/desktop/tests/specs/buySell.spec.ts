@@ -145,7 +145,14 @@ for (const asset of assets) {
     test(
       `Buy [${crypto.currency.name}] asset from portfolio page`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,

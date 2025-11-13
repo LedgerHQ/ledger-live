@@ -237,7 +237,16 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            ...(transaction.transaction.accountToDebit === Account.BTC_NATIVE_SEGWIT_1
+              ? ["@smoke"]
+              : []),
+          ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {

@@ -115,6 +115,87 @@ jobs:
           name: coverage-desktop
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
+  speculos-e2e-tests-linux:
+    name: "Speculos E2E Smoke (NanoSP - 1.4.1)"
+    outputs:
+      allure_url: ${{ steps.publish-allure.outputs.report-url }}
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "ubuntu-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_DEVICE: nanoSP
+      SPECULOS_FIRMWARE_VERSION: "1.4.1"
+    runs-on: [ledger-live-4xlarge]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        id: setup-test-desktop
+        with:
+          build_type: testing
+          turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: Setup Speculos image and Coin Apps
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: coin-apps
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Set test environment variables
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: false
+          build_type: testing
+      - name: Prepare smoke test filter
+        id: test-filter
+        run: echo "filter=@smoke" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Run Playwright Speculos smoke tests
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/qaa-609
+        with:
+          speculos_device: nanoSP
+          test_filter: ${{ steps.test-filter.outputs.filter }}
+          invert_filter: false
+          shard_index: 1
+          shard_total: 1
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          XRAY: false
+          TEST_EXECUTION: ""
+          PROJECT_KEY: B2CQA
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          SPECULOS_FIRMWARE_VERSION: ${{ env.SPECULOS_FIRMWARE_VERSION }}
+      - name: Upload Allure Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-speculos-smoke
+          path: "e2e/desktop/allure-results"
+      - name: Publish Allure report
+        id: publish-allure
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa-609
+        with:
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          platform: linux-speculos
+          path: "e2e/desktop/allure-results"
+          report_path_suffix: PR-checks
+
   e2e-tests-linux:
     name: "Ubuntu Mock"
     timeout-minutes: 20
@@ -129,7 +210,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ ledger-live-linux-16CPU-64RAM ]
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -184,7 +265,7 @@ jobs:
 
   report:
     name: "Test Desktop > Report"
-    needs: [codechecks, unit-tests, e2e-tests-linux]
+    needs: [codechecks, unit-tests, e2e-tests-linux, speculos-e2e-tests-linux]
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
@@ -247,6 +328,11 @@ jobs:
                 name: "Linux",
                 jobUrl: jobs.find(job => job.name == `Ubuntu Mock`)?.html_url
               },
+              speculos: {
+                symbol: "🍪",
+                name: "Speculos NanoSP 1.4.1",
+                jobUrl: jobs.find(job => job.name == `Speculos E2E Smoke (NanoSP - 1.4.1)`)?.html_url
+              },
             };
 
             const typecheck = {
@@ -259,12 +345,19 @@ jobs:
               status: "${{ needs.unit-tests.result }}",
             };
 
+            const speculosAllureUrl = "${{ needs.speculos-e2e-tests-linux.outputs.allure_url }}";
+
             const report = {
               linux: {
                 pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              }
+              },
+              speculos: {
+                pass: ${{ needs.speculos-e2e-tests-linux.result == 'success' }},
+                status: "${{ needs.speculos-e2e-tests-linux.result }}",
+              },
             };
+
 
             let summary = `### TypeCheck
 
@@ -302,6 +395,8 @@ jobs:
             });
 
             summary += `
+
+            Speculos Allure report: ${speculosAllureUrl || "N/A"}
             ${{ steps.comment.outputs.body }}
             `
 
@@ -390,6 +485,13 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": `🐧 linux Mock: ${report.linux.pass ? "✅" : "❌"}\n`
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `🍪 Speculos NanoSP 1.4.1: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
                   }
                 },
                 {
