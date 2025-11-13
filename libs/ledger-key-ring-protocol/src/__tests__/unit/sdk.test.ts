@@ -1,5 +1,6 @@
 import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "msw";
 import { setupServer } from "msw/node";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import {
   CommandBlock,
   crypto,
@@ -195,6 +196,39 @@ describe("Trustchain SDK", () => {
 
     expect(onTrustchainRotation).toHaveBeenCalledWith(sdk, trustchain, alice);
     expect(afterRotation).toHaveBeenCalledWith(newTrustchain);
+  });
+
+  it("should recover from any 4xx indirectly caused by wrong JWT", async () => {
+    const { alice } = MOCK_DATA.members;
+    const trustchainId = "TRUSTCHAIN_ID";
+
+    const trustchain = {
+      rootId: trustchainId,
+      walletSyncEncryptionKey: "0x123",
+      applicationPath: "m/0'/16'/0'",
+    };
+
+    const initialJwt = {
+      accessToken: "INITIAL TOKEN",
+      permissions: { [trustchainId]: { "m/0'/16'/0'": ["owner"] } },
+    };
+
+    apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
+    apiMocks.postAuthenticate.mockReturnValue({ ...initialJwt, access_token: "NEW TOKEN" });
+
+    const sdk = new SDK(sdkContext, hwDeviceProviderMock);
+
+    // Set private state:
+    sdk["jwt"] = initialJwt;
+    sdk["jwtHash"] = `${trustchainId} ${alice.pubkey}`;
+
+    await sdk.withAuth(trustchain, alice, async jwt => {
+      if (jwt.accessToken === "NEW TOKEN") return;
+      throw new LedgerAPI4xx("Permission denied");
+    });
+
+    expect(apiMocks.getChalenge).toHaveBeenCalledTimes(1);
+    expect(apiMocks.postAuthenticate).toHaveBeenCalledTimes(1);
   });
 });
 
