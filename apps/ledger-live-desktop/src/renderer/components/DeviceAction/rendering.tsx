@@ -75,7 +75,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
-import { DmkError } from "@ledgerhq/live-dmk-desktop";
+import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
 import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
@@ -749,8 +749,10 @@ const FirmwareNotRecognizedErrorComponent: React.FC<{
 }> = ({ onRetry }) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
   const goToExperimentalSettings = () => {
     setDrawer();
+    dispatch(closeAllModal());
     history.push("/settings/experimental");
   };
   return (
@@ -827,7 +829,10 @@ export const renderError = ({
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
-  } else if (tmpError instanceof FirmwareNotRecognized) {
+  } else if (
+    tmpError instanceof FirmwareNotRecognized ||
+    isInvalidGetFirmwareMetadataResponseError(tmpError)
+  ) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   } else if (tmpError instanceof CompleteExchangeError) {
     if (tmpError.title === "userRefused") {

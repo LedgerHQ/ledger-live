@@ -149,7 +149,6 @@ export class DeviceManagementKitBLETransport extends Transport {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
         );
-
         return activeDeviceSessionSubject.value.transport;
       }
     }

@@ -60,6 +60,10 @@ const ErrorEvents = [
       "UnknownDeviceExchangeError",
     ],
   },
+  {
+    name: "Invalid Provider",
+    tags: ["InvalidGetFirmwareMetadataResponseError"],
+  },
 ];
 
 export const useTrackDmkErrorsEvents = ({
