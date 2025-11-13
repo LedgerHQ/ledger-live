@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "Sacado",
       "SENDING" : "Enviando",
       "BURN" : "Queimado",
-      "ASSOCIATE_TOKEN" : "Associar token"
+      "ASSOCIATE_TOKEN" : "Associar token",
+      "CONTRACT_CALL" : "Chamada do contrato"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -1446,6 +1447,12 @@
         "description" : "De qualquer corretora ou carteira, diretamente para a sua Ledger.",
         "actionCompletedPopupLabel" : "Ativos transferidos"
       },
+      "syncAccounts" : {
+        "title" : "Sincronize suas contas cripto",
+        "titleCompleted" : "Suas contas estão sincronizadas",
+        "description" : "Ative o Ledger Sync para sincronizar suas contas cripto",
+        "actionCompletedPopupLabel" : "Contas sincronizadas"
+      },
       "recover" : {
         "title" : "Inscrever-se no Ledger Recover",
         "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Ao validar esta transação,\neu aceito os <0>Termos de uso do SwapKit</0>, a tecnologia que impulsiona o NEAR Intents",
       "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
       "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
       "changellySimplifiedAcceptTerms" : "Ao assinar esta transação, você aceita os <0>Termos de uso</0> e\na <1>Política de AML/KYC</1> da Changelly. A Changelly pode aplicar procedimentos AML/KYC que podem,\nem alguns casos, afetar a conclusão de sua transação. Caso isso aconteça, você deve entrar em contato\n com o <2>suporte ao cliente</2> da Changelly.",
@@ -1978,7 +1986,7 @@
         "title" : "Atualização Disponível",
         "title_other" : "Atualizações disponíveis",
         "progressTitle" : "{{number}} atualização de aplicativo",
-        "progressTitle_other" : "{{number}} atualizações de aplicativo",
+        "progressTitle_other" : "{{number}} atualizações\nde aplicativo",
         "progressWarning" : "Não feche a Minha Ledger durante a atualização.",
         "progress" : "Atualizando todos..."
       },
@@ -2279,6 +2287,7 @@
         "label" : "Conta a creditar",
         "parentAccount" : "1. Selecione a conta {{currencyName}}",
         "token" : "2. Selecione um token",
+        "errorLoadingTokens" : "Erro ao carregar tokens",
         "verifyTokenType" : "Verifique se <0>{{token}}</0> é um token <0>{{tokenType}}</0>. Qualquer outro criptoativo enviado para uma conta de {{currency}} poderá ser perdido.",
         "warningTokenType" : "Envie apenas <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> para contas de {{currency}}. O envio de outros criptoativos poderá resultar na perda permanente dos fundos.",
         "depositFromCexBannerTitle" : "Depositar criptomoedas da sua conta Coinbase"
@@ -5758,7 +5767,7 @@
   "updatedTerms" : {
     "title" : "Atualização dos Termos de uso",
     "body" : {
-      "intro" : "Olá! Atualizamos nossos Termos de Uso do Ledger Live com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
+      "intro" : "Olá! Atualizamos nossos Termos de Uso da Ledger Wallet com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
       "bulletPoints" : ["Esclarecer quais serviços estão disponíveis e como funcionam", "Explicar como funcionam as taxas de serviços", "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"],
       "agreement" : "Ao clicar em \"Continuar\" você concorda que leu e aceitou os Termos de uso abaixo."
     },
@@ -6777,6 +6786,10 @@
       "title" : "Não foi possível verificar a associação do token",
       "description" : "Não foi possível confirmar se a conta de destino pode receber este token. O endereço pode estar inválido ou pode haver um problema de rede ou serviço."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "É necessário verificar o endereço EVM",
+      "description" : "Verifique o endereço EVM visível no seu dispositivo Ledger antes de confirmar."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Falha no carregamento da imagem do arquivo.",
       "description" : "Tente novamente com uma imagem."
@@ -7110,6 +7123,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Saiba mais"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Você está enviando um token ERC-20. Para este tipo de transação, o seu dispositivo Ledger exibirá o endereço EVM do remetente, e não o ID da conta dele.\nSiga este <0>guia</0> para verificar se o endereço está correto antes de confirmar."
         }
       }
     },
@@ -7155,8 +7171,8 @@
       "transfer" : {
         "stepLabel" : "Carregar",
         "useAnotherPicture" : "Enviar outra foto",
-        "allowPreview" : "Clique em “Carregar imagem” para\npersonalizar a imagem da tela de bloqueio",
-        "allowConfirmPreview" : "Clique em “Carregar imagem” para\nrestaurar a imagem da tela de bloqueio",
+        "allowPreview" : "Clique em “Carregar foto” para\npersonalizar a imagem da tela de bloqueio",
+        "allowConfirmPreview" : "Clique em “Carregar foto” para\nrestaurar a imagem da tela de bloqueio",
         "loadingPicture" : "Carregando...",
         "voila" : "Voilà!",
         "imageLoaded" : "Imagem carregada em {{productName}}",
