@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Modal, Platform, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
@@ -257,7 +257,7 @@ const QueuedDrawerNative = ({
               width: "100%",
               paddingHorizontal: 16,
               paddingTop: 16,
-              paddingBottom: Math.max(insets.bottom, 12) + 32,
+              paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
             }}
           >
             {shouldShowHeader && !CustomHeader ? (
