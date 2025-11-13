@@ -30,6 +30,11 @@ const HEDERA_ERC20_OVERRIDES: Record<string, Partial<CALServiceOutput>> = {
     id: "hedera/erc20/weth_0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
     contract_address: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
   },
+  // WBTC https://hashscan.io/mainnet/contract/0.0.10047837
+  "0.0.10047837": {
+    id: "hedera/erc20/wrapped_btc_0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+    contract_address: "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+  },
 };
 
 export const importHederaTokens = async (outputDir: string) => {
