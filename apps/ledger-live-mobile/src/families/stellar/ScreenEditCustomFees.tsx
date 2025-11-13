@@ -14,7 +14,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyInput from "~/components/CurrencyInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "~/const";
+import { ScreenName, NavigatorName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
@@ -53,13 +53,16 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
     // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
-      ...route.params,
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        fees: BigNumber(customFee || 0),
-        customFees: { parameters: { fees: BigNumber(customFee || 0) } },
-      }),
+    navigation.popTo(NavigatorName.SendFunds, {
+      screen: currentNavigation,
+      params: {
+        ...route.params,
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          fees: BigNumber(customFee || 0),
+          customFees: { parameters: { fees: BigNumber(customFee || 0) } },
+        }),
+      },
     });
   }, [customFee, account, parentAccount, route.params, navigation, transaction]);
   return (

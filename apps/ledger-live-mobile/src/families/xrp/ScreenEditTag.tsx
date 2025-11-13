@@ -12,7 +12,7 @@ import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { ScreenName } from "~/const";
+import { ScreenName, NavigatorName } from "~/const";
 import { track } from "~/analytics";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
@@ -57,11 +57,14 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
     if (!account) return;
     const bridge = getAccountBridge(account);
     // @ts-expect-error FIXME: no current / next navigation param?
-    navigation.navigate(ScreenName.SendSummary, {
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        tag: tag && tag.toNumber(),
-      }),
+    navigation.popTo(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSummary,
+      params: {
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          tag: tag && tag.toNumber(),
+        }),
+      },
     });
   }, [navigation, account, tag, transaction]);
   return (
