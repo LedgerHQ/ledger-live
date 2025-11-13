@@ -1089,6 +1089,10 @@
       "title" : "无法验证代币关联",
       "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "需要核实以太坊虚拟机 (EVM) 地址",
+      "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
+    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -2409,7 +2413,7 @@
       "notCompatible" : "不兼容 iPhone",
       "modal" : {
         "title" : "iOS 设备不支持 Ledger Nano S 和 Ledger Nano S Plus",
-        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet配合使用。"
+        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet 配合使用。"
       }
     },
     "scanning" : {
@@ -2751,7 +2755,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "ASSOCIATE_TOKEN" : "关联代币"
+      "ASSOCIATE_TOKEN" : "关联代币",
+      "CONTRACT_CALL" : "合约调用"
     }
   },
   "operationDetails" : {
@@ -4458,6 +4463,7 @@
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
+      "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
@@ -7216,6 +7222,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "了解更多"
+        },
+        "evmVerificationRequired" : {
+          "text" : "您正在发送 ERC-20 代币。对于此类交易，您的 Ledger 设备将显示发送者的 EVM 地址，而非其账户 ID。\n请按照<0>此指南</0>，在确认前核实地址是否正确。"
         }
       }
     },
@@ -7304,11 +7313,11 @@
         "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
-      "recover" : {
-        "title" : "订阅 Ledger Recover",
-        "titleCompleted" : "已订阅 Ledger Recover",
-        "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
-        "popupLabel" : "已成功订阅 Ledger Recover"
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "popupLabel" : "账户已同步"
       }
     }
   },
