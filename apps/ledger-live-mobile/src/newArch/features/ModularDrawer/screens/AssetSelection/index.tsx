@@ -63,8 +63,13 @@ const AssetSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { collapse } = useBottomSheet();
+  const { collapse, snapToIndex } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const expandToFullHeight = () => {
+    snapToIndex(1);
+    listRef.current?.scrollToIndex({ index: 0 });
+  };
 
   const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
 
@@ -115,10 +120,6 @@ const AssetSelection = ({
       trackModularDrawerEvent,
     ],
   );
-
-  const handleSearchPressIn = () => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
 
   const handleSearchFocus = () => {};
 
@@ -181,7 +182,7 @@ const AssetSelection = ({
         flow={flow}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
-        onPressIn={handleSearchPressIn}
+        onPressIn={expandToFullHeight}
       />
       {renderContent()}
     </>
