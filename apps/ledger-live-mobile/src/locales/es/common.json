@@ -1089,6 +1089,10 @@
       "title" : "No se puede verificar la asociación del token",
       "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Verificación de dirección EVM necesaria",
+      "description" : "Verifica la dirección EVM visible en tu dispositivo Ledger antes de confirmar."
+    },
     "NearNewAccountWarning" : {
       "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
     },
@@ -2751,7 +2755,8 @@
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
-      "ASSOCIATE_TOKEN" : "Asociar token"
+      "ASSOCIATE_TOKEN" : "Asociar token",
+      "CONTRACT_CALL" : "Llamada a contrato"
     }
   },
   "operationDetails" : {
@@ -4458,6 +4463,7 @@
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
@@ -4752,7 +4758,7 @@
       "all" : "Todas",
       "installed" : "Aplicaciones",
       "not_installed" : "No instaladas",
-      "supported" : "Compatible con Ledger Wallet",
+      "supported" : "Compatibles con Ledger Wallet",
       "updatable" : "Actualizable",
       "apply" : "Aplicar"
     },
@@ -7090,7 +7096,7 @@
       },
       "order" : {
         "topGainers" : "Máximos Ganadores",
-        "topLosers" : "Máximos perdedores",
+        "topLosers" : "Máximos Perdedores",
         "marketCap" : "Puesto",
         "asc" : "Posición (capitalización) asc.",
         "desc" : "Posición (capitalización) desc."
@@ -7102,7 +7108,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
@@ -7216,6 +7222,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Más información"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vas a enviar un token ERC20. Para este tipo de transacción, en tu dispositivo Ledger se muestra la dirección EVM del remitente, no el ID de su cuenta.\nSigue <0>esta guía</0> para verificar que la dirección es correcta antes de confirmar."
         }
       }
     },
@@ -7304,11 +7313,11 @@
         "description" : "Elige cualquier obra de arte digital o imagen para establecerla como pantalla de bloqueo de tu {{productName}}.",
         "popupLabel" : "Pantalla de bloqueo personalizada correctamente"
       },
-      "recover" : {
-        "title" : "Suscríbete a Ledger Recover",
-        "titleCompleted" : "Te has suscrito a Ledger Recover",
-        "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
-        "popupLabel" : "Te has suscrito correctamente a Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "popupLabel" : "Cuentas sincronizadas"
       }
     }
   },
