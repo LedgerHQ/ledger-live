@@ -4858,7 +4858,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://explorer.somnia.network/tx/$hash",
         address: "https://explorer.somnia.network/address/$address",
-        },
+      },
     ],
   },
   zero_gravity: {

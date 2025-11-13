@@ -377,14 +377,14 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
   });
 
 /* Get default maxPriorityFeePerGas by chain */
-const getMaxPriorityFeePerGas = (currency: CryptoCurrency) => {
+const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
   switch (currency.id) {
     case "zero_gravity":
-      return new BigNumber(2e9) // 2 Gwei
+      return new BigNumber(2e9); // 2 Gwei
     default:
-      return new BigNumber(1e9) // 1 Gwei
+      return new BigNumber(1e9); // 1 Gwei
   }
-}
+};
 
 const node: NodeApi = {
   getBlockByHeight,
