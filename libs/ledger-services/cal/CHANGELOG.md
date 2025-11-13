@@ -1,5 +1,19 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.9.0-next.0
+
+### Minor Changes
+
+- [#12550](https://github.com/LedgerHQ/ledger-live/pull/12550) [`8cd8bbc`](https://github.com/LedgerHQ/ledger-live/commit/8cd8bbcbf9c06e2a601cce3b58f831d88b5e2d8e) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Change Near Intents display name to NEAR Intents, TC link extended to include more words
+
+- [#12657](https://github.com/LedgerHQ/ledger-live/pull/12657) [`3a5e317`](https://github.com/LedgerHQ/ledger-live/commit/3a5e317908246db5e816e6a8825218d228f09ed9) Thanks [@Justkant](https://github.com/Justkant)! - fix: correct mapping of 'apex' in DeviceModel for CAL certificates
+
+### Patch Changes
+
+- Updated dependencies [[`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73)]:
+  - @ledgerhq/live-env@2.21.0-next.0
+  - @ledgerhq/live-network@2.1.1-next.0
+
 ## 1.8.0
 
 ### Minor Changes

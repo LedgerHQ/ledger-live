@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#12499](https://github.com/LedgerHQ/ledger-live/pull/12499) [`48ad785`](https://github.com/LedgerHQ/ledger-live/commit/48ad785ce6f7f8fef27157b611e8c8e6e91bfe7e) Thanks [@qperrot](https://github.com/qperrot)! - Add tests on BTC coin tester regarding rbf and cancel
+
 ## 0.11.0
 
 ### Minor Changes

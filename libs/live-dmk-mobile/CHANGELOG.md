@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#12562](https://github.com/LedgerHQ/ledger-live/pull/12562) [`f78d6ff`](https://github.com/LedgerHQ/ledger-live/commit/f78d6ff46551a8d45b42d8d878b3dcbc96596b2f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix an error recognition bug in ConnectApp DA
+
 ## 0.14.0
 
 ### Minor Changes
