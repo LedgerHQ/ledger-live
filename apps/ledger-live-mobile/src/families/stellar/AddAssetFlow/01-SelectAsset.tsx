@@ -124,7 +124,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   const { data, loadNext } = useTokensData({
     networkFamily: mainAccount.currency.id,
-    pageSize: 100,
   });
 
   const options = useMemo(() => data?.tokens || [], [data?.tokens]);

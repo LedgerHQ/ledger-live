@@ -13,7 +13,7 @@ const { data, isLoading, isSuccess, isError, loadNext, error, refetch } = useTok
   networkFamily?: string, // Filter by network families (e.g., "ethereum", "polygon")
   output?: string[], // Specify output fields (e.g., ["id", "name", "ticker", "units", "delisted"])
   limit?: number, // Maximum number of assets to return
-  pageSize?: number, // Number of items per page (default: 100, options: 10, 100, 1000)
+  pageSize?: number, // Number of items per page (default: 1000, options: 10, 100, 1000)
   ref?: string, // CAL reference (default: "branch:main", can be tag or commit)
   isStaging?: boolean, // Use staging or production environment
 });
@@ -63,9 +63,7 @@ function TokenList() {
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 
 function TokenList() {
-  const { data, isLoading, loadNext } = useTokensData({
-    pageSize: 100, // Optional: default is 100
-  });
+  const { data, isLoading, loadNext } = useTokensData({});
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -159,9 +157,7 @@ import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokens
 import { useMemo } from "react";
 
 function SearchableTokens({ searchQuery }) {
-  const { data, isLoading, loadNext } = useTokensData({
-    pageSize: 100,
-  });
+  const { data, isLoading, loadNext } = useTokensData({});
 
   const filteredTokens = useMemo(() => {
     if (!data?.tokens) return [];
@@ -199,7 +195,6 @@ function TokenDropdown() {
   const { data, isLoading } = useTokensData({
     output: ["id", "name", "ticker"], // Only fetch what you need
     networkFamily: "ethereum",
-    pageSize: 100,
   });
 
   if (isLoading) return <select disabled>Loading...</select>;

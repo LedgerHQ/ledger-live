@@ -197,7 +197,7 @@ export const cryptoAssetsApi = createApi({
 
     getTokensData: build.infiniteQuery<TokensDataWithPagination, GetTokensDataParams, PageParam>({
       query: ({ pageParam, queryArg = {} }) => {
-        const { isStaging = false, output, networkFamily, pageSize = 100, limit, ref } = queryArg;
+        const { isStaging = false, output, networkFamily, pageSize = 1000, limit, ref } = queryArg;
 
         const params = {
           output: output?.join(",") || TOKEN_OUTPUT_FIELDS.join(","),
