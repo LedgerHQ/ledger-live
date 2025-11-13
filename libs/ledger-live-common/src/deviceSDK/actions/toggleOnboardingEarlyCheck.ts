@@ -10,6 +10,7 @@ import { scan } from "rxjs/operators";
 
 export type ToggleOnboardingEarlyCheckActionArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   toggleType: "enter" | "exit";
 };
 
@@ -44,9 +45,10 @@ export const initialState: ToggleOnboardingEarlyCheckActionState = {
  */
 export function toggleOnboardingEarlyCheckAction({
   deviceId,
+  deviceName,
   toggleType,
 }: ToggleOnboardingEarlyCheckActionArgs): Observable<ToggleOnboardingEarlyCheckActionState> {
-  return toggleOnboardingEarlyCheckTask({ deviceId, toggleType }).pipe(
+  return toggleOnboardingEarlyCheckTask({ deviceId, deviceName, toggleType }).pipe(
     scan<ToggleOnboardingEarlyCheckTaskEvent, ToggleOnboardingEarlyCheckActionState>(
       (currentState, event) => {
         switch (event.type) {

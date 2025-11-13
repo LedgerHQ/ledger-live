@@ -10,6 +10,7 @@ import {
 export type UseToggleOnboardingEarlyCheckArgs = {
   toggleOnboardingEarlyCheckAction?: typeof defaultToggleOnboardingEarlyCheckAction;
   deviceId: string;
+  deviceName: string | null;
   toggleType: ToggleOnboardingEarlyCheckActionArgs["toggleType"] | null;
 };
 
@@ -39,6 +40,7 @@ export type UseToggleOnboardingEarlyCheckArgs = {
 export const useToggleOnboardingEarlyCheck = ({
   toggleOnboardingEarlyCheckAction = defaultToggleOnboardingEarlyCheckAction,
   deviceId,
+  deviceName,
   toggleType,
 }: UseToggleOnboardingEarlyCheckArgs): {
   state: ToggleOnboardingEarlyCheckActionState;
@@ -50,6 +52,7 @@ export const useToggleOnboardingEarlyCheck = ({
 
     const subscription = toggleOnboardingEarlyCheckAction({
       deviceId,
+      deviceName,
       toggleType,
     }).subscribe({
       next: setState,
@@ -64,7 +67,7 @@ export const useToggleOnboardingEarlyCheck = ({
 
       subscription.unsubscribe();
     };
-  }, [deviceId, toggleOnboardingEarlyCheckAction, toggleType]);
+  }, [deviceId, deviceName, toggleOnboardingEarlyCheckAction, toggleType]);
 
   return { state };
 };
