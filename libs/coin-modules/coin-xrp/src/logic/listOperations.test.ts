@@ -14,7 +14,7 @@ const mockGetServerInfos = jest.fn().mockResolvedValue({
 const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
-  getTransactions: () => mockNetworkGetTransactions(),
+  getTransactions: (...args: any[]) => mockNetworkGetTransactions(...args),
 }));
 
 describe("listOperations", () => {
@@ -66,7 +66,10 @@ describe("listOperations", () => {
     hash: "HASH_VALUE",
     validated: true,
     close_time_iso: "2000-01-01T00:00:01Z",
-    meta: { delivered_amount: "100" },
+    meta: {
+      delivered_amount: "100",
+      TransactionResult: "tesSUCCESS",
+    },
     tx_json: {
       TransactionType: "Payment",
       Fee: "1",
@@ -125,6 +128,48 @@ describe("listOperations", () => {
     // it's called 2 times because the second call is a shortage of txs
     expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
+    expect(JSON.parse(token)).toEqual(someMarker);
+  });
+
+  it("should handle gracefully when minHeight is higher than current ledger (future block)", async () => {
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([paymentTx]));
+
+    const futureMinHeight = 999439370; // very high value (more than expected)
+    const [results, token] = await listOperations("any address", {
+      minHeight: futureMinHeight,
+      order: "asc",
+    });
+
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
+
+    // Verify that ledger_index_min is NOT passed when minHeight is too high
+    const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
+    expect(callArgs).toBeDefined();
+    expect(callArgs.ledger_index_min).toBeUndefined();
+
+    expect(results.length).toEqual(1);
+    expect(JSON.parse(token)).toEqual(someMarker);
+  });
+
+  it("should use ledger_index_min when minHeight is valid (within current ledger range)", async () => {
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([paymentTx]));
+
+    const validMinHeight = 1; // valid value (within range 1-2)
+    const [results, token] = await listOperations("any address", {
+      minHeight: validMinHeight,
+      order: "asc",
+    });
+
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
+
+    // Verify that ledger_index_min IS passed when minHeight is valid
+    const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
+    expect(callArgs).toBeDefined();
+    expect(callArgs.ledger_index_min).toBe(1); // Should be max(1, 1) = 1
+
+    expect(results.length).toEqual(1);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 

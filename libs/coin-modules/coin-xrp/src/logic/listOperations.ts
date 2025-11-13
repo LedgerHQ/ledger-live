@@ -24,6 +24,7 @@ export async function listOperations(
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
+  const maxLedgerVersion = Number(ledgers[1]);
 
   // by default the explorer queries the transactions in descending order (newest first)
   let forward = false;
@@ -49,7 +50,9 @@ export async function listOperations(
     };
   }
 
-  if (minHeight !== undefined) {
+  if (minHeight !== undefined && minHeight <= maxLedgerVersion) {
+    // Only set ledger_index_min if minHeight is valid (not higher than current ledger)
+    // LIVE-22334 fix: minHeight <= maxLedgerVersion
     options = {
       ...options,
       // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
