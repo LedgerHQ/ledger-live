@@ -4,12 +4,6 @@ import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type AddAccountsNavigatorParamList = {
-  [ScreenName.AddAccountsSelectCrypto]:
-    | {
-        filterCurrencyIds?: string[];
-        currency?: string;
-      }
-    | undefined;
   [ScreenName.AddAccountsSelectDevice]: {
     currency?: CryptoOrTokenCurrency;
     inline?: boolean;

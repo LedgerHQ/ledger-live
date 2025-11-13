@@ -1,4 +1,4 @@
-import { groupCurrenciesByProvider } from "../groupCurrenciesByProvider";
+import { groupCurrenciesByAsset } from "../groupCurrenciesByAsset";
 import { AssetData } from "../type";
 import {
   mockBtcCryptoCurrency,
@@ -6,9 +6,9 @@ import {
   mockBaseCryptoCurrency,
 } from "../../__mocks__/currencies.mock";
 
-describe("groupCurrenciesByProvider", () => {
+describe("groupCurrenciesByAsset", () => {
   it("should return an empty map when given an empty array", () => {
-    const result = groupCurrenciesByProvider([]);
+    const result = groupCurrenciesByAsset([]);
     expect(result).toBeInstanceOf(Map);
     expect(result.size).toBe(0);
   });
@@ -26,7 +26,7 @@ describe("groupCurrenciesByProvider", () => {
       },
     ];
 
-    const result = groupCurrenciesByProvider(assetData);
+    const result = groupCurrenciesByAsset(assetData);
     expect(result.size).toBe(0);
   });
 
@@ -43,7 +43,7 @@ describe("groupCurrenciesByProvider", () => {
       },
     ];
 
-    const result = groupCurrenciesByProvider(assetData);
+    const result = groupCurrenciesByAsset(assetData);
     expect(result.size).toBe(1);
     expect(result.has("ethereum")).toBe(true);
 
@@ -74,7 +74,7 @@ describe("groupCurrenciesByProvider", () => {
       },
     ];
 
-    const result = groupCurrenciesByProvider(assetData);
+    const result = groupCurrenciesByAsset(assetData);
     expect(result.size).toBe(2);
     expect(result.has("bitcoin")).toBe(true);
     expect(result.has("ethereum")).toBe(true);

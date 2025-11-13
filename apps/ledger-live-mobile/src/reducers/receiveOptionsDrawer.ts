@@ -20,7 +20,7 @@ export const INITIAL_STATE: ReceiveOptionsDrawerState = {
 export const receiveOptionsDrawerStateSelector = (state: State) => state.receiveOptionsDrawer;
 
 const receiveOptionsDrawerSlice = createSlice({
-  name: "receiveOptionsDrawerKey  ",
+  name: "receiveOptionsDrawerKey",
   initialState: INITIAL_STATE,
   reducers: {
     openReceiveOptionsDrawer: (

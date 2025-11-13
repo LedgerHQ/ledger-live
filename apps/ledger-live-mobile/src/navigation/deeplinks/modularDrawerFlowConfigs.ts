@@ -7,7 +7,6 @@ export interface ScreenConfig {
 
 export interface DrawerFlowConfigs {
   modularDrawer: Record<string, ScreenConfig>;
-  classicAddAccount: Record<string, ScreenConfig>;
 }
 
 /**
@@ -19,35 +18,21 @@ export function getDrawerFlowConfigs(
   modularDrawer: Feature_ModularDrawer | null,
 ): DrawerFlowConfigs {
   const isModularDrawerEnabled = modularDrawer?.enabled;
-  const hasAddAccount = modularDrawer?.params?.add_account;
-
-  const classicAddAccountConfig = {
-    [NavigatorName.AssetSelection]: {
-      screens: {
-        [ScreenName.AddAccountsSelectCrypto]: "add-account",
-      },
-    },
-  };
 
   if (isModularDrawerEnabled) {
     return {
       modularDrawer: {
         [NavigatorName.ModularDrawer]: {
           screens: {
-            ...(hasAddAccount && {
-              [ScreenName.AddAccountDeepLinkHandler]: "add-account",
-            }),
-
+            [ScreenName.AddAccountDeepLinkHandler]: "add-account",
             [ScreenName.ReceiveDeepLinkHandler]: "receive",
           },
         },
       },
-      classicAddAccount: hasAddAccount ? {} : classicAddAccountConfig,
     };
   }
 
   return {
     modularDrawer: {},
-    classicAddAccount: classicAddAccountConfig,
   };
 }
