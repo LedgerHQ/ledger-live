@@ -97,7 +97,7 @@ const Header = ({
 
       {title && (
         <Flex alignItems="center" pb={32}>
-          <Text variant="h4" numberOfLines={1}>
+          <Text variant="h4" numberOfLines={2} textAlign="center">
             {title}
           </Text>
         </Flex>
