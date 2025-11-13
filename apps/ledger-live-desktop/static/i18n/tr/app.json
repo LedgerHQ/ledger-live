@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
       "BURN" : "Yakıldı",
-      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
+      "CONTRACT_CALL" : "Sözleşme çağrısı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1446,6 +1447,12 @@
         "description" : "Herhangi bir borsadan veya cüzdandan doğrudan Ledger cihazınıza aktarın.",
         "actionCompletedPopupLabel" : "Varlıklar aktarıldı"
       },
+      "syncAccounts" : {
+        "title" : "Kripto hesaplarınızı senkronize edin",
+        "titleCompleted" : "Hesaplarınız senkronize edildi",
+        "description" : "Kripto hesaplarınızı senkronize etmek için Ledger Sync’i etkinleştirin",
+        "actionCompletedPopupLabel" : "Hesaplar senkronize edildi"
+      },
       "recover" : {
         "title" : "Ledger Recover'a abone olun",
         "description" : "Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
+      "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
       "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
@@ -2279,6 +2287,7 @@
         "label" : "Alacak hesap",
         "parentAccount" : "1. {{currencyName}} hesabı seçin",
         "token" : "2. Token seçin",
+        "errorLoadingTokens" : "Token’lar yüklenirken bir hata oluştu",
         "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
         "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
@@ -6777,6 +6786,10 @@
       "title" : "Token ilişkilendirmesi doğrulanamıyor",
       "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM adresi doğrulaması gerekiyor",
+      "description" : "Onaylamadan önce, Ledger cihazınızda görüntülenen EVM adresini lütfen doğrulayın."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -7110,6 +7123,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Daha fazla bilgi"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Bir ERC-20 token’ı gönderiyorsunuz. Ledger cihazınız bu işlem türünde gönderenin Hesap Kimliğini değil, EVM adresini gösterir.\nOnaylamadan önce adresin doğru olduğunu doğrulamak için lütfen bu <0>bu rehberdeki</0> yönergeleri izleyin."
         }
       }
     },
