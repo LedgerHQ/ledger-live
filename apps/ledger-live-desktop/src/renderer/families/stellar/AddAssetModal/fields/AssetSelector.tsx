@@ -113,7 +113,6 @@ export default function DelegationSelectorField({
 
   const { data, loadNext } = useTokensData({
     networkFamily: account.currency.id,
-    pageSize: 100,
   });
 
   const options = useMemo(() => data?.tokens || [], [data?.tokens]);
