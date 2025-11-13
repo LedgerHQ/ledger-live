@@ -26,6 +26,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -59,6 +60,7 @@ import {
   setOsTheme,
   setPersonalizedRecommendations,
   setIsOnboardingFlow,
+  setIsPostOnboardingFlow,
 } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
@@ -129,7 +131,9 @@ function App() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
+  const initiatedIsPostOnboardingFlow = useRef<boolean>(isPostOnboardingFlow);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
@@ -182,8 +186,15 @@ function App() {
   ]);
 
   useEffect(() => {
+    /* 
+    / To capture all tracking events under the same flow we have these states set
+    / and to prevent the flow state leaking we reset them here
+    */
     if (initiatedIsOnboardingFlow.current) {
       dispatch(setIsOnboardingFlow(false));
+    }
+    if (initiatedIsPostOnboardingFlow.current) {
+      dispatch(setIsPostOnboardingFlow(false));
     }
   }, [dispatch]);
 
