@@ -62,7 +62,8 @@ export class PageScroller {
     if (scrollViewId) {
       return element(by.id(scrollViewId));
     }
-    const type = isAndroid() ? "android.widget.ScrollView" : "RCTScrollView";
+    // On iOS with New Architecture (RN77+), scroll views use RCTEnhancedScrollView
+    const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
     return element(by.type(type)).atIndex(0);
   }
 
