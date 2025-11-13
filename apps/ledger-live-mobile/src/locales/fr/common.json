@@ -1089,6 +1089,10 @@
       "title" : "Impossible de vérifier l’association du token",
       "description" : "Nous n’avons pas pu confirmer que le compte bénéficiaire peut recevoir ce token. L’adresse pourrait être invalide, ou il pourrait y avoir un problème avec le réseau ou le service."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Vérification de l’adresse EVM requise",
+      "description" : "Veuillez vérifier l’adresse EVM affichée sur votre appareil Ledger avant de confirmer."
+    },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
     },
@@ -1918,7 +1922,7 @@
               "label" : "Achetez un nouvel appareil Ledger."
             },
             "1" : {
-              "label" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Live."
+              "label" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Wallet."
             },
             "2" : {
               "label" : "Entrez votre phrase de récupération sur votre nouvel appareil pour restaurer l’accès à vos cryptos."
@@ -2751,7 +2755,8 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "ASSOCIATE_TOKEN" : "Association de token"
+      "ASSOCIATE_TOKEN" : "Association de token",
+      "CONTRACT_CALL" : "Appel de contrat"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3785,7 @@
       },
       "wrongDevice" : {
         "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
-        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live."
+        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges interchaînes sur {{provider}} via Ledger Live."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
@@ -4458,6 +4463,7 @@
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "acceptTerms" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -7216,6 +7222,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "En savoir plus"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vous êtes sur le point d’envoyer un token ERC20. Pour ce type de transaction, votre appareil Ledger affiche l’adresse EVM du donneur d’ordre et non l’identifiant de son compte.\nAvant de confirmer, veuillez suivre <0>ce guide</0> pour vérifier que l’adresse est correcte."
         }
       }
     },
@@ -7304,11 +7313,11 @@
         "description" : "Choisissez une œuvre d’art numérique ou image comme fond d’écran de votre {{productName}}.",
         "popupLabel" : "Fond d’écran personnalisé"
       },
-      "recover" : {
-        "title" : "Vous abonner à Ledger Recover",
-        "titleCompleted" : "Abonné(e) à Ledger Recover",
-        "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
-        "popupLabel" : "Vous êtes abonné(e) à Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Synchroniser vos comptes crypto",
+        "titleCompleted" : "Vos comptes sont synchronisés",
+        "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
+        "popupLabel" : "Comptes synchronisés"
       }
     }
   },
