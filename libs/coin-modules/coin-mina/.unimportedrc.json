@@ -10,13 +10,11 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
-    "**/*.fixture.ts",
+    "**/fixtures.ts",
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnimported": [
-    "src/test/fixtures.ts"
-  ],
+  "ignoreUnimported": [],
   "ignoreUnresolved": [],
   "ignoreUnused": [
     "lodash"
