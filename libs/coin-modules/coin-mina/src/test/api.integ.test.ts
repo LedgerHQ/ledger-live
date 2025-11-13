@@ -1,3 +1,18 @@
+// Mock the config module
+jest.mock("../config", () => ({
+  getCoinConfig: () => ({
+    status: {
+      type: "active",
+    },
+    infra: {
+      API_VALIDATORS_BASE_URL: "https://api.minaexplorer.com",
+      API_MINA_ROSETTA_NODE: "https://rosetta.minaprotocol.network",
+      API_MINA_GRAPHQL_NODE: "https://graphql.minaexplorer.com",
+    },
+  }),
+  setCoinConfig: jest.fn(),
+}));
+
 import { getAccount, getTransactions } from "../api";
 
 const invalidAddress = [

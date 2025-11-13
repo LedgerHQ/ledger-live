@@ -9,6 +9,7 @@ import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useTranslation } from "react-i18next";
 
+const linkUrl = "https://www.ledger.com/staking/staking-mina";
 const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -26,7 +27,6 @@ const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
     : t("mina.stakeBanner.description");
 
   const linkText = t("common.learnMore");
-  const linkUrl = "https://www.ledger.com/staking/staking-mina";
 
   const onClick = () => {
     track("button_clicked", {
