@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "已提取",
       "SENDING" : "发送",
       "BURN" : "已销毁",
-      "ASSOCIATE_TOKEN" : "关联代币"
+      "ASSOCIATE_TOKEN" : "关联代币",
+      "CONTRACT_CALL" : "合约调用"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -1446,6 +1447,12 @@
         "description" : "从任何交易所或钱包直接转入您的 Ledger。",
         "actionCompletedPopupLabel" : "资产已转移"
       },
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "actionCompletedPopupLabel" : "账户已同步"
+      },
       "recover" : {
         "title" : "订阅 Ledger Recover",
         "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
+      "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
       "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服。</2>",
@@ -2279,6 +2287,7 @@
         "label" : "信贷账户",
         "parentAccount" : "1. 选择 {{currencyName}} 账户",
         "token" : "2. 选择代币",
+        "errorLoadingTokens" : "加载代币时出错",
         "verifyTokenType" : "请验证 <0>{{token}}</0> 是 <0>{{tokenType}}</0> 代币。发送到 {{currency}} 账户的任何其他类型的加密资产都可能被丢失。",
         "warningTokenType" : "请只发送 <0>{{ticker}}</0> 或 <0>{{tokenType}}</0> 代币到 {{currency}} 账户。发送其他加密资产可能会导致资金的永久损失",
         "depositFromCexBannerTitle" : "从您的比特币基地（Coinbase）账户存入加密货币"
@@ -6777,6 +6786,10 @@
       "title" : "无法验证代币关联",
       "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "需要核实以太坊虚拟机 (EVM) 地址",
+      "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "从文件加载图片失败。",
       "description" : "请使用图片再试一次。"
@@ -7110,6 +7123,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "了解更多"
+        },
+        "evmVerificationRequired" : {
+          "text" : "您正在发送 ERC-20 代币。对于此类交易，您的 Ledger 设备将显示发送者的 EVM 地址，而非其账户 ID。\n请按照<0>此指南</0>，在确认前核实地址是否正确。"
         }
       }
     },
