@@ -23,6 +23,7 @@ import { urls } from "~/utils/urls";
 import LocationDisabled from "~/components/RequiresLocation/LocationDisabled";
 import LocationPermissionDenied from "~/components/RequiresLocation/LocationPermissionDenied";
 import { trace } from "@ledgerhq/logs";
+import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
   error: HwTransportError | DeprecatedError | Error;
@@ -53,7 +54,8 @@ const getIsBrokenPairing = (error: Error) => {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
   const isPairingStatus = status === "pairing";
-  const isFirmwareNotRecognized = error instanceof FirmwareNotRecognized;
+  const isFirmwareNotRecognized =
+    error instanceof FirmwareNotRecognized || isInvalidGetFirmwareMetadataResponseError(error);
   const isGenuineCheckStatus = status === "genuinecheck";
   const isGenuineCheckSkippableError = isGenuineCheckStatus && !isFirmwareNotRecognized;
   const isBrokenPairing = useMemo(() => getIsBrokenPairing(error), [error]);

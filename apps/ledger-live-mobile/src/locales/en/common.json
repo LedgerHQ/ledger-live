@@ -1154,6 +1154,11 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "InvalidGetFirmwareMetadataResponseError": {
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "openSettings": "Go to settings"
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning": {
+      "title": "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError": {
+      "title": "Amount too large for UTXO constraints."
     }
   },
   "crash": {
