@@ -11,9 +11,28 @@ import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
+LiveConfig.setConfig({
+  config_currency_bitcoin: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+    },
+  },
+  config_currency_ethereum: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+    },
+  },
+});
 const USDT = {
   type: "TokenCurrency" as const,
   id: "ethereum/erc20/usd_tether__erc20_",

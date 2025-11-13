@@ -13,7 +13,7 @@ export const groupCurrenciesByProvider = (assetsSorted: AssetData[]) => {
         asset: { id: providerId },
         networks = [],
       } = item;
-      if (networks.length > 0) {
+      if (networks?.length > 0) {
         const mainCurrency = networks.find(c => c.id === providerId) ?? networks[0];
         assetMap.set(providerId, {
           mainCurrency,

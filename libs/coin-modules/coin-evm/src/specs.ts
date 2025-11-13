@@ -53,6 +53,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   berachain: 0.001,
   sei_network_evm: 0.001,
   monad: 0.05,
+  somnia: 0.001,
 };
 
 /**

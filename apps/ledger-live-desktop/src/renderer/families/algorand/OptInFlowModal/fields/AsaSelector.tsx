@@ -64,7 +64,6 @@ export default function DelegationSelectorField({
 
   const { data } = useTokensData({
     networkFamily: "algorand",
-    pageSize: 100,
   });
 
   const options = data?.tokens || [];

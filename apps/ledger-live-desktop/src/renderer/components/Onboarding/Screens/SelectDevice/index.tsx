@@ -11,6 +11,7 @@ import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { OnboardingContext } from "../../index";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const SelectDeviceContainer = styled(Flex).attrs({
   height: "100%",
@@ -52,6 +53,7 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
+      <TrackPage category="Onboarding Device - Selection" />
       <OnboardingNavHeader
         onClickPrevious={() =>
           history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")

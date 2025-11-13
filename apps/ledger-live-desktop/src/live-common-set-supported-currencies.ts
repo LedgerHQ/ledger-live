@@ -121,4 +121,5 @@ setSupportedCurrencies([
   "babylon",
   "kaspa",
   "monad",
+  "somnia",
 ]);

@@ -7311,11 +7311,11 @@
         "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
-      "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "titleCompleted": "Subscribed to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
-        "popupLabel": "Successfully subscribed to Ledger Recover"
+      "syncAccounts": {
+        "title": "Sync your crypto accounts",
+        "titleCompleted": "Your accounts are synchronized",
+        "description": "Activate Ledger Sync to sync your crypto accounts",
+        "popupLabel": "Accounts synced"
       }
     }
   },

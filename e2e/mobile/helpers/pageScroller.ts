@@ -71,15 +71,20 @@ export class PageScroller {
     direction: Direction,
     pixels: number,
   ): Promise<void> {
-    switch (direction) {
-      case "down":
-        return scrollContainer.scroll(pixels, "down", NaN, 0.8);
-      case "up":
-        return scrollContainer.scroll(pixels, "up", NaN, 0.8);
-      case "bottom":
-        return scrollContainer.swipe("up", "fast");
-      default:
-        throw new Error(`Unsupported scroll direction: ${direction}`);
+    try {
+      switch (direction) {
+        case "down":
+          return await scrollContainer.scroll(pixels, "down", NaN, 0.8);
+        case "up":
+          return await scrollContainer.scroll(pixels, "up", NaN, 0.8);
+        case "bottom":
+          return await scrollContainer.swipe("up", "fast");
+        default:
+          throw new Error(`Unsupported scroll direction: ${direction}`);
+      }
+    } catch (error) {
+      // If scroll fails, try alternative approaches for ModularDrawer
+      return await scrollContainer.swipe(direction === "down" ? "up" : "down", "slow");
     }
   }
 

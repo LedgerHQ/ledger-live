@@ -1,6 +1,7 @@
 import { useDeviceSessionState } from "@ledgerhq/live-dmk-shared";
 
-export { DeviceManagementKitTransport } from "./transport/DeviceManagementKitTransport";
+export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKitBLETransport";
+export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
 export * from "./errors";
 export * from "./hooks";
 export { useDeviceSessionState };

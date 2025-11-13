@@ -19,15 +19,24 @@ export function runAddAccountTest(
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.common.performSearch(currency.name);
-      await app.receive.selectCurrency(currency.id);
-      await app.receive.selectNetworkIfAsked(currency.id);
+
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
+      if (isModularDrawer) {
+        await app.modularDrawer.performSearchByTicker(currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+        await app.modularDrawer.selectNetworkIfAsked(currency.name);
+      } else {
+        await app.common.performSearch(currency.id);
+        await app.receive.selectCurrency(currency.id);
+        await app.receive.selectNetworkIfAsked(currency.id);
+      }
 
       const accountId = await app.addAccount.addAccountAtIndex(
         `${currency.name} 1`,
         currency.id,
         0,
       );
+
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.name);

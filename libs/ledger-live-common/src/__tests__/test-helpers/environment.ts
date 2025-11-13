@@ -124,6 +124,7 @@ setSupportedCurrencies([
   "canton_network_testnet",
   "kaspa",
   "monad",
+  "somnia",
 ]);
 LiveConfig.setConfig(liveConfig);
 

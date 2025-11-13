@@ -17,7 +17,6 @@ import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokens
 const TokensList = () => {
   const { data, isLoading, error, loadNext, isSuccess } = useTokensData({
     networkFamily: ["ethereum", "polygon"],
-    pageSize: 100,
     isStaging: false,
   });
 
@@ -74,7 +73,6 @@ const InfiniteTokensList = () => {
     refetch
   } = useTokensData({
     networkFamily: "ethereum",
-    pageSize: 100,
     output: ["id", "name", "ticker", "contract_address"],
   });
 
@@ -119,7 +117,7 @@ const { data: hash } = cryptoAssetsApi.useGetTokensSyncHashQuery("ethereum");
 - `useTokensData(params)` - Fetch paginated tokens data with infinite scroll support
   - **Parameters:**
     - `networkFamily?: string` - Filter by network families (e.g., "ethereum", "polygon")
-    - `pageSize?: number` - Number of items per page (default: 100, options: 10, 100, 1000)
+    - `pageSize?: number` - Number of items per page (default: 1000, options: 10, 100, 1000)
     - `isStaging?: boolean` - Use staging environment
     - `output?: string[]` - Specify output fields (default: all fields)
   - **Returns:**

@@ -6,6 +6,7 @@ import {
   UpdateFirmwareActionState,
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getDeviceHasBattery } from "@ledgerhq/live-common/device/use-cases/getDeviceHasBattery";
 import {
   Alert,
   Flex,
@@ -188,6 +189,7 @@ export const FirmwareUpdate = ({
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
   const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
+  const hasBattery = getDeviceHasBattery(device.modelId);
   const {
     requestCompleted: batteryRequestCompleted,
     batteryStatusesState,
@@ -198,6 +200,7 @@ export const FirmwareUpdate = ({
   } = useBatteryStatuses({
     deviceId: device.deviceId,
     statuses: requiredBatteryStatuses,
+    enabled: hasBattery,
   });
 
   const {
@@ -789,6 +792,11 @@ export const FirmwareUpdate = ({
     isBeforeOnboarding,
     deviceInfo.version,
   ]);
+
+  /** For devices with no battery, start the update when the release notes are not shown */
+  useEffect(() => {
+    if (!hasBattery && !showReleaseNotes) startUpdate();
+  }, [hasBattery, startUpdate, showReleaseNotes]);
 
   useEffect(() => {
     if (!batteryRequestCompleted) return;

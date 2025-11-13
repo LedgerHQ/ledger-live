@@ -56,7 +56,7 @@ export function LiveApp({ route }: Props) {
     };
   }
   return manifest ? (
-    <SafeAreaViewFixed edges={["top", "bottom", "left", "right"]} isFlex>
+    <SafeAreaViewFixed edges={["bottom", "left", "right"]} isFlex>
       <TrackScreen category="Platform" name="App" />
       <WebPlatformPlayer
         manifest={manifest}

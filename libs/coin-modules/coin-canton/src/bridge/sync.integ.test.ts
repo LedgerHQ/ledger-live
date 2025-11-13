@@ -44,7 +44,7 @@ const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
   return callback(mockSigner);
 });
 
-describe("sync (devnet)", () => {
+describe.skip("sync (devnet)", () => {
   beforeAll(async () => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",

@@ -40,6 +40,7 @@ const SearchInputContainer = ({
         placeholder={t("modularDrawer.searchPlaceholder")}
         onDebouncedChange={handleDebouncedChange}
         onChange={e => handleSearch(e.nativeEvent.text)}
+        testID="modular-drawer-search-input"
       />
     </Flex>
   );

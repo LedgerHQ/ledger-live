@@ -67,6 +67,8 @@ import {
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
+  SettingsIsPostOnboardingFlowPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -120,6 +122,13 @@ export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload
 );
 export const setIsOnboardingFlow = createAction<SettingsIsOnboardingFlowPayload>(
   SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW,
+);
+export const setIsOnboardingFlowReceiveSuccess =
+  createAction<SettingsIsOnboardingFlowReceiveSuccessPayload>(
+    SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS,
+  );
+export const setIsPostOnboardingFlow = createAction<SettingsIsPostOnboardingFlowPayload>(
+  SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW,
 );
 export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
   SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,

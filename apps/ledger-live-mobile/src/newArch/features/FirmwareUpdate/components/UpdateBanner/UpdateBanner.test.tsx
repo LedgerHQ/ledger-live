@@ -70,7 +70,6 @@ const oldUpdateFlowNotSupportedDataSet: Array<{
 }> = [
   { ...NANO_S_DATA, version: "1.6.0", fwVersion: "1.7.0" },
   { ...NANO_X_DATA, version: "1.2.9", fwVersion: "1.3.0" },
-  { ...NANO_SP_DATA, version: "0.9.9", fwVersion: "1.0.0" },
 ];
 
 const oldUpdateFlowSupportedDataSet: Array<{
@@ -78,10 +77,7 @@ const oldUpdateFlowSupportedDataSet: Array<{
   version: string;
   fwVersion: string;
   productName: string;
-}> = [
-  { ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2" },
-  { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0" },
-];
+}> = [{ ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2" }];
 
 const newUpdateFlowSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
@@ -92,6 +88,7 @@ const newUpdateFlowSupportedDataSet: Array<{
   { ...STAX_DATA, version: "1.0.0", fwVersion: "1.1.0" },
   { ...EUROPA_DATA, version: "1.0.0", fwVersion: "1.1.0" },
   { ...NANO_X_DATA, version: "2.4.0", fwVersion: "2.4.1" },
+  { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0" },
 ];
 
 describe("<UpdateBanner />", () => {

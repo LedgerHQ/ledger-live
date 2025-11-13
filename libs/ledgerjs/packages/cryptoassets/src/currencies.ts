@@ -631,8 +631,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.cantonloop.com/party/$address",
+        tx: "https://ccview.io/updates/$hash",
+        address: "https://ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network"],
@@ -663,8 +663,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.testnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.testnet.cantonloop.com/party/$address",
+        tx: "https://testnet.ccview.io/updates/$hash",
+        address: "https://testnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_testnet"],
@@ -695,8 +695,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.devnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.devnet.cantonloop.com/party/$address",
+        tx: "https://devnet.ccview.io/updates/$hash",
+        address: "https://devnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_devnet"],
@@ -4837,6 +4837,27 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://monadexplorer.com/tx/$hash",
         address: "https://monadexplorer.com/address/$address",
+      },
+    ],
+  },
+  somnia: {
+    type: "CryptoCurrency",
+    id: "somnia",
+    coinType: CoinType.ETH,
+    name: "Somnia",
+    managerAppName: "Ethereum",
+    ticker: "SOMI",
+    scheme: "somnia",
+    color: "#6F0191",
+    family: "evm",
+    units: ethereumUnits("SOMI", "SOMI"),
+    ethereumLikeInfo: {
+      chainId: 5031,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.somnia.network/tx/$hash",
+        address: "https://explorer.somnia.network/address/$address",
       },
     ],
   },

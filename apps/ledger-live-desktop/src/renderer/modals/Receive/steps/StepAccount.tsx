@@ -77,7 +77,6 @@ const TokenSelection = ({
     loadNext,
   } = useTokensData({
     networkFamily: networkFamily,
-    pageSize: 100,
   });
 
   const handleMenuScrollToBottom = useCallback(() => {

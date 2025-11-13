@@ -115,7 +115,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   const { data, loadNext } = useTokensData({
     networkFamily: "algorand",
-    pageSize: 100,
   });
 
   const options = data?.tokens || [];

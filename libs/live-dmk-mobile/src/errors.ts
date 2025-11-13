@@ -1,6 +1,8 @@
 import {
   DeviceBusyError,
+  DeviceDisconnectedWhileSendingError,
   DmkError,
+  SendApduEmptyResponseError,
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
@@ -36,6 +38,8 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
+      error instanceof DeviceDisconnectedWhileSendingError ||
+      error instanceof SendApduEmptyResponseError ||
       error._tag === "DeviceSessionNotFound"
     );
   }
