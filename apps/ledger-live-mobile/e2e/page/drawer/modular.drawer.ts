@@ -32,7 +32,6 @@ export default class ModularDrawer {
   @Step("Select currency in list by ticker")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
     const assetItemId = this.assetItem(ticker);
-
     await tapById(assetItemId, 0);
   }
 

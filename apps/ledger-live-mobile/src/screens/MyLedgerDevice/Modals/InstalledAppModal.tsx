@@ -10,27 +10,13 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 
-import { NavigatorName, ScreenName } from "~/const";
-
 import AppIcon from "../AppsList/AppIcon";
 
 import QueuedDrawer from "~/components/QueuedDrawer";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
->;
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type Props = {
   state: State;
-  navigation: NavigationProps["navigation"];
   disable: boolean;
 };
 
@@ -52,32 +38,21 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
+const InstallSuccessBar = ({ state, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
 
   const { openDrawer } = useModularDrawerController();
 
   const onAddAccount = useCallback(() => {
-    if (isModularDrawerVisible({ location: ModularDrawerLocation.ADD_ACCOUNT })) {
-      openDrawer({
-        enableAccountSelection: false,
-        flow: "add_account",
-        source: "InstalleAppModal",
-      });
-    } else {
-      navigation.navigate(NavigatorName.AssetSelection, {
-        context: AddAccountContexts.AddAccounts,
-        sourceScreenName: "InstalleAppModal",
-      });
-    }
+    openDrawer({
+      enableAccountSelection: false,
+      flow: "add_account",
+      source: "InstalleAppModal",
+    });
 
     setHasBeenShown(true);
-  }, [isModularDrawerVisible, navigation, openDrawer]);
+  }, [openDrawer]);
 
   const successInstalls = useMemo(
     () =>

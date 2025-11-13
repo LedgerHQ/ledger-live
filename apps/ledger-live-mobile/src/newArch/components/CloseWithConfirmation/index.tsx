@@ -6,8 +6,6 @@ import { ScreenName } from "~/const";
 
 const routesWithConfirmation: string[] = [
   ScreenName.SelectDevice,
-  ScreenName.SelectNetwork,
-  ScreenName.AddAccountsSelectCrypto,
   ScreenName.ScanDeviceAccounts,
   ScreenName.NoAssociatedAccounts,
 ];
