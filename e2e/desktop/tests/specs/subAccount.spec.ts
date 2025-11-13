@@ -26,7 +26,11 @@ const subAccounts = [
   { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
 ];
 
-const subAccountReceive = [
+const subAccountReceive: Array<{
+  account: TokenAccount;
+  xrayTicket: string;
+  shouldSelectTokenOnReceiveFlow?: boolean;
+}> = [
   { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
   { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
   { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
