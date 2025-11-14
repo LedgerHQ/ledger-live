@@ -52,10 +52,6 @@ const useUpsellFlexModel = () => {
       },
     });
 
-    // Close the modal after navigation starts to avoid closing
-    // the selection modal before the navigation starts
-    setTimeout(() => navigation.goBack(), 100);
-
     if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
