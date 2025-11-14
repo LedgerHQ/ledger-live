@@ -44,6 +44,7 @@ import {
 import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
   [key: string]: Theme;
@@ -337,6 +338,9 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  // Hook to close drawers when deeplink is triggered after app was in background
+  const onDeeplinkReceived = useDeeplinkDrawerCleanup();
+
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
@@ -514,6 +518,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Close all drawers if app was in background before deeplink
+            onDeeplinkReceived();
+
             // Prevent default deep link if we're already in a wallet connect route.
             const navigationState = navigationRef.current?.getState();
             if (
@@ -715,6 +722,7 @@ export const DeeplinksProvider = ({
     storylyContext,
     liveAppProviderInitialized,
     manifests,
+    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
 
