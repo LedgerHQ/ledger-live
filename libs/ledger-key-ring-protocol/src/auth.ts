@@ -37,8 +37,14 @@ export async function genericWithJWT<T>(
 
   return job(jwt).catch(async e => {
     // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling
-    const { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated } =
-      networkCheckJwtExpiration(e);
+    const {
+      hasExpired,
+      canBeRefreshed,
+      isNotPermitted,
+      isTrustchainOutdated,
+      isUncaughtClientError,
+    } = networkCheckJwtExpiration(e);
+
     if (isNotPermitted) {
       throw new TrustchainNotAllowed();
     }
@@ -50,6 +56,12 @@ export async function genericWithJWT<T>(
       jwt = await (jwt && canBeRefreshed ? refresh(jwt) : auth());
       return job(jwt);
     }
+    if (isUncaughtClientError) {
+      log("trustchain", "Uncaught client error -> reauthenticating");
+      jwt = await auth();
+      return job(jwt);
+    }
+
     throw e;
   });
 }
@@ -59,6 +71,7 @@ type JwtExpirationCheck = {
   canBeRefreshed: boolean;
   isNotPermitted: boolean;
   isTrustchainOutdated: boolean;
+  isUncaughtClientError: boolean;
 };
 
 function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
@@ -66,6 +79,7 @@ function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
   let canBeRefreshed = false;
   let isNotPermitted = false;
   let isTrustchainOutdated = false;
+  let isUncaughtClientError = false;
   // this assume live-network is used and we adapt to its error's format
   if (error instanceof LedgerAPI4xx) {
     if (error.message.includes("JWT is expired")) {
@@ -75,7 +89,15 @@ function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
       isNotPermitted = true;
     } else if (error.message.includes("path does not match")) {
       isTrustchainOutdated = true;
+    } else {
+      isUncaughtClientError = true;
     }
   }
-  return { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated };
+  return {
+    hasExpired,
+    canBeRefreshed,
+    isNotPermitted,
+    isTrustchainOutdated,
+    isUncaughtClientError,
+  };
 }
