@@ -31,6 +31,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
         time: date,
       },
       date: date,
+      failed: operation.hasFailed ?? false,
     },
     type,
     value: BigInt(value.toString()),

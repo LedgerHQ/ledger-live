@@ -4,6 +4,7 @@ import type { TezosApi } from "./types";
 import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 /**
+ * Ghostnet-specific integration tests
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */

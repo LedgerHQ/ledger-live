@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -200,7 +200,6 @@ const StepReceiveFunds = (props: StepProps) => {
   invariant(account && mainAccount, "No account given");
   const maybeAccountName = useMaybeAccountName(account);
   const name = token ? token.name : maybeAccountName || getDefaultAccountName(account);
-  const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
@@ -233,13 +232,10 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
 
   const onVerify = useCallback(() => {
-    // if device has changed since the beginning, we need to re-entry device
-    if (device !== initialDevice.current || !isAddressVerified) {
-      transitionTo("device");
-    }
     onChangeAddressVerified(null);
     onResetSkip();
-  }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
+    transitionTo("device");
+  }, [onChangeAddressVerified, onResetSkip, transitionTo]);
 
   const onFinishReceiveFlow = useCallback(() => {
     if (!isOnboardingReceiveFlow) {

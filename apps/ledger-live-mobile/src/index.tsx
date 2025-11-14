@@ -18,6 +18,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
+import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
@@ -25,6 +26,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -35,7 +37,6 @@ import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
-import RtkQueryDevPanel from "~/screens/Settings/Debug/Debugging/RTK";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
@@ -46,13 +47,11 @@ import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
-import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
-import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
@@ -61,6 +60,7 @@ import {
   setOsTheme,
   setPersonalizedRecommendations,
   setIsOnboardingFlow,
+  setIsPostOnboardingFlow,
 } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
@@ -77,10 +77,11 @@ import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/po
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
-import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
+import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -130,7 +131,9 @@ function App() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
+  const initiatedIsPostOnboardingFlow = useRef<boolean>(isPostOnboardingFlow);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
@@ -183,8 +186,15 @@ function App() {
   ]);
 
   useEffect(() => {
+    /* 
+    / To capture all tracking events under the same flow we have these states set
+    / and to prevent the flow state leaking we reset them here
+    */
     if (initiatedIsOnboardingFlow.current) {
       dispatch(setIsOnboardingFlow(false));
+    }
+    if (initiatedIsPostOnboardingFlow.current) {
+      dispatch(setIsPostOnboardingFlow(false));
     }
   }, [dispatch]);
 
@@ -219,7 +229,6 @@ function App() {
   useAccountsWithFundsListener(accounts, updateIdentify);
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
-  useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
 
   return (
@@ -237,7 +246,6 @@ function App() {
       )}
 
       <AnalyticsConsole />
-      <RtkQueryDevPanel />
 
       <DebugTheme />
       <Modals />
@@ -302,7 +310,7 @@ export default class Root extends Component {
   render() {
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {(ready, initialCountervalues) =>
+        {({ ready, initialCountervalues, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -314,35 +322,37 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
-                <FirebaseRemoteConfigProvider>
-                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                    <I18nextProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <StorylyProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <App />
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
-                              </StylesProvider>
-                            </StorylyProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nextProvider>
-                  </FirebaseFeatureFlagsProvider>
-                </FirebaseRemoteConfigProvider>
+                <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                          <BridgeSyncProvider>
+                                            <App />
+                                          </BridgeSyncProvider>
+                                        </WaitForAppReady>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
+                          </StorylyProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>
           ) : (

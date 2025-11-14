@@ -11,6 +11,7 @@ import ManagerEntryPoint from "../components/ManagerEntryPoint";
 import AccountsEntryPoint from "../components/AccountsEntryPoint";
 import SettingsEntryPoint from "../components/SettingsEntryPoint";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
+import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
 
 export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
   const { push } = useHistory();
@@ -31,7 +32,10 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       enabled: featureLedgerSyncEntryPoints?.params?.onboarding ?? false,
       page: AnalyticsPage.Onboarding,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Onboarding" });
+        track("banner_clicked", {
+          banner: "Ledger Sync Activation",
+          page: AnalyticsPage.Onboarding,
+        });
       },
       component: OnboardingEntryPoint,
     },
@@ -39,7 +43,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       enabled: featureLedgerSyncEntryPoints?.params?.manager ?? false,
       page: AnalyticsPage.Manager,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Manager" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Manager });
         push("/settings");
       },
       component: ManagerEntryPoint,
@@ -48,7 +52,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       enabled: featureLedgerSyncEntryPoints?.params?.accounts ?? false,
       page: AnalyticsPage.Accounts,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Accounts" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Accounts });
         push("/settings");
       },
       component: AccountsEntryPoint,
@@ -57,9 +61,20 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,
       page: AnalyticsPage.Settings,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Settings" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Settings });
       },
       component: SettingsEntryPoint,
+    },
+    [EntryPoint.postOnboarding]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
+      page: AnalyticsPage.PostOnboarding,
+      onClick: () => {
+        track("banner_clicked", {
+          banner: "Ledger Sync Activation",
+          page: AnalyticsPage.PostOnboarding,
+        });
+      },
+      component: PostOnboardingEntryPoint,
     },
   };
 

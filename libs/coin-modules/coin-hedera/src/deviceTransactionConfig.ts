@@ -1,9 +1,9 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { isTokenAssociateTransaction } from "./logic";
+import { isTokenAssociateTransaction } from "./logic/utils";
+import type { Transaction, TransactionStatus } from "./types";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
   status: { estimatedFees },
 }: {
@@ -11,7 +11,7 @@ function getDeviceTransactionConfig({
   parentAccount?: Account;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
 
   const method = (() => {

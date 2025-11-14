@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:15
+    cpus: 1
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    volumes:
+      - "./postgres:/docker-entrypoint-initdb.d"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U username"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  btcliked:
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/bitcoin-node:28.0
+    platform: linux/amd64
+    command: /app/bitcoin/bin/bitcoind -datadir=/config -regtest -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=user -rpcpassword=pass -fallbackfee=0.001 -deprecatedrpc=addresses -txindex -zmqpubsequence=tcp://0.0.0.0:19999
+    ports:
+      - "18443:18443" # exposes RPC
+  atlas-pending:
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-pending-v2:rolling
+    platform: linux/amd64
+    cpus: 1
+    pull_policy: always
+    command: /app/bin/atlas /config/pending.conf
+    volumes:
+      - "./atlas:/config"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      btcliked:
+        condition: service_started
+    restart: on-failure
+    healthcheck:
+      test: curl --fail http://localhost:9877/_health || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  atlas:
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-v2:rolling
+    platform: linux/amd64
+    cpus: 1
+    pull_policy: always
+    command: /app/bin/atlas /config/bitcoin.conf
+    volumes:
+      - "./atlas:/config"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      atlas-pending:
+        condition: service_started
+      btcliked:
+        condition: service_started
+    restart: on-failure
+    healthcheck:
+      test: curl --fail http://localhost:9877/_health || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  rabbitmq:
+    cpus: 1
+    image: rabbitmq:3
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 10
+  atlas-nginx:
+    image: nginx:latest
+    volumes:
+      - "./nginx:/etc/nginx/conf.d/"
+    depends_on:
+      - atlas
+    ports:
+      - "9876:9876"

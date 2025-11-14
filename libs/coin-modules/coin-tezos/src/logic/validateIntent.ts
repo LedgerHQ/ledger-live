@@ -98,16 +98,16 @@ function calculateAmounts(
   intent: TransactionIntent,
   senderInfo: any,
   estimatedFees: bigint,
+  estimatedAmount: bigint | undefined,
 ): { amount: bigint; totalSpent: bigint } {
   if (intent.type === "stake" || intent.type === "unstake") {
-    const amount = BigInt(senderInfo.type === "user" ? senderInfo.balance : 0);
-    return { amount, totalSpent: estimatedFees };
+    return { amount: 0n, totalSpent: estimatedFees };
   }
 
   if (intent.type === "send" && intent.useAllAmount) {
     if (senderInfo.type === "user") {
       const balance = BigInt(senderInfo.balance);
-      const amount = balance > estimatedFees ? balance - estimatedFees : 0n;
+      const amount = estimatedAmount ?? (balance > estimatedFees ? balance - estimatedFees : 0n);
       return { amount, totalSpent: amount + estimatedFees };
     }
     return { amount: 0n, totalSpent: 0n };
@@ -137,6 +137,7 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   let estimatedFees: bigint;
+  let estimatedAmount: bigint | undefined;
   let amount: bigint;
   let totalSpent: bigint;
 
@@ -178,6 +179,7 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
         },
       });
       estimatedFees = estimation.estimatedFees;
+      estimatedAmount = estimation.amount;
 
       // Handle Taquito errors
       if (estimation.taquitoError) {
@@ -189,7 +191,7 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     }
 
     // Calculate final amounts
-    const amounts = calculateAmounts(intent, senderInfo, estimatedFees);
+    const amounts = calculateAmounts(intent, senderInfo, estimatedFees, estimatedAmount);
     amount = amounts.amount;
     totalSpent = amounts.totalSpent;
 

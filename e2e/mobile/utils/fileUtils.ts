@@ -19,8 +19,9 @@ export class FileUtils {
       try {
         await fs.access(filePath);
         return true;
-      } catch (e: any) {
-        console.error("Error in waitForFileToExist : ", e);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        console.error("Error in waitForFileToExist:", errorMessage);
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }

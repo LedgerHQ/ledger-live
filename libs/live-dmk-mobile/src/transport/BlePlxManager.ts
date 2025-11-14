@@ -1,4 +1,4 @@
-import { BleManager as RNBleManager } from "react-native-ble-plx";
+import { BleManager as RNBleManager, State } from "react-native-ble-plx";
 
 export class BlePlxManager {
   private static _instance: RNBleManager;
@@ -12,5 +12,9 @@ export class BlePlxManager {
 
   static onStateChange(listener: (state: string) => void, emitCurrentState?: boolean) {
     return this.instance.onStateChange(listener, emitCurrentState);
+  }
+
+  static state(): Promise<State> {
+    return this.instance.state();
   }
 }

@@ -4,7 +4,6 @@ import {
   activateLedgerSync,
   expectValidAddressDevice,
   signSendTransaction,
-  signSendNFTTransaction,
   signDelegationTransaction,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
@@ -15,7 +14,7 @@ import {
   providePublicKey,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -35,11 +34,6 @@ export class SpeculosPage extends AppPage {
     await activateLedgerSync();
   }
 
-  @step("Sign Send NFT Transaction")
-  async signSendNFTTransaction(tx: NFTTransaction) {
-    await signSendNFTTransaction(tx);
-  }
-
   @step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
     await signSendTransaction(tx);
@@ -56,8 +50,12 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Verify amounts and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
+  async verifyAmountsAndAcceptSwapForDifferentSeed(
+    swap: Swap,
+    amount: string,
+    errorMessage: string | null,
+  ) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
   @step("Verify amounts and reject swap")

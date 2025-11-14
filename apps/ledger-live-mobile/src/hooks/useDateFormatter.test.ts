@@ -8,9 +8,13 @@ import {
   mmddyyyyFormatter,
 } from "~/components/DateFormat/formatter.util";
 
-jest.mock("react-redux", () => ({
-  useSelector: jest.fn(),
-}));
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  return {
+    ...actual,
+    useSelector: jest.fn(),
+  };
+});
 
 jest.mock("~/components/DateFormat/formatter.util", () => ({
   ddmmyyyyFormatter: { format: jest.fn() },

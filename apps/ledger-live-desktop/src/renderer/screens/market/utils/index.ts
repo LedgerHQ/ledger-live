@@ -1,4 +1,4 @@
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { listItemHeight } from "../components/Table";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -28,30 +28,28 @@ export function formatPercentage(percentage: number, decimals = 2): number {
 }
 
 export function isAvailableOnBuy(
-  currency: CurrencyData | null | undefined,
+  currency: MarketCurrencyData | null | undefined,
   isCurrencyAvailable: (
     currencyId: CryptoCurrency["id"] | string,
     mode: "onRamp" | "offRamp",
   ) => boolean,
 ) {
   if (!currency) return false;
-  return (
-    (!!currency.internalCurrency &&
-      !!currency.internalCurrency?.id &&
-      isCurrencyAvailable(currency.internalCurrency.id, "onRamp")) ||
-    currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) ||
-    false
-  );
+  return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) || false;
 }
 
 export function isAvailableOnSwap(
-  currency: CurrencyData | null | undefined,
+  currency: MarketCurrencyData | null | undefined,
   currenciesForSwapAllSet: Set<string>,
 ) {
   if (!currency) return false;
-  return (
-    (!!currency.internalCurrency && currenciesForSwapAllSet.has(currency.internalCurrency.id)) ||
-    currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) ||
-    false
-  );
+  return currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) || false;
+}
+
+export function isAvailableOnStake(
+  currency: MarketCurrencyData | null | undefined,
+  getCanStakeCurrency: (currencyId: string) => boolean,
+) {
+  if (!currency) return false;
+  return currency?.ledgerIds.some(lrId => getCanStakeCurrency(lrId)) || false;
 }

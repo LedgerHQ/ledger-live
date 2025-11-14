@@ -35,7 +35,11 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           children: t(prop.name),
           onPress: () => {
             track("button_clicked", { button: prop.analytics, page: router.name });
-            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            if (quickActionsItem.customHandler) {
+              quickActionsItem.customHandler();
+            } else if (quickActionsItem.route) {
+              navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            }
           },
           disabled: quickActionsItem.disabled,
         };

@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "../HelpDrawer";
@@ -17,6 +17,7 @@ import {
   completeOnboarding,
   setHasOrderedNano,
   setIsOnboardingFlow,
+  setIsOnboardingFlowReceiveSuccess,
   setReadOnlyMode,
 } from "~/actions/settings";
 import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
@@ -27,6 +28,8 @@ import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { COMPANION_STATE, CompanionStep, SEED_STATE } from "./types";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
 
 /*
  * Constants
@@ -94,7 +97,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const [companionStep, setCompanionStep] = useState<CompanionStep>(COMPANION_STATE.SETUP);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-
+  const [isInitialised, setIsInitialised] = useState<boolean>(false);
   /*
    * Refs
    */
@@ -107,6 +110,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
    * Redux State
    */
   const dispatchRedux = useDispatch();
+  const isOnboardingFlowReceiveSuccess = useSelector(isOnboardingFlowReceiveSuccessSelector);
 
   /*
    * Custom hooks/state
@@ -114,6 +118,11 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const isFocused = useIsFocused();
   useKeepScreenAwake(isFocused);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
+
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    sourceScreenName: "sync-onboarding-companion",
+    navigationOverride: baseNavigation,
+  });
 
   const twoStepDesync = useTwoStepDesync({
     onLostDevice,
@@ -135,55 +144,94 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
    */
   const handleOnboardingDone = useCallback(() => {
     handleOnboardingDoneState();
-    navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
+    navigation.navigate(ScreenName.SyncOnboardingCompletion, {
+      device,
+      seedConfiguration: analyticsSeedConfiguration.current,
+    });
   }, [device, navigation, handleOnboardingDoneState]);
+
+  const handleReceiveFlowSuccess = useCallback(() => {
+    dispatchRedux(setIsOnboardingFlowReceiveSuccess(false));
+    handleOnboardingDoneState();
+    baseNavigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.BaseOnboarding,
+          state: {
+            routes: [
+              {
+                name: NavigatorName.SyncOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: ScreenName.SyncOnboardingCompletion,
+                      params: {
+                        device,
+                        seedConfiguration: analyticsSeedConfiguration.current,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    });
+  }, [dispatchRedux, baseNavigation, device, handleOnboardingDoneState]);
 
   const handleSecondStepFinish = useCallback(
     (done: boolean) => {
       if (!done) {
         handleOnboardingDone();
       } else if (companionStep === SEED_STATE.NEW_SEED) {
-        handleOnboardingDoneState();
         dispatchRedux(setIsOnboardingFlow(true));
-        baseNavigation.reset({
-          index: 1,
-          routes: [
-            {
-              name: NavigatorName.BaseOnboarding,
-              state: {
-                routes: [
-                  {
-                    name: NavigatorName.SyncOnboarding,
-                    state: {
-                      routes: [
-                        {
-                          name: ScreenName.SyncOnboardingCompletion,
-                          params: {
-                            device,
-                            seedConfiguration: analyticsSeedConfiguration.current,
+
+        if (isModularDrawerEnabled) {
+          // No genericity or extraction because we will remove the other code block once we fully migrate to the modular drawer.
+          handleOpenReceiveDrawer();
+        } else {
+          baseNavigation.reset({
+            index: 1,
+            routes: [
+              {
+                name: NavigatorName.BaseOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.SyncOnboarding,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.SyncOnboardingCompletion,
+                            params: {
+                              device,
+                              seedConfiguration: analyticsSeedConfiguration.current,
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
-                  },
-                  {
-                    name: NavigatorName.ReceiveFunds,
-                    state: {
-                      routes: [
-                        {
-                          name: ScreenName.ReceiveSelectCrypto,
-                          params: {
-                            device,
+                    {
+                      name: NavigatorName.ReceiveFunds,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.ReceiveSelectCrypto,
+                            params: {
+                              device,
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
-                  },
-                ],
+                  ],
+                },
               },
-            },
-          ],
-        });
+            ],
+          });
+        }
       } else {
         setCompanionStep(COMPANION_STATE.EXIT);
       }
@@ -194,8 +242,9 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       baseNavigation,
       device,
       handleOnboardingDone,
-      handleOnboardingDoneState,
       dispatchRedux,
+      isModularDrawerEnabled,
+      handleOpenReceiveDrawer,
     ],
   );
   /*
@@ -226,6 +275,15 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       }
     };
   }, [companionStep, handleOnboardingDone]);
+
+  useEffect(() => {
+    if (!isInitialised) {
+      if (isOnboardingFlowReceiveSuccess) dispatchRedux(setIsOnboardingFlowReceiveSuccess(false));
+      setIsInitialised(true);
+    } else if (isOnboardingFlowReceiveSuccess) {
+      handleReceiveFlowSuccess();
+    }
+  }, [isOnboardingFlowReceiveSuccess, handleReceiveFlowSuccess, dispatchRedux, isInitialised]);
 
   return (
     <>

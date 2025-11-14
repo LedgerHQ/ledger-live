@@ -84,6 +84,7 @@ export type ReceiveFundsStackParamList = {
     onSuccess?: (_?: string) => void;
     onError?: () => void;
     fromMenu?: boolean;
+    hideBackButton?: boolean;
   };
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>

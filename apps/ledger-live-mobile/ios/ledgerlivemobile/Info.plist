@@ -38,7 +38,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.90.0</string>
+	<string>3.96.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -50,6 +50,7 @@
 			<string>com.ledger.live</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>ledgerwallet</string>
 				<string>ledgerlive</string>
 			</array>
 		</dict>
@@ -74,11 +75,11 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Ledger Live needs to connect to your Ledger device to manage your crypto assets</string>
+	<string>Ledger Wallet needs to connect to your Ledger device to manage your crypto assets</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>The Ledger Live app needs access device</string>
+	<string>The Ledger Wallet app needs access device</string>
 	<key>NSCameraUsageDescription</key>
-	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
+	<string>The Ledger Wallet app needs access to your camera to scan QR codes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>NSMicrophoneUsageDescription</key>

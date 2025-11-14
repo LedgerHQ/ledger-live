@@ -25,7 +25,7 @@ describe("Add account from modal", () => {
 
   $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
-    await app.receive.selectCurrency(testedCurrency);
+    await app.receive.selectCurrencyByName(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.waitAccountsDiscovery();

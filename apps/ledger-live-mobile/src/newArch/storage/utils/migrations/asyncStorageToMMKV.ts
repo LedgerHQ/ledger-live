@@ -58,12 +58,12 @@ export const migrator = {
         state.migrationStatus !== MIGRATION_STATUS.COMPLETED &&
         state.rollbackStatus !== ROLLBACK_STATUS.COMPLETED
       ) {
-        log("Storage", "Running rollback...");
+        log("Storage", "Running migration...");
         migrator.migrate(state);
         return true;
       }
     } catch (e) {
-      console.error("Error during migration rollback", e);
+      console.error("Error during migration, will rollback", e);
       await migrator.rollbackToAsyncStorage(state);
     }
     return false;
@@ -84,7 +84,7 @@ export const migrator = {
       migrator.markMigrationStatusCompleted(state);
       migrator.selectMMKVStorage(state);
 
-      log("Storage", "Migration");
+      log("Storage", "Migration completed");
       return true;
     } catch (error) {
       console.error("Failed to migrate from AsyncStorage to MMKV!", error);
@@ -122,7 +122,7 @@ export const migrator = {
       state.migrationStatus === MIGRATION_STATUS.NOT_STARTED ||
       state.storageType === STORAGE_TYPE.ASYNC_STORAGE
     ) {
-      console.warn(
+      log(
         "Storage",
         "Rollback skipped: Migration has not started or storage is already AsyncStorage.",
       );
@@ -240,7 +240,7 @@ export const migrator = {
   },
 
   /**
-   * Sets the migration status to {@link MigrationStatus}.
+   * Sets the rollback status to {@link RollbackStatus}.
    *
    * @param state
    * The current state of the application storage.
@@ -250,7 +250,7 @@ export const migrator = {
   },
 
   /**
-   * Sets the migration status to {@link MigrationStatus}.
+   * Sets the rollback status to {@link RollbackStatus}.
    *
    * @param state
    * The current state of the application storage.
@@ -260,7 +260,7 @@ export const migrator = {
   },
 
   /**
-   * Sets the migration status to {@link MigrationStatus}.
+   * Sets the rollback status to {@link RollbackStatus}.
    *
    * @param state
    * The current state of the application storage.
@@ -270,7 +270,7 @@ export const migrator = {
   },
 
   /**
-   * Sets the migration status to {@link RollbackStatus}.
+   * Sets the rollback status to {@link RollbackStatus}.
    *
    * @param state
    * The current state of the application storage.

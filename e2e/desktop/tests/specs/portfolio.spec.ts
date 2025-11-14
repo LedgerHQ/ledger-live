@@ -1,6 +1,6 @@
-import { test } from "../fixtures/common";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
+import { test } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
 
 test.describe("Portfolio", () => {
   test.use({
@@ -9,7 +9,7 @@ test.describe("Portfolio", () => {
   test(
     "Charts are displayed when user added his accounts",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-927, B2CQA-928, B2CQA-3038",

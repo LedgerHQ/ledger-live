@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -112,7 +112,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
     [navigation, route.params, bridge, transaction],
   );
   const subAccounts = mainAccount.subAccounts;
-  const options = listTokensForCryptoCurrency(mainAccount.currency);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: "algorand",
+  });
+
+  const options = data?.tokens || [];
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   // @ts-expect-error token is a string and setInfoModalOpen expect a boolean, whut ?
   const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
@@ -133,9 +138,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         )}
         keyExtractor={keyExtractor}
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
       />
     ),
-    [subAccounts, onNext, openModal],
+    [subAccounts, onNext, openModal, loadNext],
   );
   return (
     <SafeAreaView

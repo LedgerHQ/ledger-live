@@ -3,7 +3,7 @@ import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 export function runVerifyAddressTest(
   account: AccountType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 ) {
   describe("Verify Address", () => {
     beforeAll(async () => {

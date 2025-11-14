@@ -51,6 +51,9 @@ jest.mock("react-i18next", () => ({
   Trans: ({ i18nKey }: { i18nKey: string }) => (
     <div data-testid={`trans-${i18nKey}`}>{i18nKey}</div>
   ),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
 }));
 
 jest.mock("~/reducers/settings", () => ({
@@ -122,6 +125,15 @@ jest.mock("@ledgerhq/native-ui", () => ({
       <Icon />
     </div>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Alert: ({ children, testID, ...props }: any) => (
+    <div data-testid={testID} {...props}>
+      {children}
+    </div>
+  ),
+  IconsLegacy: {
+    InfoMedium: () => <div data-testid="info-medium-icon">InfoMedium</div>,
+  },
 }));
 
 // Mock navigation types

@@ -2,7 +2,7 @@ import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -43,7 +43,7 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const USDC_ON_SCROLL = findTokenById("scroll/erc20/usd_coin");
+  const USDC_ON_SCROLL = tokensById["scroll/erc20/usd_coin"];
   if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
   const scenarioSendUSDCTransaction: ScrollScenarioTransaction = {
     name: "Send USDC",
@@ -114,7 +114,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, scroll);
 
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
+    const USDC_ON_SCROLL = tokensById[TOKEN_ID];
     if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
     await callMyDealer({
       provider,
@@ -136,7 +136,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     await indexBlocks();
   },
   beforeAll: account => {
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
+    const USDC_ON_SCROLL = tokensById[TOKEN_ID];
     if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
@@ -145,7 +145,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     );
   },
   afterAll: account => {
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
+    const USDC_ON_SCROLL = tokensById[TOKEN_ID];
     if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(

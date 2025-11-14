@@ -6,7 +6,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { SmallMarketItemChart } from "./MarketItemChart";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Button } from "../..";
 import { useTranslation } from "react-i18next";
 import { TableRow, TableCell } from "../../components/Table";
@@ -33,7 +33,7 @@ const EllipsisText = styled(Text)`
 `;
 
 type Props = {
-  currency?: CurrencyData | null;
+  currency?: MarketCurrencyData | null;
   counterCurrency?: string;
   style: React.CSSProperties;
   loading: boolean;
@@ -80,7 +80,9 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   );
 
   const hasActions =
-    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+    currency?.ledgerIds &&
+    currency?.ledgerIds.length > 0 &&
+    (availableOnBuy || availableOnSwap || availableOnStake);
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -211,7 +213,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 });
 
 type CurrencyRowProps = {
-  data: CurrencyData[]; // NB: CurrencyData.id is different to Currency.id
+  data: MarketCurrencyData[]; // NB: MarketCurrencyData.id is different to Currency.id
   index: number;
   counterCurrency?: string;
   loading: boolean;

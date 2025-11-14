@@ -1,5 +1,6 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
 import type { CosmosAccountRaw, Transaction } from "../types";
+import { BigNumber } from "bignumber.js";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreOperationFields: ["gas"],
@@ -51,7 +52,7 @@ const dataset: CurrenciesData<Transaction> = {
             date: "2023-07-26T02:02:57.000Z",
             value: "1000000",
             fee: "8880",
-            transactionSequenceNumber: 0,
+            transactionSequenceNumber: new BigNumber(0),
           },
         ],
         pendingOperations: [],

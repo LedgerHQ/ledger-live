@@ -34,5 +34,10 @@
     "src/transaction.ts",
     "src/tokens.ts"
   ],
-  "ignoreUnimported": []
+  "ignoreUnimported": [
+    "src/constants/env.ts",
+    "src/constants/index.ts"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": []
 }

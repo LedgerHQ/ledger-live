@@ -6,6 +6,7 @@ import {
   UpdateFirmwareActionState,
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getDeviceHasBattery } from "@ledgerhq/live-common/device/use-cases/getDeviceHasBattery";
 import {
   Alert,
   Flex,
@@ -71,6 +72,7 @@ import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/setting
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -187,6 +189,7 @@ export const FirmwareUpdate = ({
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
   const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
+  const hasBattery = getDeviceHasBattery(device.modelId);
   const {
     requestCompleted: batteryRequestCompleted,
     batteryStatusesState,
@@ -197,6 +200,7 @@ export const FirmwareUpdate = ({
   } = useBatteryStatuses({
     deviceId: device.deviceId,
     statuses: requiredBatteryStatuses,
+    enabled: hasBattery,
   });
 
   const {
@@ -248,13 +252,18 @@ export const FirmwareUpdate = ({
 
   useEffect(() => {
     if (updateStep === "completed") {
-      const completeTimeout = setTimeout(() => setFullUpdateComplete(true), 3000);
+      let dead = false;
+      const completeTimeout = setTimeout(() => {
+        if (dead) return;
+        setFullUpdateComplete(true);
+      }, 3000);
 
-      return () => clearTimeout(completeTimeout);
+      return () => {
+        dead = true;
+        clearTimeout(completeTimeout);
+      };
     }
-
-    return undefined;
-  });
+  }, [updateStep]);
 
   const restoreSteps = useMemo(() => {
     const steps = [];
@@ -784,6 +793,11 @@ export const FirmwareUpdate = ({
     deviceInfo.version,
   ]);
 
+  /** For devices with no battery, start the update when the release notes are not shown */
+  useEffect(() => {
+    if (!hasBattery && !showReleaseNotes) startUpdate();
+  }, [hasBattery, startUpdate, showReleaseNotes]);
+
   useEffect(() => {
     if (!batteryRequestCompleted) return;
 
@@ -891,7 +905,7 @@ export default function FirmwareUpdateScreen({ route: { params } }: NavigationPr
     return null;
   }
   return (
-    <Flex flex={1}>
+    <SafeAreaViewFixed isFlex>
       <FirmwareUpdate
         deviceInfo={params.deviceInfo}
         device={params.device}
@@ -899,6 +913,6 @@ export default function FirmwareUpdateScreen({ route: { params } }: NavigationPr
         onBackFromUpdate={params.onBackFromUpdate}
         isBeforeOnboarding={params.isBeforeOnboarding}
       />
-    </Flex>
+    </SafeAreaViewFixed>
   );
 }

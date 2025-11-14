@@ -1,5 +1,17 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.6.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
 ## 0.5.0
 
 ### Minor Changes

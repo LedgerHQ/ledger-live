@@ -1,5 +1,146 @@
 # @ledgerhq/cryptoassets
 
+## 13.32.0
+
+### Minor Changes
+
+- [#12257](https://github.com/LedgerHQ/ledger-live/pull/12257) [`b4ceaff`](https://github.com/LedgerHQ/ledger-live/commit/b4ceaff2ecf68d8a14e09801c76ab0b014c45286) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce hooks in cryptoassets
+
+- [#12277](https://github.com/LedgerHQ/ledger-live/pull/12277) [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make CryptoCurrency dynamically loadable.
+
+- [#12321](https://github.com/LedgerHQ/ledger-live/pull/12321) [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump axios version to 1.12.2
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+- [#12420](https://github.com/LedgerHQ/ledger-live/pull/12420) [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d) Thanks [@semeano](https://github.com/semeano)! - Add Monad currency
+
+- [#12460](https://github.com/LedgerHQ/ledger-live/pull/12460) [`607e4be`](https://github.com/LedgerHQ/ledger-live/commit/607e4be33145c102debce1606224b08579888aa8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify & implement all cal-client API for future Remove CAL.
+
+- [#12516](https://github.com/LedgerHQ/ledger-live/pull/12516) [`f8d904d`](https://github.com/LedgerHQ/ledger-live/commit/f8d904de5607c103549f247428b5a4079f28c1c0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update networkFamily params in CAL-client
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+- [#12307](https://github.com/LedgerHQ/ledger-live/pull/12307) [`36e5168`](https://github.com/LedgerHQ/ledger-live/commit/36e5168397eaec2a5f425038392a4400f60571d0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add useCurrencyById hook to cryptoassets package that finds a currency by ID (crypto or token) with async loading state. Updates mobile and desktop apps to use the new hook for currency/token lookups.
+
+- [#12442](https://github.com/LedgerHQ/ledger-live/pull/12442) [`6ccabef`](https://github.com/LedgerHQ/ledger-live/commit/6ccabef8f3c4e8cc042299d531684595ebadcc55) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Refactor api-token-converter to fix bad tokens data
+
+- [#12382](https://github.com/LedgerHQ/ledger-live/pull/12382) [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce CryptoAssetStore#getTokensSyncHash function
+
+- [#12274](https://github.com/LedgerHQ/ledger-live/pull/12274) [`d9305e8`](https://github.com/LedgerHQ/ledger-live/commit/d9305e8a4d8364366aaba05dd698396d28b539dc) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Remove cryptoassets fallback from exchange config flow
+
+### Patch Changes
+
+- Updated dependencies [[`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/live-env@2.20.0
+  - @ledgerhq/types-live@6.88.0
+
+## 13.32.0-next.0
+
+### Minor Changes
+
+- [#12257](https://github.com/LedgerHQ/ledger-live/pull/12257) [`b4ceaff`](https://github.com/LedgerHQ/ledger-live/commit/b4ceaff2ecf68d8a14e09801c76ab0b014c45286) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce hooks in cryptoassets
+
+- [#12277](https://github.com/LedgerHQ/ledger-live/pull/12277) [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make CryptoCurrency dynamically loadable.
+
+- [#12321](https://github.com/LedgerHQ/ledger-live/pull/12321) [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump axios version to 1.12.2
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+- [#12420](https://github.com/LedgerHQ/ledger-live/pull/12420) [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d) Thanks [@semeano](https://github.com/semeano)! - Add Monad currency
+
+- [#12460](https://github.com/LedgerHQ/ledger-live/pull/12460) [`607e4be`](https://github.com/LedgerHQ/ledger-live/commit/607e4be33145c102debce1606224b08579888aa8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify & implement all cal-client API for future Remove CAL.
+
+- [#12516](https://github.com/LedgerHQ/ledger-live/pull/12516) [`f8d904d`](https://github.com/LedgerHQ/ledger-live/commit/f8d904de5607c103549f247428b5a4079f28c1c0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update networkFamily params in CAL-client
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+- [#12307](https://github.com/LedgerHQ/ledger-live/pull/12307) [`36e5168`](https://github.com/LedgerHQ/ledger-live/commit/36e5168397eaec2a5f425038392a4400f60571d0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add useCurrencyById hook to cryptoassets package that finds a currency by ID (crypto or token) with async loading state. Updates mobile and desktop apps to use the new hook for currency/token lookups.
+
+- [#12442](https://github.com/LedgerHQ/ledger-live/pull/12442) [`6ccabef`](https://github.com/LedgerHQ/ledger-live/commit/6ccabef8f3c4e8cc042299d531684595ebadcc55) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Refactor api-token-converter to fix bad tokens data
+
+- [#12382](https://github.com/LedgerHQ/ledger-live/pull/12382) [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce CryptoAssetStore#getTokensSyncHash function
+
+- [#12274](https://github.com/LedgerHQ/ledger-live/pull/12274) [`d9305e8`](https://github.com/LedgerHQ/ledger-live/commit/d9305e8a4d8364366aaba05dd698396d28b539dc) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Remove cryptoassets fallback from exchange config flow
+
+### Patch Changes
+
+- Updated dependencies [[`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`7744980`](https://github.com/LedgerHQ/ledger-live/commit/774498090411f1a6d6c06395dda1fc7cd24adf24), [`77566c5`](https://github.com/LedgerHQ/ledger-live/commit/77566c5a3b5795f5938bd5daaa5f8d65934c56b8), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`f392f69`](https://github.com/LedgerHQ/ledger-live/commit/f392f6912f445cc2f7cf4dfcfd030fa3da76f736), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705), [`3d4188a`](https://github.com/LedgerHQ/ledger-live/commit/3d4188a26021d33b950129d82cb55d2c2e8d4358), [`2c6a198`](https://github.com/LedgerHQ/ledger-live/commit/2c6a198ba28391695202a0787ce168c53768ff37)]:
+  - @ledgerhq/live-env@2.20.0-next.0
+  - @ledgerhq/types-live@6.88.0-next.0
+
+## 13.31.0
+
+### Minor Changes
+
+- [#12051](https://github.com/LedgerHQ/ledger-live/pull/12051) [`ea16f59`](https://github.com/LedgerHQ/ledger-live/commit/ea16f592e85019a1b77287a7f2b975c6fcffc74c) Thanks [@semeano](https://github.com/semeano)! - Fetch SUI tokens from dynamic CAL
+
+- [#12143](https://github.com/LedgerHQ/ledger-live/pull/12143) [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate cryptoassets function to anticipate Removal CAL initiative.
+
+- [#12186](https://github.com/LedgerHQ/ledger-live/pull/12186) [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated `findTokenByTicker` function and related internal state. This function was ambiguous when multiple tokens shared the same ticker across different blockchains. Use `findTokenById` or `findTokenByAddressInCurrency` instead for more precise token lookup.
+
+- [#12185](https://github.com/LedgerHQ/ledger-live/pull/12185) [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated findTokenByAddress in favor of findTokenByAddressInCurrency
+
+  Removed the deprecated `findTokenByAddress` function which had ambiguous behavior when multiple tokens shared the same contract address across different blockchains. The function has been fully replaced with `findTokenByAddressInCurrency` which requires both the token address and parent currency ID, providing more precise token lookup.
+
+  This includes:
+
+  - Removal of `findTokenByAddress` function from cryptoassets package
+  - Removal of `tokensByAddress` state dictionary
+  - Update all usages to `findTokenByAddressInCurrency` across the codebase
+  - Update CryptoAssetsStore interface to remove the deprecated method
+
+- [#12196](https://github.com/LedgerHQ/ledger-live/pull/12196) [`565da80`](https://github.com/LedgerHQ/ledger-live/commit/565da807b1ebbfc830fd0e47b3d8856f88d410a6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated getTokenById and hasTokenId functions
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+### Patch Changes
+
+- Updated dependencies [[`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5), [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592), [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2), [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19), [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33), [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445), [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/types-live@6.87.0
+  - @ledgerhq/live-env@2.19.0
+
+## 13.31.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5)]:
+  - @ledgerhq/types-live@6.87.0-next.1
+
+## 13.31.0-next.0
+
+### Minor Changes
+
+- [#12051](https://github.com/LedgerHQ/ledger-live/pull/12051) [`ea16f59`](https://github.com/LedgerHQ/ledger-live/commit/ea16f592e85019a1b77287a7f2b975c6fcffc74c) Thanks [@semeano](https://github.com/semeano)! - Fetch SUI tokens from dynamic CAL
+
+- [#12143](https://github.com/LedgerHQ/ledger-live/pull/12143) [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate cryptoassets function to anticipate Removal CAL initiative.
+
+- [#12186](https://github.com/LedgerHQ/ledger-live/pull/12186) [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated `findTokenByTicker` function and related internal state. This function was ambiguous when multiple tokens shared the same ticker across different blockchains. Use `findTokenById` or `findTokenByAddressInCurrency` instead for more precise token lookup.
+
+- [#12185](https://github.com/LedgerHQ/ledger-live/pull/12185) [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated findTokenByAddress in favor of findTokenByAddressInCurrency
+
+  Removed the deprecated `findTokenByAddress` function which had ambiguous behavior when multiple tokens shared the same contract address across different blockchains. The function has been fully replaced with `findTokenByAddressInCurrency` which requires both the token address and parent currency ID, providing more precise token lookup.
+
+  This includes:
+
+  - Removal of `findTokenByAddress` function from cryptoassets package
+  - Removal of `tokensByAddress` state dictionary
+  - Update all usages to `findTokenByAddressInCurrency` across the codebase
+  - Update CryptoAssetsStore interface to remove the deprecated method
+
+- [#12196](https://github.com/LedgerHQ/ledger-live/pull/12196) [`565da80`](https://github.com/LedgerHQ/ledger-live/commit/565da807b1ebbfc830fd0e47b3d8856f88d410a6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated getTokenById and hasTokenId functions
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+### Patch Changes
+
+- Updated dependencies [[`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592), [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2), [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19), [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33), [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445), [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/types-live@6.87.0-next.0
+  - @ledgerhq/live-env@2.19.0-next.0
+
 ## 13.30.0
 
 ### Minor Changes

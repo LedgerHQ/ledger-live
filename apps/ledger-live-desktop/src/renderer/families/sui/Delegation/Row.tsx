@@ -85,7 +85,14 @@ type Props = {
   readonly onExternalLink: (address: string) => void;
 };
 export function Row({
-  stakingPosition: { stakedSuiId, validator, formattedAmount, status, principal },
+  stakingPosition: {
+    stakedSuiId,
+    validator,
+    formattedAmount,
+    status,
+    principal,
+    formattedEstimatedReward,
+  },
   onManageAction,
   onExternalLink,
 }: Props) {
@@ -135,6 +142,11 @@ export function Row({
       <Column>
         <Ellipsis>
           <Discreet>{formattedAmount}</Discreet>
+        </Ellipsis>
+      </Column>
+      <Column>
+        <Ellipsis>
+          <Discreet>{formattedEstimatedReward}</Discreet>
         </Ellipsis>
       </Column>
       <Column>

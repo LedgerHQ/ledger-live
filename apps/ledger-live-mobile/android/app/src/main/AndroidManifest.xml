@@ -60,6 +60,7 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:windowSoftInputMode="adjustResize"
         android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.Splash"
         android:exported="true"
         >
         <intent-filter>
@@ -70,6 +71,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="ledgerwallet"/>
             <data android:scheme="ledgerlive"/>
         </intent-filter>
         <intent-filter>

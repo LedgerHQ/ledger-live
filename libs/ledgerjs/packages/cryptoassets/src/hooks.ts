@@ -2,20 +2,55 @@ import { useState, useEffect } from "react";
 import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
 import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
+import { cryptoAssetsApi } from "./cal-client/state-manager/api";
 
 /**
  * CryptoAssetsHooks is the hooks interface version of the CryptoAssetsStore
- * This work provide a common interface for the hooks, and the backend implementation will be completed in the future
- * See https://github.com/LedgerHQ/ledger-live/pull/11951
+ * It provides a unified interface for the hooks, regardless of the backend used
  */
 export function createCryptoAssetsHooks(
   config: {
-    useCALBackend?: false; // at the moment, we only support legacy
-    api?: unknown; // placeholder for the future
+    useCALBackend?: boolean;
   } = {},
 ): Hooks {
   if (config.useCALBackend) {
-    throw new Error("backend is not supported yet");
+    return {
+      useTokenById: (id: string) => {
+        const result = cryptoAssetsApi.useFindTokenByIdQuery({ id });
+        return {
+          token: result.data,
+          loading: result.isLoading,
+          error: result.error,
+        };
+      },
+      useTokenByAddressInCurrency: (address: string, currencyId: string) => {
+        const result = cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery({
+          contract_address: address,
+          network: currencyId,
+        });
+        return {
+          token: result.data,
+          loading: result.isLoading,
+          error: result.error,
+        };
+      },
+      useCurrencyById: (id: string) => {
+        const maybeCryptoCurrency = findCryptoCurrencyById(id);
+        if (maybeCryptoCurrency) {
+          return {
+            currency: maybeCryptoCurrency,
+            loading: false,
+            error: null,
+          };
+        }
+        const result = cryptoAssetsApi.useFindTokenByIdQuery({ id });
+        return {
+          currency: result.data,
+          loading: result.isLoading,
+          error: result.error,
+        };
+      },
+    };
   } else {
     return {
       useTokenById: useLegacyTokenById,

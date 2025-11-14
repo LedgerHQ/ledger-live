@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.30.0",
+  "version": "13.32.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -36,9 +36,11 @@
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bs58check": "^2.1.2",
-    "invariant": "2"
+    "invariant": "2",
+    "zod": "^3.22.4",
+    "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -51,6 +53,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-redux": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",

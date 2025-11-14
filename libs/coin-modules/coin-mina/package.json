@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.2.3",
+  "version": "1.4.0",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",

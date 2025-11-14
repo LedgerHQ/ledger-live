@@ -5,7 +5,8 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { getAbandonSeedAddress, findTokenById } from "@ledgerhq/cryptoassets";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { firstValueFrom, from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
@@ -66,7 +67,7 @@ const exec = async (opts: SwapJobOpts) => {
 
   //Are we asking for a token account?
   if (tokenId) {
-    const token = findTokenById(tokenId);
+    const token = await getCryptoAssetsStore().findTokenById(tokenId);
     invariant(token, `✖ No token currency found with id ${tokenId}`);
     if (!token) throw new Error(`✖ No token currency found with id ${tokenId}`);
     const subAccounts = accountWithMandatoryTokens(fromAccount, [token]).subAccounts || [];
@@ -115,7 +116,7 @@ const exec = async (opts: SwapJobOpts) => {
 
   //Are we asking for a token account?
   if (tokenId2) {
-    const token = findTokenById(tokenId2);
+    const token = await getCryptoAssetsStore().findTokenById(tokenId2);
     if (!token) {
       throw new Error(`✖ No token currency found with id ${tokenId2}`);
     }

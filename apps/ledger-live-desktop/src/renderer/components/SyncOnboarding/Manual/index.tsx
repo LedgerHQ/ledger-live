@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
@@ -52,7 +52,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const action = useConnectManagerAction();
   const history = useHistory<RecoverState>();
   const { t } = useTranslation();
-
+  const ref = useRef<HTMLDivElement | null>(null);
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
@@ -71,6 +71,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
   );
+  const [companionStep, setCompanionStep] = useState<"first-step" | "second-step">("first-step");
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
   const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
     null | "enter" | "exit"
@@ -307,6 +308,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         device={lastSeenDevice}
         notifySyncOnboardingShouldReset={notifyOnboardingEarlyCheckShouldReset}
         onLostDevice={onLostDevice}
+        parentRef={ref}
+        setCompanionStep={setCompanionStep}
       />
     );
   }
@@ -317,6 +320,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   return (
     <Flex
+      ref={ref}
       width="100%"
       height="100%"
       overflow="scroll"
@@ -337,6 +341,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
             device={lastSeenDevice}
             onClose={handleClose}
             displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
+            companionStep={companionStep}
           />
           {stepContent}
         </>

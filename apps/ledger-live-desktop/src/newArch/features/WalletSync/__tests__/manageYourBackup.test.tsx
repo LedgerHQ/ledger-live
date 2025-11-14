@@ -56,6 +56,6 @@ describe("ManageYourBackup", () => {
     await user.click(deleteButton);
 
     //Success message
-    expect(await screen.findByText("Your Ledger Live apps are no longer synched")).toBeDefined();
+    expect(await screen.findByText("Your Ledger Wallet apps are no longer synched")).toBeDefined();
   });
 });

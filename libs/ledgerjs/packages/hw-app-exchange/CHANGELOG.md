@@ -1,5 +1,41 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.17.0
+
+### Minor Changes
+
+- [#12452](https://github.com/LedgerHQ/ledger-live/pull/12452) [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update DMK, Signers and Transports versions
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#12452](https://github.com/LedgerHQ/ledger-live/pull/12452) [`b386019`](https://github.com/LedgerHQ/ledger-live/commit/b3860190aedc7691250e0abacf07ee7dd2962c91) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update DMK, Signers and Transports versions
+
+### Patch Changes
+
+- Updated dependencies [[`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+
+## 0.16.0
+
+### Minor Changes
+
+- [#12204](https://github.com/LedgerHQ/ledger-live/pull/12204) [`7e0dfed`](https://github.com/LedgerHQ/ledger-live/commit/7e0dfedc7c06af31763bb7216cd89b94a395c304) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update dmk versions
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#12204](https://github.com/LedgerHQ/ledger-live/pull/12204) [`7e0dfed`](https://github.com/LedgerHQ/ledger-live/commit/7e0dfedc7c06af31763bb7216cd89b94a395c304) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update dmk versions
+
 ## 0.15.0
 
 ### Minor Changes

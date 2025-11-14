@@ -175,7 +175,7 @@ export function WelcomeOld() {
     <WelcomeContainer>
       <LeftContainer>
         <Presentation>
-          <Logos.LedgerLiveRegular color={colors.neutral.c100} />
+          <Logos.LedgerLiveRegular color={colors.neutral.c100} width={155} height={32} />
           <Text
             data-testid="onbording-welcome-title"
             variant="h1"

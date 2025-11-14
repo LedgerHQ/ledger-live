@@ -6,7 +6,7 @@ import { useBatteryStatuses } from "./useBatteryStatuses";
 
 describe("useBatteryStatuses", () => {
   it("should return an initial cancelRequest method that is callable", async () => {
-    const { result } = renderHook(() => useBatteryStatuses({ statuses: [] }));
+    const { result } = renderHook(() => useBatteryStatuses({ statuses: [], enabled: true }));
     expect(() => result.current.cancelRequest()).not.toThrow();
   });
 });

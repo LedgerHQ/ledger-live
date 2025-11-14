@@ -2,7 +2,7 @@ describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-370");
   $TmsLink("B2CQA-1753");
   $TmsLink("B2CQA-1806");
-  const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+  const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
   tags.forEach(tag => $Tag(tag));
   it("goes through discover app and should see an empty portfolio page", async () => {
     await app.onboarding.startOnboarding();

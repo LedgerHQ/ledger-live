@@ -1,7 +1,6 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { Flex } from "@ledgerhq/native-ui";
 import React, { useRef, forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
@@ -25,7 +24,9 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import SafeAreaView from "~/components/SafeAreaView";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -64,6 +65,9 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const currentAccounts = useSelector(flattenAccountsSelector);
     const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
     const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
+    const llmModularDrawerFF = useFeature("llmModularDrawer");
+
+    const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
     // Capture the initial source to prevent webview refreshes.
     // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
@@ -72,7 +76,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
     return (
       <ScopeProvider atoms={[currentAccountAtom]}>
-        <Flex flex={1}>
+        <SafeAreaView edges={["bottom"]} isFlex>
           <Web3AppWebview
             ref={ref}
             manifest={manifest}
@@ -93,10 +97,11 @@ export const WebView = forwardRef<WebviewAPI, Props>(
               platform: "LLM", // need consistent format with LLD, Platform doesn't work
               shareAnalytics,
               hasSeenAnalyticsOptInPrompt,
+              isModularDrawer: isLlmModularDrawer ? "true" : "false",
               ...swapParams,
             }}
           />
-        </Flex>
+        </SafeAreaView>
       </ScopeProvider>
     );
   },

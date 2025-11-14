@@ -100,7 +100,7 @@
     "coin:hedera": "pnpm --filter coin-hedera",
     "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
-    "coin:icp": "pnpm --filter coin-internet_computer",
+    "coin:internet_computer": "pnpm --filter coin-internet_computer",
     "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
@@ -112,6 +112,7 @@
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
+    "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -251,10 +252,10 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5"
+      "@sentry/react-native>metro": "0.81.5",
+      "ethers": "6.15.0"
     },
     "patchedDependencies": {
-      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",

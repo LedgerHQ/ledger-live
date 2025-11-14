@@ -28,3 +28,4 @@ await executeScenario(scenarioEthereum);
 
 - @ledgerhq/coin-tester
 - @ledgerhq/coin-evm
+- @ledgerhq/live-common

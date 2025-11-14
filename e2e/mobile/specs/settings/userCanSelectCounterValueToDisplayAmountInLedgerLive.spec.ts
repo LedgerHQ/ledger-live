@@ -3,7 +3,7 @@ import { runUserCanSelectCounterValueToDisplayAmountInLedgerLive } from "./setti
 const testConfig = {
   account: Account.BTC_NATIVE_SEGWIT_1,
   tmsLinks: ["B2CQA-804"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runUserCanSelectCounterValueToDisplayAmountInLedgerLive(

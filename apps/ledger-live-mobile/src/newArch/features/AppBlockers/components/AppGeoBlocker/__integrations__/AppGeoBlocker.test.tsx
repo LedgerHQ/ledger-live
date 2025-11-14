@@ -1,13 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 
+import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppGeoBlocker from "../index";
 
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: () => (url: string) => url,
-}));
-jest.mock("@ledgerhq/live-common/hooks/useOFACGeoBlockCheck", () => ({
-  useOFACGeoBlockCheck: jest.fn(),
 }));
 jest.mock("@ledgerhq/native-ui", () => ({
   Box: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -37,8 +35,6 @@ jest.mock("styled-components/native", () => ({
 }));
 jest.mock("~/utils/urls", () => ({ urls: { geoBlock: { learnMore: "https://test.url" } } }));
 
-import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
-
 const Text: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
 
 describe("AppGeoBlocker", () => {
@@ -47,33 +43,33 @@ describe("AppGeoBlocker", () => {
   });
 
   it("renders children when not loading and not blocked", async () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: false, isLoading: false });
     const Child = () => <Text>Allowed</Text>;
     render(
       <AppGeoBlocker>
         <Child />
       </AppGeoBlocker>,
+      { wrapper: getWrapper({ blocked: false, isLoading: false }) },
     );
     expect(screen.toJSON()).toBe("Allowed");
   });
 
-  it("renders nothing when loading", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: false, isLoading: true });
+  it("don't block children rendering while loading", () => {
     const Child = () => <Text>Allowed</Text>;
-    const { toJSON } = render(
+    render(
       <AppGeoBlocker>
         <Child />
       </AppGeoBlocker>,
+      { wrapper: getWrapper({ blocked: false, isLoading: true }) },
     );
-    expect(toJSON()).toBeNull();
+    expect(screen.toJSON()).toBe("Allowed");
   });
 
   it("renders block screen when blocked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: true, isLoading: false });
     render(
       <AppGeoBlocker>
         <Text>Allowed</Text>
       </AppGeoBlocker>,
+      { wrapper: getWrapper({ blocked: true, isLoading: false }) },
     );
 
     const renderedNode = screen.toJSON();
@@ -81,3 +77,10 @@ describe("AppGeoBlocker", () => {
     expect(renderedNode.includes("geoBlocking.description")).toBeTruthy();
   });
 });
+
+function getWrapper(ofacResult: { blocked: boolean; isLoading: boolean }) {
+  const value = { ofacResult, firebaseIsReady: true };
+  return ({ children }: React.PropsWithChildren) => (
+    <InitialQueriesContext.Provider value={value}>{children}</InitialQueriesContext.Provider>
+  );
+}

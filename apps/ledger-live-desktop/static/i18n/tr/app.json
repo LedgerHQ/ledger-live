@@ -41,26 +41,26 @@
       },
       "banner" : {
         "title" : "Live Apps Kataloğumuzu Keşfedin",
-        "description" : "DeFi ve NFT dünyasına ve daha fazlasına, doğrudan Ledger Live içerisinden ve güvenle erişebilmeniz için sıkı bir şekilde çalışıyoruz!"
+        "description" : "DeFi ve NFT dünyasına ve daha fazlasına, doğrudan Ledger Wallet içerisinden ve güvenle erişebilmeniz için sıkı bir şekilde çalışıyoruz!"
       },
       "twitterBanner" : {
-        "description" : "Bu hashtag ile Ledger Live'da görmek istediğiniz bir sonraki hizmetin ne olduğunu bize bildirin:",
+        "description" : "Ledger Wallet’ta görmek istediğiniz bir sonraki hizmetin ne olduğunu bize bu hashtag ile bildirin:",
         "tweetText" : "Sıradaki Ledger Uygulaması şöyle olmalı..."
       },
       "pollCTA" : {
         "title" : "Anket",
-        "description" : "Ledger Live'da hangi hizmeti görmek istersiniz?",
+        "description" : "Ledger Wallet'ta hangi hizmeti görmek istersiniz?",
         "button" : "Hadi, oylayalım!"
       },
       "developerCTA" : {
         "title" : "Geliştiriciler için",
-        "description" : "Uygulamalarınızı Ledger Live'a entegre etmek için ihtiyacınız olan tüm bilgiler.",
+        "description" : "Uygulamalarınızı Ledger Wallet'a entegre etmek için ihtiyacınız olan tüm bilgiler.",
         "button" : "Portala git"
       },
       "warnings" : {
         "notFound" : "Bulunamadı",
         "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
-        "retrySearchKeywordAndUrl" : "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin ya da <Link>{{search}}</Link> hedefini Ledger Live'ın dışında açın."
+        "retrySearchKeywordAndUrl" : "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin ya da <Link>{{search}}</Link> hedefini Ledger Wallet'ın dışında açın."
       }
     },
     "disclaimer" : {
@@ -306,7 +306,7 @@
   "bridge" : {
     "modalTitle" : "Cihaz Köprüsü",
     "openHeader" : "Cihaz Köprüsü artık mevcut değil",
-    "openDescription" : "Ledger Live yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
+    "openDescription" : "Ledger Wallet yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
     "closeButton" : "Kapat"
   },
   "swap2" : {
@@ -377,7 +377,7 @@
       "disclaimer" : "İşlemler, takas geçmişinde görünmeyebilir ancak güvenli bir şekilde işlenir. Tüm işlemler için hesabınızdaki ‘Son işlemler’ bilgilerini kontrol edebilirsiniz.",
       "empty" : {
         "title" : "Önceki takas işlemleriniz burada görünecek",
-        "description" : "Henüz herhangi bir takas işlemi yapmadınız ya da Ledger Live sıfırlandı."
+        "description" : "Henüz herhangi bir takas işlemi yapmadınız ya da Ledger Wallet bu arada sıfırlandı."
       },
       "export" : "Dışa aktarma işlemleri",
       "exporting" : "Dışa aktarılıyor...",
@@ -420,10 +420,10 @@
       "history" : "Geçmiş"
     },
     "history" : {
-      "disclaimer" : "Masaüstü takas işlemleriniz Ledger Live mobil uygulamasıyla senkronize edilmez",
+      "disclaimer" : "Masaüstü takas işlemleriniz Ledger Wallet mobil uygulamasıyla senkronize edilmez",
       "empty" : {
         "title" : "Önceki takas işlemleriniz burada görünecek",
-        "description" : "Henüz herhangi bir takas işlemi yapmadınız ya da Ledger Live sıfırlandı."
+        "description" : "Henüz herhangi bir takas işlemi yapmadınız ya da Ledger Wallet bu arada sıfırlandı."
       }
     },
     "landing" : {
@@ -443,7 +443,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
-      "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
+      "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Wallet üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -464,12 +464,18 @@
       "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
       "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+      "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+      "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
       "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
       "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
+      "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
+      "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -589,7 +595,7 @@
     "noFundsModal" : {
       "title" : "{{actions, list(type: disjunction)}}",
       "text" : "Stake etmek için hesabınızda yeterince {{coin}} bulunmuyor",
-      "description" : "Fonlarınız yetersiz mi? Merak etmeyin! Doğrudan Ledger Live üzerinden güvenli bir şekilde kripto satın alabilir, takas edebilir veya transfer alabilirsiniz.",
+      "description" : "Fonlarınız yetersiz mi? Merak etmeyin! Doğrudan Ledger Wallet üzerinden güvenli bir şekilde kripto satın alabilir, takas edebilir veya transfer edebilirsiniz.",
       "options" : {
         "buy" : {
           "title" : "Satın Alın",
@@ -608,7 +614,7 @@
     },
     "getFundsModal" : {
       "text" : "Stake etmek için {{coin}} edinin",
-      "description" : "Ledger Live'ı kullanarak doğrudan Ledger'ınızda kripto satın alın, takas edin veya alın."
+      "description" : "Ledger Wallet'ı kullanarak doğrudan Ledger'ınızda kripto satın alın, takas edin veya alın."
     }
   },
   "lottieDebugger" : {
@@ -623,7 +629,7 @@
   "vaultSigner" : {
     "modal" : {
       "title" : "Vault'u bağlayın",
-      "info" : "Aşağıdaki alanları doldurarak Ledger Vault çalışma alanı hesaplarınızı bağlayın ve Ledger Live kaynaklı işlemler oluşturun. Bilgilere “Ayarlar” > “Üçüncü taraf cüzdanı imzalayıcısı” kısmından ulaşabilirsiniz.",
+      "info" : "Aşağıdaki alanları doldurarak Ledger Vault çalışma alanı hesaplarınızı bağlayın ve Ledger Wallet kaynaklı işlemler oluşturun. Bilgilere “Ayarlar” > “Üçüncü taraf cüzdanı imzalayıcısı” kısmından ulaşabilirsiniz.",
       "info_link" : "Daha fazla bilgi",
       "host" : {
         "title" : "URL Uç Noktası",
@@ -665,7 +671,7 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Düğüm parametrelerinizi girin",
-              "disclaimer" : "Tam düğümünüz, Ledger Live'a bağlanmadan önce tamamen senkronize edilmelidir.",
+              "disclaimer" : "Tam düğümünüz, Ledger Wallet'a bağlanmadan önce tamamen senkronize edilmelidir.",
               "fields" : {
                 "nodeHost" : {
                   "title" : "Sunucu",
@@ -723,8 +729,8 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Ledger SatStack uygulamasını indir ve çalıştır",
-              "description" : "Ledger SatStack, Ledger Live ile tam düğümünüz arasında iletişim kurulmasını sağlayan küçük bir uygulamadır. Devam etmeden önce lütfen indirin ve çalıştırın.",
-              "disclaimer" : "Ledger Live'ın tam düğümünüze bağlanabilmesi için SatStack çalışıyor olmalıdır. Bilgisayarınız açıldığında otomatik olarak başlayacak şekilde ayarlamanızı öneririz.",
+              "description" : "Ledger SatStack, Ledger Wallet ile tam düğümünüz arasında iletişim kurulmasını sağlayan küçük bir uygulamadır. Devam etmeden önce lütfen indirin ve çalıştırın.",
+              "disclaimer" : "Ledger Wallet’ın tam düğümünüze bağlanabilmesi için SatStack çalışıyor olmalıdır.  Bilgisayarınız açıldığında otomatik olarak başlayacak şekilde ayarlamanızı öneririz.",
               "cta" : "SatStack'i indir"
             },
             "satstack-disconnected" : {
@@ -775,8 +781,8 @@
       "drawer" : {
         "title" : "{{family}} entegrasyonu",
         "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
-        "description" : "Ledger Live, açık kaynaklı bir platformdur.",
-        "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
+        "description" : "Ledger Wallet, açık kaynaklı bir platformdur.",
+        "description2" : "Dünyanın her yerinden geliştiriciler, Ledger Wallet ile entegre olabilir",
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
@@ -802,8 +808,8 @@
       "support" : "destek bölümüne"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "{{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live’da desteklenmeyecektir. Ancak Ledger donanım cüzdanınızda güvenle tutulmaya devam edecektir. Daha fazla bilgi edinmek için aşağıda bağlantısı verilen Yardım Merkezi makalesini lütfen baştan sona okuyun.",
-      "learnMore" : "Daha fazla bilgi"
+      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Wallet'ta desteklenmeyecektir. Ancak Ledger cihazlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
+      "contactSupport" : "Destek Al"
     },
     "lastOperations" : "Son işlemler",
     "contractAddress" : "Sözleşme:",
@@ -1246,6 +1252,11 @@
     },
     "manual" : {
       "title" : "{{deviceName}} cihazınızı hazırlayın",
+      "titleTwoStep" : "Hadi başlayalım",
+      "titleFirstStepDone" : "{{deviceName}} cihazınız hazır",
+      "successStepTitle" : "{{deviceName}} cihazınız kriptolarınızı güvenceye almaya artık hazır",
+      "secureCryptoTitle" : "Kriptolarınızı güvende tutun",
+      "secureCryptoDoneTitle" : "Blok zinciri uygulamalarınız yüklendi.",
       "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
         "title" : "{{deviceName}} orijinal",
@@ -1291,6 +1302,11 @@
         "backupCharonCta" : "Daha fazla bilgi edinin veya satın alın",
         "backupCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
       },
+      "secureCrypto" : {
+        "description" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Wallet’ınıza aktarabilirsiniz.",
+        "depositButton" : "Kriptolarınızı güvende tutun",
+        "skipButton" : "Belki sonra"
+      },
       "backup" : {
         "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
         "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -1315,8 +1331,8 @@
           "completed" : "Ledger Orijinallik Denetimi"
         },
         "exitWarningDrawer" : {
-          "title" : "Orijinallik Denetimi ve İşletim Sistemi güncellemesi denetimi iptal edilsin mi?",
-          "description" : "Ledger Live uygulamasını kullanarak {{productName}} cihazınızın kurulumuna devam edebilmek için Orijinallik Denetimi zorunludur.",
+          "title" : "Ledger Orijinallik Denetimi ve İşletim Sistemi güncellemesi denetimi iptal edilsin mi?",
+          "description" : "Ledger Orijinallik Denetimi, Ledger Wallet uygulamasını kullanarak {{productName}} cihazınızın kurulumuna devam edebilmek için zorunludur.",
           "cancelCheckCTA" : "Denetimleri iptal et",
           "resumeCheckCTA" : "Denetimleri sürdür"
         },
@@ -1326,28 +1342,28 @@
           "retryCTA" : "Tekrar dene",
           "contactSupportCTA" : "Ledger Destek ile iletişime geçin",
           "notFoundEntityError" : {
-            "title" : "Orijinallik Denetimini tekrar başlatın",
-            "description" : "İlk önce “My Ledger Sağlayıcım ({{providerNumber}})” ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Live'da “Ayarlar”ı açın, “Deneysel özellikler”i seçin ve “My Ledger sağlayıcım” ayarını kapalı hâle getirin."
+            "title" : "Ledger Orijinallik Denetimini tekrar başlatın",
+            "description" : "İlk önce “My Ledger Sağlayıcım ({{providerNumber}})” ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Wallet'ta “Ayarlar”ı açın, “Deneysel özellikler”i seçin ve “My Ledger sağlayıcım” ayarını kapalı hâle getirin."
           },
           "deviceNotGenuineError" : {
             "title" : "Bu {{productName}} orijinal değil",
             "description" : "Bu {{productName}} cihazını kullanmak güvenli değil.\nLütfen Ledger Destek ile iletişime geçin."
           }
         },
-        "whyPerformChecksLink" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
+        "whyPerformChecksLink" : "Ledger Orijinallik Denetimi hakkında daha fazla bilgi edinin",
         "startChecksCTA" : "{{modelName}} cihazını denetle",
         "continueCTA" : "Kuruluma devam et",
         "genuineCheck" : {
           "title" : {
             "active" : "Ledger Orijinallik Denetimi",
             "completed" : "{{modelName}} orijinal",
-            "cancelled" : "Orijinallik Denetimi reddedildi"
+            "cancelled" : "Ledger Orijinallik Denetimi reddedildi"
           },
           "subtitle" : {
             "active" : "Bu işlem, {{modelName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar.",
-            "cancelled" : "Ledger Live uygulamasını kullanarak {{modelName}} cihazınızın kurulumuna devam edebilmek için bu Denetim zorunludur."
+            "cancelled" : "Ledger Wallet uygulamasını kullanarak {{modelName}} cihazınızın kurulumuna devam edebilmek için bu Denetim zorunludur."
           },
-          "resumeCTA" : "Orijinallik Denetimini sürdür"
+          "resumeCTA" : "Ledger Orijinallik Denetimini Sürdürün"
         },
         "firmwareUpdate" : {
           "title" : {
@@ -1379,7 +1395,7 @@
         "titleCompleted" : "{{deviceName}} hazır"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Orijinallik Denetimini başlatmak için “Allow” (İzin Ver) seçeneğine dokunun"
+        "title" : "Ledger Orijinallik Denetimini başlatmak için “İzin Ver” seçeneğine dokunun"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Cihazınızın kilidini açın"
@@ -1442,11 +1458,11 @@
       "title" : "Deneysel ayarların değiştirilmesi için önbellek temiz olmalıdır",
       "cta" : "Önbelleği temizleyin"
     },
-    "migrate" : "Ledger Live hesap güncellemesi mevcut",
+    "migrate" : "Ledger Wallet hesap güncellemesi mevcut",
     "genericTerminatedCrypto" : "{{coinName}} artık desteklenmiyor",
     "valentine" : {
       "title" : "Sevgililer Günü",
-      "description" : "Sevgimizin bir ispatı olarak, Ledger Live alım ve satım ücretlerini azaltıyoruz"
+      "description" : "Sevgimizin bir ispatı olarak, Ledger Wallet alım ve satım işlem ücretlerini azaltıyoruz"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1470,11 +1486,11 @@
     },
     "polkaStake" : {
       "title" : "POLKADOT staking",
-      "description" : "DOT'larınızı artık doğrudan Ledger Live ile stake edip güvenceye alabilir ve yönetebilirsiniz"
+      "description" : "DOT'larınızı artık doğrudan Ledger Wallet ile stake edip güvenceye alabilir ve yönetebilirsiniz"
     },
     "sell" : {
       "title" : "kripto sat",
-      "description" : "Bitcoin satışlarınızı ortağımızla doğrudan Ledger Live'da gerçekleştirin"
+      "description" : "Bitcoin satışlarınızı ortağımızla doğrudan Ledger Wallet'tan gerçekleştirin"
     },
     "stakeAlgorand" : {
       "title" : "ALGORAND ile staking",
@@ -1482,7 +1498,7 @@
     },
     "swap" : {
       "title" : "Kripto takas edin",
-      "description" : "Sağlayıcımız aracılığıyla Ledger Live üzerinden bir kriptoyu bir diğeriyle takas edin."
+      "description" : "Sağlayıcımız aracılığıyla Ledger Wallet üzerinden bir kriptoyu bir diğeriyle takas edin."
     },
     "lending" : {
       "title" : "Kripto Borç Verin",
@@ -1490,7 +1506,7 @@
     },
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
-      "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
+      "description" : "BLACKFRIDAY20 promosyon koduyla Ledger cihazlarında %40'lık indirimden yararlanın"
     },
     "referralProgram" : {
       "title" : "Referans olup $10 kazanın",
@@ -1643,7 +1659,7 @@
       "title" : "Filtreler",
       "show" : "Göster",
       "all" : "Tümü",
-      "isLedgerCompatible" : "Ledger Live Uyumluluğu",
+      "isLedgerCompatible" : "Ledger Wallet ile Uyumlu",
       "isFavorite" : "Yıldızlanan Varlıklar",
       "applyFilters" : "Filtreleri uygula",
       "clearAll" : "Tümünü temizle"
@@ -1668,7 +1684,7 @@
       "circulatingSupply" : "Dolaşımdaki arz",
       "totalSupply" : "Toplam arz",
       "maxSupply" : "Maksimum arz",
-      "assetNotSupportedOnLedgerLive" : "Bu varlık Ledger Live'da desteklenmiyor",
+      "assetNotSupportedOnLedgerLive" : "Bu varlık Ledger Wallet'ta desteklenmiyor.",
       "supportedCoinsAndTokens" : "Desteklenen coin'ler ve token'lar"
     },
     "range" : {
@@ -1690,7 +1706,7 @@
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
-      "ledgerUnableToRetrieveData" : "Ledger Live veri alamıyor.",
+      "ledgerUnableToRetrieveData" : "Ledger Wallet veri alamıyor.",
       "checkInternetAndReload" : "Lütfen internet bağlantınızı kontrol edin ve bu sayfayı yeniden yükleyin.",
       "reload" : "Yeniden yükle",
       "noCryptosFound" : "Coin bulunamadı",
@@ -1931,7 +1947,7 @@
       "capacity" : "Kapasite",
       "used" : "Kullanılan",
       "OSVersion" : "İşletim sistemi sürümü",
-      "genuine" : "Orijinallik denetimi",
+      "genuine" : "Ledger Orijinallik Denetimi",
       "incomplete" : "Bazı uygulamalar tanınmadı. Lütfen bunları kaldırın ve yeniden yükleyin."
     },
     "applist" : {
@@ -1943,7 +1959,7 @@
       "filter" : {
         "title" : "Göster",
         "all" : "Tümü",
-        "supported" : "Live'da destekleniyor",
+        "supported" : "Ledger Wallet destekleniyor",
         "installed" : "Yüklendi",
         "not_installed" : "Yüklenmemiş"
       },
@@ -1980,7 +1996,7 @@
         "updated" : "Güncellendi",
         "uninstall" : "Kaldır",
         "notEnoughSpace" : "Yeterli depolama alanı yok",
-        "supported" : "Ledger Live tarafından destekleniyor",
+        "supported" : "Ledger Wallet destekleniyor",
         "not_supported" : "3. taraf cüzdan gerektirir",
         "addAccount" : "Hesap ekle",
         "addAccountTooltip" : "{{appName}} hesabı ekle",
@@ -2101,7 +2117,7 @@
         "boot" : "{{option}} görüntülenene kadar yan tuşu basılı tutun",
         "recoveryMode" : "{{mode}} Moduna dokunun. Kontrol paneli görünene kadar bekleyin.",
         "third" : "3. Tüm uygulamaları kaldırma",
-        "openLive" : "Ledger Live'da My Ledger'ı açın.",
+        "openLive" : "Ledger Wallet’ta My Ledger’ı açın.",
         "uninstall" : "{{deviceName}} cihazında yüklü olan tüm uygulamalar için gri çöp kutusu simgesine tıklayın. Bu, donanım yazılımı yükleyicisine yer açacak.",
         "disclaimer" : "Not: Bu işlem fonlarınızı etkilemez; blok zincirindeki kripto varlıklarınıza erişmek için gereken özel anahtarlarınız Kurtarma kağıdınızda güvende kalır."
       }
@@ -2246,15 +2262,16 @@
   "receive" : {
     "title" : "Al",
     "successTitle" : "Adres güvenli şekilde paylaşıldı",
+    "connectToNoah" : "Noah’a bağlanıyorsunuz",
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Bir banka hesabından",
-          "description" : "USD veya EUR yatırın"
+          "title" : "Banka transferiyle",
+          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
         },
         "fromCrypto" : {
-          "title" : "Bir kripto adresinden",
-          "description" : "Kripto alın"
+          "title" : "Kripto adresiyle",
+          "description" : "Başka bir cüzdandan kripto alın."
         }
       },
       "chooseAccount" : {
@@ -2425,7 +2442,7 @@
   },
   "releaseNotes" : {
     "title" : "Sürüm notları",
-    "version" : "Ledger Live {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}"
   },
   "troubleshootNetwork" : {
     "title" : "Ağ sorunlarını giderin",
@@ -2441,7 +2458,7 @@
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
     "description" : {
-      "newSupport" : "Güzel bir haberimiz var! Ekiplerimizin yoğun çabaları sonucunda Ledger Live artık {{language}} dilini destekliyor.",
+      "newSupport" : "Güzel bir haberimiz var! Ekiplerimiz yoğun çaba gösterdi ve Ledger Wallet artık {{language}} dilini destekliyor.",
       "advice" : "Dilinizi istediğiniz zaman ayarlar bölümünden tekrar değiştirebilirsiniz."
     },
     "switchButton" : "{{language}} diline geç",
@@ -2475,7 +2492,7 @@
     "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}} cihazının dili {{language}} olsun mu?",
-      "description" : "{{deviceName}} cihazınızı ve Ledger Live uygulamasını aynı dilde kullanmak istiyor musunuz?"
+      "description" : "{{deviceName}} cihazınızı ve Ledger Wallet uygulamasını aynı dilde kullanmak istiyor musunuz?"
     },
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
@@ -2512,7 +2529,7 @@
     "header" : "Hesap dağılımı ({{count}})"
   },
   "elrond" : {
-    "guardedAccountWarning" : "Hesabınız için bir Guardian belirlediyseniz Ledger Live üzerinden gönderme işlemlerini başarıyla yapamayacaksınız.",
+    "guardedAccountWarning" : "Hesabınız için bir guardian belirlediyseniz Ledger Wallet üzerinden gönderme işlemlerini başarıyla yapamayacaksınız.",
     "summary" : {
       "availableBalanceTooltip" : "Bu miktar aktarılabilir.",
       "availableBalance" : "Mevcut bakiye",
@@ -2526,8 +2543,8 @@
         "cardTitle" : "MultiversX teknolojisiyle",
         "moreInfo" : "Daha fazla bilgi",
         "drawerTitle" : "MultiversX entegrasyonu",
-        "title" : "MultiversX eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
-        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "title" : "MultiversX eGold (EGLD) token'ı artık Ledger Wallet'ta kullanılabilir",
+        "description" : "eGold (EGLD) token'larınızı artık Ledger Wallet üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
         "description2" : "MultiversX Network'e özgü olan MultiversX eGold (EGLD) Token'ı, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
         "description3" : "MultiversX ekibiyle aktif şekilde çalışarak staking işlemlerini, dahili ESDT (Elrond Standart Dijital Token) desteğini ve diğer birçok işlevi eklemek için çalışıyoruz.",
         "website" : "İnternet Ölçeğinde Blok Zinciri"
@@ -2874,8 +2891,8 @@
         "cardTitle" : "Figment desteğiyle",
         "moreInfo" : "Daha fazla bilgi",
         "drawerTitle" : "Figment desteğiyle",
-        "title" : "CELO token artık Ledger Live'da",
-        "description" : "Artık CELO token'larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "title" : "CELO token artık Ledger Wallet’ta",
+        "description" : "Artık CELO token'larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
         "description2" : "Celo token, Celo zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
         "website" : "Figment desteğiyle"
       }
@@ -3399,9 +3416,9 @@
       "electionOpen" : "Yeni doğrulayıcıların seçimi an itibarıyla devam ediyor. Bu nedenle, staking işlemleri yaklaşık 15 dakika süreyle kullanılamayabilir.",
       "electionOpenTooltip" : "Doğrulayıcıların seçimi yapılırken bu işlem devre dışıdır.",
       "externalControllerTooltip" : "Bu hesap başka bir hesap tarafından kontrol ediliyor.",
-      "externalControllerUnsupported" : "<0>Bu stash hesabı, <0>{{controllerAddress}}</0> adresli ayrı bir hesap tarafından kontrol ediliyor</0>.<1> Ledger Live ile staking yapmak için bu stash hesabını kendi denetleyicisi olarak ayarlamalısınız.",
+      "externalControllerUnsupported" : "<0>Bu stash hesabı, <0>{{controllerAddress}}</0> adresli ayrı bir hesap tarafından kontrol ediliyor</0>.<1> Ledger Wallet ile staking yapmak için bu stash hesabını kendi denetleyicisi olarak ayarlamalısınız.</1>",
       "externalStashTooltip" : "Bu hesap başka bir hesabı kontrol ediyor.",
-      "externalStashUnsupported" : "<0>Bu hesap, <0>{{stashAddress}}</0> adresli ayrı bir stash hesabını kontrol ediyor</0>.<1> Ledger Live ile staking yapmak için bu stash hesabını kendi denetleyicisi olarak ayarlamalısınız.",
+      "externalStashUnsupported" : "<0>Bu hesap, <0>{{stashAddress}}</0> adresli ayrı bir stash hesabını kontrol ediyor</0>.<1> Ledger Wallet ile staking yapmak için bu stash hesabını kendi denetleyicisi olarak ayarlamalısınız.</1>",
       "showInactiveNominations" : "Tüm aday gösterimlerini görüntüle ({{count}})",
       "hideInactiveNominations" : "Sadece aktif aday gösterimlerini görüntüle",
       "noActiveNominations" : "Aktif aday gösterimi yok.",
@@ -3588,7 +3605,7 @@
         "setController" : {
           "title" : "Denetleyiciyi Değiştir",
           "description" : "Bu Ledger hesabını, kendi denetleyicisi olarak ayarlayın",
-          "info" : "Ledger Live, ayrı stash ve denetleyici hesaplarındaki işlemleri desteklemez."
+          "info" : "Ledger Wallet, ayrı stash ve denetleyici hesaplarındaki işlemleri desteklemez."
         }
       },
       "steps" : {
@@ -3992,7 +4009,7 @@
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
-      "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller alarak bakiyenizi artırın.",
+      "subTitle" : "ETH varlıklarınızı stake edin ve doğrudan Ledger Wallet'a günlük ödüller alarak bakiyenizi artırın.",
       "tagMinimum" : "{{min}} ETH gerektirir",
       "kiln_pooling" : {
         "title" : "Kiln staking havuzu",
@@ -4027,7 +4044,7 @@
       "category" : {
         "all" : {
           "name" : "Tümü",
-          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Live'da mevcuttur."
+          "description" : "Tüm Ethereum staking sağlayıcıları Ledger Wallet'ta mevcuttur."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -4106,8 +4123,8 @@
         "cardTitle" : "Figment desteğiyle",
         "moreInfo" : "Daha fazla bilgi",
         "drawerTitle" : "Figment desteğiyle",
-        "title" : "NEAR token’ı artık Ledger Live’da",
-        "description" : "NEAR token’larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "title" : "NEAR token artık Ledger Wallet’ta",
+        "description" : "NEAR token’larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
         "description2" : "NEAR token, NEAR zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
         "website" : "Figment desteğiyle"
       }
@@ -4241,8 +4258,8 @@
         "cardTitle" : "Figment desteğiyle",
         "moreInfo" : "Daha fazla bilgi",
         "drawerTitle" : "Figment desteğiyle",
-        "title" : "SUI token artık Ledger Live’da",
-        "description" : "Artık SUI token’larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "title" : "SUI token artık Ledger Wallet’ta",
+        "description" : "Artık SUI token’larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
         "description2" : "SUI token, SUI zincirinin native token’ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
         "website" : "Figment desteğiyle"
       }
@@ -4262,6 +4279,8 @@
         "header" : "Staking Pozisyonları",
         "stake" : "Ekle",
         "staked" : "Yetki devredildi",
+        "estimatedReward" : "Kazanılan ödüller",
+        "rewardTooltip" : "Sui ödülleri her 24 saatlik epoch’ta (devirde) bir dağıtılır. Otomatik olarak bileştirilir ve yetki devrinde kullandığınız stake'e eklenir.",
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
@@ -4437,7 +4456,7 @@
     "export" : {
       "accounts" : {
         "title" : "Hesapları dışa aktar",
-        "desc" : "Hesaplarınızı Ledger Live mobile ekleyin. Hesaplarınız mobil ile masaüstü uygulamaları arasında değil, sadece blok zinciri üzerinde senkronize olur.",
+        "desc" : "Ledger Wallet mobil uygulamasında hesaplarınızı ekleyin. Hesaplarınız mobil ile masaüstü uygulamaları arasında değil, sadece blok zinciri ile senkronize olur.",
         "button" : "Dışa aktar"
       },
       "operations" : {
@@ -4447,7 +4466,7 @@
       "modal" : {
         "button" : "Tamam",
         "title" : "Mobil cihaza aktarmak için tarayın",
-        "listTitle" : "Ledger Live mobil uygulamasında:",
+        "listTitle" : "Ledger Wallet mobil uygulamasında:",
         "step1" : "Ana ekranda <highlight>Hesap ekle</highlight> veya <highlight>Tüm Varlıkları Gör</highlight> seçeneğine ve ardından <highlight><icon>+</icon></highlight> butonuna dokunun.",
         "step2" : "<highlight>Masaüstü hesaplarını içe aktar</highlight> seçeneğine dokunun",
         "step3" : "Yükleyici %100'e ulaşana kadar <highlight>LiveQR kodunu</highlight> tarayın"
@@ -4455,7 +4474,7 @@
     },
     "display" : {
       "language" : "Görüntüleme dili",
-      "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
+      "languageDesc" : "Ledger Wallet'ta görüntülenen dili ayarlayın.",
       "theme" : "Tema",
       "themeDesc" : "Temayı seçin.",
       "counterValue" : "Tercih edilen para birimi",
@@ -4465,7 +4484,7 @@
       "stock" : "Bölgesel piyasa göstergesi",
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+      "walletSyncDesc" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
       "mevProtection" : "MEV Koruması",
       "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
       "mevProtectionLearnMore" : "Gizlilik bildirimi",
@@ -4593,6 +4612,54 @@
         "title" : "Modular Drawer Geliştirici Aracı",
         "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır"
       },
+      "cryptoAssetsList" : {
+        "title" : "Kripto Varlık Listesi",
+        "description" : "Kripto Varlık Listesi (CAL) hizmetindeki kripto varlıklara göz atın ve bu varlıkları yönetin.",
+        "openTokenList" : "Token Listesini Aç",
+        "drawer" : {
+          "title" : "Token Listesi Yapılandırması",
+          "description" : "Kripto Varlık Listesi hizmetindeki token’ları yapılandırın ve bu token'lara göz atın. Mevcut token’ları görüntülemek için bir blok zinciri ailesi seçin.",
+          "options" : "Seçenekler",
+          "blockchainFamily" : "Blok Zinciri Ailesi",
+          "selectFamily" : "Bir blok zinciri ailesi seçin",
+          "pageSize" : "Sayfa Boyutu",
+          "useStaging" : "Test Ortamını Kullan",
+          "useStagingDesc" : "Üretim yerine test ortamını kullanın",
+          "outputFields" : "Çıktı Alanları",
+          "refresh" : "Yenile",
+          "loading" : "Yükleniyor...",
+          "close" : "Kapat",
+          "availableTokens" : "Mevcut Token’lar ({{count}})",
+          "noTokens" : "{{family}} için hiçbir token bulunamadı",
+          "error" : "Token’lar yüklenemedi",
+          "tokenId" : "Kimlik (ID)",
+          "contractAddress" : "Sözleşme Adresi",
+          "tokenType" : "Token Türü",
+          "parentCurrency" : "Üst Para Birimi",
+          "ledgerSignature" : "Ledger İmzası",
+          "units" : "Birimler",
+          "delisted" : "Liste Dışı Bırakılanlar",
+          "copy" : "Kimliği Kopyala",
+          "loadMore" : "Daha fazlasını yükle",
+          "searchAndFilters" : "Arama ve Filtreler",
+          "maxResults" : "Maks. Sonuçlar",
+          "maxResultsPlaceholder" : "Limitsiz",
+          "pagination" : "Sayfalandırma",
+          "advanced" : "Gelişmiş",
+          "calReference" : "CAL Referansı",
+          "calReferencePlaceholder" : "ör. branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Varsayılan: branch:main",
+          "selectAll" : "Tümü",
+          "selectNone" : "Yok",
+          "reset" : "Sıfırla",
+          "tokens" : "Token'lar",
+          "resultsCount" : "{{count}} sonuç",
+          "collapseAll" : "Tümünü Daralt",
+          "noTokensFound" : "Hiçbir token bulunamadı",
+          "hide" : "Gizle",
+          "show" : "Göster"
+        }
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "mockAppUpdate" : "Test uygulama güncellemesi",
@@ -4608,7 +4675,7 @@
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
       "customLockScreenCTA" : "Başlat",
-      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsTitle" : "Ledger Wallet'ta kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
@@ -4654,17 +4721,17 @@
     },
     "profile" : {
       "password" : "Parola kilidi",
-      "passwordDesc" : "Hesap adları, bakiyeler, işlemler ve açık adresler gibi bilgisayarınızda bulunan Ledger Live verilerinin güvenliğini sağlamak için bir parola belirleyin.",
+      "passwordDesc" : "Hesap adları, bakiyeler, işlemler ve açık adresler gibi bilgisayarınızda bulunan Ledger Wallet verilerinin güvenliğini sağlamak için bir parola belirleyin.",
       "passwordAutoLock" : "Otomatik kilit",
-      "passwordAutoLockDesc" : "Ledger Live etkin olmadığında onu otomatik olarak kilitleyin.",
+      "passwordAutoLockDesc" : "Ledger Wallet etkin olmadığında onu otomatik olarak kilitleyin.",
       "changePassword" : "Parola değiştir",
       "softResetTitle" : "Önbelleği temizleyin",
-      "softResetDesc" : "Blok zinciri ile tekrar senkronizasyona zorlamak için Ledger Live önbelleğini temizleyin.",
+      "softResetDesc" : "Blok zinciri ile tekrar senkronizasyona zorlamak için Ledger Wallet önbelleğini temizleyin.",
       "softReset" : "Temizle",
       "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
       "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
-      "hardResetTitle" : "Ledger Live'ı sıfırlayın",
-      "hardResetDesc" : "Hesaplarınız, işlem geçmişleriniz ve ayarlarınız da dahil olmak üzere bilgisayarınızda depolanan tüm Ledger Live verilerini silin.",
+      "hardResetTitle" : "Ledger Wallet'ı sıfırlayın",
+      "hardResetDesc" : "Hesaplarınız, işlem geçmişleriniz ve ayarlarınız da dahil olmak üzere bilgisayarınızda depolanan tüm Ledger Wallet verilerini silin.",
       "hardReset" : "Sıfırla",
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin. Bu verilere tıklamalar, sayfa ziyaretleri, sayfa yönlendirmeleri, eylemler (gönderme, alma, kilitleme vb.), sayfa kaydırmalarında durma konumu, yükleme/kaldırma ve uygulama sürümü, hesap sayısı, kripto varlıkları ve işlemleri, oturum süreleri, Ledger cihaz türü ve donanım yazılımı dahildir.",
@@ -4679,9 +4746,9 @@
       "termsBtn" : "Oku",
       "faq" : "Ledger Destek",
       "chatbot" : "Ledger Sohbet Botu",
-      "faqDesc" : "Bir sorun yaşıyorsanız, Ledger Live'ı donanım cüzdanınızla kullanma konusunda yardım alabilirsiniz.",
+      "faqDesc" : "Bir sorun yaşıyorsanız, Ledger'ınızla Ledger Wallet'ı kullanma konusunda yardım alın.",
       "terms" : "Kullanım Koşulları",
-      "termsDesc" : "Ledger Live'ı kullanarak Kullanım Koşullarımızı kabul etmiş sayılırsınız.",
+      "termsDesc" : "Ledger Wallet'ı kullanarak Kullanım Koşullarımızı kabul etmiş sayılırsınız.",
       "privacy" : "Gizlilik Politikası",
       "privacyDesc" : "Hangi kişisel verileri topladığımızı, bunları neden ve nasıl kullandığımızı öğrenmek için Gizlilik Politikamıza bakın."
     },
@@ -4726,12 +4793,12 @@
         },
         "testAnimations" : {
           "title" : "Lottie animasyonlarını test edin",
-          "description" : "Ledger Live'da kullanılan tüm animasyonları test edin",
+          "description" : "Ledger Wallet’ta kullanılan tüm animasyonları test edin",
           "longDesc" : "Bu, ekibin uygulamada kullanılan Lottie animasyonlarını doğrulaması için olduğu gibi sunulan bir araçtır."
         },
         "testStories" : {
           "title" : "Storyly hikâyeleri testi",
-          "description" : "Ledger Live'da kullanılan tüm hikâyeleri test edin",
+          "description" : "Ledger Wallet’ta kullanılan tüm hikâyeleri test edin",
           "longDesc" : "Bu, ekibin uygulamada kullanılan Storyly hikâyelerini doğrulaması için olduğu gibi sunulan bir araçtır."
         },
         "testStaxPostonboarding" : {
@@ -4769,9 +4836,9 @@
       }
     },
     "hardResetModal" : {
-      "title" : "Ledger Live'ı sıfırlayın",
-      "desc" : "Bilgisayarınızdaki tüm ayarları ve hesapları silmek için Ledger Live'ı sıfırlayın. Daha sonra parolanızı seçebilir ve hesaplarınızı Ledger cihazınızla geri ekleyebilirsiniz. Kripto varlıklarınıza erişim sağlayan özel anahtarlar, Ledger cihazınızda güvende kalır ve kurtarma ifadesi ile yedeklenir.",
-      "warning" : "Ledger Live'ı sıfırlamak, tüm hesaplarınız için takas işlem geçmişinizi siler."
+      "title" : "Ledger Wallet'ı sıfırlayın",
+      "desc" : "Bilgisayarınızdaki tüm ayarları ve hesapları silmek için Ledger Wallet’ı sıfırlayın. Daha sonra parolanızı seçebilir ve hesaplarınızı Ledger cihazınızla geri ekleyebilirsiniz. Kripto varlıklarınıza erişim sağlayan özel anahtarlar, Ledger cihazınızda güvende kalır ve kurtarma ifadeniz ile yedeklenir.",
+      "warning" : "Ledger Wallet'ı sıfırlamak, tüm hesaplarınız için takas işlem geçmişinizi siler."
     },
     "softResetModal" : {
       "title" : "Önbelleği temizleyin",
@@ -4804,7 +4871,7 @@
     },
     "exportLogs" : {
       "title" : "Logları kaydedin",
-      "desc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
+      "desc" : "Ledger Wallet günlüklerini kaydetmek, sorun giderme amacıyla gerekli olabilir.",
       "btn" : "Kaydet"
     },
     "troubleshootNetwork" : {
@@ -4852,20 +4919,20 @@
     "setPassword" : {
       "title" : "Parola kilidi",
       "subTitle" : "Parola belirleyin",
-      "desc" : "Parolanızı güvende tutun. Parolanızı kaybettiğiniz takdirde Ledger Live'ı sıfırlamanız ve hesaplarınızı yeniden eklemeniz gerekir."
+      "desc" : "Parolanızı güvende tutun. Parolanızı kaybettiğiniz takdirde Ledger Wallet’ı sıfırlamanız ve hesaplarınızı yeniden eklemeniz gerekir."
     },
     "disablePassword" : {
       "title" : "Parola kilidini devre dışı bırakın",
-      "desc" : "Ledger Live verileri bilgisayarınızda şifrelenmeden saklanacak. Bu verilere hesap adları, işlemler ve açık adresler de dâhildir."
+      "desc" : "Ledger Wallet verileri bilgisayarınızda şifrelenmeden saklanacak. Bu verilere hesap adları, işlemler ve herkese açık adresler de dahildir."
     }
   },
   "update" : {
     "downloadInProgress" : "Güncelleme indiriliyor...",
     "downloadProgress" : "%{{progress}} tamamlandı",
     "checking" : "Güncelleme kontrol ediliyor...",
-    "checkSuccess" : "Yeni güncelleme mevcut. Güncelleme, uygulamayı kapattığınızda Ledger Live'ı otomatik olarak yükleyecek ve yeniden başlatacaktır.",
+    "checkSuccess" : "Yeni güncelleme mevcut. Güncelleme, uygulamayı kapattığınızda Ledger Wallet'ı otomatik olarak yükleyecek ve yeniden başlatacaktır.",
     "quitAndInstall" : "Hemen yükle ve yeniden başlat",
-    "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
+    "updateAvailable" : "Ledger Wallet {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
     "reDownload" : "Tekrar indir",
     "nightlyWarning" : "Bu sürüm otomatik olarak güncellenemez. Lütfen en son sürümü manuel olarak yükleyin"
@@ -4944,35 +5011,35 @@
     },
     "serviceStatus" : {
       "statusOk" : {
-        "title" : "Ledger Live çalışır durumda",
+        "title" : "Ledger Wallet çalışır durumda",
         "description" : "Sorun mu yaşıyorsunuz? <0>Yardım sayfamıza</0> gidin"
       },
       "statusNotOk" : {
-        "title" : "Ledger Live'de bir sorun var",
+        "title" : "Ledger Wallet'ta sorun yaşanıyor",
         "learnMore" : "Daha fazla bilgi"
       }
     },
     "announcement" : {
       "emptyState" : {
         "title" : "An itibarıyla herhangi bir haber yok",
-        "desc" : "Ledger ve Ledger Live ile ilgili tüm haberleri burada bulabilirsiniz"
+        "desc" : "Ledger ve Ledger Wallet ile ilgili tüm haberleri burada bulabilirsiniz"
       }
     }
   },
   "onboarding" : {
     "drawers" : {
       "pinHelp" : {
-        "title" : "PIN kodunuzu güvende tutun",
-        "intro" : "Kurulum işlemi sırasında bir PIN kodu seçersiniz.",
+        "title" : "PIN'inizi güvende tutun",
+        "intro" : "Kurulum işlemi sırasında bir PIN seçersiniz.",
         "rules" : {
-          "1" : "PIN kodunuzu <0>her zaman</0> kendiniz seçin.",
-          "2" : "PIN kodunuzu <0>her zaman</0> gözden uzak bir şekilde girin.",
-          "3" : "Gerekirse PIN kodunuzu değiştirebilirsiniz.",
-          "4" : "PIN kodunun arka arkaya üç kez yanlış girilmesi halinde cihaz sıfırlanır.",
-          "5" : "<0>Asla</0> 0000, 123456 veya 55555555 gibi kolay bir PIN kodu kullanmayın.",
-          "6" : "PIN kodunuzu <0>asla </0> başkasıyla paylaşmayın. Ledger'la bile paylaşmayın.",
-          "7" : "<0>Asla</0> kendiniz seçmediğiniz bir PIN kodu kullanmayın.",
-          "8" : "PIN kodunuzu <0>asla</0> bir bilgisayarda veya telefonda saklamayın."
+          "1" : "PIN'inizi <0>her zaman</0> kendiniz seçin.",
+          "2" : "PIN'inizi <0>her zaman</0> gözlerden uzak bir şekilde girin.",
+          "3" : "Gerekirse PIN'i değiştirebilirsiniz.",
+          "4" : "PIN'in arka arkaya üç kez yanlış girilmesi cihazı sıfırlayacaktır.",
+          "5" : "<0>Asla</0> 0000, 123456 veya 55555555 gibi kolay bir PIN kullanmayın.",
+          "6" : "PIN'inizi <0>asla</0> başkasıyla paylaşmayın. Ledger ile bile paylaşmayın.",
+          "7" : "<0>Asla</0> kendiniz seçmediğiniz bir PIN kullanmayın.",
+          "8" : "PIN'i <0>asla</0> bir bilgisayarda veya telefonda saklamayın."
         }
       },
       "recoverySeed" : {
@@ -4984,7 +5051,7 @@
         "paragraph3" : "Endişelenmeyin ve şu adımları izleyin:",
         "paragraph4" : "Kriptolarınıza erişiminizi kurtarmak istediğinizde, kurtarma ifadenizi herhangi bir cüzdanda kullanarak özel anahtarlarınızı yeniden üretebilirsiniz.",
         "points" : {
-          "1" : "Yeni bir donanım cüzdan alın.",
+          "1" : "Yeni bir Ledger cihazı edinin.",
           "2" : "Ledger uygulamasında “Yeni bir cihazda kurtarma ifadesiyle geri yükle” seçeneğini seçin",
           "3" : "Yeni cihazınızda kurtarma ifadenizi girerek kriptolarınıza erişim sağlayın."
         }
@@ -5005,7 +5072,7 @@
         "contactSupportCTA" : "Destek Al",
         "continueCTA" : "Devam",
         "title" : "Lütfen kutunun içindekileri kontrol edin",
-        "description" : "{{device}} cihazınız bir PIN kodu veya kurtarma ifadesi ile geldiyse kullanımı güvenli değildir ve Ledger Destek Ekibiyle iletişime geçmelisiniz.",
+        "description" : "{{device}} cihazınız bir PIN veya kurtarma ifadesi ile geldiyse kullanımı güvenli değildir ve Ledger Destek Ekibiyle iletişime geçmelisiniz.",
         "alert" : "Yalnızca kurulum sırasında cihaz ekranında görüntülenmiş olan kurtarma ifadesini kullanın"
       }
     },
@@ -5023,8 +5090,14 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
+          "thousandsCrypto" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
+          "secureWallet" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
+        },
+        "notice" : "Devam ettiğinizde Ledger’ın <Link1>Hüküm ve Koşullarını</Link1> ve <Link2>Gizlilik Politikasını</Link2> kabul etmiş olursunuz. Ledger hiçbir finansal tavsiyede bulunmaz.\nTakas ve staking hizmetleri üçüncü taraflarca sağlanmaktadır.",
         "title" : "En güvenli kripto para ve NFT cüzdanı",
-        "description" : "Ledger Live ile güvenle kripto ve NFT satın alın, varlıklarınızı yönetin ve bakiyenizi artırın.",
+        "description" : "Ledger Wallet ile güvenle kripto ve NFT satın alın, varlıklarınızı yönetin ve bakiyenizi artırın.",
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger satın alın",
@@ -5047,7 +5120,7 @@
           },
           "3" : {
             "title" : "İşlemlerinizi onaylayın",
-            "desc" : "Ledger Live ile güvenliğinizden ödün vermeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz.\nTüm kripto işlemlerinizi Nano cihazınızla onaylayacaksınız."
+            "desc" : "Ledger Wallet ile güvenliğinizden ödün vermeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz.\nTüm kripto işlemlerinizi Nano cihazınızla onaylayacaksınız."
           },
           "4" : {
             "title" : "Nano cihazınızı kuralım",
@@ -5084,7 +5157,7 @@
       "tutorial" : {
         "steps" : {
           "getStarted" : "Hemen başla",
-          "pinCode" : "PIN kodu",
+          "pinCode" : "PIN",
           "recoveryPhrase" : "Kurtarma ifadesi",
           "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
           "pairNano" : "Nano'yu bağla"
@@ -5092,7 +5165,7 @@
         "screens" : {
           "importYourRecoveryPhrase" : {
             "title" : "Kurtarma ifadesiyle geri yükleme",
-            "paragraph1" : "Ledger donanım cüzdanınızı geri yüklemek, değiştirmek veya yedeklemek için kurtarma ifadenizi kullanarak Nano'yu geri yükleyin.",
+            "paragraph1" : "Ledger'ınızı geri yüklemek, değiştirmek veya yedeklemek için kurtarma ifadenizi kullanarak Nano cihazınızı geri yükleyin.",
             "paragraph2" : "Nano cihazınız özel anahtarlarınızı geri yükleyecektir; bu sayede kriptolarınıza yeniden erişebilecek ve yönetebileceksiniz.",
             "buttons" : {
               "next" : "Tamam, hazırım!",
@@ -5126,12 +5199,12 @@
               "descr" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
             },
             "select" : {
-              "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+              "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
               "descr" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
             },
             "follow" : {
               "title" : "Yönergeleri uygulayın",
-              "descr" : "PIN kodunuzla ilgili yönergeleri uygulamak için buraya dönün."
+              "descr" : "PIN ile ilgili yönergeleri uygulamak için buraya dönün."
             },
             "buttons" : {
               "next" : "Sonraki adım",
@@ -5159,7 +5232,7 @@
             },
             "follow" : {
               "title" : "Yönergeleri uygulayın",
-              "descr" : "PIN kodunuzla ilgili yönergeleri uygulamak için buraya dönün."
+              "descr" : "PIN ile ilgili yönergeleri uygulamak için buraya dönün."
             },
             "buttons" : {
               "next" : "Sonraki adım",
@@ -5172,11 +5245,11 @@
             }
           },
           "pinCode" : {
-            "title" : "PIN kodu",
-            "paragraph" : "PIN kodunuz ilk güvenlik katmanıdır. Nano cihazınıza ve özel anahtarınıza erişimi fiziksel olarak korur. PIN kodunuz 4 ila 8 rakam uzunluğunda olmalıdır.",
-            "disclaimer" : "PIN kodumu kendim seçmem ve gizli tutmam gerektiğini anlıyorum.",
+            "title" : "PIN",
+            "paragraph" : "PIN'iniz ilk güvenlik katmanıdır. Nano cihazınıza ve özel anahtarınıza erişimi fiziksel olarak korur. PIN'iniz 4 ila 8 rakam uzunluğunda olabilir",
+            "disclaimer" : "PIN'imi kendim seçmem ve gizli tutmam gerektiğini anlıyorum.",
             "buttons" : {
-              "next" : "PIN kodunu ayarla",
+              "next" : "PIN'i belirleyin",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
             },
@@ -5208,12 +5281,12 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "PIN kodu seçin",
-              "descr" : "Rakamları değiştirmek için sol veya sağ tuşa basın. Bir rakamı onaylamak için her iki tuşa da basın. PIN kodunuzu onaylamak için <0></0> simgesini seçin. Bir rakamı silmek için <1></1> simgesini seçin."
+              "title" : "PIN seçin",
+              "descr" : "Rakamları değiştirmek için sol veya sağ tuşa basın. Bir rakamı onaylamak için her iki tuşa da basın. PIN'i onaylamak için <0></0> öğesini seçin. Bir rakamı silmek için <1></1> öğesini seçin."
             },
             "confirm" : {
-              "title" : "PIN kodunu onaylayın",
-              "descr" : "Onaylamak için PIN kodunuzu tekrar girin."
+              "title" : "PIN'i onaylayın",
+              "descr" : "Onaylamak için PIN'i tekrar girin."
             },
             "buttons" : {
               "next" : "Sonraki adım",
@@ -5246,7 +5319,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "Kurtarma ifadenizi girin",
-            "paragraph1" : "Kurtarma ifadeniz, cüzdanınızı ilk kez kurduğunuzda yedeklemeniz için görüntülenen gizli sözcük listesidir.",
+            "paragraph1" : "Kurtarma ifadeniz, Ledger cihazınızı ilk kez kurduğunuzda yedeklemeniz için görüntülenen gizli kelime listesidir.",
             "paragraph2" : "Ledger kurtarma ifadenizin bir kopyasını tutmaz.",
             "disclaimer" : "Kurtarma ifademi kaybedersem, Nano'ya erişimi kaybetmem durumunda kriptolarıma erişemeyeceğimi anlıyorum.",
             "buttons" : {
@@ -5256,7 +5329,7 @@
             },
             "warning" : {
               "title" : "Bizzat oluşturmadığınız bir kurtarma ifadesini kullanmayın.",
-              "desc" : "Ledger donanım cüzdanınızın PIN kodu ve kurtarma ifadesi sadece ve sadece sizin tarafınızdan oluşturulmalıdır. Anahtar kelimeleri önceden türetilmiş veya PIN kodu önceden belirlenmiş bir cihaz aldıysanız ürünü kullanmayın ve müşteri destek ekibimizle iletişime geçin.",
+              "desc" : "Ledger cihazınızın PIN'i ve kurtarma ifadesi sadece ve sadece sizin tarafınızdan oluşturulmalıdır. Anahtar kelimeleri önceden türetilmiş veya PIN'i önceden belirlenmiş bir cihaz aldıysanız ürünü kullanmayın ve müşteri destek ekibimizle iletişime geçin.",
               "supportLink" : "Müşteri destek ekibiyle iletişime geç"
             }
           },
@@ -5344,7 +5417,7 @@
           "genuineCheck" : {
             "success" : {
               "title" : "Her şey yolunda!",
-              "desc" : "Ledger {{deviceName}} cihazınız orijinal ve Ledger Live ile kullanıma hazır"
+              "desc" : "Ledger {{deviceName}} cihazınız orijinal ve Ledger Wallet ile kullanıma hazır!"
             },
             "buttons" : {
               "next" : "Devam",
@@ -5355,7 +5428,7 @@
           "hideRecoveryPhrase" : {
             "title" : "Kurtarma ifadenizi saklayın",
             "paragraph" : "Nano cihazınız kullanılamaz duruma gelirse, kurtarma ifadeniz kriptolarınıza erişmek için son şansınızdır. Onu güvenli bir yerde saklamalısınız.",
-            "keepItOffline" : "Bu sözcükleri yalnızca bir donanım cüzdanında kullanın; bilgisayar veya akıllı telefonlara girmeyin.",
+            "keepItOffline" : "Bu kelimeleri sadece bir Ledger cihazına girin, bilgisayarlara veya akıllı telefonlara girmeyin.",
             "neverShowToAnyone" : "24 kelimenizi kimseyle, Ledger'la bile paylaşmayın.",
             "buttons" : {
               "next" : "Tamam, bitirdim!",
@@ -5369,7 +5442,7 @@
             }
           },
           "pairMyNano" : {
-            "title" : "Orijinallik denetimi",
+            "title" : "Ledger Orijinallik Denetimi",
             "paragraph" : "Nano cihazınızın orijinal olup olmadığını doğrulayacağız. Bu çok hızlı ve kolay bir işlem olacak!",
             "buttons" : {
               "next" : "Nano cihazımı kontrol et",
@@ -5401,7 +5474,7 @@
         },
         "validateTransactions" : {
           "title" : "İşlemlerinizi onaylayın",
-          "description" : "Ledger Live ile güvenliğinizden ödün vermeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz. Tüm kripto işlemlerinizi Nano cihazınızla onaylayacaksınız."
+          "description" : "Ledger Wallet ile güvenliğinizden ödün vermeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz. Tüm kripto işlemlerinizi Nano cihazınızla onaylayacaksınız."
         },
         "setUpNanoWallet" : {
           "title" : "Nano'nuzu kuralım!",
@@ -5413,7 +5486,7 @@
     "quizz" : {
       "heading" : "Test",
       "title" : "Test zamanı!",
-      "descr" : "Donanım cüzdanınızla ilgili yaygın yanılgılardan kaçınmanız için size 3 basit soru hazırladık.",
+      "descr" : "Ledger cihazınızla ilgili yaygın yanılgılardan kaçınmak için 3 basit soruyu yanıtlayın.",
       "buttons" : {
         "start" : "Teste hazırım",
         "next" : "Sonraki soru",
@@ -5429,11 +5502,11 @@
           "results" : {
             "success" : {
               "title" : "Tebrikler!",
-              "text" : "Kriptolarınız her zaman blok zincirinde saklanır. Donanım cüzdanınız yalnızca kriptolarınıza erişmenizi sağlayan özel anahtarınızı tutar."
+              "text" : "Kripto varlıklarınız her zaman blok zincirinde saklanır. Ledger'ınız yalnızca kriptolarınıza erişmenizi sağlayan özel anahtarınızı saklar."
             },
             "fail" : {
               "title" : "Yanlış!",
-              "text" : "Kriptolarınız her zaman blok zincirinde saklanır. Donanım cüzdanınız yalnızca kriptolarınıza erişmenizi sağlayan özel anahtarınızı tutar."
+              "text" : "Kripto varlıklarınız her zaman blok zincirinde saklanır. Ledger'ınız yalnızca kriptolarınıza erişmenizi sağlayan özel anahtarınızı saklar."
             }
           }
         },
@@ -5455,7 +5528,7 @@
           }
         },
         "3" : {
-          "text" : "Ledger Nano'mu Ledger Live uygulamasına bağladığımda, özel anahtarım...",
+          "text" : "Ledger Nano'mu Ledger Wallet uygulamasına bağladığımda, özel anahtarım...",
           "answers" : {
             "1" : "Çevrim dışı kalmaya devam eder",
             "2" : "Kısa süreliğine internete bağlanır"
@@ -5463,11 +5536,11 @@
           "results" : {
             "success" : {
               "title" : "Tebrikler!",
-              "text" : "Özel anahtarınız donanım cüzdanınızda her zaman çevrim dışı kalır. Ledger uygulaması Nano'ya bağlandığında bile özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak onaylamanız gerekir."
+              "text" : "Özel anahtarınız Ledger cihazınızda her zaman çevrim dışı kalır. Ledger uygulaması Nano cihazınıza bağlansa bile özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak yetkilendirmeniz gerekir."
             },
             "fail" : {
               "title" : "Yanlış!",
-              "text" : "Özel anahtarınız donanım cüzdanınızda her zaman çevrim dışı kalır. Ledger uygulaması Nano'ya bağlandığında bile özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak onaylamanız gerekir."
+              "text" : "Özel anahtarınız Ledger cihazınızda her zaman çevrim dışı kalır. Ledger uygulaması Nano cihazınıza bağlansa bile özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak yetkilendirmeniz gerekir."
             }
           }
         }
@@ -5495,10 +5568,10 @@
       },
       "1" : {
         "windows" : {
-          "title" : "Ledger Live'ı Yönetici Olarak Çalıştırın",
+          "title" : "Ledger Wallet'ı Y\"önetici Olarak Çalıştırın",
           "bullets" : {
-            "0" : "Ledger Live'dan Çıkın.",
-            "1" : "Ledger Live uygulamasına sağ tıklayın.",
+            "0" : "Ledger Wallet'tan çıkın.",
+            "1" : "Ledger Wallet uygulamasına sağ tıklayın.",
             "2" : "“Yönetici Olarak Çalıştır” seçeneğini belirleyin.",
             "3" : "Cihazınızın algılanıp algılanmadığını görmek için cihazınızı bağlayın ve kilidini açın."
           }
@@ -5534,7 +5607,7 @@
           "title" : "Bilgisayarınızı yeniden başlatın",
           "bullets" : {
             "0" : "Bilgisayarınızı yeniden başlatın.",
-            "1" : "Ledger Live'ı başlatın.",
+            "1" : "Ledger Wallet'ta başlatın.",
             "2" : "Cihazınızın algılanıp algılanmadığını görmek için cihazınızı bağlayın ve kilidini açın."
           }
         },
@@ -5543,13 +5616,13 @@
           "bullets" : {
             "0" : "Herhangi bir antivirüs, güvenlik duvarı ve VPN programı varsa kapatın.",
             "1" : "Cihazınızın algılanıp algılanmadığını görmek için cihazınızı bağlayın ve kilidini açın.",
-            "2" : "İşe yaradıysa antivirüs programınızda Ledger Live'ı beyaz listeye alın."
+            "2" : "İşe yaradıysa antivirüs programınızda Ledger Wallet'ı beyaz listeye alın."
           }
         },
         "anotherComputer" : {
           "title" : "Başka bir bilgisayarı deneyin",
           "bullets" : {
-            "0" : "Ledger Live'ı indirmek ve yüklemek için başka bir bilgisayarda <0>{{link}}</0> adresine gidin.",
+            "0" : "Ledger Wallet'ı indirmek ve yüklemek için başka bir bilgisayarda <0>{{link}}</0> adresine gidin.",
             "1" : "Cihazınızın algılanıp algılanmadığını görmek için cihazınızı bağlayın ve kilidini açın."
           }
         }
@@ -5570,7 +5643,7 @@
               "0" : "“Sistem Tercihleri\"ni açın.",
               "1" : "“Güvenlik ve Gizlilik” bölümüne gidin.",
               "2" : "“Gizlilik” sekmesinde, sol sütunda “Tam Disk Erişimi” seçeneğine gidin.",
-              "3" : "“Ledger Live”ı ekleyin.",
+              "3" : "“Ledger Wallet”ı ekleyin.",
               "4" : "Cihazınızın algılanıp algılanmadığını görmek için cihazınızı bağlayın ve kilidini açın."
             }
           },
@@ -5614,7 +5687,7 @@
     "messageHash" : "Mesaj Hash'i",
     "message" : "Mesaj",
     "title" : "Ledger {{wording}} üzerinde devam edin",
-    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+    "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
@@ -5685,7 +5758,7 @@
   "updatedTerms" : {
     "title" : "Kullanım Koşulları Güncellemesi",
     "body" : {
-      "intro" : "Merhaba! Ledger Live Kullanım Koşullarımızı güncelleyerek daha anlaşılır bir hâle getirdik ve Ledger Live'ın yeni sunulan hizmet ve özelliklerini ekledik. Güncellemeyle yapılan önemli değişiklikler:",
+      "intro" : "Merhaba! Ledger Wallet Kullanım Koşullarımızı güncelleyerek daha anlaşılır bir hâle getirdik ve Ledger Wallet'ın yeni sunulan hizmet ve özelliklerini ekledik. Güncellemeyle yapılan önemli değişiklikler:",
       "bulletPoints" : ["Hangi hizmetlerin mevcut olduğu ve nasıl çalıştıklarıyla ilgili açıklamalar", "Hizmetler için ücretlerin nasıl çalıştığıyla ilgili açıklamalar", "Kullanım Koşullarımızdaki herhangi bir değişiklikten gerektiği gibi haberdar olmanızı sağlamak için bildirim sürecindeki iyileştirmeler"],
       "agreement" : "\"Devam\" butonuna tıklayarak, aşağıdaki Kullanım Koşullarını okuyup kabul ettiğinizi beyan etmiş olursunuz."
     },
@@ -5710,7 +5783,42 @@
     },
     "canton" : {
       "commentPlaceholder" : "Tercihe bağlı",
-      "comment" : "Yorum"
+      "comment" : "Yorum",
+      "addAccount" : {
+        "title" : "Canton Hesabı Ekleyin",
+        "onboard" : {
+          "title" : "Kurulum",
+          "newAccount" : "Yeni Hesap",
+          "init" : "Devam tuşuna tıklayarak yeni Canton hesabınızı oluşturun",
+          "onboarded" : "Kurulumu yapılmış hesaplar",
+          "success" : "Yeni Canton hesabınız oluşturuldu ve kurulumu yapıldı.",
+          "error" : "Yeni hesabın kurulumu yapılamadı. Lütfen tekrar deneyin.",
+          "error429" : "An itibarıyla Canton Network'te bir gün içinde sınırlı sayıda hesap oluşturulabilir. Lütfen daha sonra tekrar deneyin.",
+          "status" : {
+            "prepare" : "Hesap kurulumuna hazırlanılıyor...",
+            "submit" : "Hesabın kurulumu yapılıyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "auth" : {
+          "title" : "Yetkilendirme",
+          "validator" : "İzin ver",
+          "hint" : "Bu hesaba gelen fonları otomatik olarak kabul edin.",
+          "error" : "Yetkilendirme başarısız. Lütfen tekrar deneyin.",
+          "validatorLabel" : "Ledger Doğrulayıcı",
+          "validatorDescription" : "Otomatik fon kabulü"
+        },
+        "finish" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "tooManyUtxos" : {
+        "title" : "Eylem Alınması Gerekiyor: Çok Fazla UTXO",
+        "description" : "Hesabınızda çok sayıda küçük UTXO olduğundan bu transfer işlenemiyor. Biriken tutma ücretleri nedeniyle sürelerinin dolmasından kaçınmak ve transfer işlemlerinin yapılabilmesini sağlamak için bu UTXO'ları hemen birleştirin.",
+        "quickFix" : "Hızlı Düzeltme: Birleştirmek için kendinize biraz fon gönderin.",
+        "warning" : "Hesabınızda çok sayıda küçük UTXO var. Birleştirmek için kendinize biraz fon gönderin.",
+        "consolidate" : "Birleştir"
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -5790,7 +5898,7 @@
       "title" : "Gerekli tutar"
     },
     "NoAccessToCamera" : {
-      "title" : "Lütfen sisteminizin kamerası olduğundan, başka bir uygulama tarafından kullanılmadığından ve Ledger Live'ın bu kamerayı kullanma izni olduğundan emin olun.",
+      "title" : "Lütfen sisteminizin kamerası olduğundan, başka bir uygulama tarafından kullanılmadığından ve Ledger Wallet'ın bu kamerayı kullanma izni olduğundan emin olun.",
       "description" : ""
     },
     "CeloAllFundsWarning" : {
@@ -5897,7 +6005,7 @@
     },
     "DeviceNotOnboarded" : {
       "title" : "Cihazınız henüz kullanıma hazır değil",
-      "description" : "Ledger Live ile kullanmadan önce cihazınızı kurun."
+      "description" : "Ledger Wallet ile kullanmadan önce cihazınızı kurun."
     },
     "DeviceSocketFail" : {
       "title" : "Lütfen Ledger cihazınızı yeniden başlatın ve tekrar deneyin",
@@ -5909,7 +6017,7 @@
     },
     "DisconnectedDevice" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
     "EConnReset" : {
       "title" : "Ledger uygulama mağazasına ulaşılamıyor",
@@ -5933,7 +6041,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
-      "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin.",
+      "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin.",
       "goToSettingsCTA" : "Ayarlara git"
     },
     "HardResetFail" : {
@@ -6107,7 +6215,7 @@
     },
     "OperatingSystemOutdated" : {
       "title" : "Your Operating System version is outdated",
-      "description" : "Lütfen işletim sisteminizi yükseltin ve tekrar deneyin. Mevcut işletim sistemi sürümünüzde Ledger Live uygulamasının neden desteklenmediğini öğrenmek için aşağıdaki makaleyi inceleyebilirsiniz."
+      "description" : "Lütfen işletim sisteminizi yükseltin ve tekrar deneyin. Mevcut işletim sistemi sürümünüzde Ledger Wallet uygulamasının neden desteklenmediğini öğrenmek için aşağıdaki makaleyi inceleyebilirsiniz."
     },
     "PasswordsDontMatch" : {
       "title" : "Parolalar eşleşmiyor",
@@ -6247,7 +6355,7 @@
     },
     "WrongDeviceForAccount" : {
       "title" : "Bir hata oluştu",
-      "description" : "Lütfen donanım cüzdanınızın, seçilen hesapla ilişkili kurtarma ifadesi veya passphrase ile kurulmuş olduğunu doğrulayın."
+      "description" : "Lütfen Ledger cihazınızın, seçilen hesapla ilişkili kurtarma ifadesi veya passphrase ile ayarlandığından emin olun."
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Bir hata oluştu",
@@ -6451,7 +6559,7 @@
       "description" : "Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "GenuineCheckFailed" : {
-      "title" : "Orijinallik denetimi başarısız",
+      "title" : "Ledger Orijinallik Denetimi başarısız",
       "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "EthAppPleaseEnableContractData" : {
@@ -6653,6 +6761,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı (sağlama toplamı) geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -6833,23 +6945,23 @@
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DisconnectError" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceSessionNotFound" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "TransportNotSupportedError" : {
       "title" : "Bağlantı yöntemi hatası",
@@ -6889,7 +7001,7 @@
     },
     "UnsupportedFirmwareDAError" : {
       "title" : "İşletim sistemi desteklenmiyor",
-      "description" : "Cihazınızın işletim sistemi desteklenmiyor. Lütfen Ledger Live üzerinden güncelleyin veya zorluk yaşarsanız yardım almak için Ledger Destek ile iletişime geçin."
+      "description" : "Cihazınızın işletim sistemi desteklenmiyor. Lütfen Ledger Wallet üzerinden güncelleyin veya zorluk yaşarsanız yardım almak için Ledger Destek ile iletişime geçin."
     },
     "InvalidBatteryStatusTypeError" : {
       "title" : "Pil hatası",
@@ -6913,15 +7025,15 @@
     },
     "DeviceNotRecognizedError" : {
       "title" : "Cihaz tanınamadı",
-      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceAlreadyDiscoveredError" : {
       "title" : "Cihaz tanınamadı",
-      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "UnknownDeviceError" : {
       "title" : "Cihaz tanınamadı",
-      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "description" : "Ledger Wallet, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "ReceiverApduError" : {
       "title" : "İletişim hatası",
@@ -7077,8 +7189,8 @@
     },
     "progress" : {
       "loading" : "Yükleniyor...",
-      "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
-      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz.",
+      "progress" : "Uygulamalar yüklenirken Ledger Wallet'ta kalın.",
+      "disclaimer" : "Ledger Wallet üzerinde uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
       "skipped" : "Henüz {{ productName }} ile kullanılamıyor",
       "app" : "{{appName}} uygulaması"
@@ -7099,7 +7211,7 @@
     "title" : "Kimliğinizi kullanarak\nanahtarlarınızı kurtarın",
     "description" : "Gizli Kurtarma İfadeniz her zaman yanınızda olmaz.\nLedger Nano X'e özel ön lansman. 30 Haziran 2023'e kadar ücretsiz abone olun",
     "cta" : "Neden abone olmalıyım?",
-    "downloadLLM" : "Ledger Live Mobile uygulamasını kullanarak <purple>Ledger Recover</purple>'a abone olun"
+    "downloadLLM" : "Ledger Wallet mobil uygulamasını kullanarak <purple>Ledger Recover</purple>'a abone olun"
   },
   "webview" : {
     "networkError" : {
@@ -7118,10 +7230,10 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemizi sağlar.",
-      "whatWeTrack" : "Sizin açık rızanızla Ledger, Ledger Live'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) toplayabilir:",
+      "description" : "Ledger Wallet verilerinizi paylaşmanız, tercihlerinizi anlamamıza ve sizin ilginizi çekebilecek içerikleri göstermemize yardımcı olur.",
+      "whatWeTrack" : "Sizin açık rızanızla Ledger, Ledger Wallet'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) toplayabilir:",
       "whatWeTrackList" : {
-        "1" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için (Analizler).",
+        "1" : "Ledger Wallet performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için (Analizler).",
         "2" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sağlamanın yanı sıra pazarlama kampanyalarımızın etkinliğini ölçebilmemiz için (Kişiselleştirme)."
       },
       "whatWeDoNotTrack" : "Ledger şunlarla ilgili bilgileri hiçbir zaman toplamaz:",
@@ -7135,19 +7247,19 @@
       "accept" : "Tümünü kabul et",
       "analyticsData" : {
         "title" : "Analiz",
-        "description" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için sayfa ziyaretleri ve tıklamalar da dâhil olmak üzere kullanım verilerini paylaşırız."
+        "description" : "Ledger Wallet'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için sayfa ziyaretleri ve tıklamalar da dâhil olmak üzere kullanım verilerini paylaşırız."
       },
       "personalizationData" : {
         "title" : "Kişiselleştirme",
         "description" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler almanız ve pazarlama kampanyalarımızın performansını ölçebilmemiz için tıklamalar, sayfa ziyaretleri ve dönüşüm verileri de dâhil olmak üzere uygulama kullanımı verilerini paylaşırız."
       },
-      "share" : "Paylaş"
+      "validate" : "Doğrula"
     },
     "variantB" : {
       "accept" : "Kabul et",
       "refuse" : "Reddet",
       "analytics" : {
-        "description" : "Ledger Live analiz verilerinizi paylaşmanız, insanların Ledger Live'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı oluyor.",
+        "description" : "Ledger Wallet analiz verilerinizi paylaşmanız, insanların Ledger Wallet'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı olur.",
         "details" : {
           "1" : "Analiz verileri arasında sayfa ziyaretleri ve tıklamalar yer alır.",
           "2" : "Bakiyeniz, hesaplarınız ve portföyünüz ile ilgili hiçbir bilgiyi toplayamayız veya göremeyiz.",
@@ -7156,7 +7268,7 @@
       },
       "personalRecommendations" : {
         "title" : "Kişiselleştirilmiş bir deneyim elde edin",
-        "description" : "Ledger Live kişiselleştirme verilerinizi paylaşmanız, tercihlerinizle uyumlu içerikler göstermemizi sağlar",
+        "description" : "Ledger Wallet kişiselleştirme verilerinizi paylaşmanız, tercihlerinize uygun içerikler göstermemize olanak sağlar",
         "details" : {
           "1" : "Kişiselleştirme verileri arasında dönüştürme verileri, tıklamalar ve sayfa ziyaretleri yer alır.",
           "2" : "Kişisel veya portföy bilgilerinizi takip edemez veya toplayamayız."
@@ -7172,7 +7284,7 @@
       "personalizedExp" : "Kişiselleştirilmiş deneyim",
       "analytics" : "Analiz",
       "personalizedExpDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
-      "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin."
+      "analyticsDesc" : "Ledger Wallet'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin."
     }
   },
   "walletSync" : {
@@ -7200,22 +7312,22 @@
         "cta" : "Ledger Sync'i Aç"
       },
       "onboarding" : {
-        "title" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+        "title" : "Başka bir Ledger Wallet uygulamasıyla senkronize edin"
       }
     },
     "manage" : {
       "cta" : "Yönet",
       "synchronize" : {
-        "label" : "Başka bir Ledger Live uygulamasıyla senkronize et",
-        "description" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin."
+        "label" : "Başka bir Ledger Wallet uygulamasıyla senkronize edin",
+        "description" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin."
       },
       "backup" : {
         "label" : "Senkronizasyonu sil",
-        "description" : "Farklı Ledger Live uygulamalarındaki senkronize edilmiş kripto hesaplarınız artık senkronize olmayacaktır."
+        "description" : "Farklı Ledger Wallet uygulamalarındaki senkronize edilmiş kripto hesaplarınız artık senkronize olmayacaktır."
       },
       "instance" : {
-        "label" : "1 Ledger Live uygulaması senkronize edildi",
-        "label_other" : "{{count}} Ledger Live uygulamaları senkronize edildi",
+        "label" : "1 Ledger Wallet uygulaması senkronize edildi",
+        "label_other" : "{{count}} Ledger Wallet uygulaması senkronize edildi",
         "cta" : "Yönet"
       }
     },
@@ -7254,24 +7366,24 @@
     },
     "success" : {
       "backup" : {
-        "title" : "Ledger Sync, bu bilgisayarda Ledger Live için açıldı"
+        "title" : "Ledger Sync, bu bilgisayarda Ledger Wallet için açıldı"
       },
       "synch" : {
         "title" : "Senkronizasyon başarılı!",
-        "desc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Live uygulamalarında otomatik olarak görüntülenecektir. "
+        "desc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Wallet uygulamalarında otomatik olarak görüntülenecektir. "
       },
-      "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
+      "synchAnother" : "Başka bir Ledger Wallet uygulamasıyla senkronize edin",
       "close" : "Kapat"
     },
     "manageBackup" : {
       "deleteBackup" : {
         "title" : "Senkronizasyonu silmek istediğinizden emin misiniz?",
-        "description" : "Farklı telefonlarda ve bilgisayarlarda yer alan Ledger Live uygulamalarındaki kripto hesaplarınız artık senkronize olmayacaktır. Bu, fonlarınızı hiçbir şekilde etkilemez. ",
+        "description" : "Farklı telefonlarda ve bilgisayarlarda yer alan Ledger Wallet uygulamalarındaki kripto hesaplarınız artık senkronize olmayacaktır. Bu, fonlarınızı hiçbir şekilde etkilemez. ",
         "delete" : "Evet, sil",
         "cancel" : "Senkronizasyonu tut"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ledger Live uygulamalarınız artık senkronize değil",
+        "title" : "Ledger Wallet uygulamalarınız artık senkronize değil",
         "description" : "Senkronizasyonu istediğiniz zaman açabilirsiniz"
       },
       "deleteBackupError" : {
@@ -7281,7 +7393,7 @@
     "synchronize" : {
       "chooseMethod" : {
         "title" : "Senkronizasyon yönteminizi seçin",
-        "description" : "Doğrudan Ledger cihazınızla veya Ledger Live'da bir karekodu okutarak senkronize etmeyi seçebilirsiniz.",
+        "description" : "Doğrudan Ledger cihazınızla veya Ledger Wallet'ta bir karekod okutarak senkronize etmeyi seçebilirsiniz.",
         "scan" : {
           "title" : "Karekodu görüntüleyin",
           "description" : "Bir karekodu okutarak senkronize edin"
@@ -7292,25 +7404,25 @@
         }
       },
       "qrCode" : {
-        "title" : "Ledger Live uygulamalarınızı senkronize edin",
+        "title" : "Ledger Wallet uygulamalarınızı senkronize edin",
         "options" : {
           "mobile" : "Telefonla senkronize edin",
           "desktop" : "Bilgisayarla senkronize edin"
         },
         "mobile" : {
-          "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
+          "description" : "Başka bir telefondaki Ledger Wallet uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
             "step4" : "Karekodu okutun."
           }
         },
         "desktop" : {
-          "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+          "description" : "Hesaplarınızı başka bir Ledger Wallet uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
             "step4" : "Ledger cihazınızı bağlayın."
           }
@@ -7318,27 +7430,27 @@
       },
       "unbackedError" : {
         "title" : "Senkronizasyon algılanmadı",
-        "description" : "Ya bu Ledger Live'da ya da senkronize ettiğiniz Ledger Live'da Ledger Sync'i açın",
+        "description" : "Ya bu Ledger Wallet’ta ya da senkronize ettiğiniz Ledger Wallet’ta Ledger Sync’i açın",
         "cta" : "Ledger Sync'i Aç"
       },
       "pinCode" : {
         "title" : "Ledger Sync kodunuz",
-        "description" : "Kripto hesaplarınızı her iki Ledger Live uygulamasında senkronize etmek için telefonunuzdaki Ledger Live'da bu kodu girin.",
+        "description" : "Kripto hesaplarınızı her iki Ledger Wallet uygulamasında senkronize etmek için telefonunuzdaki Ledger Wallet'ta bu kodu girin.",
         "error" : {
           "title" : "Kodlar eşleşmiyor",
-          "description" : "Girdiğiniz kodun, diğer Ledger Live oturumunda gösterilen kodla aynı olduğundan emin olun."
+          "description" : "Girdiğiniz kodun, diğer Ledger Wallet oturumunda gösterilen kodla aynı olduğundan emin olun."
         }
       }
     },
     "manageInstances" : {
-      "title" : "Ledger Live şu cihazlarda senkronize edildi:",
+      "title" : "Ledger Wallet şu cihazlarda senkronize edildi:",
       "remove" : "Kaldır",
-      "deleteInstanceSuccess" : "{{instanceName}} örneğindeki Ledger Live uygulamanız artık Ledger Sync'e bağlı değil",
+      "deleteInstanceSuccess" : "{{instanceName}} örneğindeki Ledger Wallet uygulamanız artık Ledger Sync'e bağlı değil",
       "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
     },
     "deviceAction" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
-      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
+      "description" : "Ledger cihazınızın Güvenli Ekranında görünen yönergeleri izleyin."
     }
   },
   "lnsUpsell" : {
@@ -7391,7 +7503,7 @@
         "cta" : "Hesabınıza fon ekleyin",
         "close" : "Kapat",
         "noAssociatedAccounts" : {
-          "description" : "{{currency}} ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. {{currency}} hesabınız oluşturulduktan sonra o hesabı Ledger Live'da ekleyebilirsiniz.",
+          "description" : "{{currency}} ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. {{currency}} hesabınız oluşturulduktan sonra o hesabı Ledger Wallet'a ekleyebilirsiniz.",
           "cta" : "Bir {{currency}} hesabı nasıl oluşturulur?",
           "close" : "Kapat"
         }
@@ -7407,7 +7519,7 @@
     "connectYourDevice" : {
       "title" : "Cihazınızı bağlayın ve kilidini açın"
     },
-    "searchPlaceholder" : "Ara",
+    "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
@@ -7438,14 +7550,14 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger Live bu konumda kullanılamıyor.",
+    "description" : "Ledger Wallet bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
-    "title" : "Ledger Live Güncellemesi Gerekli",
+    "title" : "Ledger Wallet Güncellemesi Gerekli",
     "errorTitle" : "Güncelleme başarısız",
-    "errorDescription" : "Güncelleme başarısız oldu. Lütfen aşağıdaki bağlantıdan Ledger Live'ın en son sürümünü indirin. ",
-    "description" : "Ledger Live'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
+    "errorDescription" : "Güncelleme başarısız oldu. Lütfen aşağıdaki bağlantıdan Ledger Wallet'ın en son sürümünü indirin. ",
+    "description" : "Ledger Wallet'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
     "restart" : "Yeniden başlat",
     "downloadOnLedger" : "Ledger.com'dan indirin",
     "downloadProgress" : "İndiriliyor... %{{ progress }}"

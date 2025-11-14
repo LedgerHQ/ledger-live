@@ -4,7 +4,7 @@ const swapWithSendMaxConfig = {
   fromAccount: Account.ETH_1,
   toAccount: Account.BTC_NATIVE_SEGWIT_1,
   tmsLinks: ["B2CQA-3365"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runSwapWithSendMaxTest(

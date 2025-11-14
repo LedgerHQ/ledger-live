@@ -1,6 +1,5 @@
 import { Currency } from "./Currency";
 import { TokenType } from "./TokenType";
-import { Nft } from "./Nft";
 
 export class Account {
   constructor(
@@ -11,7 +10,6 @@ export class Account {
     public readonly tokenType?: TokenType,
     public readonly ensName?: string,
     public readonly derivationMode?: string,
-    public readonly nft?: Nft[],
     public readonly parentAccount?: Account,
   ) {}
 
@@ -109,12 +107,6 @@ export class Account {
     "BNB Chain 2",
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
-  );
-  static readonly BSC_POL = new Account(
-    Currency.BSC_POL,
-    "BNB Chain 1",
-    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
-    0,
   );
   static readonly BSC_SHIBA = new Account(
     Currency.BSC_SHIBA,
@@ -246,7 +238,6 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
   // don't use this account as a recipient, it's balance
   // should stay close to null to allow for error message testing
@@ -361,7 +352,6 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    [Nft.ANIME_SHIPS_494, Nft.BISHOP_OF_STORMS, Nft.COMMON_TOWER_MAP],
   );
   static readonly POL_2 = new Account(
     Currency.POL,
@@ -552,19 +542,8 @@ export class TokenAccount extends Account {
     parentAccount: Account,
     ensName?: string,
     derivationMode?: string,
-    nft?: Nft[],
   ) {
-    super(
-      currency,
-      accountName,
-      address,
-      index,
-      tokenType,
-      ensName,
-      derivationMode,
-      nft,
-      parentAccount,
-    );
+    super(currency, accountName, address, index, tokenType, ensName, derivationMode, parentAccount);
   }
 
   static readonly ETH_LIDO = new TokenAccount(

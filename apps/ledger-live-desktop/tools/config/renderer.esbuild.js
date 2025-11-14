@@ -33,6 +33,17 @@ module.exports = {
       // It prevents the global styles from working.
       // See: https://github.com/styled-components/styled-components/issues/3714#issuecomment-1112672142
       "styled-components": [require.resolve("styled-components/dist/styled-components")],
+      // Force resolution of crypto-icons-ui to workspace to avoid duplication
+      "@ledgerhq/crypto-icons-ui": path.resolve(
+        path.dirname(__dirname),
+        "..",
+        "..",
+        "..",
+        "libs",
+        "ui",
+        "packages",
+        "crypto-icons",
+      ),
       "buffer/": "buffer",
     }),
     HtmlPlugin({
@@ -41,7 +52,7 @@ module.exports = {
           entryPoints: ["src/renderer/index.ts", "renderer.bundle.css"],
           htmlTemplate: "src/renderer/index.html",
           filename: "index.html",
-          title: "Ledger Live",
+          title: "Ledger Wallet",
         },
       ],
     }),

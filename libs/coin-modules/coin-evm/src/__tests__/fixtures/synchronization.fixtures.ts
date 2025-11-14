@@ -4,9 +4,8 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import * as logic from "../../logic";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { getCoinConfig } from "../../config";
-import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
 import {
   makeAccount,
   makeNft,
@@ -56,9 +55,9 @@ export const swapHistory = [
 
 export const tokenCurrencies = [
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
+  tokensById["ethereum/erc20/usd__coin"] as TokenCurrency,
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
+  tokensById["ethereum/erc20/usd_tether__erc20_"] as TokenCurrency,
 ];
 
 export const tokenAccount = {
@@ -67,7 +66,6 @@ export const tokenAccount = {
 };
 export const account = Object.freeze({
   ...makeAccount("0xkvn", currency, [tokenAccount]),
-  syncHash: logic.getSyncHash(currency),
 });
 
 export const coinOperations = [
@@ -76,21 +74,21 @@ export const coinOperations = [
     accountId: "js:2:ethereum:0xkvn:",
     blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
     senders: ["0xd48f2332Eeed88243Cb6b1D0d65a10368A5370f0"], // johnnyhallyday.eth
-    transactionSequenceNumber: 1,
+    transactionSequenceNumber: new BigNumber(1),
     date: new Date(),
     blockHeight: 1,
   }),
   makeOperation({
     hash: "0xCoinOp2Hash",
     accountId: "js:2:ethereum:0xkvn:",
-    transactionSequenceNumber: 2,
+    transactionSequenceNumber: new BigNumber(2),
     date: new Date(Date.now() + 1),
     blockHeight: 100,
   }),
   makeOperation({
     hash: "0xCoinOp3Hash",
     accountId: "js:2:ethereum:0xkvn:",
-    transactionSequenceNumber: 5,
+    transactionSequenceNumber: new BigNumber(5),
     date: new Date(Date.now() + 2),
     blockHeight: 1000,
   }),

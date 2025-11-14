@@ -2,6 +2,7 @@ export { broadcast } from "./transaction/broadcast";
 export { combine } from "./transaction/combine";
 export { craftTransaction } from "./transaction/craftTransaction";
 export { estimateFees } from "./transaction/estimateFees";
+export { signTransaction } from "./transaction/sign";
 export { getBalance } from "./account/getBalance";
 export { lastBlock } from "./history/lastBlock";
 export { listOperations } from "./history/listOperations";

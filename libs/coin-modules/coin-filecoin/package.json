@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.12.2",
+  "version": "1.14.0",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -104,7 +104,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "bignumber.js": "^9.1.2",
-    "ethers": "6.15.0",
+    "ethers": "catalog:",
     "invariant": "^2.2.2",
     "iso-filecoin": "^4.1.0",
     "lodash": "^4.17.21",
@@ -116,7 +116,7 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/semver": "^7.5.8",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },

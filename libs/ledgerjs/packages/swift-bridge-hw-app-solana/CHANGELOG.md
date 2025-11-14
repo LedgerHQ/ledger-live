@@ -1,5 +1,21 @@
 # @ledgerhq/swift-bridge-hw-app-solana
 
+## 1.2.15
+
+### Patch Changes
+
+- Updated dependencies [[`2a67525`](https://github.com/LedgerHQ/ledger-live/commit/2a67525bfce19b673126ce6dddfca240559b10db)]:
+  - @ledgerhq/hw-app-solana@7.6.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.13
+
+## 1.2.15-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2a67525`](https://github.com/LedgerHQ/ledger-live/commit/2a67525bfce19b673126ce6dddfca240559b10db)]:
+  - @ledgerhq/hw-app-solana@7.6.0-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.13-next.0
+
 ## 1.2.14
 
 ### Patch Changes

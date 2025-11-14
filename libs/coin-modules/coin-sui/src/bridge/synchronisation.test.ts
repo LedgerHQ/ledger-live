@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
@@ -7,10 +9,13 @@ import { getAccountShape } from "./synchronisation";
 import coinConfig from "../config";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import * as networkModule from "../network";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-// Mock getTokenById and listTokensForCryptoCurrency
+// Mock findTokenById
 jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
-  getTokenById: (coinType: string) => ({
+  findTokenById: async (coinType: string) => ({
     id: coinType,
     ticker: "TEST",
     name: "Test Token",
@@ -20,7 +25,6 @@ jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
     parentCurrency: { id: "sui" },
     contract: "0x123",
   }),
-  listTokensForCryptoCurrency: () => [{ id: "0x123::sui::TEST" }],
 }));
 
 jest.mock("../network", () => {
@@ -35,15 +39,21 @@ jest.mock("../network", () => {
   };
 });
 
+const mockedFindTokenByAddressInCurrency = jest.fn();
+setCryptoAssetsStore({
+  findTokenByAddressInCurrency: async (address: string, currencyId: string) =>
+    mockedFindTokenByAddressInCurrency(address, currencyId),
+  findTokenById: async () => undefined,
+  getTokensSyncHash: async () => "0",
+} as unknown as CryptoAssetsStore);
+
 describe("getAccountShape", () => {
   const mockGetAccountBalances = networkModule.getAccountBalances as jest.Mock;
   const mockGetOperations = networkModule.getOperations as jest.Mock;
   const mockGetStakesRaw = networkModule.getStakesRaw as jest.Mock;
 
   beforeEach(() => {
-    mockGetAccountBalances.mockClear();
-    mockGetOperations.mockClear();
-    mockGetStakesRaw.mockClear();
+    jest.clearAllMocks();
   });
 
   beforeAll(() => {
@@ -200,6 +210,110 @@ describe("getAccountShape", () => {
     expect(shape.balance).toEqual(mainBalance.balance);
     expect(shape.subAccounts).toBeDefined();
     expect(Array.isArray(shape.subAccounts)).toBe(true);
+  });
+
+  it("should build subAccounts from SUI tokens", async () => {
+    mockedFindTokenByAddressInCurrency.mockImplementation((address: string, currencyId: string) => {
+      if (currencyId !== "sui") {
+        return undefined;
+      }
+
+      if (address === DEFAULT_COIN_TYPE) {
+        return undefined;
+      }
+
+      return {
+        contractAddress: "0x123",
+        countervalueTicker: "TEST",
+        id: `sui/coin/${address}`,
+        name: "Test Token",
+        parentCurrency: { id: "sui" },
+        standard: "SUI-20",
+        ticker: "TEST",
+        tokenType: "sui",
+      } as unknown as TokenCurrency;
+    });
+
+    const accountBalanceCoinType = "random coin type 1";
+    const accountBalanceCoinType2 = "random coin type 2";
+    mockGetAccountBalances.mockResolvedValue([
+      createAccountBalance(),
+      createAccountBalance({ coinType: accountBalanceCoinType }),
+      createAccountBalance({ coinType: accountBalanceCoinType2 }),
+    ]);
+    mockGetOperations.mockResolvedValue([]);
+
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const suiAccount = await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address,
+        initialAccount: undefined,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    expect(suiAccount.subAccounts).toEqual([
+      {
+        balance: expect.any(BigNumber),
+        balanceHistoryCache: {
+          DAY: { balances: [], latestDate: null },
+          HOUR: { balances: [], latestDate: null },
+          WEEK: { balances: [], latestDate: null },
+        },
+        blockHeight: 5,
+        creationDate: expect.any(Date),
+        id: `js:2:sui:${address}:sui+sui%2Fcoin%2Frandom%20coin%20type%201`,
+        operations: [],
+        operationsCount: 0,
+        parentId: `js:2:sui:${address}:sui`,
+        pendingOperations: [],
+        spendableBalance: expect.any(BigNumber),
+        swapHistory: [],
+        token: {
+          contractAddress: "0x123",
+          countervalueTicker: "TEST",
+          id: `sui/coin/${accountBalanceCoinType}`,
+          name: "Test Token",
+          parentCurrency: { id: "sui" },
+          standard: "SUI-20",
+          ticker: "TEST",
+          tokenType: "sui",
+        },
+        type: "TokenAccount",
+      },
+      {
+        balance: expect.any(BigNumber),
+        balanceHistoryCache: {
+          DAY: { balances: [], latestDate: null },
+          HOUR: { balances: [], latestDate: null },
+          WEEK: { balances: [], latestDate: null },
+        },
+        blockHeight: 5,
+        creationDate: expect.any(Date),
+        id: `js:2:sui:${address}:sui+sui%2Fcoin%2Frandom%20coin%20type%202`,
+        operations: [],
+        operationsCount: 0,
+        parentId: `js:2:sui:${address}:sui`,
+        pendingOperations: [],
+        spendableBalance: expect.any(BigNumber),
+        swapHistory: [],
+        token: {
+          contractAddress: "0x123",
+          countervalueTicker: "TEST",
+          id: `sui/coin/${accountBalanceCoinType2}`,
+          name: "Test Token",
+          parentCurrency: { id: "sui" },
+          standard: "SUI-20",
+          ticker: "TEST",
+          tokenType: "sui",
+        },
+        type: "TokenAccount",
+      },
+    ]);
   });
 
   describe("stakes functionality", () => {

@@ -53,8 +53,9 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, true);
@@ -99,8 +100,10 @@ export function runSendSPLAddressValid(
   transaction: TransactionType,
   expectedWarningMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - valid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
@@ -122,8 +125,10 @@ export function runSendSPLAddressInvalid(
   recipientContractAddress: string | undefined,
   expectedErrorMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - invalid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
@@ -171,21 +176,33 @@ export function runAddSubAccountTest(
             await app.portfolio.addAccount();
           }
 
-          await app.addAccount.importWithYourLedger();
-          await app.common.performSearch(
-            asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-          );
-          if (asset.tokenType) {
-            await app.receive.selectCurrencyByType(asset.tokenType);
-          } else {
-            await app.receive.selectCurrency(asset.currency.id);
-          }
+          const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
 
-          const networkId =
-            asset?.parentAccount === undefined
-              ? asset.currency.speculosApp.name.toLowerCase()
-              : asset?.parentAccount?.currency.id;
-          await app.receive.selectNetworkIfAsked(networkId);
+          if (isModularDrawer) {
+            await app.addAccount.importWithYourLedger();
+            await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+            await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+            const networkName =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name
+                : asset?.parentAccount?.currency.name;
+            await app.modularDrawer.selectNetworkIfAsked(networkName);
+          } else {
+            await app.addAccount.importWithYourLedger();
+            await app.common.performSearch(
+              asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
+            );
+            if (asset.tokenType) {
+              await app.receive.selectCurrencyByType(asset.tokenType);
+            } else {
+              await app.receive.selectCurrency(asset.currency.id);
+            }
+            const networkId =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name.toLowerCase()
+                : asset?.parentAccount?.currency.id;
+            await app.receive.selectNetworkIfAsked(networkId);
+          }
 
           const accountId = await app.addAccount.addAccountAtIndex(
             asset?.parentAccount === undefined

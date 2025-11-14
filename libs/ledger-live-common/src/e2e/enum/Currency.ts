@@ -72,7 +72,7 @@ export class Currency {
   );
   static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, [Network.SOLANA]);
 
-  static readonly DOT = new Currency("Polkadot", "DOT", "polkadot", AppInfos.POLKADOT, [
+  static readonly DOT = new Currency("Polkadot", "DOT", "assethub_polkadot", AppInfos.POLKADOT, [
     Network.POLKADOT,
   ]);
   static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
@@ -155,13 +155,6 @@ export class Currency {
     "bsc",
     AppInfos.BNB_CHAIN,
     [Network.BNB_CHAIN, Network.POLYGON],
-  );
-  static readonly BSC_POL = new Currency(
-    "Matic Token",
-    "MATIC",
-    "bsc/bep20/matic_token",
-    AppInfos.BNB_CHAIN,
-    [Network.BNB_CHAIN],
   );
   static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
     Network.BNB_CHAIN,

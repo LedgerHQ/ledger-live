@@ -9,7 +9,15 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { GenericTransaction } from "./types";
+import {
+  FeeData,
+  FeeDataRaw,
+  GasOptions,
+  GasOptionsRaw,
+  GenericTransaction,
+  GenericTransactionRaw,
+  OperationCommon,
+} from "./types";
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
@@ -27,6 +35,30 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === "string");
+}
+
+export function cleanedOperation(operation: OperationCommon): OperationCommon {
+  if (!operation.extra) return operation;
+
+  const extraToClean = new Set([
+    "assetReference",
+    "assetAmount",
+    "assetOwner",
+    "assetSenders",
+    "assetRecipients",
+    "parentSenders",
+    "parentRecipients",
+    "ledgerOpType",
+  ]);
+  const cleanedExtra = Object.fromEntries(
+    Object.entries(operation.extra).filter(([key]) => !extraToClean.has(key)),
+  );
+
+  return { ...operation, extra: cleanedExtra };
+}
+
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const opType = op.type as OperationType;
 
@@ -34,6 +66,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     assetReference?: string;
     assetOwner?: string;
     assetAmount?: string | undefined;
+    assetSenders?: string[];
+    assetRecipients?: string[];
+    parentSenders?: string[];
+    parentRecipients?: string[];
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
   } = {};
@@ -46,6 +82,22 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.assetAmount = op.details.assetAmount as string;
   }
 
+  if (isStringArray(op.details?.assetSenders)) {
+    extra.assetSenders = op.details?.assetSenders;
+  }
+
+  if (isStringArray(op.details?.assetRecipients)) {
+    extra.assetRecipients = op.details?.assetRecipients;
+  }
+
+  if (isStringArray(op.details?.parentSenders)) {
+    extra.parentSenders = op.details?.parentSenders;
+  }
+
+  if (isStringArray(op.details?.parentRecipients)) {
+    extra.parentRecipients = op.details?.parentRecipients;
+  }
+
   if (op.asset?.type !== "native") {
     extra.assetReference =
       "assetReference" in (op.asset ?? {}) ? (op.asset as any).assetReference : "";
@@ -55,23 +107,36 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.memo = op.details.memo as string;
   }
   const bnFees = new BigNumber(op.tx.fees.toString());
+  const hasFailed = op.details?.status === "failed";
+
+  let value: BigNumber;
+  if (hasFailed) {
+    value = bnFees;
+  } else if (
+    op.asset.type === "native" &&
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+  ) {
+    value = new BigNumber(op.value.toString()).plus(bnFees);
+  } else {
+    value = new BigNumber(op.value.toString());
+  }
+
   const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value:
-      op.asset.type === "native" && ["OUT", "FEES"].includes(opType)
-        ? new BigNumber(op.value.toString()).plus(bnFees)
-        : new BigNumber(op.value.toString()),
+    value,
     fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
-    senders: op.senders,
-    recipients: op.recipients,
+    senders: extra.parentSenders ?? op.senders,
+    recipients: extra.parentRecipients ?? op.recipients,
     date: op.tx.date,
-    transactionSequenceNumber: op.details?.sequence as number,
-    hasFailed: (op.details as unknown as { status?: string })?.status === "failed",
+    transactionSequenceNumber: op.details?.sequence
+      ? new BigNumber(op.details?.sequence.toString())
+      : undefined,
+    hasFailed,
     extra,
   };
 
@@ -145,6 +210,10 @@ export function transactionToIntent(
     data: Buffer.isBuffer(transaction.data)
       ? { type: "buffer", value: transaction.data }
       : { type: "none" },
+    sequence:
+      transaction.nonce !== null && transaction.nonce !== undefined
+        ? BigInt(transaction.nonce.toString())
+        : undefined,
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
@@ -172,10 +241,114 @@ export function transactionToIntent(
   return res;
 }
 
+function toFeeDataRaw(data: FeeData): FeeDataRaw {
+  return {
+    gasPrice: data.gasPrice?.toFixed() ?? null,
+    maxFeePerGas: data.maxFeePerGas?.toFixed() ?? null,
+    maxPriorityFeePerGas: data.maxPriorityFeePerGas?.toFixed() ?? null,
+    nextBaseFee: data.nextBaseFee?.toFixed() ?? null,
+  };
+}
+
+function toGasOptionRaw(options: GasOptions): GasOptionsRaw {
+  return {
+    fast: toFeeDataRaw(options.fast),
+    medium: toFeeDataRaw(options.medium),
+    slow: toFeeDataRaw(options.slow),
+  };
+}
+
+function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransactionRaw {
+  const raw: GenericTransactionRaw = {
+    amount: transaction.amount.toString(),
+    recipient: transaction.recipient,
+    family: transaction.family,
+  };
+
+  if ("useAllAmount" in transaction) {
+    raw.useAllAmount = transaction.useAllAmount;
+  }
+
+  const stringFieldsToPropagate = [
+    "memoType",
+    "memoValue",
+    "assetReference",
+    "assetOwner",
+  ] as const;
+  for (const field of stringFieldsToPropagate) {
+    if (field in transaction) {
+      raw[field] = transaction[field];
+    }
+  }
+
+  const numberFieldsToPropagate = ["tag", "type", "chainId"] as const;
+  for (const field of numberFieldsToPropagate) {
+    if (field in transaction) {
+      raw[field] = transaction[field];
+    }
+  }
+
+  const bigNumberFieldsToPropagate = [
+    "fees",
+    "storageLimit",
+    "nonce",
+    "gasLimit",
+    "gasPrice",
+    "maxFeePerGas",
+    "maxPriorityFeePerGas",
+  ] as const;
+  for (const field of bigNumberFieldsToPropagate) {
+    if (field in transaction) {
+      raw[field] = transaction[field]?.toFixed();
+    }
+  }
+
+  if ("customFees" in transaction) {
+    raw.customFees =
+      transaction.customFees && "fees" in transaction.customFees.parameters
+        ? {
+            parameters: { fees: transaction.customFees.parameters.fees?.toFixed() },
+          }
+        : { parameters: {} };
+  }
+
+  if ("feesStrategy" in transaction) {
+    raw.feesStrategy = transaction.feesStrategy;
+  }
+
+  if ("mode" in transaction) {
+    raw.mode = transaction.mode;
+  }
+
+  if ("feeCustomUnit" in transaction) {
+    raw.feeCustomUnit = transaction.feeCustomUnit;
+  }
+
+  if ("data" in transaction) {
+    raw.data = transaction.data?.toString("hex");
+  }
+
+  if ("networkInfo" in transaction) {
+    raw.networkInfo = transaction.networkInfo && {
+      fees: transaction.networkInfo.fees.toFixed(),
+    };
+  }
+
+  if ("gasOptions" in transaction) {
+    raw.gasOptions = transaction.gasOptions && toGasOptionRaw(transaction.gasOptions);
+  }
+
+  if ("recipientDomain" in transaction) {
+    raw.recipientDomain = transaction.recipientDomain;
+  }
+
+  return raw;
+}
+
 export const buildOptimisticOperation = (
   account: Account,
   transaction: GenericTransaction,
-  sequenceNumber?: number,
+  sequenceNumber?: bigint,
 ): Operation => {
   let type: OperationType;
   switch (transaction.mode) {
@@ -197,20 +370,29 @@ export const buildOptimisticOperation = (
   const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
+  const parentType = subAccountId ? "FEES" : type;
+  const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
 
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, "", parentType),
     hash: "",
-    type: type,
+    type: parentType,
     value: subAccountId ? new BigNumber(fees.toString()) : transaction.amount, // match old behavior
     fee: new BigNumber(fees.toString()),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
-    transactionSequenceNumber: sequenceNumber ?? 0,
+    transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
     accountId: account.id,
     date: new Date(),
+    transactionRaw: toGenericTransactionRaw({
+      ...transaction,
+      nonce: sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
+      ...(tokenAccount
+        ? { recipient: tokenAccount.token.contractAddress, amount: new BigNumber(0) }
+        : {}),
+    }),
     extra: {
       ledgerOpType: type,
       blockTime: new Date(),
@@ -218,13 +400,12 @@ export const buildOptimisticOperation = (
     },
   };
 
-  const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
-        id: `${subAccountId}--OUT`,
+        id: `${subAccountId}--${type}`,
         hash: "",
-        type: "OUT",
+        type,
         value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,
@@ -233,6 +414,11 @@ export const buildOptimisticOperation = (
         recipients: [transaction.recipient],
         accountId: subAccountId,
         date: new Date(),
+        transactionRaw: toGenericTransactionRaw({
+          ...transaction,
+          nonce:
+            sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
+        }),
         extra: {
           ledgerOpType: type,
         },

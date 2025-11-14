@@ -1,6 +1,6 @@
 const testConfig = {
   tmsLinks: ["B2CQA-2871", "B2CQA-2873", "B2CQA-3060", "B2CQA-2873"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 describe("Wallet Page", () => {
@@ -15,5 +15,11 @@ describe("Wallet Page", () => {
   testConfig.tags.forEach(tag => $Tag(tag));
   it("Portfolio Accounts Tab - LLM", async () => {
     await app.portfolio.checkAccountsSection();
+    const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
+    if (isModularDrawer) {
+      await app.modularDrawer.checkSelectAssetPage();
+    } else {
+      await app.portfolio.checkSelectAssetPage();
+    }
   });
 });

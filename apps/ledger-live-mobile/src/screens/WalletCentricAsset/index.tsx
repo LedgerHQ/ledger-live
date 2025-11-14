@@ -7,7 +7,10 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import VersionNumber from "react-native-version-number";
 import { useNavigation } from "@react-navigation/native";
+import { Loading } from "~/components/Loading";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import BigNumber from "bignumber.js";
@@ -52,7 +55,23 @@ const AssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
-  const { currency } = route?.params;
+  const { currency: preloadedCurrency, currencyId } = route?.params ?? {};
+
+  const { data: assetData, isLoading: isLoadingAssetData } = useAssetsData({
+    currencyIds: currencyId ? [currencyId] : undefined,
+    product: "llm",
+    version: VersionNumber.appVersion,
+    areCurrenciesFiltered: true,
+    skip: !!preloadedCurrency,
+  });
+
+  const currency = useMemo(() => {
+    if (preloadedCurrency) return preloadedCurrency;
+    if (!currencyId || !assetData) return undefined;
+
+    return assetData.cryptoOrTokenCurrencies?.[currencyId];
+  }, [preloadedCurrency, currencyId, assetData]);
+
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
     isEqual,
@@ -103,6 +122,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   );
 
   const onAddAccount = useCallback(() => {
+    if (!currency) return;
     if (provider && provider?.currenciesByNetwork.length > 1) {
       navigation.navigate(NavigatorName.AssetSelection, {
         screen: ScreenName.SelectNetwork,
@@ -124,7 +144,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [currency, provider, navigation]);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
-  if (isCryptoCurrency(currency)) {
+  if (currency && isCryptoCurrency(currency)) {
     try {
       currencyConfig = getCurrencyConfiguration(currency);
     } catch (e) {
@@ -133,6 +153,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }
 
   const data = useMemo(() => {
+    if (!currency) return [];
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const accounts = cryptoAccounts as Account[] | TokenAccount[];
     return [
@@ -210,6 +231,13 @@ const AssetScreen = ({ route }: NavigationProps) => {
     onAddAccount,
     currencyConfig,
   ]);
+
+  if (!currency) {
+    if (currencyId && isLoadingAssetData) {
+      return <Loading />;
+    }
+    return null;
+  }
 
   return (
     <SafeAreaView edges={["bottom", "left", "right"]} isFlex>

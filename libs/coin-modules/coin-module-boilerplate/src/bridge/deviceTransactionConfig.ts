@@ -3,7 +3,7 @@ import type { Transaction, TransactionStatus } from "../types";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
 // This method adds additional fields that need to be reviewed when signing a transaction on the device.
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction: {},
   status: { amount, estimatedFees },
 }: {
@@ -11,7 +11,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<CommonDeviceTransactionField> {
+}): Promise<Array<CommonDeviceTransactionField>> {
   const fields: Array<CommonDeviceTransactionField> = [];
 
   if (!amount.isZero()) {
