@@ -13,9 +13,7 @@ const PostOnboardingHub = () => {
   const postOnboardingRows = useMemo(
     () =>
       actionsState.map((action, index) => (
-        <React.Fragment key={index}>
-          <PostOnboardingActionRow {...action} deviceModelId={deviceModelId} />
-        </React.Fragment>
+        <React.Fragment key={index}>{action.title}</React.Fragment>
       )),
     [actionsState, deviceModelId],
   );
