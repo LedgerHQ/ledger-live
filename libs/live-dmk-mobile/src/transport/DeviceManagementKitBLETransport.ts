@@ -23,7 +23,7 @@ import {
   timer,
   Subscription,
 } from "rxjs";
-import { first, filter, tap, timeout, retry } from "rxjs/operators";
+import { first, filter, tap, timeout, retry, map } from "rxjs/operators";
 import { DescriptorEvent, DeviceModel } from "@ledgerhq/types-devices";
 import type {
   Observer as TransportObserver,
@@ -34,6 +34,7 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { findMatchingDiscoveredDevice, matchDeviceByName } from "../utils/matchDevicesByNameOrId";
 
 export const tracer = new LocalTracer("live-dmk-tracer", {
   function: "DeviceManagementKitBLETransport",
@@ -119,11 +120,13 @@ export class DeviceManagementKitBLETransport extends Transport {
     deviceOrId: DiscoveredDevice | string,
     _timeoutMs?: number,
     _context?: TraceContext,
+    options?: { matchDeviceByName?: string },
   ): Promise<DeviceManagementKitBLETransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
     tracer.trace(
       "[DMKTransport] [open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
+      { options },
     );
 
     if (activeSessionId) {
@@ -140,16 +143,45 @@ export class DeviceManagementKitBLETransport extends Transport {
         sessionId: activeSessionId,
       });
 
+      const isSameDeviceId = connectedDevice.id === deviceOrId;
+      const isSameDeviceNameButDifferentId =
+        !isSameDeviceId &&
+        matchDeviceByName({
+          oldDevice: { deviceName: options?.matchDeviceByName },
+          newDevice: { deviceName: connectedDevice.name },
+        });
+
       if (
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
         connectedDevice.type === "BLE" &&
         activeDeviceSessionSubject.value?.transport &&
-        connectedDevice.id === deviceOrId
+        (isSameDeviceId || isSameDeviceNameButDifferentId)
       ) {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
+          {
+            data: {
+              isSameDeviceId,
+              isSameDeviceNameButDifferentId,
+              status: deviceSessionState?.deviceStatus,
+              transport: activeDeviceSessionSubject.value?.transport,
+              oldDevice: { deviceName: options?.matchDeviceByName },
+              newDevice: { deviceName: connectedDevice.name },
+            },
+          },
         );
         return activeDeviceSessionSubject.value.transport;
+      } else {
+        tracer.trace("[DMKTransport] [open] not reusing existing session", {
+          data: {
+            isSameDeviceId,
+            isSameDeviceNameButDifferentId,
+            status: deviceSessionState?.deviceStatus,
+            transport: activeDeviceSessionSubject.value?.transport,
+            oldDevice: { deviceName: options?.matchDeviceByName },
+            newDevice: { deviceName: connectedDevice.name },
+          },
+        });
       }
     }
 
@@ -160,24 +192,25 @@ export class DeviceManagementKitBLETransport extends Transport {
       tracer.trace("[DMKTransport] [open] listen to available devices");
 
       const subscription = devicesObs.pipe(
-        first(devices => devices.some(device => device.id === deviceOrId)),
-        switchMap(async devices => {
-          const found = devices.find(device => device.id === deviceOrId)!;
+        map(discoveredDevices =>
+          findMatchingDiscoveredDevice(deviceOrId, options?.matchDeviceByName, discoveredDevices),
+        ),
+        first((device): device is DiscoveredDevice => device !== null),
+        switchMap(async discoveredDevice => {
+          tracer.trace(`[DMKTransport] [open] device found ${discoveredDevice.id}`);
 
-          tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
-
-          await getDeviceManagementKit().close();
           const sessionId = await getDeviceManagementKit()
             .connect({
-              device: found,
+              device: discoveredDevice,
               sessionRefresherOptions: { isRefresherDisabled: true },
             })
             .catch(error => {
               if (isPeerRemovedPairingError(error)) {
                 // NB: remapping this error here because we need the device model info
                 throw new PeerRemovedPairing(undefined, {
-                  productName: getDeviceModel(dmkToLedgerDeviceIdMap[found.deviceModel.model])
-                    ?.productName,
+                  productName: getDeviceModel(
+                    dmkToLedgerDeviceIdMap[discoveredDevice.deviceModel.model],
+                  )?.productName,
                 });
               }
               throw error;

@@ -199,6 +199,7 @@ export const FirmwareUpdate = ({
     lowBatteryPercentage,
   } = useBatteryStatuses({
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     statuses: requiredBatteryStatuses,
     enabled: hasBattery,
   });

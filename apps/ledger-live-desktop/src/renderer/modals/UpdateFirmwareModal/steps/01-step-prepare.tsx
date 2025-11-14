@@ -172,6 +172,7 @@ const StepPrepare = ({
       deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
         ? customLockScreenFetch({
             deviceId,
+            deviceName: device?.deviceName ?? null,
             request: { allowedEmpty: true, deviceModelId },
           })
         : EMPTY;

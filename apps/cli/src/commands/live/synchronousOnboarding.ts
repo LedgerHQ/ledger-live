@@ -28,6 +28,7 @@ export default {
   }: SynchronousOnboardingJobOpts): Observable<OnboardingStatePollingResult | null> =>
     getOnboardingStatePolling({
       deviceId: device ?? "",
+      deviceName: null,
       pollingPeriodMs: pollingPeriodMs ?? 1000,
     }),
 };

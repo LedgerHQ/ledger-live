@@ -11,6 +11,7 @@ import { useEnv } from "../../env.react";
 
 export type UseBatteryStatusesArgs = {
   deviceId?: string;
+  deviceName: string | null;
   statuses: BatteryStatusTypes[];
   enabled: boolean;
 };
@@ -29,6 +30,7 @@ export type UseBatteryStatusesArgs = {
  */
 export const useBatteryStatuses = ({
   deviceId,
+  deviceName,
   statuses,
   enabled,
 }: UseBatteryStatusesArgs): {
@@ -56,6 +58,7 @@ export const useBatteryStatuses = ({
     if (nonce > 0 && deviceId) {
       const sub = getBatteryStatusesAction({
         deviceId,
+        deviceName,
         statuses,
       }).subscribe({
         next: state => {
@@ -90,7 +93,7 @@ export const useBatteryStatuses = ({
         sub.unsubscribe();
       };
     }
-  }, [deviceId, lowBatteryPercentage, statuses, nonce, enabled]);
+  }, [deviceId, deviceName, lowBatteryPercentage, statuses, nonce, enabled]);
 
   const triggerRequest = useCallback(() => {
     setRequestCompleted(false);

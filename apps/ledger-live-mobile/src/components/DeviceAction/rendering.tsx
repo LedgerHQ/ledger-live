@@ -830,7 +830,8 @@ export function renderConnectYourDevice({
             ? "DeviceAction.unlockDevice"
             : device.wired
               ? "DeviceAction.connectAndUnlockDevice"
-              : "DeviceAction.turnOnAndUnlockDevice",
+              : "DeviceAction.powerOnDevice",
+          { deviceName: getDeviceModel(device.modelId).productName },
         )}
       </TitleText>
       {onSelectDeviceLink ? (
