@@ -209,26 +209,35 @@ describe("Trustchain SDK", () => {
     };
 
     const initialJwt = {
-      accessToken: "INITIAL TOKEN",
+      access_token: "INITIAL TOKEN",
+      // It should work with `permissions: { [trustchainId]: "m/": ...` as this is the trustchain creator permissions (i.e the device).
+      // But at the moment the backend will return a 401 when accessing cloudsync with a root path jwt.
+      // Once this is fixed the auth verification of permissions should be updated to accept this case.
       permissions: { [trustchainId]: { "m/0'/16'/0'": "ffffffff" } },
     };
 
     apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
-    apiMocks.postAuthenticate.mockReturnValue({ ...initialJwt, access_token: "NEW TOKEN" });
 
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
 
     // Set private state:
-    sdk["jwt"] = initialJwt;
-    sdk["jwtHash"] = `${trustchainId} ${alice.pubkey}`;
+    apiMocks.postAuthenticate.mockReturnValueOnce(initialJwt);
+    await sdk.withAuth(trustchain, alice, async () => {});
+    expect(apiMocks.getChalenge).toHaveBeenCalledTimes(1);
+    expect(apiMocks.postAuthenticate).toHaveBeenCalledTimes(1);
+    expect(sdk["jwt"]).toEqual({
+      accessToken: initialJwt.access_token,
+      permissions: initialJwt.permissions,
+    });
 
+    apiMocks.postAuthenticate.mockReturnValueOnce({ ...initialJwt, access_token: "NEW TOKEN" });
     await sdk.withAuth(trustchain, alice, async jwt => {
       if (jwt.accessToken === "NEW TOKEN") return;
       throw new LedgerAPI4xx("Permission denied");
     });
 
-    expect(apiMocks.getChalenge).toHaveBeenCalledTimes(1);
-    expect(apiMocks.postAuthenticate).toHaveBeenCalledTimes(1);
+    expect(apiMocks.getChalenge).toHaveBeenCalledTimes(2);
+    expect(apiMocks.postAuthenticate).toHaveBeenCalledTimes(2);
   });
 });
 
