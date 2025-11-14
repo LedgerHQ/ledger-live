@@ -12,7 +12,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import AccountCard from "~/components/AccountCard";
-import CopyLink from "~/components/CopyLink";
+import CopyLink from "../components/CopyLink";
 
 import { MinaStakingFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
