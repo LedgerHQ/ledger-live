@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.10.1-hotfix.0",
+  "version": "1.10.1",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [

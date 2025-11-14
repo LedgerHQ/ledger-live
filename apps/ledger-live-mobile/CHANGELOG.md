@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.97.1
+
+### Patch Changes
+
+- [#12742](https://github.com/LedgerHQ/ledger-live/pull/12742) [`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
+- Updated dependencies [[`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238)]:
+  - @ledgerhq/live-dmk-mobile@0.14.1
+
 ## 3.97.1-hotfix.0
 
 ### Patch Changes
