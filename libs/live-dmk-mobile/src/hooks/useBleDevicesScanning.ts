@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Subscription } from "rxjs";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
@@ -41,11 +42,22 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
     if (!scanningEnabled) return;
 
     let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+    let subscription: Subscription | null = null;
+
+    const finalizeScanning = () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        dmk.stopDiscovering();
+        subscription = null;
+      }
+      setIsScanning(false);
+      setScannedDevices([]);
+    };
 
     setIsScanning(true);
     setScanningBleError(null);
     log("useBleDevicesScanning", " useEffect -> calling dmk.listenToAvailableDevices()");
-    const subscription = dmk
+    subscription = dmk
       .listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
       })
@@ -64,27 +76,18 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           setScanningBleError(error);
           log("useBleDevicesScanning", " error", `${error.type}: ${error.message}`);
           log("useBleDevicesScanning", " error -> unsubscribing and stopping discovery");
-          subscription.unsubscribe();
-          dmk.stopDiscovering();
-          setIsScanning(false);
-          setScannedDevices([]);
+          finalizeScanning();
           retryTimeout = setRetryTimeout();
         },
         complete: () => {
           log("useBleDevicesScanning", " complete -> unsubscribing and stopping discovery");
-          subscription.unsubscribe();
-          dmk.stopDiscovering();
-          setIsScanning(false);
-          setScannedDevices([]);
+          finalizeScanning();
           retryTimeout = setRetryTimeout();
         },
       });
     return () => {
       log("useBleDevicesScanning", " useEffect cleanup -> unsubscribing and stopping discovery");
-      subscription.unsubscribe();
-      dmk.stopDiscovering();
-      setIsScanning(false);
-      setScannedDevices([]);
+      finalizeScanning();
       if (retryTimeout) {
         clearTimeout(retryTimeout);
       }
