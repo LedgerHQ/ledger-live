@@ -1,6 +1,8 @@
 import mixpanel from "mixpanel-browser";
 import { getEnv } from "@ledgerhq/live-env";
-
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSelector } from "react-redux";
+import { shareAnalyticsSelector } from "../reducers/settings";
 /**
  * ⚠️ FEATURE IN TESTING PHASE ⚠️
  *
@@ -20,9 +22,11 @@ export function initMixpanel(sampling: number = 100) {
   });
 }
 
-export function getMixpanelDistinctId(): string | undefined {
-  if (!mixpanel || !mixpanel.get_distinct_id) {
-    return undefined;
+export function useGetMixpanelDistinctId(): string | undefined {
+  const mixpanelFF = useFeature("lldSessionReplay");
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
+  if (mixpanelFF?.enabled && shareAnalytics) {
+    return mixpanel.get_distinct_id();
   }
-  return mixpanel.get_distinct_id();
+  return undefined;
 }
