@@ -364,6 +364,35 @@ describe("EVM Family", () => {
       });
     });
 
+    it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee for 0G", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            reward: [
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+            ],
+            baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
+            gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
+          };
+        }
+      });
+
+      expect(
+        await RPC_API.getFeeData(
+          { ...fakeCurrency, id: "zero_gravity" } as CryptoCurrency,
+          eip1559Tx,
+        ),
+      ).toEqual({
+        maxFeePerGas: new BigNumber("2000000026"),
+        maxPriorityFeePerGas: new BigNumber(2e9),
+        gasPrice: null,
+        nextBaseFee: new BigNumber("13"),
+      });
+    });
+
     const legacyTx: EvmTransactionLegacy = {
       amount: new BigNumber(100),
       useAllAmount: false,

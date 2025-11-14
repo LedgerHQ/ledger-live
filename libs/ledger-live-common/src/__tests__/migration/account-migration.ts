@@ -102,6 +102,7 @@ setSupportedCurrencies([
   "mina",
   "monad",
   "somnia",
+  "zero_gravity",
 ]);
 
 LiveConfig.setConfig(liveConfig);

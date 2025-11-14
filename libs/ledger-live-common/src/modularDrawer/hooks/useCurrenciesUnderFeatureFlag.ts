@@ -81,6 +81,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const polkadot = useFeature("currencyPolkadot");
   const monad = useFeature("currencyMonad");
   const somnia = useFeature("currencySomnia");
+  const zeroGravity = useFeature("currencyZeroGravity");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -158,6 +159,7 @@ export function useCurrenciesUnderFeatureFlag() {
       polkadot,
       monad,
       somnia,
+      zero_gravity: zeroGravity,
     }),
     [
       aptos,
@@ -232,6 +234,7 @@ export function useCurrenciesUnderFeatureFlag() {
       polkadot,
       monad,
       somnia,
+      zeroGravity,
     ],
   );
 
