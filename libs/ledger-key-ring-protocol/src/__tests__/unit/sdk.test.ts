@@ -210,7 +210,7 @@ describe("Trustchain SDK", () => {
 
     const initialJwt = {
       accessToken: "INITIAL TOKEN",
-      permissions: { [trustchainId]: { "m/0'/16'/0'": ["owner"] } },
+      permissions: { [trustchainId]: { "m/0'/16'/0'": "ffffffff" } },
     };
 
     apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
