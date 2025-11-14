@@ -18,6 +18,7 @@ import {
   Pressable,
   View,
 } from "react-native";
+import Share from "react-native-share";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { track, TrackScreen } from "~/analytics";
@@ -31,8 +32,9 @@ import logger from "../../../logger";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
+import { getEnv } from "@ledgerhq/live-env";
+import { sendFile } from "../../../../e2e/bridge/client";
 import { Text } from "react-native";
-import { exportFile } from "LLM/utils/exportFile";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 import SafeAreaView from "~/components/SafeAreaView";
 
@@ -140,17 +142,30 @@ const History = () => {
 
   const exportSwapHistory = async () => {
     const mapped = mappedSwapOperationsToCSV(sections);
-    try {
-      await exportFile({
-        content: mapped,
-        filename: t("transfer.swap.history.exportFilename"),
-        type: "text/csv",
-        title: t("transfer.swap.history.exportButton"),
-        message: t("transfer.swap.history.exportButton"),
-        detoxFileName: "ledgerwallet-swap-history.csv",
-      });
-    } catch (err) {
-      if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+    if (!getEnv("DETOX")) {
+      try {
+        const base64 = Buffer.from(mapped).toString("base64");
+        const options = {
+          title: t("transfer.swap.history.exportButton"),
+          message: t("transfer.swap.history.exportButton"),
+          failOnCancel: false,
+          saveToFiles: true,
+          type: "text/csv",
+          filename: t("transfer.swap.history.exportFilename"),
+          url: `data:text/csv;base64,${base64}`,
+        };
+
+        await Share.open(options);
+      } catch (err) {
+        // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+          logger.critical(err as Error);
+        }
+      }
+    } else {
+      try {
+        sendFile({ fileName: "ledgerwallet-swap-history.csv", fileContent: mapped });
+      } catch (err) {
         logger.critical(err as Error);
       }
     }

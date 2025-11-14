@@ -9,8 +9,8 @@ import { StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
+import Share from "react-native-share";
 import Node from "./Node";
-import { exportFile } from "LLM/utils/exportFile";
 import logger from "../../../../logger";
 import { dangerouslyOverrideState } from "~/actions/settings";
 import Button from "~/components/Button";
@@ -118,16 +118,20 @@ export default function Store() {
 
   const onExportState = () => {
     const exportState = async () => {
-      const jsonString = JSON.stringify(state);
+      const base64 = Buffer.from(JSON.stringify(state)).toString("base64");
       const date = new Date().toISOString().split("T")[0];
-      const humanReadableName = `ledgerwallet-mob-${date}-state.json`;
+      const humanReadableName = `ledgerwallet-mob-${date}-state`;
+
+      const options = {
+        failOnCancel: false,
+        saveToFiles: true,
+        type: "text/plain",
+        filename: humanReadableName,
+        url: `data:text/plain;base64,${base64}`,
+      };
 
       try {
-        await exportFile({
-          content: jsonString,
-          filename: humanReadableName,
-          type: "application/json",
-        });
+        await Share.open(options);
       } catch (err) {
         if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
