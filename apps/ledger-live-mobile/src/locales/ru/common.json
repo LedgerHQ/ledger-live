@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
     "loading" : "Загружаем...",
     "turnOnAndUnlockDevice" : "Включите и разблокируйте устройство",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "Подключите и разблокируйте устройство",
     "connectAnotherDevice" : "Подключить другой Ledger",
     "unlockDevice" : "Разблокируйте устройство",
@@ -4494,6 +4495,11 @@
     "bluetooth" : {
       "title" : "Подключение по Bluetooth...",
       "label" : "Автоматически определять Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Поддержка"
     },
     "deviceNotFoundPairNewDevice" : "Подключиться по Bluetooth®",
     "headerDescription" : "Обязательно разблокируйте {{productName}} и включите Bluetooth",
@@ -5529,7 +5535,7 @@
               "cta" : "Подробности"
             },
             "pending" : {
-              "title" : "Трансляция транзакции..."
+              "title" : "Транслируем транзакцию..."
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
           }
