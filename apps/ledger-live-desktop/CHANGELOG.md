@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.133.0-next.1
+
+### Minor Changes
+
+- [#12792](https://github.com/LedgerHQ/ledger-live/pull/12792) [`319ae46`](https://github.com/LedgerHQ/ledger-live/commit/319ae46c50fa444df65ef600604cbab6ed2b0199) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Bump package versions to fix an update bug
+
 ## 2.133.0-next.0
 
 ### Minor Changes
