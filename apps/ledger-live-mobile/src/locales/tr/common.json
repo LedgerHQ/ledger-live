@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "Ledger ile güvenli bir bağlantının kurulmasına izin verin",
     "loading" : "Yükleniyor...",
     "turnOnAndUnlockDevice" : "Cihazınızı çalıştırın ve kilidini açın",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
     "connectAnotherDevice" : "Başka Ledger bağla",
     "unlockDevice" : "Cihazınızın kilidini açın",
@@ -4494,6 +4495,11 @@
     "bluetooth" : {
       "title" : "Bluetooth ile bağlanın...",
       "label" : "Nano'nuzu otomatik olarak algılayın"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Get support"
     },
     "deviceNotFoundPairNewDevice" : "Bluetooth ile eşleyin",
     "headerDescription" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun.",
