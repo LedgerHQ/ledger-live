@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "loading" : "กำลังโหลด...",
     "turnOnAndUnlockDevice" : "เปิดเครื่องและปลดล็อกอุปกรณ์ของคุณ",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ",
     "connectAnotherDevice" : "เชื่อมต่อกับ Ledger เครื่องอื่น",
     "unlockDevice" : "ปลดล็อกอุปกรณ์ของคุณ",
@@ -4494,6 +4495,11 @@
     "bluetooth" : {
       "title" : "เชื่อมต่อผ่านบลูทูธ...",
       "label" : "ตรวจสอบ Nano ของคุณโดยอัตโนมัติ"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Get support"
     },
     "deviceNotFoundPairNewDevice" : "จับคู่กับบลูทูธ",
     "headerDescription" : "โปรดตรวจสอบให้แน่ใจว่ามีการปลดล็อก {{productName}} แล้วโดยมีการเปิดใช้งานบลูทูธ",
