@@ -33,6 +33,11 @@ export default function CustomNavigationHeader({ options, route }: NativeStackHe
         const title = options.title !== undefined ? options.title : route.name;
         return <HeaderTitleComponent>{title}</HeaderTitleComponent>;
       }
+
+      if (typeof HeaderTitleComponent === "string") {
+        return <HeaderTitle>{HeaderTitleComponent}</HeaderTitle>;
+      }
+
       return HeaderTitleComponent;
     }
     const title = options.title !== undefined ? options.title : route.name;

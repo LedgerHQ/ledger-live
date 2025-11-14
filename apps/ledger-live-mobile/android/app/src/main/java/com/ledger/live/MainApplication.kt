@@ -20,12 +20,18 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
+import cl.json.ShareApplication
 
-class MainApplication : Application(), ReactApplication {
+class MainApplication : Application(), ReactApplication, ShareApplication {
 
   companion object {
     const val FW_UPDATE_NOTIFICATION_PROGRESS = 1
     const val FW_UPDATE_NOTIFICATION_USER = 2
+  }
+
+
+  override fun getFileProviderAuthority(): String {
+          return "$packageName.provider"
   }
 
   override val reactNativeHost: ReactNativeHost by lazy {
