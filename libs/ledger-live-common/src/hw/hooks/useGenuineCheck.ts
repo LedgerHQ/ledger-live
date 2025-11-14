@@ -22,6 +22,7 @@ export type DevicePermissionState =
 export type UseGenuineCheckArgs = {
   isHookEnabled?: boolean;
   deviceId: DeviceId;
+  deviceName: string | null;
   lockedDeviceTimeoutMs?: number;
   permissionTimeoutMs?: number;
 };
@@ -70,6 +71,7 @@ export const useGenuineCheck = ({
   getGenuineCheckFromDeviceId = defaultGetGenuineCheckFromDeviceId,
   isHookEnabled = true,
   deviceId,
+  deviceName,
   lockedDeviceTimeoutMs = 1000,
   permissionTimeoutMs = 60 * 1000,
 }: UseGenuineCheckArgs & UseGenuineCheckDependencies): UseGenuineCheckResult => {
@@ -92,6 +94,7 @@ export const useGenuineCheck = ({
 
     const sub = getGenuineCheckFromDeviceId({
       deviceId,
+      deviceName,
       lockedDeviceTimeoutMs,
     }).subscribe({
       next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -146,6 +149,7 @@ export const useGenuineCheck = ({
   }, [
     isHookEnabled,
     deviceId,
+    deviceName,
     lockedDeviceTimeoutMs,
     getGenuineCheckFromDeviceId,
     permissionTimeoutMs,

@@ -65,6 +65,7 @@ export const useOnboardingStatePolling = ({
     if (device && !stopPolling) {
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: device.deviceName ?? null,
         pollingPeriodMs,
         allowedErrorChecks,
       }).subscribe({

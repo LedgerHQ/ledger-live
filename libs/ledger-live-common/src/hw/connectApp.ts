@@ -48,6 +48,7 @@ export type RequiresDerivation = {
 };
 export type Input = {
   deviceId: string;
+  deviceName: string | null;
   request: ConnectAppRequest;
 };
 export type ConnectAppRequest = {
@@ -524,10 +525,13 @@ export default function connectAppFactory(
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
-    return ({ deviceId, request }: Input): Observable<ConnectAppEvent> =>
-      withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
+    return ({ deviceId, deviceName, request }: Input): Observable<ConnectAppEvent> =>
+      withDevice(
+        deviceId,
+        deviceName ? { matchDeviceByName: deviceName } : undefined,
+      )(transport => cmd(transport, { deviceId, deviceName, request }));
   }
-  return ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+  return ({ deviceId, deviceName, request }: Input): Observable<ConnectAppEvent> => {
     const {
       appName,
       requiresDerivation,
@@ -535,9 +539,12 @@ export default function connectAppFactory(
       requireLatestFirmware,
       allowPartialDependencies = false,
     } = request;
-    return withDevice(deviceId)(transport => {
+    return withDevice(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(transport => {
       if (!isDmkTransport(transport)) {
-        return cmd(transport, { deviceId, request });
+        return cmd(transport, { deviceId, deviceName, request });
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new ConnectAppDeviceAction({

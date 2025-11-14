@@ -95,6 +95,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: lastSeenDevice?.deviceId ?? "",
+    deviceName: lastSeenDevice?.deviceName ?? null,
     toggleType: toggleOnboardingEarlyCheckType,
   });
 

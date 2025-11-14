@@ -8,6 +8,7 @@ import genuineCheck from "./genuineCheck";
 
 export type GetGenuineCheckFromDeviceIdArgs = {
   deviceId: string;
+  deviceName: string | null;
   lockedDeviceTimeoutMs?: number;
 };
 
@@ -29,6 +30,7 @@ export type GetGenuineCheckFromDeviceIdOutput = Observable<GetGenuineCheckFromDe
  */
 export const getGenuineCheckFromDeviceId = ({
   deviceId,
+  deviceName,
   lockedDeviceTimeoutMs = 1000,
 }: GetGenuineCheckFromDeviceIdArgs): GetGenuineCheckFromDeviceIdOutput => {
   return new Observable(subscriber => {
@@ -42,7 +44,10 @@ export const getGenuineCheckFromDeviceId = ({
 
     // Returns a Subscription that can be unsubscribed/cleaned
     return (
-      withDevice(deviceId)(t =>
+      withDevice(
+        deviceId,
+        deviceName ? { matchDeviceByName: deviceName } : undefined,
+      )(t =>
         from(getDeviceInfo(t)).pipe(
           mergeMap(deviceInfo => {
             clearTimeout(lockedDeviceTimeout);

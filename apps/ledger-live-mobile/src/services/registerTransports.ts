@@ -85,7 +85,8 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   // BLE is always the fallback choice because we always keep raw id in it
   registerTransportModule({
     id: "ble",
-    open: (...args) => getBLETransport({ isLDMKEnabled }).open(...args),
+    open: (id, timeoutMs, traceContext, matchDeviceByName) =>
+      getBLETransport({ isLDMKEnabled }).open(id, timeoutMs, traceContext, { matchDeviceByName }),
     disconnect: id => getBLETransport({ isLDMKEnabled }).disconnectDevice(id),
   });
 };

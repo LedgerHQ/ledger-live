@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
-import type { BleState, State } from "./types";
+import type { BleState, DeviceLike, State } from "./types";
 import type {
   BleAddKnownDevicePayload,
   BleImportBlePayload,
@@ -8,18 +8,44 @@ import type {
   BleRemoveKnownDevicePayload,
   BleRemoveKnownDevicesPayload,
   BleSaveDeviceNamePayload,
+  BleUpdateKnownDevicePayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { BleActionTypes } from "../actions/types";
+import { type DeviceBaseInfo, findMatchingOldDevice } from "@ledgerhq/live-dmk-mobile";
 
 export const INITIAL_STATE = {
   knownDevices: [],
 };
+
+function mapDeviceLikeToDeviceBaseInfo(device: DeviceLike): DeviceBaseInfo {
+  return {
+    deviceId: device.id,
+    deviceName: device.name,
+    modelId: device.modelId,
+  };
+}
+
 const handlers: ReducerMap<BleState, BlePayload> = {
   [BleActionTypes.BLE_ADD_DEVICE]: (state, action) => {
     const device = (action as Action<BleAddKnownDevicePayload>).payload;
     return {
       knownDevices: state.knownDevices.filter(d => d.id !== device.id).concat({ ...device }),
+    };
+  },
+  [BleActionTypes.BLE_UPDATE_DEVICE]: (state, action) => {
+    const newDevice = (action as Action<BleUpdateKnownDevicePayload>).payload;
+    const deviceToUpdate = findMatchingOldDevice(
+      mapDeviceLikeToDeviceBaseInfo(newDevice),
+      state.knownDevices.map(mapDeviceLikeToDeviceBaseInfo),
+    );
+    if (!deviceToUpdate) {
+      return state;
+    }
+    return {
+      knownDevices: state.knownDevices.map(d =>
+        d.id === deviceToUpdate.deviceId ? { ...d, ...newDevice } : d,
+      ),
     };
   },
   [BleActionTypes.BLE_REMOVE_DEVICE]: (state, action) => ({

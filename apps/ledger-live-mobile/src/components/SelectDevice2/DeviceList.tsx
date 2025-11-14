@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceItem from "./DeviceItem";
+import { type DisplayedDevice } from "./DisplayedDevice";
 
 const MAX_LEDGERS_DISPLAYED = 3;
 
 type Props = {
-  readonly deviceList: Device[];
-  readonly handleOnSelect: (device: Device) => void;
+  readonly deviceList: DisplayedDevice[];
+  readonly handleOnSelect: (device: DisplayedDevice) => void;
 };
 export function DeviceList({ deviceList, handleOnSelect }: Props) {
   const { t } = useTranslation();

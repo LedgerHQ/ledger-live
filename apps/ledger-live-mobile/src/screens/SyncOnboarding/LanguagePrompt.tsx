@@ -21,7 +21,10 @@ export type LanguagePromptProps = {
 };
 
 export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device }) => {
-  const { deviceInfo } = useGetDeviceInfo({ deviceId: device.deviceId });
+  const { deviceInfo } = useGetDeviceInfo({
+    deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
+  });
   const { availableLanguages, loaded: availableLanguagesLoaded } =
     useAvailableLanguagesForDevice(deviceInfo);
 
