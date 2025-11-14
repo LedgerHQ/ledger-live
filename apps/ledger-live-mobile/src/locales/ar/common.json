@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
     "loading" : "جاري التحميل...",
     "turnOnAndUnlockDevice" : "قم بتشغيل وإلغاء قفل جهازك",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "connectAnotherDevice" : "توصيل جهاز Ledger آخر",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
@@ -4494,6 +4495,11 @@
     "bluetooth" : {
       "title" : "الاتصال عبر البلوتوث...",
       "label" : "اكتشف Nano الخاصة بك تلقائياً"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Get support"
     },
     "deviceNotFoundPairNewDevice" : "الإقران باستخدام البلوتوث",
     "headerDescription" : "يرجى التأكد من إلغاء قفل {{productName}} الخاصة بك مع تمكين البلوتوث",
