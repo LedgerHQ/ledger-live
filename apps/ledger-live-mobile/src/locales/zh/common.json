@@ -2409,7 +2409,7 @@
       "notCompatible" : "不兼容 iPhone",
       "modal" : {
         "title" : "iOS 设备不支持 Ledger Nano S 和 Ledger Nano S Plus",
-        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet配合使用。"
+        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet 配合使用。"
       }
     },
     "scanning" : {
@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
     "loading" : "正在加载……",
     "turnOnAndUnlockDevice" : "开机并解锁您的设备",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "connectAnotherDevice" : "连接另一台 Ledger 设备",
     "unlockDevice" : "解锁您的设备",
@@ -4494,6 +4495,11 @@
     "bluetooth" : {
       "title" : "通过蓝牙连接……",
       "label" : "自动检测您的 Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "获取支持"
     },
     "deviceNotFoundPairNewDevice" : "与蓝牙配对",
     "headerDescription" : "请确保您的 {{productName}} 处于解锁状态并已开启蓝牙",
