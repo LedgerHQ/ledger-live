@@ -1,6 +1,4 @@
 export {
-  getUnit,
-  processTxs,
   mapTxToOps,
   getAddress,
   getTxToBroadcast,
