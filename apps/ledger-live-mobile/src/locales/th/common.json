@@ -10,6 +10,9 @@
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
     "back" : "ย้อนกลับ",
+    "fee" : "ค่าธรรมเนียม",
+    "stake" : "สเตค",
+    "validator" : "ผู้ตรวจสอบ",
     "delete" : "ลบ",
     "paste" : "วาง",
     "yes" : "ใช่",
@@ -4458,6 +4461,7 @@
         "provider" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
       "acceptTerms" : "การลงชื่อในธุรกรรมนี้จะถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0><0>{{provider}}</0>",
+      "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งานของ SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ<1>นโยบาย AML/KYC</1> ของ Changelly ในบางกรณี Changelly อาจดำเนินการตรวจสอบ AML/KYC ซึ่งอาจกระทบต่อการทำธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าว โปรดติดต่อ <2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
@@ -5973,6 +5977,45 @@
       "newAddressTRC20" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งาน"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "คัดลอก Address แล้ว!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "memoPlaceholder" : "Memo (ไม่บังคับ)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    }
+  },
   "stellar" : {
     "token" : "สินทรัพย์",
     "memo" : {
@@ -6376,9 +6419,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo (ไม่บังคับ)"
   },
   "near" : {
     "info" : {
