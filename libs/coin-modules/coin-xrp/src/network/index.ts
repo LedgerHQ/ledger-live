@@ -15,7 +15,8 @@ import {
 
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
 
-export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
+const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
+const NOT_FOUND_ERROR_MESSAGE = "actMalformed";
 
 export const submit = async (signature: string): Promise<SubmitReponse> => {
   return rpcCall<SubmitReponse>("submit", { tx_blob: signature });
@@ -41,7 +42,11 @@ export const getAccountInfo = async (
     },
   });
 
-  if (result.status !== "success" && result.error !== NEW_ACCOUNT_ERROR_MESSAGE) {
+  if (
+    result.status !== "success" &&
+    result.error &&
+    ![NOT_FOUND_ERROR_MESSAGE, NEW_ACCOUNT_ERROR_MESSAGE].includes(result.error)
+  ) {
     throw new Error(`couldn't fetch account info ${recipient}`);
   }
 

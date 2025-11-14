@@ -174,6 +174,14 @@ describe("Sui Api", () => {
       // Then
       expect(acc.value).toBeGreaterThan(0);
     });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance(
+        "0xcafebabe00000000000000000000000000000000000000000000000000000000",
+      );
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
   });
 
   describe("getLastBlock", () => {

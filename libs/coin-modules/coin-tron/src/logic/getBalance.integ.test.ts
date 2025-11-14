@@ -23,4 +23,10 @@ describe("getBalance", () => {
       .forEach(balance => expect(["trc20", "trc10"].includes(balance.asset.type)).toBe(true));
     balances.forEach(balance => expect(balance.value).toBeGreaterThanOrEqual(0));
   });
+
+  it("returns 0 when address is not found", async () => {
+    const result = await getBalance("TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
+
+    expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+  });
 });

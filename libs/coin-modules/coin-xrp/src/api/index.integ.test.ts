@@ -137,6 +137,12 @@ describe("Xrp Api (testnet)", () => {
       // Then
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
     });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await api.getBalance("rhWTXC2m2gGGA9WozUaoMm6kLAVPb1tcS0");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
+    });
   });
 
   describe("craftTransaction", () => {

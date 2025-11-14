@@ -45,10 +45,14 @@ async function getAccount(address: string): Promise<HederaMirrorAccount> {
     return account;
   } catch (error) {
     if (error instanceof LedgerAPI4xx && "status" in error && error.status === 404) {
-      throw new HederaAddAccountError();
+      return {
+        account: "",
+        max_automatic_token_associations: 0,
+        balance: { timestamp: "", tokens: [], balance: 0 },
+      };
+    } else {
+      throw error;
     }
-
-    throw error;
   }
 }
 
@@ -123,10 +127,18 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   let nextUrl: string | null = `/api/v1/accounts/${address}/tokens?${params.toString()}`;
 
   while (nextUrl) {
-    const res: LiveNetworkResponse<HederaMirrorAccountTokensResponse> = await fetch(nextUrl);
-    const newTokens = res.data.tokens;
-    tokens.push(...newTokens);
-    nextUrl = res.data.links.next;
+    try {
+      const res: LiveNetworkResponse<HederaMirrorAccountTokensResponse> = await fetch(nextUrl);
+      const newTokens = res.data.tokens;
+      tokens.push(...newTokens);
+      nextUrl = res.data.links.next;
+    } catch (error) {
+      if (error instanceof LedgerAPI4xx && "status" in error && error.status === 404) {
+        nextUrl = null;
+      } else {
+        throw error;
+      }
+    }
   }
 
   return tokens;

@@ -146,6 +146,12 @@ describe.each([
       ]);
     });
 
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance("0xcafebabe00000000000000000000000000000000");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
+
     it("returns balance for an address", async () => {
       const result = await module.getBalance("0x9bcd841436ef4f85dacefb1aec772af71619024e");
 

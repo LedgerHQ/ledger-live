@@ -163,6 +163,12 @@ describe("Tezos Api", () => {
       expect(result[0].asset).toEqual({ type: "native" });
       expect(result[0].value).toBeGreaterThan(0);
     });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance("tz1euQVEofitwkUzMRKCuBK9D1ZPiy4udXz1");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
   });
 
   describe("craftTransaction", () => {

@@ -96,6 +96,14 @@ describe("Stellar Api", () => {
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance(
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3000000",
+      );
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
+    });
   });
 
   describe("craftTransaction", () => {

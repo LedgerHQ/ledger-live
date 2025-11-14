@@ -12,10 +12,12 @@ export async function getBalance(address: string): Promise<Balance[]> {
 
 const getNativeBalance = async (address: string): Promise<Balance[]> => {
   const balances = await getAllBalancesCached(address);
-  return balances.map(({ coinType, totalBalance }) => ({
-    value: BigInt(totalBalance),
-    asset: toSuiAsset(coinType),
-  }));
+  return balances.length
+    ? balances.map(({ coinType, totalBalance }) => ({
+        value: BigInt(totalBalance),
+        asset: toSuiAsset(coinType),
+      }))
+    : [{ value: 0n, asset: { type: "native" } }];
 };
 
 const getStakingBalances = (address: string): Promise<Balance[]> =>
