@@ -18,6 +18,7 @@ import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
@@ -52,8 +53,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     setCustomFee(BigNumber(customFee || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-    // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
+    popToScreen(navigation, currentNavigation, {
       ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {

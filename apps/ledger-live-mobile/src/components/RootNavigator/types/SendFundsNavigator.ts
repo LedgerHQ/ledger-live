@@ -298,6 +298,21 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.StellarEditMemoValue]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StellarTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+  };
   [ScreenName.StellarEditMemoType]: {
     accountId: string;
     parentId?: string;

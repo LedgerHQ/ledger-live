@@ -17,6 +17,7 @@ import { track } from "~/analytics";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>
@@ -25,7 +26,7 @@ type NavigationProps = BaseComposite<
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const options = {
   title: i18n.t("send.summary.tag"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 
 function XrpEditTag({ route, navigation }: NavigationProps) {
@@ -56,8 +57,7 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
   const onValidateText = useCallback(() => {
     if (!account) return;
     const bridge = getAccountBridge(account);
-    // @ts-expect-error FIXME: no current / next navigation param?
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         tag: tag && tag.toNumber(),
