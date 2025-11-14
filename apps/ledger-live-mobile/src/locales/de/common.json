@@ -10,6 +10,9 @@
     "seeAll" : "Alles anzeigen",
     "seeAllWithNumber" : "Alle anzeigen ({{number}})",
     "back" : "Zurück",
+    "fee" : "Gebühr",
+    "stake" : "Staken",
+    "validator" : "Validator",
     "delete" : "Löschen",
     "paste" : "Einfügen",
     "yes" : "Ja",
@@ -1154,6 +1157,11 @@
       "title" : "Ungültiger Anbieter",
       "description" : "Du musst die Einstellung „Mein Ledger-Anbieter“ ändern. Öffne dazu die Einstellungen in Ledger Wallet, navigiere zu „Experimentelle Features“ und wähle einen anderen Anbieter aus."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Ungültiger Anbieter",
+      "description" : "Du musst die Einstellung „Mein Ledger-Anbieter“ ändern. Öffne dazu die Einstellungen in Ledger Live, navigiere zu „Experimentelle Features“ und wähle einen anderen Anbieter aus.",
+      "openSettings" : "Gehe zu Einstellungen"
+    },
     "GasLessThanEstimate" : {
       "title" : "Dies könnte zu niedrig sein. Bitte erhöhen"
     },
@@ -1224,6 +1232,12 @@
     "AddressesSanctionedError" : {
       "title" : "Wir sorgen für deine Sicherheit",
       "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Betrag reduziert, um UTXO-Beschränkungen zu erfüllen."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Betrag zu hoch für UTXO-Beschränkungen."
     }
   },
   "crash" : {
@@ -4458,6 +4472,7 @@
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Signieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen von <0>{{provider}}</0></0> zu.",
+      "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie der <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, die in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
     },
@@ -5973,6 +5988,45 @@
       "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse kopiert!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Erneut delegieren",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "memoPlaceholder" : "Optionales Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    }
+  },
   "stellar" : {
     "token" : "Vermögenswerte",
     "memo" : {
@@ -6376,9 +6430,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Optionales Memo"
   },
   "near" : {
     "info" : {
@@ -7304,11 +7355,11 @@
         "description" : "Wähle eine beliebige digitale Grafik oder ein Bild für den Sperrbildschirm deines {{productName}}-Geräts aus.",
         "popupLabel" : "Sperrbildschirm erfolgreich angepasst"
       },
-      "recover" : {
-        "title" : "Ledger Recover abonnieren",
-        "titleCompleted" : "Ledger Recover abonniert",
-        "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
-        "popupLabel" : "Du hast erfolgreich Ledger Recover abonniert"
+      "syncAccounts" : {
+        "title" : "Deine Kryptokonten synchronisieren",
+        "titleCompleted" : "Deine Konten sind synchronisiert",
+        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
+        "popupLabel" : "Konten synchronisiert"
       }
     }
   },
