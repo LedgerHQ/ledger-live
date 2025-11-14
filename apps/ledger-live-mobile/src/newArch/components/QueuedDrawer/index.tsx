@@ -140,17 +140,29 @@ const QueuedDrawerNative = ({
   }, [openAnim]);
 
   const handleCloseUserEvent = useCallback(() => {
-    closeAnim(() => handleDismiss());
+    closeAnim(() => {
+      requestAnimationFrame(() => {
+        handleDismiss();
+      });
+    });
   }, [closeAnim, handleDismiss]);
 
   const onRequestClose = useCallback(() => {
     if (!enablePanDownToClose) return;
-    closeAnim(() => handleDismiss());
+    closeAnim(() => {
+      requestAnimationFrame(() => {
+        handleDismiss();
+      });
+    });
   }, [enablePanDownToClose, closeAnim, handleDismiss]);
 
   const onBackdropPress = useCallback(() => {
     if (!enablePanDownToClose) return;
-    closeAnim(() => handleDismiss());
+    closeAnim(() => {
+      requestAnimationFrame(() => {
+        handleDismiss();
+      });
+    });
   }, [enablePanDownToClose, closeAnim, handleDismiss]);
 
   const shouldShowHeader = useMemo(
@@ -166,7 +178,11 @@ const QueuedDrawerNative = ({
   // Close when opening conditions are no longer met (e.g., action succeeded)
   useEffect(() => {
     if (isVisible && !isRequestingToBeOpened && !isForcingToBeOpened) {
-      closeAnim(() => handleDismiss());
+      closeAnim(() => {
+        requestAnimationFrame(() => {
+          handleDismiss();
+        });
+      });
     }
   }, [isVisible, isRequestingToBeOpened, isForcingToBeOpened, closeAnim, handleDismiss]);
 

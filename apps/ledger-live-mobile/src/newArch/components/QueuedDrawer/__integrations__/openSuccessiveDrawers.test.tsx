@@ -1,28 +1,7 @@
 import React from "react";
-import { screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react-native";
-import { act, render, cleanup } from "@tests/test-renderer";
+import { act, render, screen, waitFor, waitForElementToBeRemoved } from "@tests/test-renderer";
 import { TestPages } from "./shared";
 import { testIds, TestIdPrefix } from "../TestScreens";
-
-jest.useFakeTimers();
-
-// Helper to advance timers and flush all pending promises/effects for Reanimated animations
-// This ensures: close animation completes → callback fires → next drawer opens → animation completes
-const flushAnimations = async () => {
-  await act(async () => {
-    // Advance to trigger close animation completion and timeout fallback
-    jest.advanceTimersByTime(350);
-    await Promise.resolve();
-
-    // Advance for Modal onShow and opening animation
-    jest.advanceTimersByTime(350);
-    await Promise.resolve();
-
-    // Run any remaining timers
-    jest.runOnlyPendingTimers();
-    await Promise.resolve();
-  });
-};
 
 // Helper: conditionally wait for an element (by testID) to be removed if it exists
 const maybeWaitForRemovalByTestId = async (testId: string) => {
@@ -33,12 +12,6 @@ const maybeWaitForRemovalByTestId = async (testId: string) => {
 };
 
 describe("QueuedDrawer", () => {
-  afterEach(cleanup);
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   test("open one drawer, then close it with close button", async () => {
     const { user } = render(<TestPages />);
     // open drawer
@@ -109,9 +82,6 @@ describe("QueuedDrawer", () => {
 
     // press close
     await user.press(screen.getByTestId("modal-close-button"));
-
-    // flush animations for drawer close + open transition
-    await flushAnimations();
 
     // Wait for drawer 2 to appear, advancing timers if needed
     await waitFor(
@@ -207,9 +177,6 @@ describe("QueuedDrawer", () => {
 
     // force open fourth drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4ForcingButton));
-
-    // flush animations for forced drawer opening
-    await flushAnimations();
 
     // Wait for drawer 4 to appear, advancing timers if needed
     await waitFor(
@@ -380,9 +347,6 @@ describe("QueuedDrawer", () => {
     // force open drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4ForcingButton));
 
-    // flush animations for forced drawer opening
-    await flushAnimations();
-
     // wait for drawer 4 to be visible
     expect(await screen.findByText("Drawer 4", {}, { timeout: 2000 })).toBeVisible();
 
@@ -448,9 +412,6 @@ describe("QueuedDrawer", () => {
 
     // force open third drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4ForcingButton));
-
-    // flush animations for forced drawer opening
-    await flushAnimations();
 
     // wait for drawer 4 to be visible
     expect(await screen.findByText("Drawer 4", {}, { timeout: 2000 })).toBeVisible();
