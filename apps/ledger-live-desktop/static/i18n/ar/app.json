@@ -152,7 +152,8 @@
     "quote" : "عرض أسعار",
     "memoTag" : {
       "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
-    }
+    },
+    "stake" : "تكديس"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1446,6 +1447,12 @@
         "description" : "من أي منصة تداول أو محفظة، مباشرةً إلى جهازك Ledger.",
         "actionCompletedPopupLabel" : "تم تحويل الأصول"
       },
+      "syncAccounts" : {
+        "title" : "مزامنة حسابات الأصول المشفرة خاصتك",
+        "titleCompleted" : "تمت مزامنة حساباتك",
+        "description" : "تنشيط مزامنة Ledger Sync لمزامنة حسابات الأصول المشفرة الخاصة بك",
+        "actionCompletedPopupLabel" : "تمت مزامنة الحسابات"
+      },
       "recover" : {
         "title" : "الاشتراك في Ledger Recover",
         "description" : "استعدْ الوصول إلى محفظتك بدون الحاجة إلى عبارة الاسترداد السرية الخاصة بك.",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
       "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
@@ -2279,6 +2287,7 @@
         "label" : "الحساب للإيداع",
         "parentAccount" : "1. اختر حساب {{currencyName}}",
         "token" : "2. اختر رمز التوكن",
+        "errorLoadingTokens" : "خطأ في تحميل رموز التوكن",
         "verifyTokenType" : "يرجى التحقق أن <0>{{token}}</0> هو رمز <0>{{tokenType}}</0>. أي أصل مشفر آخر تم إرساله إلى حساب {{currency}} قد يتم فقده.",
         "warningTokenType" : "يرجى إرسال رموز <0>{{ticker}}</0> أو <0>{{tokenType}}</0> الى حسابات {{currency}}. إرسال الأصول المشفرة الأخرى قد ينتج عنه فقدان دائم للأموال.",
         "depositFromCexBannerTitle" : "إيداع الأصول المشفرة من حسابك كوينباس (Coinbase)"
@@ -7054,12 +7063,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "خطأ في الاتصال",
       "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Amount too large for UTXO constraints."
     }
   },
   "cryptoOrg" : {
     "memo" : "ملاحظة (تسمية الوجهة)",
     "memoPlaceholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
     "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "رسوم",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "تغيير التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. ",
+      "changeCTA" : "تغيير"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    }
   },
   "hedera" : {
     "name" : "hedera",
