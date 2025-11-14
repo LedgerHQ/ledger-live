@@ -4495,9 +4495,9 @@
       "label": "Automatically detect your Nano"
     },
     "bleDeviceNotAvailableDrawer": {
-      "bannerHintTitle": "Trouble connecting your signer?",
-      "scanSignersCta": "Scan signers",
-      "helpCenterCta": "Help center"
+      "bannerHintTitle": "Can't see your Ledger device?",
+      "scanSignersCta": "Scan devices",
+      "helpCenterCta": "Get support"
     },
     "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
