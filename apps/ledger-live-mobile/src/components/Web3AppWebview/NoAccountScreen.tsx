@@ -19,7 +19,7 @@ export function NoAccountScreen({
   currentAccountHistDb,
   openModularDrawer,
 }: NoAccountScreenProps) {
-  const { onSelectAccount, onSelectAccountSuccess, currencies } = useSelectAccount({
+  const { onSelectAccount, onSelectAccountSuccess, currencyIds } = useSelectAccount({
     manifest,
     currentAccountHistDb,
   });
@@ -27,8 +27,8 @@ export function NoAccountScreen({
   const handleAddAccountPress = () => {
     if (openModularDrawer) {
       openModularDrawer({
-        currencies: currencies.map(c => c.id),
-        areCurrenciesFiltered: manifest.currencies !== "*",
+        currencies: currencyIds,
+        areCurrenciesFiltered: true,
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
         flow: manifest.name,

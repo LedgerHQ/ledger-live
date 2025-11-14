@@ -86,7 +86,6 @@ const NetworkSelection = ({
 
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
-    accounts$: undefined,
   });
 
   const formattedNetworks = transformNetworks(availableNetworks);

@@ -12,7 +12,7 @@ import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   CurrentAccountHistDB,
   safeGetRefValue,
-  useManifestCurrencies,
+  useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
@@ -192,32 +192,24 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = useCallback(
-    (errorEvent: {
-      errorCode: number;
-      errorDescription: string;
-      validatedURL: string;
-      isMainFrame: boolean;
-    }) => {
-      const { errorCode, validatedURL, isMainFrame } = errorEvent;
-      const fullURL = new URL(validatedURL);
-      const errorInfo = {
-        errorCode,
-        url: fullURL.hostname,
-      };
-      console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
-      track("useWebviewState", errorInfo);
+  const handleFailLoad = useCallback((errorEvent: Electron.DidFailLoadEvent) => {
+    const { errorCode, validatedURL, isMainFrame } = errorEvent;
+    const fullURL = new URL(validatedURL);
+    const errorInfo = {
+      errorCode,
+      url: fullURL.hostname,
+    };
+    console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
+    track("useWebviewState", errorInfo);
 
-      if (isMainFrame) {
-        setState(oldState => ({
-          ...oldState,
-          loading: false,
-          isAppUnavailable: true,
-        }));
-      }
-    },
-    [],
-  ) as unknown as EventListenerOrEventListenerObject;
+    if (isMainFrame) {
+      setState(oldState => ({
+        ...oldState,
+        loading: false,
+        isAppUnavailable: true,
+      }));
+    }
+  }, []);
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({
@@ -313,7 +305,7 @@ export function useSelectAccount({
     liveAppId: manifest.id,
   });
 
-  const currencies = useManifestCurrencies(manifest);
+  const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
     useDappCurrentAccount(currentAccountHistDb);
 
@@ -345,10 +337,10 @@ export function useSelectAccount({
       dispatch(setSourceValue(source));
 
       openAssetAndAccountDrawer({
-        currencies: currencies.map(currency => currency.id),
+        currencies: currencyIds,
         onSuccess,
         onCancel,
-        areCurrenciesFiltered: manifest.currencies !== "*",
+        areCurrenciesFiltered: true,
       });
     } else {
       setDrawer(
@@ -356,7 +348,7 @@ export function useSelectAccount({
         {
           flow,
           source,
-          currencies: currencies,
+          currencyIds,
           onAccountSelected: onSuccess,
         },
         {
@@ -364,16 +356,7 @@ export function useSelectAccount({
         },
       );
     }
-  }, [
-    currencies,
-    flow,
-    manifest.currencies,
-    modularDrawerVisible,
-    onCancel,
-    onSuccess,
-    source,
-    dispatch,
-  ]);
+  }, [modularDrawerVisible, dispatch, flow, source, currencyIds, onSuccess, onCancel]);
 
   return { onSelectAccount, currentAccount };
 }

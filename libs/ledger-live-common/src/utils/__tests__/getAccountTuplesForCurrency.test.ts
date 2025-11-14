@@ -54,19 +54,6 @@ describe("getAccountTuplesForCurrency", () => {
 
       expect(results).toHaveLength(0);
     });
-
-    test("filters based on the accountId map", () => {
-      const ethCurrency = getCryptoCurrencyById("ethereum");
-      const ethAccounts = [getEthAccount(), getEthAccount(), getEthAccount(), getEthAccount()];
-
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        ethAccounts,
-        new Map([[ethAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(1);
-    });
   });
 
   describe("TokenCurrency", () => {
@@ -129,23 +116,6 @@ describe("getAccountTuplesForCurrency", () => {
 
       const results = getAccountTuplesForCurrency(aaveToken, allAccounts);
       expect(results).toHaveLength(0);
-    });
-
-    test("does not filter based on the accountId map", () => {
-      const aaveAccounts = [
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-      ];
-
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        aaveAccounts,
-        new Map([[aaveAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(4);
     });
   });
 });

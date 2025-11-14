@@ -239,6 +239,7 @@ export const {
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
+  endpoints,
 } = cryptoAssetsApi;
 
 export type CryptoAssetsApi = typeof cryptoAssetsApi;

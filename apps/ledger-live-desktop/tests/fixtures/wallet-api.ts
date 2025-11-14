@@ -139,6 +139,15 @@ export const mockedAccountList = [
     currency: "ethereum",
   },
   {
+    id: "917d77a2-5ded-57e6-a3e3-3cb7472a5974",
+    parentAccountId: "a758d3a7-e057-5fcc-8b6e-23169bc4d577",
+    name: "Sanctioned Ethereum (KICK)",
+    address: "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    currency: "ethereum/erc20/kicktoken",
+    balance: "88888800000000",
+    spendableBalance: "88888800000000",
+  },
+  {
     id: "2fa370fd-2210-5487-b9c9-bc36971ebc72",
     name: "Solana 1",
     address: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",

@@ -241,6 +241,28 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
     },
 
+    // currency.list handler tracking
+    currencyListRequested: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList requested", getEventData(manifest));
+    },
+    currencyListSuccess: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList success", getEventData(manifest));
+    },
+    currencyListFail: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList fail", getEventData(manifest));
+    },
+
+    // account.list handler tracking
+    accountListRequested: (manifest: AppManifest) => {
+      track("WalletAPI AccountList requested", getEventData(manifest));
+    },
+    accountListSuccess: (manifest: AppManifest) => {
+      track("WalletAPI AccountList success", getEventData(manifest));
+    },
+    accountListFail: (manifest: AppManifest) => {
+      track("WalletAPI AccountList fail", getEventData(manifest));
+    },
+
     dappSendTransactionRequested: (manifest: AppManifest, trackingData: DAppTrackingData) => {
       track("dApp SendTransaction requested", { ...getEventData(manifest), ...trackingData });
     },

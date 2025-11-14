@@ -1,12 +1,11 @@
-/* eslint-disable consistent-return */
-import { useMemo, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
-
 import { useStakingDrawer } from "./useStakingDrawer";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
@@ -21,12 +20,6 @@ const StakeFlow = ({ route }: Props) => {
   const account = route?.params?.account;
   const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
 
-  const cryptoCurrencies = useMemo(() => {
-    return filterCurrencies(listCurrencies(true), {
-      currencies: currencies || [],
-    });
-  }, [currencies]);
-
   const goToAccountStakeFlow = useStakingDrawer({
     navigation,
     parentRoute,
@@ -34,13 +27,9 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route?.params?.entryPoint,
   });
 
-  const currency = cryptoCurrencies.length === 1 ? cryptoCurrencies[0] : undefined;
-  const enabledCurrenciesForDrawer = cryptoCurrencies.map(c => c.id);
-
   const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
-    currency,
+    currencies,
     sourceScreenName: "stake_flow",
-    enabledCurrencies: enabledCurrenciesForDrawer,
   });
 
   const requestAccountRef = useRef(() => {});
@@ -51,21 +40,27 @@ const StakeFlow = ({ route }: Props) => {
       return;
     } else {
       // Fallback to traditional navigation
-      if (cryptoCurrencies.length === 1) {
-        // Navigate to the second screen when there is only one currency
-        navigation.replace(NavigatorName.RequestAccount, {
-          screen: ScreenName.RequestAccountsSelectAccount,
-          params: {
-            currency: cryptoCurrencies[0],
-            onSuccess: goToAccountStakeFlow,
-            allowAddAccount: true, // if no account, need to be able to add one to get funds.
-          },
+      if (currencies.length === 1) {
+        Promise.resolve(
+          findCryptoCurrencyById(currencies[0]) ||
+            getCryptoAssetsStore().findTokenById(currencies[0]),
+        ).then(currency => {
+          if (!currency) return;
+          // Navigate to the second screen when there is only one currency
+          navigation.replace(NavigatorName.RequestAccount, {
+            screen: ScreenName.RequestAccountsSelectAccount,
+            params: {
+              currency,
+              onSuccess: goToAccountStakeFlow,
+              allowAddAccount: true, // if no account, need to be able to add one to get funds.
+            },
+          });
         });
       } else {
         navigation.replace(NavigatorName.RequestAccount, {
           screen: ScreenName.RequestAccountsSelectCrypto,
           params: {
-            currencies: cryptoCurrencies,
+            currencyIds: currencies,
             allowAddAccount: true,
             onSuccess: goToAccountStakeFlow,
           },

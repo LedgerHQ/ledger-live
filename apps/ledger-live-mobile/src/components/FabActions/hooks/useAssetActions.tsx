@@ -80,7 +80,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
     useOpenStakeDrawer({
       sourceScreenName: "asset_action",
-      currency,
+      currencies: currency ? [currency.id] : undefined,
     });
   const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
     useOpenReceiveDrawer({

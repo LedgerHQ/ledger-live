@@ -78,7 +78,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
     useOpenStakeDrawer({
-      currency,
+      currencies: currency ? [currency.id] : undefined,
       sourceScreenName: route.name,
     });
 
