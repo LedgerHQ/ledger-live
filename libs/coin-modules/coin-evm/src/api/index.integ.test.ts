@@ -3,6 +3,7 @@ import {
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
+  Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
@@ -172,35 +173,52 @@ describe.each([
       ).toEqual([[], ""]);
     });
 
-    it("lists operations for an address", async () => {
-      const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
-        minHeight: 200,
-        order: "asc",
-      });
-      expect(result.length).toBeGreaterThanOrEqual(52);
-      result.forEach(op => {
-        expect([
-          "NONE",
-          "FEES",
-          "IN",
-          "OUT",
-          "DELEGATE",
-          "UNDELEGATE",
-          "REDELEGATE",
-          "NFT_IN",
-          "NFT_OUT",
-        ]).toContainEqual(op.type);
-        expect(op.senders.concat(op.recipients)).toContain(
-          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
-        );
-        expect(op.value).toBeGreaterThanOrEqual(0n);
-        expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
-        expect(op.tx.fees).toBeGreaterThan(0);
-        expect(op.tx.date).toBeInstanceOf(Date);
-      });
-    });
+    it.each([
+      [
+        "an ascending",
+        "asc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date >= operations[i - 1].tx.date),
+      ],
+      [
+        "a descending",
+        "desc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date <= operations[i - 1].tx.date),
+      ],
+    ] as const)(
+      "lists operations for an address with %s order",
+      async (_s, order, isCorrectlyOrdered) => {
+        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
+          minHeight: 200,
+          order,
+        });
+        expect(result.length).toBeGreaterThanOrEqual(52);
+        result.forEach(op => {
+          expect([
+            "NONE",
+            "FEES",
+            "IN",
+            "OUT",
+            "DELEGATE",
+            "UNDELEGATE",
+            "REDELEGATE",
+            "NFT_IN",
+            "NFT_OUT",
+          ]).toContainEqual(op.type);
+          expect(op.senders.concat(op.recipients)).toContain(
+            "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          );
+          expect(op.value).toBeGreaterThanOrEqual(0n);
+          expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
+          expect(op.tx.fees).toBeGreaterThan(0);
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+        expect(isCorrectlyOrdered(result));
+      },
+    );
   });
 
   describe.each([

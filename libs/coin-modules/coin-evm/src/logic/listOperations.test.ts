@@ -114,7 +114,9 @@ describe("listOperations", () => {
       lastInternalOperations: [],
     });
 
-    expect(await listOperations({} as CryptoCurrency, "address", 5)).toEqual([
+    expect(
+      await listOperations({} as CryptoCurrency, "address", { minHeight: 5, order: "asc" }),
+    ).toEqual([
       [
         {
           id: "coin-op-1",
