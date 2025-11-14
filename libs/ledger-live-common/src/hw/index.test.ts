@@ -9,7 +9,7 @@ describe("open", () => {
     it("should reject with a CantOpenDevice error", async () => {
       registerTransportModule({
         id: "test_0",
-        open: (_id: string, _timeoutMs?: number) => {
+        open: (_id: string, _timeoutMs?: number, _context?, _matchDeviceByName?: string) => {
           // Handles no device
           return null;
         },
@@ -27,7 +27,7 @@ describe("open", () => {
     it("should return the associated opened Transport instance", async () => {
       registerTransportModule({
         id: "test_1",
-        open: (id: string, _timeoutMs?: number) => {
+        open: (id: string, _timeoutMs?: number, _context?, _matchDeviceByName?: string) => {
           // Filters on this current test
           if (id !== "device_1") return null;
 
@@ -47,7 +47,7 @@ describe("open", () => {
     it("should reject with an error on timeout", async () => {
       registerTransportModule({
         id: "test_2",
-        open: (id: string, timeoutMs?: number) => {
+        open: (id: string, timeoutMs?: number, _context?, _matchDeviceByName?: string) => {
           // Filters on this current test
           if (id !== "device_2") return null;
 
@@ -63,7 +63,7 @@ describe("open", () => {
 
       const timeoutMs = 1000;
 
-      const openPromise = open("device_2", timeoutMs);
+      const openPromise = open("device_2", { openTimeoutMs: timeoutMs });
       jest.advanceTimersByTime(timeoutMs);
       await expect(openPromise).rejects.toBeInstanceOf(CantOpenDevice);
     });
@@ -71,7 +71,7 @@ describe("open", () => {
     test("And the Transport/module implementation timeouts before open, it should still reject with an error", async () => {
       registerTransportModule({
         id: "test_3",
-        open: (id: string, timeoutMs?: number) => {
+        open: (id: string, timeoutMs?: number, _context?, _matchDeviceByName?: string) => {
           // Filters on this current test
           if (id !== "device_3") return null;
 
@@ -88,10 +88,31 @@ describe("open", () => {
 
       const timeoutMs = 1000;
 
-      const openPromise = open("device_3", timeoutMs);
+      const openPromise = open("device_3", { openTimeoutMs: timeoutMs });
       // Advances time after the implementation timeout but before the `open` timeout
       jest.advanceTimersByTime(timeoutMs - 100);
       await expect(openPromise).rejects.toBeInstanceOf(TransportError);
+    });
+  });
+
+  describe("When matchDeviceByName is provided", () => {
+    it("should pass matchDeviceByName to the transport module open function", async () => {
+      const mockOpen = jest.fn(
+        (_id: string, _timeoutMs?: number, _context?, _matchDeviceByName?: string) => {
+          return Promise.resolve(aTransportBuilder());
+        },
+      );
+
+      registerTransportModule({
+        id: "test_4",
+        open: mockOpen,
+        disconnect: (_id: string) => {
+          return Promise.resolve();
+        },
+      });
+
+      await open("device_4", { matchDeviceByName: "My Device" });
+      expect(mockOpen).toHaveBeenCalledWith("device_4", undefined, undefined, "My Device");
     });
   });
 });

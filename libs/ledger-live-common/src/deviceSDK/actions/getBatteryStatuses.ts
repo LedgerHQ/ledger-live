@@ -8,6 +8,7 @@ import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 
 export type GetBatteryStatusesActionArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   statuses: BatteryStatusTypes[];
 };
 
@@ -26,9 +27,10 @@ export const initialState: GetBatteryStatusesActionState = {
 
 export function getBatteryStatusesAction({
   deviceId,
+  deviceName,
   statuses,
 }: GetBatteryStatusesActionArgs): Observable<GetBatteryStatusesActionState> {
-  return getBatteryStatusTask({ deviceId, statuses }).pipe(
+  return getBatteryStatusTask({ deviceId, deviceName, statuses }).pipe(
     scan((currentState, event) => {
       switch (event.type) {
         case "taskError":

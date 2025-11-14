@@ -47,13 +47,21 @@ export type FetchImageRequest = {
 
 export type Input = {
   deviceId: string;
+  deviceName: string | null;
   request: FetchImageRequest;
 };
 
-export default function fetchImage({ deviceId, request }: Input): Observable<FetchImageEvent> {
+export default function fetchImage({
+  deviceId,
+  deviceName,
+  request,
+}: Input): Observable<FetchImageEvent> {
   const { backupHash, allowedEmpty = false, deviceModelId } = request;
 
-  const sub = withDevice(deviceId)(
+  const sub = withDevice(
+    deviceId,
+    deviceName ? { matchDeviceByName: deviceName } : undefined,
+  )(
     transport =>
       new Observable(subscriber => {
         const timeoutSub = of<FetchImageEvent>({

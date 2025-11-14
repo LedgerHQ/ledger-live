@@ -26,6 +26,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
       // `enter` and `exit` have the same behavior
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
+        deviceName: null,
         toggleType: "exit",
       }).subscribe({
         next: event => {
@@ -47,6 +48,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
 
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
+        deviceName: null,
         toggleType: "enter",
       }).subscribe({
         next: event => {
@@ -78,6 +80,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
 
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
+        deviceName: null,
         toggleType: "enter",
       }).subscribe({
         next: event => {

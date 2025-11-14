@@ -11,6 +11,7 @@ export default {
     return new Observable(o => {
       return getDeviceInfoAction({
         deviceId: device ?? "",
+        deviceName: null,
       }).subscribe(o);
     });
   },

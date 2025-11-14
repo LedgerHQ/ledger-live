@@ -4,7 +4,7 @@ import { scan } from "rxjs/operators";
 import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
 import { getDeviceInfoTask, GetDeviceInfoTaskError } from "../tasks/getDeviceInfo";
 
-export type GetDeviceInfoActionArgs = { deviceId: DeviceId };
+export type GetDeviceInfoActionArgs = { deviceId: DeviceId; deviceName: string | null };
 
 // Union of all the tasks specific errors
 export type GetDeviceInfoActionErrorType = GetDeviceInfoTaskError;
@@ -21,10 +21,11 @@ export const initialState: GetDeviceInfoActionState = {
 
 export function getDeviceInfoAction({
   deviceId,
+  deviceName,
 }: GetDeviceInfoActionArgs): Observable<GetDeviceInfoActionState> {
   // TODO: to decide: should we push an event if the state is not changing?
   // For ex: when the device is locked with 0x5515: an event with lockedDevice: true is pushed for each retry
-  return getDeviceInfoTask({ deviceId }).pipe(
+  return getDeviceInfoTask({ deviceId, deviceName }).pipe(
     scan((currentState, event) => {
       switch (event.type) {
         case "taskError":

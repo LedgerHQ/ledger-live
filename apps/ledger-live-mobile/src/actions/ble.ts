@@ -5,6 +5,7 @@ import type {
   BleRemoveKnownDevicePayload,
   BleRemoveKnownDevicesPayload,
   BleSaveDeviceNamePayload,
+  BleUpdateKnownDevicePayload,
 } from "./types";
 import { BleActionTypes } from "./types";
 
@@ -18,4 +19,7 @@ export const addKnownDevice = createAction<BleAddKnownDevicePayload>(BleActionTy
 export const importBle = createAction<BleImportBlePayload>(BleActionTypes.BLE_IMPORT);
 export const saveBleDeviceName = createAction<BleSaveDeviceNamePayload>(
   BleActionTypes.BLE_SAVE_DEVICE_NAME,
+);
+export const updateKnownDevice = createAction<BleUpdateKnownDevicePayload>(
+  BleActionTypes.BLE_UPDATE_DEVICE,
 );

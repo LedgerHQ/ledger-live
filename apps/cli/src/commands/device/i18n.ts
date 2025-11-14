@@ -20,7 +20,7 @@ const exec = async (opts: I18nJobOpts) => {
 
   if (install) {
     await new Promise<void>(p =>
-      installLanguage({ deviceId, request: { language } }).subscribe(
+      installLanguage({ deviceId, deviceName: null, request: { language } }).subscribe(
         x => console.log(x),
         e => {
           console.error(e);

@@ -468,12 +468,13 @@ export const createAction = (
     );
 
     const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
-      ({ deviceId, request }: ConnectAppInput) => {
+      ({ deviceId, deviceName, request }: ConnectAppInput) => {
         //To avoid redundant checks, we remove passed checks from the request.
         const { dependencies, requireLatestFirmware } = request;
 
         return connectAppExec({
           deviceId,
+          deviceName,
           request: {
             ...request,
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,

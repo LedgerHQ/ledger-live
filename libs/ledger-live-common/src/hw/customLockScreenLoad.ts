@@ -68,14 +68,22 @@ export type LoadImageRequest = {
 
 export type Input = {
   deviceId: string;
+  deviceName: string | null;
   request: LoadImageRequest;
 };
 
-export default function loadImage({ deviceId, request }: Input): Observable<LoadImageEvent> {
+export default function loadImage({
+  deviceId,
+  deviceName,
+  request,
+}: Input): Observable<LoadImageEvent> {
   const { hexImage, padImage = true, deviceModelId } = request;
   const screenSpecs = getScreenSpecs(deviceModelId);
 
-  const sub = withTransport(deviceId)(
+  const sub = withTransport(
+    deviceId,
+    deviceName ? { matchDeviceByName: deviceName } : undefined,
+  )(
     ({ transportRef }) =>
       new Observable(subscriber => {
         const timeoutSub = of<LoadImageEvent>({ type: "unresponsiveDevice" })

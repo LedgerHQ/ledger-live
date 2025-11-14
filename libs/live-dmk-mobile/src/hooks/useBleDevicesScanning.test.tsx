@@ -79,35 +79,30 @@ describe("defaultMapper", () => {
         deviceName: "name0",
         modelId: "europa",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id1",
         deviceName: "name1",
         modelId: "stax",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id2",
         deviceName: "name2",
         modelId: "nanoX",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id3",
         deviceName: "name3",
         modelId: "nanoS",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id4",
         deviceName: "name4",
         modelId: "nanoSP",
         wired: false,
-        isAlreadyKnown: false,
       },
     ]);
   });
@@ -339,5 +334,117 @@ describe("useBleDevicesScanning", () => {
     expect(result.current.scannedDevices).toEqual([]);
     expect(result.current.scanningBleError).toBeNull();
     expect(mockStopDiscovering).toHaveBeenCalled();
+  });
+
+  it("should retry scanning after unexpected completion", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    // First attempt - completes unexpectedly
+    const subject1 = new Subject<DiscoveredDevice[]>();
+    // Second attempt - after retry
+    const subject2 = new Subject<DiscoveredDevice[]>();
+
+    mockListenToAvailableDevices
+      .mockReturnValueOnce(subject1.asObservable())
+      .mockReturnValueOnce(subject2.asObservable());
+
+    const { result } = renderHook(() => useBleDevicesScanning(true));
+
+    // First attempt: emit devices then complete unexpectedly
+    act(() => {
+      subject1.next([mockDevice1]);
+      subject1.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Fast-forward time by 5 seconds to trigger retry
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should have retried
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(2);
+    expect(result.current.isScanning).toBe(true);
+
+    // Second attempt succeeds
+    act(() => {
+      subject2.next([mockDevice1, mockDevice2]);
+    });
+
+    expect(result.current.scannedDevices).toHaveLength(2);
+    expect(result.current.isScanning).toBe(true);
+
+    vi.useRealTimers();
+  });
+
+  it("should not retry if scanning is disabled before retry timeout", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, rerender } = renderHook(({ enabled }) => useBleDevicesScanning(enabled), {
+      initialProps: { enabled: true },
+    });
+
+    // First attempt: complete unexpectedly
+    act(() => {
+      subject.next([mockDevice1]);
+      subject.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Disable scanning before retry timeout
+    rerender({ enabled: false });
+
+    // Fast-forward time by 5 seconds
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should NOT have retried because scanning was disabled
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+    expect(result.current.isScanning).toBe(false);
+
+    vi.useRealTimers();
+  });
+
+  it("should cleanup retry timeout on unmount", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, unmount } = renderHook(() => useBleDevicesScanning(true));
+
+    // First attempt: complete unexpectedly
+    act(() => {
+      subject.next([mockDevice1]);
+      subject.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Unmount before retry timeout
+    unmount();
+
+    // Fast-forward time by 5 seconds
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should NOT have retried because component was unmounted
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 });
