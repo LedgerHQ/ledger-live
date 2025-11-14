@@ -144,6 +144,7 @@ setSupportedCurrencies([
   "kaspa",
   "monad",
   "somnia",
+  "zero_gravity",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))

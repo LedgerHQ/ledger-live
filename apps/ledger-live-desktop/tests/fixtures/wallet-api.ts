@@ -1156,4 +1156,13 @@ export const expectedCurrencyList = [
     color: "#6F0191",
     decimals: 18,
   },
+  {
+    type: "CryptoCurrency",
+    id: "zero_gravity",
+    ticker: "0G",
+    name: "0G",
+    family: "ethereum",
+    color: "#9200E1",
+    decimals: 18,
+  },
 ];
