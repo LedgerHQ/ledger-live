@@ -6,7 +6,7 @@ import { useFilteredProviders } from "./useFilteredProviders";
 
 export function useFetchCurrencyAll() {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
-  const { providers, loading, error } = useFilteredProviders();
+  const { providers, error } = useFilteredProviders();
 
   const { data, ...rest } = useAPI({
     queryFn: fetchCurrencyAll,
@@ -14,9 +14,8 @@ export function useFetchCurrencyAll() {
       additionalCoinsFlag: fetchAdditionalCoins?.enabled,
       providers,
     },
-    // assume the all currency list for the given props won't change during a users session.
     staleTimeout: FETCH_CURRENCIES_TIMEOUT_MS,
-    enabled: !loading && !error,
+    enabled: !error && providers.length > 0,
   });
   return {
     ...rest,
