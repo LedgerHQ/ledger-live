@@ -152,7 +152,8 @@
     "quote" : "Preis",
     "memoTag" : {
       "learnMore" : "Weitere Informationen zu Tags/Memos"
-    }
+    },
+    "stake" : "Staken"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1446,6 +1447,12 @@
         "description" : "Von jeder Börse oder Wallet direkt zu deinem Ledger-Gerät.",
         "actionCompletedPopupLabel" : "Vermögenswerte übertragen"
       },
+      "syncAccounts" : {
+        "title" : "Deine Kryptokonten synchronisieren",
+        "titleCompleted" : "Deine Konten sind synchronisiert",
+        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
+        "actionCompletedPopupLabel" : "Konten synchronisiert"
+      },
       "recover" : {
         "title" : "Ledger Recover abonnieren",
         "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
+      "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
       "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
       "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
@@ -2279,6 +2287,7 @@
         "label" : "Zu belastendes Konto",
         "parentAccount" : "1. {{currencyName}} Konto wählen",
         "token" : "2. Token auswählen",
+        "errorLoadingTokens" : "Fehler beim Laden der Token",
         "verifyTokenType" : "Bitte vergewissere dich, dass <0>{{token}}</0> ein <0>{{tokenType}}</0>-Token ist. Jeder andere Kryptovermögenswert, der an ein {{currency}}-Konto gesendet wird, kann verloren gehen.",
         "warningTokenType" : "Bitte sende nur <0>{{ticker}}</0> oder <0>{{tokenType}}</0>-Token an {{currency}}-Konten. Das Versenden anderer Kryptovermögenswerte kann zu deren dauerhaftem Verlust führen.",
         "depositFromCexBannerTitle" : "Kryptos von deinem Coinbase-Konto einzahlen"
@@ -7060,6 +7069,46 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Tag/Memo eingeben",
     "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Gebühr",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Delegierung ändern",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. ",
+      "changeCTA" : "Ändern"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
