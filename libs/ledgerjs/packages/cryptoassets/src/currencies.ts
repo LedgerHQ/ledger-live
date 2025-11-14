@@ -4840,6 +4840,27 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  monad_testnet: {
+    type: "CryptoCurrency",
+    id: "monad_testnet",
+    coinType: CoinType.ETH,
+    name: "Monad Testnet",
+    managerAppName: "Ethereum",
+    ticker: "MON",
+    scheme: "monad_testnet",
+    color: "#836EF9",
+    family: "evm",
+    units: ethereumUnits("MON", "MON"),
+    ethereumLikeInfo: {
+      chainId: 10143,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.monadexplorer.com/tx/$hash",
+        address: "https://testnet.monadexplorer.com/address/$address",
+      },
+    ],
+  },
   somnia: {
     type: "CryptoCurrency",
     id: "somnia",
