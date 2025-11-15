@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -25,26 +25,39 @@ import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
 export const HEIGHT = 30;
 export const PADDING = 8;
 
+const ANIMATION_DURATION = 200;
+const ANIMATION_CONFIG = { duration: ANIMATION_DURATION };
+const CLOSED_STATE = 0;
+const OPENED_STATE = 1;
+
+const isMock = !!Config.MOCK;
+
 function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
   const { colors } = useTheme();
   const { top } = useSafeAreaInsets();
   const isExperimental = useExperimental();
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
-  const areFeatureFlagsOverridden =
-    useSelector(featureFlagsBannerVisibleSelector) && hasLocallyOverriddenFlags;
+  const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
 
-  // Reanimated value representing the state of the header: 0: closed, 1: opened
-  const openState = useSharedValue(Config.MOCK ? 1 : 0);
+  const areFeatureFlagsOverridden = useMemo(
+    () => featureFlagsBannerVisible && hasLocallyOverriddenFlags,
+    [featureFlagsBannerVisible, hasLocallyOverriddenFlags],
+  );
+
+  const shouldShowHeader = useMemo(
+    () => isExperimental || areFeatureFlagsOverridden,
+    [isExperimental, areFeatureFlagsOverridden],
+  );
+
+  const openState = useSharedValue(isMock ? OPENED_STATE : CLOSED_STATE);
 
   useEffect(() => {
-    if (Config.MOCK) return;
-    if (isExperimental || areFeatureFlagsOverridden) {
-      openState.value = withTiming(1, { duration: 200 });
-    } else {
-      openState.value = withTiming(0, { duration: 200 });
-    }
-  }, [isExperimental, areFeatureFlagsOverridden, openState]);
+    if (isMock) return;
+
+    const targetState = shouldShowHeader ? OPENED_STATE : CLOSED_STATE;
+    openState.value = withTiming(targetState, ANIMATION_CONFIG);
+  }, [shouldShowHeader, openState]);
 
   const opacityStyle = useAnimatedStyle(
     () => ({
@@ -53,13 +66,12 @@ function ExperimentalHeader() {
     [openState],
   );
 
-  // Animated style updating the height depending on the opening animation state
   const heightStyle = useAnimatedStyle(
     () => ({
       height: interpolate(
         openState.value,
-        [0, 1],
-        [0, HEIGHT + top + PADDING],
+        [CLOSED_STATE, OPENED_STATE],
+        [0, HEIGHT + PADDING + top],
         Extrapolation.CLAMP,
       ),
     }),
@@ -70,7 +82,7 @@ function ExperimentalHeader() {
     rejections.next();
   }, []);
 
-  const onPressExperimental: () => void = useCallback(() => {
+  const onPressExperimental = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
       params: {
@@ -79,7 +91,7 @@ function ExperimentalHeader() {
     });
   }, [navigation]);
 
-  const onPressFlags: () => void = useCallback(() => {
+  const onPressFlags = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
       params: {
@@ -88,22 +100,57 @@ function ExperimentalHeader() {
     });
   }, [navigation]);
 
+  const containerHeight = useMemo(() => HEIGHT + PADDING + top, [top]);
+
+  const rootStyle = useMemo(
+    () => [
+      styles.root,
+      {
+        backgroundColor: colors.lightLiveBg,
+      },
+    ],
+    [colors.lightLiveBg],
+  );
+
+  const containerBaseStyle = useMemo(
+    () => [
+      styles.container,
+      {
+        backgroundColor: colors.lightLiveBg,
+      },
+    ],
+    [colors.lightLiveBg],
+  );
+
+  if (isMock) {
+    return (
+      <View
+        style={[
+          rootStyle,
+          {
+            height: containerHeight,
+            paddingTop: top,
+          },
+        ]}
+      >
+        <View style={containerBaseStyle}>
+          <TouchableOpacity onPress={onPressMock}>
+            <LText bold style={styles.label}>
+              MOCK
+            </LText>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <Animated.View
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.lightLiveBg,
-        },
-        heightStyle,
-      ]}
-    >
+    <Animated.View style={[rootStyle, heightStyle]}>
       <Animated.View
         style={[
-          styles.container,
+          containerBaseStyle,
           {
             top,
-            backgroundColor: colors.lightLiveBg,
           },
           opacityStyle,
         ]}
@@ -111,27 +158,23 @@ function ExperimentalHeader() {
         {isExperimental && (
           <>
             <ExperimentalIcon size={16} color={colors.live} />
-            <LText bold style={styles.label} onPress={onPressExperimental} py={4}>
-              <Trans i18nKey="settings.experimental.title" />
-            </LText>
+            <TouchableOpacity onPress={onPressExperimental}>
+              <LText bold style={styles.label} py={4}>
+                <Trans i18nKey="settings.experimental.title" />
+              </LText>
+            </TouchableOpacity>
           </>
         )}
 
-        {areFeatureFlagsOverridden ? (
+        {areFeatureFlagsOverridden && (
           <Flex px={4}>
-            <LText bold style={styles.label} onPress={onPressFlags}>
-              <Trans i18nKey="settings.debug.bannerTitle" />
-            </LText>
+            <TouchableOpacity onPress={onPressFlags}>
+              <LText bold style={styles.label}>
+                <Trans i18nKey="settings.debug.bannerTitle" />
+              </LText>
+            </TouchableOpacity>
           </Flex>
-        ) : null}
-
-        {Config.MOCK ? (
-          <TouchableOpacity onPress={onPressMock}>
-            <LText bold style={styles.label}>
-              MOCK
-            </LText>
-          </TouchableOpacity>
-        ) : null}
+        )}
       </Animated.View>
     </Animated.View>
   );

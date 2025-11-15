@@ -7,7 +7,7 @@ export class TradePageUtil {
     await scrollToId(CurrencyRowId, AccountListId);
 
     // account row may be partially hidden by the bottom bar
-    await getElementById(AccountListId).scroll(25, "down");
+    await getElementById(AccountListId).scroll(40, "down");
     await waitForElementById(CurrencyRowId);
     await tapById(CurrencyRowId);
   }

@@ -200,11 +200,13 @@ export const enabledExperimentalFeatures = (): string[] =>
 })();
 
 export function useExperimental(): boolean {
-  const [state, setState] = useState(() => enabledExperimentalFeatures().length > 0);
+  const [state, setState] = useState(
+    () => enabledExperimentalFeatures().length > 0 || !!Config.MOCK,
+  );
 
   useEffect(() => {
     const sub = changes.subscribe(() => {
-      const newExperimental = enabledExperimentalFeatures().length > 0;
+      const newExperimental = enabledExperimentalFeatures().length > 0 || !!Config.MOCK;
       setState(newExperimental);
     });
 
