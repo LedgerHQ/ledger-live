@@ -53,22 +53,8 @@ describe("Device Selection feature integration test", () => {
     mockDiscoverDevices.mockReturnValue(of({}));
     render(<DeviceSelectionNavigator />);
 
-    /**
-     * Note: Header elements with custom React components (via headerTitle: () => <Component />)
-     * are rendered TWICE by @react-navigation/native-stack:
-     *
-     * 1. Once in RNSScreenStackHeaderConfig (native header config, hidden but in DOM)
-     * 2. Once in RNSScreenContentWrapper (visible React component tree)
-     *
-     * This is by design to bridge React components with native navigation performance.
-     * In tests, both instances exist in the component tree, causing "multiple elements found" errors
-     * when using getBy* queries.
-     *
-     * Solution: Use getAllBy* and take [0] to get the first (visible) instance.
-     * This only affects custom headerTitle components, not other screen elements.
-     */
-    const screenTitle = screen.getAllByText(/Connect device/i)[0];
-    const stepIndicator = screen.getAllByText(/Step 2 of 3/i)[0];
+    const screenTitle = screen.getByText(/Connect device/i);
+    const stepIndicator = screen.getByText(/Step 2 of 3/i);
     const listHeader = screen.getByText(/Devices/i);
 
     const addDeviceCTA = screen.getByText(/Add a Ledger/i);

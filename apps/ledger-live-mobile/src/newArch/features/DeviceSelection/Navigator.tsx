@@ -46,6 +46,7 @@ export default function Navigator() {
         name={ScreenName.SelectDevice}
         component={SelectDevice}
         options={{
+          header: undefined,
           headerTitle: () => (
             <StepHeader
               subtitle={t("transfer.receive.stepperHeader.range", {

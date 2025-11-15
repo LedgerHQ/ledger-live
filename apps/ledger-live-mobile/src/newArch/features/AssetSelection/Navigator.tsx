@@ -79,12 +79,12 @@ export default function Navigator() {
         component={SelectCrypto}
         options={{
           title: "",
+          header: undefined,
           headerRight: () => (
             <CloseWithConfirmation
               onClose={handleOnCloseAssetSelectionNavigator(ScreenName.AddAccountsSelectCrypto)}
             />
           ),
-
           headerLeft: () => (
             <NavigationHeaderBackButton
               onPress={handleOnBack(ScreenName.AddAccountsSelectCrypto)}
