@@ -13,9 +13,7 @@ import type {
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
 import { getEnv } from "@ledgerhq/live-env";
-import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   broadcastTransactionLogic,
@@ -38,6 +36,7 @@ import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -55,6 +54,10 @@ import {
   useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -99,7 +102,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       >();
     const [device, setDevice] = useState<Device>();
     const listAccounts = useListPlatformAccounts(walletState, accounts);
-    const listPlatformCurrencies = useListPlatformCurrencies();
+    const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+    const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { isModularDrawerVisible } = useModularDrawerVisibility({
       modularDrawerFeatureFlagKey: "llmModularDrawer",
@@ -113,7 +117,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const requestAccount = useCallback(
       ({
-        currencies: currencyIds,
+        currencies,
         allowAddAccount = true,
         includeTokens,
       }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
@@ -132,33 +136,18 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * works at build time and the `currencies` array is received at runtime from
            * JSONRPC requests. So we need to make sure the array is properly typed.
            */
-          const safeCurrencyIds = currencyIds?.filter(c => typeof c === "string") ?? undefined;
-          const allCurrencies = listAndFilterCurrencies({
-            currencies: safeCurrencyIds,
-            includeTokens,
-          });
-          const cryptoCurrencyIds =
-            safeCurrencyIds && safeCurrencyIds.length > 0
-              ? safeCurrencyIds
-              : allCurrencies.map(currency => currency.id);
-
-          const foundAccounts = cryptoCurrencyIds?.length
-            ? accounts.filter(a =>
-                cryptoCurrencyIds.includes(isTokenAccount(a) ? a.token.id : a.currency.id),
-              )
-            : accounts;
-
-          // @TODO replace with correct error
-          if (foundAccounts.length <= 0 && !allowAddAccount) {
-            tracking.platformRequestAccountFail(manifest);
-            reject(new Error("No accounts found matching request"));
-            return;
-          }
-          const currenciesDiff = allowAddAccount
-            ? cryptoCurrencyIds
-            : foundAccounts
-                .map(a => (isTokenAccount(a) ? a.token.id : a.currency.id))
-                .filter((c, i, arr) => cryptoCurrencyIds.includes(c) && i === arr.indexOf(c));
+          const cryptoCurrencyIds = currencies?.filter(c => typeof c === "string") ?? undefined;
+          const currencyIds =
+            !includeTokens && !cryptoCurrencyIds
+              ? listSupportedCurrencies().reduce<string[]>((acc, currency) => {
+                  if (
+                    isPlatformSupportedCurrency(currency) &&
+                    !deactivatedCurrencyIds.has(currency.id)
+                  )
+                    acc.push(currency.id);
+                  return acc;
+                }, [])
+              : cryptoCurrencyIds;
 
           const onSuccess = (account: AccountLike, parentAccount?: Account) => {
             tracking.platformRequestAccountSuccess(manifest);
@@ -175,8 +164,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           if (modularDrawerVisible) {
             openModularDrawer({
-              currencies: cryptoCurrencyIds,
-              areCurrenciesFiltered: manifest.currencies !== "*",
+              currencies: currencyIds,
+              areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
               enableAccountSelection: true,
               onAccountSelected: onSuccess,
               flow: manifest.name,
@@ -186,28 +175,31 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   : currentRouteNameRef.current ?? "Unknown",
             });
           } else {
-            if (currenciesDiff.length === 1) {
-              const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
-              if (!currency) {
-                tracking.platformRequestAccountFail(manifest);
-                reject(new Error("Currency not found"));
-                return;
-              }
-              navigation.navigate(NavigatorName.RequestAccount, {
-                screen: ScreenName.RequestAccountsSelectAccount,
-                params: {
-                  currencies: allCurrencies,
-                  currency,
-                  allowAddAccount,
-                  onSuccess,
-                },
-                onClose,
+            if (currencyIds && currencyIds.length === 1) {
+              Promise.resolve(
+                findCryptoCurrencyById(currencyIds[0]) ||
+                  getCryptoAssetsStore().findTokenById(currencyIds[0]),
+              ).then(currency => {
+                if (!currency) {
+                  tracking.platformRequestAccountFail(manifest);
+                  reject(new Error("Currency not found"));
+                  return;
+                }
+                navigation.navigate(NavigatorName.RequestAccount, {
+                  screen: ScreenName.RequestAccountsSelectAccount,
+                  params: {
+                    currency,
+                    allowAddAccount,
+                    onSuccess,
+                  },
+                  onClose,
+                });
               });
             } else {
               navigation.navigate(NavigatorName.RequestAccount, {
                 screen: ScreenName.RequestAccountsSelectCrypto,
                 params: {
-                  currencies: allCurrencies,
+                  currencyIds,
                   allowAddAccount,
                   onSuccess,
                 },
@@ -219,8 +211,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [
         tracking,
         manifest,
-        accounts,
         modularDrawerVisible,
+        deactivatedCurrencyIds,
         walletState,
         openModularDrawer,
         navigation,

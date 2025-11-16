@@ -7,8 +7,8 @@ import {
   useConfig,
   useWalletAPIServer,
   CurrentAccountHistDB,
-  useManifestCurrencies,
   useCacheBustedLiveApps,
+  useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
@@ -46,6 +46,8 @@ import {
 } from "LLM/features/ModularDrawer";
 import { OpenDrawer } from "LLM/features/ModularDrawer/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 export function useWebView(
   {
     manifest,
@@ -219,6 +221,7 @@ export function useWebView(
     }
   }, [manifest.id, manifest.cacheBustingId, webviewRef, getLatest, edit]);
 
+  // TODO merge with webviewProps in useWebviewState
   const webviewCacheOptions = useMemo(() => {
     if (manifest.nocache) {
       return {
@@ -407,9 +410,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
 
   return useMemo(
     () => ({
-      "account.request": ({
-        accounts$,
-        currencies,
+      "account.request": async ({
+        currencyIds,
         onSuccess,
         onCancel,
         areCurrenciesFiltered,
@@ -418,7 +420,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
       }) => {
         if (isModularDrawerVisible) {
           // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
-          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+          const shouldUseCurrencies =
+            (useCase && currencyIds && currencyIds.length <= 25) || !useCase;
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
           openModularDrawer?.({
@@ -427,9 +430,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             enableAccountSelection: true,
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
-            accounts$,
-            currencies:
-              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
+            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
             areCurrenciesFiltered,
             useCase,
             ...(finalDrawerConfiguration.assets && {
@@ -440,12 +441,17 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             }),
           });
         } else {
-          if (currencies.length === 1) {
+          if (currencyIds && currencyIds.length === 1) {
+            const currency =
+              findCryptoCurrencyById(currencyIds[0]) ||
+              (await getCryptoAssetsStore().findTokenById(currencyIds[0]));
+            if (!currency) {
+              throw new Error(`Currency not found for id ${currencyIds[0]}`);
+            }
             navigation.navigate(NavigatorName.RequestAccount, {
               screen: ScreenName.RequestAccountsSelectAccount,
               params: {
-                accounts$,
-                currency: currencies[0],
+                currency,
                 allowAddAccount: true,
                 onSuccess,
               },
@@ -455,8 +461,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             navigation.navigate(NavigatorName.RequestAccount, {
               screen: ScreenName.RequestAccountsSelectCrypto,
               params: {
-                accounts$,
-                currencies,
+                currencyIds,
                 allowAddAccount: true,
                 onSuccess,
               },
@@ -662,7 +667,7 @@ export function useSelectAccount({
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
-  const currencies = useManifestCurrencies(manifest);
+  const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
     useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
@@ -675,12 +680,18 @@ export function useSelectAccount({
     [manifest.id, setCurrentAccountHist, setCurrentAccount],
   );
 
-  const onSelectAccount = useCallback(() => {
-    if (currencies.length === 1) {
+  const onSelectAccount = useCallback(async () => {
+    if (currencyIds.length === 1) {
+      const currency =
+        findCryptoCurrencyById(currencyIds[0]) ||
+        (await getCryptoAssetsStore().findTokenById(currencyIds[0]));
+      if (!currency) {
+        throw new Error(`Currency not found for id ${currencyIds[0]}`);
+      }
       navigation.navigate(NavigatorName.RequestAccount, {
         screen: ScreenName.RequestAccountsSelectAccount,
         params: {
-          currency: currencies[0],
+          currency,
           allowAddAccount: true,
           onSuccess: onSelectAccountSuccess,
         },
@@ -689,13 +700,13 @@ export function useSelectAccount({
       navigation.navigate(NavigatorName.RequestAccount, {
         screen: ScreenName.RequestAccountsSelectCrypto,
         params: {
-          currencies,
+          currencyIds,
           allowAddAccount: true,
           onSuccess: onSelectAccountSuccess,
         },
       });
     }
-  }, [currencies, navigation, onSelectAccountSuccess]);
+  }, [currencyIds, navigation, onSelectAccountSuccess]);
 
-  return { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess };
+  return { onSelectAccount, currentAccount, currencyIds, onSelectAccountSuccess };
 }

@@ -3,19 +3,17 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useModularDrawerController, useModularDrawerVisibility } from "../ModularDrawer";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = {
-  currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
-  enabledCurrencies?: string[];
+  currencies?: string[];
 };
 
-export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrencies = [] }: Props) {
+export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer } = useModularDrawerController();
@@ -39,10 +37,9 @@ export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrenci
   const handleOpenStakeDrawer = useCallback(() => {
     if (isModularDrawerEnabled) {
       const stakeDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-      const currencies = currency ? [currency.id] : enabledCurrencies;
       return openDrawer({
         currencies,
-        areCurrenciesFiltered: currencies?.length > 0,
+        areCurrenciesFiltered: currencies && currencies.length > 0,
         flow: "stake",
         source: sourceScreenName,
         enableAccountSelection: true,
@@ -60,17 +57,16 @@ export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrenci
       return navigation.navigate(NavigatorName.StakeFlow, {
         screen: ScreenName.Stake,
         params: {
-          currencies: currency ? [currency.id] : undefined,
+          currencies,
           parentRoute: route,
         },
       });
     }
   }, [
     isModularDrawerEnabled,
-    currency,
-    enabledCurrencies,
     createDrawerConfiguration,
     openDrawer,
+    currencies,
     sourceScreenName,
     goToAccountStakeFlow,
     navigation,

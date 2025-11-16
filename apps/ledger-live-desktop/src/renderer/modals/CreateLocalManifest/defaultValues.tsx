@@ -20,7 +20,7 @@ export const DEFAULT_VALUES = {
   platforms: ["ios", "android", "desktop"],
   categories: [""],
   provider: ["evm"],
-  currencies: [""],
+  currencies: ["**"],
 };
 
 export const DEFAULT_FORM = {

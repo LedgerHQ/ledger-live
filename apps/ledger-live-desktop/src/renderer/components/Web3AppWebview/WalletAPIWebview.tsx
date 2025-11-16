@@ -79,8 +79,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   return useMemo(
     () => ({
       "account.request": ({
-        accounts$,
-        currencies,
+        currencyIds,
         drawerConfiguration,
         areCurrenciesFiltered,
         useCase,
@@ -94,15 +93,14 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           dispatch(setSourceValue(source));
 
           // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
-          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+          const shouldUseCurrencies =
+            (useCase && currencyIds && currencyIds.length <= 25) || !useCase;
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
           openAssetAndAccountDrawer({
-            accounts$,
             drawerConfiguration: finalDrawerConfiguration,
-            currencies:
-              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
+            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
             areCurrenciesFiltered,
             useCase,
             onSuccess,
@@ -112,12 +110,11 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           setDrawer(
             SelectAccountAndCurrencyDrawer,
             {
-              currencies,
+              currencyIds,
               onAccountSelected: (account, parentAccount) => {
                 setDrawer();
                 onSuccess(account, parentAccount);
               },
-              accounts$,
               flow,
             },
             {
@@ -436,8 +433,7 @@ function useWebView(
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDomReady, handleMessage, onLoad]);
+  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
 
   const webviewStyle = useMemo(() => {
     return {

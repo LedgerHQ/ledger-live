@@ -227,6 +227,8 @@ export function useCurrenciesUnderFeatureFlag() {
       mina,
       babylon,
       canton,
+      cantonDevnet,
+      cantonTestnet,
       kaspa,
       core,
       ethereumHoodi,

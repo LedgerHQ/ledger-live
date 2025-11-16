@@ -10,6 +10,8 @@ import { version as LLD_VERSION } from "../../../package.json";
 import { expectedCurrencyList, mockedAccountList } from "tests/fixtures/wallet-api";
 
 const methods = [
+  "currency.list",
+  "account.list",
   "account.request",
   "account.receive",
   "message.sign",
