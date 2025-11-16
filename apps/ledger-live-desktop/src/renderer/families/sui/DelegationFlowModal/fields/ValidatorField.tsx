@@ -12,7 +12,7 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "~/renderer/families/sui/shared/components/ValidatorRow";
 import { Account } from "@ledgerhq/types-live";
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   readonly account: Account;
@@ -40,9 +40,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
-  if (!chosenVoteAccAddr && validators[0]?.suiAddress === FIGMENT_SUI_VALIDATOR_ADDRESS) {
+  if (!chosenVoteAccAddr && validators[0]?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS) {
     onChangeValidator({
-      address: FIGMENT_SUI_VALIDATOR_ADDRESS,
+      address: P2P_SUI_VALIDATOR_ADDRESS,
     });
   }
   return (

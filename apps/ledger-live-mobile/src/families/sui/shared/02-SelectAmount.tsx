@@ -15,6 +15,7 @@ import { BigNumber } from "bignumber.js";
 import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
@@ -194,7 +195,7 @@ function StakingAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
-              {transaction.mode === "delegate" && (
+              {route.params.validator?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS && (
                 <View style={styles.alertContainer}>
                   <Alert type="primary">
                     <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />

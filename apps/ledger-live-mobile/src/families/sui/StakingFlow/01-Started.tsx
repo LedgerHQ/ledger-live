@@ -14,6 +14,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiStakingFlowParamList } from "./types";
+import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidator>
@@ -22,11 +23,13 @@ type Props = BaseComposite<
 export default function StakingStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const validators = useLedgerFirstShuffledValidatorsSui("");
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.SuiStakingValidator, {
       ...route.params,
+      validator: validators[0],
     });
-  }, [navigation, route.params]);
+  }, [navigation, route.params, validators]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

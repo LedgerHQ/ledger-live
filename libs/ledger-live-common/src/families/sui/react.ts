@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
 import { BigNumber } from "bignumber.js";
 import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
 import { getAccountCurrency } from "../../account";
@@ -71,13 +71,11 @@ function reorderValidators(validators: SuiValidator[]): SuiValidator[] {
   );
 
   // move Ledger validator to the first position
-  const ledgerValidator = sortedValidators.find(
-    v => v.suiAddress === FIGMENT_SUI_VALIDATOR_ADDRESS,
-  );
+  const ledgerValidator = sortedValidators.find(v => v.suiAddress === P2P_SUI_VALIDATOR_ADDRESS);
 
   if (ledgerValidator) {
     const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      v => v.suiAddress !== FIGMENT_SUI_VALIDATOR_ADDRESS,
+      v => v.suiAddress !== P2P_SUI_VALIDATOR_ADDRESS,
     );
     sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 

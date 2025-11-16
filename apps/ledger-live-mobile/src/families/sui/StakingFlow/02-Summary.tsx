@@ -81,6 +81,10 @@ export default function StakingSummary({ navigation, route }: Props) {
   invariant(transaction.family === "sui", "transaction sui");
 
   useEffect(() => {
+    if (!route.params.fromSelectAmount) {
+      return;
+    }
+
     const tmpTransaction = route.params.transaction;
     if (tmpTransaction) {
       updateTransaction(_ => tmpTransaction);
@@ -94,14 +98,7 @@ export default function StakingSummary({ navigation, route }: Props) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    route.params,
-    bridge,
-    setTransaction,
-    chosenValidator?.suiAddress,
-    updateTransaction,
-    route.params.transaction,
-  ]);
+  }, [route.params, updateTransaction, setTransaction, chosenValidator?.suiAddress]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {

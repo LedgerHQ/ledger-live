@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type {
   MappedStake,
+  SuiValidator,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/sui/types";
@@ -19,6 +20,7 @@ export type SuiUnstakingFlowParamList = {
     updateTransaction?: (updater: (arg0: Transaction) => Transaction) => void;
     bridgePending?: boolean;
     status?: TransactionStatus;
+    validator?: SuiValidator;
   };
   [ScreenName.SuiUnstakingSelectDevice]: {
     accountId: string;

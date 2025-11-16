@@ -1,6 +1,6 @@
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 import React from "react";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
@@ -17,7 +17,7 @@ const LedgerValidatorIcon = ({
   const address = validator?.suiAddress || validatorId;
 
   const iconComponent =
-    address === FIGMENT_SUI_VALIDATOR_ADDRESS ? (
+    address === P2P_SUI_VALIDATOR_ADDRESS ? (
       <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
     ) : validator?.imageUrl ? (
       <Icon src={validator.imageUrl} size="XS" loading="lazy" />
