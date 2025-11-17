@@ -1446,6 +1446,12 @@
         "description" : "จาก Exchange หรือ Wallet ต่าง ๆ ไปยังบัญชี Ledger ของคุณโดยตรง",
         "actionCompletedPopupLabel" : "สินทรัพย์ที่โอน"
       },
+      "syncAccounts" : {
+        "title" : "ซิงค์บัญชีคริปโตของคุณ",
+        "titleCompleted" : "บัญชีของคุณได้รับการซิงโครไนซ์แล้ว",
+        "description" : "เปิดใช้งาน Ledger Sync เพื่อซิงค์บัญชีคริปโตของคุณ",
+        "actionCompletedPopupLabel" : "ซิงค์บัญชีแล้ว"
+      },
       "recover" : {
         "title" : "สมัครใช้งาน Ledger Recover",
         "description" : "กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "Payout Fees",
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0>SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
       "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ\n<1>นโยบาย AML/KYC</1> ของ Changelly Changelly อาจใช้กระบวนการ AML/KYC \nซึ่งอาจส่งผลกระทบต่อการทำธุรกรรมของคุณในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
@@ -2279,6 +2286,7 @@
         "label" : "บัญชีที่จะเครดิต",
         "parentAccount" : "1. เลือกบัญชี {{currencyName}}",
         "token" : "2. เลือกโทเคน",
+        "errorLoadingTokens" : "เกิดข้อผิดพลาดในการโหลดโทเคน",
         "verifyTokenType" : "โปรดยืนยันว่า <0>{{token}}</0> เป็นโทเคนประเภท <0>{{tokenType}}</0> สินทรัพย์คริปโตอื่นที่ถูกส่งไปยังบัญชี {{currency}} อาจสูญหาย",
         "warningTokenType" : "โปรดส่งเฉพาะ <0>{{ticker}}</0> หรือโทเคน <0>{{tokenType}}</0> ไปยังบัญชี {{currency}} การส่งสินทรัพย์คริปโตอื่น ๆ อาจส่งผลให้สูญเสียเงินทุนอย่างถาวร",
         "depositFromCexBannerTitle" : "ฝากคริปโตจากบัญชี Coinbase ของคุณ"
@@ -7054,6 +7062,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
       "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Amount too large for UTXO constraints."
     }
   },
   "cryptoOrg" : {
