@@ -1,8 +1,16 @@
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Store } from "@reduxjs/toolkit";
 import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "./state-manager";
 import { setCryptoAssetsStore as setGlobalCryptoAssetsStore } from "../state";
+import type { StateWithCryptoAssets } from "./persistence";
+
+/**
+ * Local Redux store instance (for accessing RTK Query state).
+ * This is set when setupCalClientStore() is called.
+ * Kept local to test-helpers to avoid polluting the global state.
+ */
+let localReduxStore: Store<StateWithCryptoAssets> | undefined = undefined;
 
 /**
  * Sets up a real CAL client store that connects to the API.
@@ -30,8 +38,22 @@ export function setupCalClientStore(): CryptoAssetsStore {
 
   // Set as global store so all modules can access it
   setGlobalCryptoAssetsStore(cryptoAssetsStore);
+  // Also store the Redux store locally for state access (e.g., for persistence)
+  localReduxStore = store;
 
   return cryptoAssetsStore;
+}
+
+/**
+ * Gets the local Redux store instance.
+ * This allows access to the RTK Query state for persistence operations.
+ * @throws {Error} If the store has not been set yet.
+ */
+export function getReduxStore(): Store<StateWithCryptoAssets> {
+  if (!localReduxStore) {
+    throw new Error("Redux store is not set. Please call setupCalClientStore first.");
+  }
+  return localReduxStore;
 }
 
 /**
