@@ -283,34 +283,16 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    // Make a transfer from Alice to polkadotScenarioAccountPair, waiting for inclusion
     const unsub = await api.tx.balances
-      .transferKeepAlive(
+      .transferAllowDeath(
         polkadotScenarioAccountPair.address,
         parseCurrencyUnit(assethub.units[0], "50000").toNumber(),
       )
       .signAndSend(alice, result => {
-        console.log(`Current status is ${result.status}`);
-
-        if (result.status.isInBlock) {
-          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-        } else if (result.status.isFinalized) {
-          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+        if (result.status.isFinalized) {
           unsub();
         }
       });
-
-    // const unsub = await api.tx.balances
-    //   .transferAllowDeath(
-    //     polkadotScenarioAccountPair.address,
-    //     parseCurrencyUnit(assethub.units[0], "500000").toNumber(),
-    //   )
-    //   .signAndSend(alice, result => {
-    //     console.log("current result de chez signAndSend", JSON.stringify(result));
-    //     if (result.status.isFinalized) {
-    //       unsub()
-    //     }
-    //   });
 
     const account = makeAccount(polkadotScenarioAccountPair.address, assethub);
 
@@ -412,8 +394,6 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     });
   },
   beforeAll: async account => {
-    // @ts-ignore
-    console.log("account de chez account", account.balance);
     expect(formatCurrencyUnit(assethub.units[0], account.balance, { useGrouping: false })).toBe(
       "50000",
     );
