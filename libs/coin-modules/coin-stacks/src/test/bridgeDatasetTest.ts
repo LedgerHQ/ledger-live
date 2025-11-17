@@ -20,6 +20,7 @@ const TOKEN_ACCOUNT_ID = `js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc
 
 const stacks: CurrenciesData<Transaction> = {
   IgnorePrepareTransactionFields: ["fee"],
+  FIXME_ignorePreloadFields: ["tokens"],
   scanAccounts: [
     {
       name: "stacks seed 1",

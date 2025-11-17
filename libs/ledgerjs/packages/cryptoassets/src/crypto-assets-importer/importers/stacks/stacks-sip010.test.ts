@@ -65,7 +65,16 @@ export default tokens as StacksSip010Token[];
       1,
       "stacks-sip010.json",
       JSON.stringify([
-        ["SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4", "sbtc-token", "sbtc", "sBTC Token", "sBTC", 8, false, "abc123"],
+        [
+          "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4",
+          "sbtc-token",
+          "sbtc",
+          "sBTC Token",
+          "sBTC",
+          8,
+          false,
+          "abc123",
+        ],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(
