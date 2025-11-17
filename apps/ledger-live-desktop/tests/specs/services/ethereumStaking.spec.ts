@@ -122,7 +122,9 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Stake entry button", async () => {
     await portfolioPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
-    await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-portfolio.png");
+    await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-portfolio.png", {
+      mask: [page.getByTestId("select-asset-drawer-list-container")],
+    });
   });
 
   await test.step("choose to stake Ethereum", async () => {

@@ -78,7 +78,7 @@ export function CurrencyList({
   );
 
   return (
-    <ListWrapper customHeight={LIST_HEIGHT}>
+    <ListWrapper customHeight={LIST_HEIGHT} data-testid="select-asset-drawer-list-container">
       <VirtualList
         items={currencies}
         itemHeight={52}
