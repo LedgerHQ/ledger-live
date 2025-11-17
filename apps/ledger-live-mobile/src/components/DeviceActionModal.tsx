@@ -104,6 +104,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   onSelectDeviceLink={onSelectDeviceLink}
                   analyticsPropertyFlow={analyticsPropertyFlow}
                   location={location}
+                  onClose={handleClose}
                 />
               </DeviceActionContainer>
               {showInfo && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}

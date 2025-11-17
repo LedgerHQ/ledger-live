@@ -3791,7 +3791,9 @@
       },
       "wrongDevice": {
         "title": "Ledger Nano S™ is not compatible with {{provider}}",
-        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live"
+        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Wallet",
+        "explore_compatible_devices": "Explore compatible devices",
+        "swapWithAnotherProvider": "Swap with another provider"
       },
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",

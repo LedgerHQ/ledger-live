@@ -63,12 +63,14 @@ import {
   renderWarningOutdated,
   RequiredFirmwareUpdate,
 } from "./rendering";
+import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 import { UnsupportedFirmwareDAError } from "@ledgerhq/device-management-kit";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 const isFirmwareUnsupportedError = (error: unknown): boolean =>
   error instanceof LatestFirmwareVersionRequired || error instanceof UnsupportedFirmwareDAError;
@@ -137,6 +139,7 @@ type Props<H extends Status, P> = {
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   location?: HOOKS_TRACKING_LOCATIONS;
+  onClose?: () => void;
   /*
    * Defines in what type of component this action will be rendered in.
    *
@@ -180,6 +183,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   request,
   payload,
   location,
+  onClose,
 }: Props<H, P> & {
   request?: R;
 }): JSX.Element | null {
@@ -187,7 +191,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const {
     colors: { palette },
   } = useThemeFromStyledComponents();
-
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -454,6 +457,23 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
     });
+  }
+
+  // Check for NanoS + ThorSwap incompatibility
+  const provider = (request as { provider?: string })?.provider;
+  const isThorSwap = provider?.toLowerCase() === "thorswap";
+  const isNanoS = device?.modelId === DeviceModelId.nanoS;
+
+  if (completeExchangeStarted && completeExchangeError && isNanoS && isThorSwap) {
+    return (
+      <ThorSwapIncompatibility
+        t={t}
+        device={selectedDevice}
+        provider={provider}
+        theme={theme}
+        onClose={onClose}
+      />
+    );
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
