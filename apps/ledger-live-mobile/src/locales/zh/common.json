@@ -1154,6 +1154,11 @@
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。"
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "提供商无效",
+      "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。",
+      "openSettings" : "前往设置选项"
+    },
     "GasLessThanEstimate" : {
       "title" : "这可能太低。请增加"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "保障您的安全",
       "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "数额已减少至符合 UTXO 限制。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "数额过大，超出 UTXO 限制。"
     }
   },
   "crash" : {
@@ -2409,7 +2420,7 @@
       "notCompatible" : "不兼容 iPhone",
       "modal" : {
         "title" : "iOS 设备不支持 Ledger Nano S 和 Ledger Nano S Plus",
-        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet配合使用。"
+        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Wallet 配合使用。"
       }
     },
     "scanning" : {
@@ -4430,6 +4441,7 @@
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
     "loading" : "正在加载……",
     "turnOnAndUnlockDevice" : "开机并解锁您的设备",
+    "powerOnDevice" : "将您的 {{deviceName}} 开机并解锁",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "connectAnotherDevice" : "连接另一台 Ledger 设备",
     "unlockDevice" : "解锁您的设备",
@@ -4458,6 +4470,7 @@
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
+      "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
@@ -4494,6 +4507,11 @@
     "bluetooth" : {
       "title" : "通过蓝牙连接……",
       "label" : "自动检测您的 Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "看不到您的 Ledger 设备？",
+      "scanSignersCta" : "扫描设备",
+      "helpCenterCta" : "获取支持"
     },
     "deviceNotFoundPairNewDevice" : "与蓝牙配对",
     "headerDescription" : "请确保您的 {{productName}} 处于解锁状态并已开启蓝牙",
@@ -7304,11 +7322,11 @@
         "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
-      "recover" : {
-        "title" : "订阅 Ledger Recover",
-        "titleCompleted" : "已订阅 Ledger Recover",
-        "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
-        "popupLabel" : "已成功订阅 Ledger Recover"
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "popupLabel" : "账户已同步"
       }
     }
   },
