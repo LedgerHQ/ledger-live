@@ -19,6 +19,5 @@ export function makeDeviceActionInternalApiMock(): jest.Mocked<InternalApi> {
     setDeviceSessionState: setDeviceSessionStateMock,
     getManagerApiService: getManagerApiServiceMock,
     getSecureChannelService: getSecureChannelServiceMock,
-    disableRefresher: disableRefresherMock,
   };
 }

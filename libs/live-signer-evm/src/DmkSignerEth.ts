@@ -139,7 +139,7 @@ export class DmkSignerEth implements EvmSigner {
   signTransaction(
     path: string,
     rawTxHex: string,
-    resolution?: ResolutionConfig,
+    _resolution?: ResolutionConfig,
   ): Observable<EvmSignerEvent> {
     const buffer = hexaStringToBuffer(rawTxHex);
 
@@ -151,7 +151,6 @@ export class DmkSignerEth implements EvmSigner {
       this.signer
         .signTransaction(path, buffer, {
           skipOpenApp: true,
-          domain: resolution?.domains?.[0]?.domain,
         })
         .observable.subscribe({
           next: result => {
