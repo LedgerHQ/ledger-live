@@ -52,7 +52,7 @@ const CURRENCY_CONFIGS = {
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         id: "dot-hub",
       },
-      hasBeenMigrated: false,
+      hasBeenMigrated: true,
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },
@@ -105,11 +105,6 @@ describe("sidecar integration test", () => {
       describe("getValidators", () => {
         it(`returns expected result with ${currencyId}`, async () => {
           const result = await getValidators(undefined, currency);
-
-          if (currencyId === "assethub_polkadot") {
-            expect(result).toEqual([]);
-            return;
-          }
 
           expect(result).toEqual(
             expect.arrayContaining([

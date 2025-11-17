@@ -61,6 +61,7 @@ const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
+const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
 
 // blocks = 2 minutes 30
 
@@ -277,7 +278,9 @@ export const fetchChainSpec = async (currency?: CryptoCurrency) => {
  *
  * @returns {boolean}
  */
-export const isElectionClosed = async (currency?: CryptoCurrency): Promise<boolean> => {
+export const isElectionClosed = async (currency: CryptoCurrency): Promise<boolean> => {
+  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) return true;
+
   const progress = await fetchStakingProgress(currency);
   return !progress.electionStatus?.status?.Open;
 };
@@ -334,7 +337,7 @@ export const verifyValidatorAddresses = async (
  * @async
  * @param {*} addr
  */
-export const getAccount = async (addr: string, currency?: CryptoCurrency) => {
+export const getAccount = async (addr: string, currency: CryptoCurrency) => {
   const balances = await getBalances(addr, currency);
   const stakingInfo = await getStakingInfo(addr, currency);
   const nominations = await getNominations(addr);
@@ -371,13 +374,13 @@ export const getBalances = async (addr: string, currency?: CryptoCurrency) => {
  * @async
  * @param {*} addr
  */
-export const getStakingInfo = async (addr: string, currency?: CryptoCurrency) => {
+export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => {
   const [stash, controller] = await Promise.all([
     fetchStashAddr(addr, currency),
     fetchControllerAddr(addr, currency),
   ]);
   // If account is not a stash, no need to fetch staking-info (it would return an error)
-  if (!controller || currency?.id === "westend") {
+  if (!controller || UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
     return {
       controller: null,
       stash: stash || null,
@@ -566,8 +569,17 @@ export const getValidators = async (
  * @returns {PolkadotStakingProgress}
  */
 export const getStakingProgress = async (
-  currency?: CryptoCurrency,
+  currency: CryptoCurrency,
 ): Promise<PolkadotStakingProgress> => {
+  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
+    return {
+      electionClosed: true,
+      activeEra: 0,
+      maxNominatorRewardedPerValidator: 128,
+      bondingDuration: 28,
+    };
+  }
+
   const [progress, consts] = await Promise.all([
     fetchStakingProgress(currency),
     getConstants(currency),
