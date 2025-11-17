@@ -9,10 +9,13 @@ import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import TextInput from "~/components/FocusedTextInput";
-import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
-type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.AlgorandEditMemo>;
+type Props = BaseComposite<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.AlgorandEditMemo>
+>;
 
 function AlgorandEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -22,7 +25,7 @@ function AlgorandEditMemo({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo,
@@ -76,6 +79,7 @@ function AlgorandEditMemo({ navigation, route }: Props) {
 const options = {
   title: i18next.t("send.summary.memo.title"),
   headerLeft: undefined,
+  headerRight: () => null,
 };
 export { AlgorandEditMemo as component, options };
 const styles = StyleSheet.create({

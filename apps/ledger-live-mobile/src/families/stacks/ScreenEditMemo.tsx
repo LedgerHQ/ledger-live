@@ -16,7 +16,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
-
+import { popToScreen } from "~/helpers/navigationHelpers";
 type NavigationProps = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StacksEditMemo>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StacksEditMemo>
@@ -36,8 +36,7 @@ function StacksEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    // @ts-expect-error FIXME: No current / next navigation params?
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo: memo && memo.toString(),
@@ -90,7 +89,7 @@ function StacksEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.value"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { StacksEditMemo as component, options };
 const styles = StyleSheet.create({

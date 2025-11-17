@@ -16,7 +16,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-
+import { popToScreen } from "~/helpers/navigationHelpers";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
     SendFundsNavigatorStackParamList | SignTransactionNavigatorParamList | SwapNavigatorParamList,
@@ -39,8 +39,7 @@ function TonEditComment({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    // @ts-expect-error FIXME: No current / next navigation params?
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         comment: { isEncrypted: false, text: comment },
@@ -93,7 +92,7 @@ function TonEditComment({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.comment"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { TonEditComment as component, options };
 const styles = StyleSheet.create({

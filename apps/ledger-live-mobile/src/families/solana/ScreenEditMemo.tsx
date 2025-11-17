@@ -13,6 +13,7 @@ import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
 import { isModelSupported } from "./SendRowsCustom";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
@@ -40,8 +41,8 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
         },
       },
     });
-    // @ts-expect-error FIXME: no current / next navigation param?
-    navigation.navigate(ScreenName.SendSummary, {
+
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: nextTx,
     });
@@ -84,7 +85,7 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 
 export { SolanaEditMemo as component, options };
