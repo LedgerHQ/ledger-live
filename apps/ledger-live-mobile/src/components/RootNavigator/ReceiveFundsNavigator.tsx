@@ -87,7 +87,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveProvider}
         component={ReceiveProvider}
         options={{
-          headerShown: false,
+          header: undefined,
         }}
       />
 
