@@ -131,7 +131,6 @@ export function runSwapWithDifferentSeedTest(
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
-      await app.common.selectKnownDevice();
       if (errorMessage) {
         await app.common.enableSynchronization();
         await app.swapLiveApp.checkErrorMessage(errorMessage);
@@ -287,7 +286,6 @@ export function runUserRefusesTransactionTest(
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
-      await app.common.selectKnownDevice();
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
@@ -395,7 +393,6 @@ export function runSwapWithSendMaxTest(
       await app.common.disableSynchronizationForiOS();
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await app.common.selectKnownDevice();
       await app.common.enableSynchronization();
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.verifyDeviceActionLoadingNotVisible();

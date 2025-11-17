@@ -311,7 +311,6 @@ export default class SwapLiveAppPage {
       await waitForElement(summaryContinueButton);
       //Test will fail here with a known issue: LIVE-21138
       await tapByElement(summaryContinueButton);
-      await app.common.selectKnownDevice();
     }
   }
 
