@@ -9,15 +9,15 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
-const ButtonGrid = styled(Grid).attrs(() => ({
-  columns: 3,
+const ButtonGrid = styled(Grid).attrs<{ $hideSwapButton: boolean }>(({ $hideSwapButton }) => ({
+  columns: $hideSwapButton ? 2 : 3,
   columnGap: 4,
-}))`
-  margin-top: ${p => p.theme.space[4]}px;
-  margin-bottom: ${p => p.theme.space[6]}px;
+}))<{ $hideSwapButton: boolean }>`
+  margin-top: ${p => (p.$hideSwapButton ? 0 : p.theme.space[4])}px;
+  margin-bottom: ${p => (p.$hideSwapButton ? p.theme.space[4] : p.theme.space[6])}px;
 `;
 
-const FeaturedButtons = () => {
+const FeaturedButtons = ({ hideSwapButton = false }: { hideSwapButton?: boolean }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const stakeLabel = useGetStakeLabelLocaleBased();
@@ -48,7 +48,7 @@ const FeaturedButtons = () => {
   if (!bannerEnabled) return null;
 
   return (
-    <ButtonGrid>
+    <ButtonGrid $hideSwapButton={hideSwapButton}>
       <EntryButton
         Icon={() => <Icons.Dollar size="S" />}
         title={t("dashboard.featuredButtons.buySell.title")}
@@ -56,13 +56,15 @@ const FeaturedButtons = () => {
         onClick={handleClickExchange}
         entryButtonTestId="buy-sell-entry-button"
       />
-      <EntryButton
-        Icon={() => <Icons.Exchange size="S" />}
-        title={t("dashboard.featuredButtons.swap.title")}
-        body={t("dashboard.featuredButtons.swap.description")}
-        onClick={handleClickSwap}
-        entryButtonTestId="swap-entry-button"
-      />
+      {hideSwapButton ? null : (
+        <EntryButton
+          Icon={() => <Icons.Exchange size="S" />}
+          title={t("dashboard.featuredButtons.swap.title")}
+          body={t("dashboard.featuredButtons.swap.description")}
+          onClick={handleClickSwap}
+          entryButtonTestId="swap-entry-button"
+        />
+      )}
       <EntryButton
         Icon={() => <Icons.Percentage size="S" />}
         title={stakeLabel}

@@ -1009,14 +1009,8 @@ test.describe("Swap flow from different entry point", () => {
         getParentAccountName(swapEntryPoint.swap.accountToDebit),
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.currency.name,
-        electronApp,
-      );
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.accountName,
-        electronApp,
-      );
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 

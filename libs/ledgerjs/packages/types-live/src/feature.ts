@@ -201,6 +201,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;

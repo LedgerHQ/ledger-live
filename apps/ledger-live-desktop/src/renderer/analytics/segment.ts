@@ -137,6 +137,7 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+  const ptxSwapLiveAppOnPortfolio = analyticsFeatureFlagMethod("ptxSwapLiveAppOnPortfolio");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -174,6 +175,7 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
+    ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio?.enabled,
     stablecoinYield,
     bitcoinYield,
     stakingCurrenciesEnabled,
