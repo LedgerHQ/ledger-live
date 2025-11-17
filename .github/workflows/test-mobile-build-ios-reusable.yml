@@ -118,7 +118,7 @@ jobs:
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -205,7 +205,7 @@ jobs:
           install-proto: "true"
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
