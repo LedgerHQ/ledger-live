@@ -16,7 +16,7 @@ import { SendApduEmptyResponseError } from "@ledgerhq/device-management-kit";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
-export type GetDeviceInfoTaskArgs = { deviceId: DeviceId };
+export type GetDeviceInfoTaskArgs = { deviceId: DeviceId; deviceName: string | null };
 
 // No taskError for getDeviceInfoTask. Kept for consistency with other tasks.
 export type GetDeviceInfoTaskError = "None";
@@ -34,10 +34,14 @@ export type GetDeviceInfoTaskEvent =
 // Exported for tests
 export function internalGetDeviceInfoTask({
   deviceId,
+  deviceName,
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
   return new Observable(subscriber => {
     return (
-      withTransport(deviceId)(({ transportRef }) =>
+      withTransport(
+        deviceId,
+        deviceName ? { matchDeviceByName: deviceName } : undefined,
+      )(({ transportRef }) =>
         quitApp(transportRef.current).pipe(
           switchMap(() => {
             return retryOnErrorsCommandWrapper({

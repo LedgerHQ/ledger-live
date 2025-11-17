@@ -10,6 +10,7 @@ import { withTransport } from "../transports/core";
 
 export type GetLatestFirmwareTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   deviceInfo: DeviceInfo;
 };
 
@@ -27,10 +28,14 @@ export type GetLatestFirmwareTaskEvent =
 
 function internalGetLatestFirmwareTask({
   deviceId,
+  deviceName,
   deviceInfo,
 }: GetLatestFirmwareTaskArgs): Observable<GetLatestFirmwareTaskEvent> {
   return new Observable(subscriber => {
-    return withTransport(deviceId)(({ transportRef }) =>
+    return withTransport(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(({ transportRef }) =>
       quitApp(transportRef.current).pipe(
         switchMap(() => {
           return from(getLatestFirmwareForDeviceUseCase(deviceInfo));

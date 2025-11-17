@@ -33,7 +33,7 @@ interface CommonTransportConstructor {
     deviceOrId: (Device & DiscoveredDevice) | string,
     timeoutMs?: number,
     context?: TraceContext,
-    options?: { rxjsScheduler?: SchedulerLike },
+    options?: { rxjsScheduler?: SchedulerLike; matchDeviceByName?: string },
   ) => Promise<BleTransport | DeviceManagementKitBLETransport>;
 }
 

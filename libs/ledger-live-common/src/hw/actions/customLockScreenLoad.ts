@@ -37,7 +37,7 @@ type ActionState = State & {
   onRetry: () => void;
 };
 
-type LoadImageAction = Action<LoadImageRequest, ActionState, LoadimageResult>;
+type LoadImageAction = Action<LoadImageRequest | undefined, ActionState, LoadimageResult>;
 
 const mapResult = ({ imageHash, imageSize }: State) => ({
   imageHash,
@@ -131,12 +131,16 @@ export const reducer = (state: State, e: Event): State => {
 export const createAction = (
   task: (arg0: LoadImageInput) => Observable<LoadImageEvent>,
 ): LoadImageAction => {
-  const useHook = (device: Device | null | undefined, request: LoadImageRequest): ActionState => {
+  const useHook = (
+    device: Device | null | undefined,
+    request: LoadImageRequest | undefined,
+  ): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
+      if (!request) return;
       if (state.imageLoaded) return;
 
       const impl = getImplementation(currentMode)<LoadImageEvent, LoadImageRequest>({

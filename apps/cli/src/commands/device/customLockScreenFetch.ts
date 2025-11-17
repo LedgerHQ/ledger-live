@@ -25,6 +25,7 @@ const exec = async (opts: CustomLockScreenFetchJobOpts) => {
     customLockScreenFetch({
       deviceId,
       request: { allowedEmpty: false, deviceModelId: clsSupportedDeviceModelId },
+      deviceName: null,
     }).subscribe(
       event => {
         if (event.type === "imageFetched") {

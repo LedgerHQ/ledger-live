@@ -4439,6 +4439,7 @@
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Switch on and unlock your device",
+    "powerOnDevice": "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice": "Connect and unlock your device",
     "connectAnotherDevice": "Connect another Ledger",
     "unlockDevice": "Unlock your device",
@@ -4504,6 +4505,11 @@
     "bluetooth": {
       "title": "Connect via Bluetooth...",
       "label": "Automatically detect your Nano"
+    },
+    "bleDeviceNotAvailableDrawer": {
+      "bannerHintTitle": "Can't see your Ledger device?",
+      "scanSignersCta": "Scan devices",
+      "helpCenterCta": "Get support"
     },
     "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",

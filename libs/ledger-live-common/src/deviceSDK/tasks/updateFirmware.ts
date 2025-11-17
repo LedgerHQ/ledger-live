@@ -41,6 +41,7 @@ import {
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   updateContext: FirmwareUpdateContext;
 };
 
@@ -85,6 +86,7 @@ const waitForGetVersion = retryOnErrorsCommandWrapper({
 
 function internalUpdateFirmwareTask({
   deviceId,
+  deviceName,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
   const tracer = new LocalTracer(LOG_TYPE, {
@@ -92,7 +94,10 @@ function internalUpdateFirmwareTask({
   });
 
   return new Observable(subscriber => {
-    const sub = withTransport(deviceId)(({ transportRef }) =>
+    const sub = withTransport(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
           switchMap(() => {

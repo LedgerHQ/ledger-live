@@ -6,5 +6,4 @@ export type ScannedDevice = {
   deviceName: string;
   wired: boolean;
   modelId: DeviceModelId;
-  isAlreadyKnown: boolean;
 };
