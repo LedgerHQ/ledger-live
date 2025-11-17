@@ -41,7 +41,8 @@
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
-        "src/webviewPreloader/index.ts"
+        "src/webviewPreloader/index.ts",
+        "src/renderer/recentAddresses.ts"
       ],
       "ignore": [
         "src/newArch/features/Collectibles/**",
@@ -68,7 +69,8 @@
     "./apps/ledger-live-mobile": {
       "entry": [
         "index.js",
-        "src/families/**"
+        "src/families/**",
+        "src/newArch/storage/recentAddresses.ts"
       ],
       "ignore": [
         "src/**/*.android.*",

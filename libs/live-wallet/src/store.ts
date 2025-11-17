@@ -9,6 +9,7 @@ import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DistantState } from "./walletsync";
 import { NonImportedAccountInfo } from "./walletsync/modules/accounts";
+import { RecentAddressesState } from "@ledgerhq/types-live";
 
 export type WSState = {
   data: DistantState | null;
@@ -26,6 +27,7 @@ export type WalletState = {
 
   // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
   walletSyncState: WSState;
+  recentAddresses: RecentAddressesState;
 };
 
 export type ExportedWalletState = {
@@ -35,6 +37,7 @@ export type ExportedWalletState = {
     accountNames: Array<[string, string]>;
     starredAccountIds: string[];
   };
+  recentAddresses: RecentAddressesState;
 };
 
 export const initialState: WalletState = {
@@ -42,6 +45,7 @@ export const initialState: WalletState = {
   starredAccountIds: new Set(),
   nonImportedAccountInfos: [],
   walletSyncState: { data: null, version: 0 },
+  recentAddresses: {},
 };
 
 export enum WalletHandlerType {
@@ -53,6 +57,7 @@ export enum WalletHandlerType {
   WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
   IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
   SET_NON_IMPORTED_ACCOUNTS = "SET_NON_IMPORTED_ACCOUNTS",
+  UPDATE_RECENT_ADDRESSES = "UPDATE_RECENT_ADDRESSES",
 }
 
 export type HandlersPayloads = {
@@ -67,6 +72,7 @@ export type HandlersPayloads = {
   };
   IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
+  UPDATE_RECENT_ADDRESSES: RecentAddressesState;
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -144,6 +150,9 @@ export const handlers: WalletHandlers = {
   SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
     return { ...state, nonImportedAccountInfos: payload };
   },
+  UPDATE_RECENT_ADDRESSES: (state, { payload }) => {
+    return { ...state, recentAddresses: { ...payload } };
+  },
 };
 
 // actions
@@ -191,6 +200,11 @@ export const walletSyncUpdate = (data: DistantState | null, version: number) => 
 
 export const setNonImportedAccounts = (payload: NonImportedAccountInfo[]) => ({
   type: "SET_NON_IMPORTED_ACCOUNTS",
+  payload,
+});
+
+export const updateRecentAddresses = (payload: RecentAddressesState) => ({
+  type: "UPDATE_RECENT_ADDRESSES",
   payload,
 });
 
@@ -262,6 +276,7 @@ export const exportWalletState = (state: WalletState): ExportedWalletState => ({
     accountNames: Array.from(state.accountNames),
     starredAccountIds: Array.from(state.starredAccountIds),
   },
+  recentAddresses: state.recentAddresses,
 });
 
 export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
@@ -269,7 +284,8 @@ export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): b
     a.walletSyncState !== b.walletSyncState ||
     a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
     a.accountNames !== b.accountNames ||
-    a.starredAccountIds !== b.starredAccountIds
+    a.starredAccountIds !== b.starredAccountIds ||
+    a.recentAddresses !== b.recentAddresses
   );
 };
 

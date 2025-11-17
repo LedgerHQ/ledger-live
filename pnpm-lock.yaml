@@ -61373,8 +61373,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-crypto@10.2.0: {}
-
   expo-crypto@13.0.2(expo-modules-core@2.2.3(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(o5udpnbwryssk5sspkxkkxgo6i))(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       base64-js: 1.5.1
@@ -61543,10 +61541,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
-
-  expo-random@12.3.0:
-    dependencies:
-      base64-js: 1.5.1
 
   expo@52.0.46(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(expo-modules-core@2.2.3)(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1):
     dependencies:

@@ -55,6 +55,7 @@ import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
+import { setupRecentAddressesStore } from "./recentAddresses";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -123,6 +124,7 @@ async function init() {
     analyticsMiddleware,
   });
 
+  setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
 
   // Hydrate persisted crypto assets tokens from app.json
@@ -302,6 +304,7 @@ function r(Comp: JSX.Element) {
     render(Comp, rootNode);
   }
 }
+
 init()
   .catch(e => {
     logger.critical(e);

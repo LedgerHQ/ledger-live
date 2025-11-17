@@ -100,6 +100,7 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
+  recentAddresses: {},
 };
 
 beforeAll(async () => {
