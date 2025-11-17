@@ -1446,6 +1446,12 @@
         "description" : "あらゆる取引所やウォレットから、直接Ledgerにアクセス。",
         "actionCompletedPopupLabel" : "転送済み資産"
       },
+      "syncAccounts" : {
+        "title" : "暗号資産アカウントを同期する",
+        "titleCompleted" : "アカウントの同期が完了しました",
+        "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
+        "actionCompletedPopupLabel" : "アカウント同期済み"
+      },
       "recover" : {
         "title" : "Ledger Recoverのサブスクリプション契約をする",
         "description" : "シークレットリカバリーフレーズを使用せずに、ウォレットへのアクセスを復元します。",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
+      "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
       "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、\n取引の完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
@@ -2279,6 +2286,7 @@
         "label" : "受取アカウント",
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
+        "errorLoadingTokens" : "トークンの読み込みエラー",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
         "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
         "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
@@ -7054,6 +7062,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Amount too large for UTXO constraints."
     }
   },
   "cryptoOrg" : {
