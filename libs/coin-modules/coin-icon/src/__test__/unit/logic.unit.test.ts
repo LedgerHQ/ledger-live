@@ -65,11 +65,11 @@ describe("Icon Utils", () => {
     it("should get nonce correctly", () => {
       const account: IconAccount = {
         iconResources: { nonce: 5 },
-        pendingOperations: [{ transactionSequenceNumber: 4 }],
+        pendingOperations: [{ transactionSequenceNumber: BigNumber(4) }],
       } as IconAccount;
       expect(getNonce(account)).toBe(5);
 
-      account.pendingOperations = [{ transactionSequenceNumber: 6 }] as any;
+      account.pendingOperations = [{ transactionSequenceNumber: BigNumber(6) }] as any;
       expect(getNonce(account)).toBe(7);
     });
   });

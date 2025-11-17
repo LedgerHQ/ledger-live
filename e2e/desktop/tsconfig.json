@@ -1,20 +1,20 @@
 {
-    "extends": "../../tsconfig.base",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "target": "ESNext",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "typeRoots": [
-            "./node_modules/@types"
-        ],
-        "paths": {
-            "@ledgerhq/live-common/*": ["../../libs/ledger-live-common/src/*"],
-            "@ledgerhq/live-wallet/*": ["../../libs/live-wallet/src/*"],
-        }
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types"],
+    "paths": {
+      "~/*": ["../../apps/ledger-live-desktop/src/*"],
+      "tests/*": ["tests/*"]
     },
-    "include": ["tests", "../../apps/ledger-live-desktop/index-types.d.ts"]
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts", "../../apps/ledger-live-desktop/index-types.d.ts"],
+  "exclude": ["**/node_modules/*"]
 }

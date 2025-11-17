@@ -2,11 +2,11 @@ import type { DeviceId, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/type
 
 import { quitApp } from "../commands/quitApp";
 
-import { withDevice } from "../../hw/deviceAccess";
 import { from, Observable, of } from "rxjs";
 import { switchMap, catchError } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { withTransport } from "../transports/core";
 
 export type GetLatestFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -32,11 +32,11 @@ function internalGetLatestFirmwareTask({
   deviceInfo,
 }: GetLatestFirmwareTaskArgs): Observable<GetLatestFirmwareTaskEvent> {
   return new Observable(subscriber => {
-    return withDevice(
+    return withTransport(
       deviceId,
       deviceName ? { matchDeviceByName: deviceName } : undefined,
-    )(transport =>
-      quitApp(transport).pipe(
+    )(({ transportRef }) =>
+      quitApp(transportRef.current).pipe(
         switchMap(() => {
           return from(getLatestFirmwareForDeviceUseCase(deviceInfo));
         }),

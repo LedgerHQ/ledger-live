@@ -1,0 +1,78 @@
+name: "Create or Update Tag"
+description: "Create or update a Git tag using the GitHub API. Can overwrite existing tags if specified."
+inputs:
+  ref:
+    description: "The ref (commit SHA) to tag"
+    required: true
+  tagName:
+    description: "The name of the tag"
+    required: true
+  token:
+    description: "GitHub token for authentication"
+    required: true
+  overwrite:
+    description: "Whether to overwrite the tag if it already exists"
+    type: boolean
+    default: "true"
+    required: false
+outputs:
+  created:
+    description: "Whether a new tag was created"
+    value: ${{ steps.tag.outputs.created }}
+  updated:
+    description: "Whether an existing tag was updated"
+    value: ${{ steps.tag.outputs.updated }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create or update tag
+      id: tag
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const ref = '${{ inputs.ref }}';
+          const tagName = '${{ inputs.tagName }}';
+          const overwrite = '${{ inputs.overwrite }}' === 'true';
+          
+          try {
+            // Try to get the existing tag
+            await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${tagName}`
+            });
+            
+            // Tag exists
+            if (overwrite) {
+              // Update the existing tag
+              await github.rest.git.updateRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`,
+                sha: ref,
+                force: true
+              });
+              console.log(`Updated tag '${tagName}' to point to ${ref}`);
+              core.setOutput('updated', 'true');
+              core.setOutput('created', 'false');
+            } else {
+              core.setFailed(`Tag '${tagName}' already exists and overwrite is disabled`);
+            }
+          } catch (error) {
+            if (error.status === 404) {
+              // Tag doesn't exist, create it
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tagName}`,
+                sha: ref
+              });
+              console.log(`Created tag '${tagName}' pointing to ${ref}`);
+              core.setOutput('created', 'true');
+              core.setOutput('updated', 'false');
+            } else {
+              throw error;
+            }
+          }

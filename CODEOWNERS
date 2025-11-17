@@ -40,6 +40,7 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 .github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
 .github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/wallet-ci
+.github/workflows/notify-e2e-required-reusable.yml       @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflow-templates/bot-coin**                    @ledgerhq/coin-integration
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
@@ -197,8 +198,16 @@ apps/ledger-live-mobile/src/components/ServicesWidget/Protect/                  
 apps/ledger-live-mobile/src/components/WebRecoverPlayer/                                       @ledgerhq/recover-software
 apps/ledger-live-mobile/src/screens/Protect/                                                   @ledgerhq/recover-software
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                                        @ledgerhq/recover-software
-apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/recover-software
-apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/Manual/SyncOnboardingCompanion @ledgerhq/recover-software
+
+# Activation team
+apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/activation-team
+apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/activation-team
+apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/activation-team
+apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/activation-team
+apps/ledger-live-mobile/src/newArch/features/WelcomePage/                                      @ledgerhq/activation-team
+apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/activation-team
+apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/activation-team
+
 # Live hub overrides
 
 apps/web-tools/trustchain/                               @ledgerhq/live-hub

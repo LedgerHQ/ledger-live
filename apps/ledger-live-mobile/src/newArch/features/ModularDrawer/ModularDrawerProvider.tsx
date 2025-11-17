@@ -12,7 +12,6 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
     preselectedCurrencies,
     closeDrawer,
     handleAccountSelected,
-    getAccountsObservable,
     assetsConfiguration,
     networksConfiguration,
     useCase,
@@ -29,7 +28,6 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         assetsConfiguration={assetsConfiguration}
         networksConfiguration={networksConfiguration}
         onAccountSelected={handleAccountSelected}
-        accounts$={getAccountsObservable()}
         useCase={useCase}
         areCurrenciesFiltered={areCurrenciesFiltered}
       />

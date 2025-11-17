@@ -44,6 +44,7 @@ import {
 import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
   [key: string]: Theme;
@@ -179,6 +180,10 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
+          /**
+           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
+           */
+          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -332,6 +337,9 @@ export const DeeplinksProvider = ({
 }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
+  // Hook to close drawers when deeplink is triggered after app was in background
+  const onDeeplinkReceived = useDeeplinkDrawerCleanup();
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -495,6 +503,11 @@ export const DeeplinksProvider = ({
                            * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
                            */
                           [ScreenName.Accounts]: "account",
+                          /**
+                           * @params currencyId: string (path parameter)
+                           * ie: "ledgerlive://asset/bitcoin" will open the Bitcoin Asset screen.
+                           */
+                          [ScreenName.Asset]: "asset/:currencyId",
                         },
                       },
                     },
@@ -505,6 +518,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Close all drawers if app was in background before deeplink
+            onDeeplinkReceived();
+
             // Prevent default deep link if we're already in a wallet connect route.
             const navigationState = navigationRef.current?.getState();
             if (
@@ -548,6 +564,7 @@ export const DeeplinksProvider = ({
             deeplinkChannel,
             deeplinkMedium,
             deeplinkCampaign,
+            deeplinkLocation,
           } = query;
 
           if (!ajsPropSource && !Config.MOCK) {
@@ -570,6 +587,7 @@ export const DeeplinksProvider = ({
               currency,
               installApp,
               appName,
+              deeplinkLocation,
               ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
             });
           } else
@@ -580,6 +598,7 @@ export const DeeplinksProvider = ({
               deeplinkChannel,
               deeplinkMedium,
               deeplinkCampaign,
+              deeplinkLocation,
             });
 
           const platform = pathname.split("/")[1];
@@ -703,6 +722,7 @@ export const DeeplinksProvider = ({
     storylyContext,
     liveAppProviderInitialized,
     manifests,
+    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
 

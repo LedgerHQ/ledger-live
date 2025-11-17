@@ -7,6 +7,21 @@ import { useGroupedCurrenciesByProvider } from ".";
 import { GroupedCurrencies, LoadingBasedGroupedCurrencies, MappedAsset } from "./type";
 import * as api from "./api";
 
+// Mock dependencies for useAcceptedCurrency
+jest.mock("../featureFlags", () => ({
+  useFeature: jest.fn().mockReturnValue({ enabled: true }),
+}));
+
+jest.mock("../hooks/useEnv", () => jest.fn().mockReturnValue(false));
+
+// Mock the countervalues API for currenciesByMarketcap
+jest.mock("@ledgerhq/live-countervalues/api/index", () => ({
+  __esModule: true,
+  default: {
+    fetchIdsSortedByMarketcap: jest.fn().mockResolvedValue(["bitcoin", "ethereum"]),
+  },
+}));
+
 // Mock the API module
 jest.mock("./api");
 const mockGetMappedAssets = api.getMappedAssets as jest.MockedFunction<typeof api.getMappedAssets>;

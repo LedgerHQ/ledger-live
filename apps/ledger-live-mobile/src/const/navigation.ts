@@ -130,6 +130,7 @@ export enum ScreenName {
   SendSummary = "SendSummary",
   SendBroadcastError = "SendBroadcastError",
   SendValidationError = "SendValidationError",
+  NewSendFlow = "NewSendFlow",
   TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",
   SettingsScreen = "SettingsScreen",

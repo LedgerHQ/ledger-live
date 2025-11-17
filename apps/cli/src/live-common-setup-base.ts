@@ -127,6 +127,9 @@ setSupportedCurrencies([
   "canton_network_testnet",
   "kaspa",
   "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

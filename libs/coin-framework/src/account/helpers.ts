@@ -184,7 +184,7 @@ export const accountWithMandatoryTokens = (
     .filter(
       (
         t, // token of the same currency
-      ) => t.parentCurrency === account.currency && !existingTokens.includes(t), // not yet in the sub accounts
+      ) => t.parentCurrency.id === account.currency.id && !existingTokens.includes(t), // not yet in the sub accounts
     )
     .map<TokenAccount>(token => ({
       type: "TokenAccount",

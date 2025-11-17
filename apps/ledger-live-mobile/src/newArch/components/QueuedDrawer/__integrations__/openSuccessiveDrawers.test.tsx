@@ -534,4 +534,49 @@ describe("QueuedDrawer", () => {
     // close drawer 2
     await user.press(screen.getByTestId("modal-close-button"));
   });
+
+  test("closeAllDrawers clears the queue and allows new drawers to open", async () => {
+    const { user } = render(<TestPages />);
+
+    // open first drawer
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+
+    // expect first drawer is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // queue open second drawer (button in first drawer)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
+    // expect second drawer not visible (it's queued)
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // call closeAllDrawers (simulating app lock scenario)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).closeAllDrawersButton));
+
+    // expect both drawers are closed immediately
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // verify the queue is cleared and ready to be used again
+    // open first drawer again
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first drawer is visible (this would fail if queue wasn't cleared)
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // close drawer
+    await user.press(screen.getByTestId("modal-close-button"));
+    // drawer should be closed
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+
+    // verify we can open drawer 1 again and queue drawer 2
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+    // close drawer 1 to verify drawer 2 can open (queue works properly)
+    await user.press(screen.getByTestId("modal-close-button"));
+    // drawer 1 should be closed and drawer 2 should appear
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(await screen.findByText("Drawer 2")).toBeVisible();
+  });
 });

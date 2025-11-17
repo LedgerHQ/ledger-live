@@ -327,6 +327,7 @@
   ],
   "ignoreUnimported": [
     "src/account/typeGuards.ts",
+    "src/api/ofacGeoBlockApi.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
     "src/bridge/generic-alpaca/signer/Eth.ts",
@@ -340,12 +341,15 @@
     "src/dada-client/entities/selectorUtils.ts",
     "src/dada-client/hooks/useAssetData.ts",
     "src/dada-client/hooks/useAssetsData.ts",
+    "src/dada-client/hooks/useLazyLedgerCurrency.ts",
     "src/dada-client/hooks/useDrawerConfiguration.ts",
     "src/dada-client/hooks/useInterestRatesByCurrencies.ts",
     "src/dada-client/hooks/useMarketByCurrencies.ts",
+    "src/dada-client/index.ts",
     "src/dada-client/state-manager/api.ts",
     "src/dada-client/state-manager/types.ts",
     "src/dada-client/types/trend.ts",
+    "src/dada-client/utils/currencySelection.ts",
     "src/device",
     "src/device/hooks/useLatestFirmware.ts",
     "src/device/use-cases/appDataBackup/deleteAppData.ts",
@@ -355,6 +359,7 @@
     "src/device/use-cases/isEditDeviceNameSupported.ts",
     "src/device/use-cases/isSyncOnboardingSupported.ts",
     "src/device/use-cases/shouldForceFirmwareUpdate.ts",
+    "src/device/use-cases/getDeviceHasBattery.ts",
     "src/deviceSDK/commands/genuineCheck.ts",
     "src/deviceSDK/commands/getAppAndVersion.ts",
     "src/deviceSDK/tasks/genuineCheck.ts",
@@ -453,7 +458,8 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/utils/addressUtils.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",

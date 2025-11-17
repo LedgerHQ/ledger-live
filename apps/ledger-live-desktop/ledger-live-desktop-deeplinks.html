@@ -377,6 +377,19 @@
                     ]
                 },
                 {
+                    section: "Asset",
+                    title: "Asset Page",
+                    url: "ledgerlive://asset/:currencyId",
+                    description: "Opens the asset page for a specific currency.",
+                    parameters: [
+                        { name: "currencyId", required: true, description: "The currency ID (e.g., bitcoin, ethereum)" }
+                    ],
+                    examples: [
+                        "ledgerlive://asset/bitcoin",
+                        "ledgerlive://asset/ethereum"
+                    ]
+                },
+                {
                     section: "Add Account",
                     title: "Add Account Modal",
                     url: "ledgerwallet://add-account",
@@ -517,6 +530,20 @@
                     examples: [
                         "ledgerwallet://market",
                         "ledgerlive://market"
+                    ]
+                },
+                {
+                    section: "Market",
+                    title: "Market Detail Page",
+                    url: "ledgerlive://market/:currencyId",
+                    description: "Opens the market detail page for a specific cryptocurrency.",
+                    parameters: [
+                        { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
+                    ],
+                    examples: [
+                        "ledgerlive://market/bitcoin",
+                        "ledgerlive://market/ethereum",
+                        "ledgerlive://market/solana"
                     ]
                 },
                 {

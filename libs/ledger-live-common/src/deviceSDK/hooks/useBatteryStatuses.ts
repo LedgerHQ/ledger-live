@@ -13,6 +13,7 @@ export type UseBatteryStatusesArgs = {
   deviceId?: string;
   deviceName: string | null;
   statuses: BatteryStatusTypes[];
+  enabled: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export const useBatteryStatuses = ({
   deviceId,
   deviceName,
   statuses,
+  enabled,
 }: UseBatteryStatusesArgs): {
   batteryStatusesState: GetBatteryStatusesActionState;
   requestCompleted: boolean;
@@ -52,6 +54,7 @@ export const useBatteryStatuses = ({
   const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
 
   useEffect(() => {
+    if (!enabled) return;
     if (nonce > 0 && deviceId) {
       const sub = getBatteryStatusesAction({
         deviceId,
@@ -90,7 +93,7 @@ export const useBatteryStatuses = ({
         sub.unsubscribe();
       };
     }
-  }, [deviceId, deviceName, lowBatteryPercentage, statuses, nonce]);
+  }, [deviceId, deviceName, lowBatteryPercentage, statuses, nonce, enabled]);
 
   const triggerRequest = useCallback(() => {
     setRequestCompleted(false);

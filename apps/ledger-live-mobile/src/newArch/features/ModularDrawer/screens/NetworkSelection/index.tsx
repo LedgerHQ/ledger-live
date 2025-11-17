@@ -86,7 +86,6 @@ const NetworkSelection = ({
 
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
-    accounts$: undefined,
   });
 
   const formattedNetworks = transformNetworks(availableNetworks);
@@ -113,6 +112,7 @@ const NetworkSelection = ({
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
         }}
+        testID="modular-drawer-network-selection-scrollView"
       />
     </Flex>
   );

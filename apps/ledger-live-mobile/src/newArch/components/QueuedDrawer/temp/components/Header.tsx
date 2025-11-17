@@ -71,6 +71,7 @@ const Header = ({
       </Flex>
       {!noCloseButton && !areDrawersLocked && (
         <Pressable
+          testID="drawer-close-button"
           onPress={handleCloseUserEvent}
           style={({ pressed }: { pressed: boolean }) => ({
             borderRadius: 999,

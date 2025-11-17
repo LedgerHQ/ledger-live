@@ -106,18 +106,16 @@ function ScanDeviceAccounts() {
           </Text>
         </Flex>
       ) : (
-        !cantCreateAccount && (
-          <Flex px={6} style={styles.headerTitle}>
-            <Text
-              variant="h4"
-              testID="receive-header-step2-title"
-              fontSize="24px"
-              color="neutral.c100"
-            >
-              <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
-            </Text>
-          </Flex>
-        )
+        <Flex px={6} style={styles.headerTitle}>
+          <Text
+            variant="h4"
+            testID="receive-header-step2-title"
+            fontSize="24px"
+            color="neutral.c100"
+          >
+            <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
+          </Text>
+        </Flex>
       )}
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
@@ -178,7 +176,7 @@ function ScanDeviceAccounts() {
           );
         })}
       </NavigationScrollView>
-      {!!scannedAccounts.length && (
+      {sections.some(s => s.data.length > 0) && (
         <ScanDeviceAccountsFooter
           isScanning={scanning}
           canRetry={

@@ -57,6 +57,22 @@ export async function addDelayBeforeInteractingWithDevice(
   await delay(process.env.CI ? ciDelay : localDelay);
 }
 
+/**
+ * Creates a regex string for Detox URL blacklisting
+ * @returns Formatted regex string for Detox
+ */
+function createDetoxURLBlacklistRegex(): string {
+  const patterns = [
+    ".*sdk.*.braze.*",
+    ".*.googleapis.com/.*",
+    ".*clients3.google.com.*",
+    ".*tron.coin.ledger.com/wallet/getBrokerage.*",
+    ".*crypto-assets-service.api.ledger.com.*",
+  ];
+
+  return `\\("${patterns.join('","')}"\\)`;
+}
+
 export async function launchApp() {
   const port = await findFreePort();
   closeBridge();
@@ -64,8 +80,7 @@ export async function launchApp() {
   await device.launchApp({
     launchArgs: {
       wsPort: port,
-      detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
+      detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       IS_TEST: true,

@@ -1,6 +1,5 @@
 import { makeRe } from "minimatch";
-import { AppPlatform, PlatformAccount, PlatformCurrency } from "./types";
-import { isPlatformTokenCurrency } from "./helpers";
+import { AppPlatform, PlatformAccount } from "./types";
 
 export type FilterParams = {
   branches?: string[];
@@ -38,24 +37,3 @@ export type CurrencyFilters = {
   includeTokens?: boolean;
   currencies?: string[];
 };
-
-export function filterPlatformCurrencies(
-  currencies: PlatformCurrency[],
-  filters: CurrencyFilters,
-): PlatformCurrency[] {
-  const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map(filter => makeRe(filter))
-    : null;
-
-  return currencies.filter(currency => {
-    if (!filters.includeTokens && isPlatformTokenCurrency(currency)) {
-      return false;
-    }
-
-    if (filterCurrencyRegexes && !filterCurrencyRegexes.some(regex => currency.id.match(regex))) {
-      return false;
-    }
-
-    return true;
-  });
-}

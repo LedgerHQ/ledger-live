@@ -27,6 +27,7 @@ const UnderlinedText = styled(Text).attrs({
 export type TermsProviders = keyof typeof urls.swap.providers;
 
 const CHANGELLY_PROVIDER = "changelly";
+const NEAR_INTENTS_PROVIDER = "nearintents";
 
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
@@ -36,10 +37,15 @@ const TermsFooter: React.FC<{
   const providerUrls = providerName && urls.swap.providers[providerName];
 
   const { acceptTerms, urlsArray } = useMemo(() => {
-    //we need to check if the provider is changelly
-    //This helps to display specific message and urls for changelly
     const isChangelly = providerName === CHANGELLY_PROVIDER;
+    const isNearIntents = providerName === NEAR_INTENTS_PROVIDER;
 
+    if (isNearIntents) {
+      return {
+        acceptTerms: "DeviceAction.confirmSwap.nearIntentsAcceptTerms",
+        urlsArray: [providerUrls?.tos].filter(Boolean),
+      };
+    }
     if (isChangelly) {
       return {
         acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",

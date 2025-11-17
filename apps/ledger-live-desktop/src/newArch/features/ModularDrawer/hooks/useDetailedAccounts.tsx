@@ -1,9 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
   AccountTuple,
@@ -25,7 +22,6 @@ import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
-  accounts$?: Observable<WalletAPIAccount[]>,
   onAccountSelected?: (account: Account) => void,
 ) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
@@ -37,15 +33,14 @@ export const useDetailedAccounts = (
     source,
   );
 
-  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts);
     return orderBy(accountTuples, [(tuple: AccountTuple) => tuple.account.balance], ["desc"]);
-  }, [asset, nestedAccounts, accountIds]);
+  }, [asset, nestedAccounts]);
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 

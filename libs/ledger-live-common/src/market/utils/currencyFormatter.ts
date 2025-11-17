@@ -1,6 +1,5 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  CurrencyData,
+  MarketCurrencyData,
   KeysPriceChange,
   MarketItemPerformer,
   MarketItemResponse,
@@ -45,29 +44,16 @@ function sparklineAsSvgData(points: number[]): SparklineSvgData {
   };
 }
 
-export function currencyFormatter(
-  data: MarketItemResponse[],
-  cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
-): CurrencyData[] {
-  return data.map((currency: MarketItemResponse) => format(currency, cryptoCurrenciesList));
+export function currencyFormatter(data: MarketItemResponse[]): MarketCurrencyData[] {
+  return data.map((currency: MarketItemResponse) => format(currency));
 }
 
-export const format = (
-  currency: MarketItemResponse,
-  cryptoCurrenciesList?: (CryptoCurrency | TokenCurrency)[],
-): CurrencyData => {
-  const ledgerIdsSet = new Set(currency.ledgerIds.map(id => id.toLowerCase()));
-
-  const internalCurrency = cryptoCurrenciesList?.find(({ id }) =>
-    ledgerIdsSet.has(id.toLowerCase()),
-  );
-
+export const format = (currency: MarketItemResponse): MarketCurrencyData => {
   return {
     id: currency.id,
     ledgerIds: currency.ledgerIds,
     name: currency.name,
     image: currency.image,
-    internalCurrency,
     marketcap: currency.marketCap,
     marketcapRank: currency.marketCapRank,
     totalVolume: currency.totalVolume,

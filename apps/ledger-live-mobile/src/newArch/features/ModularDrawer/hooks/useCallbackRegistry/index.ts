@@ -1,7 +1,5 @@
 import { AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { callbackRegistry, observableRegistry, resetAllRegistries } from "./registries";
+import { callbackRegistry, resetAllRegistries } from "./registries";
 import { RegistryManager, AccountCallback } from "./types";
 
 /**
@@ -31,21 +29,6 @@ export const useCallbackRegistry = (): RegistryManager => {
 
   const getCallbackKeys = (): string[] => callbackRegistry.keys();
 
-  // Observable methods
-  const registerObservable = (id: string, observable: Observable<WalletAPIAccount[]>) =>
-    observableRegistry.register(id, observable);
-
-  const getObservable = (id: string): Observable<WalletAPIAccount[]> | undefined =>
-    observableRegistry.get(id);
-
-  const unregisterObservable = (id: string): boolean => observableRegistry.unregister(id);
-
-  const hasObservable = (id: string): boolean => observableRegistry.has(id);
-
-  const clearObservables = () => observableRegistry.clear();
-
-  const getObservableKeys = (): string[] => observableRegistry.keys();
-
   // Reset methods
   const resetAll = () => resetAllRegistries();
 
@@ -58,14 +41,6 @@ export const useCallbackRegistry = (): RegistryManager => {
     executeCallback,
     clearCallbacks,
     getCallbackKeys,
-
-    // Observable methods
-    registerObservable,
-    getObservable,
-    unregisterObservable,
-    hasObservable,
-    clearObservables,
-    getObservableKeys,
 
     // Reset methods
     resetAll,

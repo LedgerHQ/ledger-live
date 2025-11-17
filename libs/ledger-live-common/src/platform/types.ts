@@ -196,6 +196,6 @@ export type PlatformSignedTransaction = SignedOperation;
 
 export type ListPlatformAccount = (filters?: AccountFilters) => PlatformAccount[];
 
-export type ListPlatformCurrency = (filters?: CurrencyFilters) => PlatformCurrency[];
+export type ListPlatformCurrency = (filters?: CurrencyFilters) => Promise<PlatformCurrency[]>;
 
 export type PlatformSupportedCurrency = CryptoCurrency | TokenCurrency;

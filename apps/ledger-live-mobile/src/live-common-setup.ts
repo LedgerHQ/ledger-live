@@ -143,6 +143,9 @@ setSupportedCurrencies([
   "canton_network_testnet",
   "kaspa",
   "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))

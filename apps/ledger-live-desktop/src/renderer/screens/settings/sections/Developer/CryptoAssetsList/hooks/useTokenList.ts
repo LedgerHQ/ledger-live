@@ -11,7 +11,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     initialOption,
   );
   const [isStaging, setIsStaging] = useState<boolean>(true);
-  const [pageSize, setPageSize] = useState<number>(100);
+  const [pageSize, setPageSize] = useState<number>(1000);
   const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>([
     ...TOKEN_OUTPUT_FIELDS,
   ]);
@@ -109,7 +109,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     setLimit("");
     setRef("");
     setSelectedOutputFields([...TOKEN_OUTPUT_FIELDS]);
-    setPageSize(100);
+    setPageSize(1000);
     setIsStaging(true);
     setSelectedFamilyOption(FAMILY_OPTIONS[0]);
   };

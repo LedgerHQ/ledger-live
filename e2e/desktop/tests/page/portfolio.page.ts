@@ -1,4 +1,4 @@
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect } from "@playwright/test";
 

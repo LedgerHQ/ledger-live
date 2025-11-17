@@ -23,10 +23,12 @@ export default function SelectAccountButton({
   manifest,
   currentAccountHistDb,
 }: SelectAccountButtonProps) {
-  const { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess } = useSelectAccount({
-    manifest,
-    currentAccountHistDb,
-  });
+  const { onSelectAccount, currentAccount, currencyIds, onSelectAccountSuccess } = useSelectAccount(
+    {
+      manifest,
+      currentAccountHistDb,
+    },
+  );
 
   const currentAccountName = useMaybeAccountName(currentAccount);
 
@@ -44,8 +46,8 @@ export default function SelectAccountButton({
   const handleAddAccountPress = () => {
     if (canOpenModularDrawer) {
       openDrawer({
-        currencies: currencies.map(c => c.id),
-        areCurrenciesFiltered: manifest.currencies !== "*",
+        currencies: currencyIds,
+        areCurrenciesFiltered: true,
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
         flow: manifest.name,

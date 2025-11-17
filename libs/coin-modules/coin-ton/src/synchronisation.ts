@@ -4,6 +4,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
+  getSyncHash,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
@@ -29,7 +30,6 @@ import {
   mapJettonTxToOps,
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
-import { getSyncHash } from "./logic";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
 import { WalletContractV4 } from "@ton/ton";
 
@@ -64,7 +64,7 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   });
 
   log("debug", `Generation account shape for ${address}`);
-  const syncHash = getSyncHash(currency, blacklistedTokenIds ?? []);
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
   const newTxs: TonTransactionsList = { transactions: [], address_book: {} };

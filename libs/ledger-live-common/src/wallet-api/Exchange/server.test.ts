@@ -6,7 +6,6 @@ import {
   ExchangeStartFundParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
-import { of } from "rxjs";
 import { genAccount } from "../../mock/account";
 import { AppBranch, AppPlatform, Visibility } from "../types";
 import { handlers } from "./server";
@@ -193,8 +192,6 @@ function prepareSwapRequest(params: ExchangeStartSwapParams): PreparedRequest {
   };
 
   const context = {
-    currencies$: of([]),
-    accounts$: of([]),
     config: {
       userId: "userId",
       tracking: false,
@@ -222,8 +219,6 @@ function prepareSellRequest(params: ExchangeStartParams): PreparedRequest {
   };
 
   const context = {
-    currencies$: of([]),
-    accounts$: of([]),
     config: {
       userId: "userId",
       tracking: false,

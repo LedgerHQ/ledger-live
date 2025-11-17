@@ -7,8 +7,6 @@ import { useModularDrawerState } from "./hooks/useModularDrawerState";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { Observable } from "rxjs";
 import { useSelector } from "react-redux";
 import {
   modularDrawerEnableAccountSelectionSelector,
@@ -40,8 +38,6 @@ export type ModularDrawerProps = {
   // Account selection
   /** Callback fired when an account is selected */
   readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
-  /** Observable of accounts */
-  readonly accounts$?: Observable<WalletAPIAccount[]>;
 
   /** The use case identifier for the drawer */
   readonly useCase?: string;
@@ -62,7 +58,6 @@ export function ModularDrawer({
   assetsConfiguration,
   networksConfiguration,
   onAccountSelected,
-  accounts$,
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
@@ -133,7 +128,6 @@ export function ModularDrawer({
           networksConfiguration: networkConfigurationSanitized,
         }}
         accountsViewModel={{
-          accounts$,
           onAddNewAccount,
           asset: accountCurrency,
           onAccountSelected,

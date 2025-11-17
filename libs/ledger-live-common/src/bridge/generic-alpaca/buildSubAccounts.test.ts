@@ -534,4 +534,70 @@ describe("mergeSubAccounts", () => {
       },
     ]);
   });
+
+  it("prevents duplicates when token account ID changes but token.id stays the same", () => {
+    const oldSubAccounts = [
+      {
+        id: "accountId+stellar:USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+        type: "TokenAccount",
+        parentId: "accountId",
+        token: {
+          id: "stellar/asset/USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+        },
+        balance: new BigNumber(100),
+        spendableBalance: new BigNumber(100),
+        operations: [
+          {
+            id: "old-op-1",
+            type: "IN",
+            senders: ["sender1"],
+            recipients: ["owner"],
+            date: new Date("2019-01-01"),
+          },
+          {
+            id: "old-op-2",
+            type: "OUT",
+            senders: ["owner"],
+            recipients: ["recipient1"],
+            date: new Date("2019-01-02"),
+          },
+        ],
+        operationsCount: 2,
+      },
+    ] as Array<TokenAccount>;
+
+    const newSubAccounts = [
+      {
+        id: "accountId+stellar/asset/USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+        type: "TokenAccount",
+        parentId: "accountId",
+        token: {
+          id: "stellar/asset/USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+        },
+        balance: new BigNumber(150),
+        spendableBalance: new BigNumber(150),
+        operations: [
+          {
+            id: "new-op-1",
+            type: "IN",
+            senders: ["sender2"],
+            recipients: ["owner"],
+            date: new Date("2019-01-03"),
+          },
+        ],
+        operationsCount: 1,
+      },
+    ] as Array<TokenAccount>;
+
+    const merged = mergeSubAccounts(oldSubAccounts, newSubAccounts);
+
+    expect(merged).toHaveLength(1);
+    expect(merged[0]).toMatchObject({
+      token: { id: "stellar/asset/USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5" },
+      balance: new BigNumber(150),
+      spendableBalance: new BigNumber(150),
+      operationsCount: 3,
+    });
+    expect(merged[0].operations).toHaveLength(3);
+  });
 });

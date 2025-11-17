@@ -80,6 +80,9 @@ export function useCurrenciesUnderFeatureFlag() {
   const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
   const polkadot = useFeature("currencyPolkadot");
   const monad = useFeature("currencyMonad");
+  const monadTestnet = useFeature("currencyMonadTestnet");
+  const somnia = useFeature("currencySomnia");
+  const zeroGravity = useFeature("currencyZeroGravity");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -156,6 +159,9 @@ export function useCurrenciesUnderFeatureFlag() {
       assethub_polkadot: assetHubPolkadot,
       polkadot,
       monad,
+      monad_testnet: monadTestnet,
+      somnia,
+      zero_gravity: zeroGravity,
     }),
     [
       aptos,
@@ -221,6 +227,8 @@ export function useCurrenciesUnderFeatureFlag() {
       mina,
       babylon,
       canton,
+      cantonDevnet,
+      cantonTestnet,
       kaspa,
       core,
       ethereumHoodi,
@@ -229,6 +237,9 @@ export function useCurrenciesUnderFeatureFlag() {
       assetHubPolkadot,
       polkadot,
       monad,
+      monadTestnet,
+      somnia,
+      zeroGravity,
     ],
   );
 

@@ -1,7 +1,7 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export const NotEnoughFeeError = createCustomErrorClass("NotEnoughFeeError");
-
 export const TransactionMassExceededError = createCustomErrorClass("TransactionMassExceededError");
-
 export const EmptyRecipientError = createCustomErrorClass("EmptyRecipientError");
+export const ReducedAmountUtxoWarning = createCustomErrorClass("ReducedAmountUtxoWarning");
+export const UtxoLimitReachedError = createCustomErrorClass("UtxoLimitReachedError");

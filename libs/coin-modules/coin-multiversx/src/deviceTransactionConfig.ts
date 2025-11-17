@@ -21,7 +21,7 @@ async function getDeviceTransactionConfig({
   const isEsdtTransfer = subAccountId !== undefined && subAccountId !== null;
 
   if (isEsdtTransfer) {
-    const { token } = decodeTokenAccountId(subAccountId);
+    const { token } = await decodeTokenAccountId(subAccountId);
 
     if (token) {
       fields.push({

@@ -33,8 +33,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { LLMRTKApiState } from "~/context/rtkQueryApi";
 
 // === ACCOUNT STATE ===
 
@@ -227,6 +226,8 @@ export type SettingsState = {
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
   isOnboardingFlow: boolean;
+  isOnboardingFlowReceiveSuccess: boolean;
+  isPostOnboardingFlow: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
@@ -377,11 +378,9 @@ export type LargeMoverState = {
 
 // === ROOT STATE ===
 
-export type State = {
+export type State = LLMRTKApiState & {
   accounts: AccountsState;
   appstate: AppState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
-  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;

@@ -12,7 +12,6 @@ describe("useNetworkAccountCounts", () => {
     const assetAccountCounts = useNetworkAccountCounts({
       networks: [ethereumCurrency],
       nestedAccounts: [ethereumAccountHigh],
-      accountIds: new Map([[ethereumAccountHigh.id, true]]),
       formatLabel: (count: number) => `${count}`,
     });
 
@@ -27,10 +26,6 @@ describe("useNetworkAccountCounts", () => {
     const assetAccountCounts = useNetworkAccountCounts({
       networks: [ethereumCurrency],
       nestedAccounts: [ethereumAccountHigh, ethereumAccountLow],
-      accountIds: new Map([
-        [ethereumAccountHigh.id, true],
-        [ethereumAccountLow.id, true],
-      ]),
       formatLabel: (count: number) => `${count}`,
     });
 

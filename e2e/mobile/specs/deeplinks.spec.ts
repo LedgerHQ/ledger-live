@@ -1,7 +1,7 @@
 import { waitSwapReady } from "../bridge/server";
 
 $TmsLink("B2CQA-1837");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
@@ -86,6 +86,11 @@ describe("DeepLinks Tests", () => {
     await app.swap.expectSwapPage();
   });
 
+  it("should open Market Detail page for Bitcoin", async () => {
+    await app.market.openViaDeeplink("bitcoin");
+    await app.market.expectMarketDetailPage();
+  });
+
   it("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
@@ -103,5 +108,15 @@ describe("DeepLinks Tests", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.receive.receiveViaDeeplink(ethereumLong);
     await app.receive.expectSecondStepNetworks([ethereumLong, zksyncName, scrollName]);
+  });
+
+  it("should open Asset page for Bitcoin", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
+  });
+
+  it("should open Asset page for Ethereum", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.expectAssetPage(ethereumLong);
   });
 });

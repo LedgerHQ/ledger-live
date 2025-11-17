@@ -95,7 +95,7 @@ export const assetsDataApi = createApi({
         const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
 
         return {
-          url: `${baseUrl}assets`,
+          url: `${baseUrl}/assets`,
           params,
         };
       },

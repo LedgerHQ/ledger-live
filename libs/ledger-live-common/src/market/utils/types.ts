@@ -1,4 +1,3 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
@@ -33,7 +32,7 @@ export type MarketListRequestParams = {
 };
 
 export type MarketListRequestResult = {
-  data: CurrencyData[];
+  data: MarketCurrencyData[];
   isPending: boolean;
   isLoading: boolean;
   isError: boolean;
@@ -45,7 +44,7 @@ export type HashMapBody = {
   refetch: (options?: RefetchOptions | undefined) => Promise<
     QueryObserverResult<
       {
-        formattedData: CurrencyData[];
+        formattedData: MarketCurrencyData[];
         page: number;
       },
       Error
@@ -80,12 +79,11 @@ export enum KeysPriceChange {
   year = "1y",
 }
 
-export type CurrencyData = {
+export type MarketCurrencyData = {
   id: string;
   ledgerIds: string[];
   name: string;
   image?: string;
-  internalCurrency?: CryptoOrTokenCurrency;
   marketcap?: number;
   marketcapRank: number;
   totalVolume: number;
@@ -113,13 +111,13 @@ export type SingleCoinState = {
   loadingChart: boolean;
   error?: Error;
   supportedCounterCurrencies: string[];
-  selectedCoinData?: CurrencyData;
+  selectedCoinData?: MarketCurrencyData;
   counterCurrency?: string;
 };
 
 export type State = SingleCoinState & {
   ready: boolean;
-  marketData?: CurrencyData[];
+  marketData?: MarketCurrencyData[];
   requestParams: MarketListRequestParams;
   page: number;
   endOfList: boolean;
@@ -187,7 +185,7 @@ export type MarketItemPerformer = {
 
 export type MarketDataApi = {
   setSupportedCoinsList: () => Promise<SupportedCoins>;
-  listPaginated: (params: MarketListRequestParams) => Promise<CurrencyData[]>;
+  listPaginated: (params: MarketListRequestParams) => Promise<MarketCurrencyData[]>;
   supportedCounterCurrencies: () => Promise<string[]>;
   currencyChartData: (
     params: MarketCurrencyChartDataRequestParams,

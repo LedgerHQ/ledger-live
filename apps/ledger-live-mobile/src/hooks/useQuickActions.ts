@@ -17,6 +17,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export type QuickAction = {
   disabled: boolean;
@@ -75,10 +76,18 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
-  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
-    currency,
-    sourceScreenName: "quick_action_stake",
-  });
+  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
+    useOpenStakeDrawer({
+      currencies: currency ? [currency.id] : undefined,
+      sourceScreenName: route.name,
+    });
+
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
+    useOpenReceiveDrawer({
+      currency,
+      sourceScreenName: route.name,
+    });
+  const noah = useFeature("noah");
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -108,6 +117,12 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
                 },
               },
         ],
+        // We have two features getting enabled at the same time that change the entry point of receive funds
+        // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
+        // if modular drawer is enabled but noah is not then go there
+        // if neither is enabled we'll go through the old flow
+        customHandler:
+          isModularDrawerEnabledReceive && !noah?.enabled ? handleOpenReceiveDrawer : undefined,
         icon: IconsLegacy.ArrowBottomMedium,
       },
       SWAP: {
@@ -175,7 +190,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
             },
           },
         ],
-        customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
+        customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
         icon: IconsLegacy.CoinsMedium,
       };
     }
@@ -208,20 +223,23 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     return list;
   }, [
+    readOnlyModeEnabled,
+    hasCurrency,
     currency,
     hasCurrencyAccounts,
-    hasCurrency,
-    hasFunds,
+    isModularDrawerEnabledReceive,
+    handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
-    readOnlyModeEnabled,
-    route,
+    hasFunds,
     canBeBought,
     canBeSold,
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
-    isModularDrawerEnabled,
+    route,
+    isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
+    noah,
   ]);
 
   return { quickActionsList };

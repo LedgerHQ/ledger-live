@@ -49,7 +49,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
@@ -116,6 +116,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             block: {
               height: liveOp.blockHeight ?? 10,
             },
+            failed: liveOp.hasFailed ?? false,
           },
         } satisfies Operation;
       });
@@ -127,7 +128,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     validateIntent: async (_transactionIntent, _customFees): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getSequence: async (_address): Promise<number> => {
+    getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
     },
     getBlock: async (_height): Promise<Block> => {

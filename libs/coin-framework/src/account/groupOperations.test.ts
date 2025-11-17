@@ -1,17 +1,20 @@
 import { groupAccountsOperationsByDay } from "./groupOperations";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { createOperation, createAccount as baseCreateAccount } from "./pending.test";
+import BigNumber from "bignumber.js";
 
 // Wrapper around createOperation to set transactionSequenceNumber and optional date override
-const createOp = (id: string, isoDate: string, sequence?: number, isPending = false): Operation => {
+const createOp = (id: string, isoDate: string, sequence?: bigint, isPending = false): Operation => {
   const op = createOperation("acc1", ["sender"], sequence);
+  const transactionSequenceNumber =
+    typeof sequence === "bigint" ? new BigNumber(sequence.toString()) : undefined;
   return {
     ...op,
     id,
     hash: id,
     accountId: "acc1",
     date: new Date(isoDate),
-    transactionSequenceNumber: sequence,
+    transactionSequenceNumber: transactionSequenceNumber,
     blockHeight: isPending ? null : 1,
   };
 };
@@ -51,8 +54,8 @@ describe("groupAccountOperationsByDay", () => {
   });
 
   it("orders ops with equal date by transactionSequenceNumber", () => {
-    const op1 = createOp("op1", "2024-01-01T10:00:00Z", 3);
-    const op2 = createOp("op2", "2024-01-01T10:00:00Z", 5);
+    const op1 = createOp("op1", "2024-01-01T10:00:00Z", BigInt(3));
+    const op2 = createOp("op2", "2024-01-01T10:00:00Z", BigInt(5));
 
     const acc1 = createAccount({ confirmed: [op1] });
     const acc2 = createAccount({ confirmed: [op2] });
@@ -65,7 +68,7 @@ describe("groupAccountOperationsByDay", () => {
 
   it("prioritizes defined transactionSequenceNumber over undefined", () => {
     const op1 = createOp("op1", "2024-01-01T10:00:00Z");
-    const op2 = createOp("op2", "2024-01-01T10:00:00Z", 0);
+    const op2 = createOp("op2", "2024-01-01T10:00:00Z", BigInt(0));
 
     const acc1 = createAccount({ confirmed: [op1] });
     const acc2 = createAccount({ confirmed: [op2] });
@@ -76,8 +79,8 @@ describe("groupAccountOperationsByDay", () => {
   });
 
   it("includes pending ops if not duplicated", () => {
-    const confirmed = createOp("op1", "2024-01-01T10:00:00Z", 5);
-    const pending = createOp("op2", "2024-01-02T10:00:00Z", 10, true);
+    const confirmed = createOp("op1", "2024-01-01T10:00:00Z", BigInt(5));
+    const pending = createOp("op2", "2024-01-02T10:00:00Z", BigInt(10), true);
 
     const acc = createAccount({
       confirmed: [confirmed],
@@ -92,8 +95,8 @@ describe("groupAccountOperationsByDay", () => {
   });
 
   it("filters out pending ops with duplicate hash", () => {
-    const confirmed = createOp("op1", "2024-01-01T10:00:00Z", 5);
-    const pendingDuplicate = createOp("op1", "2024-01-02T10:00:00Z", 10, true); // same hash/id
+    const confirmed = createOp("op1", "2024-01-01T10:00:00Z", BigInt(5));
+    const pendingDuplicate = createOp("op1", "2024-01-02T10:00:00Z", BigInt(10), true); // same hash/id
 
     const acc = createAccount({
       confirmed: [confirmed],

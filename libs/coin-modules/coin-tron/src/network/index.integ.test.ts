@@ -1,4 +1,5 @@
 import {
+  craftStandardTransaction,
   defaultFetchParams,
   fetchTronAccount,
   fetchTronAccountTxs,
@@ -7,6 +8,8 @@ import {
 } from ".";
 import coinConfig from "../config";
 import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
+import BigNumber from "bignumber.js";
+import expect from "expect";
 
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.
@@ -50,6 +53,22 @@ describe("TronGrid", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]).toHaveProperty("balance");
+    });
+  });
+
+  describe("craftStandardTransaction", () => {
+    it("handles errors correctly", async () => {
+      await expect(
+        craftStandardTransaction(
+          "wrong token address",
+          "wrong recipient address",
+          "wrong sender address",
+          BigNumber(-1),
+          false,
+          "wrong memo",
+          -1,
+        ),
+      ).rejects.toThrow("INVALID hex String");
     });
   });
 

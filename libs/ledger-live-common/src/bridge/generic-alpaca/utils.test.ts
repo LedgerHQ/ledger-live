@@ -22,6 +22,7 @@ describe("Alpaca utils", () => {
           parentType: "OPT_IN",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -32,6 +33,7 @@ describe("Alpaca utils", () => {
           parentType: "DELEGATE",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -42,6 +44,7 @@ describe("Alpaca utils", () => {
           parentType: "DELEGATE",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -52,6 +55,7 @@ describe("Alpaca utils", () => {
           parentType: "UNDELEGATE",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -62,6 +66,7 @@ describe("Alpaca utils", () => {
           parentType: "UNDELEGATE",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -72,6 +77,7 @@ describe("Alpaca utils", () => {
           parentType: "OUT",
           subType: undefined,
           parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
         },
       ],
       [
@@ -82,6 +88,7 @@ describe("Alpaca utils", () => {
           parentType: "FEES",
           subType: "OPT_IN",
           parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
         },
       ],
       [
@@ -92,6 +99,7 @@ describe("Alpaca utils", () => {
           parentType: "FEES",
           subType: "DELEGATE",
           parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
         },
       ],
       [
@@ -102,6 +110,7 @@ describe("Alpaca utils", () => {
           parentType: "FEES",
           subType: "DELEGATE",
           parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
         },
       ],
       [
@@ -112,6 +121,7 @@ describe("Alpaca utils", () => {
           parentType: "FEES",
           subType: "UNDELEGATE",
           parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
         },
       ],
       [
@@ -122,26 +132,38 @@ describe("Alpaca utils", () => {
           parentType: "FEES",
           subType: "UNDELEGATE",
           parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
         },
       ],
       [
         "token",
         "send",
         { subAccountId: "sub-account-id" },
-        { parentType: "FEES", subType: "OUT", parentValue: new BigNumber(12) },
+        {
+          parentType: "FEES",
+          subType: "OUT",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
       ],
     ])("builds an optimistic %s operation with %s mode ", (_s, mode, params, expected) => {
       const operation = buildOptimisticOperation(
         {
           id: "parent-account-id",
           freshAddress: "account-address",
-          subAccounts: [{ id: "sub-account-id" }],
+          subAccounts: [{ id: "sub-account-id", token: { contractAddress: "contract-address" } }],
         } as Account,
         {
           mode,
           amount: new BigNumber(50),
           fees: new BigNumber(12),
           recipient: "recipient-address",
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
           ...params,
         } as GenericTransaction,
       );
@@ -156,6 +178,17 @@ describe("Alpaca utils", () => {
         fee: new BigNumber(12),
         blockHash: null,
         blockHeight: null,
+        transactionRaw: {
+          amount: expected.subType ? "0" : expected.parentValue.toFixed(),
+          fees: "12",
+          recipient: expected.parentRecipient,
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
+        },
         ...(expected.subType
           ? {
               subOperations: [
@@ -168,6 +201,11 @@ describe("Alpaca utils", () => {
                   value: new BigNumber(50),
                   blockHash: null,
                   blockHeight: null,
+                  transactionRaw: {
+                    amount: "50",
+                    fees: "12",
+                    recipient: "recipient-address",
+                  },
                 },
               ],
             }
@@ -326,6 +364,7 @@ describe("Alpaca utils", () => {
           height: 123456,
         },
         date: new Date("2025-08-29T12:00:00Z"),
+        failed: false,
       },
       senders: ["sender1"],
       recipients: ["recipient1"],
@@ -346,6 +385,7 @@ describe("Alpaca utils", () => {
               height: 123456,
             },
             date: new Date("2025-08-29T12:00:00Z"),
+            failed: false,
           },
           senders: ["sender"],
           recipients: ["recipient"],
@@ -419,6 +459,24 @@ describe("Alpaca utils", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, op);
 
       expect(result.value.toString()).toEqual("50");
+    });
+
+    it("shows fees in value when transaction has failed", () => {
+      const failedOp = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(100),
+        tx: { ...baseOp.tx, fees: BigInt(25) },
+        details: { status: "failed" },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, failedOp);
+
+      expect(result).toMatchObject({
+        hasFailed: true,
+        value: new BigNumber(25),
+        fee: new BigNumber(25),
+      });
     });
   });
 });

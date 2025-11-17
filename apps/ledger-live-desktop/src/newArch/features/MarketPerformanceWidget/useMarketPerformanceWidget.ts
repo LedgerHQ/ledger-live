@@ -17,20 +17,11 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { listTokens } from "@ledgerhq/cryptoassets/tokens";
-
 const LIMIT_TO_DISPLAY = 5;
 
 export function useMarketPerformanceWidget() {
   const { isCurrencyAvailable } = useRampCatalog();
   const { data: currenciesForSwapAll } = useFetchCurrencyAll();
-
-  const cryptoCurrenciesList = useMemo(() => [...listCryptoCurrencies(), ...listTokens()], []);
-  const cryptoCurrenciesSet = useMemo(
-    () => new Set(cryptoCurrenciesList.map(({ id }) => id.toLowerCase())),
-    [cryptoCurrenciesList],
-  );
 
   const currenciesForSwapAllSet = useMemo(
     () => new Set(currenciesForSwapAll),
@@ -46,9 +37,9 @@ export function useMarketPerformanceWidget() {
 
   const filterAvailable = useCallback(
     (elem: MarketItemPerformer): boolean => {
-      return filterAvailableBuyOrSwapCurrency(elem, cryptoCurrenciesSet, isAvailable);
+      return filterAvailableBuyOrSwapCurrency(elem, isAvailable);
     },
-    [cryptoCurrenciesSet, isAvailable],
+    [isAvailable],
   );
 
   const { refreshRate, top, supported, limit, enableNewFeature } =

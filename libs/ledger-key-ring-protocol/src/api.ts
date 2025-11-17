@@ -10,7 +10,7 @@ export type APIJWT = {
   access_token: string;
   permissions: {
     [trustchainId: string]: {
-      [path: string]: string[];
+      [path: string]: string;
     };
   };
 };

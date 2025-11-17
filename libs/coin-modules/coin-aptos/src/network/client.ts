@@ -41,6 +41,7 @@ import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./grap
 import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
+  TransactionVersion,
 } from "./graphql/types";
 import {
   BlockInfo,
@@ -297,31 +298,55 @@ export class AptosAPI {
     return [newOperations, ""];
   }
 
-  private async fetchTransactions(address: string, gt?: string) {
-    if (!address) {
-      return [];
-    }
+  private async getAllTransactions(address: string, gt?: string): Promise<TransactionVersion[]> {
+    let allTransactions: TransactionVersion[] = [];
+    let offset = 0;
 
     let query = GetAccountTransactionsData;
     if (gt) {
       query = GetAccountTransactionsDataGt;
     }
 
-    const queryResponse = await this.apolloClient.query<
-      GetAccountTransactionsDataQuery,
-      GetAccountTransactionsDataGtQueryVariables
-    >({
-      query,
-      variables: {
-        address,
-        limit: 1000,
-        gt,
-      },
-      fetchPolicy: "network-only",
-    });
+    const condition = true;
 
+    while (condition) {
+      try {
+        const queryResponse = await this.apolloClient.query<
+          GetAccountTransactionsDataQuery,
+          GetAccountTransactionsDataGtQueryVariables
+        >({
+          query,
+          variables: {
+            address,
+            limit: 100,
+            gt,
+            offset,
+          },
+          fetchPolicy: "network-only",
+        });
+        offset += 100;
+
+        allTransactions = allTransactions.concat(queryResponse.data.account_transactions);
+
+        if (queryResponse.data.account_transactions.length < 100) {
+          break;
+        }
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    }
+
+    return allTransactions;
+  }
+
+  private async fetchTransactions(address: string, gt?: string) {
+    if (!address) {
+      return [];
+    }
+
+    const transactions = await this.getAllTransactions(address, gt);
     return Promise.all(
-      queryResponse.data.account_transactions
+      transactions
         .slice()
         .sort((a, b) => b.transaction_version - a.transaction_version)
         .map(({ transaction_version }) => {

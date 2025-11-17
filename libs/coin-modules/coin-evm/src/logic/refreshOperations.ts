@@ -22,7 +22,7 @@ async function getOperationStatus(
 
     return {
       ...op,
-      transactionSequenceNumber: nonce,
+      transactionSequenceNumber: new BigNumber(nonce),
       blockHash,
       blockHeight,
       date,
@@ -30,7 +30,7 @@ async function getOperationStatus(
       value: new BigNumber(value).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         blockHash,
         blockHeight,
         date,

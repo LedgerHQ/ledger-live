@@ -57,7 +57,7 @@ export function createApi(
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
@@ -71,7 +71,7 @@ export function createApi(
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination.minHeight),
+      listOperations(currency, address, pagination),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
@@ -87,7 +87,7 @@ export function createApi(
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getSequence: (address: string): Promise<number> => getSequence(currency, address),
+    getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
