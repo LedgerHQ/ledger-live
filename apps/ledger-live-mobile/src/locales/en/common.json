@@ -4457,6 +4457,7 @@
         "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "acceptTerms": "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
+      "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },

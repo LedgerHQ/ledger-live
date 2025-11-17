@@ -370,4 +370,5 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.NewSendFlow]: Record<string, object>;
 };

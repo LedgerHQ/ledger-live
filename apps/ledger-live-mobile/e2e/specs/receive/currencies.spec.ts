@@ -30,7 +30,7 @@ describe("Receive different currency", () => {
     ["tron"],
     ["avalanche_c_chain"],
     ["polygon", "polygon"],
-    ["polkadot"],
+    ["polkadot", "assethub_polkadot"],
     ["cosmos", "cosmos"],
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);
@@ -42,7 +42,7 @@ describe("Receive different currency", () => {
     if (network) await app.receive.selectNetwork(network);
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.addAccount.addAccountAtIndex(currency.name, currency.id, 1);
+    await app.addAccount.addAccountAtIndex(currency.name, network || currency.id, 1);
     await app.addAccount.tapAddFunds();
     await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();

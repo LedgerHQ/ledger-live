@@ -1,5 +1,27 @@
 # @ledgerhq/types-live
 
+## 6.89.0-next.0
+
+### Minor Changes
+
+- [#12572](https://github.com/LedgerHQ/ledger-live/pull/12572) [`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - BREAKING: CryptoAssetsStore interface is now fully async. All token lookup methods return Promises. Bot system and coin modules updated to support async token operations.
+
+- [#12558](https://github.com/LedgerHQ/ledger-live/pull/12558) [`a6bc24e`](https://github.com/LedgerHQ/ledger-live/commit/a6bc24ee988b98bf82f807ac5ce731ba79813901) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [CoinConfig] Feature flag by currency
+
+- [#12402](https://github.com/LedgerHQ/ledger-live/pull/12402) [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9) Thanks [@qperrot](https://github.com/qperrot)! - Fix transactionSequenceNumber type
+
+- [#12384](https://github.com/LedgerHQ/ledger-live/pull/12384) [`1c6f5f5`](https://github.com/LedgerHQ/ledger-live/commit/1c6f5f5843349b1955f7ca466f98cbe4ffcdaddf) Thanks [@thesan](https://github.com/thesan)! - Remove the OfacGeoBlocking feature flag
+
+- [#12611](https://github.com/LedgerHQ/ledger-live/pull/12611) [`d5d838a`](https://github.com/LedgerHQ/ledger-live/commit/d5d838a23e00edd53293843781c559c41db4e854) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - kick-off nano onboarding fund wallet feature
+
+- [#12635](https://github.com/LedgerHQ/ledger-live/pull/12635) [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: mixpanel session replay
+
+- [#12599](https://github.com/LedgerHQ/ledger-live/pull/12599) [`70049be`](https://github.com/LedgerHQ/ledger-live/commit/70049bed0cd0a8c7a9e4947a63af82061dad46c0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove llm_reborn_flex ff as it's ON for months now
+
+- [#12529](https://github.com/LedgerHQ/ledger-live/pull/12529) [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup llmMarketQuickActions Feature flag
+
+- [#12555](https://github.com/LedgerHQ/ledger-live/pull/12555) [`c70f6a8`](https://github.com/LedgerHQ/ledger-live/commit/c70f6a8370056b6fd8f236205471359d6f9b846f) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync to post onboarding hub on desktop. Add postonboarding landing page for mobile.
+
 ## 6.88.0
 
 ### Minor Changes

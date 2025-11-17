@@ -9,7 +9,7 @@ import {
   LandingPagesNavigatorParamList,
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
-import { mockCurrencyData } from "../../fixtures/currency";
+import { mockChartData, mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
 import { mockNavigation } from "../../fixtures/navigation";
 
@@ -46,7 +46,7 @@ jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverChartData", () => ({
     chartDataArray: [
       {
         idChartData: "ethereum",
-        chartData: mockCurrencyData.chartData,
+        chartData: mockChartData,
         isLoading: false,
         isError: false,
       },

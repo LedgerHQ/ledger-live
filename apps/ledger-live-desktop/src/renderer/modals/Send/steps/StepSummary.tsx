@@ -251,6 +251,7 @@ const StepSummary = (props: StepProps) => {
               fontSize={4}
               inline
               showCode
+              alwaysShowValue
               data-testid="transaction-amount"
             />
             <Box textAlign="right">
@@ -260,6 +261,7 @@ const StepSummary = (props: StepProps) => {
                 currency={currency}
                 value={amount}
                 alwaysShowSign={false}
+                alwaysShowValue
               />
             </Box>
           </Box>

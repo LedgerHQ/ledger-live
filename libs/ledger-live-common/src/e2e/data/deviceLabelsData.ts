@@ -40,9 +40,10 @@ const TOUCHSCREEN_DEVICE_CONFIG: LabelConfig = {
     [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
     [AppInfos.COSMOS.name]: DeviceLabels.VERIFY_COSMOS,
     [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
-    [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
+    [AppInfos.POLKADOT.name]: DeviceLabels.VERIFY_POLKADOT,
     [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
     [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
+    [AppInfos.SUI.name]: DeviceLabels.PROVIDE_PUBLIC_KEY,
     default: DeviceLabels.ADDRESS,
   },
   receiveConfirm: {

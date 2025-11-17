@@ -69,7 +69,7 @@ export default function MarketCoinScreen() {
 
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
-  const { name, ticker, image, internalCurrency, price } = currency || {};
+  const { name, ticker, image, ledgerIds, price } = currency || {};
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -107,7 +107,7 @@ export default function MarketCoinScreen() {
           </Flex>
         </Flex>
         <Flex flexDirection="row" alignItems="center" justifyContent="flex-end">
-          {internalCurrency && (
+          {ledgerIds && ledgerIds.length > 0 && (
             <>
               {availableOnBuy && (
                 <Button data-testid="market-coin-buy-button" variant="color" mr={1} onClick={onBuy}>

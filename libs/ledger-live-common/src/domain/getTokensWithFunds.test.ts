@@ -3,6 +3,10 @@ import { getCryptoCurrencyById } from "../currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 const ETH = getCryptoCurrencyById("ethereum");
 

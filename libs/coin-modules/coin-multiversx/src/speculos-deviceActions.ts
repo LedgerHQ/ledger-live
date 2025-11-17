@@ -190,7 +190,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> = dev
     {
       title: "Token",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, transaction }) => {
+      expectedValue: async ({ account, transaction }) => {
         const { subAccounts } = account;
         const { subAccountId } = transaction;
         const tokenAccount = !subAccountId
@@ -201,15 +201,14 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> = dev
           throw new Error();
         }
 
-        const { token } = decodeTokenAccountId(tokenAccount.id);
-
+        const { token } = await decodeTokenAccountId(tokenAccount.id);
         return token?.name ?? "";
       },
     },
     {
       title: "Value",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, transaction }) => {
+      expectedValue: async ({ account, transaction }) => {
         const { subAccounts } = account;
         const { subAccountId } = transaction;
         const tokenAccount = !subAccountId
@@ -220,7 +219,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> = dev
           throw new Error();
         }
 
-        const { token } = decodeTokenAccountId(tokenAccount.id);
+        const { token } = await decodeTokenAccountId(tokenAccount.id);
         if (!token) {
           throw new Error();
         }

@@ -11,9 +11,11 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 }));
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
-  findTokenById: jest.fn(),
-  findTokenByAddressInCurrency: jest.fn(),
   getCryptoCurrencyById: jest.fn(),
+}));
+
+jest.mock("../../bridge/crypto-assets/index", () => ({
+  getCryptoAssetsStore: jest.fn(),
 }));
 
 jest.mock("../converters", () => ({
@@ -148,8 +150,15 @@ describe("ACRE Server Handlers", () => {
   let mockUiHooks: any;
   let serverHandlers: any;
 
+  const { getCryptoAssetsStore } = jest.requireMock("../../bridge/crypto-assets/index");
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    getCryptoAssetsStore.mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenCurrency),
+      findTokenById: jest.fn().mockResolvedValue(mockTokenCurrency),
+    });
     mockUiHooks = {
       "custom.acre.messageSign": jest.fn().mockImplementation(({ onSuccess }) => {
         onSuccess("0x1234567890abcdef");
@@ -165,12 +174,6 @@ describe("ACRE Server Handlers", () => {
         onSuccess();
       }),
     };
-
-    // Mock the cryptoassets functions globally
-    const { findTokenByAddressInCurrency, getCryptoCurrencyById } =
-      jest.requireMock("@ledgerhq/cryptoassets");
-    findTokenByAddressInCurrency.mockReturnValue(mockTokenCurrency);
-    getCryptoCurrencyById.mockReturnValue(mockEthereumCurrency);
 
     // Mock the account functions
     const { makeEmptyTokenAccount, getMainAccount, getParentAccount } = jest.requireMock(

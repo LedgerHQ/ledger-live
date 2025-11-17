@@ -1,4 +1,4 @@
-import test from "../fixtures/common";
+import test from "tests/fixtures/common";
 import {
   Account,
   TokenAccount,
@@ -7,19 +7,19 @@ import {
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { CLI } from "../utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   handleSwapErrorOrSuccess,
   selectAccountMAD,
-} from "../utils/swapUtils";
+} from "tests/utils/swapUtils";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
-import { overrideNetworkPayload } from "../utils/networkUtils";
+import { overrideNetworkPayload } from "tests/utils/networkUtils";
 const app: AppInfos = AppInfos.EXCHANGE;
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
@@ -581,7 +581,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
       } else {
-        await app.swap.chooseFromAsset(account1.currency.name);
+        await app.swap.selectAsset(account1.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
         await app.addAccount.addAccounts();
         await app.addAccount.done();
@@ -1056,7 +1056,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           await app.modularDrawer.selectAccountByName(toAccount);
         } else {
           const networkName = fromAccount.parentAccount?.currency.name;
-          await app.swap.chooseFromAsset(fromAccount.currency.name, networkName);
+          await app.swap.selectAsset(fromAccount.currency.name, networkName);
           await app.swapDrawer.selectAccountByName(fromAccount);
           await app.swap.selectAssetTo(electronApp, toAccount.currency.name);
           await app.swapDrawer.selectAccountByName(toAccount);

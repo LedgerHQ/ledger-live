@@ -1,8 +1,11 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.9.1",
+  "version": "0.10.0-next.0",
   "private": true,
   "scripts": {
+    "lint": "eslint . --ext .ts --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
     "test:playwright": "playwright test --config=playwright.config.ts",
     "test:playwright:setup": "playwright install chromium"
   },
@@ -28,7 +31,7 @@
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
-    "electron": "38.0.0",
+    "electron": "catalog:",
     "playwright": "1.51.1"
   }
 }

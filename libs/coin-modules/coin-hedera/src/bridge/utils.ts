@@ -1,7 +1,5 @@
 import BigNumber from "bignumber.js";
-import murmurhash from "imurmurhash";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -10,7 +8,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { HEDERA_OPERATION_TYPES } from "../constants";
@@ -82,26 +80,6 @@ export const calculateAmount = ({
     : HEDERA_OPERATION_TYPES.CryptoTransfer;
 
   return calculateCoinAmount({ account, transaction, operationType });
-};
-
-const simpleSyncHashMemoize: Record<string, string> = {};
-
-export const getSyncHash = (
-  currency: CryptoCurrency,
-  blacklistedTokenIds: string[] = [],
-): string => {
-  const tokens = listTokensForCryptoCurrency(currency);
-
-  const stringToHash =
-    currency.id +
-    tokens.map(token => token.id + token.contractAddress + token.name + token.ticker).join("") +
-    blacklistedTokenIds.join("");
-
-  if (!simpleSyncHashMemoize[stringToHash]) {
-    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
-  }
-
-  return simpleSyncHashMemoize[stringToHash];
 };
 
 export const getSubAccounts = async (

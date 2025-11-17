@@ -1,11 +1,20 @@
 # web-tools
 
-## 0.25.1
+## 0.25.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238)]:
-  - @ledgerhq/live-common@34.52.1
+- Updated dependencies [[`bba0818`](https://github.com/LedgerHQ/ledger-live/commit/bba0818d91913ac8b45b9638792a28b36e02f48d), [`8c5966e`](https://github.com/LedgerHQ/ledger-live/commit/8c5966ebbf04e9e4ce48b8fcba5de391252eb921), [`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c), [`b2780c4`](https://github.com/LedgerHQ/ledger-live/commit/b2780c42aa9dbc38709b4254a14c792913464637), [`8422b37`](https://github.com/LedgerHQ/ledger-live/commit/8422b376ac66bd43e3f70578b441fb7d3e95e9ff), [`a6bc24e`](https://github.com/LedgerHQ/ledger-live/commit/a6bc24ee988b98bf82f807ac5ce731ba79813901), [`ddffd48`](https://github.com/LedgerHQ/ledger-live/commit/ddffd4836cc916018e96dd7373543dcdb20334e0), [`cccee0b`](https://github.com/LedgerHQ/ledger-live/commit/cccee0b8d76851abadbf8d2aa97c72454b749a1d), [`b69c97d`](https://github.com/LedgerHQ/ledger-live/commit/b69c97d979ba97154c9abfda6abfc2a36becee4f), [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9), [`b80ae2a`](https://github.com/LedgerHQ/ledger-live/commit/b80ae2a43a0b6831afbca248e95142ced7e4dc01), [`5cd6964`](https://github.com/LedgerHQ/ledger-live/commit/5cd69649120a86328ce7943f4b54d84ce6426238), [`9a8d4ba`](https://github.com/LedgerHQ/ledger-live/commit/9a8d4ba540372a2b901186f711dbfd005d17ca42), [`1c6f5f5`](https://github.com/LedgerHQ/ledger-live/commit/1c6f5f5843349b1955f7ca466f98cbe4ffcdaddf), [`f0e3f10`](https://github.com/LedgerHQ/ledger-live/commit/f0e3f10aaddadc03d7ebac577c4d4a0dd4d3d044), [`d5d838a`](https://github.com/LedgerHQ/ledger-live/commit/d5d838a23e00edd53293843781c559c41db4e854), [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515), [`479abcc`](https://github.com/LedgerHQ/ledger-live/commit/479abcc77310297226726271d3bdad7668a084ee), [`1b12223`](https://github.com/LedgerHQ/ledger-live/commit/1b1222391d351698710d23e3245a1a7b61566d90), [`938b970`](https://github.com/LedgerHQ/ledger-live/commit/938b970e15118dc706c759a3bec27dc01c3dd268), [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73), [`7acca7b`](https://github.com/LedgerHQ/ledger-live/commit/7acca7b3f8db4f0c1d2bdbeb0722c88923b0e5ea), [`c0b5b9f`](https://github.com/LedgerHQ/ledger-live/commit/c0b5b9f4cdcb2ea3e15419cbf3d1a14f725c3e6a), [`f78d6ff`](https://github.com/LedgerHQ/ledger-live/commit/f78d6ff46551a8d45b42d8d878b3dcbc96596b2f), [`3e54d84`](https://github.com/LedgerHQ/ledger-live/commit/3e54d8442ecd95fd9cbaf140f80c4173b82cc152), [`70049be`](https://github.com/LedgerHQ/ledger-live/commit/70049bed0cd0a8c7a9e4947a63af82061dad46c0), [`ded9965`](https://github.com/LedgerHQ/ledger-live/commit/ded99658228c6ee46c70d6f32563c2c92f4f0565), [`4232a4c`](https://github.com/LedgerHQ/ledger-live/commit/4232a4cbef7e77082ff8ecbd3f2da9c22559c2de), [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db), [`e686e2e`](https://github.com/LedgerHQ/ledger-live/commit/e686e2e54eb7b6cc166e36883c1de722108285ef), [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec), [`af47f52`](https://github.com/LedgerHQ/ledger-live/commit/af47f52290f0a140744cea4cb99649e0a47ef54e), [`c70f6a8`](https://github.com/LedgerHQ/ledger-live/commit/c70f6a8370056b6fd8f236205471359d6f9b846f)]:
+  - @ledgerhq/live-common@34.53.0-next.0
+  - @ledgerhq/types-live@6.89.0-next.0
+  - @ledgerhq/cryptoassets@13.33.0-next.0
+  - @ledgerhq/coin-framework@6.9.0-next.0
+  - @ledgerhq/live-wallet@0.16.0-next.0
+  - @ledgerhq/live-env@2.21.0-next.0
+  - @ledgerhq/domain-service@1.4.1-next.0
+  - @ledgerhq/hw-app-eth@6.47.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.4-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.7.1-next.0
 
 ## 0.25.1-hotfix.0
 

@@ -2,6 +2,7 @@ import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 
 export enum EntryPoint {
   onboarding = "onboarding",
+  postOnboarding = "postOnboarding",
   manager = "manager",
   accounts = "accounts",
   settings = "settings",

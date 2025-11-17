@@ -120,9 +120,16 @@ export default function useScanDeviceAccountsViewModel({
 
   const quitFlow = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Accounts,
+      screen: ScreenName.AccountsList,
+      params: {
+        sourceScreenName: ScreenName.ScanDeviceAccounts,
+        showHeader: true,
+        canAddAccount: false,
+        isSyncEnabled: false,
+        specificAccounts: scannedAccounts,
+      },
     });
-  }, [navigation]);
+  }, [navigation, scannedAccounts]);
   const onPressAccount = useCallback(
     (account: Account) => {
       const isChecked = selectedIds.indexOf(account.id) > -1;

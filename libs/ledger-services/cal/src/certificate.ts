@@ -11,7 +11,7 @@ const DeviceModel = {
   /** Ledger Flex ("europa" is the internal name) */
   europa: "flex",
   flex: "flex",
-  apex: "apex",
+  apex: "apexp",
 } as const;
 export type Device = keyof typeof DeviceModel;
 

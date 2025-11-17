@@ -418,6 +418,7 @@ export function alpacaTransactionToOp(
         height: Number.parseInt(transaction.checkpoint || "0"),
         time: getOperationDate(transaction),
       },
+      failed: transaction.effects?.status.status !== "success",
     },
     asset: toSuiAsset(coinType),
     recipients: getOperationRecipients(transaction.transaction?.data),

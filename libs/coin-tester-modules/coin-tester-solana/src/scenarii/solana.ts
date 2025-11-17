@@ -31,7 +31,7 @@ import {
 } from "../connection";
 import { Config, getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
-import { addTokens } from "@ledgerhq/cryptoassets/tokens";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
 global.console = require("console");
 jest.setTimeout(100_000);

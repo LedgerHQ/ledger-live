@@ -22,20 +22,19 @@ export async function craftTransaction(
     customFees?: FeeEstimation | undefined;
   },
 ): Promise<CraftedTransaction> {
-  const { sender } = transactionIntent;
-
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
   );
 
-  const nonce = await getSequence(currency, sender);
+  const nonce =
+    transactionIntent.sequence ?? (await getSequence(currency, transactionIntent.sender));
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const unsignedTransaction: TransactionLike = {
     type,
     to,
-    nonce,
+    nonce: Number(nonce),
     gasLimit: BigInt(gasLimit.toFixed(0)),
     data,
     value,

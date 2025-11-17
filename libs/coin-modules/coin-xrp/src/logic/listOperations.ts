@@ -160,6 +160,12 @@ const convertToCoreOperation =
       signingPubKey: SigningPubKey,
     };
 
+    // Note: it's technically possible on XRP to have failures where fees have not been paid, which contradicts the
+    // "failed" field specification. However, since we are only converting transactions included in published blocks
+    // here, this edge case should not be possible.
+    // See https://xrpl.org/docs/references/protocol/transactions/transaction-results
+    const failed = operation.meta.TransactionResult !== "tesSUCCESS";
+
     let op: Operation = {
       id: hash,
       asset: { type: "native" },
@@ -172,6 +178,7 @@ const convertToCoreOperation =
           hash: ledger_hash,
           height: ledger_index,
         },
+        failed: failed,
       },
       type: type,
       value,

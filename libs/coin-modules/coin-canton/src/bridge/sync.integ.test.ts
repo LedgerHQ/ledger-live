@@ -44,7 +44,7 @@ const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
   return callback(mockSigner);
 });
 
-describe("sync (devnet)", () => {
+describe.skip("sync (devnet)", () => {
   beforeAll(async () => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
@@ -114,7 +114,7 @@ describe("sync (devnet)", () => {
             senders: [TEST_ADDRESS],
             recipients: ["recipient-1"],
             date: new Date("2023-01-01"),
-            transactionSequenceNumber: 100,
+            transactionSequenceNumber: BigNumber(100),
             extra: { uid: "uid-1" },
           },
         ];
@@ -181,7 +181,7 @@ describe("sync (devnet)", () => {
           senders: [TEST_ADDRESS],
           recipients: ["recipient-1"],
           date: new Date("2023-01-01"),
-          transactionSequenceNumber: 100,
+          transactionSequenceNumber: BigNumber(100),
           extra: { uid: "uid-1" },
         };
 

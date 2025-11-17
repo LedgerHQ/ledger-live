@@ -124,8 +124,8 @@ const buildGetBalance = (networkFamily: string) =>
   };
 
 const buildGetSequence = (networkFamily: string) =>
-  async function getSequence(address: string): Promise<number> {
-    const { data } = await network<number, unknown>({
+  async function getSequence(address: string): Promise<bigint> {
+    const { data } = await network<bigint, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
     });
@@ -191,7 +191,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },

@@ -49,7 +49,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tesSUCCESS",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -64,7 +67,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tecAMM_ACCOUNT",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -80,7 +86,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tesSUCCESS",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -185,6 +194,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: false,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -213,6 +223,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: true,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -236,6 +247,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: false,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,

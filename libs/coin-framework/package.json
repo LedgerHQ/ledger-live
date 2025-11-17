@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "6.8.0",
+  "version": "6.9.0-next.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -95,6 +95,7 @@
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32-path": "^0.4.2",
+    "imurmurhash": "^0.1.4",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
@@ -106,6 +107,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

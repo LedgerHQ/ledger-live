@@ -12,6 +12,9 @@ import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { Dispatch } from "redux";
+import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
@@ -36,10 +39,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch: Dispatch = useDispatch();
   const history = useHistory();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
+
+  const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
+    entryPoint: EntryPoint.postOnboarding,
+    needEligibleDevice: false,
+  });
 
   const completeAction = useCompleteActionCallback();
   const [isActionCompleted, setIsActionCompleted] = useState(false);
@@ -62,7 +70,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     };
 
     if ("startAction" in props && deviceModelId !== null) {
-      props.startAction({ openModalCallback, navigationCallback, deviceModelId, protectId });
+      props.startAction({
+        openModalCallback,
+        navigationCallback,
+        deviceModelId,
+        protectId,
+        openActivationDrawer,
+      });
       buttonLabelForAnalyticsEvent &&
         track("button_clicked2", {
           button: buttonLabelForAnalyticsEvent,
@@ -81,6 +95,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     id,
     shouldCompleteOnStart,
     protectId,
+    openActivationDrawer,
   ]);
 
   return (
@@ -92,7 +107,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       borderRadius={3}
       marginBottom={4}
       completed={isActionCompleted}
-      padding="32px 24px 32px 24px"
+      padding="32px 24px"
       {...(isActionCompleted
         ? undefined
         : {

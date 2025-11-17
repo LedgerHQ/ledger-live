@@ -1,7 +1,7 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
 import invariant from "invariant";
 
 const currencies = [

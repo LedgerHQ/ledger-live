@@ -18,6 +18,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
+import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
@@ -45,7 +46,6 @@ import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
-import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
@@ -76,10 +76,11 @@ import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/po
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
-import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
+import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -300,7 +301,7 @@ export default class Root extends Component {
   render() {
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {(ready, initialCountervalues) =>
+        {({ ready, initialCountervalues, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -312,35 +313,37 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
-                <FirebaseRemoteConfigProvider>
-                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                    <I18nextProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <StorylyProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <App />
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
-                              </StylesProvider>
-                            </StorylyProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nextProvider>
-                  </FirebaseFeatureFlagsProvider>
-                </FirebaseRemoteConfigProvider>
+                <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                          <BridgeSyncProvider>
+                                            <App />
+                                          </BridgeSyncProvider>
+                                        </WaitForAppReady>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
+                          </StorylyProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>
           ) : (

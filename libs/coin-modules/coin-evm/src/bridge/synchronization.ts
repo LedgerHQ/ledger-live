@@ -20,7 +20,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ExplorerApi } from "../network/explorer/types";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
-import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
+import { attachOperations, mergeSubAccounts, createSwapHistoryMap, getSyncHash } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
 import { getCoinConfig } from "../config";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
@@ -52,7 +52,8 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   });
   const findToken = async (contractAddress: string): Promise<TokenCurrency | undefined> =>
     getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, currency.id);
-  const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  const syncHash = await getSyncHash(currency, blacklistedTokenIds);
+
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
@@ -255,7 +256,7 @@ export const getOperationStatus = async (
 
     return {
       ...op,
-      transactionSequenceNumber: nonce,
+      transactionSequenceNumber: new BigNumber(nonce),
       blockHash,
       blockHeight,
       date,
@@ -263,14 +264,14 @@ export const getOperationStatus = async (
       value: new BigNumber(value).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         blockHash,
         blockHeight,
         date,
       })),
       nftOperations: op.nftOperations?.map(nftOp => ({
         ...nftOp,
-        transactionSequenceNumber: nonce,
+        transactionSequenceNumber: new BigNumber(nonce),
         blockHash,
         blockHeight,
         date,
@@ -288,7 +289,7 @@ export const getOperationStatus = async (
 export const postSync = (initial: Account, synced: Account): Account => {
   // Get the latest nonce from the synced account
   const lastOperation = synced.operations.find(op => ["OUT", "FEES", "NFT_OUT"].includes(op.type));
-  const latestNonce = lastOperation?.transactionSequenceNumber || -1;
+  const latestNonce = lastOperation?.transactionSequenceNumber || new BigNumber(-1);
   // Set of ids from the already existing subAccount from previous sync
   const initialSubAccountsIds = new Set();
   for (const subAccount of initial.subAccounts || []) {

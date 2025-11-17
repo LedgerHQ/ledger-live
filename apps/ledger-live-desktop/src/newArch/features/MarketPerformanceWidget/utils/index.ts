@@ -36,20 +36,15 @@ export function isAvailableOnBuyOrSwap(
 
 export function filterAvailableBuyOrSwapCurrency(
   elem: MarketItemPerformer,
-  cryptoCurrenciesSet: Set<string>,
   isAvailable: (id: string, type: CurrencyCheck) => boolean,
 ): boolean {
-  const isCurrencyInLedger = elem.ledgerIds.some(ledgerId =>
-    cryptoCurrenciesSet.has(ledgerId.toLowerCase()),
-  );
-
   const isAvailableOnBuyOrSwap = ["onRamp", "swap"].some(
     type =>
       isAvailable(elem.id, type as CurrencyCheck) ||
       elem.ledgerIds.some(lrId => isAvailable(lrId, type as CurrencyCheck)),
   );
 
-  return isCurrencyInLedger && isAvailableOnBuyOrSwap;
+  return isAvailableOnBuyOrSwap;
 }
 
 export function getSlicedListWithFilters(

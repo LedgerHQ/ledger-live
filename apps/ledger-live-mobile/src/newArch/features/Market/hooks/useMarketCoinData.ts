@@ -21,7 +21,11 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
     range,
   });
 
-  const { data: currency, isLoading } = useCurrencyData({
+  const {
+    data: currency,
+    isFetching,
+    refetch,
+  } = useCurrencyData({
     counterCurrency,
     id: currencyId,
   });
@@ -31,8 +35,9 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
     range,
     currency,
     dataChart: resCurrencyChartData.data,
-    loadingChart: resCurrencyChartData.isLoading,
-    loading: isLoading,
+    loadingChart: resCurrencyChartData.isFetching,
+    loading: isFetching,
     marketParams,
+    refetch,
   };
 };
