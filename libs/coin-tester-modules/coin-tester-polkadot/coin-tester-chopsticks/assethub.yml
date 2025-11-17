@@ -1,0 +1,20 @@
+# Configuration file for chopsticks
+# Inspired by https://github.com/AcalaNetwork/chopsticks/blob/master/configs/polkadot-asset-hub.yml
+# Documentation: https://github.com/AcalaNetwork/chopsticks?tab=readme-ov-file
+endpoint: wss://polkadot-asset-hub-rpc.polkadot.io
+mock-signature-host: true
+db: /data/assethub.sqlite
+
+import-storage:
+  System:
+    Account:
+      - - - 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+        - providers: 1
+          data:
+            free: 10000000000000000
+  Assets:
+    Account:
+      - [[1984, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY], { balance: 1000000000 }]
+      - [[1337, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY], { balance: 1000000000 }]
+      - [[21, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY], { balance: 1000000000 }]
+    Asset: [[[21], { supply: 1000000000 }]]

@@ -252,7 +252,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       spawnSpeculos(
         `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
       ),
-      spawnChopsticksAndSidecar("coin-tester-chopsticks/polkadot.yml"),
+      spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml"),
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
@@ -282,27 +282,16 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    // Wait for the transfer to be finalized
-    await new Promise<void>((resolve, reject) => {
-      api.tx.balances
-        .transferAllowDeath(
-          polkadotScenarioAccountPair.address,
-          parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
-        )
-        .signAndSend(alice, result => {
-          if (result.status.isFinalized) {
-            resolve();
-          } else if (
-            result.status.type === "Dropped" ||
-            result.status.type === "Invalid" ||
-            result.status.type === "Usurped" ||
-            result.status.type === "FinalityTimeout"
-          ) {
-            reject(new Error(`Transaction failed: ${result.status.type}`));
-          }
-        })
-        .catch(reject);
-    });
+    const unsub = await api.tx.balances
+      .transferAllowDeath(
+        polkadotScenarioAccountPair.address,
+        parseCurrencyUnit(polkadot.units[0], "100000").toNumber(),
+      )
+      .signAndSend(alice, result => {
+        if (result.status.isFinalized) {
+          unsub();
+        }
+      });
 
     const account = makeAccount(polkadotScenarioAccountPair.address, polkadot);
 
@@ -405,7 +394,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
   },
   beforeAll: async account => {
     expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
-      "500000",
+      "100000",
     );
   },
   beforeSync: async () => {
