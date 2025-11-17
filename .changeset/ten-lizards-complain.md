@@ -1,0 +1,12 @@
+---
+"@ledgerhq/hw-app-vet": minor
+"@ledgerhq/crypto-icons-ui": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/native-ui": minor
+"@ledgerhq/icons-ui": minor
+"@ledgerhq/live-dmk-mobile": minor
+"ledger-live-mobile-e2e-tests": minor
+---
+
+Migrate to React-Native New-Architecture
