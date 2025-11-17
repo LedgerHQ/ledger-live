@@ -273,7 +273,7 @@ const QueuedDrawerNative = ({
               width: "100%",
               paddingHorizontal: 16,
               paddingTop: 16,
-              paddingBottom: insets.bottom,
+              paddingBottom: insets.bottom + 16,
             }}
           >
             {shouldShowHeader && !CustomHeader ? (
