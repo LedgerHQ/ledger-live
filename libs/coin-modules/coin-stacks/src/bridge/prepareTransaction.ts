@@ -9,7 +9,7 @@ import {
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
 import invariant from "invariant";
-import { StacksNetwork } from "../network/api.types";
+import { StacksNetwork } from "../network/types/api";
 import { Transaction } from "../types";
 import { validateAddress } from "./utils/addresses";
 import { findNextNonce, getAddress } from "./utils/misc";

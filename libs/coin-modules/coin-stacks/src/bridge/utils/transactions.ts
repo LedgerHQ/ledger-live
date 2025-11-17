@@ -17,7 +17,7 @@ import {
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { StacksNetwork } from "../../network/api.types";
+import { StacksNetwork } from "../../network/types/api";
 import { StacksOperation, Transaction } from "../../types";
 import { memoToBufferCV } from "./memoUtils";
 
@@ -93,7 +93,7 @@ export const createTokenTransferPostConditions = (
       conditionCode,
       amount: BigInt(amount.toFixed()),
       assetInfo: createAssetInfo(contractAddress, contractName, assetName),
-    } as PostCondition,
+    },
   ];
 };
 

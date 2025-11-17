@@ -1,4 +1,4 @@
-import { TransactionResponse } from "./api.types";
+import { TransactionResponse } from "./types/api";
 import { fetchFungibleTokenMetadataCached } from "./api";
 import { TokenPrefix } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";

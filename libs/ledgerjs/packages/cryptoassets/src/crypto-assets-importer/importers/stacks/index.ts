@@ -18,7 +18,6 @@ export const convertCALContractAddressToStacksSip010 = (fullIdentifier: string) 
   let contractName = "";
   let assetName = "";
 
-  console.log(fullIdentifier);
   const dotIndex = fullIdentifier.lastIndexOf(".");
   if (dotIndex !== -1) {
     actualContractAddress = fullIdentifier.substring(0, dotIndex);

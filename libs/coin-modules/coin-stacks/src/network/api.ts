@@ -16,7 +16,7 @@ import {
   TokenBalanceResponse,
   TransactionResponse,
   TransactionsResponse,
-} from "./api.types";
+} from "./types/api";
 import {
   extractTokenTransferTransactions,
   extractSendManyTransactions,
@@ -163,7 +163,7 @@ export const fetchEstimatedFees = async (
  */
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   const data = await fetch<NetworkStatusResponse>("/extended");
-  return data as NetworkStatusResponse;
+  return data;
 };
 
 /**

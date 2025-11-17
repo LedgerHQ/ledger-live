@@ -3,7 +3,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { StacksNetwork } from "../network/api.types";
+import { StacksNetwork } from "../network/types/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
