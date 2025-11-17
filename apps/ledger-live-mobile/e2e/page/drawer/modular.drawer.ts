@@ -40,14 +40,16 @@ export default class ModularDrawer {
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
       const id = this.networkItemIdMAD(networkName);
+
       try {
         if (!(await IsIdVisible(id))) {
           await scrollToId(id, this.networkSelectionScrollViewId);
         }
-      } catch (error) {
-        // Element might have multiple matches or already be visible, proceed to tap
+      } catch {
+        // do nothing
+      } finally {
+        await tapById(id, 0);
       }
-      await tapById(id, 0);
     }
   }
 
