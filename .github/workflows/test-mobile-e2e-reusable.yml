@@ -168,8 +168,8 @@ jobs:
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios" >> $GITHUB_OUTPUT
-          echo "android_native_key=${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-2" >> $GITHUB_OUTPUT
+          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
@@ -386,32 +386,28 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         if: inputs.production_firebase != true
-        uses: tespkg/actions-cache/restore@v1
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: ${{ env.IOS_NATIVE_PATH }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Download JS Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         if: inputs.production_firebase != true
-        uses: tespkg/actions-cache/restore@v1
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Copy JS build
         if: inputs.production_firebase != true
@@ -594,31 +590,25 @@ jobs:
 
       - name: Download Native Build
         if: inputs.production_firebase != true
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
-          path: |
-            ${{ env.ANDROID_APK_PATH }}
-            ${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Download JS Bundle
         if: inputs.production_firebase != true
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
-          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Prepare APK
         if: inputs.production_firebase != true
