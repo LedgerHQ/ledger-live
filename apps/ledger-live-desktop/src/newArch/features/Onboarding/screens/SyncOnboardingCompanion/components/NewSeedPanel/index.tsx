@@ -1,7 +1,8 @@
-import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
+import { SeedOriginType } from "@ledgerhq/types-live";
 import NewSeedIllustration from "./NewSeedIllustration";
 import {
   onboardingReceiveFlowSelector,
@@ -9,10 +10,9 @@ import {
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
 import { track } from "~/renderer/analytics/segment";
-import { analyticsFlowName } from "../../shared";
-import { SeedOriginType } from "@ledgerhq/types-live";
-import { useOpenAssetFlow } from "~/newArch/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "~/newArch/features/ModularDrawer";
+import { analyticsFlowName } from "~/renderer/components/SyncOnboarding/Manual/shared";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 
 const NewSeedPanel = ({
   handleComplete,
