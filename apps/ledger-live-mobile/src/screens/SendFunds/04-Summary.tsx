@@ -311,7 +311,7 @@ function SendSummary({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error} color="alert">
-          <TranslatedError error={transactionError} />
+          <TranslatedError error={transactionError ?? error} />
         </LText>
         <Button
           event="SummaryContinue"
