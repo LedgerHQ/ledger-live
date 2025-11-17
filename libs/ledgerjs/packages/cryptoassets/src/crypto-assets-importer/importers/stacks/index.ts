@@ -68,26 +68,12 @@ export const importStacksSip010Tokens = async (outputDir: string) => {
       fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
     }
 
-    fs.writeFileSync(
-      `${filePath}.ts`,
-      `export type StacksSip010Token = [
-  string, // contractAddress
-  string, // contractName
-  string, // assetName
-  string, // displayName
-  string, // ticker
-  number, // decimals
-  boolean, // delisted
-  string, // live_signature
-];
-
-import tokens from "./stacks-sip010.json";
-
-${hash ? `export { default as hash } from "./stacks-sip010-hash.json";` : ""}
-
-export default tokens as StacksSip010Token[];
-`,
-    );
+    const templatePath = path.join(__dirname, "tokens.template.ts");
+    let data = fs.readFileSync(templatePath, { encoding: "utf8" });
+    if (!hash) {
+      data = data.replace('export { default as hash } from "./stacks-sip010-hash.json";\n\n', "");
+    }
+    fs.writeFileSync(`${filePath}.ts`, data);
 
     console.log("importing stacks sip010 tokens success");
   } catch (err) {
