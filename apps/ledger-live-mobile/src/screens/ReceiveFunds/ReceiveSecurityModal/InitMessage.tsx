@@ -59,7 +59,7 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
         >
           <Trans i18nKey="transfer.receive.securityVerify.verifyCta" />
         </Button>
-        <NotNowButton onPress={onDontVerify} testID="button-DontVerify-my-address">
+        <NotNowButton onPressIn={onDontVerify} testID="button-DontVerify-my-address">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="transfer.receive.securityVerify.dontVerifyCta" />
           </Text>
