@@ -12,6 +12,7 @@ import getBatteryStatus from "../commands/getBatteryStatus";
 
 export type GetBatteryStatusesTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   statuses: BatteryStatusTypes[];
 };
 
@@ -30,10 +31,14 @@ export type GetBatteryStatusesTaskEvent =
 
 function internalGetBatteryStatusesTask({
   deviceId,
+  deviceName,
   statuses,
 }: GetBatteryStatusesTaskArgs): Observable<GetBatteryStatusesTaskEvent> {
   return new Observable(subscriber => {
-    return withTransport(deviceId)(({ transportRef }) =>
+    return withTransport(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(({ transportRef }) =>
       quitApp(transportRef.current).pipe(
         switchMap(() => {
           const statusesObservable = statuses.map(statusType =>

@@ -17,6 +17,7 @@ export type DeviceEvent = {
 };
 
 export type Discovery = Observable<DeviceEvent>;
+
 // NB open/close/disconnect semantic will have to be refined...
 export type TransportModule = {
   // unique transport name that identify the transport module
@@ -35,6 +36,7 @@ export type TransportModule = {
     id: string,
     timeoutMs?: number,
     context?: TraceContext,
+    matchDeviceByName?: string,
   ) => Promise<Transport> | null | undefined;
   // here, close means we want to STOP doing something with the transport
   close?: (transport: Transport, id: string) => Promise<void> | null | undefined;
@@ -88,6 +90,11 @@ export const discoverDevices = (
   );
 };
 
+export type OpenOptions = {
+  openTimeoutMs?: number;
+  matchDeviceByName?: string;
+};
+
 /**
  * Tries to call `open` on the 1st matching registered transport implementation
  *
@@ -109,7 +116,7 @@ export const discoverDevices = (
  */
 export const open = (
   deviceId: string,
-  timeoutMs?: number,
+  options?: OpenOptions,
   context?: TraceContext,
 ): Promise<Transport> => {
   // The first registered Transport (TransportModule) accepting the given device will be returned.
@@ -117,16 +124,16 @@ export const open = (
   // A TransportModule can check the prefix of the device id to guess if it should use USB or not on LLM for ex.
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
-    const p = m.open(deviceId, timeoutMs, context);
+    const p = m.open(deviceId, options?.openTimeoutMs, context, options?.matchDeviceByName);
     if (p) {
       trace({
         type: LOG_TYPE,
         message: `Found a matching Transport: ${m.id}`,
         context,
-        data: { timeoutMs },
+        data: { options },
       });
 
-      if (!timeoutMs) {
+      if (!options?.openTimeoutMs) {
         return p;
       }
 
@@ -144,18 +151,18 @@ export const open = (
 
           return transport;
         }),
-        new Promise((_resolve, reject) => {
+        new Promise<never>((_resolve, reject) => {
           timer = setTimeout(() => {
             trace({
               type: LOG_TYPE,
-              message: `Could not open registered transport ${m.id} on ${deviceId}, timed out after ${timeoutMs}ms`,
+              message: `Could not open registered transport ${m.id} on ${deviceId}, timed out after ${options?.openTimeoutMs}ms`,
               context,
             });
 
             return reject(new CantOpenDevice(`Timeout while opening device on transport ${m.id}`));
-          }, timeoutMs);
+          }, options?.openTimeoutMs);
         }),
-      ]) as Promise<Transport>;
+      ]);
     }
   }
   return Promise.reject(new CantOpenDevice(`Cannot find registered transport to open ${deviceId}`));

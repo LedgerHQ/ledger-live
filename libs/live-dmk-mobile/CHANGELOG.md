@@ -6,6 +6,18 @@
 
 - [#12562](https://github.com/LedgerHQ/ledger-live/pull/12562) [`f78d6ff`](https://github.com/LedgerHQ/ledger-live/commit/f78d6ff46551a8d45b42d8d878b3dcbc96596b2f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix an error recognition bug in ConnectApp DA
 
+## 0.14.1
+
+### Patch Changes
+
+- [#12742](https://github.com/LedgerHQ/ledger-live/pull/12742) [`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
+## 0.14.1-hotfix.0
+
+### Patch Changes
+
+- [#12742](https://github.com/LedgerHQ/ledger-live/pull/12742) [`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
 ## 0.14.0
 
 ### Minor Changes

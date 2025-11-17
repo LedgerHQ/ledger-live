@@ -37,6 +37,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -60,6 +61,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -80,6 +82,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -102,6 +105,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -127,6 +131,7 @@ describe("useGenuineCheck", () => {
           useGenuineCheck({
             getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
             deviceId: "A_DEVICE_ID",
+            deviceName: null,
           }),
         );
 
@@ -151,6 +156,7 @@ describe("useGenuineCheck", () => {
           useGenuineCheck({
             getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
             deviceId: "A_DEVICE_ID",
+            deviceName: null,
           }),
         );
 
@@ -185,6 +191,7 @@ describe("useGenuineCheck", () => {
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           isHookEnabled: true,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -220,6 +227,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -250,6 +258,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           permissionTimeoutMs,
         }),
       );
@@ -288,6 +297,7 @@ describe("useGenuineCheck", () => {
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
         }),
       );
 
@@ -298,6 +308,33 @@ describe("useGenuineCheck", () => {
       // Then the hook consumer should not have errors and the permission state should be granted
       expect(result.current.devicePermissionState).toEqual("granted");
       expect(result.current.error).toBeNull();
+    });
+  });
+
+  describe("When deviceName is provided", () => {
+    it("should pass deviceName to getGenuineCheckFromDeviceId", async () => {
+      const mockGetGenuineCheck = jest.fn().mockReturnValue(
+        of({
+          socketEvent: { type: "device-permission-granted" },
+          lockedDevice: false,
+        }),
+      );
+
+      renderHook(() =>
+        useGenuineCheck({
+          getGenuineCheckFromDeviceId: mockGetGenuineCheck,
+          deviceId: "A_DEVICE_ID",
+          deviceName: "My Device",
+        }),
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(mockGetGenuineCheck).toHaveBeenCalledWith(
+        expect.objectContaining({ deviceName: "My Device" }),
+      );
     });
   });
 });

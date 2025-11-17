@@ -8,6 +8,7 @@ import { getLatestFirmwareTask, GetLatestFirmwareTaskErrorEvent } from "../tasks
 
 export type updateFirmwareActionArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
 };
 
 export type UpdateFirmwareActionState = FullActionState<{
@@ -51,16 +52,17 @@ export const initialState: UpdateFirmwareActionState = {
  */
 export function updateFirmwareAction({
   deviceId,
+  deviceName,
 }: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
   return concat(
     of(initialState),
-    getDeviceInfoTask({ deviceId }).pipe(
+    getDeviceInfoTask({ deviceId, deviceName }).pipe(
       switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         }
         const { deviceInfo } = event;
-        return getLatestFirmwareTask({ deviceId, deviceInfo });
+        return getLatestFirmwareTask({ deviceId, deviceName, deviceInfo });
       }),
       switchMap(event => {
         if (event.type !== "data") {
@@ -68,6 +70,7 @@ export function updateFirmwareAction({
         } else {
           return updateFirmwareTask({
             deviceId,
+            deviceName,
             updateContext: event.firmwareUpdateContext,
           });
         }

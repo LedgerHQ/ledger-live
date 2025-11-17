@@ -1,15 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Touchable from "~/components/Touchable";
 import RemoveDeviceMenu from "./RemoveDeviceMenu";
+import { type DisplayedDevice } from "./DisplayedDevice";
 
 type Props = {
-  device: Device & { available?: boolean };
+  device: DisplayedDevice;
   isScanning?: boolean;
-  onPress: (_: Device) => void;
+  onPress: (_: DisplayedDevice) => void;
 };
 
 function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {

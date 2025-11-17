@@ -110,6 +110,18 @@
   - @ledgerhq/speculos-transport@0.2.15-next.0
   - @ledgerhq/hw-app-celo@6.35.3-next.0
 
+## 34.52.1
+
+### Patch Changes
+
+- [#12742](https://github.com/LedgerHQ/ledger-live/pull/12742) [`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
+## 34.52.1-hotfix.0
+
+### Patch Changes
+
+- [#12742](https://github.com/LedgerHQ/ledger-live/pull/12742) [`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
 ## 34.52.0
 
 ### Minor Changes

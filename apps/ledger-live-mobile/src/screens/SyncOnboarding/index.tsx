@@ -117,6 +117,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     toggleType: toggleOnboardingEarlyCheckType,
   });
 

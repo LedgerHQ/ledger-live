@@ -125,6 +125,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGenuineCheck({
     isHookEnabled: genuineCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
@@ -148,6 +149,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 

@@ -10,6 +10,7 @@ const STATE_UPDATE_THROTTLE = 500;
 
 export type UseUpdateFirmwareArgs = {
   deviceId: string;
+  deviceName: string | null;
   updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
 };
 
@@ -22,6 +23,7 @@ export type UseUpdateFirmwareArgs = {
  */
 export function useUpdateFirmware({
   deviceId,
+  deviceName,
   updateFirmwareAction = defaultUpdateFirmwareAction,
 }: UseUpdateFirmwareArgs): {
   updateState: UpdateFirmwareActionState;
@@ -34,6 +36,7 @@ export function useUpdateFirmware({
     if (nonce > 0) {
       const sub = updateFirmwareAction({
         deviceId,
+        deviceName,
       })
         .pipe(
           // in order to correctly throttle the events without losing any important events
@@ -52,7 +55,7 @@ export function useUpdateFirmware({
         sub.unsubscribe();
       };
     }
-  }, [deviceId, updateFirmwareAction, nonce]);
+  }, [deviceId, updateFirmwareAction, nonce, deviceName]);
 
   const triggerUpdate = useCallback(() => {
     setUpdateState(initialState);

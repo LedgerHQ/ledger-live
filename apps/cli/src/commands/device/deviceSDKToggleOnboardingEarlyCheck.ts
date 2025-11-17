@@ -26,6 +26,7 @@ export default {
 
       return toggleOnboardingEarlyCheckAction({
         deviceId: device ?? "",
+        deviceName: null,
         toggleType: toggleType ?? "enter",
       }).subscribe(o);
     });

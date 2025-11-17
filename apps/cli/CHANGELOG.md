@@ -25,6 +25,20 @@
   - @ledgerhq/ledger-key-ring-protocol@0.7.1-next.0
   - @ledgerhq/live-network@2.1.1-next.0
 
+## 24.27.1
+
+### Patch Changes
+
+- Updated dependencies [[`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238)]:
+  - @ledgerhq/live-common@34.52.1
+
+## 24.27.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`51bfea9`](https://github.com/LedgerHQ/ledger-live/commit/51bfea93d2b52ab552bb7f4932bfd225134f3238)]:
+  - @ledgerhq/live-common@34.52.1-hotfix.0
+
 ## 24.27.0
 
 ### Minor Changes
