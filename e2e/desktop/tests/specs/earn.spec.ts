@@ -46,7 +46,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -170,7 +170,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,

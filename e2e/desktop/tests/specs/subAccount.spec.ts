@@ -35,7 +35,6 @@ const subAccountReceive: Array<{
   { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
   { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
   { account: Account.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  { account: Account.BSC_SHIBA, xrayTicket: "B2CQA-2490" },
   { account: Account.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: Account.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },

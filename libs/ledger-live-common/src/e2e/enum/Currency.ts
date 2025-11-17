@@ -156,10 +156,6 @@ export class Currency {
     AppInfos.BNB_CHAIN,
     [Network.BNB_CHAIN, Network.POLYGON],
   );
-  static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
-    Network.BNB_CHAIN,
-    Network.ETHEREUM,
-  ]);
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
     "DAI",
