@@ -5,6 +5,12 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { Account } from "@ledgerhq/types-live";
+import { getReduxStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import {
+  extractTokensFromState,
+  PERSISTENCE_VERSION,
+  type PersistedTokens,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 export type LiveDataJobOpts = ScanCommonOpts &
   Partial<{
@@ -45,7 +51,9 @@ export default {
           return throwError(() => new Error("encrypted ledger live data is not supported"));
         }
 
-        const existingIds = appjsondata.data.accounts.map((a: any) => a.data.id);
+        const existingIds = appjsondata.data.accounts.map(
+          (a: { data: { id: string } }) => a.data.id,
+        );
         const append = accounts
           .filter(a => !existingIds.includes(a.id))
           .map(account => ({
@@ -53,6 +61,13 @@ export default {
             version: 1,
           }));
         appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
+
+        // Extract persisted tokens from the RTK Query cache
+        const reduxStore = getReduxStore();
+        const state = reduxStore.getState();
+        const tokens = extractTokensFromState(state);
+        const persistedTokens: PersistedTokens = { version: PERSISTENCE_VERSION, tokens };
+        appjsondata.data.cryptoAssets = persistedTokens;
 
         if (opts.appjson) {
           fs.writeFileSync(opts.appjson, JSON.stringify(appjsondata), "utf-8");
