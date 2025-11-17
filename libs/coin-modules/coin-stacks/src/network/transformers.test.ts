@@ -1,4 +1,4 @@
-import { TransactionResponse } from "./api.types";
+import { TransactionResponse } from "./types/api";
 import {
   extractTokenTransferTransactions,
   extractSendManyTransactions,

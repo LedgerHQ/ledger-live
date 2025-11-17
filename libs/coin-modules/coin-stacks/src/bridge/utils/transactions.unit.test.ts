@@ -7,7 +7,7 @@ import {
   StacksMessageType,
 } from "@stacks/transactions";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { StacksNetwork } from "../../network/api.types";
+import { StacksNetwork } from "../../network/types/api";
 import {
   getTokenContractDetails,
   createTokenTransferFunctionArgs,

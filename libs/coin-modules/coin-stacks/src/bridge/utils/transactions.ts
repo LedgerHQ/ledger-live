@@ -81,7 +81,7 @@ export const createTokenTransferPostConditions = (
   assetName: string,
 ): PostCondition[] => {
   let conditionCode: FungibleConditionCode = FungibleConditionCode.Equal;
-  if (specialConditionCode[`${contractAddress}.${contractName}::${assetName}`]) {
+  if (specialConditionCode.includes(`${contractAddress}.${contractName}::${assetName}`)) {
     conditionCode = FungibleConditionCode.LessEqual;
   }
 

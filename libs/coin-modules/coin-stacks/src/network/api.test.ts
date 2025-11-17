@@ -14,7 +14,7 @@ import {
   fetchFullMempoolTxs,
   fetchNonce,
 } from "./api";
-import { EstimatedFeesRequest } from "./api.types";
+import { EstimatedFeesRequest } from "./types/api";
 
 jest.mock("@ledgerhq/live-env");
 jest.mock("@ledgerhq/live-network/network");
