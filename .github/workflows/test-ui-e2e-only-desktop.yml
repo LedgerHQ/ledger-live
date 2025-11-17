@@ -57,7 +57,7 @@ on:
         description: "Firmware version to use for selected device"
         required: false
         type: string
-        default: "1.4.1"
+        default: "1.5.0"
 
   workflow_call:
     inputs:
@@ -112,7 +112,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
-      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
+      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -181,7 +181,7 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
