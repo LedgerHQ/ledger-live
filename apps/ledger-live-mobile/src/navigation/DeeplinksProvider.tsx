@@ -383,7 +383,6 @@ export const DeeplinksProvider = ({
                        */
                       ...modularDrawerFlowConfigs.modularDrawer,
                       ...modularDrawerFlowConfigs.classicAddAccount,
-                      ...modularDrawerFlowConfigs.classicReceive,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {

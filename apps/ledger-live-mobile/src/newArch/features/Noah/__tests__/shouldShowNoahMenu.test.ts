@@ -1,24 +1,23 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { shouldShowNoahMenu, NoahRouteProp } from "./shouldShowNoahMenu";
+import { shouldShowNoahMenu, NoahParams } from "../shouldShowNoahMenu";
 
 describe("shouldShowNoahMenu", () => {
-  const makeRoute = (params?: {
+  const makeParams = (params?: {
     fromMenu?: boolean;
     currency?: TokenCurrency | CryptoCurrency;
-  }): NoahRouteProp => ({
-    key: "string",
-    name: "params",
-    params: { params },
+  }): NoahParams => ({
+    fromMenu: params?.fromMenu,
+    currency: params?.currency,
   });
 
   it("returns false if noahFlagEnabled is false", () => {
-    const route = makeRoute();
-    expect(shouldShowNoahMenu(route, false)).toBe(false);
+    const param = makeParams();
+    expect(shouldShowNoahMenu(param, false)).toBe(false);
   });
 
   it("returns false if fromMenu is true", () => {
-    const route = makeRoute({ fromMenu: true });
-    expect(shouldShowNoahMenu(route, true)).toBe(false);
+    const param = makeParams({ fromMenu: true });
+    expect(shouldShowNoahMenu(param, true)).toBe(false);
   });
 
   it("returns true if token is ethereum/erc20/usd__coin", () => {
@@ -31,27 +30,27 @@ describe("shouldShowNoahMenu", () => {
       },
     } as unknown as TokenCurrency;
 
-    const route = makeRoute({ currency: token });
-    expect(shouldShowNoahMenu(route, true)).toBe(true);
+    const param = makeParams({ currency: token });
+    expect(shouldShowNoahMenu(param, true)).toBe(true);
   });
 
   it("returns true if currency is undefined", () => {
-    const route = makeRoute();
-    expect(shouldShowNoahMenu(route, true)).toBe(true);
+    const param = makeParams();
+    expect(shouldShowNoahMenu(param, true)).toBe(true);
   });
 
   it("returns true if currency is an object with id 'ethereum'", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const currency = { id: "ethereum", family: "evm" } as unknown as CryptoCurrency;
 
-    const route = makeRoute({ currency });
-    expect(shouldShowNoahMenu(route, true)).toBe(true);
+    const param = makeParams({ currency });
+    expect(shouldShowNoahMenu(param, true)).toBe(true);
   });
 
   it("returns false if currency is an object with id 'bitcoin'", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const currency = { id: "bitcoin", family: "evm" } as unknown as CryptoCurrency;
-    const route = makeRoute({ currency });
-    expect(shouldShowNoahMenu(route, true)).toBe(false);
+    const param = makeParams({ currency });
+    expect(shouldShowNoahMenu(param, true)).toBe(false);
   });
 });

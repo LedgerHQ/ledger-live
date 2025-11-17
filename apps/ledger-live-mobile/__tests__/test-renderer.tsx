@@ -34,6 +34,7 @@ import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modula
 import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notifications";
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
+import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as SWAP_INITIAL_STATE } from "~/reducers/swap";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
@@ -57,6 +58,7 @@ const INITIAL_STATE: State = {
   largeMover: LARGE_MOVER_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
+  receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,

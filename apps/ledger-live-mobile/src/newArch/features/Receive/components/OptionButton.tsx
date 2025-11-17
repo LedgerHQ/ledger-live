@@ -2,8 +2,8 @@ import React, { memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
-import { rgba } from "../../colors";
 import { NewIconType } from "@ledgerhq/native-ui/lib/components/Icon/type";
+import { rgba } from "~/colors";
 
 type Props = {
   onPress: () => void;

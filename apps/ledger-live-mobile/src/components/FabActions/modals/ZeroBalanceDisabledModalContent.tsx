@@ -36,7 +36,7 @@ function ZeroBalanceDisabledModalContent({
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "zero-balance-disabled-modal",
     currency,
   });
@@ -79,15 +79,8 @@ function ZeroBalanceDisabledModalContent({
             parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
         },
       });
-    } else if (isModularDrawerEnabled) {
-      handleOpenReceiveDrawer();
     } else {
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
-        params: {
-          currency: actionCurrency!,
-        },
-      });
+      handleOpenReceiveDrawer();
     }
     onClose();
   }, [
@@ -99,7 +92,6 @@ function ZeroBalanceDisabledModalContent({
     navigation,
     actionCurrency,
     parentAccount?.id,
-    isModularDrawerEnabled,
     handleOpenReceiveDrawer,
   ]);
 
