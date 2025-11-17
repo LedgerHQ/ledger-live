@@ -3,7 +3,10 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPICustomHandlers,
+  AccountIdFormatsResponse,
+} from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -288,7 +291,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
 
         try {
-          const results: Record<string, "uuid" | "encoded"> = {};
+          const results: AccountIdFormatsResponse = {};
 
           // For each liveAppId, fetch the manifest and check if it uses uuid format
           for (const liveAppId of liveAppIds) {

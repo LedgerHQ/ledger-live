@@ -5,7 +5,10 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPICustomHandlers,
+  AccountIdFormatsResponse,
+} from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
@@ -214,7 +217,7 @@ export function useCustomExchangeHandlers({
           throw new Error("liveAppIds must be an array");
         }
 
-        const results: Record<string, "uuid" | "encoded"> = {};
+        const results: AccountIdFormatsResponse = {};
 
         // For each liveAppId, fetch the manifest and check if it uses uuid format
         for (const liveAppId of liveAppIds) {

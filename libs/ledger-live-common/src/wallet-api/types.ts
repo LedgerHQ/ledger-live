@@ -83,3 +83,8 @@ export type DAppTrackingData = {
   currency: string;
   network: CryptoCurrency["id"];
 };
+
+export type AccountIdFormat = "uuid" | "encoded";
+
+/** @developer note uuid = wallet API id format, encoded = ledger wallet default format */
+export type AccountIdFormatsResponse = Record<string, AccountIdFormat>;
