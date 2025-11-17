@@ -1,11 +1,13 @@
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { isIos } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
+  modularDrawerFlowViewId = "modular-drawer-flow-view";
   networkBasedTitleIdMAD = "modular-drawer-Network-title";
   assetBasedTitleIdMAD = "modular-drawer-Asset-title";
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
@@ -28,6 +30,12 @@ export default class ModularDrawer {
   ): Promise<boolean> {
     await this.loadFlags();
     return this.flags!.enabled && Boolean(this.flags!.params?.[flow]);
+  }
+
+  getNetworkNameForAccount(account: Account): string {
+    return account?.parentAccount === undefined
+      ? account.currency.speculosApp.name
+      : account?.parentAccount?.currency.name;
   }
 
   @Step("Select first account in modular drawer")
@@ -65,11 +73,32 @@ export default class ModularDrawer {
   async selectAsset(account: Account): Promise<void> {
     await this.performSearchByTicker(account.currency.ticker);
     await this.selectCurrencyByTicker(account.currency.ticker);
-    const networkName =
-      account?.parentAccount === undefined
-        ? account.currency.speculosApp.name
-        : account?.parentAccount?.currency.name;
+    const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);
+    await this.selectFirstAccount();
+  }
+
+  /**
+   * Workaround for iOS Buy/Sell flow where drawer opens over WebView.
+   * Avoids any kind of waitFor visibility checks that cause Ledger Live App to freeze.
+   * Falls back to standard selectAsset on Android.
+   */
+  @Step("Select currency in modular drawer - (workaround) buy sell flow")
+  async selectAssetBuySellIosWorkaround(account: Account): Promise<void> {
+    if (!isIos()) {
+      return this.selectAsset(account);
+    }
+
+    await this.performSearchByTicker(account.currency.ticker);
+    const assetItemId = this.assetItem(account.currency.ticker);
+    await tapById(assetItemId, 0);
+
+    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
+    if (modularDrawerAttributes.label?.includes("Select network")) {
+      const networkName = this.getNetworkNameForAccount(account);
+      const id = this.networkItemIdMAD(networkName);
+      await tapById(id, 0);
+    }
     await this.selectFirstAccount();
   }
 

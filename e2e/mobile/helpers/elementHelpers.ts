@@ -161,6 +161,17 @@ export const NativeElementHelpers = {
     await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
   },
 
+
+  async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
+    );
+    if("elements" in attributes) {
+      return attributes.elements[index];
+    }
+    return attributes;
+  },
+
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () =>
       NativeElementHelpers.getElementById(id, index).getAttributes(),

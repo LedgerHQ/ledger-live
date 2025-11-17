@@ -7,7 +7,6 @@ export default class AccountsPage extends CommonPage {
   private readonly listTitle = "accounts-list-title";
 
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
-  accountByName = (name: string) => `account-row-name-${name}`;
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
@@ -44,10 +43,5 @@ export default class AccountsPage extends CommonPage {
   async expectNoAccount() {
     const el = this.emptyAccountDisplay();
     await detoxExpect(el).toBeVisible();
-  }
-
-  @Step("Select account by name")
-  async selectAccountByName(name: string) {
-    await tapById(this.accountByName(name));
   }
 }

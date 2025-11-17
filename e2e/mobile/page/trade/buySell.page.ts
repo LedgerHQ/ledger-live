@@ -1,6 +1,6 @@
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
-import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
+import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 
 export default class BuySellPage {
   cryptoCurrencySelector = "crypto-amount-option-button";
@@ -55,7 +55,9 @@ export default class BuySellPage {
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
     if (await app.modularDrawer.isFlowEnabled("live_app")) {
-      await app.modularDrawer.selectAsset(account);
+      isIos()
+        ? await app.modularDrawer.selectAssetBuySellIosWorkaround(account)
+        : await app.modularDrawer.selectAsset(account);
     } else {
       await this.selectCurrency(account.currency.id);
       await app.common.selectAccount(account);
