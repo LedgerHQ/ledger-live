@@ -71,7 +71,7 @@ export function createApi(
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination.minHeight),
+      listOperations(currency, address, pagination),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
