@@ -130,6 +130,41 @@ export default class ModularDrawer {
     await this.selectFirstAccount();
   }
 
+  @Step("Validate account(s) present on account list")
+  async validateAccountsScreen(accounts?: string[]): Promise<void> {
+    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
+    jestExpect(modularDrawerAttributes.label).toMatch(/Select account.*/i);
+    if (!accounts) {
+      detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
+      return;
+    }
+    for (const account of accounts) {
+      const accountItemId = this.accountItemNameId(account);
+      await detoxExpect(getElementById(accountItemId)).toBeVisible();
+    }
+  }
+
+  @Step("Validate network(s) present on network list")
+  async validateNetworksScreen(networks: string[]): Promise<void> {
+    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
+    jestExpect(modularDrawerAttributes.label).toMatch(/Select network.*/i);
+    for (const network of networks) {
+      const networkItemId = this.networkItemIdMAD(network);
+      await scrollToId(networkItemId, this.networkSelectionScrollViewId);
+      await detoxExpect(getElementById(networkItemId)).toBeVisible();
+    }
+  }
+
+  @Step("Validate assets present on account list")
+  async validateAssetsScreen(assets: string[]): Promise<void> {
+    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
+    jestExpect(modularDrawerAttributes.label).toMatch(/Select asset.*/i);
+    for (const asset of assets) {
+      const assetItemId = this.assetItemByTicker(asset);
+      await detoxExpect(getElementById(assetItemId)).toBeVisible();
+    }
+  }
+
   @Step("Tap on add new or existing account button")
   async tapAddNewOrExistingAccountButtonMAD(): Promise<void> {
     await tapById(this.addNewOrExistingAccountButton);

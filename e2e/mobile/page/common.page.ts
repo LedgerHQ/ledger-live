@@ -78,7 +78,7 @@ export default class CommonPage {
     await tapByElement(this.accountItem(accountId));
   }
 
-  @Step("Check number of account rows: $0")
+  @Step("Check number of account rows")
   async checkAccountRowNumber(nbr: number) {
     jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }
