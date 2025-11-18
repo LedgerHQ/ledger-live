@@ -479,7 +479,7 @@ for (const currency of liveApps) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: currency.delegate.account.currency.ticker,
+            currency: currency.delegate.account.currency.id,
             index: currency.delegate.account.index,
             add: true,
             appjson: appjsonPath,
