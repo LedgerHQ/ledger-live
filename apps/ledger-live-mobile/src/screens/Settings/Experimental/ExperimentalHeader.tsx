@@ -30,8 +30,6 @@ const ANIMATION_CONFIG = { duration: ANIMATION_DURATION };
 const CLOSED_STATE = 0;
 const OPENED_STATE = 1;
 
-const isMock = !!Config.MOCK;
-
 function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
   const { colors } = useTheme();
@@ -39,6 +37,7 @@ function ExperimentalHeader() {
   const isExperimental = useExperimental();
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
+  const isMock = !!Config.MOCK;
 
   const areFeatureFlagsOverridden = useMemo(
     () => featureFlagsBannerVisible && hasLocallyOverriddenFlags,
@@ -129,11 +128,10 @@ function ExperimentalHeader() {
           rootStyle,
           {
             height: containerHeight,
-            paddingTop: top,
           },
         ]}
       >
-        <View style={containerBaseStyle}>
+        <View style={[containerBaseStyle, { top }]}>
           <TouchableOpacity onPress={onPressMock}>
             <LText bold style={styles.label}>
               MOCK
