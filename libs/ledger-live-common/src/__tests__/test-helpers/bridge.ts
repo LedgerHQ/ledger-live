@@ -468,7 +468,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               };
               const bridge = await getBridge();
               const synced = await syncAccount(bridge, copy);
-              if (initialAccountId.includes("ripple")) return; // ripple wont work because of the current implementation of pagination
               expect(synced.operations.length).toBe(account.operations.length);
               // same ops are restored
               expect(synced.operations).toEqual(account.operations);
@@ -481,7 +480,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
             });
             makeTest("pendingOperations are cleaned up", async () => {
               const account = await getSynced();
-              if (initialAccountId.includes("ripple")) return; // ripple wont work because of the current implementation of pagination
 
               if (account.operations.length) {
                 const operations = account.operations.slice(1);
