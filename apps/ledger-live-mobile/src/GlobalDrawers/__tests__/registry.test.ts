@@ -4,8 +4,8 @@ import ReceiveDrawerWrapper from "LLM/features/Receive/drawers/ReceiveFundsOptio
 
 describe("GlobalDrawers Registry", () => {
   it("should contain all expected drawer entries with correct components", () => {
-    expect(DRAWER_REGISTRY.modular).toBeDefined();
-    expect(DRAWER_REGISTRY.modular.component).toBe(ModularDrawerWrapper);
+    expect(DRAWER_REGISTRY.modularAssets).toBeDefined();
+    expect(DRAWER_REGISTRY.modularAssets.component).toBe(ModularDrawerWrapper);
 
     expect(DRAWER_REGISTRY.receive).toBeDefined();
     expect(DRAWER_REGISTRY.receive.component).toBe(ReceiveDrawerWrapper);

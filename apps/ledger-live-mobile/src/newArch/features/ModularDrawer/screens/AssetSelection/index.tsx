@@ -32,7 +32,7 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
+import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import Config from "react-native-config";
 
@@ -71,7 +71,7 @@ const AssetSelection = ({
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
-  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
+  const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
   const assetConfigurationDeps = {
     ApyIndicator,

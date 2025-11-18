@@ -47,7 +47,7 @@ All drawers are registered in `registry.ts`:
 
 ```typescript
 export const DRAWER_REGISTRY = {
-  modular: {
+  modularAssets: {
     component: ModularDrawerWrapper,
   },
   // ... more drawers
@@ -179,7 +179,7 @@ Add your drawer to `GlobalDrawers/registry.ts`:
 import { MyDrawerWrapper } from "LLM/features/MyFeature/MyDrawerWrapper";
 
 export const DRAWER_REGISTRY = {
-  modular: { ... },
+  modularAssets: { ... },
   receive: { ... },
   myDrawer: {
     component: MyDrawerWrapper,

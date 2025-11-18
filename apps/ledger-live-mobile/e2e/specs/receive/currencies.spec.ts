@@ -14,20 +14,6 @@ describe("Receive different currency", () => {
       userdata: "skip-onboarding",
       knownDevices: [knownDevice],
       featureFlags: {
-        llmModularDrawer: {
-          enabled: true,
-          params: {
-            add_account: false,
-            live_app: false,
-            live_apps_allowlist: [],
-            live_apps_blocklist: [],
-            receive_flow: true,
-            send_flow: false,
-            enableModularization: false,
-            searchDebounceTime: 300,
-            backendEnvironment: "STAGING",
-          },
-        },
         noah: {
           enabled: false,
         },

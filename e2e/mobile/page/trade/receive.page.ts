@@ -1,32 +1,34 @@
 import { by, element } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-common/lib/e2e/enum/TokenType";
-
+import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 export default class ReceivePage {
-  baseLink = "receive";
-  noVerifyAddressButton = "button-DontVerify-my-address";
-  noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
-  buttonVerifyAddressId = "button-verify-my-address";
-  buttonCreateAccountId = "button-create-account";
+  baseLink = "receive";
   buttonContinueId = "add-accounts-continue-button";
-  step2HeaderTitleId = "receive-header-step2-title";
+  buttonCreateAccountId = "button-create-account";
+  buttonVerifyAddressId = "button-verify-my-address";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
-  receivePageScrollViewId = "receive-screen-scrollView";
+  noVerifyAddressButton = "button-DontVerify-my-address";
+  noVerifyValidateButton = "button-confirm-dont-verify";
   receiveConnectDeviceHeaderId = "receive-connect-device-header";
+  receivePageScrollViewId = "receive-screen-scrollView";
   selectCryptoScrollViewId = "select-crypto-scrollView";
+  step2HeaderTitleId = "receive-header-step2-title";
 
-  currencyRowId = (t: string) => `big-currency-row-${t}`;
+  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencyNameIdByRegex = (type: string) => new RegExp(`big-currency-name-.*\\/${type}\\/.*`);
+  currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
+  receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
+    `option-button-content-${receiveFundsOption}`;
+  receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
+  step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
-  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
-  receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
-  step2Accounts = () => getElementById("receive-header-step2-accounts");
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -208,5 +210,11 @@ export default class ReceivePage {
     await detoxExpect(getElementById(this.receiveConnectDeviceHeaderId)).toHaveText(
       "Connect Device",
     );
+  }
+
+  @Step("Select receive funds option '$0'")
+  async selectReceiveFundsOption(receiveFundsOption: ReceiveFundsOptionsType): Promise<void> {
+    await waitForElementById(this.receiveFundsOptionId(receiveFundsOption));
+    await tapById(this.receiveFundsOptionId(receiveFundsOption));
   }
 }

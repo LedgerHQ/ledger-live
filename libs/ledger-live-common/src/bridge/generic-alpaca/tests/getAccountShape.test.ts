@@ -1,8 +1,10 @@
 import BigNumber from "bignumber.js";
 import { genericGetAccountShape } from "../getAccountShape";
 
+const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/coin-framework/account/index", () => ({
   encodeAccountId: jest.fn(() => "accId"),
+  getSyncHash: (...args: any[]) => getSyncHashMock(...args),
 }));
 
 const mergeOpsMock = jest.fn();
@@ -63,105 +65,16 @@ describe("genericGetAccountShape", () => {
   });
 
   describe.each(chains)("$currency.id", ({ currency, network }) => {
-    test("builds account shape with existing operations, pagination and sub accounts", async () => {
-      const oldOp = {
-        hash: "h1",
-        blockHeight: 10,
-        type: "OPT_IN",
-        extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
-      };
-      const pendingOp = {
-        hash: "h0",
-        blockHeight: 10,
-        type: "OUT",
-      };
-      const initialAccount = {
-        operations: [oldOp],
-        pendingOperations: [pendingOp],
-        blockHeight: 10,
-      };
-
-      extractBalanceMock.mockReturnValue({ value: "1000", locked: "300" });
-      getBalanceMock.mockResolvedValue([
-        { asset: { type: "native" }, value: "1000", locked: "300" },
-        { asset: { type: "token", symbol: "TOK1" }, value: "42" },
-        { asset: { type: "token", symbol: "TOK_IGNORE" }, value: "5" },
-      ]);
-
-      getTokenFromAssetMock.mockImplementation(asset =>
-        asset.symbol === "TOK1" ? { id: `${currency.id}_token1` } : null,
-      );
-
-      const coreOp = { hash: "h2", height: 12 };
-      listOperationsMock.mockResolvedValue([[coreOp]]);
-      refreshOperationsMock.mockImplementation(ops => {
-        const op = ops[0];
-        if (op?.hash === "h0") {
-          return [{ ...op, blockHeight: 12 }];
-        }
-        return [];
-      });
-
-      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
-        hash: op.hash,
-        type: "IN",
-        blockHeight: 12,
-        extra: { assetReference: "ar2", assetOwner: "ow2" },
-      }));
-
-      mergeOpsMock.mockImplementation((oldOps, newOps) => [...newOps, ...oldOps]);
-      cleanedOperationMock.mockImplementation(operation => operation);
-      mergeSubAccountsMock.mockImplementation((oldSubAccounts, newSubAccounts) => [
-        ...newSubAccounts,
-        ...oldSubAccounts,
-      ]);
-
-      buildSubAccountsMock.mockReturnValue([
-        { id: `${currency.id}_subAcc1`, type: "TokenAccount" },
-      ]);
-
-      inferSubOperationsMock.mockImplementation(hash =>
-        hash === "h2" ? [{ id: `${currency.id}_subOp1` }] : [],
-      );
-
-      lastBlockMock.mockResolvedValue({ height: 123 });
-
-      const getShape = genericGetAccountShape(network, currency.id);
-      const result = await getShape(
+    test.each([
+      [
+        "an up-to-date sync hash",
+        "sync-hash",
         {
-          address: `${currency.id}_addr1`,
-          initialAccount,
-          currency,
-          derivationMode: "",
-        } as any,
-        { paginationConfig: {} as any },
-      );
-
-      expect(chainSpecificGetAccountShapeMock).toHaveBeenCalledWith(`${currency.id}_addr1`);
-
-      expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, {
-        minHeight: 11,
-        order: "asc",
-        lastPagingToken: "pt1",
-      });
-
-      const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
-      expect(assetsBalancePassed).toEqual([
-        { asset: { symbol: "TOK1", type: "token" }, value: "42" },
-        { asset: { symbol: "TOK_IGNORE", type: "token" }, value: "5" },
-      ]);
-
-      const assetOpsPassed = buildSubAccountsMock.mock.calls[0][0].operations;
-      expect(assetOpsPassed).toHaveLength(1);
-      expect(assetOpsPassed[0].hash).toBe("h2");
-
-      expect(result).toMatchObject({
-        balance: new BigNumber(1000),
-        spendableBalance: new BigNumber(700),
-        blockHeight: 123,
-        operationsCount: 3,
-        subAccounts: [{ id: `${currency.id}_subAcc1`, type: "TokenAccount" }],
-        operations: [
+          minHeight: 11,
+          order: "asc",
+          lastPagingToken: "pt1",
+        },
+        [
           {
             hash: "h0",
             type: "OUT",
@@ -174,10 +87,138 @@ describe("genericGetAccountShape", () => {
             subOperations: [{ id: `${currency.id}_subOp1` }],
             extra: { assetReference: "ar2", assetOwner: "ow2" },
           },
-          oldOp,
+          {
+            hash: "h1",
+            blockHeight: 10,
+            type: "OPT_IN",
+            extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+          },
         ],
-      });
-    });
+      ],
+      [
+        "an outdated sync hash",
+        "outdated-sync-hash",
+        {
+          minHeight: 0,
+          order: "asc",
+        },
+        [
+          {
+            hash: "h0",
+            type: "OUT",
+            blockHeight: 12,
+          },
+          {
+            hash: "h2",
+            type: "IN",
+            blockHeight: 12,
+            subOperations: [{ id: `${currency.id}_subOp1` }],
+            extra: { assetReference: "ar2", assetOwner: "ow2" },
+          },
+        ],
+      ],
+    ])(
+      "builds account shape with existing operations, pagination and sub accounts from %s",
+      async (_s, syncHash, expectedPagination, expectedOperations) => {
+        const oldOp = {
+          hash: "h1",
+          blockHeight: 10,
+          type: "OPT_IN",
+          extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+        };
+        const pendingOp = {
+          hash: "h0",
+          blockHeight: 10,
+          type: "OUT",
+        };
+        const initialAccount = {
+          operations: [oldOp],
+          pendingOperations: [pendingOp],
+          blockHeight: 10,
+          syncHash,
+        };
+
+        getSyncHashMock.mockReturnValue("sync-hash");
+        extractBalanceMock.mockReturnValue({ value: "1000", locked: "300" });
+        getBalanceMock.mockResolvedValue([
+          { asset: { type: "native" }, value: "1000", locked: "300" },
+          { asset: { type: "token", symbol: "TOK1" }, value: "42" },
+          { asset: { type: "token", symbol: "TOK_IGNORE" }, value: "5" },
+        ]);
+
+        getTokenFromAssetMock.mockImplementation(asset =>
+          asset.symbol === "TOK1" ? { id: `${currency.id}_token1` } : null,
+        );
+
+        const coreOp = { hash: "h2", height: 12 };
+        listOperationsMock.mockResolvedValue([[coreOp]]);
+        refreshOperationsMock.mockImplementation(ops => {
+          const op = ops[0];
+          if (op?.hash === "h0") {
+            return [{ ...op, blockHeight: 12 }];
+          }
+          return [];
+        });
+
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          hash: op.hash,
+          type: "IN",
+          blockHeight: 12,
+          extra: { assetReference: "ar2", assetOwner: "ow2" },
+        }));
+
+        mergeOpsMock.mockImplementation((oldOps, newOps) => [...newOps, ...oldOps]);
+        cleanedOperationMock.mockImplementation(operation => operation);
+        mergeSubAccountsMock.mockImplementation((oldSubAccounts, newSubAccounts) => [
+          ...newSubAccounts,
+          ...oldSubAccounts,
+        ]);
+
+        buildSubAccountsMock.mockReturnValue([
+          { id: `${currency.id}_subAcc1`, type: "TokenAccount" },
+        ]);
+
+        inferSubOperationsMock.mockImplementation(hash =>
+          hash === "h2" ? [{ id: `${currency.id}_subOp1` }] : [],
+        );
+
+        lastBlockMock.mockResolvedValue({ height: 123 });
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: `${currency.id}_addr1`,
+            initialAccount,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(chainSpecificGetAccountShapeMock).toHaveBeenCalledWith(`${currency.id}_addr1`);
+
+        expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, expectedPagination);
+
+        const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
+        expect(assetsBalancePassed).toEqual([
+          { asset: { symbol: "TOK1", type: "token" }, value: "42" },
+          { asset: { symbol: "TOK_IGNORE", type: "token" }, value: "5" },
+        ]);
+
+        const assetOpsPassed = buildSubAccountsMock.mock.calls[0][0].operations;
+        expect(assetOpsPassed).toHaveLength(1);
+        expect(assetOpsPassed[0].hash).toBe("h2");
+
+        expect(result).toMatchObject({
+          balance: new BigNumber(1000),
+          spendableBalance: new BigNumber(700),
+          blockHeight: 123,
+          operationsCount: expectedOperations.length,
+          subAccounts: [{ id: `${currency.id}_subAcc1`, type: "TokenAccount" }],
+          operations: expectedOperations,
+        });
+      },
+    );
 
     test("handles empty operations (no old ops, no new ops) and blockHeight=0", async () => {
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: "0", locked: "0" }]);

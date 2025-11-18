@@ -10,9 +10,10 @@ type Props = {
   title: string;
   Icon: NewIconType;
   subtitle: string;
+  testID?: string;
 };
 
-export const OptionButton = memo(({ onPress, title, Icon, subtitle }: Props) => {
+export const OptionButton = memo(({ onPress, title, Icon, subtitle, testID }: Props) => {
   const { colors } = useTheme();
 
   return (
@@ -48,7 +49,7 @@ export const OptionButton = memo(({ onPress, title, Icon, subtitle }: Props) => 
           >
             <Icon size={"M"} color={colors.black} />
           </View>
-          <View style={styles.content}>
+          <View style={styles.content} testID={testID}>
             <View style={styles.header}>
               <Text variant="body" fontWeight="semiBold" numberOfLines={1}>
                 {title}

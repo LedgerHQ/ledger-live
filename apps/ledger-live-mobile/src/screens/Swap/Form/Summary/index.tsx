@@ -85,12 +85,12 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
     };
 
     if (to.currency.type === "TokenCurrency") {
-      navigation.navigate(NavigatorName.AssetSelection, {
-        token: to.currency.id,
-        currency: to.currency.parentCurrency.id,
-        context: AddAccountContexts.AddAccounts,
-        sourceScreenName: ScreenName.SwapForm,
-      });
+      // navigation.navigate(NavigatorName.AssetSelection, {
+      //   token: to.currency.id,
+      //   currency: to.currency.parentCurrency.id,
+      //   context: AddAccountContexts.AddAccounts,
+      //   sourceScreenName: ScreenName.SwapForm,
+      // });
     } else {
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
