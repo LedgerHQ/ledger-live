@@ -3,7 +3,6 @@ import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "@l
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import { App, AppType, ApplicationV2, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
@@ -130,7 +129,21 @@ export function mockListAppsResult(
   deviceModelId?: DeviceModelId,
   deviceName?: string | null,
 ): ListAppsResult {
-  const tickersByMarketCap = Object.keys(getBTCValues());
+  // Simplified: use a hardcoded list of common tickers for mock purposes
+  const tickersByMarketCap = [
+    "BTC",
+    "ETH",
+    "XRP",
+    "USDT",
+    "BCH",
+    "LTC",
+    "BNB",
+    "EOS",
+    "XTZ",
+    "XLM",
+    "ETC",
+    "DOGE",
+  ];
   const apps = appDesc
     .split(",")
     .map(a => a.trim())

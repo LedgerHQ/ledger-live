@@ -1,10 +1,8 @@
 import type { CounterValuesAPI, RateGranularity } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
-import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
+import { referenceSnapshotDate, MOCK_COUNTERVALUE_IDS } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -45,22 +43,42 @@ function temporalFactor(from: string, to: string, maybeDate: Date | undefined) {
   return Math.max(0, res);
 }
 
+// Simplified mapping of ticker to BTC value (replaces getBTCValues)
+// Only includes common tickers needed for tests
+const TICKER_TO_BTC: Record<string, number> = {
+  BTC: 1,
+  ETH: 0.024148511267564544,
+  XRP: 0.000024684982446046028,
+  USDT: 0.00011333520351848443,
+  BCH: 0.028933931707658213,
+  LTC: 0.005380715375819416,
+  XLM: 0.000008137469105171634,
+  ETC: 0.0007604915493071563,
+  DOGE: 2.8120373022624386e-7,
+  DAI: 0.00011315522800968864,
+};
+
 function rate(from: string, to: string, date?: Date): number | undefined {
-  const asBTC = getBTCValues()[from];
-  if (!asBTC) return;
+  // Get BTC value from mapping or use random fallback
+  const asBTC = TICKER_TO_BTC[from] ?? (from === "BTC" ? 1 : fromToRandom(from) * 0.1);
 
   if (to === "BTC") {
     return asBTC * temporalFactor(from, to, date);
   }
 
   if (to === "USD") {
-    return asBTC * BTCtoUSD * temporalFactor(from, to, date);
+    return asBTC * 9000 * temporalFactor(from, to, date);
   }
 
   if (from === "BTC") {
     const r = rate(to, from, date);
     if (!r) return;
     return 1 / r;
+  }
+
+  // Only support BTC and USD as target currencies for other conversions
+  if (to !== "BTC" && to !== "USD") {
+    return undefined;
   }
 
   const btcTO = rate("BTC", to, date);
@@ -76,17 +94,7 @@ const increment = {
 };
 
 async function getIds(): Promise<string[]> {
-  const ids: string[] = [];
-  for (const k in getBTCValues()) {
-    const c =
-      findCryptoCurrencyByTicker(k) ||
-      findFiatCurrencyByTicker(k) ||
-      (await getCryptoAssetsStore().findTokenById(k));
-    if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
-      ids.push(c.id);
-    }
-  }
-  return ids;
+  return [...MOCK_COUNTERVALUE_IDS];
 }
 
 function getDates(granularity: RateGranularity, start: Date): Date[] {

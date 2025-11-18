@@ -5,13 +5,9 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import {
-  getCryptoAssetsStore,
-  setCryptoAssetsStore,
-} from "@ledgerhq/coin-framework/crypto-assets/index";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getBTCValues } from "./mock";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { MOCK_COUNTERVALUE_IDS } from "./mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import api from "./api";
@@ -101,15 +97,13 @@ describe("extreme cases", () => {
   let universe: Currency[] = [];
   let currencies: Currency[] = [];
   beforeAll(async () => {
-    const tickers = Object.keys(getBTCValues()).filter(t => t !== "USD");
     universe = (
       await Promise.all(
-        tickers.map(
-          async (ticker: string) =>
-            findCryptoCurrencyByTicker(ticker) ||
-            findFiatCurrencyByTicker(ticker) ||
-            (await getCryptoAssetsStore().findTokenById(ticker)),
-        ),
+        MOCK_COUNTERVALUE_IDS.map(async (id: string) => {
+          const currency = getCryptoCurrencyById(id);
+          if (currency) return currency;
+          return await getCryptoAssetsStore().findTokenById(id);
+        }),
       )
     ).filter((currency): currency is Currency => currency != null);
     universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
