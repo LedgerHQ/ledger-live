@@ -22,7 +22,7 @@ function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: View
       snapPoints={["35%", "55%"]}
       onClose={handleClose}
     >
-      <TrackScreen category="Deposit" name="Options" />
+      <TrackScreen category="receive_drawer" type="drawer" />
       <Text textAlign="center" fontSize={24} mb={5}>
         {t("transfer.receive.title")}
       </Text>

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useReceiveOptionsDrawerController } from "../useReceiveOptionsDrawerController";
@@ -27,6 +28,10 @@ function useReceiveFundsOptionsViewModel() {
   }, [closeDrawer]);
 
   const handleGoToFiat = useCallback(() => {
+    track("button_clicked", {
+      button: "fiat",
+      page: "receive_drawer",
+    });
     handleClose();
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveProvider,
@@ -38,6 +43,10 @@ function useReceiveFundsOptionsViewModel() {
   }, [navigation, handleClose]);
 
   const handleGoToCrypto = useCallback(() => {
+    track("button_clicked", {
+      button: "crypto",
+      page: "receive_drawer",
+    });
     handleClose();
     handleOpenReceiveDrawer(true);
   }, [handleOpenReceiveDrawer, handleClose]);
