@@ -96,7 +96,7 @@ describe("Xrp Api (testnet)", () => {
       // Then
       // Check if status is set
       for (const operation of operations) {
-        expect([true, false]).toContain(operation.tx.failed);
+        expect(operation.tx.failed).toEqual(expect.any(Boolean));
       }
     });
   });
