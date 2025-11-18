@@ -24,7 +24,7 @@ const ACCOUNT_CONTROLLER = "15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD";
 const ACCOUNT_EMPTY = "111111111111111111111111111111111HC1";
 const ACCOUNT_WITH_NO_OPERATION = "12EsPA79dvhtjp1bYvCiEWPsQmmdKGss44GzE3CT9tTo9g4Q";
 
-const polkadot: CurrenciesData<Transaction> = {
+const assethub_polkadot: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "polkadotResources.unlockings", // Due to completion date that change everyday (estimated time)
     "polkadotResources.nominations", // TODO: try to only ignore status
@@ -51,7 +51,7 @@ const polkadot: CurrenciesData<Transaction> = {
     {
       // Account which is stash and controller
       raw: {
-        id: `js:2:polkadot:${ACCOUNT_SAME_STASHCONTROLLER}:polkadotbip44`,
+        id: `js:2:assethub_polkadot:${ACCOUNT_SAME_STASHCONTROLLER}:polkadotbip44`,
         seedIdentifier: ACCOUNT_SAME_STASHCONTROLLER,
         name: "Polkadot 1",
         derivationMode: "polkadotbip44",
@@ -61,7 +61,7 @@ const polkadot: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        currencyId: "polkadot",
+        currencyId: "assethub_polkadot",
         lastSyncDate: "",
         balance: "21000310",
       },
@@ -357,7 +357,7 @@ const polkadot: CurrenciesData<Transaction> = {
     },
     {
       raw: {
-        id: `js:2:polkadot:${ACCOUNT_STASH}:polkadotbip44`,
+        id: `js:2:assethub_polkadot:${ACCOUNT_STASH}:polkadotbip44`,
         seedIdentifier: ACCOUNT_STASH,
         name: "Polkadot 2",
         derivationMode: "polkadotbip44",
@@ -367,7 +367,7 @@ const polkadot: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        currencyId: "polkadot",
+        currencyId: "assethub_polkadot",
         lastSyncDate: "",
         balance: "11000000000",
       },
@@ -473,7 +473,7 @@ const polkadot: CurrenciesData<Transaction> = {
     // TODO: Write a setController test
     {
       raw: {
-        id: `js:2:polkadot:${ACCOUNT_CONTROLLER}:polkadotbip44`,
+        id: `js:2:assethub_polkadot:${ACCOUNT_CONTROLLER}:polkadotbip44`,
         seedIdentifier: ACCOUNT_CONTROLLER,
         name: "Polkadot 3",
         derivationMode: "polkadotbip44",
@@ -483,7 +483,7 @@ const polkadot: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        currencyId: "polkadot",
+        currencyId: "assethub_polkadot",
         lastSyncDate: "",
         balance: "11000000000",
       },
@@ -654,6 +654,6 @@ const polkadot: CurrenciesData<Transaction> = {
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    polkadot,
+    assethub_polkadot,
   },
 };
