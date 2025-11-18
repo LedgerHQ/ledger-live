@@ -1,2 +1,2 @@
 export * from "./LegacySignerSolana";
-export * from "./DMKSignerSolana";
+export * from "./DmkSignerSol";

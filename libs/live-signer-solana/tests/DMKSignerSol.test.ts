@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-// tests/DMKSignerSolana.test.ts
-import { DMKSignerSolana } from "../src/DMKSignerSolana";
+// tests/DmkSignerSol.test.ts
+import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
 import bs58 from "bs58";
@@ -14,13 +14,13 @@ jest.mock("@ledgerhq/device-signer-kit-solana", () => ({
   })),
 }));
 
-describe("DMKSignerSolana", () => {
-  let signer: DMKSignerSolana;
+describe("DmkSignerSol", () => {
+  let signer: DmkSignerSol;
   const dmkMock = {} as any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    signer = new DMKSignerSolana(dmkMock, "sessionId");
+    signer = new DmkSignerSol(dmkMock, "sessionId");
   });
 
   describe("getAppConfiguration", () => {

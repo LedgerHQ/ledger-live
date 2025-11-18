@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { SolAppPleaseEnableContractData, UserRefusedOnDevice } from "@ledgerhq/errors";
 
 export type DAError =
   | GetAddressDAError
@@ -27,7 +27,7 @@ export type DAError =
 /**
  * DMK-based Solana signer using DMK signer-kit
  */
-export class DMKSignerSolana implements SolanaSigner {
+export class DmkSignerSol implements SolanaSigner {
   private dmkSigner: SignerSolana;
   private readonly DMKPubKeyDisplayMode: { readonly long: string; readonly short: string } = {
     long: "long",
@@ -44,11 +44,9 @@ export class DMKSignerSolana implements SolanaSigner {
       sessionId,
       originToken: "Solana",
     }).build();
-    console.log("DMKSignerSolana initialized with session ID:", sessionId);
   }
 
   private _mapError<E extends DAError>(error: E): Error {
-    console.log("ERROR", error);
     if (
       typeof error.originalError !== "object" ||
       error.originalError === null ||
@@ -66,7 +64,9 @@ export class DMKSignerSolana implements SolanaSigner {
         case "6985":
           return new UserRefusedOnDevice();
         case "6808":
-          return new Error("Please enable Blind signing in the Solana app Settings");
+          return new SolAppPleaseEnableContractData(
+            "Please enable Blind signing in the Solana app Settings",
+          );
         default:
           return new Error(error._tag);
       }
@@ -169,7 +169,6 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param messageHex - message to sign in hexadecimal format
    */
   async signMessage(path: string, messageHex: string): Promise<SolanaSignature> {
-    console.log("Signing message via DMK");
     const { observable } = this.dmkSigner.signMessage(path, messageHex, {
       skipOpenApp: true,
     });
