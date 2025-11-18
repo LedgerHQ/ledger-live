@@ -8174,6 +8174,9 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -8241,6 +8244,9 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -8308,6 +8314,9 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
+      '@noble/hashes':
+        specifier: ^1.8.0
+        version: 1.8.0
       '@types/semver':
         specifier: ^7
         version: 7.7.0
