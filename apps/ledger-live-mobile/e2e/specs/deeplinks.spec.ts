@@ -4,11 +4,17 @@ $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
+  const arbitrumLong = "arbitrum";
 
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
       knownDevices: [knownDevices.nanoX],
+      featureFlags: {
+        noah: {
+          enabled: false,
+        },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -21,11 +27,6 @@ describe("DeepLinks Tests", () => {
   it("should open Account page", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
-  });
-
-  it("should open Add Account drawer", async () => {
-    await app.addAccount.openViaDeeplink();
-    await app.receive.selectCurrencyByName(bitcoinLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
@@ -73,6 +74,23 @@ describe("DeepLinks Tests", () => {
     await app.send.sendViaDeeplink(ethereumLong);
     await app.send.expectFirstStep();
     await app.common.expectSearch(ethereumLong);
+  });
+
+  it("should open Receive flow", async () => {
+    await app.modularDrawer.openReceiveDeeplink();
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.modularDrawer.tapDrawerCloseButton();
+
+    await app.modularDrawer.openReceiveDeeplink(ethereumLong);
+    await app.modularDrawer.selectAccount(1);
+  });
+
+  it("should open Add Account flow", async () => {
+    await app.modularDrawer.openAddAccountDeeplink();
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.modularDrawer.tapDrawerCloseButton();
+    await app.modularDrawer.openAddAccountDeeplink(ethereumLong);
+    await app.modularDrawer.selectNetworkIfAsked(arbitrumLong);
   });
 
   it("should open Asset page for Bitcoin", async () => {

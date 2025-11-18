@@ -379,10 +379,8 @@ export const DeeplinksProvider = ({
 
                       /**
                        * Modular drawer flows (add-account & receive)
-                       * or classic flows when modular drawer is disabled
                        */
                       ...modularDrawerFlowConfigs.modularDrawer,
-                      ...modularDrawerFlowConfigs.classicAddAccount,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {

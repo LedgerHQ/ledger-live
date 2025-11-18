@@ -1,6 +1,9 @@
 import { by, element, expect } from "detox";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
+  baseLinkAddAccount = "add-account";
+  baseLinkReceive = "receive";
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
@@ -14,6 +17,20 @@ export default class ModularDrawer {
   searchBar = () => getElementById(this.searchBarId);
   assetItem = (addressOrId: string) => `asset-item-${addressOrId}`;
   networkItemIdMAD = (networkId: string) => `network-item-${networkId}`;
+
+  @Step("Open add account via deeplink")
+  async openAddAccountDeeplink(currency?: string) {
+    const link = currency
+      ? this.baseLinkAddAccount + currencyParam + currency
+      : this.baseLinkAddAccount;
+    await openDeeplink(link);
+  }
+
+  @Step("Open receive via deeplink")
+  async openReceiveDeeplink(currency?: string) {
+    const link = currency ? this.baseLinkReceive + currencyParam + currency : this.baseLinkReceive;
+    await openDeeplink(link);
+  }
 
   @Step("Select first account in modular drawer")
   async selectFirstAccount() {
@@ -32,7 +49,6 @@ export default class ModularDrawer {
   @Step("Select currency in list by ticker")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
     const assetItemId = this.assetItem(ticker);
-
     await tapById(assetItemId, 0);
   }
 

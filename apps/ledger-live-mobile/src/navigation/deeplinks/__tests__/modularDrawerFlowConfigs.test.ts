@@ -6,14 +6,11 @@ describe("getDrawerFlowConfigs", () => {
   /**
    * Helper function to create a Feature_ModularDrawer object with default values
    */
-  const createModularDrawerFeature = (
-    enabled: boolean,
-    add_account = false,
-  ): Feature_ModularDrawer => {
+  const createModularDrawerFeature = (enabled: boolean): Feature_ModularDrawer => {
     return {
       enabled,
       params: {
-        add_account,
+        add_account: true,
         live_app: false,
         live_apps_allowlist: [],
         live_apps_blocklist: [],
@@ -34,13 +31,6 @@ describe("getDrawerFlowConfigs", () => {
 
       expect(result).toEqual({
         modularDrawer: {},
-        classicAddAccount: {
-          [NavigatorName.AssetSelection]: {
-            screens: {
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-        },
       });
     });
 
@@ -49,78 +39,12 @@ describe("getDrawerFlowConfigs", () => {
 
       expect(result).toEqual({
         modularDrawer: {},
-        classicAddAccount: {
-          [NavigatorName.AssetSelection]: {
-            screens: {
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-        },
       });
     });
   });
 
   describe("when modular drawer is enabled", () => {
-    it("should return modular drawer config for add_account only", () => {
-      const modularDrawer = createModularDrawerFeature(true, true);
-
-      const result = getDrawerFlowConfigs(modularDrawer);
-
-      expect(result).toEqual({
-        modularDrawer: {
-          [NavigatorName.ModularDrawer]: {
-            screens: {
-              [ScreenName.AddAccountDeepLinkHandler]: "add-account",
-              [ScreenName.ReceiveDeepLinkHandler]: "receive",
-            },
-          },
-        },
-        classicAddAccount: {},
-      });
-    });
-
-    it("should return modular drawer config for receive_flow only", () => {
-      const modularDrawer = createModularDrawerFeature(true, false);
-
-      const result = getDrawerFlowConfigs(modularDrawer);
-
-      expect(result).toEqual({
-        modularDrawer: {
-          [NavigatorName.ModularDrawer]: {
-            screens: {
-              [ScreenName.ReceiveDeepLinkHandler]: "receive",
-            },
-          },
-        },
-        classicAddAccount: {
-          [NavigatorName.AssetSelection]: {
-            screens: {
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-        },
-      });
-    });
-
     it("should return modular drawer config for both add_account and receive_flow", () => {
-      const modularDrawer = createModularDrawerFeature(true, true);
-
-      const result = getDrawerFlowConfigs(modularDrawer);
-
-      expect(result).toEqual({
-        modularDrawer: {
-          [NavigatorName.ModularDrawer]: {
-            screens: {
-              [ScreenName.AddAccountDeepLinkHandler]: "add-account",
-              [ScreenName.ReceiveDeepLinkHandler]: "receive",
-            },
-          },
-        },
-        classicAddAccount: {},
-      });
-    });
-
-    it("should return classic configs when modular drawer is enabled but no params are true", () => {
       const modularDrawer = createModularDrawerFeature(true);
 
       const result = getDrawerFlowConfigs(modularDrawer);
@@ -129,14 +53,8 @@ describe("getDrawerFlowConfigs", () => {
         modularDrawer: {
           [NavigatorName.ModularDrawer]: {
             screens: {
+              [ScreenName.AddAccountDeepLinkHandler]: "add-account",
               [ScreenName.ReceiveDeepLinkHandler]: "receive",
-            },
-          },
-        },
-        classicAddAccount: {
-          [NavigatorName.AssetSelection]: {
-            screens: {
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
             },
           },
         },
@@ -146,12 +64,11 @@ describe("getDrawerFlowConfigs", () => {
 
   describe("edge cases", () => {
     it("should return consistent structure regardless of input", () => {
-      const modularDrawer = createModularDrawerFeature(true, true);
+      const modularDrawer = createModularDrawerFeature(true);
 
       const result = getDrawerFlowConfigs(modularDrawer);
 
       expect(result).toHaveProperty("modularDrawer");
-      expect(result).toHaveProperty("classicAddAccount");
 
       expect(result.modularDrawer[NavigatorName.ModularDrawer]).toHaveProperty("screens");
     });

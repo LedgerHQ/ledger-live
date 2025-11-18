@@ -11,7 +11,7 @@ export interface DrawerRegistryEntry {
 }
 
 export const DRAWER_REGISTRY = {
-  modular: {
+  modularAssets: {
     component: ModularDrawerWrapper,
   },
   receive: {
