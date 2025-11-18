@@ -402,8 +402,8 @@ importers:
         specifier: 1000.0.7
         version: 1000.0.7
       '@pnpm/read-project-manifest':
-        specifier: 1000.0.6
-        version: 1000.0.6
+        specifier: 1000.0.11
+        version: 1000.0.11
       '@types/asciichart':
         specifier: 1.5.8
         version: 1.5.8
@@ -12165,12 +12165,15 @@ packages:
 
   '@cosmjs/crypto@0.24.1':
     resolution: {integrity: sha512-GPhaWmQO06mXldKj/b+oKF5o3jMNfRKpAw+Q8XQhrD7ItinVPDMu8Xgl6frUXWTUdgpYwqpvqOcpm85QUsYV0Q==}
+    deprecated: This uses elliptic for cryptographic operations, which contains several security-relevant bugs. To what degree this affects your application is something you need to carefully investigate. See https://github.com/cosmos/cosmjs/issues/1708 for further pointers. Starting with version 0.34.0 the cryptographic library has been replaced. However, private keys might still be at risk.
 
   '@cosmjs/crypto@0.26.8':
     resolution: {integrity: sha512-ykZWgRHuZjizQnIwG7mj6D0Jip406Z6VZLH9bs1RdNOugeX6kp/I3EYEsEO694bQPvggwNZqRT84ovqjsj2KwQ==}
+    deprecated: This uses elliptic for cryptographic operations, which contains several security-relevant bugs. To what degree this affects your application is something you need to carefully investigate. See https://github.com/cosmos/cosmjs/issues/1708 for further pointers. Starting with version 0.34.0 the cryptographic library has been replaced. However, private keys might still be at risk.
 
   '@cosmjs/crypto@0.31.3':
     resolution: {integrity: sha512-vRbvM9ZKR2017TO73dtJ50KxoGcFzKtKI7C8iO302BQ5p+DuB+AirUg1952UpSoLfv5ki9O416MFANNg8UN/EQ==}
+    deprecated: This uses elliptic for cryptographic operations, which contains several security-relevant bugs. To what degree this affects your application is something you need to carefully investigate. See https://github.com/cosmos/cosmjs/issues/1708 for further pointers. Starting with version 0.34.0 the cryptographic library has been replaced. However, private keys might still be at risk.
 
   '@cosmjs/encoding@0.24.1':
     resolution: {integrity: sha512-PMr+gaXAuM0XgjeXwB1zdX1QI0t+PgVhbmjgI/RSgswDzdExNH97qUopecL0/HG3p64vhIT/6ZjXYYTljZL7WA==}
@@ -15719,6 +15722,10 @@ packages:
   '@pnpm/ramda@0.28.1':
     resolution: {integrity: sha512-zcAG+lvU0fMziNeGXpPyCyCJYp5ZVrPElEE4t14jAmViaihohocZ+dDkcRIyAomox8pQsuZnv1EyHR+pOhmUWw==}
 
+  '@pnpm/read-project-manifest@1000.0.11':
+    resolution: {integrity: sha512-uPl5tkXullEQa+WOZDIhp7jb1UlGg8vVjnOLZmv6oJltEfMzOlDryu0awYJB5QVj1twKuxevjH6Zaq/mdVn4dw==}
+    engines: {node: '>=18.12'}
+
   '@pnpm/read-project-manifest@1000.0.6':
     resolution: {integrity: sha512-MnGXzzgCX1tkNskdJb/4WJr7OldPg8nhLe5RXN8W+nqt2a2vKLbbeDZmMkBUOvACLEKPRe58dMzs8h8g8gntuQ==}
     engines: {node: '>=18.12'}
@@ -15731,8 +15738,16 @@ packages:
     resolution: {integrity: sha512-ZNDgxznoPHS3aMKgBox1z559qnX9TkQTS7cC8KS+Af8AjPZ+08q8sUKA4ywjT/EvizwkeUTVHzdfnx98oLhhWA==}
     engines: {node: '>=18.12'}
 
+  '@pnpm/types@1000.6.0':
+    resolution: {integrity: sha512-6PsMNe98VKPGcg6LnXSW/LE3YfJ77nj+bPKiRjYRWAQLZ+xXjEQRaR0dAuyjCmchlv4wR/hpnMVRS21/fCod5w==}
+    engines: {node: '>=18.12'}
+
   '@pnpm/write-project-manifest@1000.0.3':
     resolution: {integrity: sha512-QIjosiI1FYnHxxLSc+zsAToUr/NrJGzDvdI5LU2RlJ5dKnwVVhIndz/upPNGNKDaQWZsmFiu95q1pEzvSSHikA==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/write-project-manifest@1000.0.8':
+    resolution: {integrity: sha512-5bfAJcx/SMGDjWc9U1DFEbJrghZR9C+7iQF/0S64ASeAUBA3i1q0ZsTmQzbtR9G7YhD+22n9R/nw1UQbpPgbXg==}
     engines: {node: '>=18.12'}
 
   '@polka/url@1.0.0-next.25':
@@ -18787,7 +18802,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -19538,6 +19553,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -21399,7 +21415,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -24928,7 +24944,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -28423,6 +28439,7 @@ packages:
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -31733,6 +31750,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -31978,7 +31996,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -46543,6 +46561,21 @@ snapshots:
 
   '@pnpm/ramda@0.28.1': {}
 
+  '@pnpm/read-project-manifest@1000.0.11':
+    dependencies:
+      '@gwhitney/detect-indent': 7.0.1
+      '@pnpm/error': 1000.0.2
+      '@pnpm/graceful-fs': 1000.0.0
+      '@pnpm/text.comments-parser': 1000.0.0
+      '@pnpm/types': 1000.6.0
+      '@pnpm/write-project-manifest': 1000.0.8
+      fast-deep-equal: 3.1.3
+      is-windows: 1.0.2
+      json5: 2.2.3
+      parse-json: 5.2.0
+      read-yaml-file: 2.1.0
+      strip-bom: 4.0.0
+
   '@pnpm/read-project-manifest@1000.0.6':
     dependencies:
       '@gwhitney/detect-indent': 7.0.1
@@ -46564,10 +46597,20 @@ snapshots:
 
   '@pnpm/types@1000.2.0': {}
 
+  '@pnpm/types@1000.6.0': {}
+
   '@pnpm/write-project-manifest@1000.0.3':
     dependencies:
       '@pnpm/text.comments-parser': 1000.0.0
       '@pnpm/types': 1000.2.0
+      json5: 2.2.3
+      write-file-atomic: 5.0.1
+      write-yaml-file: 5.0.0
+
+  '@pnpm/write-project-manifest@1000.0.8':
+    dependencies:
+      '@pnpm/text.comments-parser': 1000.0.0
+      '@pnpm/types': 1000.6.0
       json5: 2.2.3
       write-file-atomic: 5.0.1
       write-yaml-file: 5.0.0
