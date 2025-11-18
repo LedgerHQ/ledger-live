@@ -118,7 +118,7 @@ export default class ModularDrawer {
     }
 
     await this.performSearchByTicker(account.currency.ticker);
-    const assetItemId = this.assetItem(account.currency.ticker);
+    const assetItemId = this.assetItemByTicker(account.currency.ticker);
     await tapById(assetItemId, 0);
 
     const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
