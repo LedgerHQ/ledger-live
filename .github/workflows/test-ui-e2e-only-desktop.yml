@@ -192,7 +192,7 @@ jobs:
         shell: bash
 
       - name: Run Playwright Tests
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/qaa-609
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -245,7 +245,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: linux-speculos
+          platform: ${{ inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}

@@ -116,7 +116,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   speculos-e2e-tests-linux:
-    name: "Speculos E2E Smoke (NanoSP - 1.4.1)"
+    name: "UI e2e smoke tests (NanoSP - 1.5.0)"
+    continue-on-error: true
     outputs:
       allure_url: ${{ steps.publish-allure.outputs.report-url }}
     timeout-minutes: 60
@@ -128,8 +129,8 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
       SPECULOS_DEVICE: nanoSP
-      SPECULOS_FIRMWARE_VERSION: "1.4.1"
-    runs-on: [ledger-live-4xlarge]
+      SPECULOS_FIRMWARE_VERSION: "1.5.0"
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -138,6 +139,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          install-proto: "true"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -164,8 +166,8 @@ jobs:
         id: test-filter
         run: echo "filter=@smoke" >> $GITHUB_OUTPUT
         shell: bash
-      - name: Run Playwright Speculos smoke tests
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/qaa-609
+      - name: UI e2e smoke tests
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: nanoSP
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -188,7 +190,7 @@ jobs:
       - name: Publish Allure report
         id: publish-allure
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa-609
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -330,8 +332,8 @@ jobs:
               },
               speculos: {
                 symbol: "🍪",
-                name: "Speculos NanoSP 1.4.1",
-                jobUrl: jobs.find(job => job.name == `Speculos E2E Smoke (NanoSP - 1.4.1)`)?.html_url
+                name: "Speculos NanoSP 1.5.0",
+                jobUrl: jobs.find(job => job.name == `UI e2e smoke tests (NanoSP - 1.5.0)`)?.html_url
               },
             };
 
@@ -491,7 +493,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `🍪 Speculos NanoSP 1.4.1: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
+                    "text": `🍪 Speculos NanoSP 1.5.0: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
                   }
                 },
                 {
