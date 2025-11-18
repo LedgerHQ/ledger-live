@@ -4,20 +4,26 @@ import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
 
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
+  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
 
   const postOnboardingRows = useMemo(
     () =>
       actionsState.map((action, index) => (
         <React.Fragment key={index}>
-          <PostOnboardingActionRow {...action} deviceModelId={deviceModelId} />
+          <PostOnboardingActionRow
+            {...action}
+            deviceModelId={deviceModelId}
+            isLedgerSyncActive={isLedgerSyncActive}
+          />
         </React.Fragment>
       )),
-    [actionsState, deviceModelId],
+    [actionsState, deviceModelId, isLedgerSyncActive],
   );
 
   useEffect(() => {
