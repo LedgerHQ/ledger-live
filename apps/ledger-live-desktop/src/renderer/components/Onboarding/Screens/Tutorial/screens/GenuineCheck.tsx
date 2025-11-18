@@ -8,11 +8,13 @@ import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Success = ({ device }: { device: Device }) => {
   const { t } = useTranslation();
   return (
     <Column>
+      <TrackPage category="Set up device" name="Final Step Your device is ready" />
       <Bullet
         icon="CheckAlone"
         text={t("onboarding.screens.tutorial.screens.genuineCheck.success.title")}
