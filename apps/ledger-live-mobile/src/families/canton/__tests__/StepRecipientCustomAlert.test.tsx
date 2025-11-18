@@ -61,6 +61,7 @@ describe("StepRecipientCustomAlert", () => {
     account: {
       ...createMockAccount({ xpub: "test-address" }),
       cantonResources: {
+        pendingTransferProposals: [],
         instrumentUtxoCounts: {
           Amulet: 5, // Below warning threshold
         },

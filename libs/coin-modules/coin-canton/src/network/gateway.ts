@@ -58,6 +58,25 @@ export type PrepareTransferRequest = {
   reason?: string;
 };
 
+export type PrepareTransferInstructionRequest = {
+  type:
+    | "accept-transfer-instruction"
+    | "reject-transfer-instruction"
+    | "withdraw-transfer-instruction";
+  contract_id: string;
+  reason?: string;
+};
+
+export type TransferProposal = {
+  contract_id: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+  instrument_id: string;
+  memo: string;
+  expires_at_micros: number;
+};
+
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -380,6 +399,22 @@ export async function submit(
   return data;
 }
 
+export async function prepare(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferRequest | PrepareTransferInstructionRequest,
+) {
+  const { data } = await gatewayNetwork<
+    PrepareTransferResponse,
+    PrepareTransferRequest | PrepareTransferInstructionRequest
+  >({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: params,
+  });
+  return data;
+}
+
 export async function getBalance(currency: CryptoCurrency, partyId: string) {
   const { data } = await gatewayNetwork<GetBalanceResponse>({
     method: "GET",
@@ -502,13 +537,15 @@ export async function prepareTransferRequest(
   partyId: string,
   params: PrepareTransferRequest,
 ) {
-  const { data } = await gatewayNetwork<PrepareTransferResponse, PrepareTransferRequest>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
-    data: params,
-  });
+  return prepare(currency, partyId, params);
+}
 
-  return data;
+export async function prepareTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferInstructionRequest,
+) {
+  return prepare(currency, partyId, params);
 }
 
 export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
@@ -553,6 +590,15 @@ export async function submitPreApprovalTransaction(
   } satisfies PreApprovalResult;
 }
 
+export async function submitTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  return submit(currency, partyId, serialized, signature);
+}
+
 type GetTransferPreApprovalResponse = {
   contract_id: string;
   receiver: string;
@@ -566,6 +612,14 @@ export async function getTransferPreApproval(currency: CryptoCurrency, partyId: 
   const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
+}
+
+export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<TransferProposal[]>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
   });
   return data;
 }

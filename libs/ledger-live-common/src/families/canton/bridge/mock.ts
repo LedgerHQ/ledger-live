@@ -146,6 +146,7 @@ const scanAccounts = (): any => {
           pendingOperations: [],
           cantonResources: {
             instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
           },
         },
       });
