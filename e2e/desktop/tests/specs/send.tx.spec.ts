@@ -205,7 +205,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-3924",
   },
   {
-    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
+    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
   },
   {
