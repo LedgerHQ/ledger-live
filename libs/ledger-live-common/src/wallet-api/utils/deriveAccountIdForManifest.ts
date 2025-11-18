@@ -5,7 +5,7 @@ import { LiveAppManifest } from "../../platform/types";
 import semver from "semver";
 
 /**
- * Determines if a manifest uses uuid (Ledger Live) account ID format or encoded (Wallet API) format.
+ * Determines if a manifest uses (Ledger Live) account ID format or UUID (Wallet API) format.
  * @param manifest - The live app manifest to check
  * @returns true if the manifest uses encoded format (v3+ dapp), false otherwise
  */
