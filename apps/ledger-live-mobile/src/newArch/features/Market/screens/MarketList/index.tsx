@@ -1,7 +1,6 @@
 import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { RefreshControl, ViewToken } from "react-native";
-import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import {
   MarketCurrencyData,
   MarketListRequestParams,
@@ -124,7 +123,6 @@ function View({
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
-      paddingBottom: TAB_BAR_SAFE_HEIGHT,
     },
     data: marketData,
     renderItem: ({ item, index }: { item: MarketCurrencyData; index: number }) => (

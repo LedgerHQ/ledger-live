@@ -9,7 +9,6 @@ const transformIncludePatterns = [
   "rn-range-slider",
   "react-native-reanimated",
   "react-native-modal",
-  "react-native-animatable",
   "@sentry/react-native",
   "@hashgraph/sdk",
   "react-native-startup-time",
@@ -22,6 +21,7 @@ const transformIncludePatterns = [
   "react-native-video",
   "ky",
   "@gorhom/bottom-sheet",
+  "react-native-safe-area-context",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

@@ -328,3 +328,7 @@ export const getAvailableProviders = async (): Promise<string[]> => {
   }
   return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
 };
+
+export const getDefaultSwapProviderKeys = (): string[] => {
+  return Object.keys(DEFAULT_SWAP_PROVIDERS);
+};

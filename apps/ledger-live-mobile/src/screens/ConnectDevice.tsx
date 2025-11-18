@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
@@ -119,7 +119,7 @@ type Props =
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
   // type of component accepting mostly the same params as this one.
-  (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+  (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
     route.name.replace("ConnectDevice", "SelectDevice"),
     {
       ...route.params,

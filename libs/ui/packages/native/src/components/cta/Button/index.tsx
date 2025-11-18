@@ -1,13 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
-
 import {
   ActivityIndicator,
   NativeSyntheticEvent,
   NativeTouchEvent,
-  TouchableOpacity,
-  TouchableOpacityProps,
+  Pressable,
+  PressableProps,
+  StyleProp,
   View,
+  ViewStyle,
 } from "react-native";
 import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
@@ -16,9 +17,10 @@ import { Icon as IconComponent } from "../../Icon";
 import baseStyled, { BaseStyledProps } from "../../styled";
 import { IconType } from "../../Icon/type";
 
-export type ButtonProps = TouchableOpacityProps &
+export type ButtonProps = Omit<PressableProps, "onPress"> &
   BaseStyledProps & {
-    onPressWhenDisabled?: TouchableOpacityProps["onPress"];
+    onPress?: PressableProps["onPress"] | (() => void);
+    onPressWhenDisabled?: PressableProps["onPress"];
     iconName?: string;
     type?: "main" | "shade" | "error" | "color" | "accent" | "default";
     size?: "small" | "medium" | "large";
@@ -42,7 +44,7 @@ const IconContainer = styled.View<{
     p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
-export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => {
+export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
   // if onPressWhenDisabled prop exists then the button will look
   // disabled but will still be press-able.
   const disabled = !p.onPressWhenDisabled && p.disabled;
@@ -60,6 +62,7 @@ export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => {
   {
     iconButton?: boolean;
     sizeVariant?: ButtonProps["size"];
+    style?: StyleProp<ViewStyle>;
   } & Omit<ButtonProps, "size">
 >`
 
@@ -178,15 +181,17 @@ const Button = (props: ButtonProps): React.ReactElement => {
     testID,
   } = props;
   const theme = useTheme();
-
   return (
     <Base
-      activeOpacity={1}
+      pointerEvents="box-only"
+      hitSlop={16}
       {...props}
+      style={(state) => [props.style, state.pressed ? { opacity: 1 } : {}]}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
       disabled={disabled || pending}
       testID={testID}
+      accessible={true}
     >
       <View>
         <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />
@@ -221,11 +226,14 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
 
   return (
     <Base
+      pointerEvents="box-only"
+      hitSlop={16}
       {...props}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
       disabled={disabled || spinnerOn}
       onPress={onPressHandler}
+      accessible={true}
     >
       <View>
         <ButtonContainer {...props} type={type} hide={spinnerOn} />

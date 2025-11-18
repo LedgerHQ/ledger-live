@@ -135,7 +135,7 @@ function useMarketListViewModel() {
     filterByStarredCurrencies,
     starredMarketCoins,
     search,
-    loading: marketResult.isLoading,
+    loading: marketResult.isFetching,
     updateMarketParams,
     counterCurrency,
     range,

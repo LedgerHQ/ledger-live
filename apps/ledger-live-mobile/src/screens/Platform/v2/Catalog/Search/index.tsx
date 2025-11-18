@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
-import * as Animatable from "react-native-animatable";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
@@ -20,8 +20,6 @@ const noResultIllustration = {
   dark: require("~/images/illustration/Dark/_051.webp"),
   light: require("~/images/illustration/Light/_051.webp"),
 };
-
-const AnimatedView = Animatable.View;
 
 interface Props {
   title: React.ReactNode;
@@ -96,7 +94,7 @@ export function Search({ title, disclaimer, search }: Props) {
               <InfiniteLoader size={40} />
             </Flex>
           ) : (
-            <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+            <Animated.View entering={FadeInUp.delay(50).duration(300)}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
                 {!!search.input.length && !search.result.length ? (
                   noResultFoundComponent
@@ -104,7 +102,7 @@ export function Search({ title, disclaimer, search }: Props) {
                   <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 )}
               </Flex>
-            </AnimatedView>
+            </Animated.View>
           )
         }
       />

@@ -204,6 +204,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
+        testID="asset-screen-flatlist"
       />
       <Header
         currentPositionY={currentPositionY}
