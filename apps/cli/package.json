@@ -77,7 +77,7 @@
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@pnpm/exportable-manifest": "1000.0.7",
+    "@pnpm/exportable-manifest": "1000.0.10",
     "@pnpm/read-project-manifest": "1000.0.6",
     "@types/asciichart": "1.5.8",
     "@types/body-parser": "1.19.5",
