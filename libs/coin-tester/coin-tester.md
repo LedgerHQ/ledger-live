@@ -2,6 +2,8 @@
 
 The coin tester is a deterministic tool to test the coin modules.
 
+TEST
+
 ## Motivation
 
 Historically to test the coin modules we had to run Ledger Live and test manually the different operations supported on Ledger Live. However we wanted to make sure that the coin modules could be used in Ledger Live as well as any other software wallet. We thus needed a way to easily test the full capabilities of a coin modules without relying on the client specific use cases.
@@ -14,7 +16,7 @@ A scenario could look like:
 
 > Send 1 Eth to Alice
 > Send 1 NFT to Bob
-> Stake 100 Eth to this staking pool 
+> Stake 100 Eth to this staking pool
 
 You'll just need to define the transactions as expected by the coin module and then let the coin module do the job
 
@@ -35,7 +37,6 @@ Everytime we do a synchronization we intercept the calls made to the explorer an
 - A coin module: All the logic to craft and broadcast a transaction. The coin module must be "coin configurable" meaning it must implement a `setConfiguration` function and use `getConfiguration` in the implementation.
 
 - A tool that can spawn a fresh local test node. Best practice is to run it inside a Docker container.
-
 
 ## Engine
 
