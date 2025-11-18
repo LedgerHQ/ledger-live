@@ -119,7 +119,7 @@ export function Onboarding() {
                 ]}
                 render={props =>
                   useCase ? (
-                    <Tutorial {...props} useCase={useCase} deviceModelId={deviceModelId} />
+                    <Tutorial {...props} useCase={useCase} />
                   ) : (
                     /**
                      * In case we navigate to another screen then do a
