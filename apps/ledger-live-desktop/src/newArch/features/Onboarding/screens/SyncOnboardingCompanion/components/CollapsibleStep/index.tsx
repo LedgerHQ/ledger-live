@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import StepStatusIcon, { StepStatus } from "../StepStatusIcon";
+import StepStatusIcon, { StepStatus } from "./StepStatusIcon";
 import AnimatedWrapper from "./AnimatedWrapper";
 
 interface CollapsibleStepProps extends PropsWithChildren {
@@ -22,6 +22,7 @@ const CollapsibleStep = ({
   doneTitle,
 }: CollapsibleStepProps) => {
   const status: StepStatus = isComplete ? "completed" : "inactive";
+
   return (
     <div>
       <AnimatedWrapper isCollapsed={isCollapsed} hasSubtitle={!!doneTitle}>
@@ -34,7 +35,7 @@ const CollapsibleStep = ({
             alignItems="center"
           >
             {!hideTitle && (
-              <Text variant="large" fontWeight="semiBold">
+              <Text variant="large" fontWeight="semiBold" data-testid="collapsible-step-title">
                 {title}
               </Text>
             )}
@@ -42,7 +43,7 @@ const CollapsibleStep = ({
           </Flex>
           {isCollapsed && doneTitle && (
             <Flex flex={1} flexDirection="row" alignItems="center">
-              <Text variant="body" color="neutral.c70">
+              <Text variant="body" color="neutral.c70" data-testid="collapsible-step-done-title">
                 {doneTitle}
               </Text>
             </Flex>
