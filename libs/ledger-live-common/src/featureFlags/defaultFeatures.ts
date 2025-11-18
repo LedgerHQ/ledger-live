@@ -706,6 +706,7 @@ export const DEFAULT_FEATURES: Features = {
       sampling: 100,
     },
   },
+  zcashShielded: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

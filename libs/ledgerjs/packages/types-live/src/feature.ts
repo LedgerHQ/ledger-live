@@ -274,6 +274,7 @@ export type Features = CurrencyFeatures & {
   noah: DefaultFeature;
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
+  zcashShielded: DefaultFeature;
 };
 
 /**
