@@ -64,8 +64,8 @@ export default class CommonPage {
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
     await addDevicesUSB(nano);
-    await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
+    await scrollToId(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
     await new DeviceAction(nano).accessManager();
   }
