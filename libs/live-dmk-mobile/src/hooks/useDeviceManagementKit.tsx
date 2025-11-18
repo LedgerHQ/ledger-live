@@ -5,17 +5,28 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { getEnv } from "@ledgerhq/live-env";
+import { LocalTracer } from "@ledgerhq/logs";
+
+const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
 let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
+    const userId = getEnv("USER_ID");
+    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
+    tracer.trace("Initialize DeviceManagementKit", {
+      firmwareDistributionSalt,
+    });
+
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
+      .addConfig({ firmwareDistributionSalt })
       .build();
   }
 
