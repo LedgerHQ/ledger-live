@@ -48,11 +48,6 @@ describe("DeepLinks Tests", () => {
     await app.accounts.waitForAccountsPageToLoad();
   });
 
-  it("should open Add Account drawer", async () => {
-    await app.addAccount.openViaDeeplink();
-    await app.receive.selectCurrency(ethereumLong);
-  });
-
   it("should open ETH Account Asset page when given currency param", async () => {
     await app.assetAccountsPage.openViaDeeplink(ethereumLong);
     await app.assetAccountsPage.waitForAccountAssetsToLoad(ethereumLong);
@@ -118,5 +113,11 @@ describe("DeepLinks Tests", () => {
   it("should open Asset page for Ethereum", async () => {
     await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
     await app.assetAccountsPage.expectAssetPage(ethereumLong);
+  });
+
+  it("should open Add Account drawer", async () => {
+    await app.addAccount.openViaDeeplink();
+    await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
+    await app.modularDrawer.tapDrawerCloseButton();
   });
 });

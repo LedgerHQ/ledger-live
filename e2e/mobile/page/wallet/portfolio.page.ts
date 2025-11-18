@@ -231,4 +231,9 @@ export default class PortfolioPage {
   async openEarnTab() {
     await tapById(this.tabBarEarnButton);
   }
+
+  @Step("Tap quick action receive button")
+  async tapQuickActionReceiveButton() {
+    await tapById(this.quickActionReceiveButton);
+  }
 }
