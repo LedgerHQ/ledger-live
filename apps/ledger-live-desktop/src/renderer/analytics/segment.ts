@@ -218,6 +218,9 @@ const extraProperties = (store: ReduxStore) => {
   const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
     : { enabled: false };
+  const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -277,6 +280,7 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
+    nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
     ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
