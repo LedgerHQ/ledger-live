@@ -318,7 +318,14 @@ export const sip010TxnToOperation = (
     const fee = new BigNumber(fee_rate || "0");
 
     const hasFailed = tx.tx.tx_status !== "success";
-    const type = address === sender ? "OUT" : address === receiver ? "IN" : "";
+
+    let type: OperationType | "" = "";
+    if (address === sender) {
+      type = "OUT";
+    } else if (address === receiver) {
+      type = "IN";
+    }
+
     if (type === "") {
       log("error", "op type is not known", tx);
       return [];

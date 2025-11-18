@@ -10,7 +10,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
-import { StacksNetwork } from "../network/types/api";
+import { StacksNetwork } from "../network/api";
 
 export type FamilyType = "stacks";
 export const TokenPrefix = "stacks/sip010/";

@@ -1,20 +1,16 @@
-import { TransactionResponse } from "./types/api";
+import { TransactionResponse } from "../types/api";
 import { fetchFungibleTokenMetadataCached } from "./api";
 import { TokenPrefix } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
-/**
- * Extracts token transfer transactions from a transaction list
- */
+// Extracts token transfer transactions from a transaction list
 export const extractTokenTransferTransactions = (
   transactions: TransactionResponse[],
 ): TransactionResponse[] => {
   return transactions.filter(t => t.tx?.tx_type === "token_transfer");
 };
 
-/**
- * Extracts send-many transactions from a transaction list
- */
+// Extracts send-many transactions from a transaction list
 export const extractSendManyTransactions = (
   transactions: TransactionResponse[],
 ): TransactionResponse[] => {
@@ -23,43 +19,34 @@ export const extractSendManyTransactions = (
   );
 };
 
-/**
- * Fetches asset identifier from contract ID using metadata API
- * @param contractId - The contract ID to fetch metadata for
- * @returns The asset identifier or undefined if not found
- */
+// Fetches asset identifier from contract ID using metadata API
+// Returns undefined if metadata fetch fails or no matching token found
 const getAssetIdFromContractId = async (contractId: string): Promise<string | undefined> => {
-  try {
-    const metadata = await fetchFungibleTokenMetadataCached(contractId);
+  const metadata = await fetchFungibleTokenMetadataCached(contractId);
 
-    if (metadata.results.length === 1) {
-      // If there's only one result, use its asset_identifier
-      return metadata.results[0].asset_identifier;
-    } else if (metadata.results.length > 1) {
-      // If multiple results, find which one exists in the token registry
-      for (const result of metadata.results) {
-        const token = await getCryptoAssetsStore().findTokenById(
-          TokenPrefix + result.asset_identifier,
-        );
-        if (token) {
-          return result.asset_identifier;
-        }
+  if (metadata.results.length === 1) {
+    // If there's only one result, use its asset_identifier
+    return metadata.results[0].asset_identifier;
+  }
+
+  if (metadata.results.length > 1) {
+    // If multiple results, find which one exists in the token registry
+    for (const result of metadata.results) {
+      const token = await getCryptoAssetsStore().findTokenById(
+        TokenPrefix + result.asset_identifier,
+      );
+      if (token) {
+        return result.asset_identifier;
       }
     }
-    // No metadata found or no matching token in registry
-    return undefined;
-  } catch (error) {
-    // If metadata fetch fails, return undefined
-    return undefined;
   }
+
+  // No metadata found or no matching token in registry
+  return undefined;
 };
 
-/**
- * Resolves a token ID to its final canonical form by checking cache, registry, and metadata
- * @param tokenId - The token identifier to resolve (format: CONTRACT_ID::ASSET_NAME)
- * @param prevRecords - Cache of previously resolved token IDs
- * @returns The resolved token identifier or the original if no resolution found
- */
+// Resolves token ID to canonical form by checking cache, registry, and metadata
+// Format: CONTRACT_ID::ASSET_NAME. Returns original if no resolution found
 export const findFinalTokenId = async (
   tokenId: string,
   prevRecords: Record<string, string>,
@@ -109,9 +96,44 @@ export const findFinalTokenId = async (
   return tokenId;
 };
 
-/**
- * Extracts and groups contract transactions by token ID
- */
+// Checks if transaction is a valid transfer call (not send-many)
+const isValidTransferTransaction = (tx: TransactionResponse): boolean => {
+  if (tx.tx?.tx_type !== "contract_call") return false;
+  if (tx.tx.contract_call?.function_name === "send-many") return false;
+  return tx.tx.contract_call?.function_name === "transfer";
+};
+
+// Extracts asset name from transaction post_conditions
+const getAssetNameFromPostConditions = (tx: TransactionResponse): string | undefined => {
+  return tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
+};
+
+// Determines token ID from contract ID and asset name
+const resolveTokenId = async (
+  contractId: string,
+  assetName?: string,
+): Promise<string | undefined> => {
+  if (assetName) {
+    return `${contractId}::${assetName}`;
+  }
+
+  // If no asset name from post_conditions, try fetching metadata
+  return getAssetIdFromContractId(contractId);
+};
+
+// Adds transaction to the map grouped by token ID
+const addTransactionToMap = (
+  map: Record<string, TransactionResponse[]>,
+  tokenId: string,
+  tx: TransactionResponse,
+): void => {
+  if (!map[tokenId]) {
+    map[tokenId] = [];
+  }
+  map[tokenId].push(tx);
+};
+
+// Extracts and groups contract transactions by token ID
 export const extractContractTransactions = async (
   transactions: TransactionResponse[],
 ): Promise<Record<string, TransactionResponse[]>> => {
@@ -119,45 +141,21 @@ export const extractContractTransactions = async (
   const finalTokenIdMap: Record<string, string> = {};
 
   for (const tx of transactions) {
-    // Skip non-contract transactions
-    if (tx.tx?.tx_type !== "contract_call") continue;
+    if (!isValidTransferTransaction(tx)) continue;
 
-    // Handle send-many operations (they're processed separately)
-    if (tx.tx.contract_call?.function_name === "send-many") continue;
+    const contractId = tx.tx.contract_call?.contract_id;
+    if (!contractId) continue;
 
-    // Process only transfer function calls
-    if (tx.tx.contract_call?.function_name === "transfer") {
-      const contractId = tx.tx.contract_call?.contract_id;
-      if (!contractId) continue;
+    const assetName = getAssetNameFromPostConditions(tx);
+    const tokenId = await resolveTokenId(contractId, assetName);
 
-      // Skip transactions without post_conditions
-      const assetName = tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
+    if (!tokenId) continue;
 
-      let tokenId: string;
-      if (assetName) {
-        // Use the asset name from post_conditions
-        tokenId = `${contractId}::${assetName}`;
-      } else {
-        // If we couldn't find an asset name from post_conditions, try fetching metadata
-        const assetId = await getAssetIdFromContractId(contractId);
-        if (!assetId) {
-          // Skip this transaction if we couldn't determine the asset ID
-          continue;
-        }
-        tokenId = assetId;
-      }
+    // Resolve to final token ID
+    const finalTokenId = await findFinalTokenId(tokenId, finalTokenIdMap);
+    finalTokenIdMap[tokenId] = finalTokenId;
 
-      // Resolve to final token ID
-      const finalTokenId = await findFinalTokenId(tokenId, finalTokenIdMap);
-      finalTokenIdMap[tokenId] = finalTokenId;
-      tokenId = finalTokenId;
-
-      // Group by token ID
-      if (!contractTxsMap[tokenId]) {
-        contractTxsMap[tokenId] = [];
-      }
-      contractTxsMap[tokenId].push(tx);
-    }
+    addTransactionToMap(contractTxsMap, finalTokenId, tx);
   }
 
   return contractTxsMap;

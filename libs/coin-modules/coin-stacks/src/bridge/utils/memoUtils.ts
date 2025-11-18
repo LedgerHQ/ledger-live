@@ -24,8 +24,7 @@ export const hexMemoToString = (memoHex?: string): string => {
   if (memoHex?.substring(0, 2) === "0x") {
     try {
       // eslint-disable-next-line no-control-regex
-      return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
-      // NOTE: couldn't use replaceAll because it's not supported in node 14
+      return Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
     } catch (e) {
       log("error", "Failed to convert hex memo to string", e);
     }
@@ -45,11 +44,8 @@ export const bufferMemoToString = (memoJson: any): string | undefined => {
 
   // If memo is a buffer type, try to convert to string if it contains valid printable chars
   if (
-    memoJson &&
-    memoJson.type &&
-    memoJson.type.startsWith("(buff ") &&
-    memoJson.value &&
-    typeof memoJson.value === "string" &&
+    memoJson?.type?.startsWith("(buff ") &&
+    typeof memoJson?.value === "string" &&
     memoJson.value.startsWith("0x")
   ) {
     try {

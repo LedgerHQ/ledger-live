@@ -7,7 +7,7 @@ import {
   StacksMessageType,
 } from "@stacks/transactions";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { StacksNetwork } from "../../network/types/api";
+import { StacksNetwork } from "../../network/api";
 import {
   getTokenContractDetails,
   createTokenTransferFunctionArgs,
@@ -195,7 +195,7 @@ describe("transactions utility functions", () => {
       const nonce = new BigNumber(5);
       const memo = "Test memo";
 
-      const result = await createTokenTransferTransaction(
+      const result = await createTokenTransferTransaction({
         contractAddress,
         contractName,
         assetName,
@@ -208,7 +208,7 @@ describe("transactions utility functions", () => {
         fee,
         nonce,
         memo,
-      );
+      });
 
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -236,7 +236,7 @@ describe("transactions utility functions", () => {
       const network = "mainnet";
       const publicKey = "PUBLIC_KEY";
 
-      const result = await createTokenTransferTransaction(
+      const result = await createTokenTransferTransaction({
         contractAddress,
         contractName,
         assetName,
@@ -246,7 +246,7 @@ describe("transactions utility functions", () => {
         anchorMode,
         network,
         publicKey,
-      );
+      });
 
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({

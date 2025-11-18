@@ -9,11 +9,11 @@ export const getAccountInfo = ({
   transaction,
 }: {
   account: AccountLike;
-  parentAccount?: Account | null | undefined;
-  transaction?: Transaction | null | undefined;
+  parentAccount?: Account | null;
+  transaction?: Transaction | null;
 }): {
   mainAccount: Account;
-  subAccount: TokenAccount | undefined | null;
+  subAccount: TokenAccount | null | undefined;
   isTokenType: boolean;
   tokenAccountTxn: boolean;
 } => {

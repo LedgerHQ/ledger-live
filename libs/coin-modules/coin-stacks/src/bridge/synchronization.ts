@@ -78,10 +78,7 @@ export async function createTokenAccount(
     }
 
     // Preserve existing pending operations if available
-    const maybeExistingSubAccount =
-      initialAccount &&
-      initialAccount.subAccounts &&
-      initialAccount.subAccounts.find(a => a.id === tokenAccountId);
+    const maybeExistingSubAccount = initialAccount?.subAccounts?.find(a => a.id === tokenAccountId);
 
     const tokenAccount: TokenAccount = {
       type: "TokenAccount",
@@ -92,9 +89,9 @@ export async function createTokenAccount(
       spendableBalance: bnBalance,
       operationsCount: operations.length,
       operations,
-      pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
+      pendingOperations: maybeExistingSubAccount?.pendingOperations ?? [],
       creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
-      swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
+      swapHistory: maybeExistingSubAccount?.swapHistory ?? [],
       balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
     };
 

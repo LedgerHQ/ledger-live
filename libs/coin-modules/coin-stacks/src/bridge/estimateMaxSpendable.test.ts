@@ -122,8 +122,6 @@ describe("estimateMaxSpendable", () => {
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
       "xpub123",
       undefined,
-      undefined,
-      undefined,
     );
   });
 
@@ -200,8 +198,6 @@ describe("estimateMaxSpendable", () => {
       }),
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
       "xpub123",
-      undefined,
-      undefined,
       undefined,
     );
   });

@@ -1,17 +1,7 @@
-import { StacksMainnet, StacksTestnet } from "@stacks/network";
-import { getEnv } from "@ledgerhq/live-env";
-
-export const StacksNetwork = {
-  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
-  testnet: new StacksTestnet(),
-};
-
 export interface EstimatedFeesRequest {
   to: string;
   from: string;
 }
-
-export type EstimatedFeesResponse = number;
 
 export interface TransactionsResponse {
   limit: number;
@@ -189,8 +179,6 @@ export interface NetworkStatusResponse {
 }
 
 export type BroadcastTransactionRequest = Buffer;
-
-export type BroadcastTransactionResponse = string;
 
 interface BlockIdentifier {
   block_height: number;

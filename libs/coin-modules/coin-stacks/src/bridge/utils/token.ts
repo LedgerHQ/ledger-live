@@ -12,7 +12,5 @@ export const getSubAccount = (
   if (!transaction.subAccountId || !account.subAccounts) return undefined;
 
   const subAccount = account.subAccounts.find(a => a.id === transaction.subAccountId);
-  return subAccount && subAccount.type === "TokenAccount"
-    ? (subAccount as TokenAccount)
-    : undefined;
+  return subAccount?.type === "TokenAccount" ? (subAccount as TokenAccount) : undefined;
 };

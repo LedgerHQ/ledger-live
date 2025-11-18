@@ -5,9 +5,7 @@ import network from "@ledgerhq/live-network/network";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
-  BroadcastTransactionResponse,
   EstimatedFeesRequest,
-  EstimatedFeesResponse,
   FungibleTokenMetadataResponse,
   GetNonceResponse,
   MempoolResponse,
@@ -16,13 +14,19 @@ import {
   TokenBalanceResponse,
   TransactionResponse,
   TransactionsResponse,
-} from "./types/api";
+} from "../types/api";
 import {
   extractTokenTransferTransactions,
   extractSendManyTransactions,
   extractContractTransactions,
 } from "./transformers";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { StacksMainnet, StacksTestnet } from "@stacks/network";
+
+export const StacksNetwork = {
+  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
+  testnet: new StacksTestnet(),
+};
 
 /**
  * Builds the Stacks API URL with an optional path
@@ -149,9 +153,9 @@ export const fetchAllTokenBalances = async (addr: string): Promise<Record<string
  */
 export const fetchEstimatedFees = async (
   request: EstimatedFeesRequest,
-): Promise<EstimatedFeesResponse> => {
+): Promise<number> => {
   // Cast to Record<string, unknown> to satisfy type constraints
-  const feeRate = await send<EstimatedFeesResponse>(
+  const feeRate = await send<number>(
     `/v2/fees/transfer`,
     request as unknown as Record<string, unknown>,
   );
@@ -230,8 +234,8 @@ export const fetchFullTxs = async (
  */
 export const broadcastTx = async (
   message: BroadcastTransactionRequest,
-): Promise<BroadcastTransactionResponse> => {
-  let response = await sendRaw<BroadcastTransactionResponse>(`/v2/transactions`, message);
+): Promise<string> => {
+  let response = await sendRaw<string>(`/v2/transactions`, message);
 
   if (response !== "") response = `0x${response}`;
   return response;

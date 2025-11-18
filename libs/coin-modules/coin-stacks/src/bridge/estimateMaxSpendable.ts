@@ -3,7 +3,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { StacksNetwork } from "../network/types/api";
+import { StacksNetwork } from "../network/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
@@ -38,14 +38,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
 
   // Create transaction using the shared utility function
-  const tx = await createStacksTransaction(
-    dummyTx,
-    address,
-    xpub,
-    subAccount || undefined,
-    undefined, // No fee yet
-    undefined, // No nonce
-  );
+  const tx = await createStacksTransaction(dummyTx, address, xpub, subAccount || undefined);
 
   // Get network configuration
   const network = StacksNetwork[dummyTx.network] || StacksNetwork.mainnet;

@@ -17,21 +17,70 @@ import {
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { StacksNetwork } from "../../network/types/api";
+import { StacksNetwork } from "../../network/api";
 import { StacksOperation, Transaction } from "../../types";
 import { memoToBufferCV } from "./memoUtils";
 
-const specialConditionCode = [
+const specialConditionCode = new Set([
   "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.auto-alex-v3::auto-alex-v3",
   "SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH.token-lqstx::lqstx",
   "SP673Z4BPB4R73359K9HE55F2X91V5BJTN5SXZ5T.token-liabtc::liabtc",
-];
+]);
 
-/**
- * Extracts token contract details from a TokenAccount
- * @param {TokenAccount} subAccount - The token subaccount containing token details
- * @returns {Object|null} Object containing contract address, name and asset name, or null if no subAccount
- */
+export type CreateTokenTransferTransactionOptions = {
+  contractAddress: string;
+  contractName: string;
+  assetName: string;
+  amount: BigNumber;
+  senderAddress: string;
+  recipientAddress: string;
+  anchorMode: AnchorMode;
+  network: string;
+  publicKey: string;
+  fee?: BigNumber;
+  nonce?: BigNumber;
+  memo?: string;
+};
+
+type BaseRawData = {
+  anchorMode: AnchorMode;
+  network: string;
+  xpub: string;
+};
+
+type TokenTransferRawData = BaseRawData & {
+  contractAddress: string;
+  contractName: string;
+  assetName: string;
+};
+
+// Type guard: validates rawData has all required token transfer fields
+function isTokenTransferRawData(data: Record<string, unknown>): data is TokenTransferRawData {
+  return (
+    typeof data.contractAddress === "string" &&
+    typeof data.contractName === "string" &&
+    typeof data.assetName === "string" &&
+    typeof data.anchorMode === "number" &&
+    typeof data.network === "string" &&
+    typeof data.xpub === "string"
+  );
+}
+
+// Extracts and validates base fields from rawData (throws if invalid)
+function extractBaseRawData(data: Record<string, unknown>): BaseRawData {
+  const anchorMode = data.anchorMode;
+  const network = data.network;
+  const xpub = data.xpub;
+
+  if (typeof anchorMode !== "number" || typeof network !== "string" || typeof xpub !== "string") {
+    throw new Error("Invalid raw data: missing or invalid base fields");
+  }
+
+  return { anchorMode, network, xpub };
+}
+
+// Extracts contract address, name, and asset name from TokenAccount
+// Returns null if subAccount is undefined
 export const getTokenContractDetails = (subAccount?: TokenAccount) => {
   if (!subAccount) return null;
 
@@ -42,14 +91,7 @@ export const getTokenContractDetails = (subAccount?: TokenAccount) => {
   return { contractAddress, contractName, assetName };
 };
 
-/**
- * Creates function arguments for a SIP-010 token transfer
- * @param {BigNumber} amount - The amount of tokens to transfer
- * @param {string} senderAddress - The sender's address
- * @param {string} recipientAddress - The recipient's address
- * @param {string} [memo] - Optional memo to include with the transaction
- * @returns {Array} Array of Clarity values for the token transfer function
- */
+// Creates SIP-010 function arguments: [amount, sender, recipient, memo]
 export const createTokenTransferFunctionArgs = (
   amount: BigNumber,
   senderAddress: string,
@@ -64,15 +106,8 @@ export const createTokenTransferFunctionArgs = (
   ];
 };
 
-/**
- * Creates post conditions for a token transfer transaction
- * @param {string} senderAddress - The sender's address
- * @param {BigNumber} amount - The amount of tokens to transfer
- * @param {string} contractAddress - The token's contract address
- * @param {string} contractName - The token's contract name
- * @param {string} assetName - The token's asset name
- * @returns {PostCondition[]} Array of post conditions for the transaction
- */
+// Creates post conditions for token transfer
+// Uses LessEqual for special tokens (auto-alex-v3, lqstx, liabtc), Equal for others
 export const createTokenTransferPostConditions = (
   senderAddress: string,
   amount: BigNumber,
@@ -81,7 +116,7 @@ export const createTokenTransferPostConditions = (
   assetName: string,
 ): PostCondition[] => {
   let conditionCode: FungibleConditionCode = FungibleConditionCode.Equal;
-  if (specialConditionCode.includes(`${contractAddress}.${contractName}::${assetName}`)) {
+  if (specialConditionCode.has(`${contractAddress}.${contractName}::${assetName}`)) {
     conditionCode = FungibleConditionCode.LessEqual;
   }
 
@@ -97,36 +132,25 @@ export const createTokenTransferPostConditions = (
   ];
 };
 
-/**
- * Creates an unsigned token transfer transaction (SIP-010 tokens)
- * @param {string} contractAddress - The token's contract address
- * @param {string} contractName - The token's contract name
- * @param {string} assetName - The token's asset name
- * @param {BigNumber} amount - The amount of tokens to transfer
- * @param {string} senderAddress - The sender's address
- * @param {string} recipientAddress - The recipient's address
- * @param {AnchorMode} anchorMode - The anchor mode for the transaction
- * @param {string} network - The network for the transaction (mainnet/testnet)
- * @param {string} publicKey - The sender's public key
- * @param {BigNumber} [fee] - Optional transaction fee
- * @param {BigNumber} [nonce] - Optional transaction nonce
- * @param {string} [memo] - Optional memo to include with the transaction
- * @returns {Promise<StacksTransaction>} The unsigned transaction object
- */
+// Creates unsigned SIP-010 token transfer transaction
 export const createTokenTransferTransaction = async (
-  contractAddress: string,
-  contractName: string,
-  assetName: string,
-  amount: BigNumber,
-  senderAddress: string,
-  recipientAddress: string,
-  anchorMode: AnchorMode,
-  network: string,
-  publicKey: string,
-  fee?: BigNumber,
-  nonce?: BigNumber,
-  memo?: string,
+  options: CreateTokenTransferTransactionOptions,
 ): Promise<StacksTransaction> => {
+  const {
+    contractAddress,
+    contractName,
+    assetName,
+    amount,
+    senderAddress,
+    recipientAddress,
+    anchorMode,
+    network,
+    publicKey,
+    fee,
+    nonce,
+    memo,
+  } = options;
+
   const functionArgs = createTokenTransferFunctionArgs(
     amount,
     senderAddress,
@@ -165,18 +189,7 @@ export const createTokenTransferTransaction = async (
   return tx;
 };
 
-/**
- * Creates an unsigned STX transfer transaction
- * @param {BigNumber} amount - The amount of STX to transfer
- * @param {string} recipientAddress - The recipient's address
- * @param {AnchorMode} anchorMode - The anchor mode for the transaction
- * @param {string} network - The network for the transaction (mainnet/testnet)
- * @param {string} publicKey - The sender's public key
- * @param {BigNumber} [fee] - Optional transaction fee
- * @param {BigNumber} [nonce] - Optional transaction nonce
- * @param {string} [memo] - Optional memo to include with the transaction
- * @returns {Promise<StacksTransaction>} The unsigned transaction object
- */
+// Creates unsigned STX transfer transaction
 export const createStxTransferTransaction = async (
   amount: BigNumber,
   recipientAddress: string,
@@ -206,19 +219,7 @@ export const createStxTransferTransaction = async (
   return makeUnsignedSTXTokenTransfer(options);
 };
 
-/**
- * Creates a transaction based on type (token or STX)
- * This function determines whether to create a token transfer or STX transfer
- * based on the subAccount parameter
- *
- * @param {Transaction} transaction - The transaction object with details
- * @param {string} senderAddress - The sender's address
- * @param {string} publicKey - The sender's public key
- * @param {TokenAccount} [subAccount] - The token subaccount (if this is a token transaction)
- * @param {BigNumber} [fee] - Optional transaction fee
- * @param {BigNumber} [nonce] - Optional transaction nonce
- * @returns {Promise<StacksTransaction>} The unsigned transaction object
- */
+// Creates either token or STX transfer transaction based on subAccount presence
 export const createTransaction = async (
   transaction: Transaction,
   senderAddress: string,
@@ -234,20 +235,20 @@ export const createTransaction = async (
   if (tokenDetails) {
     // Token transfer transaction
     const { contractAddress, contractName, assetName } = tokenDetails;
-    return createTokenTransferTransaction(
+    return createTokenTransferTransaction({
       contractAddress,
       contractName,
       assetName,
       amount,
       senderAddress,
-      recipient,
+      recipientAddress: recipient,
       anchorMode,
       network,
       publicKey,
       fee,
       nonce,
       memo,
-    );
+    });
   } else {
     // Regular STX transfer
     return createStxTransferTransaction(
@@ -263,31 +264,16 @@ export const createTransaction = async (
   }
 };
 
-/**
- * Applies a signature to a transaction
- * This function adds the signature to the transaction and serializes it to a buffer
- *
- * @param {StacksTransaction} tx - The unsigned transaction object
- * @param {string} signature - The signature as a hex string
- * @returns {Buffer} The serialized signed transaction
- */
+// Applies signature to transaction and returns serialized buffer
 export const applySignatureToTransaction = (tx: StacksTransaction, signature: string): Buffer => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore need to ignore the TS error here
+  // @ts-ignore - TS doesn't recognize spendingCondition.signature property
   tx.auth.spendingCondition.signature = createMessageSignature(signature);
   return Buffer.from(tx.serialize());
 };
 
-/**
- * Creates a transaction ready for broadcast from an operation and signature
- * This is used in the broadcast function to recreate and sign the transaction
- * with the appropriate signature
- *
- * @param {StacksOperation} operation - The operation containing transaction details
- * @param {string} signature - The signature as a hex string
- * @param {Record<string, any>} rawData - Additional data needed for transaction creation
- * @returns {Promise<Buffer>} The serialized signed transaction ready for broadcast
- */
+// Recreates transaction from operation and applies signature for broadcast
+// Used by the broadcast function - rawData type comes from internal ledger-live types
 export const getTxToBroadcast = async (
   operation: StacksOperation,
   signature: string,
@@ -301,16 +287,10 @@ export const getTxToBroadcast = async (
     extra: { memo },
   } = operation;
 
-  const { anchorMode, network, xpub, contractAddress, contractName, assetName } = rawData as {
-    anchorMode: AnchorMode;
-    network: string;
-    xpub: string;
-    contractAddress?: string;
-    contractName?: string;
-    assetName?: string;
-  };
+  if (isTokenTransferRawData(rawData)) {
+    // TypeScript now knows rawData has all token transfer fields
+    const { anchorMode, network, xpub, contractAddress, contractName, assetName } = rawData;
 
-  if (contractAddress && contractName && assetName) {
     // Create the function arguments for the SIP-010 transfer function
     const functionArgs = createTokenTransferFunctionArgs(
       new BigNumber(value),
@@ -342,6 +322,9 @@ export const getTxToBroadcast = async (
 
     return applySignatureToTransaction(tx, signature);
   } else {
+    // STX transfer - extract base fields
+    const { anchorMode, network, xpub } = extractBaseRawData(rawData);
+
     const tx = await createStxTransferTransaction(
       new BigNumber(value).minus(fee),
       recipients[0],
