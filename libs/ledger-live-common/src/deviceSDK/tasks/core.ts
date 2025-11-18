@@ -79,7 +79,8 @@ type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };
 
-export const isDmkError = (error: any): error is DmkError => error && "_tag" in error;
+export const isDmkError = (error: unknown): error is DmkError =>
+  !!error && typeof error === "object" && error !== null && "_tag" in error;
 
 /**
  * Calls a command and retries it on given errors. The transport is refreshed before each retry.
