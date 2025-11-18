@@ -2,6 +2,7 @@ import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/device
 import { expect } from "detox";
 import DeviceAction from "../models/DeviceAction";
 import { open, addDevicesBT, addDevicesUSB } from "../bridge/server";
+import { delay } from "../helpers/commonHelpers";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
@@ -63,10 +64,12 @@ export default class CommonPage {
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
+    const deviceAction = new DeviceAction(nano);
     await addDevicesUSB(nano);
+    await delay(1000);
     await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
-    await new DeviceAction(nano).accessManager();
+    await deviceAction.accessManager();
   }
 }
