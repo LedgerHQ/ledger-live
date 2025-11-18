@@ -56,6 +56,7 @@ function ExperimentalHeader() {
 
     const targetState = shouldShowHeader ? OPENED_STATE : CLOSED_STATE;
     openState.value = withTiming(targetState, ANIMATION_CONFIG);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldShowHeader, openState]);
 
   const opacityStyle = useAnimatedStyle(
