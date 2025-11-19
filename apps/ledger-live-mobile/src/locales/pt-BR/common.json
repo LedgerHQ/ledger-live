@@ -10,6 +10,9 @@
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Voltar",
+    "fee" : "Taxa",
+    "stake" : "Aplicar",
+    "validator" : "Validador",
     "delete" : "Excluir",
     "paste" : "Colar",
     "yes" : "Sim",
@@ -1154,6 +1157,11 @@
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” da Ledger Wallet, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Provedor Inválido",
+      "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para mudá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente.",
+      "openSettings" : "Ir para configurações"
+    },
     "GasLessThanEstimate" : {
       "title" : "Isto pode ser baixo demais Por favor, aumente"
     },
@@ -1224,6 +1232,12 @@
     "AddressesSanctionedError" : {
       "title" : "Mantendo você em segurança",
       "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Quantia reduzida para se adequar às restrições UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Quantia muito grande para as restrições UTXO."
     }
   },
   "crash" : {
@@ -3780,7 +3794,9 @@
       },
       "wrongDevice" : {
         "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
-        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live"
+        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através da Ledger Wallet",
+        "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
+        "swapWithAnotherProvider" : "Trocar com outro provedor"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
@@ -4430,6 +4446,7 @@
     "allowSecureConnection" : "Permitir uma conexão segura com a Ledger",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "connectAnotherDevice" : "Conectar outra Ledger",
     "unlockDevice" : "Desbloqueie seu dispositivo",
@@ -4458,6 +4475,7 @@
         "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
       "acceptTerms" : "Ao assinar esta transação, você aceita os <0>termos de uso</0> da <0>{{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Ao validar esta transação,\neu aceito os <0>Termos de uso do SwapKit</0>, a tecnologia que impulsiona o NEAR Intents",
       "changellySimplifiedAcceptTerms" : "Ao validar esta transação, você aceita os <0>Termos de uso</0> e a <1>Política de AML/KYC</1> da Changelly. A Changelly pode aplicar procedimentos de AML/KYC que podem, em alguns casos, afetar a conclusão da sua transação. Caso isso aconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
     },
@@ -4494,6 +4512,11 @@
     "bluetooth" : {
       "title" : "Conectar via Bluetooth...",
       "label" : "Detecta automaticamente a sua Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Obter suporte"
     },
     "deviceNotFoundPairNewDevice" : "Emparelhar via Bluetooth",
     "headerDescription" : "Certifique-se de que sua {{productName}} está desbloqueada e com Bluetooth habilitado",
@@ -4718,8 +4741,8 @@
       "continueInstall" : "Instalar Aplicativos"
     },
     "update" : {
-      "title_one" : "{{number}} atualização de aplicativo",
-      "title_other" : "{{number}} atualizações de aplicativo",
+      "title_one" : "{{number}} atualização\nde aplicativo",
+      "title_other" : "{{number}} atualizações\nde aplicativo",
       "step" : "Etapa de atualização {{step}}:",
       "updateWarn" : "Não saia da Minha Ledger durante a atualização.",
       "progress" : "Atualizando Todos...",
@@ -4866,7 +4889,7 @@
         "description" : "Suas configurações e aplicativos blockchain serão restaurados.",
         "restoreLockScreenPicture" : "Restaurando a imagem da tela de bloqueio",
         "restoreLanguage" : "Restaurando o idioma",
-        "imageLoadRequested" : "Clique em “Carregar imagem” para restaurar a imagem da tela de bloqueio",
+        "imageLoadRequested" : "Clique em “Carregar foto” para restaurar a imagem da tela de bloqueio",
         "imageCommitRequested" : "Clique em “manter” para confirmar a sua imagem da tela de bloqueio",
         "allowLanguageInstallation" : "Clique em “Install” para restaurar o idioma",
         "allowAppsRestoration" : "Clique em “Permitir” para restaurar os aplicativos",
@@ -5973,6 +5996,45 @@
       "newAddressTRC20" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para ativá-lo."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Endereço copiado!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Ganhar"
+    },
+    "stakeBanner" : {
+      "title" : "Ganhe recompensas com a MINA",
+      "altTitle" : "Gerencie sua delegação de MINA",
+      "description" : "Delegue seus MINA a um Produtor de Blocos e receba recompensas pela produção de blocos. As recompensas são distribuídas com base na quantia delegada.",
+      "altDescription" : "Altere suas configurações de delegação ou desdelegue seus tokens MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegado a",
+      "stakedBalance" : "Saldo em staking",
+      "producerAddress" : "Endereço do produtor",
+      "delegatedToTooltip" : "Nome do produtor de bloco para o qual você está delegando",
+      "stakedBalanceTooltip" : "Quantidade total de MINA atualmente em staking com esse validador",
+      "producerAddressTooltip" : "Endereço público do produtor de blocos para o qual você está delegando"
+    },
+    "delegators" : "Delegadores",
+    "memoPlaceholder" : "Memo opcional",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Escolha o validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmação"
+      },
+      "title" : "Faça staking de MINA",
+      "help" : "Selecione um validador da lista abaixo para delegar seus tokens MINA.",
+      "success" : {
+        "title" : "Transação transmitida com sucesso",
+        "description" : "Sua solicitação de alteração de delegação foi transmitida."
+      },
+      "error" : {
+        "title" : "Ocorreu um erro ao transmitir a transação"
+      }
+    }
+  },
   "stellar" : {
     "token" : "Ativos",
     "memo" : {
@@ -6376,9 +6438,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -6860,7 +6919,7 @@
   "updatedTerms" : {
     "title" : "Atualização dos Termos de uso",
     "body" : {
-      "intro" : "Olá! Atualizamos nossos Termos de Uso do Ledger Live com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
+      "intro" : "Olá! Atualizamos nossos Termos de Uso da Ledger Wallet com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
       "bulletPoints" : ["Esclarecer quais serviços estão disponíveis e como funcionam", "Explicar como funcionam as taxas de serviços", "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"],
       "agreement" : "Ao clicar em \"Continuar\" você concorda que leu e aceitou os Termos de uso abaixo."
     },
@@ -7249,7 +7308,7 @@
     "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra foto",
     "rotateImage" : "Girar",
-    "allowPreview" : "Toque em “Carregar imagem” para personalizar a tela de bloqueio",
+    "allowPreview" : "Toque em “Carregar foto” para personalizar a tela de bloqueio",
     "loadingPicture" : "Carregando...",
     "loadingPictureAlmostOver" : "Voilà!",
     "commitRequested" : "Gostou do que está vendo?\nMantenha assim!",
@@ -7304,11 +7363,11 @@
         "description" : "Escolha qualquer arte digital ou foto para exibir na tela de bloqueio da sua {{productName}}.",
         "popupLabel" : "Tela de bloqueio personalizada com sucesso"
       },
-      "recover" : {
-        "title" : "Inscrever-se no Ledger Recover",
-        "titleCompleted" : "Você se inscreveu no Ledger Recover",
-        "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
-        "popupLabel" : "Você se inscreveu com sucesso no Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Sincronize suas contas cripto",
+        "titleCompleted" : "Suas contas estão sincronizadas",
+        "description" : "Ative o Ledger Sync para sincronizar suas contas cripto",
+        "popupLabel" : "Contas sincronizadas"
       }
     }
   },
