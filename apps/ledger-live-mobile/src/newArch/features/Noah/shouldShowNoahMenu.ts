@@ -17,7 +17,7 @@ export function shouldShowNoahMenu(params: NoahParams, noahFlagEnabled: boolean)
     hasValidCurrency = decoraters?.(getCurrencyId(currency)) ?? false;
   }
 
-  // Show the original configuration in the stack
+  // Don't show the Noah menu
   if (!noahFlagEnabled || !hasValidCurrency || fromMenu) {
     return false;
   }

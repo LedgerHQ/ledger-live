@@ -122,6 +122,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "sync-onboarding-companion",
     navigationOverride: baseNavigation,
+    fromMenu: true,
   });
 
   const twoStepDesync = useTwoStepDesync({
