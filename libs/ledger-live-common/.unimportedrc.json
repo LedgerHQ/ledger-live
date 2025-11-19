@@ -390,6 +390,7 @@
     "src/families/canton/config.ts",
     "src/families/canton/logic.ts",
     "src/families/canton/types.ts",
+    "src/families/canton/react.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
     "src/families/evm/shouldUseReceiveOptions.ts",
