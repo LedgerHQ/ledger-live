@@ -5854,6 +5854,62 @@
         "quickFix": "Quick Fix: Send some funds to yourself to consolidate.",
         "warning": "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
         "consolidate": "Consolidate"
+      },
+      "pendingTransactions": {
+        "title": "Pending Transactions ({{count}})",
+        "incoming": {
+          "title": "Incoming Offers ({{count}})"
+        },
+        "outgoing": {
+          "title": "Outgoing Offers ({{count}})"
+        },
+        "pending": "Pending",
+        "expired": "Expired",
+        "status": {
+          "label": "Status",
+          "expired": "Expired",
+          "incoming": "Incoming",
+          "outgoing": "Outgoing"
+        },
+        "from": "From",
+        "to": "To",
+        "memo": "Memo",
+        "noMemo": "No memo",
+        "date": "Date",
+        "expiresAt": "Expires at",
+        "expiresIn": "Expires in",
+        "amount": "Amount",
+        "transaction": "Transaction",
+        "viewTransaction": "View transaction",
+        "action": "Action",
+        "accept": "Accept",
+        "withdraw": "Withdraw",
+        "reject": "Reject",
+        "deviceAppModal": {
+          "title": "{{action}} Offer",
+          "description": "Please open the Canton app on your Ledger device to {{action}} this offer.",
+          "contractId": "Contract ID",
+          "cancel": "Cancel",
+          "openApp": "Open Canton App",
+          "opening": "Opening...",
+          "noDevice": "No device connected",
+          "appOpenError": "Failed to open Canton app. Please try again.",
+          "processing": "Processing {{action}}...",
+          "success": {
+            "accept": {
+              "title": "Offer Accepted",
+              "description": "The transfer offer has been successfully accepted."
+            },
+            "reject": {
+              "title": "Offer Rejected",
+              "description": "The transfer offer has been successfully rejected."
+            },
+            "withdraw": {
+              "title": "Offer Withdrawn",
+              "description": "The transfer offer has been successfully withdrawn."
+            }
+          }
+        }
       }
     },
     "stellar": {

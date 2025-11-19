@@ -15,15 +15,17 @@ function isCantonAccountRaw(accountRaw: AccountRaw): accountRaw is CantonAccount
 }
 
 function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
-  const { instrumentUtxoCounts } = r;
+  const { instrumentUtxoCounts, pendingTransferProposals } = r;
   return {
     instrumentUtxoCounts,
+    pendingTransferProposals,
   };
 }
 
 function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
   return {
     instrumentUtxoCounts: r.instrumentUtxoCounts,
+    pendingTransferProposals: r.pendingTransferProposals,
   };
 }
 
