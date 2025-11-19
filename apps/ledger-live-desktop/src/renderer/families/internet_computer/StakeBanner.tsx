@@ -34,8 +34,6 @@ const bannerContent = {
   },
 };
 
-type BannerKeys = keyof typeof bannerContent;
-
 const StakeBanner: React.FC<{ account: ICPAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -45,7 +43,7 @@ const StakeBanner: React.FC<{ account: ICPAccount }> = ({ account }) => {
   if (!stakeAccountBanner?.enabled) return null;
   const { state, data } = bannerState;
 
-  const bannerContentKey = state as BannerKeys;
+  const bannerContentKey = state;
   const description = data ? defaultDescription : bannerContent[bannerContentKey]?.descriptionKey;
 
   return (
