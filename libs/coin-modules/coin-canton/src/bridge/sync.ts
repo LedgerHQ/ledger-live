@@ -4,7 +4,12 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
+import {
+  getLedgerEnd,
+  getOperations,
+  type OperationInfo,
+  getPendingTransferProposals,
+} from "../network/gateway";
 import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import resolver from "../signer";
@@ -107,6 +112,9 @@ export function makeGetAccountShape(
 
     const { nativeInstrumentId } = coinConfig.getCoinConfig(currency);
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
+    const pendingTransferProposals = xpubOrAddress
+      ? await getPendingTransferProposals(currency, xpubOrAddress)
+      : [];
 
     const balancesData = (balances || []).reduce(
       (acc, balance) => {
@@ -169,6 +177,7 @@ export function makeGetAccountShape(
       used,
       cantonResources: {
         instrumentUtxoCounts,
+        pendingTransferProposals,
       },
     };
 

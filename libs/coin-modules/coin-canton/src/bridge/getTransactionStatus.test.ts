@@ -311,6 +311,7 @@ describe("getTransactionStatus", () => {
       const accountWithManyUtxos = {
         ...mockAccount,
         cantonResources: {
+          pendingTransferProposals: [],
           instrumentUtxoCounts: {
             Amulet: TO_MANY_UTXOS_WARNING_COUNT + 1,
           },
