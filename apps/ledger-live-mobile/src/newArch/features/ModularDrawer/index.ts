@@ -5,6 +5,8 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer/ModularDrawerWr
 import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 
+export { handleModularDrawerDeeplink } from "./handleModularDrawerDeeplink";
+
 export {
   ModularDrawer,
   ModularDrawerStep,
