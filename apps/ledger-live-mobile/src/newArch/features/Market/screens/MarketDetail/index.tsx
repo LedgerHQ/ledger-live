@@ -136,8 +136,8 @@ function View({
         }
       >
         <MarketGraph
+          isLoading={loadingChart && !refreshControlVisible}
           setHoverItem={setHoverItem}
-          isLoading={loadingChart}
           refreshChart={updateMarketParams}
           chartData={dataChart}
           range={range}

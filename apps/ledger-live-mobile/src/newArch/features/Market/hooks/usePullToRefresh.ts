@@ -35,7 +35,7 @@ function usePullToRefresh({ loading, refetch }: UsePullToRefreshProps) {
 
   return {
     handlePullToRefresh,
-    refreshControlVisible: isRefreshing || loading,
+    refreshControlVisible: isRefreshing,
   };
 }
 
