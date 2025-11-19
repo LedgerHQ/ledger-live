@@ -374,7 +374,7 @@ const assethub_polkadot: CurrenciesData<Transaction> = {
             mode: "send",
             recipient: ACCOUNT_SAME_STASHCONTROLLER,
           }),
-          expectedStatus: (_account, _transaction, status) => ({
+          expectedStatus: (_account, _transaction, _status) => ({
             errors: {},
             warnings: {
               amount: new PolkadotAllFundsWarning(),
