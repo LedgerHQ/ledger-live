@@ -21,7 +21,7 @@ describe("Polkadot Deterministic Tester", () => {
     }
   });
 
-  it.skip("scenario Polkadot", async () => {
+  it("scenario Polkadot", async () => {
     try {
       await executeScenario(PolkadotScenario);
     } catch (e) {

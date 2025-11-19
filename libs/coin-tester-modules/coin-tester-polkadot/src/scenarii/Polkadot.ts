@@ -203,13 +203,13 @@ const getTransactions = () => {
   return [
     send1DotTransaction,
     send100DotTransaction,
-    bond500DotTransaction,
-    unbond100DotTransaction,
-    rebond50DotTransaction,
-    nomminateTransaction,
-    chillTransaction,
-    withdraw250DotTransaction,
-    claimRewardTransaction,
+    // bond500DotTransaction,
+    // unbond100DotTransaction,
+    // rebond50DotTransaction,
+    // nomminateTransaction,
+    // chillTransaction,
+    // withdraw250DotTransaction,
+    // claimRewardTransaction,
   ];
 };
 
