@@ -152,7 +152,8 @@
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
-    }
+    },
+    "stake" : "Staké"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -443,7 +444,7 @@
     },
     "wrongDevice" : {
       "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
-      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Wallet.",
+      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges interchaînes sur {{provider}} via Ledger Wallet.",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -946,7 +947,7 @@
       "amountSupplied" : "Montant placé",
       "amountSuppliedTooltip" : "Montant prêté sur le réseau",
       "currencyAPY" : "APY",
-      "currencyAPYTooltip" : "Rendement annuel d’un dépôt sans cesse capitalisé",
+      "currencyAPYTooltip" : "Rendement annuel d’un placement sans cesse capitalisé",
       "accruedInterests" : "Intérêts courus",
       "accruedInterestsTooltip" : "Récompenses gagnées avec vos actifs prêtés",
       "interestEarned" : "Intérêts gagnés",
@@ -1017,8 +1018,8 @@
         "allAssets" : "Actif",
         "totalBalance" : "Solde des actifs",
         "totalBalanceTooltip" : "Montant disponible au prêt",
-        "currentAPY" : "APY du dépôt",
-        "currentAPYTooltip" : "Rendement annuel d’un dépôt sans cesse capitalisé",
+        "currentAPY" : "APY du placement",
+        "currentAPYTooltip" : "Rendement annuel d’un placement sans cesse capitalisé",
         "actions" : "Actions"
       }
     },
@@ -1147,7 +1148,7 @@
           "title" : "Confirmation",
           "success" : {
             "title" : "Transaction bien envoyée",
-            "text" : "Vous commencerez à percevoir des récompenses une fois que le réseau aura confirmé le dépôt.",
+            "text" : "Vous commencerez à percevoir des récompenses une fois le placement confirmé sur le réseau.",
             "done" : "Fermer",
             "cta" : "Voir les détails",
             "info" : "Il peut y avoir un délai avant que les transactions apparaissent dans un explorateur et soient confirmées."
@@ -1445,6 +1446,12 @@
         "title" : "Transférer vos actifs vers votre Ledger",
         "description" : "Directement depuis la plateforme d’échange ou le wallet de votre choix vers votre Ledger.",
         "actionCompletedPopupLabel" : "Actifs transférés"
+      },
+      "syncAccounts" : {
+        "title" : "Synchroniser vos comptes crypto",
+        "titleCompleted" : "Vos comptes sont synchronisés",
+        "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
+        "actionCompletedPopupLabel" : "Comptes synchronisés"
       },
       "recover" : {
         "title" : "Vous abonner à Ledger Recover",
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
+      "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
       "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
       "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et\nsa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant,\nvous devez contacter l’<2>assistance clientèle</2> de Changelly.",
@@ -2279,6 +2287,7 @@
         "label" : "Compte à créditer",
         "parentAccount" : "1. Sélectionnez le compte {{currencyName}}.",
         "token" : "2. Sélectionnez un token.",
+        "errorLoadingTokens" : "Erreur lors du chargement des tokens",
         "verifyTokenType" : "Vérifiez que <0>{{token}}</0> est bien un token <0>{{tokenType}}</0>. Tout autre crypto-actif envoyé sur un compte {{currency}} risque d’être perdu.",
         "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu.",
         "depositFromCexBannerTitle" : "Recevoir des cryptos de votre compte Coinbase"
@@ -4465,7 +4474,7 @@
       },
       "modal" : {
         "button" : "Terminé",
-        "title" : "Scannez pour exporter vers Ledger Live mobile",
+        "title" : "Scannez pour exporter vers Ledger Wallet mobile",
         "listTitle" : "Sur l’application mobile Ledger Wallet :",
         "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Voir tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
@@ -5052,7 +5061,7 @@
         "paragraph4" : "Pour restaurer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
         "points" : {
           "1" : "Achetez un nouvel appareil Ledger.",
-          "2" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Live.",
+          "2" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Wallet.",
           "3" : "Entrez votre phrase de récupération sur votre nouvel appareil pour restaurer l’accès à vos cryptos."
         }
       },
@@ -6703,7 +6712,7 @@
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
     },
     "CardanoStakeKeyDepositError" : {
-      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce dépôt"
+      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce placement"
     },
     "CardanoFeeHigh" : {
       "title" : "Frais de réseau anormalement élevés",
@@ -7054,12 +7063,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Erreur de communication",
       "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Montant réduit pour respecter les limites UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Montant supérieur aux limites UTXO"
     }
   },
   "cryptoOrg" : {
     "memo" : "Mémo",
     "memoPlaceholder" : "Saisissez le tag/mémo",
     "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Frais",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Changer la délégation",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. ",
+      "changeCTA" : "Modifier"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
