@@ -16,7 +16,7 @@ const useListsAnimation = (initialTab: TabListType) => {
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const [assetsHeight, setAssetsHeight] = useState<number>(0);
   const [accountsHeight, setAccountsHeight] = useState<number>(0);
-  const [containerHeight, setContainerHeight] = useState<number>(0);
+  const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
   const [accountsButtonHeight, setAccountsButtonHeight] = useState<number>(0);
   const [assetsButtonHeight, setAssetsButtonHeight] = useState<number>(0);
 
@@ -29,8 +29,14 @@ const useListsAnimation = (initialTab: TabListType) => {
     setSelectedTab(value);
     dispatch(setSelectedTabPortfolioAssets(value));
 
-    if (value === TAB_OPTIONS.Assets) setContainerHeight(assetsHeight + assetsButtonHeight);
-    else setContainerHeight(accountsHeight + accountsButtonHeight);
+    // Only update if we have actual measurements
+    const isAssets = value === TAB_OPTIONS.Assets;
+    const height = isAssets ? assetsHeight : accountsHeight;
+    const buttonHeight = isAssets ? assetsButtonHeight : accountsButtonHeight;
+
+    if (height > 0 || buttonHeight > 0) {
+      setContainerHeight(height + buttonHeight);
+    }
 
     track("button_clicked", {
       button: value,
@@ -54,10 +60,13 @@ const useListsAnimation = (initialTab: TabListType) => {
 
   useEffect(() => {
     // Set the height of the container based on the selected tab
-    if (selectedTab === TAB_OPTIONS.Assets) {
-      setContainerHeight(assetsHeight + assetsButtonHeight);
-    } else {
-      setContainerHeight(accountsHeight + accountsButtonHeight);
+    // Only update if we have actual measurements (avoid setting to 0 on first render)
+    const isAssets = selectedTab === TAB_OPTIONS.Assets;
+    const height = isAssets ? assetsHeight : accountsHeight;
+    const buttonHeight = isAssets ? assetsButtonHeight : accountsButtonHeight;
+
+    if (height > 0 || buttonHeight > 0) {
+      setContainerHeight(height + buttonHeight);
     }
   }, [selectedTab, assetsHeight, accountsHeight, assetsButtonHeight, accountsButtonHeight]);
 
