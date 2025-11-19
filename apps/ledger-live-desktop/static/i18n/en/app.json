@@ -7659,7 +7659,7 @@
       "syncNeurons": {
         "title": "Sync Your Staked ICP",
         "description": "Your staked ICP has last been synced {{days}} days and {{hours}} hours ago. If you want to see the latest details, we recommend you sync often.",
-        "Altdescription": "We recommend syncing your neurons to see the latest details",
+        "altDescription": "We recommend syncing your neurons to see the latest details",
         "cta": "Sync Neurons"
       },
       "lockNeurons": {
