@@ -117,7 +117,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
         "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       ],
       "type": "OUT",
-      "value": "1000000000",
+      "value": "1010000000",
     },
     {
       "accountId": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44",
@@ -130,14 +130,14 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
       "fee": "200100000",
       "hasFailed": false,
       "hash": "5JuzzSWMVWj4NFV94q6piAgUehfHpAs7f6uu74TAQbxh2cD574CZ",
-      "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44-5JuzzSWMVWj4NFV94q6piAgUehfHpAs7f6uu74TAQbxh2cD574CZ-DELEGATE",
+      "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44-5JuzzSWMVWj4NFV94q6piAgUehfHpAs7f6uu74TAQbxh2cD574CZ-REDELEGATE",
       "recipients": [
         "B62qq3TQ8AP7MFYPVtMx5tZGF3kWLJukfwG1A1RGvaBW1jfTPTkDBW6",
       ],
       "senders": [
         "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       ],
-      "type": "DELEGATE",
+      "type": "REDELEGATE",
       "value": "0",
     },
     {
