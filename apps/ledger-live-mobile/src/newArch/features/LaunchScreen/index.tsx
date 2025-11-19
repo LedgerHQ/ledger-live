@@ -3,6 +3,7 @@ import { View, StyleSheet, Animated } from "react-native";
 import { LoadingState, LoadingConfig, DEFAULT_LOADING_CONFIG } from "./LoadingStates";
 import LottieLauncher from "./components/LottieLauncher";
 import { useAppLoadingManager } from "./hooks/useAppLoadingManager";
+//import { useAutoDismissSplashScreen } from "./hooks/useAutoDismissSplashScreen";
 import Config from "react-native-config";
 
 interface AppLoadingManagerProps {
@@ -20,6 +21,8 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
 }) => {
   const { loadingState, appIsReady, handleLottieFinish, appOpacity, lottieOpacity } =
     useAppLoadingManager({ isNavigationReady, config, onAppReady });
+
+  //useAutoDismissSplashScreen(isNavigationReady);
 
   if (Config.DETOX) {
     return children;

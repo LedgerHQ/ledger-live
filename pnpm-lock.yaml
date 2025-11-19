@@ -1318,6 +1318,9 @@ importers:
       react-native-ble-plx:
         specifier: 3.4.0
         version: 3.4.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-bundle-splitter:
+        specifier: 3.1.0
+        version: 3.1.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-config:
         specifier: 'catalog:'
         version: 1.5.3(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
@@ -32093,6 +32096,12 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-bundle-splitter@3.1.0:
+    resolution: {integrity: sha512-b51ZyB5mxcFV2jdZFkMJvj4b+j9g+a7lHyoHkwy1f4S03uZLXlZDkKNaArn/qekyS2gnwSROGgzfT6FPvkxfkA==}
+    peerDependencies:
+      react: '*'
+      react-native: '>=0.59.1'
 
   react-native-bundle-visualizer@3.1.3:
     resolution: {integrity: sha512-FPnrQS3t/WM67S3fBdaQ0pvkpk/ZJOC4nZpiQCHTpjNZTUmbO5vQ4QbAlOpSayHp5n3nu1Ml/KIJaC6R5cwVng==}
@@ -71569,6 +71578,11 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-native: 0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
+
+  react-native-bundle-splitter@3.1.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   react-native-bundle-visualizer@3.1.3(patch_hash=fgdd2c4kpymhnfnsaf5bc33xwi):
     dependencies:

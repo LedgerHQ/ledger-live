@@ -4,11 +4,19 @@ import Config from "react-native-config";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import BaseNavigator from "./BaseNavigator";
-import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
+import { lazyLoad } from "LLM/utils/lazyLoad";
+
+const BaseNavigator = lazyLoad<typeof import("./BaseNavigator").default>({
+  name: NavigatorName.Base,
+  loader: () => import("./BaseNavigator"),
+});
+const BaseOnboardingNavigator = lazyLoad<typeof import("./BaseOnboardingNavigator").default>({
+  name: NavigatorName.BaseOnboarding,
+  loader: () => import("./BaseOnboardingNavigator"),
+});
 
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);

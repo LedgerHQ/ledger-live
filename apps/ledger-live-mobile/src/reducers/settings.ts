@@ -78,6 +78,7 @@ import type {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
+  SettingsSetIsAppLoadedPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -169,6 +170,7 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  isAppLoaded: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -633,6 +635,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
       .payload,
   }),
+  [SettingsActionTypes.SET_IS_APP_LOADED]: (state, action) => ({
+    ...state,
+    isAppLoaded: (action as Action<SettingsSetIsAppLoadedPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -848,3 +854,4 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
+export const isAppLoadedSelector = (state: State) => state.settings.isAppLoaded;

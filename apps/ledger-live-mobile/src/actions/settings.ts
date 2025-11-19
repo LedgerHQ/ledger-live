@@ -68,6 +68,7 @@ import {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
+  SettingsSetIsAppLoadedPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -128,6 +129,9 @@ export const setIsOnboardingFlowReceiveSuccess =
   );
 export const setIsPostOnboardingFlow = createAction<SettingsIsPostOnboardingFlowPayload>(
   SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW,
+);
+export const setIsAppLoaded = createAction<SettingsSetIsAppLoadedPayload>(
+  SettingsActionTypes.SET_IS_APP_LOADED,
 );
 export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
   SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,

@@ -754,7 +754,8 @@ export const DeeplinksProvider = ({
         ref={navigationRef}
         onReady={() => {
           isReadyRef.current = true;
-          setTimeout(() => SplashScreen.hide(), 300);
+          SplashScreen.hide();
+          //setTimeout(() => SplashScreen.hide(), 300);
         }}
       >
         {children}

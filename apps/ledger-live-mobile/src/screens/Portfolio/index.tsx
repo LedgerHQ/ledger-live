@@ -53,6 +53,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import { preloadLazyLoad, PRELOAD_SCREEN_NAMES } from "LLM/utils/lazyLoad";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -76,6 +77,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isFocused = useIsFocused();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
+
+  useFocusEffect(() => {
+    preloadLazyLoad(PRELOAD_SCREEN_NAMES.EarnLiveAppNavigator);
+    preloadLazyLoad(PRELOAD_SCREEN_NAMES.ExchangeLiveAppNavigator);
+  });
 
   useEffect(() => {
     async function handleMigration() {

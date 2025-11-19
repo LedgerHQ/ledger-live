@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Easing } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { LoadingConfig, LoadingState, DEFAULT_LOADING_CONFIG } from "../LoadingStates";
+//import { useSelector } from "react-redux";
+//import { isAppLoadedSelector } from "../selectors";
 
 type UseAppLoadingManagerParams = {
   isNavigationReady: boolean;
@@ -14,6 +16,8 @@ export function useAppLoadingManager({
   config = DEFAULT_LOADING_CONFIG,
   onAppReady,
 }: UseAppLoadingManagerParams) {
+  //const isAppLoaded = useSelector(isAppLoadedSelector);
+
   const [loadingState, setLoadingState] = useState<LoadingState>(LoadingState.SPLASH);
   const [lottieStartTime, setLottieStartTime] = useState<number | null>(null);
   const [appIsReady, setAppIsReady] = useState(false);
@@ -69,7 +73,7 @@ export function useAppLoadingManager({
 
   useEffect(() => {
     if (loadingState !== LoadingState.LOTTIE_LOADING) return;
-    const canTransition = isNavigationReady && (minTimeElapsed || maxTimeElapsed) && lottieFinished;
+    const canTransition = isNavigationReady && (minTimeElapsed || maxTimeElapsed) && lottieFinished; //&& isAppLoaded;
     if (!canTransition || hasTransitionedRef.current) return;
 
     hasTransitionedRef.current = true;
@@ -101,6 +105,7 @@ export function useAppLoadingManager({
     onAppReady,
     lottieOpacity,
     appOpacity,
+    //  isAppLoaded,
   ]);
 
   const handleLottieFinish = useCallback(() => {

@@ -320,6 +320,7 @@ export enum SettingsActionTypes {
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
+  SET_IS_APP_LOADED = "SET_IS_APP_LOADED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -475,13 +476,14 @@ export type SettingsPayload =
   | SettingsSetMevProtectionPayload
   | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
-  | SettingsRemoveStarredMarketcoinsPayload;
+  | SettingsRemoveStarredMarketcoinsPayload
+  | SettingsSetIsAppLoadedPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
   WALLET_CONNECT_SET_URI = "WALLET_CONNECT_SET_URI",
 }
-
+export type SettingsSetIsAppLoadedPayload = SettingsState["isAppLoaded"];
 export type WalletConnectSetUriPayload = WalletConnectState["uri"] | void;
 export type WalletConnectPayload = WalletConnectSetUriPayload;
 
@@ -602,6 +604,13 @@ export type AuthPayload =
   | AuthSetBiometricsErrorPayload
   | AuthSetAuthModalOpenPayload;
 
+// === LAUNCHSCREEN ACTIONS ===
+export enum LaunchScreenActionTypes {
+  SET_IS_APP_LOADED = "LAUNCH_SCREEN_SET_IS_APP_LOADED",
+}
+
+export type LaunchScreenPayload = boolean;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
@@ -618,4 +627,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
+  | Action<LaunchScreenPayload>
   | AnyAction;

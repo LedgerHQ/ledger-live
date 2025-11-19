@@ -9,87 +9,150 @@ import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
-import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
-import EditDeviceName from "~/screens/EditDeviceName";
-import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
-import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
-import SettingsNavigator from "./SettingsNavigator";
-import BuyDeviceNavigator from "./BuyDeviceNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import SendFundsNavigator from "./SendFundsNavigator";
-import SignMessageNavigator from "./SignMessageNavigator";
-import SignTransactionNavigator from "./SignTransactionNavigator";
-import FreezeNavigator from "./FreezeNavigator";
-import UnfreezeNavigator from "./UnfreezeNavigator";
-import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
-import CardLiveAppNavigator from "./CardLiveAppNavigator";
-import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import SwapNavigator from "./SwapNavigator";
-import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "~/screens/Analytics/Allocation";
-import AnalyticsOperations from "~/screens/Analytics/Operations";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Account from "~/screens/Account";
-import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import styles from "~/navigation/styles";
 import StepHeader from "../StepHeader";
-import PortfolioHistory from "~/screens/Portfolio/PortfolioHistory";
-import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "~/screens/VerifyAccount";
-import { LiveApp } from "~/screens/Platform";
-import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
-import {
-  BleDevicePairingFlow,
-  bleDevicePairingFlowHeaderOptions,
-} from "~/screens/BleDevicePairingFlow";
-import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
+import { bleDevicePairingFlowHeaderOptions } from "~/screens/BleDevicePairingFlow";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
-import CustomImageNavigator from "./CustomImageNavigator";
-import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
-import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "~/screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
-import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
-import LandingPagesNavigator from "./LandingPagesNavigator";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import CustomErrorNavigator from "./CustomErrorNavigator";
-import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
-import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
-import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
-import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AssetsListNavigator from "LLM/features/Assets/Navigator";
-import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
+import { lazyLoad, PRELOAD_SCREEN_NAMES } from "LLM/utils/lazyLoad";
+import { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
+
+const OperationDetails = lazyLoad({ loader: () => import("~/screens/OperationDetails") });
+const PairDevices = lazyLoad({ loader: () => import("~/screens/PairDevices") });
+const EditDeviceName = lazyLoad({ loader: () => import("~/screens/EditDeviceName") });
+const ScanRecipient = lazyLoad({ loader: () => import("~/screens/SendFunds/ScanRecipient") });
+const Main = lazyLoad({ loader: () => import("./MainNavigator") });
+const SettingsNavigator = lazyLoad({
+  loader: () => import("./SettingsNavigator"),
+  name: PRELOAD_SCREEN_NAMES.SettingsNavigator,
+});
+const BuyDeviceNavigator = lazyLoad({ loader: () => import("./BuyDeviceNavigator") });
+const ReceiveFundsNavigator = lazyLoad({ loader: () => import("./ReceiveFundsNavigator") });
+const SendFundsNavigator = lazyLoad({ loader: () => import("./SendFundsNavigator") });
+const SignMessageNavigator = lazyLoad({ loader: () => import("./SignMessageNavigator") });
+const SignTransactionNavigator = lazyLoad({ loader: () => import("./SignTransactionNavigator") });
+const FreezeNavigator = lazyLoad({ loader: () => import("./FreezeNavigator") });
+const UnfreezeNavigator = lazyLoad({ loader: () => import("./UnfreezeNavigator") });
+const ClaimRewardsNavigator = lazyLoad({ loader: () => import("./ClaimRewardsNavigator") });
+const ExchangeLiveAppNavigator = lazyLoad({
+  loader: () => import("./ExchangeLiveAppNavigator"),
+  name: PRELOAD_SCREEN_NAMES.ExchangeLiveAppNavigator,
+});
+const CardLiveAppNavigator = lazyLoad({ loader: () => import("./CardLiveAppNavigator") });
+const EarnLiveAppNavigator = lazyLoad({
+  loader: () => import("./EarnLiveAppNavigator"),
+  name: PRELOAD_SCREEN_NAMES.EarnLiveAppNavigator,
+});
+const PlatformExchangeNavigator = lazyLoad({
+  loader: () => import("./PlatformExchangeNavigator"),
+});
+const AccountSettingsNavigator = lazyLoad({ loader: () => import("./AccountSettingsNavigator") });
+const PasswordAddFlowNavigator = lazyLoad({ loader: () => import("./PasswordAddFlowNavigator") });
+const PasswordModifyFlowNavigator = lazyLoad({
+  loader: () => import("./PasswordModifyFlowNavigator"),
+});
+const SwapNavigator = lazyLoad({ loader: () => import("./SwapNavigator") });
+const NotificationCenterNavigator = lazyLoad({
+  loader: () => import("./NotificationCenterNavigator"),
+});
+const AnalyticsAllocation = lazyLoad({ loader: () => import("~/screens/Analytics/Allocation") });
+const AnalyticsOperations = lazyLoad({ loader: () => import("~/screens/Analytics/Operations") });
+const Account = lazyLoad({ loader: () => import("~/screens/Account") });
+const ReadOnlyAccount = lazyLoad({
+  loader: () => import("~/screens/Account/ReadOnly/ReadOnlyAccount"),
+});
+
+const PortfolioHistory = lazyLoad({ loader: () => import("~/screens/Portfolio/PortfolioHistory") });
+const RequestAccountNavigator = lazyLoad({ loader: () => import("./RequestAccountNavigator") });
+const VerifyAccount = lazyLoad({ loader: () => import("~/screens/VerifyAccount") });
+const LiveApp = lazyLoad({
+  loader: () => import("~/screens/Platform").then(m => ({ default: m.LiveApp })),
+});
+const AccountsNavigator = lazyLoad({ loader: () => import("./AccountsNavigator") });
+const BleDevicePairingFlow = lazyLoad({
+  loader: () =>
+    import("~/screens/BleDevicePairingFlow").then(m => ({ default: m.BleDevicePairingFlow })),
+});
+const PostBuyDeviceScreen = lazyLoad({
+  loader: () => import("LLM/features/Reborn/screens/PostBuySuccess"),
+});
+const PostBuyDeviceSetupNanoWallScreen = lazyLoad({
+  loader: () => import("~/screens/PostBuyDeviceSetupNanoWallScreen"),
+});
+const CurrencySettings = lazyLoad({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings"),
+});
+const WalletConnectLiveAppNavigator = lazyLoad({
+  loader: () => import("./WalletConnectLiveAppNavigator"),
+});
+const CustomImageNavigator = lazyLoad({ loader: () => import("./CustomImageNavigator") });
+const PostOnboardingNavigator = lazyLoad({ loader: () => import("./PostOnboardingNavigator") });
+const DeviceConnect = lazyLoad({
+  loader: () => import("~/screens/DeviceConnect").then(m => ({ default: m.default })),
+});
+const NoFundsFlowNavigator = lazyLoad({ loader: () => import("./NoFundsFlowNavigator") });
+const StakeFlowNavigator = lazyLoad({ loader: () => import("./StakeFlowNavigator") });
+const RecoverPlayer = lazyLoad({
+  loader: () => import("~/screens/Protect/Player").then(m => ({ default: m.RecoverPlayer })),
+});
+const RedirectToOnboardingRecoverFlowScreen = lazyLoad({
+  loader: () =>
+    import("~/screens/Protect/RedirectToOnboardingRecoverFlow").then(m => ({
+      default: m.RedirectToOnboardingRecoverFlowScreen,
+    })),
+});
+
+const EditTransactionNavigator = lazyLoad({
+  loader: () => import("~/families/evm/EditTransactionFlow/EditTransactionNavigator"),
+});
+const AnalyticsOptInPromptNavigator = lazyLoad({
+  loader: () => import("./AnalyticsOptInPromptNavigator"),
+});
+const LandingPagesNavigator = lazyLoad({ loader: () => import("./LandingPagesNavigator") });
+const FirmwareUpdateScreen = lazyLoad({ loader: () => import("~/screens/FirmwareUpdate") });
+const EditCurrencyUnits = lazyLoad({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits"),
+});
+const CustomErrorNavigator = lazyLoad({ loader: () => import("./CustomErrorNavigator") });
+const WalletSyncNavigator = lazyLoad({
+  loader: () => import("LLM/features/WalletSync/WalletSyncNavigator"),
+});
+const ModularDrawerNavigator = lazyLoad({
+  loader: () => import("LLM/features/ModularDrawer/ModularDrawerNavigator"),
+});
+const LedgerSyncDeepLinkHandler = lazyLoad({
+  loader: () =>
+    import("LLM/features/WalletSync/LedgerSyncDeepLinkHandler").then(m => ({
+      default: m.LedgerSyncDeepLinkHandler,
+    })),
+});
+const Web3HubNavigator = lazyLoad({ loader: () => import("LLM/features/Web3Hub/Navigator") });
+const AddAccountsV2Navigator = lazyLoad({
+  loader: () => import("LLM/features/Accounts/Navigator"),
+});
+const DeviceSelectionNavigator = lazyLoad({
+  loader: () => import("LLM/features/DeviceSelection/Navigator"),
+});
+const AssetsListNavigator = lazyLoad({ loader: () => import("LLM/features/Assets/Navigator") });
+const FeesNavigator = lazyLoad({ loader: () => import("./FeesNavigator") });
+const SignRawTransactionNavigator = lazyLoad({
+  loader: () => import("./SignRawTransactionNavigator"),
+});
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 

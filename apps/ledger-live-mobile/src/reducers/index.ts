@@ -11,6 +11,7 @@ import dynamicContent from "./dynamicContent";
 import earn from "./earn";
 import inView from "./inView";
 import largeMover from "./largeMover";
+import launchScreen from "~/newArch/features/LaunchScreen/reducer";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
@@ -38,6 +39,7 @@ const appReducer = combineReducers({
   earn,
   inView,
   largeMover,
+  launchScreen,
   market,
   modularDrawer,
   receiveOptionsDrawer,

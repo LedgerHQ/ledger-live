@@ -35,6 +35,7 @@ import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { LLMRTKApiState } from "~/context/rtkQueryApi";
 import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import { LaunchScreenState } from "~/newArch/features/LaunchScreen/types";
 
 // === ACCOUNT STATE ===
 
@@ -288,6 +289,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  isAppLoaded: boolean;
 };
 
 export type NotificationsSettings = {
@@ -388,6 +390,7 @@ export type State = LLMRTKApiState & {
   earn: EarnState;
   inView: InViewState;
   largeMover: LargeMoverState;
+  launchScreen: LaunchScreenState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;

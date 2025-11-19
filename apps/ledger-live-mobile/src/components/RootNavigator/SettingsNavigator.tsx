@@ -5,82 +5,212 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
-import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
-import DebugBLEBenchmark from "~/screens/Settings/Debug/Connectivity/BLEBenchmark";
-import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
-import DebugConnectivity, {
-  connectivityHeaderOptions,
-} from "~/screens/Settings/Debug/Connectivity";
-import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
-import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
-import DebugDebugging from "~/screens/Settings/Debug/Debugging";
-import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
-import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
-import DebugFeatures from "~/screens/Settings/Debug/Features";
-import DebugFetchCustomImage, {
-  debugFetchCustomImageHeaderOptions,
-} from "~/screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
-import DebugGenerators from "~/screens/Settings/Debug/Generators";
-import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
-import DebugInformation from "~/screens/Settings/Debug/Information";
-import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
-import DebugPerformance from "~/screens/Settings/Debug/Performance";
-import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
-import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
-import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
-import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
-import DebugPlayground from "~/screens/Settings/Debug/Playground";
-import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
-import DebugSettings from "~/screens/Settings/Debug";
-import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
-import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
-import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
-import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
-import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
-import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
-import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
-import Settings from "~/screens/Settings";
-import AccountsSettings from "~/screens/Settings/Accounts";
-import AboutSettings from "~/screens/Settings/About";
-import Resources from "~/screens/Settings/Resources";
-import GeneralSettings from "~/screens/Settings/General";
-import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
-import NotificationsSettings from "~/screens/Settings/Notifications";
-import HelpSettings from "~/screens/Settings/Help";
-import RegionSettings from "~/screens/Settings/General/Region";
-import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-  ExchangeDeveloperMode,
-} from "~/screens/Settings/Developer";
+import { connectivityHeaderOptions } from "~/screens/Settings/Debug/Connectivity";
+import { debugFetchCustomImageHeaderOptions } from "~/screens/Settings/Debug/Features/FetchCustomImage";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
-import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
-import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
-import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
-import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
-import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import {
-  EmptyScreen,
-  MainTestScreen,
-  TestScreenWithDrawerForcingToBeOpened,
-  TestScreenWithDrawerRequestingToBeOpened,
-} from "LLM/components/QueuedDrawer/TestScreens";
-import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
-import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
-import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
-import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
-import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
+import { lazyLoad } from "LLM/utils/lazyLoad";
+
+const DebugBenchmarkQRStream = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Broken/BenchmarkQRStream"),
+});
+const DebugBLE = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Connectivity/BLE"),
+});
+const DebugBLEBenchmark = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Connectivity/BLEBenchmark"),
+});
+const DebugConfiguration = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Configuration"),
+});
+const DebugConnectivity = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Connectivity"),
+});
+const DebugCrash = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/Crashes"),
+});
+const DebugCustomImageGraphics = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/CustomImageGraphics"),
+});
+const DebugDebugging = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging"),
+});
+const DebugEnv = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Configuration/DebugEnv"),
+});
+const DebugFeatureFlags = lazyLoad({
+  loader: () => import("~/screens/FeatureFlagsSettings"),
+});
+const DebugFeatures = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features"),
+});
+const DebugFetchCustomImage = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/FetchCustomImage"),
+});
+const DebugFirmwareUpdate = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/FirmwareUpdate"),
+});
+const DebugGenerators = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Generators"),
+});
+const DebugHttpTransport = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Connectivity/DebugHttpTransport"),
+});
+const DebugInformation = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Information"),
+});
+const DebugInstallSetOfApps = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/InstallSetOfApps"),
+});
+const DebugPerformance = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Performance"),
+});
+const DebugLogs = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/Logs"),
+});
+const DebugLottie = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/Lottie"),
+});
+const DebugNetwork = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/Network"),
+});
+const DebugCommandSender = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Connectivity/CommandSender"),
+});
+const DebugPlayground = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Playground"),
+});
+const DebugBluetoothAndLocationServices = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices"),
+});
+const DebugSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug"),
+});
+const DebugSnackbars = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/Snackbars"),
+});
+const DebugTransactionsAlerts = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/TransactionsAlerts"),
+});
+const DebugStore = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/Store"),
+});
+const DebugStoryly = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/Storyly"),
+});
+const DebugSwap = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/Swap"),
+});
+const DebugVideos = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/Videos"),
+});
+const TooltipDemo = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/TooltipDemo"),
+});
+const Settings = lazyLoad({
+  loader: () => import("~/screens/Settings"),
+});
+const AccountsSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Accounts"),
+});
+const AboutSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/About"),
+});
+const Resources = lazyLoad({
+  loader: () => import("~/screens/Settings/Resources"),
+});
+const GeneralSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/General"),
+});
+const CountervalueSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/General/CountervalueSettings"),
+});
+const NotificationsSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Notifications"),
+});
+const HelpSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Help"),
+});
+const RegionSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/General/Region"),
+});
+const CurrenciesList = lazyLoad({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrenciesList"),
+});
+const CurrencySettings = lazyLoad({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings"),
+});
+const ExperimentalSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Experimental"),
+});
+const DeveloperSettings = lazyLoad({
+  loader: () => import("~/screens/Settings/Developer"),
+});
+const DeveloperCustomManifest = lazyLoad({
+  loader: () => import("~/screens/Settings/Developer").then(m => m.DeveloperCustomManifest),
+});
+const ExchangeDeveloperMode = lazyLoad({
+  loader: () => import("~/screens/Settings/Developer").then(m => m.ExchangeDeveloperMode),
+});
+const OnboardingStepLanguage = lazyLoad({
+  loader: () => import("~/screens/Onboarding/steps/language"),
+});
+const GenerateMockAccountSelectScreen = lazyLoad({
+  loader: () =>
+    import("~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect").then(
+      m => m.GenerateMockAccountSelectScreen,
+    ),
+});
+const PostOnboardingDebugScreen = lazyLoad({
+  loader: () => import("~/screens/PostOnboarding/PostOnboardingDebugScreen"),
+});
+const DebugTermsOfUse = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/TermsOfUse"),
+});
+const CameraPermissions = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Debugging/CameraPermissions"),
+});
+const BleEDevicePairingScreen = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/BleDevicePairingScreen"),
+});
+const EditCurrencyUnits = lazyLoad({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits"),
+});
+const DebugStorageMigration = lazyLoad({
+  loader: () =>
+    import("~/screens/Settings/Debug/Debugging/StorageMigration").then(
+      m => m.DebugStorageMigration,
+    ),
+});
+const CustomCALRefInput = lazyLoad({
+  loader: () => import("~/screens/Settings/Developer/CustomCALRefInput"),
+});
+
+const LargeMoverLandingPage = lazyLoad({
+  loader: () => import("LLM/features/LandingPages/screens/LargeMoverLandingPage"),
+});
+const ModularDrawerScreenDebug = lazyLoad({
+  loader: () => import("LLM/features/ModularDrawer/Debug"),
+});
+const SwiperScreenDebug = lazyLoad({
+  loader: () => import("~/screens/Settings/Debug/Features/SwiperScreenDebug"),
+});
+const MainTestScreen = lazyLoad({
+  loader: () => import("LLM/components/QueuedDrawer/TestScreens"),
+});
+const TestScreenWithDrawerRequestingToBeOpened = lazyLoad({
+  loader: () => import("LLM/components/QueuedDrawer/TestScreens"),
+});
+const TestScreenWithDrawerForcingToBeOpened = lazyLoad({
+  loader: () => import("LLM/components/QueuedDrawer/TestScreens"),
+});
+const EmptyScreen = lazyLoad({
+  loader: () => import("LLM/components/QueuedDrawer/TestScreens"),
+});
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
 

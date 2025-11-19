@@ -20,6 +20,7 @@ module.exports = {
       ? "./babel-plugin-inject-collapsable.js"
       : null,
     // react-native-reanimated/plugin has to be listed last.
+    "./babel-plugin-transform-lazy.js",
     "react-native-reanimated/plugin",
   ].filter(Boolean),
 };
