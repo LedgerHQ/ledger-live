@@ -42,7 +42,7 @@ const Loader = () => (
 
 export default function RequestAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { currencyIds } = route.params;
+  const { currencyIds, useCase } = route.params;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -57,6 +57,7 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
     areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
     isStaging: false,
     includeTestNetworks: devMode,
+    useCase,
   });
 
   // Pagination is a bit strange with this because we order by market cap

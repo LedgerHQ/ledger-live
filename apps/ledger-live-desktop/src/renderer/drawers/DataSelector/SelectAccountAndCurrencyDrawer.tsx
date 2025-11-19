@@ -50,6 +50,7 @@ export const Loader = styled.div`
 export type SelectAccountAndCurrencyDrawerProps = {
   onClose?: () => void;
   currencyIds?: string[];
+  useCase?: string;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   flow?: string;
   source?: string;
@@ -60,7 +61,7 @@ const SearchInputContainer = styled.div`
 `;
 
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencyIds, onAccountSelected, onClose, flow, source } = props;
+  const { currencyIds, useCase, onAccountSelected, onClose, flow, source } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -75,6 +76,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
     isStaging: false,
     includeTestNetworks: devMode,
+    useCase,
   });
 
   // Pagination is a bit strange with this because we order by market cap
