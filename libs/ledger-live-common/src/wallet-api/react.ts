@@ -680,10 +680,10 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSignRaw) return;
 
-    server.setHandler("bitcoin.signPsbt", async ({ account, psbt, broadcast }) => {
+    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast }) => {
       const signedOperation = await signRawTransactionLogic(
         { manifest, accounts, tracking },
-        account.id,
+        accountId,
         psbt,
         (account, parentAccount, tx) =>
           new Promise((resolve, reject) => {
@@ -714,7 +714,7 @@ export function useWalletAPIServer({
       if (broadcast) {
         const txHash = await broadcastTransactionLogic(
           { manifest, accounts, tracking },
-          account.id,
+          accountId,
           signedOperation,
           async (account, parentAccount, signedOperation) => {
             const bridge = getAccountBridge(account, parentAccount);
