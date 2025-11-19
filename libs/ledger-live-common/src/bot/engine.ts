@@ -50,7 +50,7 @@ import type {
   SignOperationEvent,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../generated/types";
+import type { TransactionStatus } from "../generated/types";
 import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
@@ -70,7 +70,7 @@ const cache = makeBridgeCacheSystem({
 const defaultScanAccountsRetries = 2;
 const delayBetweenScanAccountRetries = 5000;
 
-export async function runWithAppSpec<T extends Transaction>(
+export async function runWithAppSpec<T extends TransactionCommon>(
   spec: AppSpec<T>,
   reportLog: (arg0: string) => void,
 ): Promise<SpecReport<T>> {
@@ -276,7 +276,7 @@ export async function runWithAppSpec<T extends Transaction>(
           }
         }
         // eslint-disable-next-line no-console
-        console.log(formatReportForConsole(report));
+        console.log(formatReportForConsole(report as any));
         mutationReports.push(report);
         appReport.mutations = mutationReports;
 
@@ -343,7 +343,7 @@ export async function runWithAppSpec<T extends Transaction>(
 
   return appReport;
 }
-export async function runOnAccount<T extends Transaction>({
+export async function runOnAccount<T extends TransactionCommon>({
   appCandidate,
   spec,
   device,
@@ -761,7 +761,7 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
   return deepFreezeAccount(acc);
 }
 
-export function autoSignTransaction<T extends Transaction>({
+export function autoSignTransaction<T extends TransactionCommon>({
   transport,
   deviceAction,
   appCandidate,

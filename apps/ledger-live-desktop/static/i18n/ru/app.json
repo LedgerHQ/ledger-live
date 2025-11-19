@@ -41,26 +41,26 @@
       },
       "banner" : {
         "title" : "Исследуйте наш Каталог приложений",
-        "description" : "Мы открываем вам безопасный путь в мир DeFi, NFT и многого другого. И всё это прямо в Ledger Live!"
+        "description" : "Мы открываем вам безопасный путь в мир DeFi, NFT и многого другого. И всё это прямо в Ledger Wallet!"
       },
       "twitterBanner" : {
-        "description" : "Воспользуйтесь хэштегом и расскажите нам, какие услуги вы бы хотели видеть в Ledger Live",
+        "description" : "Воспользуйтесь хэштегом и расскажите нам, какие функции вы хотели бы видеть в Ledger Wallet",
         "tweetText" : "Следующим дополнением к приложению Ledger должно стать..."
       },
       "pollCTA" : {
         "title" : "Опрос",
-        "description" : "Какой услуги вам не хватает в Ledger Live?",
+        "description" : "Какую услугу вы хотите видеть в Ledger Wallet?",
         "button" : "Давайте проголосовать!"
       },
       "developerCTA" : {
         "title" : "Для разработчиков",
-        "description" : "Информация о том, как интегрировать собственные приложения в Ledger Live.",
+        "description" : "Информация о том, как интегрировать собственные приложения в Ledger Wallet.",
         "button" : "Перейти в Портал"
       },
       "warnings" : {
         "notFound" : "Ничего нет",
         "retrySearchKeyword" : "Повторите поиск по другому запросу.",
-        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{{search}}</Link> вне приложения Ledger Live."
+        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{{search}}</Link> вне приложения Ledger Wallet."
       }
     },
     "disclaimer" : {
@@ -306,7 +306,7 @@
   "bridge" : {
     "modalTitle" : "Device Bridge",
     "openHeader" : "Device Bridge больше недоступен",
-    "openDescription" : "Настройте браузерное расширение кошелька для использования WebHID вместо Ledger Live.",
+    "openDescription" : "Настройте расширения кошелька в браузере, чтобы использовать WebHID вместо Ledger Wallet.",
     "closeButton" : "Закрыть"
   },
   "swap2" : {
@@ -376,8 +376,8 @@
     "history" : {
       "disclaimer" : "Транзакции могут не отображаться в истории обменов, однако они всё равно обрабатываются. Просмотрите «Последние операции» внутри счёта для просмотра всех транзакций.",
       "empty" : {
-        "title" : "Здесь будет показана история обменов",
-        "description" : "Вы ещё ничего не меняли, либо недавно сбрасывали приложение Ledger Live."
+        "title" : "Здесь будет ваша история обменов",
+        "description" : "Вы ещё ничего не меняли, либо Ledger Wallet было сброшено."
       },
       "export" : "Экспорт истории транзакций",
       "exporting" : "Экспортируем…",
@@ -420,10 +420,10 @@
       "history" : "История"
     },
     "history" : {
-      "disclaimer" : "Ваши обмены в настольном приложении не синхронизированы с мобильным приложением Ledger Live",
+      "disclaimer" : "Ваши обмены не синхронизируются между Ledger Wallet на ПК и смартфоне.",
       "empty" : {
-        "title" : "Здесь будет показана история обменов",
-        "description" : "Вы ещё ничего не меняли, либо недавно сбрасывали приложение Ledger Live."
+        "title" : "Здесь будет ваша история обменов",
+        "description" : "Вы ещё ничего не меняли, либо Ledger Wallet было сброшено."
       }
     },
     "landing" : {
@@ -443,7 +443,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
-      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Wallet используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -464,12 +464,18 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+      "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
       "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
       "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
-      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ не поддерживает обмен Kaspa",
+      "kaspa_description" : "Для обмена Kaspa используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "celo_title" : "Ledger Nano S™ не поддерживает обмен Celo",
+      "celo_description" : "Используйте другие совместимые устройства Ledger для обмена Celo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -589,7 +595,7 @@
     "noFundsModal" : {
       "title" : "{{actions, list(type: disjunction)}}",
       "text" : "У вас не хватает {{coin}} для стейкинга",
-      "description" : "Не хватает монет? Ничего страшного. Купить, обменять или получить криптоактивы можно полностью безопасно прямо в Ledger Live.",
+      "description" : "Не хватает монет? Ничего страшного. Купить, обменять или получить криптоактивы можно безопасно прямо в Ledger Wallet.",
       "options" : {
         "buy" : {
           "title" : "Купить",
@@ -608,7 +614,7 @@
     },
     "getFundsModal" : {
       "text" : "Получить {{coin}} для стейкинга",
-      "description" : "Покупайте, обменивайте или получайте крипту сразу на Ledger через Ledger Live."
+      "description" : "Покупайте, обменивайте или получайте крипту сразу на счёт в Ledger Wallet."
     }
   },
   "lottieDebugger" : {
@@ -623,7 +629,7 @@
   "vaultSigner" : {
     "modal" : {
       "title" : "Подключение Vault",
-      "info" : "Свяжите учётные записи вашего рабочего места Ledger Vault и проводите транзакции из Ledger Live, заполняя поля ниже. Информация доступна во вкладке «Настройки» > «Подписант внешнего кошелька».",
+      "info" : "Свяжите учётные записи вашего рабочего места Ledger Vault, заполнив поля ниже, и проводите транзакции из Ledger Wallet. Информация доступна во вкладке «Настройки» > «Подписант внешнего кошелька».",
       "info_link" : "Подробнее",
       "host" : {
         "title" : "URL эндпоинта",
@@ -665,7 +671,7 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Введите параметры вашей ноды",
-              "disclaimer" : "Ваша полная нода должна быть полностью синхронизирована до подключения к Ledger Live.",
+              "disclaimer" : "Ваша полная нода должна быть полностью синхронизирована до подключения к Ledger Wallet.",
               "fields" : {
                 "nodeHost" : {
                   "title" : "Хост",
@@ -723,8 +729,8 @@
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Скачайте и запустите Ledger SatStack",
-              "description" : "Ledger SatStack — небольшое приложение, которое позволяет Ledger Live взаимодействовать с вашей полной нодой. Скачайте и запустите его, прежде чем продолжить.",
-              "disclaimer" : "SatStack должно быть запущено, чтобы Ledger Live могло подключиться к вашей полной боде. Подумайте о том, чтобы добавить его в Автозагрузку при включении ПК.",
+              "description" : "Ledger SatStack — небольшое приложение, которое позволяет Ledger Wallet взаимодействовать с вашей полной нодой. Пожалуйста, загрузите и запустите его, прежде чем продолжить.",
+              "disclaimer" : "SatStack должно быть запущено, чтобы Ledger Wallet могло подключиться к вашей полной ноде.  Возможно, стоит добавить его в автозагрузку при включении ПК.",
               "cta" : "Скачать SatStack"
             },
             "satstack-disconnected" : {
@@ -775,8 +781,8 @@
       "drawer" : {
         "title" : "Интеграция c {{family}}",
         "subTitle" : "Интеграция c {{family}} выполнена командой {{team}}",
-        "description" : "Ledger Live – это платформа с открытым исходным кодом.",
-        "description2" : "Разработчики из любой точки мира могут интегрировать своё приложение в Ledger Live.",
+        "description" : "Ledger Wallet – это платформа с открытым исходным кодом.",
+        "description2" : "Разработчики из любой точки мира могут интегрировать своё приложение в Ledger Wallet.",
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
@@ -802,15 +808,15 @@
       "support" : "Поддержку"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}}. При этом криптоактив по-прежнему можно хранить в аппаратном кошельке Ledger. Подробнее – в статье ниже.",
-      "learnMore" : "Подробнее..."
+      "title" : "В целях оптимизации {{currencyName}} не будет поддерживаться в Ledger Wallet с {{deprecatedDate}}. При этом поддежка на устройствах Ledger останется. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
+      "contactSupport" : "Написать в Поддержку"
     },
     "lastOperations" : "Последние операции",
     "contractAddress" : "Контракт:",
     "openInExplorer" : "Просмотреть в Обозревателе",
     "emptyState" : {
       "title" : "Ещё нет криптоактивов?",
-      "desc" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать",
+      "desc" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать этот актив",
       "descToken" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать <3><0>{{ticker}}</0></3>, а также <5><0>{{tokenList}}</0></5>",
       "buttons" : {
         "receiveFunds" : "Получить",
@@ -1246,6 +1252,11 @@
     },
     "manual" : {
       "title" : "Давайте настроим {{deviceName}}",
+      "titleTwoStep" : "Давайте приступим",
+      "titleFirstStepDone" : "Устройство {{deviceName}} готово",
+      "successStepTitle" : "Устройство {{deviceName}} готово к защите вашей криптовалюты",
+      "secureCryptoTitle" : "Обезопасьте свои криптоактивы",
+      "secureCryptoDoneTitle" : "Приложения установлены.",
       "continueOnDevice" : "Выполните это действие на {{productName}}",
       "pairedContent" : {
         "title" : "{{deviceName}} подлинный",
@@ -1291,6 +1302,11 @@
         "backupCharonCta" : "Узнать больше или купить",
         "backupCharonContinueOnDevice" : "Следуйте инструкции на {{productName}}"
       },
+      "secureCrypto" : {
+        "description" : "Для максимальной безопасности выведите криптовалюты с любой биржи или кошелька на Ledger Wallet.",
+        "depositButton" : "Хочу защититься",
+        "skipButton" : "Не сейчас"
+      },
       "backup" : {
         "title" : "Резервная копия фразы восстановления",
         "description" : "Зашифрованная резервная копия в цифровой форме позволяет восстановить доступ к кошельку без фразы восстановления.\n\nУкажите, хотите ли вы создать цифровую копию сид-фразы:",
@@ -1315,8 +1331,8 @@
           "completed" : "Проверка подлинности Ledger"
         },
         "exitWarningDrawer" : {
-          "title" : "Отменить проверку подлинности и актуальности прошивки?",
-          "description" : "Проверка подлинности обязательна для настройки {{productName}} в приложении Ledger Live.",
+          "title" : "Отменить Проверку подлинности Ledger и актуальности ОС?",
+          "description" : "Проверка подлинности Ledger обязательна для настройки {{productName}} через Ledger Wallet.",
           "cancelCheckCTA" : "Отменить проверки",
           "resumeCheckCTA" : "Продолжить проверку"
         },
@@ -1326,28 +1342,28 @@
           "retryCTA" : "Попробовать ещё раз",
           "contactSupportCTA" : "Связаться с Поддержкой",
           "notFoundEntityError" : {
-            "title" : "Перезапустить проверку подлинности",
-            "description" : "Сначала нужно отключить Поставщика приложений ({{providerNumber}}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Live, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений для Мой Ledger»."
+            "title" : "Перезапустить Проверку подлинности Ledger",
+            "description" : "Сначала нужно отключить Поставщика приложений ({{providerNumber}}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений «Мой Ledger»»."
           },
           "deviceNotGenuineError" : {
             "title" : "Устройство {{productName}} не является подлинным",
             "description" : "Устройство {{productName}} небезопасно для использования\nОбратитесь в Поддержку Ledger"
           }
         },
-        "whyPerformChecksLink" : "Подробнее об этой проверке",
+        "whyPerformChecksLink" : "Подробнее о Проверке подлинности Ledger",
         "startChecksCTA" : "Проверить {{modelName}}",
         "continueCTA" : "Продолжить настройку",
         "genuineCheck" : {
           "title" : {
             "active" : "Проверка подлинности Ledger",
             "completed" : "{{modelName}} подлинный",
-            "cancelled" : "Проверка подлинности отменена"
+            "cancelled" : "Проверка подлинности Ledger отменена"
           },
           "subtitle" : {
             "active" : "Она поможет подтвердить, что у вас оригинальное устройство {{modelName}}.",
-            "cancelled" : "Проверка подлинности обязательна для настройки {{modelName}} с помощью приложения Ledger Live."
+            "cancelled" : "Проверка подлинности обязательна при настройке {{modelName}} через Ledger Wallet."
           },
-          "resumeCTA" : "Продолжить проверку подлинности"
+          "resumeCTA" : "Продолжить Проверку подлинности Ledger"
         },
         "firmwareUpdate" : {
           "title" : {
@@ -1379,7 +1395,7 @@
         "titleCompleted" : "Устройство {{deviceName}} готово"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Одобрите проверку подлинности на устройстве"
+        "title" : "Нажмите «Разрешить», чтобы начать Проверку подлинности Ledger"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Разблокируйте устройство"
@@ -1442,11 +1458,11 @@
       "title" : "Для изменения экспериментальных настроек необходимо очистить кэш",
       "cta" : "Очистить кэш"
     },
-    "migrate" : "Доступно обновление счетов в Ledger Live",
+    "migrate" : "Доступно обновление счетов в Ledger Wallet",
     "genericTerminatedCrypto" : "{{coinName}} больше не поддерживается",
     "valentine" : {
       "title" : "День святого Валентина",
-      "description" : "В знак нашей любви Ledger снижает комиссию за покупку и продажу через Ledger Live"
+      "description" : "В знак нашей любви Ledger снижает комиссию за покупку и продажу внутри Ledger Wallet"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1470,11 +1486,11 @@
     },
     "polkaStake" : {
       "title" : "Стейкинг POLKADOT",
-      "description" : "Теперь вы можете участвовать в стейкинге, а также безопасно пользоваться токенами DOT прямо в Ledger Live"
+      "description" : "Теперь вы можете стейкать и безопасно использовать токены DOT внутри Ledger Wallet"
     },
     "sell" : {
       "title" : "Продажа криптовалюты",
-      "description" : "Продавайте BTC через сторонних операторов прямо в Ledger Live"
+      "description" : "Продавайте биткойны через проверенных операторов прямо внутри Ledger Wallet"
     },
     "stakeAlgorand" : {
       "title" : "Стейкинг ALGORAND",
@@ -1482,7 +1498,7 @@
     },
     "swap" : {
       "title" : "Обмен криптовалюты",
-      "description" : "Меняйте одну криптовалюту на другую у сторонних операторов прямо в Ledger Live"
+      "description" : "Обменивайте одну криптовалюту на другую внутри Ledger Wallet через проверенных операторов."
     },
     "lending" : {
       "title" : "Кредиты в криптовалюте",
@@ -1490,7 +1506,7 @@
     },
     "blackfriday" : {
       "title" : "ЧЁРНАЯ ПЯТНИЦА ",
-      "description" : "Получите скидку 40% на аппаратные кошельки Ledger с промокодом BLACKFRIDAY20"
+      "description" : "Получите скидку 40% на устройства Ledger с промокодом BLACKFRIDAY20"
     },
     "referralProgram" : {
       "title" : "Пригласи друга и получи 10$",
@@ -1643,7 +1659,7 @@
       "title" : "Фильтры",
       "show" : "Показать",
       "all" : "Все",
-      "isLedgerCompatible" : "Поддерживает Ledger Live",
+      "isLedgerCompatible" : "Совместим с Ledger Wallet",
       "isFavorite" : "Избранные счета",
       "applyFilters" : "Применить фильтр",
       "clearAll" : "Очистить все"
@@ -1668,7 +1684,7 @@
       "circulatingSupply" : "В обороте",
       "totalSupply" : "Общее предложение",
       "maxSupply" : "Макс. эмиссия",
-      "assetNotSupportedOnLedgerLive" : "Не поддерживается Ledger Live.",
+      "assetNotSupportedOnLedgerLive" : "Не поддерживается Ledger Wallet.",
       "supportedCoinsAndTokens" : "Поддерживаемые активы"
     },
     "range" : {
@@ -1690,7 +1706,7 @@
     },
     "warnings" : {
       "connectionError" : "Ошибка соединения",
-      "ledgerUnableToRetrieveData" : "Ledger Live не удаётся получить данные.",
+      "ledgerUnableToRetrieveData" : "Ledger Wallet не удаётся получить данные.",
       "checkInternetAndReload" : "Проверьте подключение к Интернету и обновите страницу.",
       "reload" : "Обновить",
       "noCryptosFound" : "Монеты не найдены",
@@ -1931,7 +1947,7 @@
       "capacity" : "Ёмкость",
       "used" : "Использовано",
       "OSVersion" : "Версия ОС",
-      "genuine" : "Устройство подлинное",
+      "genuine" : "Проверка подлинности Ledger",
       "incomplete" : "Не удалось распознать некоторые приложения. Переустановите их."
     },
     "applist" : {
@@ -1943,7 +1959,7 @@
       "filter" : {
         "title" : "Показать",
         "all" : "Все",
-        "supported" : "Поддерживается в Ledger Live",
+        "supported" : "Поддерживается в Ledger Wallet.",
         "installed" : "Установлено",
         "not_installed" : "Не установленные"
       },
@@ -1980,7 +1996,7 @@
         "updated" : "Обновлено",
         "uninstall" : "Удалить",
         "notEnoughSpace" : "Недостаточно места",
-        "supported" : "Поддерживается Ledger Live",
+        "supported" : "Поддерживается в Ledger Wallet.",
         "not_supported" : "Требуется сторонний кошелёк",
         "addAccount" : "Добавить счёт",
         "addAccountTooltip" : "Добавить счёт {{appName}}",
@@ -2052,7 +2068,7 @@
     "modal" : {
       "title" : "Обновление ОС {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Сохраняем настройки\nи приложения",
+        "preparingUpdate" : "Сохраняем настройки\nи приложения...",
         "transferringUpdate" : "Перенос обновления на {{productName}}",
         "prepare" : "Подготовка обновления",
         "prepareDone" : "Обновление готово\nк установке",
@@ -2101,7 +2117,7 @@
         "boot" : "Нажмите и удерживайте боковую кнопку, пока не увидите {{option}}",
         "recoveryMode" : "Выберите режим {{mode}}. Дождитесь, пока не появится Консоль.",
         "third" : "3. Удалите все приложения",
-        "openLive" : "Откройте «Мой Ledger» в Ledger Live.",
+        "openLive" : "Откройте «Мой Ledger» в Ledger Wallet.",
         "uninstall" : "Нажимайте на значок корзины рядом с приложениями, установленными на {{deviceName}}. Это позволит освободить место для установки прошивки.",
         "disclaimer" : "Примечание: эта операция не затрагивает средства. Приватные ключи для доступа к криптоактивам в блокчейне будут в безопасности, а секретную фразу вы записали на листе восстановления."
       }
@@ -2246,15 +2262,16 @@
   "receive" : {
     "title" : "Получить",
     "successTitle" : "Адрес безопасен",
+    "connectToNoah" : "Подключаемся к Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
           "title" : "Через банк",
-          "description" : "Пополните счёт в USD или EUR"
+          "description" : "Получайте стейблкойны на счёт «Стейблкойны за фиат». Требуется регистрация."
         },
         "fromCrypto" : {
           "title" : "С криптовалютного адреса",
-          "description" : "Получите криптовалюту на счёт"
+          "description" : "Получайте криптовалюту с других кошельков."
         }
       },
       "chooseAccount" : {
@@ -2425,7 +2442,7 @@
   },
   "releaseNotes" : {
     "title" : "Сведения о версии",
-    "version" : "Ledger Live {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}"
   },
   "troubleshootNetwork" : {
     "title" : "Устранение неполадок с сетью",
@@ -2441,7 +2458,7 @@
   "systemLanguageAvailable" : {
     "title" : "Поменять язык в приложении?",
     "description" : {
-      "newSupport" : "Отличные новости! Наша команда усердно трудилась, и теперь Ledger Live поддерживает {{language}}.",
+      "newSupport" : "Отличные новости! Наша команда усердно трудилась, и теперь Ledger Wallet поддерживает {{language}}.",
       "advice" : "Вы в любой момент можете изменить язык в Настройках."
     },
     "switchButton" : "Переключиться на {{language}}",
@@ -2475,7 +2492,7 @@
     "changeDeviceLanguage" : "Поменять язык устройства?",
     "changeDeviceLanguagePrompt" : {
       "title" : "Поменять язык {{deviceName}} на {{language}}?",
-      "description" : "Использовать один и тот же язык на {{deviceName}} и в приложении Ledger Live?"
+      "description" : "Использовать один и тот же язык на {{deviceName}} и в приложении Ledger Wallet?"
     },
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
@@ -2512,7 +2529,7 @@
     "header" : "Распределение счёта ({{count}})"
   },
   "elrond" : {
-    "guardedAccountWarning" : "Если для вашего счёта уже выбран «страж» (guardian), провести транзакцию с помощью Ledger Live не получится.",
+    "guardedAccountWarning" : "Если для этого счёта установлен «страж» (guardian), провести транзакцию с помощью Ledger Wallet не получится.",
     "summary" : {
       "availableBalanceTooltip" : "Эту сумму можно отправить.",
       "availableBalance" : "Доступно",
@@ -2526,8 +2543,8 @@
         "cardTitle" : "Powered by MultiversX",
         "moreInfo" : "Подробнее...",
         "drawerTitle" : "Интеграция с MultiversX",
-        "title" : "Токен MultiversX eGold (EGLD) теперь доступен в Ledger Live",
-        "description" : "Теперь вы можете безопасно хранить токены eGold (EGLD) и взаимодействовать с ними в Ledger Live.",
+        "title" : "Токен MultiversX eGold (EGLD) теперь доступен в Ledger Wallet",
+        "description" : "Теперь вы можете безопасно хранить токены eGold (EGLD) и пользоваться ими в Ledger Wallet.",
         "description2" : "MultiversX eGold (EGLD) — нативный токен сети MultiversX. Его можно использовать для чего угодно, включая транзакции, стейкинг, смарт-контракты, управление или получение вознаграждений от валидаторов.",
         "description3" : "Мы активно сотрудничаем с MultiversX Elrond над расширением функциональности, чтобы сделать доступными стейкинг, поддержку нативного токена ESDT (Elrond Standard Digital Token), а также многое другое.",
         "website" : "Блокчейн масштаба интернета"
@@ -2874,8 +2891,8 @@
         "cardTitle" : "Разработано Figment",
         "moreInfo" : "Подробнее...",
         "drawerTitle" : "Разработано Figment",
-        "title" : "Токен CELO теперь доступен в Ledger Live",
-        "description" : "Теперь вы можете управлять своими токенами CELO и хранить их в Ledger Live.",
+        "title" : "Токен CELO теперь доступен в Ledger Wallet",
+        "description" : "Теперь вы можете взаимодействовать с токенами CELO и хранить их в Ledger Wallet.",
         "description2" : "Токен CELO — нативная монета блокчейна Celo, которая используется для всех транзакций, стейкинга и множества предстоящих функций.",
         "website" : "Разработано Figment"
       }
@@ -3399,9 +3416,9 @@
       "electionOpen" : "Идёт подбор новых валидаторов. Следовательно, операции стейкинга будут недоступны в течение 15 минут.",
       "electionOpenTooltip" : "Эта операция отключена во время подбора валидаторов",
       "externalControllerTooltip" : "Этот счёт контролируется другим счётом.",
-      "externalControllerUnsupported" : "<0>Этот stash-счёт контролируется отдельным счётом с адресом <0>{{controllerAddress}}</0>.</0> <1>Чтобы стейкать средства в Ledger Live, вам нужно назначить stash-счёт в качестве самостоятельного контроллера.</1>",
+      "externalControllerUnsupported" : "<0>Этот stash-счёт контролируется отдельным счётом с адресом <0>{{controllerAddress}}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
       "externalStashTooltip" : "Этот счёт контролирует другой счёт.",
-      "externalStashUnsupported" : "<0>Этот счёт контролируется отдельным счётом с адресом <0>{{stashAddress}}</0>.</0> <1>Чтобы стейкать средства в Ledger Live, вам нужно назначить stash-счёт в качестве самостоятельного контроллера.</1>",
+      "externalStashUnsupported" : "<0>Этот счёт контролируется отдельным счётом с адресом <0>{{stashAddress}}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
       "showInactiveNominations" : "Показать все назначения ({{count}})",
       "hideInactiveNominations" : "Показать только активных номинаторов",
       "noActiveNominations" : "Нет активных назначений.",
@@ -3588,7 +3605,7 @@
         "setController" : {
           "title" : "Сменить контроллер",
           "description" : "Назначить этот счёт в качестве самостоятельного контроллера",
-          "info" : "Ledger Live не поддерживает операции на отдельных stash-счетах и счетах контроллеров."
+          "info" : "Ledger Wallet не поддерживает операции на отдельных stash-счетах и счетах контролёров."
         }
       },
       "steps" : {
@@ -3992,7 +4009,7 @@
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Приумножайте ETH",
-      "subTitle" : "Стейкайте ETH и приумножайте их за счёт ежедневных вознаграждений прямо в Ledger Live.",
+      "subTitle" : "Стейкайте ETH и приумножайте их за счёт ежедневных вознаграждений прямо в Ledger Wallet.",
       "tagMinimum" : "От {{min}} ETH",
       "kiln_pooling" : {
         "title" : "Стейкинг-пул Kiln",
@@ -4027,7 +4044,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Wallet."
         },
         "liquid" : {
           "name" : "Ликвидный",
@@ -4106,8 +4123,8 @@
         "cardTitle" : "Powered by Figment",
         "moreInfo" : "Подробнее",
         "drawerTitle" : "Powered by Figment",
-        "title" : "Токен NEAR теперь доступен в Ledger Live",
-        "description" : "Теперь вы можете управлять своими токенами NEAR и хранить их в Ledger Live.",
+        "title" : "Токен NEAR теперь доступен в Ledger Wallet",
+        "description" : "Теперь вы можете пользоваться токенами NEAR и хранить их в Ledger Wallet.",
         "description2" : "Токен NEAR — нативная монета блокчейна NEAR, которая используется для всех транзакций, стейкинга и множества предстоящих функций.",
         "website" : "Powered by Figment"
       }
@@ -4241,8 +4258,8 @@
         "cardTitle" : "Разработано Figment",
         "moreInfo" : "Подробнее",
         "drawerTitle" : "Разработано Figment",
-        "title" : "Добавили токены SUI в Ledger Live",
-        "description" : "Теперь вы можете управлять своими токенами SUI и хранить их в Ledger Live.",
+        "title" : "Токен SUI теперь доступен в Ledger Wallet",
+        "description" : "Теперь вы можете пользоваться токенами SUI и хранить их в Ledger Wallet.",
         "description2" : "Токен SUI — нативная монета блокчейна SUI, которая используется для всех транзакций, стейкинга и множества предстоящих функций.",
         "website" : "Разработано Figment"
       }
@@ -4262,6 +4279,8 @@
         "header" : "Позиции в стейкинге",
         "stake" : "Дополнить",
         "staked" : "Делегировано",
+        "estimatedReward" : "Начисленное вознаграждение",
+        "rewardTooltip" : "Вознаграждения в SUI распределяются каждую эпоху, то есть 24 часа. Они автоматически капитализируются и добавляются к вашему делегированному стейку.",
         "pending" : "Ожидает вывода",
         "available" : "Доступно для вывода"
       },
@@ -4437,7 +4456,7 @@
     "export" : {
       "accounts" : {
         "title" : "Экспорт счетов",
-        "desc" : "Перенесите счета в мобильное приложение Ledger Live. Ваши счета автоматически синхронизируются только с блокчейном, но не между мобильным и настольным приложениями.",
+        "desc" : "Добавьте счета в Ledger Wallet для смартфона. Ваши счета автоматически синхронизируются только с блокчейном, но не между мобильным и настольным приложениями.",
         "button" : "Экспортировать"
       },
       "operations" : {
@@ -4447,7 +4466,7 @@
       "modal" : {
         "button" : "Готово",
         "title" : "Сканируйте для экспорта в мобильное приложение",
-        "listTitle" : "В мобильном приложении Ledger Live:",
+        "listTitle" : "В Ledger Wallet для смартфона:",
         "step1" : "Нажмите <highlight>«Добавить счёт»</highlight> на главном экране, либо <highlight>«Посмотреть все активы»</highlight>, а затем <highlight><icon>+</icon></highlight>.",
         "step2" : "Нажмите <highlight>«Импорт из настольного приложения»</highlight>.",
         "step3" : "Cканируйте <highlight>код LiveQR</highlight> камерой телефона до 100%."
@@ -4455,7 +4474,7 @@
     },
     "display" : {
       "language" : "Язык",
-      "languageDesc" : "Выберите язык интерфейса Ledger Live.",
+      "languageDesc" : "Выберите язык интерфейса Ledger Wallet.",
       "theme" : "Тема оформления",
       "themeDesc" : "Выберите тему оформления.",
       "counterValue" : "Предпочтительная валюта",
@@ -4465,7 +4484,7 @@
       "stock" : "Индикатор регионального рынка",
       "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета в Ledger Live между разными смартфонами и компьютерами.",
+      "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета Ledger Wallet между разными смартфонами и ПК.",
       "mevProtection" : "Защита от MEV",
       "mevProtectionDesc" : "Активируйте защиту от MEV для комфортных транзакций в Эфириуме.",
       "mevProtectionLearnMore" : "Уведомление о конфиденциальности",
@@ -4593,6 +4612,54 @@
         "title" : "Инструмент разработчика Modular Drawer",
         "description" : "Позволяет легко протестировать работу Modular Drawer"
       },
+      "cryptoAssetsList" : {
+        "title" : "Список криптоактивов",
+        "description" : "Просматривайте и управляйте криптоактивами через список криптоактивов (CAL).",
+        "openTokenList" : "Открытый список токенов",
+        "drawer" : {
+          "title" : "Настройка списка токенов",
+          "description" : "Настройте и просматривайте токены из списка криптоактивов (CAL). Выберите блокчейн-семейство, чтобы увидеть доступные токены.",
+          "options" : "Параметры",
+          "blockchainFamily" : "Блокчейн-семейство",
+          "selectFamily" : "Выберите блокчейн-семейство",
+          "pageSize" : "Размер страницы",
+          "useStaging" : "Используйте тестовую среду",
+          "useStagingDesc" : "Используйте тестовую среду вместо продакшна.",
+          "outputFields" : "Поля выхода",
+          "refresh" : "Обновить",
+          "loading" : "Загружаем...",
+          "close" : "Закрыть",
+          "availableTokens" : "Доступные токены ({{count}})",
+          "noTokens" : "Не найдены токены из {{family}}",
+          "error" : "Не удалось загрузить токены",
+          "tokenId" : "ID",
+          "contractAddress" : "Адрес контракта",
+          "tokenType" : "Тип токена",
+          "parentCurrency" : "Родительская валюта",
+          "ledgerSignature" : "Подпись Ledger",
+          "units" : "Единицы",
+          "delisted" : "Исключено из листинга",
+          "copy" : "Скопировать ID",
+          "loadMore" : "Показать больше",
+          "searchAndFilters" : "Поиск и фильтры",
+          "maxResults" : "Максимальное количество результатов",
+          "maxResultsPlaceholder" : "Без лимита",
+          "pagination" : "Пагинация",
+          "advanced" : "Дополнительно",
+          "calReference" : "CAL-ссылка",
+          "calReferencePlaceholder" : "например, branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "По умолчанию: branch:main",
+          "selectAll" : "Все",
+          "selectNone" : "Ничего",
+          "reset" : "Сбросить",
+          "tokens" : "Токены",
+          "resultsCount" : "Результатов: {{count}}",
+          "collapseAll" : "Скрыть все",
+          "noTokensFound" : "Токены не найдены",
+          "hide" : "Скрыть",
+          "show" : "Показать"
+        }
+      },
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
       "mockAppUpdate" : "Фиктивное обновление приложения",
@@ -4608,7 +4675,7 @@
       "customLockScreen" : "Собственные картинки для экрана блокировки",
       "customLockScreenDesc" : "Отладка собственных картинок для экрана блокировки.",
       "customLockScreenCTA" : "Запустить",
-      "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
+      "featureFlagsTitle" : "Заданные фича-флаги (feature flags) в Ledger Wallet",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
       "featureFlagsEdit" : "Редактировать",
       "featureFlagsRestore" : "Восстановить",
@@ -4654,17 +4721,17 @@
     },
     "profile" : {
       "password" : "Блокировка паролем",
-      "passwordDesc" : "Установите пароль для защиты данных Ledger Live на вашем ПК, включая названия счетов, информацию о балансе, транзакциях и публичных адресах.",
+      "passwordDesc" : "Установите пароль для защиты данных Ledger Wallet на вашем ПК, включая названия счетов, информацию о балансе, транзакциях и публичных адресах.",
       "passwordAutoLock" : "Автоматическая блокировка",
-      "passwordAutoLockDesc" : "Автоматически блокировать Ledger Live при бездействии.",
+      "passwordAutoLockDesc" : "Автоматически блокировать Ledger Wallet при бездействии.",
       "changePassword" : "Сменить пароль",
       "softResetTitle" : "Очистка кэша",
-      "softResetDesc" : "Очистите кэш Ledger Live для принудительной синхронизации с блокчейном.",
+      "softResetDesc" : "Очистите кэш Ledger Wallet для принудительной синхронизации с блокчейном.",
       "softReset" : "Очистить",
       "resetThirdPartyData" : "Сбросьте данные посредников",
       "resetThirdPartyDataDesc" : "Удалите все данные посредников, использованные для доступа к сторонним поставщикам услуг.",
-      "hardResetTitle" : "Сброс Ledger Live",
-      "hardResetDesc" : "Удаление всех данных Ledger Live с ПК, в том числе информации о счетах, истории транзакций и настроек.",
+      "hardResetTitle" : "Сброс Ledger Wallet",
+      "hardResetDesc" : "Удаление всех данных Ledger Wallet с ПК, включая информацию о счетах, историю транзакций и настройки.",
       "hardReset" : "Сбросить",
       "analytics" : "Аналитика",
       "analyticsDesc" : "Включите аналитику, чтобы помочь компании Ledger совершенствовать пользовательский интерфейс. Сюда относятся клики, посещения страниц, перенаправления, действия (отправка, получение, блокировка и другое), прокрутка в конец страницы, установка/удаление и просмотр версии приложений, количество счетов, криптоактивы и операции, продолжительность сеансов, тип устройства, а также прошивка Ledger.",
@@ -4679,9 +4746,9 @@
       "termsBtn" : "Прочитать",
       "faq" : "Поддержка Ledger",
       "chatbot" : "Чат-бот Ledger",
-      "faqDesc" : "В случае возникновения проблем обратитесь за помощью в Ledger Live, используя аппаратный кошелёк.",
+      "faqDesc" : "В случае возникновения проблем обратитесь в Поддержку через Ledger Wallet и устройство Ledger.",
       "terms" : "Условия использования",
-      "termsDesc" : "Используя приложение Ledger Live, вы принимаете наши Условия использования.",
+      "termsDesc" : "Используя приложение Ledger Wallet, вы принимаете наши Условия использования.",
       "privacy" : "Политика конфиденциальности",
       "privacyDesc" : "О том, какие персональные данные мы собираем, каким образом и для чего, можно узнать в нашей Политике конфиденциальности."
     },
@@ -4726,12 +4793,12 @@
         },
         "testAnimations" : {
           "title" : "Тестирование анимации Lottie",
-          "description" : "Тестировать всю анимацию, которая используется в Ledger Live.",
+          "description" : "Возможность протестировать анимацию, которая используется в Ledger Wallet.",
           "longDesc" : "Инструмент предоставляется команде на условиях «как есть» для проверки Lottie-анимаций, используемых в приложении."
         },
         "testStories" : {
           "title" : "Протестировать сторис из Storyly",
-          "description" : "Протестировать все сторис, доступные в Ledger Live.",
+          "description" : "Возможность протестировать истории, доступные в Ledger Wallet.",
           "longDesc" : "Инструмент предоставляется команде на условиях «как есть» для проверки Storyly-сторис, используемых в приложении."
         },
         "testStaxPostonboarding" : {
@@ -4769,9 +4836,9 @@
       }
     },
     "hardResetModal" : {
-      "title" : "Сброс Ledger Live",
-      "desc" : "Сбросьте Ledger Live, чтобы стереть все настройки и счета на вашем ПК. Затем вы можете установить новый пароль и вновь добавить счета, используя устройство Ledger. Приватные ключи, которые дают доступ к вашим криптоактивам, хранятся в безопасности на вашем устройстве. Кроме того, у вас есть фраза восстановления.",
-      "warning" : "Сброс Ledger Live удалит всю историю обменов на всех ваших счетах."
+      "title" : "Сброс Ledger Wallet",
+      "desc" : "Сбросьте Ledger Wallet, чтобы стереть все настройки и счета на вашем ПК. Затем вы сможете установить пароль и добавить свои счета обратно с помощью устройства Ledger. Приватные ключи для доступа к вашим криптоактивам надёжно хранятся на вашем устройстве Ledger и защищены вашей фразой восстановления.",
+      "warning" : "Сброс Ledger Wallet удалит всю историю обменов на всех ваших счетах."
     },
     "softResetModal" : {
       "title" : "Очистка кэша",
@@ -4804,7 +4871,7 @@
     },
     "exportLogs" : {
       "title" : "Сохранить логи",
-      "desc" : "Загрузка логов Ledger Live может помочь для устранения неполадок.",
+      "desc" : "Сохранённые логи Ledger Wallet могут потребоваться для устранения неполадок.",
       "btn" : "Сохранить"
     },
     "troubleshootNetwork" : {
@@ -4852,20 +4919,20 @@
     "setPassword" : {
       "title" : "Блокировка паролем",
       "subTitle" : "Установить пароль",
-      "desc" : "Храните свой пароль в безопасности. В случае его потери нужно будет сбросить Ledger Live и заново добавить счета."
+      "desc" : "Храните свой пароль в безопасности. В случае его потери нужно будет сбросить Ledger Wallet и заново добавить счета."
     },
     "disablePassword" : {
       "title" : "Отключить блокировку паролем",
-      "desc" : "Данные Ledger Live будут храниться в незашифрованном виде. К таким данным относятся названия счетов, информация о транзакциях и публичные адреса кошельков."
+      "desc" : "Данные Ledger Wallet будут храниться на вашем ПК в незашифрованном виде. К таким данным относятся названия счетов, информация о транзакциях и публичные адреса кошельков."
     }
   },
   "update" : {
     "downloadInProgress" : "Скачиваем обновления...",
     "downloadProgress" : "Уже {{progress}}%",
     "checking" : "Проверяем обновления...",
-    "checkSuccess" : "Доступно обновление Ledger Live. Закройте приложение, и оно автоматически обновится и перезагрузится",
+    "checkSuccess" : "Вышло обновление Ledger Wallet. Закройте приложение, и оно автоматически обновится и перезагрузится",
     "quitAndInstall" : "Обновить и перезапустить",
-    "updateAvailable" : "Доступно обновление Ledger Live {{version}}",
+    "updateAvailable" : "Вышло обновление Ledger Wallet {{version}}",
     "error" : "Во время обновления произошла ошибка. Попробуйте ещё раз",
     "reDownload" : "Скачать ещё раз",
     "nightlyWarning" : "Эта версия не может быть установлена автоматически. Установите её вручную"
@@ -4881,7 +4948,7 @@
     "title" : "Одобрение токена",
     "description" : "Одобрите токен на устройстве Ledger",
     "unlimited" : "Вы предоставляете оператору услуги доступ к неограниченному объёму выбранного токена на вашем кошельке. Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписывать её.",
-    "limited" : "Вы предоставляете оператору услуги доступ к выбранному токену на вашем кошельке. Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписывать её.",
+    "limited" : "Вы предоставляете оператору услуги доступ к токену на вашем кошельке. Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписать её.",
     "termsAndConditions" : "Подписывая эту транзакцию, я принимаю <0>Условия использования {{appName}}</0>."
   },
   "sign" : {
@@ -4944,35 +5011,35 @@
     },
     "serviceStatus" : {
       "statusOk" : {
-        "title" : "Приложение Ledger Live запущено и работает",
+        "title" : "Приложение Ledger Wallet запущено и работает",
         "description" : "Что-то не работает? Проверьте <0>состояние наших серверов</0>"
       },
       "statusNotOk" : {
-        "title" : "В приложении Ledger Live возникли проблемы",
+        "title" : "В работе Ledger Wallet возникли неполадки",
         "learnMore" : "Подробнее"
       }
     },
     "announcement" : {
       "emptyState" : {
         "title" : "Сейчас новостей нет",
-        "desc" : "Здесь вы найдёте новости о Ledger и Ledger Live"
+        "desc" : "Здесь будут новости о Ledger и Ledger Wallet"
       }
     }
   },
   "onboarding" : {
     "drawers" : {
       "pinHelp" : {
-        "title" : "Как обезопасить ПИН-код",
-        "intro" : "В процессе настройки вы устанавливаете собственный ПИН-код.",
+        "title" : "Обезопасьте свой ПИН",
+        "intro" : "В процессе настройки вы создаёте собственный ПИН.",
         "rules" : {
-          "1" : "<0>Всегда</0> придумывайте ПИН-код самостоятельно.",
-          "2" : "<0>Всегда</0> вводите ПИН-код вдали от посторонних глаз.",
-          "3" : "При необходимости вы можете сменить ПИН-код.",
-          "4" : "После 3 неудачных попыток ввести ПИН-код устройство перезагрузится.",
-          "5" : "<0>Не используйте</0> простые ПИН-коды (наподобие 0000, 123456, 55555555).",
-          "6" : "<0>Не рассказывайте</0> ПИН-код никому. Даже сотрудникам Ledger.",
-          "7" : "<0>Не используйте</0> ПИН-код, который кто-то придумал за вас.",
-          "8" : "<0>Не храните</0> ПИН-код на ПК или смартфоне."
+          "1" : "<0>Всегда</0> придумывайте ПИН самостоятельно.",
+          "2" : "<0>Всегда</0> вводите ПИН вдали от посторонних.",
+          "3" : "При необходимости вы можете изменить свой ПИН.",
+          "4" : "После трёх неверных попыток ввода ПИН устройство сбросится.",
+          "5" : "<0>Не</0> используйте простые ПИН наподобие 0000, 123456, 55555555.",
+          "6" : "<0>Никогда</0> не сообщайте свой ПИН другим людям. Даже сотрудникам Ledger.",
+          "7" : "<0>Не используйте</0> ПИН, который кто-то придумал за вас.",
+          "8" : "<0>Не храните</0> ПИН на ПК или смартфоне."
         }
       },
       "recoverySeed" : {
@@ -4984,7 +5051,7 @@
         "paragraph3" : "Не волнуйтесь, достаточно сделать следующее:",
         "paragraph4" : "Чтобы восстановить доступ к криптовалюте любой кошелёк может сгенерировать приватный ключ при помощи вашей фразы восстановления.",
         "points" : {
-          "1" : "Купите новый аппаратный криптокошелёк.",
+          "1" : "Приобретите новое устройство Ledger.",
           "2" : "Выберите «Использовать фразу восстановления на новом устройстве» в приложении Ledger.",
           "3" : "Введите свою фразу восстановления на новом устройстве, чтобы снова получить доступ к криптовалюте."
         }
@@ -5005,7 +5072,7 @@
         "contactSupportCTA" : "Связаться с Поддержкой",
         "continueCTA" : "Продолжить",
         "title" : "Проверьте содержимое упаковки",
-        "description" : "Если {{device}} при включении запрашивает ПИН-код и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой Ledger.",
+        "description" : "Если {{device}} при включении запрашивает ПИН и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой.",
         "alert" : "Используйте фразу восстановления, которая была сгенерирована вашим устройством Ledger."
       }
     },
@@ -5023,8 +5090,14 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Кошелёк защищает вас и позволяет контролировать происходящее",
+          "thousandsCrypto" : "Отправляйте, получайте, обменивайте и стейкайте тысячи криптовалют",
+          "secureWallet" : "Подписывайте транзакции, сохраняя спокойствие"
+        },
+        "notice" : "Продолжение означает ваше согласие с <Link1>Условиями использования</Link1> и <Link2>Политикой конфиденциальности</Link2> Ledger. Ledger не даёт никаких финансовых советов.\nУслуги по обмену и стейкингу оказываются сторонними операторами.",
         "title" : "Самый безопасный кошелёк для криптовалют и NFT",
-        "description" : "Безопасно управляйте, покупайте и приумножайте криптовалюты и NFT прямо в Ledger Live.",
+        "description" : "Безопасно управляйте, покупайте и приумножайте криптовалюты и NFT прямо в Ledger Wallet.",
         "nextButton" : "Приступить",
         "noDevice" : "Нет устройства Ledger?",
         "buyLink" : "Нет устройства? Купите Ledger",
@@ -5047,7 +5120,7 @@
           },
           "3" : {
             "title" : "Подтверждение операций",
-            "desc" : "Приложение Ledger Live позволяет безопасно покупать, продавать, управлять, обменивать и приумножать криптовалюты.\nВы сами подтверждаете каждую криптотранзакцию на устройстве Nano."
+            "desc" : "Ledger Wallet позволяет безопасно покупать, продавать, управлять, обменивать и приумножать криптовалюты.\nВы сами подтверждаете каждую криптотранзакцию на устройстве Nano."
           },
           "4" : {
             "title" : "Давайте настроим ваш Nano",
@@ -5092,7 +5165,7 @@
         "screens" : {
           "importYourRecoveryPhrase" : {
             "title" : "Используем фразу восстановления",
-            "paragraph1" : "Позволяет восстановить Ledger из секретной сид-фразы. Например, если нужно заменить устройство и сделать запасную копию кошелька.",
+            "paragraph1" : "Восстановите Ledger с помощью секретной сид-фразы. Это позволит заменить устройство или создать резервную копию Ledger.",
             "paragraph2" : "Устройство Nano восстановит ваши приватные ключи, и у вас вновь будет доступ к криптовалюте.",
             "buttons" : {
               "next" : "Можно приступать!",
@@ -5131,7 +5204,7 @@
             },
             "follow" : {
               "title" : "Следуйте инструкциям",
-              "descr" : "Возвращайтесь в это окно и следуйте инструкциям по настройке ПИН-кода."
+              "descr" : "Возвращайтесь в это окно и следуйте инструкциям по установке ПИН."
             },
             "buttons" : {
               "next" : "Продолжить",
@@ -5159,7 +5232,7 @@
             },
             "follow" : {
               "title" : "Следуйте инструкциям",
-              "descr" : "Возвращайтесь в это окно и следуйте инструкциям по настройке ПИН-кода."
+              "descr" : "Возвращайтесь в это окно и следуйте инструкциям по установке ПИН."
             },
             "buttons" : {
               "next" : "Продолжить",
@@ -5173,10 +5246,10 @@
           },
           "pinCode" : {
             "title" : "ПИН-код",
-            "paragraph" : "ПИН-код — это первый этап защиты. Он физически защищает доступ к устройству Ledger и ваши приватные ключи. ПИН-код должен содержать от 4 до 8 символов.",
-            "disclaimer" : "Я понимаю, что ПИН-код необходимо придумать самостоятельно, и хранить его в секрете.",
+            "paragraph" : "ПИН — это первый этап защиты. Он физически защищает доступ к вашему приватному ключу и устройству Ledger. Длина ПИН должна быть от 4 до 8 цифр.",
+            "disclaimer" : "Я понимаю, что ПИН необходимо придумать самостоятельно и хранить его в секрете.",
             "buttons" : {
-              "next" : "Настроить ПИН-код",
+              "next" : "Настроить ПИН",
               "prev" : "Назад",
               "help" : "Требуется помощь?"
             },
@@ -5208,12 +5281,12 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "Устанавливаем ПИН-код",
-              "descr" : "Нажимайте левую или правую кнопку для выбора цифры. Для подтверждения нажмите обе кнопки. Выберите <0></0> для подтверждения ПИН-кода. Или <1></1>, чтобы удалить цифру."
+              "title" : "Придумайте ПИН",
+              "descr" : "Нажимайте левую или правую кнопку для выбора цифры. Для подтверждения нажмите обе кнопки. Выберите <0></0> для подтверждения ПИН. Или <1></1>, чтобы удалить цифру."
             },
             "confirm" : {
-              "title" : "Подтвердите ПИН-код",
-              "descr" : "Повторно введите ПИН-код для подтверждения."
+              "title" : "Подтвердите ПИН",
+              "descr" : "Повторно введите ПИН для подтверждения."
             },
             "buttons" : {
               "next" : "Продолжить",
@@ -5246,7 +5319,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "Введите фразу восстановления",
-            "paragraph1" : "Фраза восстановления – это секретный набор слов, который вы записали при первом подключении кошелька.",
+            "paragraph1" : "Фраза восстановления – это секретный набор слов, который вы записали при первой настройке устройства Ledger.",
             "paragraph2" : "Ledger не хранит копию вашей фразы восстановления.",
             "disclaimer" : "Я осознаю, что при потере фразы восстановления утрачу доступ к своей криптовалюте, если у меня больше не будет доступа к устройству Nano.",
             "buttons" : {
@@ -5256,7 +5329,7 @@
             },
             "warning" : {
               "title" : "Не используйте фразу восстановления, которую кто-то создал за вас.",
-              "desc" : "Вы должны самостоятельно придумать ПИН-код и получить фразу восстановления на аппаратном кошельке Ledger. Если вы получили устройство с уже установленной фразой восстановления или ПИН-кодом, не пользуйтесь им и свяжитесь с Поддержкой.",
+              "desc" : "Вы должны самостоятельно придумать ПИН и получить фразу восстановления для своего устройства Ledger. Если вы получили устройство с уже установленной фразой восстановления или ПИН, не пользуйтесь им и свяжитесь с Поддержкой.",
               "supportLink" : "Связаться с Поддержкой"
             }
           },
@@ -5344,7 +5417,7 @@
           "genuineCheck" : {
             "success" : {
               "title" : "Отлично!",
-              "desc" : "Ваше устройство {{deviceName}} проверено и готово к использованию в Ledger Live."
+              "desc" : "Ваше устройство {{deviceName}} проверено и готово к использованию в Ledger Wallet."
             },
             "buttons" : {
               "next" : "Продолжить",
@@ -5355,7 +5428,7 @@
           "hideRecoveryPhrase" : {
             "title" : "Спрячьте фразу восстановления",
             "paragraph" : "Фраза восстановления – это ваш последний шанс получить доступ к своим криптоактивам, если вы потеряете доступ к Nano. Храните её в надёжном месте.",
-            "keepItOffline" : "Вводите эти слова только в аппаратном кошельке, и никогда не сохраняйте на ПК или смартфоне.",
+            "keepItOffline" : "Вводите эти слова только на устройстве Ledger, и никогда не храните фразу на ПК или смартфоне.",
             "neverShowToAnyone" : "Никогда никому не передавайте эти 24 слова, даже сотрудникам Ledger.",
             "buttons" : {
               "next" : "Понятно!",
@@ -5369,7 +5442,7 @@
             }
           },
           "pairMyNano" : {
-            "title" : "Проверка подлинности",
+            "title" : "Проверка подлинности Ledger",
             "paragraph" : "Давайте убедимся в подлинности вашего Nano. Это быстро и просто.",
             "buttons" : {
               "next" : "Проверить Nano",
@@ -5401,7 +5474,7 @@
         },
         "validateTransactions" : {
           "title" : "Подтверждение операций",
-          "description" : "Приложение Ledger Live позволяет безопасно покупать, продавать, управлять, обменивать и приумножать криптовалюты. Вы сами подтверждаете каждую криптотранзакцию на устройстве Nano."
+          "description" : "Ledger Wallet позволяет безопасно покупать, продавать, управлять, обменивать и приумножать криптовалюты. Вы сами подтверждаете каждую транзакцию устройством Ledger."
         },
         "setUpNanoWallet" : {
           "title" : "Давайте настроим ваш Nano!",
@@ -5413,7 +5486,7 @@
     "quizz" : {
       "heading" : "Викторина",
       "title" : "Сыграем в игру!",
-      "descr" : "Ответьте на 3 простых вопроса и развейте мифы об аппаратных кошельках.",
+      "descr" : "Ответьте на 3 простых вопроса и развейте мифы об устройствах Ledger.",
       "buttons" : {
         "start" : "Начать викторину",
         "next" : "Следующий вопрос",
@@ -5429,11 +5502,11 @@
           "results" : {
             "success" : {
               "title" : "Поздравляем!",
-              "text" : "Ваша криптовалюта всегда хранится в блокчейне. Кошелёк Nano хранит только приватный ключ для доступа к ней."
+              "text" : "Ваша криптовалюта всегда хранится в блокчейне. Устройство Ledger хранит лишь ваш приватный ключ, который открывает доступ к криптовалюте."
             },
             "fail" : {
               "title" : "Неправильно!",
-              "text" : "Ваша криптовалюта всегда хранится в блокчейне. Кошелёк Nano хранит только приватный ключ для доступа к ней."
+              "text" : "Ваша криптовалюта всегда хранится в блокчейне. Устройство Ledger хранит лишь ваш приватный ключ, который открывает доступ к криптовалюте."
             }
           }
         },
@@ -5455,7 +5528,7 @@
           }
         },
         "3" : {
-          "text" : "Когда я подключаю Ledger Nano к приложению Ledger Live, мой приватный ключ...",
+          "text" : "Когда я подключаю устройство Ledger к приложению Ledger Wallet, мой приватный ключ...",
           "answers" : {
             "1" : "Остаётся в офлайне",
             "2" : "Ненадолго подключается к Интернету"
@@ -5463,11 +5536,11 @@
           "results" : {
             "success" : {
               "title" : "Поздравляем!",
-              "text" : "Приватный ключ всегда остаётся в офлайне на аппаратном кошельке. Даже когда приложение Ledger подключено к Nano, оно не имеет доступа к вашему приватному ключу. Каждую транзакцию вы должны физически подтверждать на устройстве."
+              "text" : "Ваш приватный ключ всегда хранится в офлайне на устройстве Ledger. Даже подключенное к устройству приложение Ledger Wallet не имеет доступа к приватным ключам. Каждую транзакцию вы будете подписывать физически на устройстве."
             },
             "fail" : {
               "title" : "Неправильно!",
-              "text" : "Приватный ключ всегда остаётся в офлайне на аппаратном кошельке. Даже когда приложение Ledger подключено к Nano, оно не имеет доступа к вашему приватному ключу. Каждую транзакцию вы должны физически подтверждать на устройстве."
+              "text" : "Ваш приватный ключ всегда хранится в офлайне на устройстве Ledger. Даже подключенное к устройству приложение Ledger Wallet не имеет доступа к приватным ключам. Каждую транзакцию вы будете подписывать физически на устройстве."
             }
           }
         }
@@ -5495,10 +5568,10 @@
       },
       "1" : {
         "windows" : {
-          "title" : "Запустите Ledger Live от имени администратора",
+          "title" : "Запустите Ledger Wallet от имени администратора",
           "bullets" : {
-            "0" : "Закройте Ledger Live.",
-            "1" : "Щёлкните правой кнопкой мыши по приложению Ledger Live.",
+            "0" : "Закройте Ledger Wallet.",
+            "1" : "Нажмите правой кнопкой мыши по приложению Ledger Wallet.",
             "2" : "Выберите «Запустить от имени администратора».",
             "3" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
           }
@@ -5534,7 +5607,7 @@
           "title" : "Перезагрузите компьютер",
           "bullets" : {
             "0" : "Перезагрузите компьютер.",
-            "1" : "Запустите Ledger Live.",
+            "1" : "Запустите Ledger Wallet.",
             "2" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
           }
         },
@@ -5543,13 +5616,13 @@
           "bullets" : {
             "0" : "Выключите антивирусную программу, фаервол и VPN.",
             "1" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено.",
-            "2" : "Добавьте Ledger Live в белый список вашей антивирусной программы, если она включена."
+            "2" : "Добавьте Ledger Wallet в белый список антивируса, если он включён."
           }
         },
         "anotherComputer" : {
           "title" : "Воспользуйтесь другим компьютером",
           "bullets" : {
-            "0" : "Перейдите по ссылке (<0>{{link}}</0>) на другом ПК, чтобы скачать и установить Ledger Live.",
+            "0" : "Перейдите по ссылке (<0>{{link}}</0>) на другом ПК, чтобы загрузить и установить Ledger Wallet.",
             "1" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
           }
         }
@@ -5570,7 +5643,7 @@
               "0" : "Откройте «Системные настройки».",
               "1" : "Перейдите к пункту «Защита и безопасность».",
               "2" : "На вкладке «Конфиденциальность» перейдите к пункту «Доступ к диску» в левом столбце.",
-              "3" : "Добавьте «Ledger Live».",
+              "3" : "Добавьте «Ledger Wallet».",
               "4" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
             }
           },
@@ -5614,7 +5687,7 @@
     "messageHash" : "Хэш сообщения",
     "message" : "Сообщение",
     "title" : "Продолжите на устройстве Ledger {{wording}}",
-    "description" : "Следуйте руководству на защищённом сенсорном экране."
+    "description" : "Следуйте инструкции на Защищённом экране."
   },
   "TransactionConfirm" : {
     "title" : "Подтвердите операцию на устройстве для её завершения",
@@ -5685,7 +5758,7 @@
   "updatedTerms" : {
     "title" : "Обновление Условий использования",
     "body" : {
-      "intro" : "Здравствуйте! Мы обновили Условия использования Ledger Live, чтобы сделать их более понятными и включить в них новые услуги и функции Ledger Live. Основные обновления:",
+      "intro" : "Привет! Мы обновили Условия использования Ledger Wallet, чтобы сделать их более понятными и включить в них новые услуги и функции Ledger Wallet. Основные обновления:",
       "bulletPoints" : ["Объяснили, какие услуги доступны и как они работают", "Добавили информацию о комиссиях за услуги", "Улучшили уведомления, чтобы вы не пропускали важные обновления Условий использования"],
       "agreement" : "Нажав на «Продолжить», вы подтверждаете, что прочитали Условия использования и принимаете их."
     },
@@ -5710,7 +5783,42 @@
     },
     "canton" : {
       "commentPlaceholder" : "Опционально",
-      "comment" : "Комментарий"
+      "comment" : "Комментарий",
+      "addAccount" : {
+        "title" : "Добавление счёта Canton",
+        "onboard" : {
+          "title" : "Настройка",
+          "newAccount" : "Новый счёт",
+          "init" : "Настройте новый счёт Canton, нажав «Продолжить»",
+          "onboarded" : "Настроенные счета",
+          "success" : "Ваш новый счёт Canton создан и настроен.",
+          "error" : "Не удалось настроить новый счёт. Попробуйте снова.",
+          "error429" : "Сейчас сеть Canton Network ограничивает количество создаваемых в день счетов. Повторите попытку позже.",
+          "status" : {
+            "prepare" : "Готовим настройку счёта...",
+            "submit" : "Настраиваем счёт...",
+            "default" : "Обрабатываем..."
+          }
+        },
+        "auth" : {
+          "title" : "Подтверждение",
+          "validator" : "Разрешить",
+          "hint" : "Автоматически принимать активы на этот счёт.",
+          "error" : "Сбой авторизации. Попробуйте снова.",
+          "validatorLabel" : "Валидатор Ledger",
+          "validatorDescription" : "Автоматическое получение активов"
+        },
+        "finish" : {
+          "title" : "Подтверждение"
+        }
+      },
+      "tooManyUtxos" : {
+        "title" : "Требуется действие: слишком много UTXO",
+        "description" : "На вашем счёте слишком много небольших UTXO для проведения этого перевода. Объедините их, чтобы избежать истечения срока действия из-за накопленных комиссий за хранение и чтобы продолжить делать переводы.",
+        "quickFix" : "Быстрое исправление: отправьте часть монет на свой счёт для их консолидации.",
+        "warning" : "На вашем счёте слишком много небольших UTXO. Отправьте часть монет на свой счёт для их консолидации.",
+        "consolidate" : "Консолидировать"
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -5790,7 +5898,7 @@
       "title" : "Укажите сумму"
     },
     "NoAccessToCamera" : {
-      "title" : "Убедитесь, что в вашей системе есть камера, что она не используется другим приложением и что у Ledger Live есть разрешение на её использование.",
+      "title" : "Убедитесь, что в вашей системе есть камера, что она не используется другим приложением и что у Ledger Wallet есть разрешение на её использование.",
       "description" : ""
     },
     "CeloAllFundsWarning" : {
@@ -5897,7 +6005,7 @@
     },
     "DeviceNotOnboarded" : {
       "title" : "Устройство не готово",
-      "description" : "Настройте устройство перед тем, как использовать его в Ledger Live."
+      "description" : "Настройте устройство перед тем, как использовать его с Ledger Wallet."
     },
     "DeviceSocketFail" : {
       "title" : "Пожалуйста, перезагрузите устройство Ledger и повторите попытку",
@@ -5909,7 +6017,7 @@
     },
     "DisconnectedDevice" : {
       "title" : "Устройство отключено",
-      "description" : "Ledger Live не удалось подключиться к устройству. Пожалуйста, попробуйте ещё раз."
+      "description" : "Ledger Wallet не удалось подключиться к устройству. Повторите попытку."
     },
     "EConnReset" : {
       "title" : "Мой Ledger недоступен",
@@ -5933,7 +6041,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "Поставщик недействителен",
-      "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Live и выберите «Экспериментальные функции», после чего укажите другого поставщика.",
+      "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet и перейдите в «Экспериментальные функции». Там укажите другого поставщика.",
       "goToSettingsCTA" : "Перейти в Настройки"
     },
     "HardResetFail" : {
@@ -6107,7 +6215,7 @@
     },
     "OperatingSystemOutdated" : {
       "title" : "Ваша версия ОС устарела",
-      "description" : "Обновите операционную систему и попробуйте снова. Почему Ledger Live не поддерживается вашей нынешней версией ОС? Подробнее об этом написано в статье ниже."
+      "description" : "Обновите операционную систему и попробуйте снова. Почему Ledger Wallet не поддерживается вашей нынешней версией ОС? Подробнее об этом – в статье ниже."
     },
     "PasswordsDontMatch" : {
       "title" : "Пароли не совпадают",
@@ -6247,7 +6355,7 @@
     },
     "WrongDeviceForAccount" : {
       "title" : "Что-то пошло не так",
-      "description" : "Убедитесь, что на вашем аппаратном кошельке используются парольная фраза или фраза восстановления, привязанные к указанному счёту."
+      "description" : "Убедитесь, что ваше устройство Ledger настроено с помощью фразы восстановления или парольной фразы, привязанной к этому счёту."
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Что-то пошло не так",
@@ -6451,7 +6559,7 @@
       "description" : "Повторите попытку или обратитесь в Поддержку в случае сомнений."
     },
     "GenuineCheckFailed" : {
-      "title" : "Не удалось проверить подлинность устройства",
+      "title" : "Проверка подлинности Ledger провалилась",
       "description" : "Что-то пошло не так. Повторите попытку или свяжитесь с Поддержкой, если возникнут вопросы."
     },
     "EthAppPleaseEnableContractData" : {
@@ -6653,6 +6761,10 @@
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Неправильный адрес контрольной суммы",
+      "description" : "У указанного адреса неправильная контрольная сумма."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Недостаточный баланс",
       "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {{requiredWorthInUSD}}$ в HBAR."
@@ -6833,23 +6945,23 @@
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Сбой подключения устройства",
-      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "Сбой подключения устройства",
-      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "DisconnectError" : {
       "title" : "Сбой подключения устройства",
-      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "DeviceSessionNotFound" : {
       "title" : "Сбой подключения устройства",
-      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Сбой подключения устройства",
-      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "TransportNotSupportedError" : {
       "title" : "Ошибка способа соединения",
@@ -6889,7 +7001,7 @@
     },
     "UnsupportedFirmwareDAError" : {
       "title" : "ОС не поддерживается",
-      "description" : "ОС вашего устройства не поддерживается. Обновите её через Ledger Live или обратитесь в Поддержку Ledger, если в процессе возникнут проблемы."
+      "description" : "ОС вашего устройства не поддерживается. Обновите её через Ledger Wallet или обратитесь в Поддержку Ledger, если возникнут вопросы."
     },
     "InvalidBatteryStatusTypeError" : {
       "title" : "Ошибка аккумулятора",
@@ -6913,15 +7025,15 @@
     },
     "DeviceNotRecognizedError" : {
       "title" : "Устройство не распознано",
-      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может определить устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "DeviceAlreadyDiscoveredError" : {
       "title" : "Устройство не распознано",
-      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может определить устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "UnknownDeviceError" : {
       "title" : "Устройство не распознано",
-      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+      "description" : "Ledger Wallet не может определить устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
     "ReceiverApduError" : {
       "title" : "Ошибка связи",
@@ -7077,8 +7189,8 @@
     },
     "progress" : {
       "loading" : "Загружаем...",
-      "progress" : "Не выходите из Ledger Live во время установки.",
-      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Live.",
+      "progress" : "Не закрывайте Ledger Wallet во время установки.",
+      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Wallet.",
       "skippedInfo" : "Некоторые приложения сейчас недоступны. Пока нет версии для {{ productName }}.",
       "skipped" : "Пока недоступно для {{ productName }}",
       "app" : "Приложение {{appName}}"
@@ -7099,7 +7211,7 @@
     "title" : "Восстановите доступ к ключам\nс помощью вашей личности",
     "description" : "Ваша секретная фраза восстановления не всегда будет под рукой.\nМягкий запуск только для Ledger Nano X. Бесплатная подписка до 30 июня 2023 года",
     "cta" : "Почему мне стоит подписаться?",
-    "downloadLLM" : "Подпишитесь на <purple>Ledger Recover</purple> в мобильном приложении Ledger Live"
+    "downloadLLM" : "Подпишитесь на <purple>Ledger Recover</purple> в Ledger Wallet для смартфона"
   },
   "webview" : {
     "networkError" : {
@@ -7118,10 +7230,10 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Раскрытие данных из Ledger Live помогает понять ваши предпочтения и подобрать подходящий контент.",
-      "whatWeTrack" : "С вашего согласия Ledger может собирать данные о вашем использовании приложения Ledger Live, включая посещения страниц и нажатия:",
+      "description" : "Раскрытие данных из Ledger Wallet помогает понять ваши предпочтения и подобрать подходящий контент.",
+      "whatWeTrack" : "С вашего согласия Ledger способна собирать данные о вашем использовании приложения Ledger Wallet, включая посещения страниц и нажатия:",
       "whatWeTrackList" : {
-        "1" : "Для измерения производительности работы Ledger Live, а также улучшения приложения и вашего опыта взаимодействия с ним (Аналитика).",
+        "1" : "Для измерения производительности работы Ledger Wallet, а также улучшения приложения и вашего опыта взаимодействия с ним (Аналитика).",
         "2" : "Для предоставления актуальных советов и контента на основе ваших предпочтений, а также помощи в нашей оценке эффективности проведения различных маркетинговых кампаний (Персонализация)."
       },
       "whatWeDoNotTrack" : "Ledger никогда не будет собирать данные, связанные с:",
@@ -7135,19 +7247,19 @@
       "accept" : "Принять",
       "analyticsData" : {
         "title" : "Аналитика",
-        "description" : "Чтобы измерять производительность работы Ledger Live, а также улучшать приложение и ваш опыт взаимодействия с ним, мы делимся данными об использовании, включая посещения страниц и нажатия."
+        "description" : "Чтобы измерять производительность работы Ledger Wallet, а также улучшать приложение и ваш опыт взаимодействия с ним, мы делимся данными об использовании, включая посещения страниц и нажатия."
       },
       "personalizationData" : {
         "title" : "Персонализация",
         "description" : "Чтобы получать актуальные советы и контент на основе ваших предпочтений, а также помогать в нашей оценке эффективности проведения различных маркетинговых кампаний, мы делимся данными об использовании приложения, включая нажатия, посещения страниц и информацию о конверсии."
       },
-      "share" : "Поделиться"
+      "validate" : "Подтвердить"
     },
     "variantB" : {
       "accept" : "Принять",
       "refuse" : "Отклонить",
       "analytics" : {
-        "description" : "Раскрытие аналитических данных из Ledger Live помогает понять способ взаимодействия пользователей с Ledger Live и улучшить его, а также исправить ошибки.",
+        "description" : "Раскрытие аналитических данных из Ledger Wallet помогает понять способ взаимодействия пользователей с Ledger Wallet и улучшить его, а также исправить ошибки.",
         "details" : {
           "1" : "Аналитические данные включают посещения страниц и клики.",
           "2" : "Мы не будем собирать или просматривать данные в отношении вашего баланса, счетов или портфеля.",
@@ -7156,7 +7268,7 @@
       },
       "personalRecommendations" : {
         "title" : "Насладитесь персонализацией",
-        "description" : "Раскрытие данных персонализации из Ledger Live позволяет показывать контент, соответствующий вашим предпочтениям",
+        "description" : "Раскрытие данных персонализации из Ledger Wallet позволяет показывать контент, соответствующий вашим предпочтениям",
         "details" : {
           "1" : "Данные персонализации, включая информацию о конверсии, клики и посещения страниц",
           "2" : "Мы не можем отслеживать и собирать любые ваши персональные данные или информацию о портфеле."
@@ -7172,7 +7284,7 @@
       "personalizedExp" : "Персонализация",
       "analytics" : "Аналитика",
       "personalizedExpDesc" : "Позволяет Ledger собирать данные об использовании приложения, чтобы предоставлять актуальные советы и контент на основе ваших предпочтений, а также помогать в нашей оценке эффективности проведения различных маркетинговых кампаний.",
-      "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения, чтобы измерять производительность работы Ledger Live, а также улучшать приложение и ваш опыт взаимодействия с ним."
+      "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения для оценки производительности Ledger Wallet, а также улучшения приложения и вашего опыта взаимодействия."
     }
   },
   "walletSync" : {
@@ -7200,22 +7312,22 @@
         "cta" : "Включить Ledger Sync"
       },
       "onboarding" : {
-        "title" : "Синхронизировать с другим приложением Ledger Live"
+        "title" : "Синхронизация с другим приложением Ledger Wallet"
       }
     },
     "manage" : {
       "cta" : "Настроить",
       "synchronize" : {
-        "label" : "Синхронизировать с другим приложением Ledger Live",
-        "description" : "Синхронизируйте ваши криптовалютные счета в Ledger Live между разными смартфонами и ПК."
+        "label" : "Синхронизировать с другим Ledger Wallet",
+        "description" : "Синхронизируйте криптосчета Ledger Wallet между разными смартфонами и ПК."
       },
       "backup" : {
         "label" : "Удалить синхронизацию",
-        "description" : "Ваши криптовалютные счета, синхронизированные между разными приложениями Ledger Live, больше не будут связаны."
+        "description" : "Ваши криптосчета, синхронизированные между разными приложениями Ledger Wallet, больше не будут связаны."
       },
       "instance" : {
-        "label" : "Синхронизированных приложений Ledger Live: 1",
-        "label_other" : "Синхронизированных приложений Ledger Live: {{count}}",
+        "label" : "Синхронизировано 1 приложение Ledger Wallet",
+        "label_other" : "Синхронизированных приложений Ledger Wallet: {{count}}",
         "cta" : "Настроить"
       }
     },
@@ -7254,24 +7366,24 @@
     },
     "success" : {
       "backup" : {
-        "title" : "Ledger Sync включён для Ledger Live на этом ПК"
+        "title" : "Ledger Sync включён для Ledger Wallet на этом ПК"
       },
       "synch" : {
         "title" : "Синхронизация прошла успешно!",
-        "desc" : "Изменения с вашими счетами автоматически отобразятся во всех приложениях Ledger Live на синхронизированных смартфонах и ПК. "
+        "desc" : "Изменения ваших криптосчетов теперь будет автоматически отображаться во всех приложениях Ledger Wallet на синхронизированных смартфонах и ПК. "
       },
-      "synchAnother" : "Синхронизировать с другим приложением Ledger Live",
+      "synchAnother" : "Синхронизация с другим приложением Ledger Wallet",
       "close" : "Закрыть"
     },
     "manageBackup" : {
       "deleteBackup" : {
         "title" : "Точно хотите отменить синхронизацию?",
-        "description" : "Ваши криптовалютные счета в приложении Ledger Live на разных смартфонах и ПК больше не будут связаны. Это никак не скажется на криптоактивах. ",
+        "description" : "Ваши криптосчета в приложении Ledger Wallet на разных смартфонах и ПК больше не будут связаны. Это никак не скажется на криптоактивах. ",
         "delete" : "Да, отменить",
         "cancel" : "Оставить"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ваши приложения Ledger Live больше не синхронизированы",
+        "title" : "Ваши приложения Ledger Wallet больше не синхронизированы",
         "description" : "Включить синхронизацию можно в любое время"
       },
       "deleteBackupError" : {
@@ -7281,7 +7393,7 @@
     "synchronize" : {
       "chooseMethod" : {
         "title" : "Выберите метод синхронизации",
-        "description" : "Вы можете синхронизировать с помощью устройства Ledger или сканировать QR-код в Ledger Live",
+        "description" : "Вы можете синхронизировать с помощью устройства Ledger или сканировать QR в Ledger Wallet",
         "scan" : {
           "title" : "Через QR-код",
           "description" : "Синхронизировать по QR-коду"
@@ -7292,25 +7404,25 @@
         }
       },
       "qrCode" : {
-        "title" : "Синхронизируйте приложения в Ledger Live",
+        "title" : "Синхронизация приложений Ledger Wallet",
         "options" : {
           "mobile" : "Через смартфон",
           "desktop" : "Через ПК"
         },
         "mobile" : {
-          "description" : "Синхронизировать с Ledger Live на другом смартфоне",
+          "description" : "Синхронизируйте приложение с Ledger Wallet на другом смартфоне",
           "steps" : {
             "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
-            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step2" : "Запустите приложение Ledger Wallet, которое будете синхронизировать.",
             "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>Через QR-код»</0>",
             "step4" : "Сканируйте QR-код."
           }
         },
         "desktop" : {
-          "description" : "Синхронизируйте ваши счета с другим приложением Ledger Live",
+          "description" : "Синхронизируйте ваши счета с другим приложением Ledger Wallet",
           "steps" : {
             "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
-            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step2" : "Запустите приложение Ledger Wallet, которое будете синхронизировать.",
             "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>С помощью Ledger»</0>",
             "step4" : "Подключите устройство Ledger."
           }
@@ -7318,27 +7430,27 @@
       },
       "unbackedError" : {
         "title" : "Синхронизация не обнаружена",
-        "description" : "Включите Ledger Sync в этом Ledger Live или же в приложении, с которым вы синхронизируетесь",
+        "description" : "Включите Ledger Sync в этом Ledger Wallet или же в приложении, с которым вы синхронизируетесь",
         "cta" : "Включить Ledger Sync"
       },
       "pinCode" : {
         "title" : "Ваш код для Ledger Sync",
-        "description" : "Для синхронизации криптовалютных счетов между несколькими приложениями Ledger Live введите код, который отображается в Ledger Live на смартфоне.",
+        "description" : "Для синхронизации криптосчетов между несколькими приложениями Ledger Wallet введите код, который отображается в Ledger Wallet на смартфоне.",
         "error" : {
           "title" : "Коды не совпадают",
-          "description" : "Убедитесь, что вы ввели код, который отображается в другом Ledger Live."
+          "description" : "Убедитесь, что вы ввели код, который отображается в другом приложении Ledger Wallet."
         }
       }
     },
     "manageInstances" : {
-      "title" : "Ledger Live синхронизирован между",
+      "title" : "Ledger Wallet синхронизировано между:",
       "remove" : "Удалить",
-      "deleteInstanceSuccess" : "Ваше приложение Ledger Live на {{instanceName}} больше не подключено к Ledger Sync",
+      "deleteInstanceSuccess" : "Ваше приложение Ledger Wallet на {{instanceName}} больше не подключено к Ledger Sync",
       "deleteInstanceError" : "Что-то пошло не так при удалении {{instanceName}}"
     },
     "deviceAction" : {
       "title" : "Продолжите операцию на вашем Ledger {{wording}}",
-      "description" : "Следуйте руководству на экране устройства Ledger."
+      "description" : "Следуйте руководству на Защищённом экране Ledger."
     }
   },
   "lnsUpsell" : {
@@ -7379,7 +7491,7 @@
       "receive" : "Получить",
       "receiveDescription" : "Получайте криптовалюту с другого кошелька",
       "buy" : "Купить",
-      "buyDescription" : "Безопасно покупайте криптовалюту за фиат"
+      "buyDescription" : "Безопасно покупайте криптовалюту за фиат."
     },
     "scanAccounts" : {
       "cta" : {
@@ -7391,14 +7503,14 @@
         "cta" : "Добавить монеты на счёт",
         "close" : "Закрыть",
         "noAssociatedAccounts" : {
-          "description" : "В экосистеме {{currency}} пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт {{currency}} в Ledger Live после его создания.",
+          "description" : "В экосистеме {{currency}} пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт {{currency}} в Ledger Wallet после его создания.",
           "cta" : "Как создать счёт {{currency}}?",
           "close" : "Закрыть"
         }
       },
       "status" : {
         "foundAccounts_zero" : "Тут пока ничего нет.",
-        "foundAccounts" : "Мы нашли {{count}} счёт",
+        "foundAccounts" : "Нашли счета ({{count}})",
         "foundAccounts_other" : "Найдено счетов: {{count}}",
         "scanning" : "Сканируем счета..."
       },
@@ -7407,7 +7519,7 @@
     "connectYourDevice" : {
       "title" : "Подключите и разблокируйте устройство"
     },
-    "searchPlaceholder" : "Поиск...",
+    "searchPlaceholder" : "Поиск по названию или адресу",
     "emptyAssetList" : "Ничего не нашли :(",
     "selectAsset" : "Выберите криптоактив",
     "selectNetwork" : "Выберите сеть",
@@ -7415,7 +7527,7 @@
     "accountCount_one" : "Счёт: {{count}}",
     "accountCount_other" : "Счета: {{count}}",
     "accountsAdded" : {
-      "title" : "Счёт добавлен в Портфель",
+      "title" : "Добавили в Портфель!",
       "title_other" : "Добавлено счетов в Портфель: {{count}}",
       "cta" : {
         "addFunds" : "Добавить монеты на счёт",
@@ -7438,14 +7550,14 @@
   },
   "geoBlocking" : {
     "title" : "Страна не обслуживается",
-    "description" : "Ledger Live недоступно в этой локации.",
+    "description" : "Устройство Ledger недоступно в этой локации.",
     "learnMore" : "Подробнее..."
   },
   "versionBlocking" : {
-    "title" : "Требуется обновить Ledger Live",
+    "title" : "Необходимо обновить Ledger Wallet",
     "errorTitle" : "Сбой обновления",
-    "errorDescription" : "Не удалось обновить. Перейдите по ссылке ниже, чтобы загрузить актуальную версию Ledger Live. ",
-    "description" : "Эта версия Ledger Live не поддерживает актуальную версию ОС устройства. Обновите приложение, чтобы нормализовать подключение.",
+    "errorDescription" : "Не удалось обновить. Перейдите по ссылке ниже, чтобы загрузить актуальную версию Ledger Wallet. ",
+    "description" : "Эта версия Ledger Wallet не поддерживает актуальную версию ОС устройства. Обновите приложение, чтобы нормализовать подключение.",
     "restart" : "Перезагрузить",
     "downloadOnLedger" : "Загрузить с Ledger.com",
     "downloadProgress" : "Скачиваем... {{ progress }}%"

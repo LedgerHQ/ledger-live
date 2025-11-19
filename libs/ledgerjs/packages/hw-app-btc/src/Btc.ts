@@ -60,6 +60,7 @@ export default class Btc {
       switch (currency) {
         case "bitcoin":
         case "bitcoin_testnet":
+        case "bitcoin_regtest":
         case "qtum":
           // new APDU (nano app API) for currencies using app-bitcoin-new implementation
           return new BtcNew(new AppClient(this._transport));

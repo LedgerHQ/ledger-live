@@ -102,7 +102,7 @@ const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): Co
     accountId,
     date: new Date(tx.timestamp),
     extra: {},
-    transactionSequenceNumber: parseInt(tx?.tx?.auth_info?.signer_infos[0]?.sequence || "0"),
+    transactionSequenceNumber: new BigNumber(tx?.tx?.auth_info?.signer_infos?.[0]?.sequence || "0"),
   };
 };
 

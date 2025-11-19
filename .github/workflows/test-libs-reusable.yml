@@ -26,6 +26,7 @@ permissions:
 jobs:
   test-libraries:
     name: "Libraries Test"
+    timeout-minutes: 40
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3

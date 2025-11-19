@@ -46,6 +46,7 @@ setSupportedCurrencies([
   "algorand",
   "polkadot",
   "bitcoin_testnet",
+  "bitcoin_regtest",
   "ethereum_sepolia",
   "ethereum_holesky",
   "ethereum_hoodi",
@@ -122,6 +123,10 @@ setSupportedCurrencies([
   "canton_network_devnet",
   "canton_network_testnet",
   "kaspa",
+  "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
 ]);
 LiveConfig.setConfig(liveConfig);
 

@@ -51,8 +51,14 @@ const VerticalCard = ContentCardBuilder<Props>(
     const hasSubDescription = !hasCta && subDescription;
     const isMediaOnly = !title && !description && !subDescription && !cta;
     if (!media && isMediaOnly) return null;
+    const isClickable = !!metadata.actions?.onClick;
+    const ContainerComponent = isClickable ? TouchableOpacity : Flex;
     return (
-      <TouchableOpacity onPress={metadata.actions?.onClick}>
+      <ContainerComponent
+        {...(isClickable ? { onPress: metadata.actions?.onClick } : {})}
+        {...(isClickable ? { accessibilityRole: "button" } : {})}
+        testID="content-card-container"
+      >
         {tag && <Tag size={size} label={tag} />}
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
         <Container
@@ -88,7 +94,7 @@ const VerticalCard = ContentCardBuilder<Props>(
             </Flex>
           ) : null}
         </Container>
-      </TouchableOpacity>
+      </ContainerComponent>
     );
   },
 );

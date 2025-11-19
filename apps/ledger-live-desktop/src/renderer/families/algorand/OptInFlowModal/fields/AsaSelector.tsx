@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
@@ -61,10 +61,15 @@ export default function DelegationSelectorField({
 }) {
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
-  const options = listTokensForCryptoCurrency(account.currency);
+
+  const { data } = useTokensData({
+    networkFamily: "algorand",
+  });
+
+  const options = data?.tokens || [];
   const value = useMemo(
-    () => options.find(({ id }) => id === transaction.assetId),
-    [options, transaction],
+    () => (data?.tokens || []).find(({ id }) => id === transaction.assetId),
+    [data?.tokens, transaction.assetId],
   );
   return (
     <Box flow={1} mb={4}>

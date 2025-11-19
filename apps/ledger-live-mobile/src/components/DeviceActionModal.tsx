@@ -8,6 +8,7 @@ import { PartialNullable } from "~/types/helpers";
 import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { PeerRemovedPairing } from "@ledgerhq/errors";
 
 const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -47,25 +48,38 @@ export default function DeviceActionModal<Req, Stt, Res>({
   preventBackdropClick,
 }: Props<Req, Stt, Res>) {
   const { t } = useTranslation();
-  const showAlert = !device?.wired;
+  const defaultShowInfo = !device?.wired;
+  const [showInfo, setShowInfo] = useState<boolean>(defaultShowInfo);
   const [result, setResult] = useState<Res | null>(null);
 
   const handleModalHide = useCallback(() => {
+    setShowInfo(defaultShowInfo);
     if (onModalHide) onModalHide();
     if (onResult && result) {
       onResult(result);
     }
-  }, [onModalHide, onResult, result]);
+  }, [defaultShowInfo, onModalHide, onResult, result]);
 
   const handleClose = useCallback(() => {
+    setShowInfo(defaultShowInfo);
     if (onClose && !result) {
       onClose();
     }
-  }, [onClose, result]);
+  }, [defaultShowInfo, onClose, result]);
 
   useEffect(() => {
     registerDeviceSelection?.(() => setResult(null));
   }, [registerDeviceSelection]);
+
+  const onDeviceActionError = useCallback(
+    (e: Error) => {
+      if (e instanceof PeerRemovedPairing) {
+        setShowInfo(false);
+      }
+      onError?.(e);
+    },
+    [onError],
+  );
 
   return (
     <QueuedDrawer
@@ -79,11 +93,11 @@ export default function DeviceActionModal<Req, Stt, Res>({
         ? null
         : device && (
             <Flex alignItems="center">
-              <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
+              <DeviceActionContainer marginBottom={showInfo ? "16px" : 0}>
                 <DeviceAction
                   action={action as unknown as Action<Req, PartialNullable<Stt>, Res>}
                   device={device}
-                  onError={onError}
+                  onError={onDeviceActionError}
                   request={request!}
                   onResult={onResult ? p => setResult(p) : undefined}
                   renderOnResult={renderOnResult}
@@ -92,7 +106,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   location={location}
                 />
               </DeviceActionContainer>
-              {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
+              {showInfo && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
             </Flex>
           )}
       {device && <SyncSkipUnderPriority priority={100} />}

@@ -212,6 +212,7 @@ jobs:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
@@ -362,10 +363,16 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shardIndex }}"
 
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
+        run: |
+          echo "Flake detected for iOS tests"
+
   detox-tests-android:
     name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -592,6 +599,11 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shardIndex }}"
 
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
+        run: |
+          echo "Flake detected for Android tests"
+
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
@@ -600,7 +612,7 @@ jobs:
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
     runs-on: [ ubuntu-22.04 ]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
+    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
     needs: [ build-ios, build-android ]
     steps:
       - name: generate token
@@ -616,6 +628,7 @@ jobs:
               \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
           }" > mobile.metafile.json
       - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+        if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}

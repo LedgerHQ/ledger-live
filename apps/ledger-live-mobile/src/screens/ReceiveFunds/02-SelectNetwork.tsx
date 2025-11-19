@@ -21,6 +21,7 @@ import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enu
 import NetworkBanner from "LLM/features/AssetSelection/components/NetworkBanner";
 import useBannerAnimation from "LLM/features/AssetSelection/screens/SelectNetwork/useBannerAnimation";
 import Animated from "react-native-reanimated";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 type CryptoWithAccounts = { crypto: CryptoCurrency; accounts: AccountLike[] };
 
@@ -178,7 +179,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
   );
 
   return (
-    <>
+    <SafeAreaViewFixed edges={["bottom", "left", "right"]} isFlex>
       <TrackScreen category="Deposit" name="Choose a network" />
       <Flex px={6} py={2}>
         <Text variant="h4" fontWeight="semiBold" testID="receive-header-step2-title" mb={2}>
@@ -207,7 +208,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
       <Animated.View style={[animatedStyle]}>
         <NetworkBanner hideBanner={hideBanner} onLayout={onBannerLayout} onPress={clickLearn} />
       </Animated.View>
-    </>
+    </SafeAreaViewFixed>
   );
 }
 

@@ -193,7 +193,7 @@ export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
         // As a safety measure, if maxPriorityFeePerGas is zero
         // we enforce a 1 Gwei value
         const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-          ? new BigNumber(1e9) // 1 Gwei
+          ? getMaxPriorityFeePerGas(currency)
           : maxPriorityFeeAverage;
 
         const nextBaseFee = new BigNumber(
@@ -375,6 +375,16 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
     const additionalL1Fees = await scrollGasOracle.getL1Fee(serializedTransaction);
     return new BigNumber(additionalL1Fees.toString());
   });
+
+/* Get default maxPriorityFeePerGas by chain */
+const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
+  switch (currency.id) {
+    case "zero_gravity":
+      return new BigNumber(2e9); // 2 Gwei
+    default:
+      return new BigNumber(1e9); // 1 Gwei
+  }
+};
 
 const node: NodeApi = {
   getBlockByHeight,

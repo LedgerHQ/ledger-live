@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { log } from "@ledgerhq/logs";
-import { addTokens, convertERC20 } from "@ledgerhq/cryptoassets/tokens";
+import { addTokens, convertERC20 } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import {
   tokens as tokensByChainId,
   hashes as embeddedHashesByChainId,

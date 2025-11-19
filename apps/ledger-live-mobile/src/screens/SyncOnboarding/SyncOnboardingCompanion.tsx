@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
-import { SeedOriginType, SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
+import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
@@ -38,7 +38,6 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
-import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen, useTrack } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
@@ -263,13 +262,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
    */
   const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(
-      addKnownDevice({
-        id: device.deviceId,
-        name: device.deviceName ?? device.modelId,
-        modelId: device.modelId,
-      }),
-    );
+    if (!device.wired) {
+      dispatchRedux(
+        addKnownDevice({
+          id: device.deviceId,
+          name: device.deviceName ?? device.modelId,
+          modelId: device.modelId,
+        }),
+      );
+    }
   }, [device, dispatchRedux]);
 
   /**
@@ -650,13 +651,10 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <Text variant="h5" fontWeight="semiBold" mb={6}>
                       {t("syncOnboarding.seedStep.newSeedTitle")}
                     </Text>
-                    <BodyText mb={8} textAlign="center">
-                      {t("syncOnboarding.seedStep.newSeedDescription", {
-                        productName,
-                      })}
+                    <BodyText mb={2} textAlign="center">
+                      {t("syncOnboarding.seedStep.newSeedDescription")}
                     </BodyText>
                   </Flex>
-                  <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
                   <ContinueOnDevice
                     Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {

@@ -10,6 +10,7 @@ import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOp
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ScreenName } from "~/const";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -66,61 +67,63 @@ function Details({ route }: Props) {
     });
 
   return (
-    <ScrollableContainer>
-      <Container alignItems="center">
-        <View>
-          <Titles>
-            <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
-              {t("analyticsOptIn.variantA.details.title")}
-            </Text>
-          </Titles>
-          <Content>
-            <Option
-              title={t("analyticsOptIn.variantA.details.analytics.title")}
-              description={t("analyticsOptIn.variantA.details.analytics.description")}
-              checked={isAnalyticsEnabled}
-              onToggle={setIsAnalyticsEnabled}
-            />
-            <Flex pt={7}>
+    <SafeAreaViewFixed edges={["bottom", "left", "right"]} isFlex>
+      <ScrollableContainer>
+        <Container alignItems="center">
+          <View>
+            <Titles>
+              <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
+                {t("analyticsOptIn.variantA.details.title")}
+              </Text>
+            </Titles>
+            <Content>
               <Option
-                title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
-                description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
-                checked={isPersonalRecommendationsEnabled}
-                onToggle={setIsPersonalRecommendationsEnabled}
+                title={t("analyticsOptIn.variantA.details.analytics.title")}
+                description={t("analyticsOptIn.variantA.details.analytics.description")}
+                checked={isAnalyticsEnabled}
+                onToggle={setIsAnalyticsEnabled}
+              />
+              <Flex pt={7}>
+                <Option
+                  title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
+                  description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
+                  checked={isPersonalRecommendationsEnabled}
+                  onToggle={setIsPersonalRecommendationsEnabled}
+                />
+              </Flex>
+            </Content>
+          </View>
+          <Bottom>
+            <Flex flexDirection="row" py="20px">
+              <Button
+                title={t("analyticsOptIn.variantA.details.ctas.confirm")}
+                onPress={() =>
+                  clickOnMoreOptionsConfirm(isAnalyticsEnabled, isPersonalRecommendationsEnabled)
+                }
+                type="main"
+                size="large"
+                outline={false}
+                ml="2"
+                flex={1}
               />
             </Flex>
-          </Content>
-        </View>
-        <Bottom>
-          <Flex flexDirection="row" py="20px">
-            <Button
-              title={t("analyticsOptIn.variantA.details.ctas.confirm")}
-              onPress={() =>
-                clickOnMoreOptionsConfirm(isAnalyticsEnabled, isPersonalRecommendationsEnabled)
-              }
-              type="main"
-              size="large"
-              outline={false}
-              ml="2"
-              flex={1}
-            />
-          </Flex>
-          <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
-            {t("analyticsOptIn.variantA.details.infoText.info")}
-          </Text>
-          <Link size="small" type="color" onPress={clickOnLearnMore}>
-            {t("analyticsOptIn.variantA.details.infoText.link")}
-          </Link>
-        </Bottom>
-        <TrackScreen
-          category="Analytics Opt In Prompt"
-          name="Preferences"
-          variant="A"
-          flow={flow}
-          mandatory={shouldWeTrack}
-        />
-      </Container>
-    </ScrollableContainer>
+            <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
+              {t("analyticsOptIn.variantA.details.infoText.info")}
+            </Text>
+            <Link size="small" type="color" onPress={clickOnLearnMore}>
+              {t("analyticsOptIn.variantA.details.infoText.link")}
+            </Link>
+          </Bottom>
+          <TrackScreen
+            category="Analytics Opt In Prompt"
+            name="Preferences"
+            variant="A"
+            flow={flow}
+            mandatory={shouldWeTrack}
+          />
+        </Container>
+      </ScrollableContainer>
+    </SafeAreaViewFixed>
   );
 }
 

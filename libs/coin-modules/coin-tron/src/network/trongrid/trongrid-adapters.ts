@@ -13,6 +13,7 @@ export function fromTrongridTxInfoToOperation(
       block: { height: trongridTxInfo.blockHeight || 0, time: trongridTxInfo.date },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
       date: trongridTxInfo.date,
+      failed: trongridTxInfo.hasFailed,
     },
     type: inferOperationType(trongridTxInfo, userAddress),
     value: fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0)),

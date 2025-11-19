@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MODULAR_DRAWER_KEY } from "LLM/features/ModularDrawer/types";
+import { MODULAR_DRAWER_KEY, ModularDrawerStep } from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { ModularDrawerStep } from "~/newArch/features/ModularDrawer/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;

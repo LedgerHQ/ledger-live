@@ -30,6 +30,7 @@ import {
   tokensByCurrencyAddress,
   tokenListHashes,
 } from "./legacy-state";
+import { legacyCryptoAssetsStore } from "./legacy-store";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   ERC20Token,
@@ -323,7 +324,7 @@ describe("Legacy Utils", () => {
       expect(tokensArray.length).toBe(1);
     });
 
-    it("should handle ticker conflicts (first wins)", () => {
+    it("should handle tokens with same ticker", () => {
       const token1: TokenCurrency = {
         type: "TokenCurrency",
         id: "ethereum/erc20/test1",
@@ -348,9 +349,8 @@ describe("Legacy Utils", () => {
 
       addTokens([token1, token2]);
 
-      // Both tokens should be added successfully
-      expect(tokensById[token1.id]).toBe(token1);
-      expect(tokensById[token2.id]).toBe(token2);
+      // Both tokens should be added since they have different IDs
+      expect(tokensArray.length).toBe(2);
     });
 
     it("should handle undefined tokens", () => {
@@ -564,6 +564,104 @@ describe("Legacy Data", () => {
     expect(mockAddTokens).toHaveBeenCalled();
     // Should have the most calls when both are enabled
     expect(mockAddTokens.mock.calls.length).toBeGreaterThan(12);
+  });
+});
+
+describe("legacyCryptoAssetsStore", () => {
+  beforeEach(() => {
+    __clearAllLists();
+  });
+
+  it("should find token by id", async () => {
+    const erc20Token: ERC20Token = [
+      "ethereum",
+      "test_token",
+      "TEST",
+      18,
+      "Test Token",
+      "signature",
+      "0x123",
+      false,
+      false,
+    ];
+
+    addTokens([convertERC20(erc20Token)].filter(Boolean) as TokenCurrency[]);
+
+    const token = await legacyCryptoAssetsStore.findTokenById("ethereum/erc20/test_token");
+
+    expect(token).toMatchObject({ ticker: "TEST" });
+  });
+
+  it("should find token by address in currency", async () => {
+    const erc20Token: ERC20Token = [
+      "ethereum",
+      "test_token",
+      "TEST",
+      18,
+      "Test Token",
+      "signature",
+      "0xABC123",
+      false,
+      false,
+    ];
+
+    addTokens([convertERC20(erc20Token)].filter(Boolean) as TokenCurrency[]);
+
+    const token = await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0xabc123",
+      "ethereum",
+    );
+
+    expect(token).toMatchObject({ ticker: "TEST" });
+  });
+
+  it("should return undefined for non-existent token by address", async () => {
+    const token = await legacyCryptoAssetsStore.findTokenByAddressInCurrency(
+      "0xnonexistent",
+      "ethereum",
+    );
+
+    expect(token).toBeUndefined();
+  });
+
+  it("should return sync hash for currency with tokens", async () => {
+    const erc20Token1: ERC20Token = [
+      "ethereum",
+      "test_token1",
+      "TEST1",
+      18,
+      "Test Token 1",
+      "signature1",
+      "0x123",
+      false,
+      false,
+    ];
+
+    const erc20Token2: ERC20Token = [
+      "ethereum",
+      "test_token2",
+      "TEST2",
+      18,
+      "Test Token 2",
+      "signature2",
+      "0x456",
+      false,
+      false,
+    ];
+
+    addTokens(
+      [convertERC20(erc20Token1), convertERC20(erc20Token2)].filter(Boolean) as TokenCurrency[],
+    );
+
+    const hash = await legacyCryptoAssetsStore.getTokensSyncHash("ethereum");
+
+    expect(hash).toBe("legacy_2");
+  });
+
+  it("should return sync hash for currency with no tokens", async () => {
+    const hash = await legacyCryptoAssetsStore.getTokensSyncHash("bitcoin");
+
+    expect(hash).toBe("legacy_undefined");
   });
 });
 

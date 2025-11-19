@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -108,21 +108,24 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
+    "protobufjs": "7.5.4",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
     "jest": "^29.7.0",
+    "protobufjs-cli": "1.1.2",
     "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
+    "generate-proto": "node scripts/generate.js",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",

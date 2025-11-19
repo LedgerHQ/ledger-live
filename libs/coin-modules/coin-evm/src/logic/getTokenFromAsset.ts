@@ -7,7 +7,7 @@ export async function getTokenFromAsset(
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   return "assetReference" in asset
-    ? getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id)
+    ? await getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id)
     : undefined;
 }
 

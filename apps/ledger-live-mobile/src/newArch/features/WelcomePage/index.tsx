@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useIsFocused } from "@react-navigation/native";
 import { Logos } from "@ledgerhq/native-ui";
@@ -12,6 +11,7 @@ import { StoryProgressBar } from "./components/StoryProgressBar";
 import { TappableMask } from "./components/TappableMask";
 import { useWelcomeNavigation } from "./hooks/useWelcomeNavigation";
 import { useWelcomeStories } from "./hooks/useWelcomeStories";
+import SafeAreaView from "~/components/SafeAreaView";
 
 export default function WelcomePage() {
   const { colors } = useTheme();
@@ -24,7 +24,7 @@ export default function WelcomePage() {
 
   return (
     <ForceTheme selectedPalette={"dark"}>
-      <View style={{ flex: 1, backgroundColor: colors.neutral.c60 }}>
+      <SafeAreaView isFlex style={{ backgroundColor: colors.neutral.c60 }}>
         {/* Force re-rendering of video backgrounds when re-focused */}
         {isFocused &&
           welcomeVideos.map(({ id, source }, index) => (
@@ -38,7 +38,7 @@ export default function WelcomePage() {
             />
           ))}
         <LogoView testID="welcome-logo" onTouchStart={onLogoTouchStart} onTouchEnd={onLogoTouchEnd}>
-          <Logos.LedgerLiveRegular color={colors.constant.white} width={113} />
+          <Logos.LedgerLiveRegular color={colors.constant.white} width={110} height={32} />
         </LogoView>
         <StoryProgressView>
           {/* Sync the progress bar with the video duration manually */}
@@ -55,7 +55,7 @@ export default function WelcomePage() {
         </StoryProgressView>
         <TappableMask onPrevious={onPrevious} onNext={onNext} />
         <WelcomeFooter />
-      </View>
+      </SafeAreaView>
     </ForceTheme>
   );
 }

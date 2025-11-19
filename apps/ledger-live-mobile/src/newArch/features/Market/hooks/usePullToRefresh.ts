@@ -3,10 +3,10 @@ import { track } from "~/analytics";
 
 interface UsePullToRefreshProps {
   loading: boolean;
-  refresh: () => void;
+  refetch: () => void;
 }
 
-function usePullToRefresh({ loading, refresh }: UsePullToRefreshProps) {
+function usePullToRefresh({ loading, refetch }: UsePullToRefreshProps) {
   const trackPullToRefresh = useCallback(() => {
     track("button_clicked", {
       button: "pull to refresh",
@@ -15,10 +15,10 @@ function usePullToRefresh({ loading, refresh }: UsePullToRefreshProps) {
 
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
   const handlePullToRefresh = useCallback(() => {
-    refresh();
+    refetch();
     setRefreshControlVisible(true);
     trackPullToRefresh();
-  }, [refresh, trackPullToRefresh]);
+  }, [refetch, trackPullToRefresh]);
 
   useEffect(() => {
     if (refreshControlVisible && !loading) setRefreshControlVisible(false);

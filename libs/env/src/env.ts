@@ -467,6 +467,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
+    parser: stringParser,
+    desc: "Ledger regtest Bitcoin explorer API",
+  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
@@ -551,6 +556,11 @@ const envDefinitions = {
     def: 1000,
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
+  },
+  MIXPANEL_API_HOST: {
+    def: "https://api.mixpanel.com",
+    parser: stringParser,
+    desc: "Mixpanel API host URL",
   },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
@@ -887,6 +897,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger.com",
     parser: stringParser,
     desc: "Cryptoassets list service url",
+  },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
   },
   FEATURE_FLAGS: {
     def: "{}",

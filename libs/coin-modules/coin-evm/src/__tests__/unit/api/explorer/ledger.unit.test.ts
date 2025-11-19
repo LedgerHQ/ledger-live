@@ -23,12 +23,14 @@ setCryptoAssetsStoreGetter(
   () =>
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ({
-      findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+      findTokenById: async (_id: string) => undefined,
+      findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
         if (_address === tokenData.contractAddress.toLowerCase()) {
           return tokenData;
         }
         return undefined;
       },
+      getTokensSyncHash: (_: string) => Promise.resolve("0"),
     }) as CryptoAssetsStore,
 );
 
@@ -265,7 +267,7 @@ describe("EVM Family", () => {
               internalOperations: [],
               recipients: [eip55.encode(coinOperation1.to)],
               senders: [eip55.encode(coinOperation1.from)],
-              transactionSequenceNumber: coinOperation1.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation1.nonce_value),
               type: "FEES",
               value: new BigNumber(coinOperation1.value).plus(
                 new BigNumber(coinOperation1.gas_used).times(coinOperation1.gas_price),
@@ -286,7 +288,7 @@ describe("EVM Family", () => {
               internalOperations: [],
               recipients: [eip55.encode(coinOperation2.to)],
               senders: [eip55.encode(coinOperation2.from)],
-              transactionSequenceNumber: coinOperation2.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation2.nonce_value),
               type: "OUT",
               value: new BigNumber(coinOperation2.value).plus(
                 new BigNumber(coinOperation2.gas_used).times(coinOperation2.gas_price),
@@ -307,7 +309,7 @@ describe("EVM Family", () => {
               internalOperations: [],
               recipients: [eip55.encode(coinOperation3.to)],
               senders: [eip55.encode(coinOperation3.from)],
-              transactionSequenceNumber: coinOperation3.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
               type: "IN",
               value: new BigNumber(coinOperation3.value),
             },
@@ -326,7 +328,7 @@ describe("EVM Family", () => {
               internalOperations: [],
               recipients: [eip55.encode(coinOperation4.to)],
               senders: [eip55.encode(coinOperation4.from)],
-              transactionSequenceNumber: coinOperation4.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation4.nonce_value),
               type: "IN",
               value: new BigNumber(coinOperation4.value),
             },
@@ -347,7 +349,7 @@ describe("EVM Family", () => {
               standard: "ERC721",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-              transactionSequenceNumber: coinOperation2.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation2.nonce_value),
               type: "NFT_OUT",
               value: new BigNumber("1"),
             },
@@ -366,7 +368,7 @@ describe("EVM Family", () => {
               standard: "ERC1155",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-              transactionSequenceNumber: coinOperation3.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
               type: "NFT_OUT",
               value: new BigNumber("1"),
             },
@@ -385,7 +387,7 @@ describe("EVM Family", () => {
               standard: "ERC1155",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319904247073734665",
-              transactionSequenceNumber: coinOperation3.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
               type: "NFT_OUT",
               value: new BigNumber("2"),
             },
@@ -403,7 +405,7 @@ describe("EVM Family", () => {
               hash: coinOperation1.hash,
               recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              transactionSequenceNumber: coinOperation1.nonce_value,
+              transactionSequenceNumber: new BigNumber(coinOperation1.nonce_value),
               type: "OUT",
               value: new BigNumber("100000000000000"),
             },

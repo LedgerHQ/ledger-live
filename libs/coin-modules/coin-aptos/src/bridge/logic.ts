@@ -2,14 +2,19 @@ import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
-  decodeTokenAccountId,
   encodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { APTOS_ASSET_ID, OP_TYPE, DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import {
+  APTOS_ASSET_ID,
+  OP_TYPE,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  APTOS_ASSET_FUNGIBLE_ID,
+} from "../constants";
 import type { AptosTransaction, Transaction } from "../types";
 import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
 import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
@@ -54,21 +59,21 @@ export const getBlankOperation = (
   accountId: id,
   date: new Date(parseInt(tx.timestamp) / 1000),
   extra: { version: tx.version },
-  transactionSequenceNumber: parseInt(tx.sequence_number),
+  transactionSequenceNumber: new BigNumber(parseInt(tx.sequence_number)),
   hasFailed: false,
 });
 
-export const txsToOps = (
+export const txsToOps = async (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[], Operation[]] => {
+): Promise<[Operation[], Operation[], Operation[]]> => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
   const opsStaking: Operation[] = [];
 
-  txs.forEach(tx => {
+  for (const tx of txs) {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
@@ -80,7 +85,7 @@ export const txsToOps = (
       const function_address = getFunctionAddress(payload);
 
       if (!function_address) {
-        return; // skip transaction without functions in payload
+        continue; // skip transaction without functions in payload
       }
 
       const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
@@ -110,27 +115,34 @@ export const txsToOps = (
         ops.push(op);
         opsStaking.push(op);
       } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
-        if (coin_id === APTOS_ASSET_ID) {
+        if (coin_id === APTOS_ASSET_ID || coin_id === APTOS_ASSET_FUNGIBLE_ID) {
           ops.push(op);
         } else {
-          const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
+          const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+            coin_id.toLowerCase(),
+            "aptos",
+          );
           if (token !== undefined) {
-            op.accountId = encodeTokenAccountId(id, token);
+            const tokenAccountId = encodeTokenAccountId(id, token);
+            op.accountId = tokenAccountId;
             opsTokens.push(op);
 
             if (op.type === OP_TYPE.OUT) {
-              ops.push({
+              const accountId = tokenAccountId.split("+")[0];
+              // Create FEES operation with decoded main account ID
+              const feesOp = {
                 ...op,
-                accountId: decodeTokenAccountId(op.accountId).accountId,
+                accountId,
                 value: op.fee,
-                type: "FEES",
-              });
+                type: "FEES" as const,
+              };
+              ops.push(feesOp);
             }
           }
         }
       }
     }
-  });
+  }
 
   return [ops, opsTokens, opsStaking];
 };

@@ -47,7 +47,7 @@ export async function scanOperations(
       hash: tx.transaction_id,
       type: operationType,
       value: myOutputAmount.minus(myInputAmount).absoluteValue(),
-      fee: totalInputAmount.minus(totalOutputAmount),
+      fee: inputs.length > 0 ? totalInputAmount.minus(totalOutputAmount) : BigNumber(0),
       senders: inputs.map(inp => inp.previous_outpoint_address),
       recipients: outputs.map(output => output.script_public_key_address),
       blockHeight: tx.accepting_block_blue_score,

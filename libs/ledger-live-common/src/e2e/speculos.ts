@@ -19,7 +19,7 @@ import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from "./families/evm";
+import { sendEVM } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -35,14 +35,20 @@ import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
-import { NFTTransaction, Transaction } from "./models/Transaction";
+import { Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
-import { getAppVersionFromCatalog, getSpeculosModel } from "./speculosAppVersion";
+import { getAppVersionFromCatalog, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
+import {
+  pressAndRelease,
+  longPressAndRelease,
+  swipeRight,
+} from "./deviceInteraction/TouchDeviceSimulator";
+import { pressBoth, pressRightButton } from "./deviceInteraction/ButtonDeviceSimulator";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -63,6 +69,8 @@ export type Dependency = { name: string; appVersion?: string };
 export type SpeculosDevice = {
   id: string;
   port: number;
+  appName?: string;
+  appVersion?: string;
 };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
@@ -412,7 +420,12 @@ export async function startSpeculos(
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return { id: device.id, port: device.ports.apiPort };
+          return {
+            id: device.id,
+            port: device.ports.apiPort,
+            appName: appCandidate.appName,
+            appVersion: appCandidate.appVersion,
+          };
         });
   } catch (e: unknown) {
     console.error(e);
@@ -431,18 +444,20 @@ export async function stopSpeculos(deviceId: string | undefined) {
 
 interface Event {
   text: string;
+  x: number;
+  y: number;
 }
 
 interface ResponseData {
   events: Event[];
 }
 
-function getSpeculosAddress(): string {
+export function getSpeculosAddress(): string {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   return speculosAddress || "http://127.0.0.1";
 }
 
-async function retryAxiosRequest<T>(
+export async function retryAxiosRequest<T>(
   requestFn: () => Promise<AxiosResponse<T>>,
   maxRetries: number = 5,
   baseDelay: number = 1000,
@@ -501,14 +516,43 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
-export async function pressBoth() {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
   const speculosAddress = getSpeculosAddress();
-  await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
-      action: "press-and-release",
-    }),
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    ),
   );
+  return response.data.events.map(event => event.text).join(" ");
+}
+
+export async function getDeviceLabelCoordinates(
+  label: string,
+  speculosApiPort: number,
+): Promise<{ x: number; y: number }> {
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    ),
+  );
+  const event = response.data.events.find(e => e.text === label);
+
+  if (!event) {
+    throw new Error(`Label "${label}" not found in screen events`);
+  }
+
+  return { x: event.x, y: event.y };
+}
+
+export async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    ),
+  );
+  return response.data.events.map(event => event.text);
 }
 
 export async function pressUntilTextFound(
@@ -525,43 +569,16 @@ export async function pressUntilTextFound(
     ) {
       return await fetchAllEvents(speculosApiPort);
     }
-
-    await pressRightButton();
+    if (isTouchDevice()) {
+      await swipeRight();
+    } else {
+      await pressRightButton();
+    }
     await waitForTimeOut(200);
   }
 
   throw new Error(
     `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
-  );
-}
-
-async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
-  const speculosAddress = getSpeculosAddress();
-  const response = await retryAxiosRequest(() =>
-    axios.get<ResponseData>(
-      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
-    ),
-  );
-  return response.data.events.map(event => event.text).join(" ");
-}
-
-async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
-  const speculosAddress = getSpeculosAddress();
-  const response = await retryAxiosRequest(() =>
-    axios.get<ResponseData>(
-      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
-    ),
-  );
-  return response.data.events.map(event => event.text);
-}
-
-export async function pressRightButton(): Promise<void> {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = getSpeculosAddress();
-  await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
-      action: "press-and-release",
-    }),
   );
 }
 
@@ -600,30 +617,60 @@ export async function waitForTimeOut(ms: number) {
 
 export async function removeMemberLedgerSync() {
   await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
-  await pressBoth();
-  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
-  await pressBoth();
-  await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONNECT);
+    await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+    await pressAndRelease(DeviceLabels.REMOVE);
+    await waitFor(DeviceLabels.CONFIRM_CHANGE);
+    await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
+    await waitFor(DeviceLabels.TURN_ON_SYNC);
+    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+  } else {
+    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressBoth();
+    await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+    await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
+    await pressBoth();
+    await waitFor(DeviceLabels.TURN_ON_SYNC);
+    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await pressBoth();
+  }
 }
 
 export async function activateLedgerSync() {
   await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
+  } else {
+    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressBoth();
+  }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+  } else {
+    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await pressBoth();
+  }
 }
 
 export async function activateExpertMode() {
-  await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await goToSettings();
+    const SettingsToggle1Coordinates = { x: 344, y: 136 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS_TOGGLE_1,
+      SettingsToggle1Coordinates.x,
+      SettingsToggle1Coordinates.y,
+    );
+  } else {
+    await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
+    await pressBoth();
+  }
 }
 
 export async function activateContractData() {
@@ -634,8 +681,17 @@ export async function activateContractData() {
 }
 
 export async function goToSettings() {
-  await pressUntilTextFound(DeviceLabels.SETTINGS);
-  await pressBoth();
+  if (isTouchDevice()) {
+    const SettingsCogwheelCoordinates = { x: 400, y: 75 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS,
+      SettingsCogwheelCoordinates.x,
+      SettingsCogwheelCoordinates.y,
+    );
+  } else {
+    await pressUntilTextFound(DeviceLabels.SETTINGS);
+    await pressBoth();
+  }
 }
 
 export async function providePublicKey() {
@@ -647,6 +703,8 @@ type DeviceLabelsReturn = {
   delegateVerifyLabel: string;
   receiveConfirmLabel: string;
   receiveVerifyLabel: string;
+  sendVerifyLabel: string;
+  sendConfirmLabel: string;
 };
 
 export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
@@ -665,22 +723,41 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
     deviceConfig.delegateVerify[appInfo.name] ?? deviceConfig.delegateVerify.default;
   const delegateConfirmLabel =
     deviceConfig.delegateConfirm[appInfo.name] ?? deviceConfig.delegateConfirm.default;
+  const sendVerifyLabel = deviceConfig.sendVerify[appInfo.name] ?? deviceConfig.sendVerify.default;
+  const sendConfirmLabel =
+    deviceConfig.sendConfirm[appInfo.name] ?? deviceConfig.sendConfirm.default;
 
-  return { receiveVerifyLabel, receiveConfirmLabel, delegateVerifyLabel, delegateConfirmLabel };
+  return {
+    receiveVerifyLabel,
+    receiveConfirmLabel,
+    delegateVerifyLabel,
+    delegateConfirmLabel,
+    sendVerifyLabel,
+    sendConfirmLabel,
+  };
 }
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   if (account.currency === Currency.SUI_USDC) {
     providePublicKey();
   }
-
   const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
-
   await waitFor(receiveVerifyLabel);
-  const events = await pressUntilTextFound(receiveConfirmLabel);
-  const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-  expect(isAddressCorrect).toBeTruthy();
-  await pressBoth();
+  if (isTouchDevice()) {
+    const events = await pressUntilTextFound(receiveConfirmLabel);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+    expect(isAddressCorrect).toBeTruthy();
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
+    const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
+      account.currency.speculosApp,
+    );
+    await waitFor(receiveVerifyLabel);
+    const events = await pressUntilTextFound(receiveConfirmLabel);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+    expect(isAddressCorrect).toBeTruthy();
+    await pressBoth();
+  }
 }
 
 export async function signSendTransaction(tx: Transaction) {
@@ -727,32 +804,29 @@ export async function signSendTransaction(tx: Transaction) {
       await sendXRP(tx);
       break;
     case Currency.APT:
-      await sendAptos();
+      await sendAptos(tx);
       break;
     case Currency.KAS:
-      await sendKaspa();
+      await sendKaspa(tx);
       break;
     case Currency.HBAR:
       await sendHedera();
       break;
     case Currency.SUI:
-      await sendSui();
-      break;
     case Currency.SUI_USDC:
-      await sendSui();
+      await sendSui(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
-export async function signSendNFTTransaction(tx: NFTTransaction) {
-  const currencyName = tx.accountToDebit.currency;
-  if (currencyName === Currency.ETH) {
-    await sendEvmNFT(tx);
-  } else {
-    throw new Error(`Unsupported currency: ${currencyName.ticker}`);
-  }
+export async function getSendEvents(tx: Transaction): Promise<string[]> {
+  const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
+    tx.accountToDebit.currency.speculosApp,
+  );
+  await waitFor(sendVerifyLabel);
+  return await pressUntilTextFound(sendConfirmLabel);
 }
 
 export async function signDelegationTransaction(delegatingAccount: Delegate) {
@@ -795,9 +869,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
   const { delegateVerifyLabel, delegateConfirmLabel } = getDeviceLabels(
     delegatingAccount.account.currency.speculosApp,
   );
-
   await waitFor(delegateVerifyLabel);
-
   return await pressUntilTextFound(delegateConfirmLabel);
 }
 
@@ -808,21 +880,50 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
       ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
       : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }
 
-export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(
+  swap: Swap,
+  amount: string,
+  errorMessage: string | null,
+) {
+  if (errorMessage === null && isTouchDevice()) {
+    await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+    await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
+  } else {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  }
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+  } else {
+    await pressBoth();
+  }
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.REJECT);
+  let events: string[] = [];
+  if (isTouchDevice()) {
+    events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  } else {
+    events = await pressUntilTextFound(DeviceLabels.REJECT);
+  }
+
   verifySwapData(swap, events, amount);
-  await pressBoth();
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.REJECT);
+    await waitFor(DeviceLabels.YES_REJECT);
+    await pressAndRelease(DeviceLabels.YES_REJECT);
+  } else {
+    await pressBoth();
+  }
 }
 
 function verifySwapData(swap: Swap, events: string[], amount: string) {
@@ -831,7 +932,6 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
     expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
   }
-
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 

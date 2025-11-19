@@ -1479,8 +1479,8 @@ PODS:
     - react-native-config/App (= 1.5.3)
   - react-native-config/App (1.5.3):
     - React-Core
-  - react-native-fast-crypto (2.2.0):
-    - React
+  - react-native-fast-crypto (3.0.0):
+    - React-Core
   - react-native-fast-pbkdf2 (0.3.1):
     - React-Core
   - react-native-get-random-values (1.11.0):
@@ -2730,7 +2730,7 @@ SPEC CHECKSUMS:
   react-native-ble-plx: c6900b8744e65d440d427b5dbdf43b3fd47c5cc6
   react-native-blur: 83afb101cb91da465c4ae996b283904ed0683aec
   react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
-  react-native-fast-crypto: 6b448866f5310cf203714a21147ef67f735bea8e
+  react-native-fast-crypto: ad4845c4dd1314c9c6e7272b91c09ff60439c6aa
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2

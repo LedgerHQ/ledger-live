@@ -53,18 +53,18 @@ type CacheOpts = {
 
 const getMinimumBondBalance = makeLRUCache(
   (currency: CryptoCurrency | undefined) => sidecarGetMinimumBondBalance(currency),
-  () => "polkadot",
+  (currency: CryptoCurrency | undefined) => currency?.id || "polkadot",
   hours(1, 1),
 );
 const getRegistry = makeLRUCache(
   (currency: CryptoCurrency | undefined) => sidecarGetRegistry(currency),
-  () => "polkadot",
+  (currency: CryptoCurrency | undefined) => currency?.id || "polkadot",
   hours(1),
 );
 
 const getTransactionParamsFn = makeLRUCache(
   (currency: CryptoCurrency | undefined) => sidecarGetTransactionParams(currency),
-  () => "polkadot",
+  (currency: CryptoCurrency | undefined) => currency?.id || "polkadot",
   minutes(5),
 );
 const getPaymentInfo = makeLRUCache(

@@ -14,7 +14,7 @@ const mockGetServerInfos = jest.fn().mockResolvedValue({
 const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
-  getTransactions: () => mockNetworkGetTransactions(),
+  getTransactions: (...args: any[]) => mockNetworkGetTransactions(...args),
 }));
 
 describe("listOperations", () => {
@@ -66,7 +66,10 @@ describe("listOperations", () => {
     hash: "HASH_VALUE",
     validated: true,
     close_time_iso: "2000-01-01T00:00:01Z",
-    meta: { delivered_amount: "100" },
+    meta: {
+      delivered_amount: "100",
+      TransactionResult: "tesSUCCESS",
+    },
     tx_json: {
       TransactionType: "Payment",
       Fee: "1",
@@ -128,6 +131,48 @@ describe("listOperations", () => {
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 
+  it("should handle gracefully when minHeight is higher than current ledger (future block)", async () => {
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([paymentTx]));
+
+    const futureMinHeight = 999439370; // very high value (more than expected)
+    const [results, token] = await listOperations("any address", {
+      minHeight: futureMinHeight,
+      order: "asc",
+    });
+
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
+
+    // Verify that ledger_index_min is NOT passed when minHeight is too high
+    const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
+    expect(callArgs).toBeDefined();
+    expect(callArgs.ledger_index_min).toBeUndefined();
+
+    expect(results.length).toEqual(1);
+    expect(JSON.parse(token)).toEqual(someMarker);
+  });
+
+  it("should use ledger_index_min when minHeight is valid (within current ledger range)", async () => {
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([paymentTx]));
+
+    const validMinHeight = 1; // valid value (within range 1-2)
+    const [results, token] = await listOperations("any address", {
+      minHeight: validMinHeight,
+      order: "asc",
+    });
+
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
+
+    // Verify that ledger_index_min IS passed when minHeight is valid
+    const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
+    expect(callArgs).toBeDefined();
+    expect(callArgs.ledger_index_min).toBe(1); // Should be max(1, 1) = 1
+
+    expect(results.length).toEqual(1);
+    expect(JSON.parse(token)).toEqual(someMarker);
+  });
+
   it.each([
     {
       address: "WHATEVER_ADDRESS",
@@ -153,7 +198,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tesSUCCESS",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -169,7 +217,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tecAMM_ACCOUNT",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -186,7 +237,10 @@ describe("listOperations", () => {
             ledger_hash: "HASH_VALUE_BLOCK",
             hash: "HASH_VALUE",
             close_time_iso: "2000-01-01T00:00:01Z",
-            meta: { delivered_amount: deliveredAmount.toString() },
+            meta: {
+              delivered_amount: deliveredAmount.toString(),
+              TransactionResult: "tesSUCCESS",
+            },
             tx_json: {
               TransactionType: "Payment",
               Fee: fees.toString(),
@@ -229,6 +283,7 @@ describe("listOperations", () => {
               time: new Date("2000-01-01T00:00:01Z"),
             },
             date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            failed: false,
           },
           type: expectedType,
           value: expectedValue,
@@ -258,6 +313,7 @@ describe("listOperations", () => {
               height: 1,
               time: new Date("2000-01-01T00:00:01Z"),
             },
+            failed: true,
           },
           type: expectedType,
           value: expectedValue,
@@ -282,6 +338,7 @@ describe("listOperations", () => {
               time: new Date("2000-01-01T00:00:01Z"),
             },
             date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            failed: false,
           },
           details: {
             sequence: 1,

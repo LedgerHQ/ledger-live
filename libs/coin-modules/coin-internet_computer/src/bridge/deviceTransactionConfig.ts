@@ -12,14 +12,14 @@ import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("internet_computer");
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<CommonDeviceTransactionField> {
+}): Promise<Array<CommonDeviceTransactionField>> {
   const fields: Array<CommonDeviceTransactionField> = [];
   fields.push({
     type: "text",

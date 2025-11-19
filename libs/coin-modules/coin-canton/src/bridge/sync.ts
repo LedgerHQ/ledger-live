@@ -4,7 +4,8 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
+import { getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
+import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonSigner } from "../types";
@@ -55,7 +56,7 @@ const txInfoToOperationAdapter =
       senders,
       recipients,
       date: new Date(transaction_timestamp),
-      transactionSequenceNumber: height,
+      transactionSequenceNumber: new BigNumber(height),
       extra: {
         uid,
         memo,
@@ -108,18 +109,25 @@ export function makeGetAccountShape(
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
 
     const balancesData = (balances || []).reduce(
-      (acc, { amount, instrument_id, locked }) => {
-        acc[instrument_id] = { amount, locked };
+      (acc, balance) => {
+        acc[balance.instrumentId] = balance;
         return acc;
       },
-      {} as Record<string, { amount: string; locked: boolean }>,
+      {} as Record<string, CantonBalance>,
     );
 
-    const unlockedAmount = new BigNumber(balancesData[nativeInstrumentId]?.amount || "0");
-    const lockedAmount = new BigNumber(balancesData[`Locked${nativeInstrumentId}`]?.amount || "0");
+    const unlockedAmount = new BigNumber(balancesData[nativeInstrumentId]?.value.toString() || "0");
+    const lockedAmount = new BigNumber(
+      balancesData[`Locked${nativeInstrumentId}`]?.value.toString() || "0",
+    );
     const totalBalance = unlockedAmount.plus(lockedAmount);
     const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
-    const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
+    const spendableBalance = BigNumber.max(0, totalBalance.minus(reserveMin));
+
+    const instrumentUtxoCounts: Record<string, number> = {};
+    for (const [instrumentId, balance] of Object.entries(balancesData)) {
+      instrumentUtxoCounts[instrumentId] = balance.utxoCount;
+    }
 
     let operations: Operation[] = [];
     if (xpubOrAddress) {
@@ -159,6 +167,9 @@ export function makeGetAccountShape(
       spendableBalance,
       xpub: xpubOrAddress,
       used,
+      cantonResources: {
+        instrumentUtxoCounts,
+      },
     };
 
     return shape;

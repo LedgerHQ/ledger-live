@@ -86,19 +86,21 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   // Default mock implementations
-  mockFindTokenById.mockImplementation((id: string) => {
+  mockFindTokenById.mockImplementation(async (id: string) => {
     if (id === "ethereum/erc20/usd_coin") {
       return mockToken;
     }
     return undefined;
   });
 
-  mockFindTokenByAddressInCurrency.mockImplementation((address: string, currencyId: string) => {
-    if (address === "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4" && currencyId === "ethereum") {
-      return mockToken;
-    }
-    return undefined;
-  });
+  mockFindTokenByAddressInCurrency.mockImplementation(
+    async (address: string, currencyId: string) => {
+      if (address === "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4" && currencyId === "ethereum") {
+        return mockToken;
+      }
+      return undefined;
+    },
+  );
 
   mockFindCryptoCurrencyById.mockImplementation((id: string) => {
     if (id === "bitcoin") {
@@ -120,9 +122,25 @@ describe("Hooks Factory", () => {
     expect(hooks.useCurrencyById).toBeInstanceOf(Function);
   });
 
-  it("should throw an error when useCALBackend is true", () => {
-    // @ts-expect-error useCALBackend is not supported yet
-    expect(() => createCryptoAssetsHooks({ useCALBackend: true })).toThrow();
+  it("should support useCALBackend", () => {
+    const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+    expect(hooks.useTokenById).toBeInstanceOf(Function);
+    expect(hooks.useTokenByAddressInCurrency).toBeInstanceOf(Function);
+    expect(hooks.useCurrencyById).toBeInstanceOf(Function);
+  });
+
+  it("should return legacy hooks when useCALBackend is not specified", () => {
+    const hooks = createCryptoAssetsHooks();
+    expect(hooks.useTokenById).toBeDefined();
+    expect(hooks.useTokenByAddressInCurrency).toBeDefined();
+    expect(hooks.useCurrencyById).toBeDefined();
+  });
+
+  it("should return legacy hooks when config is empty object", () => {
+    const hooks = createCryptoAssetsHooks({});
+    expect(hooks.useTokenById).toBeDefined();
+    expect(hooks.useTokenByAddressInCurrency).toBeDefined();
+    expect(hooks.useCurrencyById).toBeDefined();
   });
 });
 
@@ -406,6 +424,252 @@ describe("Legacy hooks", () => {
 
       // Should have token for the new id
       expect(result.current.currency).toBe(mockToken);
+    });
+  });
+});
+
+// Mock the CAL client API
+jest.mock("./cal-client/state-manager/api", () => ({
+  cryptoAssetsApi: {
+    useFindTokenByIdQuery: jest.fn(),
+    useFindTokenByAddressInCurrencyQuery: jest.fn(),
+  },
+}));
+
+import { cryptoAssetsApi } from "./cal-client/state-manager/api";
+
+const mockUseFindTokenByIdQuery = cryptoAssetsApi.useFindTokenByIdQuery as jest.MockedFunction<
+  typeof cryptoAssetsApi.useFindTokenByIdQuery
+>;
+const mockUseFindTokenByAddressInCurrencyQuery =
+  cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery as jest.MockedFunction<
+    typeof cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery
+  >;
+
+describe("CAL Backend hooks", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("useTokenById", () => {
+    it("should return token data from CAL backend", () => {
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: mockToken,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useTokenById("ethereum/erc20/usd_coin"));
+
+      expect(result.current.token).toBe(mockToken);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+      expect(mockUseFindTokenByIdQuery).toHaveBeenCalledWith({ id: "ethereum/erc20/usd_coin" });
+    });
+
+    it("should handle loading state", () => {
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: true,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useTokenById("ethereum/erc20/usd_coin"));
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(true);
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should handle error state", () => {
+      const mockError = { status: 404, data: "Not found" };
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: mockError,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useTokenById("non-existent"));
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe(mockError);
+    });
+
+    it("should handle undefined token", () => {
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useTokenById("non-existent"));
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+    });
+  });
+
+  describe("useTokenByAddressInCurrency", () => {
+    it("should return token data from CAL backend", () => {
+      mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({
+        data: mockToken,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() =>
+        hooks.useTokenByAddressInCurrency("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "ethereum"),
+      );
+
+      expect(result.current.token).toBe(mockToken);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+      expect(mockUseFindTokenByAddressInCurrencyQuery).toHaveBeenCalledWith({
+        contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        network: "ethereum",
+      });
+    });
+
+    it("should handle loading state", () => {
+      mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({
+        data: undefined,
+        isLoading: true,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() =>
+        hooks.useTokenByAddressInCurrency("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "ethereum"),
+      );
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(true);
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should handle error state", () => {
+      const mockError = { status: 404, data: "Not found" };
+      mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: mockError,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() =>
+        hooks.useTokenByAddressInCurrency("0xNonExistent", "ethereum"),
+      );
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe(mockError);
+    });
+
+    it("should handle undefined token", () => {
+      mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() =>
+        hooks.useTokenByAddressInCurrency("0xNonExistent", "ethereum"),
+      );
+
+      expect(result.current.token).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+    });
+  });
+
+  describe("useCurrencyById", () => {
+    it("should return crypto currency when found", () => {
+      mockFindCryptoCurrencyById.mockReturnValue(mockCryptoCurrency);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useCurrencyById("bitcoin"));
+
+      expect(result.current.currency).toBe(mockCryptoCurrency);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
+      expect(mockFindCryptoCurrencyById).toHaveBeenCalledWith("bitcoin");
+      // Should not call the API when crypto currency is found
+      expect(mockUseFindTokenByIdQuery).not.toHaveBeenCalled();
+    });
+
+    it("should fallback to token API when crypto currency not found", () => {
+      mockFindCryptoCurrencyById.mockReturnValue(undefined);
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: mockToken,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useCurrencyById("ethereum/erc20/usd_coin"));
+
+      expect(result.current.currency).toBe(mockToken);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+      expect(mockFindCryptoCurrencyById).toHaveBeenCalledWith("ethereum/erc20/usd_coin");
+      expect(mockUseFindTokenByIdQuery).toHaveBeenCalledWith({ id: "ethereum/erc20/usd_coin" });
+    });
+
+    it("should handle loading state when fetching token", () => {
+      mockFindCryptoCurrencyById.mockReturnValue(undefined);
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: true,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useCurrencyById("ethereum/erc20/usd_coin"));
+
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.loading).toBe(true);
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should handle error state when fetching token", () => {
+      mockFindCryptoCurrencyById.mockReturnValue(undefined);
+      const mockError = { status: 500, data: "Server error" };
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: mockError,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useCurrencyById("ethereum/erc20/usd_coin"));
+
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe(mockError);
+    });
+
+    it("should handle undefined currency and token", () => {
+      mockFindCryptoCurrencyById.mockReturnValue(undefined);
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      const hooks = createCryptoAssetsHooks({ useCALBackend: true });
+      const { result } = renderHook(() => hooks.useCurrencyById("non-existent"));
+
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeUndefined();
     });
   });
 });

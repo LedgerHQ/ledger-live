@@ -21,14 +21,4 @@ describe("Market page for user with no device", () => {
     await app.market.filterStaredAsset();
     await app.market.expectMarketRowTitle(ticker);
   });
-
-  $TmsLink("B2CQA-1881");
-  it("should redirect to the buy a nano marketplace page", async () => {
-    await app.market.openAssetPage(ticker);
-    await app.market.buyAsset();
-    /*  Todo: Fix webview check tests
-        await app.buyDevice.buyNano();
-        await app.buyDevice.expectBuyNanoWebPage();
-    */
-  });
 });

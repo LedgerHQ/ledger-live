@@ -6,10 +6,15 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
+
+initializeLegacyTokens(addTokens);
 
 describe.each([
   [
@@ -20,6 +25,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
+      showNfts: true,
     },
   ],
   [
@@ -30,25 +36,26 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
+      showNfts: true,
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
     module = createApi(config as EvmConfig, "ethereum");
   });
 
   describe("getSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
         await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
-      ).toBeGreaterThanOrEqual(17);
+      ).toBeGreaterThanOrEqual(17n);
     });
   });
 
@@ -172,7 +179,17 @@ describe.each([
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
-        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect([
+          "NONE",
+          "FEES",
+          "IN",
+          "OUT",
+          "DELEGATE",
+          "UNDELEGATE",
+          "REDELEGATE",
+          "NFT_IN",
+          "NFT_OUT",
+        ]).toContainEqual(op.type);
         expect(op.senders.concat(op.recipients)).toContain(
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
         );
@@ -198,6 +215,7 @@ describe.each([
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -215,6 +233,7 @@ describe.each([
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -334,6 +353,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -351,6 +371,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);

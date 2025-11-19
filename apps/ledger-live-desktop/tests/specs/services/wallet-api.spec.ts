@@ -244,7 +244,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     const res = await liveAppWebview.getResOutput();
     // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
     const currencies = res.filter(
-      (currency: { type: string }) => currency.type === "CryptoCurrency",
+      (currency: { type: string; id: string }) =>
+        currency.type === "CryptoCurrency" && currency.id !== "bitcoin_regtest",
     );
     expect(currencies).toMatchObject(expectedCurrencyList);
 

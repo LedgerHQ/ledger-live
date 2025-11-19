@@ -1,20 +1,20 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { BlurView } from "@react-native-community/blur";
 import { useTheme } from "styled-components/native";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
 type TickerProps = {
-  currencyId: string;
+  currency: CryptoOrTokenCurrency;
   width: number;
 };
 
-export const Ticker: React.FC<TickerProps> = ({ currencyId, width }) => {
+export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
   const theme = useTheme();
-  const currency = getCryptoCurrencyById(currencyId);
   const midColor = getCurrencyColor(currency);
   return (
     <View style={styles.container}>

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Platform, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -8,7 +8,6 @@ import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import SafeAreaView from "../SafeAreaView";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -37,6 +36,8 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import styled from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type { SetHeaderOptionsRequest };
 
@@ -78,18 +79,19 @@ export default function SelectDevice({
   children,
   stopBleScanning,
 }: Props) {
+  const { t } = useTranslation();
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const { bottom } = useSafeAreaInsets();
 
   const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
-  const { t } = useTranslation();
 
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
@@ -105,7 +107,7 @@ export default function SelectDevice({
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
-    isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
+    isLDMKEnabled && isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
   );
   const scannedDevices = isLDMKEnabled ? bleScanningState.scannedDevices : legacyScannedDevices;
 
@@ -202,15 +204,15 @@ export default function SelectDevice({
 
         if (!deviceModel) return;
 
+        const newDevice = {
+          deviceName: name,
+          modelId: deviceModel.id,
+          deviceId: id,
+          wired,
+        };
+
         setDevice((maybeDevice: Device | undefined) => {
-          return (
-            maybeDevice || {
-              deviceName: name,
-              modelId: deviceModel.id,
-              deviceId: id,
-              wired,
-            }
-          );
+          return maybeDevice || newDevice;
         });
       }
     });
@@ -218,7 +220,7 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
-    const devices: Device[] = knownDevices
+    let devices: Device[] = knownDevices
       .map(device => {
         const equivalentScannedDevice = filteredScannedDevices.find(
           ({ deviceId }) => device.id === deviceId,
@@ -235,10 +237,10 @@ export default function SelectDevice({
       .sort((a, b) => Number(b.available) - Number(a.available));
 
     if (USBDevice) {
-      devices.push(USBDevice);
+      devices = [USBDevice, ...devices];
     }
     if (ProxyDevice) {
-      devices.push(ProxyDevice);
+      devices = [ProxyDevice, ...devices];
     }
 
     return filterByDeviceModelId
@@ -334,7 +336,7 @@ export default function SelectDevice({
   );
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
+    <StyledView>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -382,7 +384,7 @@ export default function SelectDevice({
                   px={16}
                 >
                   <Text variant="h5" fontWeight="semiBold">
-                    <Trans i18nKey="manager.selectDevice.title" />
+                    {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
                     <Touchable
@@ -393,11 +395,11 @@ export default function SelectDevice({
                     >
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
-                          <Trans
-                            i18nKey={`manager.selectDevice.${
+                          {t(
+                            `manager.selectDevice.${
                               Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
-                            }`}
-                          />
+                            }`,
+                          )}
                         </Text>
                         <IconsLegacy.PlusMedium color="primary.c90" size={15} />
                       </Flex>
@@ -451,14 +453,14 @@ export default function SelectDevice({
                         mt={3}
                         mb={3}
                       >
-                        <Trans i18nKey="manager.selectDevice.otgBanner" />
+                        {t("manager.selectDevice.otgBanner")}
                       </Text>
                     )}
                 </Flex>
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8}>
+            <Flex alignItems="center" my={8} mb={bottom}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>
@@ -536,6 +538,10 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </SafeAreaView>
+    </StyledView>
   );
 }
+
+const StyledView = styled(View)`
+  flex: 1;
+`;

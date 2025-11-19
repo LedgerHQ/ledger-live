@@ -17,12 +17,12 @@ import {
 } from "../../__mocks__/currencies.mock";
 
 describe("safeCurrencyLookup", () => {
-  it("should return the currency if it is found", () => {
-    const currency = safeCurrencyLookup("ethereum");
+  it("should return the currency if it is found", async () => {
+    const currency = await safeCurrencyLookup("ethereum");
     expect(currency).toBeDefined();
   });
-  it("should return null if the currency is not found", () => {
-    const currency = safeCurrencyLookup("not-a-currency");
+  it("should return null if the currency is not found", async () => {
+    const currency = await safeCurrencyLookup("not-a-currency");
     expect(currency).toBeNull();
   });
 });
@@ -55,14 +55,14 @@ describe("isProviderToken", () => {
 });
 
 describe("getProviderCurrency", () => {
-  it("should return the currency if it is a provider currency", () => {
+  it("should return the currency if it is a provider currency", async () => {
     const { result } = useGroupedCurrenciesByProvider();
-    const currency = getProviderCurrency(result.currenciesByProvider[0]);
+    const currency = await getProviderCurrency(result.currenciesByProvider[0]);
     expect(currency).toEqual(mockBtcCryptoCurrency);
   });
-  it("should return the currency if it is a provider token", () => {
+  it("should return the currency if it is a provider token", async () => {
     const { result } = useGroupedCurrenciesByProvider();
-    const currency = getProviderCurrency(result.currenciesByProvider[3]);
+    const currency = await getProviderCurrency(result.currenciesByProvider[3]);
     expect(currency).toEqual(usdcToken);
   });
 });
@@ -115,9 +115,9 @@ describe("filterProvidersByIds", () => {
 });
 
 describe("extractProviderCurrencies", () => {
-  it("should extract provider currencies correctly", () => {
+  it("should extract provider currencies correctly", async () => {
     const { result } = useGroupedCurrenciesByProvider();
-    const providerCurrencies = extractProviderCurrencies(result.currenciesByProvider);
+    const providerCurrencies = await extractProviderCurrencies(result.currenciesByProvider);
     expect(providerCurrencies).toHaveLength(5);
     expect(providerCurrencies[0]).toEqual(mockBtcCryptoCurrency);
     expect(providerCurrencies[1].id).toBe("ethereum");

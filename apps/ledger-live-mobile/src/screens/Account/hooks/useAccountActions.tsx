@@ -159,12 +159,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     },
   };
 
+  const newSendFlow = useFeature("newSendFlow");
   const SendAction = {
     id: "send",
     navigationParams: [
       NavigatorName.SendFunds,
       {
-        screen: ScreenName.SendSelectRecipient,
+        screen: !newSendFlow?.enabled ? ScreenName.SendSelectRecipient : ScreenName.NewSendFlow,
       },
     ],
     label: t("account.send"),
@@ -233,7 +234,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ...(!readOnlyModeEnabled
       ? familySpecificMainActions.filter(
           action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
-        ) // filter out family stake action if we cannot stake using ledger live or if account can be staked with a third-party platform app
+        ) // filter out family stake action if we cannot stake using ledger Wallet or if account can be staked with a third-party platform app
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,

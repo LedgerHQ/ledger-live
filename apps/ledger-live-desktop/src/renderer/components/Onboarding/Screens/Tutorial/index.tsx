@@ -116,6 +116,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleContinue,
 }) => {
   const urlFaq = useLocalizedUrl(urls.faq);
+  const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
 
   const handleHelp = () => openURL(urlFaq);
 
@@ -127,20 +128,22 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
 
   return (
     <FlowStepperContainer>
-      <Aside
-        backgroundColor="palette.constant.purple"
-        header={
-          <Flex justifyContent="center">
-            <Logos.LedgerLiveRegular />
-          </Flex>
-        }
-        footer={Footer}
-        width="324px"
-        p={10}
-        position="relative"
-      >
-        {illustration}
-      </Aside>
+      {!nanoOnboardingFundWalletFeature && (
+        <Aside
+          backgroundColor="palette.constant.purple"
+          header={
+            <Flex justifyContent="center">
+              <Logos.LedgerLiveRegular width={155} height={32} />
+            </Flex>
+          }
+          footer={Footer}
+          width="324px"
+          p={10}
+          position="relative"
+        >
+          {illustration}
+        </Aside>
+      )}
       <FlowStepperContentContainer flexGrow={1} justifyContent="center">
         <FlowStepperContent flexDirection="column" /* Agrandir ici */>
           {ProgressBar}

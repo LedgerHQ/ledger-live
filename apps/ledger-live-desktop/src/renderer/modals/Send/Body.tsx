@@ -9,6 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -174,6 +175,43 @@ const Body = ({
     const stepId = params?.startWithWarning ? "warning" : null;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
+
+  // Apply pre-filled recipient and amount to transaction when skipping steps
+  useEffect(() => {
+    if (!transaction) return;
+
+    const bridge = getAccountBridge(account, parentAccount);
+    let updatedTransaction = transaction;
+    let hasChanges = false;
+
+    if (maybeRecipient && !transaction.recipient) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, {
+        recipient: maybeRecipient,
+      });
+      hasChanges = true;
+      onResetMaybeRecipient();
+    }
+
+    if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
+      hasChanges = true;
+      onResetMaybeAmount();
+    }
+
+    if (hasChanges) {
+      setTransaction(updatedTransaction);
+    }
+  }, [
+    maybeRecipient,
+    maybeAmount,
+    transaction,
+    account,
+    parentAccount,
+    setTransaction,
+    onResetMaybeRecipient,
+    onResetMaybeAmount,
+  ]);
+
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);

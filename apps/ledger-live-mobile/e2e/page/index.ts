@@ -25,9 +25,10 @@ import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
-import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { initTestAccounts } from "../models/currencies";
 import { setupEnvironment } from "../helpers/commonHelpers";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 setupEnvironment();
 
@@ -35,6 +36,7 @@ type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testedCurrencies?: string[];
+  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
 const lazyInit = <T>(PageClass: new () => T) => {
@@ -72,13 +74,39 @@ export class Application {
   private transferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
 
-  public async init({ userdata, knownDevices, testedCurrencies }: ApplicationOptions) {
+  public async init({
+    userdata,
+    knownDevices,
+    testedCurrencies,
+    featureFlags,
+  }: ApplicationOptions) {
     userdata && (await loadConfig(userdata, true));
 
     knownDevices && (await loadBleState({ knownDevices }));
     if (testedCurrencies) {
       this.testAccounts = initTestAccounts(testedCurrencies);
       await loadAccounts(this.testAccounts);
+    }
+
+    await setFeatureFlags({
+      llmModularDrawer: {
+        enabled: false,
+        params: {
+          add_account: false,
+          live_app: false,
+          live_apps_allowlist: [],
+          live_apps_blocklist: [],
+          receive_flow: false,
+          send_flow: false,
+          enableModularization: false,
+          searchDebounceTime: 300,
+          backendEnvironment: "STAGING",
+        },
+      },
+    });
+
+    if (featureFlags) {
+      await setFeatureFlags(featureFlags);
     }
   }
 

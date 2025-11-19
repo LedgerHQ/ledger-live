@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.95.0
+      short_description: Ledger Live Mobile 3.96.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -107,12 +107,28 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Features:
-        Revamped connectivity support making it smooth and seamless to connect to your Ledger device.
+        Improvement:
+        Clarified wording when adding an account to make the process easier to understand.
       saga_features: ""
   media:
     - purpose: screenshot
-      uri: ./media/splash.webp
+      uri: ./media/1.png
+    - purpose: screenshot
+      uri: ./media/2.png
+    - purpose: screenshot
+      uri: ./media/3.png
+    - purpose: screenshot
+      uri: ./media/4.png
+    - purpose: screenshot
+      uri: ./media/5.png
+    - purpose: screenshot
+      uri: ./media/6.png
+    - purpose: screenshot
+      uri: ./media/7.png
+    - purpose: screenshot
+      uri: ./media/8.png
+    - purpose: screenshot
+      uri: ./media/9.png
     - purpose: banner
       uri: ./media/banner.png
   files:

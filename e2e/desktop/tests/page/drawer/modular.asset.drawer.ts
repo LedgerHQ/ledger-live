@@ -13,6 +13,12 @@ export class ModularAssetDrawer extends Drawer {
   private assetItemTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
   private assetItemName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
+  private assetRow = (name: string, ticker: string) =>
+    this.assetItemName(name)
+      .locator("..")
+      .filter({
+        has: this.assetItemTicker(ticker),
+      });
 
   @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
@@ -36,39 +42,14 @@ export class ModularAssetDrawer extends Drawer {
   @step("Select asset by ticker and name")
   async selectAssetByTickerAndName(currency: Currency) {
     await this.searchInput.waitFor();
-
-    const tickerElement = await this.ensureTickerVisible(currency);
-
-    const nameElement = this.assetItemName(currency.name);
-    if (await nameElement.isVisible()) {
-      await nameElement.first().click();
-      return;
-    }
-
-    await tickerElement.click();
+    await this.searchInput.fill(currency.ticker);
+    await this.assetRow(currency.name, currency.ticker).first().click();
   }
 
-  async ensureTickerVisible(currency: Currency) {
-    let tickerElement = this.assetItemTicker(currency.ticker).first();
-    if (!(await tickerElement.isVisible())) {
-      await this.searchInput.first().fill(currency.ticker);
-      await this.waitForTickerToAppear(currency.ticker);
-      tickerElement = this.assetItemTicker(currency.ticker).first();
-      if (!(await tickerElement.isVisible())) {
-        throw new Error(`Asset with ticker ${currency.ticker} not found.`);
-      }
-    }
-    return tickerElement;
-  }
-
-  async waitForTickerToAppear(ticker: string) {
-    await this.page.waitForFunction(
-      ticker => {
-        const elements = document.querySelectorAll(`[data-testid^="asset-item-ticker-${ticker}"]`);
-        return elements.length > 0;
-      },
-      ticker,
-      { timeout: 10000 },
-    );
+  @step("Select asset by ticker")
+  async selectAssetByTicker(currency: Currency) {
+    await this.searchInput.waitFor();
+    await this.searchInput.fill(currency.ticker);
+    await this.assetItemTicker(currency.ticker).first().click();
   }
 }

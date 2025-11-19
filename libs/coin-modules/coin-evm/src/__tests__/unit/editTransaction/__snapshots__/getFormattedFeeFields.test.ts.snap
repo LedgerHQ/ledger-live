@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Akroma unit 1`] = `
 {
   "formattedFeeValue": "1.050.000 AKA",
@@ -369,6 +378,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -513,6 +540,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -615,6 +651,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -990,6 +1035,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000105 GLMR",
@@ -1134,6 +1197,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000105 SGB",
@@ -1236,6 +1308,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -1611,6 +1692,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -1755,6 +1854,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -1857,6 +1965,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -2232,6 +2349,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -2376,6 +2511,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -2478,6 +2622,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -2853,6 +3006,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000105 GLMR",
@@ -2997,6 +3168,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000105 SGB",
@@ -3099,6 +3279,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -3474,6 +3663,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000105 GLMR",
@@ -3618,6 +3825,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000105 SGB",
@@ -3720,6 +3936,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -4095,6 +4320,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -4239,6 +4482,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -4341,6 +4593,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -4716,6 +4977,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -4860,6 +5139,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -4962,6 +5250,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -5337,6 +5634,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000105 GLMR",
@@ -5481,6 +5796,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000105 SGB",
@@ -5583,6 +5907,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 0G",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -5958,6 +6291,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 MON",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000105 GLMR",
@@ -6102,6 +6453,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 SOMI",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000105 SGB",
@@ -6207,6 +6567,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -6579,6 +6948,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -6723,6 +7110,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -6825,6 +7221,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -7200,6 +7605,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000042 GLMR",
@@ -7344,6 +7767,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000042 SGB",
@@ -7446,6 +7878,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -7821,6 +8262,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -7965,6 +8424,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -8067,6 +8535,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -8442,6 +8919,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -8586,6 +9081,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -8688,6 +9192,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -9063,6 +9576,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000042 GLMR",
@@ -9207,6 +9738,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000042 SGB",
@@ -9309,6 +9849,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -9684,6 +10233,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000042 GLMR",
@@ -9828,6 +10395,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0.000042 SGB",
@@ -9930,6 +10506,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -10305,6 +10890,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -10449,6 +11052,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -10551,6 +11163,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -10926,6 +11547,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -11070,6 +11709,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -11172,6 +11820,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -11547,6 +12204,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0,000042 GLMR",
@@ -11691,6 +12366,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 SOMI",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Songbird unit 1`] = `
 {
   "formattedFeeValue": "0,000042 SGB",
@@ -11793,6 +12477,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for ZKsync unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for 0G unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 0G",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -12168,6 +12861,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Monad Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Monad unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 MON",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Moonbeam unit 1`] = `
 {
   "formattedFeeValue": "0.000042 GLMR",
@@ -12306,6 +13017,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Scroll unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Somnia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 SOMI",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",

@@ -5,10 +5,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import Transport from "@ledgerhq/hw-transport";
 import { CantonSigner } from "@ledgerhq/coin-canton";
 import cantonResolver from "@ledgerhq/coin-canton/signer";
-import type { Account, Bridge } from "@ledgerhq/types-live";
+import type { Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-canton/test/cli";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
-import { TransactionStatus, Transaction } from "@ledgerhq/coin-canton/types";
+import { TransactionStatus, Transaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { LegacySignerCanton } from "@ledgerhq/live-signer-canton";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import cantonBridgeMock from "./bridge/mock";
@@ -27,7 +27,7 @@ const getCurrencyConfig = (currency?: CryptoCurrency) => {
   return getCurrencyConfiguration<CantonCoinConfig>(currency);
 };
 
-const bridge: Bridge<Transaction, Account, TransactionStatus> = getEnv("MOCK")
+const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")
   ? cantonBridgeMock
   : createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 

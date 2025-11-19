@@ -8,6 +8,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type RenderedDevice = Device & {
   isAlreadyKnown: boolean;
+  grayedOut: boolean;
 };
 
 type Props = {
@@ -23,7 +24,7 @@ const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
     case DeviceModelId.europa:
       return <Icons.Flex size="S" />;
     case DeviceModelId.apex:
-      return <Icons.Flex size="S" />;
+      return <Icons.Apex size="S" />;
     case DeviceModelId.nanoX:
     default:
       return <IconsLegacy.NanoXFoldedMedium size={20} />;
@@ -32,9 +33,10 @@ const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
 
 const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props) => {
   const { t } = useTranslation();
-  const { deviceName, isAlreadyKnown } = deviceMeta;
+  const { deviceName, isAlreadyKnown, grayedOut } = deviceMeta;
+  const isAKnownDevice = isAlreadyKnown && !areKnownDevicesPairable;
 
-  if (isAlreadyKnown && !areKnownDevicesPairable) {
+  if (isAKnownDevice || grayedOut) {
     return (
       <Flex mb={3} opacity="0.5">
         <Flex
@@ -49,9 +51,11 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
             <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
               {deviceName}
             </Text>
-            <Text flex={1} ml={4} variant="small">
-              {t("blePairingFlow.scanning.alreadyPaired")}
-            </Text>
+            {isAKnownDevice && (
+              <Text flex={1} ml={4} variant="small">
+                {t("blePairingFlow.scanning.alreadyPaired")}
+              </Text>
+            )}
           </Flex>
         </Flex>
       </Flex>

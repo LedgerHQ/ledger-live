@@ -35,7 +35,14 @@ export function step<This extends HasConstructor, Args extends unknown[], Return
         ? message.replace(/\$(\d+)/g, (_, idx) => String(args[Number(idx)]))
         : `${ctorName}.${String(context.name)}`;
 
-      return await test.step(name, () => target.call(this, ...args), { box: true });
+      try {
+        return await test.step(name, () => target.call(this, ...args), { box: true });
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("can only be called from a test")) {
+          return await target.call(this, ...args);
+        }
+        throw error;
+      }
     }
 
     return replacementMethod;

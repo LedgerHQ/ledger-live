@@ -3,7 +3,7 @@ import { runAddSubAccountTest } from "../subAccount";
 const testConfig = {
   account: TokenAccount.ETH_LIDO,
   tmslinks: ["B2CQA-2491"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
   withParentAccount: true,
 };
 

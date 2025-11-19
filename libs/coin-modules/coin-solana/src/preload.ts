@@ -14,7 +14,7 @@ import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
 import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { getCALHash, setCALHash } from "./logic";
-import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
+import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { AxiosError } from "axios";
 
 let shouldSkipTokenLoading = false;

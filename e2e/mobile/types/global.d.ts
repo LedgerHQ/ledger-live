@@ -35,6 +35,8 @@ declare global {
     e2eBridgeServer: Subject<ServerData>;
   };
 
+  var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
+
   var app: Application;
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;
@@ -61,6 +63,7 @@ declare global {
   var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
+  var IsTextVisible: typeof NativeElementHelpers.isTextVisible;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
@@ -68,6 +71,7 @@ declare global {
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;
+  var waitForElement: typeof NativeElementHelpers.waitForElement;
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;

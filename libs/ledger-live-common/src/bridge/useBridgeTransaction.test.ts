@@ -12,6 +12,7 @@ import useBridgeTransaction, {
 } from "./useBridgeTransaction";
 import { setSupportedCurrencies } from "../currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { shouldSyncBeforeTx } from "./useBridgeTransaction";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 
@@ -26,17 +27,27 @@ LiveConfig.setConfig({
   },
 });
 
+jest.mock("@ledgerhq/live-config/LiveConfig", () => ({
+  LiveConfig: {
+    getValueByKey: jest.fn(),
+    setConfig: jest.fn(),
+  },
+}));
+
 describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
     const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
 
-    await waitFor(() => {
-      expect(result.current.bridgePending).toBeFalsy();
-      expect(result.current.bridgeError).toBeFalsy();
-      expect(result.current.transaction).not.toBeFalsy();
-      expect(result.current.account).not.toBeFalsy();
-    });
+    await waitFor(
+      () => {
+        expect(result.current.bridgePending).toBeFalsy();
+        expect(result.current.bridgeError).toBeFalsy();
+        expect(result.current.transaction).not.toBeFalsy();
+        expect(result.current.account).not.toBeFalsy();
+      },
+      { timeout: 10000 },
+    );
   });
 
   test("bridgeError go through", async () => {
@@ -74,5 +85,61 @@ describe("useBridgeTransaction", () => {
     } finally {
       setGlobalOnBridgeError(before);
     }
+  });
+
+  describe("shouldSyncBeforeTx", () => {
+    const mockCurrency = { id: "btc" } as any;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test("returns true when currency-specific config has syncBeforeTx = true", () => {
+      (LiveConfig.getValueByKey as jest.Mock).mockImplementation((key: string) => {
+        if (key === "config_currency_btc") return { syncBeforeTx: true };
+        return null;
+      });
+
+      const result = shouldSyncBeforeTx(mockCurrency);
+      expect(result).toBe(true);
+      expect(LiveConfig.getValueByKey).toHaveBeenCalledWith("config_currency_btc");
+      expect(LiveConfig.getValueByKey).toHaveBeenCalledWith("config_currency");
+    });
+
+    test("returns false when currency-specific config has syncBeforeTx = false", () => {
+      (LiveConfig.getValueByKey as jest.Mock).mockImplementation((key: string) => {
+        if (key === "config_currency_btc") return { syncBeforeTx: false };
+        return null;
+      });
+
+      const result = shouldSyncBeforeTx(mockCurrency);
+      expect(result).toBe(false);
+    });
+
+    test("returns true when shared config has syncBeforeTx = true and no currency-specific config", () => {
+      (LiveConfig.getValueByKey as jest.Mock).mockImplementation((key: string) => {
+        if (key === "config_currency") return { syncBeforeTx: true };
+        return null;
+      });
+
+      const result = shouldSyncBeforeTx(mockCurrency);
+      expect(result).toBe(true);
+    });
+
+    test("returns false when neither config has syncBeforeTx", () => {
+      (LiveConfig.getValueByKey as jest.Mock).mockReturnValue({});
+      const result = shouldSyncBeforeTx(mockCurrency);
+      expect(result).toBe(false);
+    });
+
+    test("returns false when shared config has syncBeforeTx = false", () => {
+      (LiveConfig.getValueByKey as jest.Mock).mockImplementation((key: string) => {
+        if (key === "config_currency") return { syncBeforeTx: false };
+        return null;
+      });
+
+      const result = shouldSyncBeforeTx(mockCurrency);
+      expect(result).toBe(false);
+    });
   });
 });

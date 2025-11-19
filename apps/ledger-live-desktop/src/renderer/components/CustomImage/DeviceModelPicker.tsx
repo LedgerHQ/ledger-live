@@ -18,7 +18,7 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: CLSSupportedDeviceModelI
     case DeviceModelId.europa:
       return <Icons.Flex size="M" />;
     case DeviceModelId.apex:
-      return <Icons.PiggyBank size="M" />;
+      return <Icons.Apex size="M" />;
     default:
       return null;
   }

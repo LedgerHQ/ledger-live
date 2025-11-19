@@ -1,5 +1,17 @@
 # actions-root
 
+## 0.4.0
+
+### Minor Changes
+
+- [#12067](https://github.com/LedgerHQ/ledger-live/pull/12067) [`fe480d5`](https://github.com/LedgerHQ/ledger-live/commit/fe480d5ad28cb1e4d39c3d5a118a72cdbec90e1f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Investigate 500Mb coin monitoring reports and fix
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#12067](https://github.com/LedgerHQ/ledger-live/pull/12067) [`fe480d5`](https://github.com/LedgerHQ/ledger-live/commit/fe480d5ad28cb1e4d39c3d5a118a72cdbec90e1f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Investigate 500Mb coin monitoring reports and fix
+
 ## 0.3.0
 
 ### Minor Changes

@@ -124,6 +124,29 @@ describe("validateIntent", () => {
 
       expect(result.errors.amount).toBeUndefined();
     });
+
+    it.each([["stake"], ["unstake"]])(
+      "returns 0 as amount when the transaction intent is '%s'",
+      async intentType => {
+        const result = await validateIntent({
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: intentType,
+          sender: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8",
+          recipient: "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx",
+          amount: BigInt(0),
+          useAllAmount: true,
+        });
+
+        expect(result).toEqual({
+          errors: {},
+          warnings: {},
+          estimatedFees: 1000n,
+          amount: 0n,
+          totalSpent: 1000n,
+        });
+      },
+    );
   });
 
   describe("balance validation", () => {

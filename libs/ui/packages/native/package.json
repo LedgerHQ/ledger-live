@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.47.0",
+  "version": "0.49.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native",
   "license": "MIT",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "main": "lib/index.js",
   "types": "index.d.ts",
   "typesVersions": {

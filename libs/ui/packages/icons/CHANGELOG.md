@@ -1,5 +1,29 @@
 # @ledgerhq/icons-ui
 
+## 0.16.0
+
+### Minor Changes
+
+- [#12449](https://github.com/LedgerHQ/ledger-live/pull/12449) [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update Apex assets
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#12449](https://github.com/LedgerHQ/ledger-live/pull/12449) [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update Apex assets
+
+## 0.15.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
 ## 0.14.0
 
 ### Minor Changes

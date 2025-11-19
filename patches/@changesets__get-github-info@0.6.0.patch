@@ -1,8 +1,46 @@
 diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
-index a74df59f8a5988f458a3476087399f5e6dfe4818..6cb2dbab81854301c5ad1525a4bf9bb12072a9ef 100644
+index a74df59f8a5988f458a3476087399f5e6dfe4818..c4e4a072deb098a0efb3e5fa8098e0cd1cc84650 100644
 --- a/dist/changesets-get-github-info.cjs.js
 +++ b/dist/changesets-get-github-info.cjs.js
-@@ -211,7 +211,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+@@ -148,6 +148,19 @@ function makeQuery(repos) {
+ // getReleaseLine will be called a large number of times but it'll be called at the same time
+ // so instead of doing a bunch of network requests, we can do a single one.
+ 
++//Chain promises to provide rate limiting
++function createQueue() {
++  let last = Promise.resolve();
++
++  function add(fn) {
++    last = last.then(() => fn());
++    return last;
++  }
++
++  return { add };
++}
++
++const queue = createQueue();
+ 
+ const GHDataLoader = new DataLoader__default["default"](async requests => {
+   if (!process.env.GITHUB_TOKEN) {
+@@ -167,7 +180,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+ 
+     repos[repo].push(data);
+   });
+-  const data = await fetch__default["default"]("https://api.github.com/graphql", {
++  const data = await queue.add(async () => { return await fetch__default["default"]("https://api.github.com/graphql", {
+     method: "POST",
+     headers: {
+       Authorization: `Token ${process.env.GITHUB_TOKEN}`
+@@ -175,7 +188,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+     body: JSON.stringify({
+       query: makeQuery(repos)
+     })
+-  }).then(x => x.json());
++  }).then(x => x.json())});
+ 
+   if (data.errors) {
+     throw new Error(`An error occurred when fetching data from GitHub\n${JSON.stringify(data.errors, null, 2)}`);
+@@ -211,7 +224,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
  
      return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
    });
@@ -12,7 +50,7 @@ index a74df59f8a5988f458a3476087399f5e6dfe4818..6cb2dbab81854301c5ad1525a4bf9bb1
    if (!request.commit) {
      throw new Error("Please pass a commit SHA to getInfo");
 diff --git a/dist/changesets-get-github-info.esm.js b/dist/changesets-get-github-info.esm.js
-index 27e5c972ab1202ff16f5124b471f4bbcc46be2b5..e15e719adf9a6fda8d1ba003b6528120cd37a8df 100644
+index 27e5c972ab1202ff16f5124b471f4bbcc46be2b5..d50f176e9656d511bad296eee10bf7bfa02ec8f7 100644
 --- a/dist/changesets-get-github-info.esm.js
 +++ b/dist/changesets-get-github-info.esm.js
 @@ -1,5 +1,5 @@
@@ -22,7 +60,45 @@ index 27e5c972ab1202ff16f5124b471f4bbcc46be2b5..e15e719adf9a6fda8d1ba003b6528120
  
  function _defineProperty(obj, key, value) {
    if (key in obj) {
-@@ -202,7 +202,7 @@ const GHDataLoader = new DataLoader(async requests => {
+@@ -139,6 +139,19 @@ function makeQuery(repos) {
+ // getReleaseLine will be called a large number of times but it'll be called at the same time
+ // so instead of doing a bunch of network requests, we can do a single one.
+ 
++//Chain promises to provide rate limiting
++function createQueue() {
++  let last = Promise.resolve();
++
++  function add(fn) {
++    last = last.then(() => fn());
++    return last;
++  }
++
++  return { add };
++}
++
++const queue = createQueue();
+ 
+ const GHDataLoader = new DataLoader(async requests => {
+   if (!process.env.GITHUB_TOKEN) {
+@@ -158,7 +171,7 @@ const GHDataLoader = new DataLoader(async requests => {
+ 
+     repos[repo].push(data);
+   });
+-  const data = await fetch("https://api.github.com/graphql", {
++  const data = await queue.add(async () => { return await fetch("https://api.github.com/graphql", {
+     method: "POST",
+     headers: {
+       Authorization: `Token ${process.env.GITHUB_TOKEN}`
+@@ -166,7 +179,7 @@ const GHDataLoader = new DataLoader(async requests => {
+     body: JSON.stringify({
+       query: makeQuery(repos)
+     })
+-  }).then(x => x.json());
++  }).then(x => x.json())});
+ 
+   if (data.errors) {
+     throw new Error(`An error occurred when fetching data from GitHub\n${JSON.stringify(data.errors, null, 2)}`);
+@@ -202,7 +215,7 @@ const GHDataLoader = new DataLoader(async requests => {
  
      return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
    });

@@ -48,16 +48,29 @@ export default function StepOptions(props: Readonly<StepProps>) {
   const { eventType, transitionTo, closeModal } = props;
   const history = useHistory();
 
-  function handleGoToReceiveProvider() {
+  function handleGoToBankProvider() {
     closeModal();
     history.push({
-      pathname: "/receive",
+      pathname: "/bank",
     });
   }
 
   return (
     <Box>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
+      <Option onClick={handleGoToBankProvider}>
+        <IconWrapper>
+          <Icons.Bank size={"M"} />
+        </IconWrapper>
+        <Content>
+          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey="receive.steps.options.fromBank.title" />
+          </Text>
+          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
+            <Trans i18nKey="receive.steps.options.fromBank.description" />
+          </Text>
+        </Content>
+      </Option>
       <Option onClick={() => transitionTo("account")}>
         <IconWrapper>
           <Icons.CoinsCrypto size={"M"} />
@@ -68,19 +81,6 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
           <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
             <Trans i18nKey="receive.steps.options.fromCrypto.description" />
-          </Text>
-        </Content>
-      </Option>
-      <Option onClick={handleGoToReceiveProvider}>
-        <IconWrapper>
-          <Icons.Bank size={"M"} />
-        </IconWrapper>
-        <Content>
-          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
-            <Trans i18nKey="receive.steps.options.fromBank.title" />
-          </Text>
-          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
-            <Trans i18nKey="receive.steps.options.fromBank.description" />
           </Text>
         </Content>
       </Option>

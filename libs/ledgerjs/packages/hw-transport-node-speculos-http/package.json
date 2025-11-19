@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-speculos-http",
-  "version": "6.30.2",
+  "version": "6.31.0",
   "description": "Ledger Hardware Wallet communication layer with speculos Nano simulator using the http api",
   "keywords": [
     "Ledger",
@@ -31,7 +31,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "rxjs": "^7.8.1"
   },
   "scripts": {

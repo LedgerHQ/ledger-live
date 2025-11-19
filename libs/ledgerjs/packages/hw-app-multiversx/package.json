@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-multiversx",
-  "version": "6.25.3",
+  "version": "6.26.0",
   "description": "Ledger Hardware Wallet MultiversX Application API",
   "keywords": [
     "Ledger",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@multiversx/sdk-core": "^13.7.0",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bignumber.js": "^9.0.1",
     "bip32-path": "^0.4.2",
     "protobufjs": "^7.2.6"

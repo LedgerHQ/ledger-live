@@ -56,14 +56,31 @@ export function runSwapWithoutAccountTest(
   tags: string[],
 ) {
   const handleAssetSwap = async (asset: Account, hasAccount: boolean) => {
-    await app.common.performSearch(asset.currency.name);
-    await app.stake.selectCurrency(asset.currency.id);
-    if (hasAccount) {
-      await app.common.selectFirstAccount();
+    const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
+    if (isModularDrawer) {
+      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+      const networkName = asset?.parentAccount
+        ? asset.parentAccount.currency.name
+        : asset.currency.speculosApp.name;
+      await app.modularDrawer.selectNetworkIfAsked(networkName);
+
+      if (hasAccount) {
+        await app.modularDrawer.selectFirstAccount();
+      } else {
+        await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+        await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
+      }
     } else {
-      await app.common.tapProceedButton();
-      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
-      await app.common.selectFirstAccount();
+      await app.common.performSearch(asset.currency.name);
+      await app.stake.selectCurrency(asset.currency.id);
+      if (hasAccount) {
+        await app.common.selectFirstAccount();
+      } else {
+        await app.common.tapProceedButton();
+        await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
+        await app.common.selectFirstAccount();
+      }
     }
   };
 
@@ -130,13 +147,11 @@ export function runSwapWithDifferentSeedTest(
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
-      await app.common.disableSynchronizationForiOS();
       await app.common.selectKnownDevice();
       if (errorMessage) {
-        await app.common.enableSynchronization();
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
-        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
+        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
         await app.swap.verifyDeviceActionLoadingNotVisible();
         await app.swap.waitForSuccessAndContinue();
       }
@@ -377,13 +392,34 @@ export function runSwapWithSendMaxTest(
     tags.forEach(tag => $Tag(tag));
     it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-      await app.common.performSearch(fromAccount.currency.name);
-      await app.stake.selectCurrency(fromAccount.currency.id);
-      await app.common.selectFirstAccount();
-      await app.swapLiveApp.tapToCurrency();
-      await app.common.performSearch(toAccount.currency.name);
-      await app.stake.selectCurrency(toAccount.currency.id);
-      await app.common.selectFirstAccount();
+
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
+      if (isModularDrawer) {
+        await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
+        let networkName = fromAccount?.parentAccount
+          ? fromAccount.parentAccount.currency.name
+          : fromAccount.currency.speculosApp.name;
+        await app.modularDrawer.selectNetworkIfAsked(networkName);
+        await app.modularDrawer.selectFirstAccount();
+        await app.swapLiveApp.tapToCurrency();
+        await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
+        networkName = toAccount?.parentAccount
+          ? toAccount.parentAccount.currency.name
+          : toAccount.currency.speculosApp.name;
+        await app.modularDrawer.selectNetworkIfAsked(networkName);
+        await app.modularDrawer.selectFirstAccount();
+      } else {
+        await app.common.performSearch(fromAccount.currency.name);
+        await app.stake.selectCurrency(fromAccount.currency.id);
+        await app.common.selectFirstAccount();
+        await app.swapLiveApp.tapToCurrency();
+        await app.common.performSearch(toAccount.currency.name);
+        await app.stake.selectCurrency(toAccount.currency.id);
+        await app.common.selectFirstAccount();
+      }
+
       await app.swapLiveApp.clickSwapMax();
       const amountToSend = await app.swapLiveApp.getAmountToSend();
 
@@ -429,7 +465,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       );
       await app.swapLiveApp.switchYouSendAndYouReceive();
       await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "-");
     });
   });
 }

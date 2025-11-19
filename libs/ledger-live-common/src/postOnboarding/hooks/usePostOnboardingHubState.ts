@@ -1,9 +1,22 @@
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
-import { PostOnboardingHubState } from "@ledgerhq/types-live";
-import { useFeatureFlags } from "../../featureFlags";
+import { PostOnboardingAction, PostOnboardingHubState } from "@ledgerhq/types-live";
+import { FeatureFlagsContextValue, useFeatureFlags } from "../../featureFlags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
+
+const getIsFeatureEnabled = (
+  action: PostOnboardingAction | undefined,
+  getFeature: FeatureFlagsContextValue["getFeature"],
+) => {
+  if (!action) return false;
+  if (!action.featureFlagId) return true;
+
+  const flag = getFeature(action.featureFlagId);
+  if (!flag?.enabled) return false;
+
+  return !action.featureFlagParamId || !!flag.params?.[action.featureFlagParamId];
+};
 
 /**
  * @returns an object representing the state that should be rendered on the post
@@ -26,23 +39,22 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
         actionsState: [],
         postOnboardingInProgress: hubState.postOnboardingInProgress,
       };
-    const actionsState = hubState.actionsToComplete
-      .map(actionId => ({
-        ...getPostOnboardingAction(actionId),
-        completed: !!hubState.actionsCompleted[actionId],
-      }))
-      .filter(
-        actionWithState =>
-          !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
-      );
+
+    const actionsState = hubState.actionsToComplete.flatMap(actionId => {
+      const action = getPostOnboardingAction(actionId);
+      const isFeatureEnabled = getIsFeatureEnabled(action, getFeature);
+
+      if (!action || !isFeatureEnabled) {
+        return [];
+      }
+      return [{ ...action, completed: !!hubState.actionsCompleted[actionId] }];
+    });
     const lastActionCompleted = hubState.lastActionCompleted
       ? getPostOnboardingAction(hubState.lastActionCompleted)
       : null;
 
     const isLastActionCompletedEnabled =
-      lastActionCompleted &&
-      (!lastActionCompleted.featureFlagId ||
-        getFeature(lastActionCompleted.featureFlagId)?.enabled);
+      lastActionCompleted && getIsFeatureEnabled(lastActionCompleted, getFeature);
 
     return {
       deviceModelId: hubState.deviceModelId,

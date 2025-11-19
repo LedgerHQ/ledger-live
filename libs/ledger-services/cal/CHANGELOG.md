@@ -1,5 +1,53 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.8.0
+
+### Minor Changes
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0
+  - @ledgerhq/live-env@2.20.0
+
+## 1.8.0-next.0
+
+### Minor Changes
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0-next.0
+  - @ledgerhq/live-env@2.20.0-next.0
+
+## 1.7.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0
+  - @ledgerhq/live-network@2.0.20
+
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0-next.0
+  - @ledgerhq/live-network@2.0.20-next.0
+
 ## 1.6.0
 
 ### Minor Changes

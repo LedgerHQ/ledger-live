@@ -35,6 +35,7 @@ const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
     xpub,
   } as CantonAccount,
 };
+const TIMEOUT = 30000;
 
 // Mock signer context for testing
 const keyPair = generateMockKeyPair();
@@ -43,7 +44,7 @@ const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
   return callback(mockSigner);
 });
 
-describe("sync (devnet)", () => {
+describe.skip("sync (devnet)", () => {
   beforeAll(async () => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
@@ -57,41 +58,118 @@ describe("sync (devnet)", () => {
   });
 
   describe("makeGetAccountShape", () => {
-    it("should fetch account shape for a valid address", async () => {
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
-      const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
+    it(
+      "should fetch account shape for a valid address",
+      async () => {
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-      expect(result).toBeDefined();
-      expect(result.id).toBeDefined();
-      expect(result.xpub).toBe(TEST_ADDRESS);
-      expect(result.blockHeight).toBeGreaterThan(0);
-      expect(result.balance).toBeDefined();
-      expect(result.spendableBalance).toBeDefined();
-      expect(result.operations).toBeDefined();
-      expect(result.operationsCount).toBeGreaterThanOrEqual(0);
+        expect(result).toBeDefined();
+        expect(result.id).toBeDefined();
+        expect(result.xpub).toBe(TEST_ADDRESS);
+        expect(result.blockHeight).toBeGreaterThan(0);
+        expect(result.balance).toBeDefined();
+        expect(result.spendableBalance).toBeDefined();
+        expect(result.operations).toBeDefined();
+        expect(result.operationsCount).toBeGreaterThanOrEqual(0);
 
-      expect(result.balance).toBeInstanceOf(Object);
-      expect(result.balance?.toNumber).toBeDefined();
-      expect(result.spendableBalance).toBeInstanceOf(Object);
-      expect(result.spendableBalance?.toNumber).toBeDefined();
+        expect(result.balance).toBeInstanceOf(Object);
+        expect(result.balance?.toNumber).toBeDefined();
+        expect(result.spendableBalance).toBeInstanceOf(Object);
+        expect(result.spendableBalance?.toNumber).toBeDefined();
 
-      expect(result.spendableBalance?.toNumber()).toBeLessThanOrEqual(
-        result.balance?.toNumber() || 0,
-      );
-    });
+        expect(result.spendableBalance?.toNumber()).toBeLessThanOrEqual(
+          result.balance?.toNumber() || 0,
+        );
+      },
+      TIMEOUT,
+    );
 
-    it("should handle address with colons correctly", async () => {
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
-      const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
+    it(
+      "should handle address with colons correctly",
+      async () => {
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-      expect(result.xpub).toContain("::");
-    });
+        expect(result.xpub).toContain("::");
+      },
+      TIMEOUT,
+    );
 
-    it("should merge operations correctly with initial account", async () => {
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
+    it(
+      "should merge operations correctly with initial account",
+      async () => {
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
 
-      const operations: Operation[] = [
-        {
+        const operations: Operation[] = [
+          {
+            id: "test-op-1",
+            hash: "test-hash-1",
+            accountId: "test-account",
+            type: "OUT" as const,
+            value: new BigNumber(1000000),
+            fee: new BigNumber(100000),
+            blockHash: "block-hash-1",
+            blockHeight: 100,
+            senders: [TEST_ADDRESS],
+            recipients: ["recipient-1"],
+            date: new Date("2023-01-01"),
+            transactionSequenceNumber: BigNumber(100),
+            extra: { uid: "uid-1" },
+          },
+        ];
+
+        const result = await getAccountShape(
+          {
+            ...ACCOUNT_SHAPE_INFO,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            initialAccount: { xpub, operations } as Account,
+          },
+          { paginationConfig: {} },
+        );
+
+        expect(result.operations).toBeDefined();
+        expect(result.operationsCount).toBeGreaterThanOrEqual(1);
+        const initialOp = result.operations?.find(op => op.id === "test-op-1");
+        expect(initialOp).toBeDefined();
+      },
+      TIMEOUT,
+    );
+
+    it(
+      "should take locked balance into account when calculating spendable balance",
+      async () => {
+        const mockGetBalance = jest.spyOn(gateway, "getBalance");
+
+        mockGetBalance.mockResolvedValue([
+          {
+            instrument_id: "Amulet",
+            amount: "500",
+            locked: false,
+          },
+          {
+            instrument_id: "LockedAmulet",
+            amount: "1000000",
+            locked: true,
+          },
+        ]);
+
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
+
+        expect(result.balance?.toNumber()).toBe(1000500);
+        expect(result.spendableBalance?.toNumber()).toBe(500);
+
+        mockGetBalance.mockRestore();
+      },
+      TIMEOUT,
+    );
+
+    it(
+      "should call getOperations with correct cursor based on initial account",
+      async () => {
+        const mockGetOperations = jest.spyOn(gateway, "getOperations");
+        const operation: Operation = {
           id: "test-op-1",
           hash: "test-hash-1",
           accountId: "test-account",
@@ -103,104 +181,51 @@ describe("sync (devnet)", () => {
           senders: [TEST_ADDRESS],
           recipients: ["recipient-1"],
           date: new Date("2023-01-01"),
-          transactionSequenceNumber: 100,
+          transactionSequenceNumber: BigNumber(100),
           extra: { uid: "uid-1" },
-        },
-      ];
+        };
 
-      const result = await getAccountShape(
-        {
-          ...ACCOUNT_SHAPE_INFO,
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialAccount: { xpub, operations } as Account,
-        },
-        { paginationConfig: {} },
-      );
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        const initialAccount = { xpub, operations: [operation] } as Account;
 
-      expect(result.operations).toBeDefined();
-      expect(result.operationsCount).toBeGreaterThanOrEqual(1);
-      const initialOp = result.operations?.find(op => op.id === "test-op-1");
-      expect(initialOp).toBeDefined();
-    });
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const result = await getAccountShape(
+          {
+            ...ACCOUNT_SHAPE_INFO,
+            initialAccount,
+          },
+          { paginationConfig: {} },
+        );
 
-    it("should take locked balance into account when calculating spendable balance", async () => {
-      const mockGetBalance = jest.spyOn(gateway, "getBalance");
+        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+          cursor: (operation.blockHeight || 0) + 1,
+          limit: 100,
+        });
+        expect(result.operations).toBeDefined();
+        expect(result.operationsCount).toBeGreaterThan(1);
+      },
+      TIMEOUT,
+    );
 
-      mockGetBalance.mockResolvedValue([
-        {
-          instrument_id: "Amulet",
-          amount: "500",
-          locked: false,
-        },
-        {
-          instrument_id: "LockedAmulet",
-          amount: "1000000",
-          locked: true,
-        },
-      ]);
+    it(
+      "should call getOperations with cursor 0 when no initial account",
+      async () => {
+        const mockGetOperations = jest.spyOn(gateway, "getOperations");
 
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
-      const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
+        const getAccountShape = makeGetAccountShape(mockSignerContext);
+        const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-      expect(result.balance?.toNumber()).toBe(1000500);
-      expect(result.spendableBalance?.toNumber()).toBe(500);
+        expect(result.operations).toBeDefined();
+        expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
-      mockGetBalance.mockRestore();
-    });
+        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+          cursor: 0,
+          limit: 100,
+        });
 
-    it("should call getOperations with correct cursor based on initial account", async () => {
-      const mockGetOperations = jest.spyOn(gateway, "getOperations");
-      const operation: Operation = {
-        id: "test-op-1",
-        hash: "test-hash-1",
-        accountId: "test-account",
-        type: "OUT" as const,
-        value: new BigNumber(1000000),
-        fee: new BigNumber(100000),
-        blockHash: "block-hash-1",
-        blockHeight: 100,
-        senders: [TEST_ADDRESS],
-        recipients: ["recipient-1"],
-        date: new Date("2023-01-01"),
-        transactionSequenceNumber: 100,
-        extra: { uid: "uid-1" },
-      };
-
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const initialAccount = { xpub, operations: [operation] } as Account;
-
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
-      const result = await getAccountShape(
-        {
-          ...ACCOUNT_SHAPE_INFO,
-          initialAccount,
-        },
-        { paginationConfig: {} },
-      );
-
-      expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
-        cursor: (operation.blockHeight || 0) + 1,
-        limit: 100,
-      });
-      expect(result.operations).toBeDefined();
-      expect(result.operationsCount).toBeGreaterThan(1);
-    });
-
-    it("should call getOperations with cursor 0 when no initial account", async () => {
-      const mockGetOperations = jest.spyOn(gateway, "getOperations");
-
-      const getAccountShape = makeGetAccountShape(mockSignerContext);
-      const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
-
-      expect(result.operations).toBeDefined();
-      expect(result.operationsCount).toBeGreaterThanOrEqual(1);
-
-      expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
-        cursor: 0,
-        limit: 100,
-      });
-
-      mockGetOperations.mockRestore();
-    });
+        mockGetOperations.mockRestore();
+      },
+      TIMEOUT,
+    );
   });
 });

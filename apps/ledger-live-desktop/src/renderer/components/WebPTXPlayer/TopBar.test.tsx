@@ -6,9 +6,13 @@ import { MemoryRouter } from "react-router";
 import { render, screen } from "@testing-library/react";
 import { useSelector } from "react-redux";
 
-jest.mock("react-redux", () => ({
-  useSelector: jest.fn(),
-}));
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  return {
+    ...actual,
+    useSelector: jest.fn(),
+  };
+});
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({

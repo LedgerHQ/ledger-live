@@ -43,10 +43,19 @@ const rawTron: AccountRaw = {
 };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setCryptoAssetsStore({
+  findTokenById: (_: string) => Promise.resolve(undefined),
+  findTokenByAddressInCurrency: (_: string, __: string) => Promise.resolve(undefined),
+  getTokensSyncHash: (_: string) => Promise.resolve("test_hash"),
+} as CryptoAssetsStore);
 
-const mockEthereumAccount = fromAccountRaw(raw);
-const mockTronAccount = fromAccountRaw(rawTron);
+let mockEthereumAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+let mockTronAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+
+beforeAll(async () => {
+  mockEthereumAccount = await fromAccountRaw(raw);
+  mockTronAccount = await fromAccountRaw(rawTron);
+});
 
 const mockUSDTTokenAccount: TokenAccount = {
   type: "TokenAccount",

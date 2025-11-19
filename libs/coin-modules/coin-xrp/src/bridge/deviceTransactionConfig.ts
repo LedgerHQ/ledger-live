@@ -2,7 +2,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction: { tag },
   status: { amount, estimatedFees },
 }: {
@@ -10,7 +10,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<CommonDeviceTransactionField> {
+}): Promise<Array<CommonDeviceTransactionField>> {
   const fields: Array<CommonDeviceTransactionField> = [];
 
   if (!amount.isZero()) {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.5.1",
+  "version": "0.7.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",

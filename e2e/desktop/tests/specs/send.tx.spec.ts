@@ -1,10 +1,10 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -173,6 +173,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
+    bugTicket: "LIVE-20362",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
@@ -236,12 +237,14 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
+          if (transaction.bugTicket) {
+            await addBugLink([transaction.bugTicket]);
+          }
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -284,7 +287,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -330,7 +333,7 @@ test.describe("Send flows", () => {
     test(
       `Check Valid amount input (${transactionInputValid.amount})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: "B2CQA-473",
@@ -375,7 +378,7 @@ test.describe("Send flows", () => {
       test(
         `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -418,7 +421,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -472,7 +475,7 @@ test.describe("Send flows", () => {
     test(
       `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: "B2CQA-2202",

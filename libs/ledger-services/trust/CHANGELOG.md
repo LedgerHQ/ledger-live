@@ -1,5 +1,45 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0
+  - @ledgerhq/live-env@2.20.0
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0-next.0
+  - @ledgerhq/live-env@2.20.0-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0
+  - @ledgerhq/live-network@2.0.20
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0-next.0
+  - @ledgerhq/live-network@2.0.20-next.0
+
 ## 0.3.14
 
 ### Patch Changes

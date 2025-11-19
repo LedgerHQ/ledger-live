@@ -7,19 +7,38 @@ import {
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 import { ScrollContainer } from "@ledgerhq/native-ui";
-import { setHasBeenRedirectedToPostOnboarding } from "~/actions/settings";
+import { setHasBeenRedirectedToPostOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";
+import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
+import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const closePostOnboarding = useCompletePostOnboarding();
+  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+
+  const { isActivationDrawerVisible, closeActivationDrawer, openActivationDrawer } =
+    useLedgerSyncEntryPointViewModel({
+      entryPoint: EntryPoint.postOnboarding,
+      page: "PostOnboarding",
+    });
+
+  useEffect(() => {
+    if (isActivationDrawerVisible) {
+      dispatch(setIsPostOnboardingFlow(true));
+    }
+  }, [dispatch, isActivationDrawerVisible]);
 
   useEffect(() => {
     /**
@@ -83,6 +102,8 @@ const PostOnboardingHub = () => {
                   {...action}
                   deviceModelId={deviceModelId}
                   productName={productName}
+                  openActivationDrawer={openActivationDrawer}
+                  isLedgerSyncActive={isLedgerSyncActive}
                 />
                 {index !== arr.length - 1 && <Divider />}
               </React.Fragment>
@@ -115,6 +136,12 @@ const PostOnboardingHub = () => {
             )}
           </Flex>
         </ScrollContainer>
+
+        <ActivationDrawer
+          startingStep={Steps.Activation}
+          isOpen={isActivationDrawerVisible}
+          handleClose={closeActivationDrawer}
+        />
       </Flex>
     </>
   );

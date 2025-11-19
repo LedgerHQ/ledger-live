@@ -4,12 +4,13 @@ import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { getMaxSendBalance, getBlankOperation, txsToOps } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 
 jest.mock("@ledgerhq/cryptoassets");
 jest.mock("@ledgerhq/coin-framework/account/index");
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 describe("Aptos logic ", () => {
   describe("getMaxSendBalance", () => {
@@ -112,7 +113,7 @@ describe("Aptos logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: "1" },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -140,7 +141,7 @@ describe("Aptos logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -149,7 +150,7 @@ describe("Aptos logic ", () => {
 
 describe("Aptos sync logic ", () => {
   describe("txsToOps", () => {
-    it("should convert Aptos transactions to operations correctly", () => {
+    it("should convert Aptos transactions to operations correctly", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -219,7 +220,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -235,12 +236,12 @@ describe("Aptos sync logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
 
-    it("should skip transactions without functions in payload", () => {
+    it("should skip transactions without functions in payload", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -259,12 +260,12 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
 
-    it("should skip transactions that result in no Aptos change", () => {
+    it("should skip transactions that result in no Aptos change", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -288,12 +289,12 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
 
-    it("should handle failed transactions", () => {
+    it("should handle failed transactions", async () => {
       const address = "0xa0d8";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -418,7 +419,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -434,52 +435,55 @@ describe("Aptos sync logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: true,
       });
     });
 
-    it("should convert Aptos token transactions to operations correctly", () => {
-      (findTokenByAddressInCurrency as jest.Mock).mockReturnValue({
-        type: "TokenCurrency",
-        id: "aptos/coin/dstapt::staked_coin::stakedaptos",
-        contractAddress: "0xd111::staked_coin::StakedAptos",
-        parentCurrency: {
-          type: "CryptoCurrency",
-          id: "aptos",
-          coinType: 637,
-          name: "Aptos",
-          managerAppName: "Aptos",
-          ticker: "APT",
-          scheme: "aptos",
-          color: "#231F20",
-          family: "aptos",
+    it("should convert Aptos token transactions to operations correctly", async () => {
+      (encodeTokenAccountId as jest.Mock).mockReturnValue("token_account_id");
+      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+        findTokenByAddressInCurrency: jest.fn().mockReturnValue({
+          type: "TokenCurrency",
+          id: "aptos/coin/dstapt::staked_coin::stakedaptos",
+          contractAddress: "0xd111::staked_coin::StakedAptos",
+          parentCurrency: {
+            type: "CryptoCurrency",
+            id: "aptos",
+            coinType: 637,
+            name: "Aptos",
+            managerAppName: "Aptos",
+            ticker: "APT",
+            scheme: "aptos",
+            color: "#231F20",
+            family: "aptos",
+            units: [
+              {
+                name: "APT",
+                code: "APT",
+                magnitude: 8,
+              },
+            ],
+            explorerViews: [
+              {
+                address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+                tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+              },
+            ],
+          },
+          name: "dstAPT",
+          tokenType: "coin",
+          ticker: "dstAPT",
+          disableCountervalue: false,
+          delisted: false,
           units: [
             {
-              name: "APT",
-              code: "APT",
+              name: "dstAPT",
+              code: "dstAPT",
               magnitude: 8,
             },
           ],
-          explorerViews: [
-            {
-              address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
-              tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
-            },
-          ],
-        },
-        name: "dstAPT",
-        tokenType: "coin",
-        ticker: "dstAPT",
-        disableCountervalue: false,
-        delisted: false,
-        units: [
-          {
-            name: "dstAPT",
-            code: "dstAPT",
-            magnitude: 8,
-          },
-        ],
+        }),
       });
 
       jest.mock("../../bridge/logic", () => ({
@@ -698,7 +702,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [ops, tokenOps] = txsToOps({ address }, id, txs);
+      const [ops, tokenOps] = await txsToOps({ address }, id, txs);
 
       expect(ops).toHaveLength(1);
       expect(ops[0]).toEqual({
@@ -714,13 +718,14 @@ describe("Aptos sync logic ", () => {
         accountId: "token_account_id",
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
 
       expect(tokenOps).toHaveLength(1);
       expect(tokenOps[0]).toEqual({
         id: expect.any(String),
+        accountId: "token_account_id",
         hash: "0x123",
         type: OP_TYPE.OUT,
         value: new BigNumber(1500000),
@@ -731,52 +736,54 @@ describe("Aptos sync logic ", () => {
         recipients: ["0x00000000000000000000000000000000000000000000000000000000000004e5"],
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
 
-    it("should convert Aptos token transactions to operations correctly", () => {
-      (findTokenByAddressInCurrency as jest.Mock).mockReturnValue({
-        type: "TokenCurrency",
-        id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
-        contractAddress: "0x2ebb",
-        parentCurrency: {
-          type: "CryptoCurrency",
-          id: "aptos",
-          coinType: 637,
-          name: "Aptos",
-          managerAppName: "Aptos",
-          ticker: "APT",
-          scheme: "aptos",
-          color: "#231F20",
-          family: "aptos",
+    it("should convert Aptos token transactions to operations correctly", async () => {
+      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+        findTokenByAddressInCurrency: jest.fn().mockReturnValue({
+          type: "TokenCurrency",
+          id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          contractAddress: "0x2ebb",
+          parentCurrency: {
+            type: "CryptoCurrency",
+            id: "aptos",
+            coinType: 637,
+            name: "Aptos",
+            managerAppName: "Aptos",
+            ticker: "APT",
+            scheme: "aptos",
+            color: "#231F20",
+            family: "aptos",
+            units: [
+              {
+                name: "APT",
+                code: "APT",
+                magnitude: 8,
+              },
+            ],
+            explorerViews: [
+              {
+                address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+                tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+              },
+            ],
+          },
+          name: "CELLANA",
+          tokenType: "fungible_asset",
+          ticker: "CELL",
+          disableCountervalue: false,
+          delisted: false,
           units: [
             {
-              name: "APT",
-              code: "APT",
+              name: "CELLANA",
+              code: "CELL",
               magnitude: 8,
             },
           ],
-          explorerViews: [
-            {
-              address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
-              tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
-            },
-          ],
-        },
-        name: "CELLANA",
-        tokenType: "fungible_asset",
-        ticker: "CELL",
-        disableCountervalue: false,
-        delisted: false,
-        units: [
-          {
-            name: "CELLANA",
-            code: "CELL",
-            magnitude: 8,
-          },
-        ],
+        }),
       });
 
       jest.mock("../../bridge/logic", () => ({
@@ -1009,7 +1016,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [ops, tokenOps] = txsToOps({ address: "0x6b8c" }, "test_id", txs);
+      const [ops, tokenOps] = await txsToOps({ address: "0x6b8c" }, "test_id", txs);
 
       expect(ops).toHaveLength(0);
 
@@ -1027,7 +1034,7 @@ describe("Aptos sync logic ", () => {
         recipients: ["0x0000000000000000000000000000000000000000000000000000000000006b8c"],
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });

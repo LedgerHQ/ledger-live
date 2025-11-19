@@ -15,6 +15,7 @@ export type MappedStake = StakeObject & {
   validator: SuiValidator;
   stakedSuiId: string;
   formattedAmount: string;
+  formattedEstimatedReward: string;
 };
 
 /**

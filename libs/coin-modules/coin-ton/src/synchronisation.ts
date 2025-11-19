@@ -4,6 +4,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
+  getSyncHash,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
@@ -29,7 +30,6 @@ import {
   mapJettonTxToOps,
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
-import { getSyncHash } from "./logic";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
 import { WalletContractV4 } from "@ton/ton";
 
@@ -64,7 +64,7 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   });
 
   log("debug", `Generation account shape for ${address}`);
-  const syncHash = getSyncHash(currency, blacklistedTokenIds ?? []);
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
   const newTxs: TonTransactionsList = { transactions: [], address_book: {} };
@@ -113,10 +113,13 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   }
 
   const newOps = flatMap(newTxs.transactions, mapTxToOps(accountId, address, newTxs.address_book));
-  const newJettonOps = flatMap(
-    newJettonTxs,
-    mapJettonTxToOps(accountId, address, newTxs.address_book, jettonTxMessageHashesMap),
+  const jettonOpsMapper = mapJettonTxToOps(
+    accountId,
+    address,
+    newTxs.address_book,
+    jettonTxMessageHashesMap,
   );
+  const newJettonOps = (await Promise.all(newJettonTxs.map(jettonOpsMapper))).flat();
   const operations = shouldSyncFromScratch ? newOps : mergeOps(oldOps, newOps);
 
   const subAccounts = await getSubAccounts(
@@ -187,14 +190,14 @@ async function getSubAccounts(
   blacklistedTokenIds: string[] = [],
   shouldSyncFromScratch: boolean,
 ): Promise<Partial<TonSubAccount>[]> {
-  const opsPerToken = newOps.reduce((acc, op) => {
+  const opsPerToken = new Map<TokenCurrency, TonOperation[]>();
+  for (const op of newOps) {
     const { accountId: tokenAccountId } = decodeOperationId(op.id);
-    const { token } = decodeTokenAccountId(tokenAccountId);
-    if (!token || blacklistedTokenIds.includes(token.id)) return acc;
-    if (!acc.has(token)) acc.set(token, []);
-    acc.get(token)?.push(op);
-    return acc;
-  }, new Map<TokenCurrency, TonOperation[]>());
+    const { token } = await decodeTokenAccountId(tokenAccountId);
+    if (!token || blacklistedTokenIds.includes(token.id)) continue;
+    if (!opsPerToken.has(token)) opsPerToken.set(token, []);
+    opsPerToken.get(token)?.push(op);
+  }
   const subAccountsPromises: Promise<Partial<TonSubAccount>>[] = [];
   for (const [token, ops] of opsPerToken.entries()) {
     subAccountsPromises.push(

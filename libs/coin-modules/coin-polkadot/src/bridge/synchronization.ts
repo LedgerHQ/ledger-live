@@ -4,12 +4,20 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import { PolkadotAccount } from "../types";
 import polkadotAPI from "../network";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import coinConfig from "../config";
 
 export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();
+
   const { address, initialAccount, currency, derivationMode } = info;
 
-  // Retrieve account info
+  const assethubCurrency = getCryptoCurrencyById("assethub_polkadot");
+  const assethubConfig = coinConfig.getCoinConfig(assethubCurrency);
+
+  const shouldMigrate = currency.id === "polkadot" && assethubConfig.hasBeenMigrated;
+  const currencyToUse = shouldMigrate ? assethubCurrency : currency;
+
   const {
     blockHeight,
     balance,
@@ -23,27 +31,27 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
     unlockings,
     nominations,
     numSlashingSpans,
-  } = await polkadotAPI.getAccount(address, currency);
+  } = await polkadotAPI.getAccount(address, currencyToUse);
 
-  // Retrieve operations associated
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
-    currencyId: currency.id,
+    currencyId: currencyToUse.id,
     xpubOrAddress: address,
     derivationMode,
   });
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newOperations = await polkadotAPI.getOperations(accountId, address, currency, startAt);
+  const newOperations = await polkadotAPI.getOperations(accountId, address, currencyToUse, startAt);
   const operations = mergeOps(oldOperations, newOperations);
 
   return {
     id: accountId,
     balance,
+    currency: currencyToUse,
     spendableBalance,
-    operations,
-    operationsCount: operations.length,
+    operations: shouldMigrate ? [] : operations,
+    operationsCount: shouldMigrate ? 0 : operations.length,
     blockHeight,
     polkadotResources: {
       nonce,

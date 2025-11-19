@@ -91,7 +91,8 @@ export default class ReceivePage {
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkId: string): Promise<void> {
-    if (await IsIdVisible(this.networkBasedStep2HeaderTitleId)) {
+    const id = this.networkBasedStep2HeaderTitleId;
+    if (await IsIdVisible(id)) {
       await this.selectNetwork(networkId);
     }
   }

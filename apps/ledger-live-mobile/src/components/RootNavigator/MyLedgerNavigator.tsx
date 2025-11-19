@@ -78,7 +78,7 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
       icon = <Icons.Flex size="M" color={color} />;
       break;
     case DeviceModelId.apex:
-      icon = <Icons.Flex size="M" color={color} />;
+      icon = <Icons.Apex size="M" color={color} />;
       break;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:

@@ -110,11 +110,6 @@ export async function runNavigateToBuyFromMarketPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-        featureFlags: {
-          llmMarketQuickActions: {
-            enabled: true,
-          },
-        },
       });
     });
 

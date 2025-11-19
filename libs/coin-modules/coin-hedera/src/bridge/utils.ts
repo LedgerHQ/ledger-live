@@ -1,16 +1,5 @@
 import BigNumber from "bignumber.js";
-import murmurhash from "imurmurhash";
-import invariant from "invariant";
-import { AccountId } from "@hashgraph/sdk";
-import { InvalidAddress } from "@ledgerhq/errors";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
-import {
-  findCryptoCurrencyById,
-  findTokenByAddressInCurrency,
-  getFiatCurrencyByTicker,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -19,63 +8,14 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import type { HederaOperationExtra, Transaction } from "../types";
-import { getAccount } from "../api/mirror";
-import { getHederaClient } from "../api/network";
-import type { HederaMirrorToken } from "../api/types";
-import { HederaRecipientInvalidChecksum } from "../errors";
-import { isTokenAssociateTransaction, isValidExtra } from "../logic";
-import { BASE_USD_FEE_BY_OPERATION_TYPE, HEDERA_OPERATION_TYPES } from "../constants";
-
-const ESTIMATED_FEE_SAFETY_RATE = 2;
-
-// note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
-export const getCurrencyToUSDRate = makeLRUCache(
-  async (currency: Currency) => {
-    try {
-      const [rate] = await cvsApi.fetchLatest([
-        {
-          from: currency,
-          to: getFiatCurrencyByTicker("USD"),
-          startDate: new Date(),
-        },
-      ]);
-
-      invariant(rate, "no value returned from cvs api");
-
-      return new BigNumber(rate);
-    } catch {
-      return null;
-    }
-  },
-  currency => currency.ticker,
-  seconds(3),
-);
-
-export const getEstimatedFees = async (
-  account: Account,
-  operationType: HEDERA_OPERATION_TYPES,
-): Promise<BigNumber> => {
-  try {
-    const usdRate = await getCurrencyToUSDRate(account.currency);
-
-    if (usdRate) {
-      return new BigNumber(BASE_USD_FEE_BY_OPERATION_TYPE[operationType])
-        .dividedBy(new BigNumber(usdRate))
-        .integerValue(BigNumber.ROUND_CEIL)
-        .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
-    }
-    // eslint-disable-next-line no-empty
-  } catch {}
-
-  // as fees are based on a currency conversion, we stay
-  // on the safe side here and double the estimate for "max spendable"
-  return new BigNumber("150200").multipliedBy(ESTIMATED_FEE_SAFETY_RATE); // 0.001502 ℏ (as of 2023-03-14)
-};
+import { estimateFees } from "../logic/estimateFees";
+import { isTokenAssociateTransaction, isValidExtra } from "../logic/utils";
+import type { HederaOperationExtra, Transaction, HederaMirrorToken } from "../types";
 
 interface CalculateAmountResult {
   amount: BigNumber;
@@ -91,7 +31,7 @@ const calculateCoinAmount = async ({
   transaction: Transaction;
   operationType: HEDERA_OPERATION_TYPES;
 }): Promise<CalculateAmountResult> => {
-  const estimatedFees = await getEstimatedFees(account, operationType);
+  const estimatedFees = await estimateFees(account.currency, operationType);
   const amount = transaction.useAllAmount
     ? await estimateMaxSpendable({ account, transaction })
     : transaction.amount;
@@ -142,62 +82,30 @@ export const calculateAmount = ({
   return calculateCoinAmount({ account, transaction, operationType });
 };
 
-// NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
-export function base64ToUrlSafeBase64(data: string): string {
-  // Might be nice to use this alternative if .nvmrc changes to >= Node v14.18.0
-  // base64url encoding option isn't supported until then
-  // Buffer.from(data, "base64").toString("base64url");
-
-  return data.replace(/\//g, "_").replace(/\+/g, "-");
-}
-
-const simpleSyncHashMemoize: Record<string, string> = {};
-
-export const getSyncHash = (
-  currency: CryptoCurrency,
-  blacklistedTokenIds: string[] = [],
-): string => {
-  const tokens = listTokensForCryptoCurrency(currency);
-
-  const stringToHash =
-    currency.id +
-    tokens.map(token => token.id + token.contractAddress + token.name + token.ticker).join("") +
-    blacklistedTokenIds.join("");
-
-  if (!simpleSyncHashMemoize[stringToHash]) {
-    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
-  }
-
-  return simpleSyncHashMemoize[stringToHash];
-};
-
 export const getSubAccounts = async (
   accountId: string,
   lastTokenOperations: Operation[],
   mirrorTokens: HederaMirrorToken[],
 ): Promise<TokenAccount[]> => {
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const operationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
-    (acc, tokenOperation) => {
-      const { token } = decodeTokenAccountId(tokenOperation.accountId);
-      if (!token) return acc;
+  const operationsByToken = new Map<TokenCurrency, Operation[]>();
 
-      const isTokenListedInCAL = findTokenByAddressInCurrency(
-        token.contractAddress,
-        token.parentCurrency.id,
-      );
-      if (!isTokenListedInCAL) return acc;
+  for (const tokenOperation of lastTokenOperations) {
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
+    if (!token) continue;
 
-      if (!acc.has(token)) {
-        acc.set(token, []);
-      }
+    const isTokenListedInCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      token.contractAddress,
+      token.parentCurrency.id,
+    );
+    if (!isTokenListedInCAL) continue;
 
-      acc.get(token)?.push(tokenOperation);
+    if (!operationsByToken.has(token)) {
+      operationsByToken.set(token, []);
+    }
 
-      return acc;
-    },
-    new Map<TokenCurrency, Operation[]>(),
-  );
+    operationsByToken.get(token)?.push(tokenOperation);
+  }
 
   const subAccounts: TokenAccount[] = [];
 
@@ -234,7 +142,10 @@ export const getSubAccounts = async (
     const parentAccountId = accountId;
     const rawBalance = rawToken.balance;
     const balance = new BigNumber(rawBalance);
-    const token = findTokenByAddressInCurrency(rawToken.token_id, "hedera");
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      rawToken.token_id,
+      "hedera",
+    );
 
     if (!token) {
       continue;
@@ -265,14 +176,15 @@ export const getSubAccounts = async (
   return subAccounts;
 };
 
-type CoinOperationForOrphanChildOperation = Operation & Required<Pick<Operation, "subOperations">>;
+type CoinOperationForOrphanChildOperation = Operation<HederaOperationExtra> &
+  Required<Pick<Operation, "subOperations">>;
 
 // create NONE coin operation that will be a parent of an orphan child operation
-const makeCoinOperationForOrphanChildOperation = (
-  childOperation: Operation,
-): CoinOperationForOrphanChildOperation => {
+const makeCoinOperationForOrphanChildOperation = async (
+  childOperation: Operation<HederaOperationExtra>,
+): Promise<CoinOperationForOrphanChildOperation> => {
   const type = "NONE";
-  const { accountId } = decodeTokenAccountId(childOperation.accountId);
+  const { accountId } = await decodeTokenAccountId(childOperation.accountId);
   const id = encodeOperationId(accountId, childOperation.hash, type);
 
   return {
@@ -298,34 +210,16 @@ const makeCoinOperationForOrphanChildOperation = (
 // this util handles:
 // - linking sub operations with coin operations, e.g. token transfer with fee payment
 // - if possible, assigning `extra.associatedTokenId = mirrorToken.tokenId` based on operation's consensus timestamp
-export const prepareOperations = (
-  coinOperations: Operation[],
-  tokenOperations: Operation[],
-  mirrorTokens: HederaMirrorToken[],
-): Operation[] => {
+export const prepareOperations = async (
+  coinOperations: Operation<HederaOperationExtra>[],
+  tokenOperations: Operation<HederaOperationExtra>[],
+): Promise<Operation<HederaOperationExtra>[]> => {
   const preparedCoinOperations = coinOperations.map(op => ({ ...op }));
   const preparedTokenOperations = tokenOperations.map(op => ({ ...op }));
 
-  // loop through coin operations to:
-  // - enrich ASSOCIATE_TOKEN operations with extra.associatedTokenId
-  // - prepare a map of hash => operations
+  // loop through coin operations to prepare a map of hash => operations
   const coinOperationsByHash: Record<string, CoinOperationForOrphanChildOperation[]> = {};
   preparedCoinOperations.forEach(op => {
-    const extra = isValidExtra(op.extra) ? op.extra : null;
-
-    if (op.type === "ASSOCIATE_TOKEN" && extra?.consensusTimestamp) {
-      const relatedMirrorToken = mirrorTokens.find(t => {
-        return t.created_timestamp === extra.consensusTimestamp;
-      });
-
-      if (relatedMirrorToken) {
-        op.extra = {
-          ...extra,
-          associatedTokenId: relatedMirrorToken.token_id,
-        } satisfies HederaOperationExtra;
-      }
-    }
-
     if (!coinOperationsByHash[op.hash]) {
       coinOperationsByHash[op.hash] = [];
     }
@@ -336,13 +230,13 @@ export const prepareOperations = (
 
   // loop through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of preparedTokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token) continue;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
 
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOperationForOrphanChildOperation(tokenOperation);
+      const noneOperation = await makeCoinOperationForOrphanChildOperation(tokenOperation);
       mainOperations = [noneOperation];
       preparedCoinOperations.push(noneOperation);
     }
@@ -456,64 +350,3 @@ export function patchOperationWithExtra(
     nftOperations: (operation.nftOperations ?? []).map(op => ({ ...op, extra })),
   };
 }
-
-export const checkAccountTokenAssociationStatus = makeLRUCache(
-  async (address: string, tokenId: string) => {
-    const [parsingError, parsingResult] = safeParseAccountId(address);
-
-    if (parsingError) {
-      throw parsingError;
-    }
-
-    const addressWithoutChecksum = parsingResult.accountId;
-    const mirrorAccount = await getAccount(addressWithoutChecksum);
-
-    // auto association is enabled
-    if (mirrorAccount.max_automatic_token_associations === -1) {
-      return true;
-    }
-
-    const isTokenAssociated = mirrorAccount.balance.tokens.some(token => {
-      return token.token_id === tokenId;
-    });
-
-    return isTokenAssociated;
-  },
-  (accountId, tokenId) => `${accountId}-${tokenId}`,
-  seconds(30),
-);
-
-export const safeParseAccountId = (
-  address: string,
-): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
-  const currency = findCryptoCurrencyById("hedera");
-  const currencyName = currency?.name ?? "Hedera";
-
-  try {
-    const accountId = AccountId.fromString(address);
-
-    // verify checksum if present
-    // FIXME: migrate to EntityIdHelper methods once SDK is upgraded:
-    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L197
-    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L446
-    const checksum: string | null = address.split("-")[1] ?? null;
-    if (checksum) {
-      const client = getHederaClient();
-      const recipientWithChecksum = accountId.toStringWithChecksum(client);
-      const expectedChecksum = recipientWithChecksum.split("-")[1];
-
-      if (checksum !== expectedChecksum) {
-        return [new HederaRecipientInvalidChecksum(), null];
-      }
-    }
-
-    const result = {
-      accountId: accountId.toString(),
-      checksum,
-    };
-
-    return [null, result];
-  } catch (err) {
-    return [new InvalidAddress("", { currencyName }), null];
-  }
-};

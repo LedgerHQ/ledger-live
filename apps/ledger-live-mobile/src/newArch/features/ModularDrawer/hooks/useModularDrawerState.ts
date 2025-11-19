@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
-
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
@@ -11,6 +9,7 @@ import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import type { ModularDrawerProps } from "../ModularDrawer";
 
 type ModularDrawerStateProps = {
   assetsSorted?: AssetData[];
@@ -18,7 +17,7 @@ type ModularDrawerStateProps = {
   currencyIds: string[];
   isDrawerOpen?: boolean;
   onClose?: () => void;
-  onAccountSelected?: (account: AccountLike) => void;
+  onAccountSelected: ModularDrawerProps["onAccountSelected"];
   hasSearchedValue?: boolean;
 };
 
@@ -97,7 +96,8 @@ export function useModularDrawerState({
           selected,
           singleNetwork,
         );
-        proceedToNextStep(resolvedCurrency ?? selected, singleNetwork);
+        const currencyToUse = resolvedCurrency ?? selected;
+        proceedToNextStep(currencyToUse, singleNetwork);
       } else if (enableAccountSelection) {
         dispatch(setStep(ModularDrawerStep.Account));
       } else {
@@ -124,7 +124,9 @@ export function useModularDrawerState({
         asset,
         selectedNetwork,
       );
-      if (correspondingCurrency) proceedToNextStep(correspondingCurrency, selectedNetwork);
+      if (correspondingCurrency) {
+        proceedToNextStep(correspondingCurrency, selectedNetwork);
+      }
     },
     [asset, assetsSorted, proceedToNextStep, isAcceptedCurrency],
   );

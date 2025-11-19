@@ -136,19 +136,17 @@ export const getSubAccounts = async (
   const { currency } = infos;
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const operationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
-    (acc, operation) => {
-      const { token } = decodeTokenAccountId(operation.accountId);
-      if (!token) return acc; // TODO: do we need to check blacklistedTokenIds
+  const operationsByToken = new Map<TokenCurrency, Operation[]>();
 
-      if (!acc.has(token)) {
-        acc.set(token, []);
-      }
-      acc.get(token)?.push(operation);
-      return acc;
-    },
-    new Map<TokenCurrency, Operation[]>(),
-  );
+  for (const operation of lastTokenOperations) {
+    const { token } = await decodeTokenAccountId(operation.accountId);
+    if (!token) continue; // TODO: do we need to check blacklistedTokenIds
+
+    if (!operationsByToken.has(token)) {
+      operationsByToken.set(token, []);
+    }
+    operationsByToken.get(token)?.push(operation);
+  }
 
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<TokenAccount>[] = [];
@@ -190,7 +188,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     Operation[],
     Operation[],
     Operation[],
-  ] = txsToOps(info, accountId, transactions);
+  ] = await txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);

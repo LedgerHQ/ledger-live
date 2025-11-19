@@ -1,11 +1,11 @@
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
 import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";
 
 const getSwapOperationMap =
   (account: AccountLike, accounts: AccountLike[]) =>
-  (swapOperation: SwapOperation): MappedSwapOperation | null | undefined => {
+  async (swapOperation: SwapOperation): Promise<MappedSwapOperation | null | undefined> => {
     const {
       provider,
       swapId,
@@ -34,7 +34,7 @@ const getSwapOperationMap =
         toExists = true;
       }
       if (toAccount && tokenId) {
-        const token = findTokenById(tokenId);
+        const token = await getCryptoAssetsStore().findTokenById(tokenId);
 
         if (token && toAccount.type === "Account") {
           toParentAccount = toAccount;
@@ -74,7 +74,7 @@ function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
-const getCompleteSwapHistory = (accounts: AccountLike[]): SwapHistorySection[] => {
+const getCompleteSwapHistory = async (accounts: AccountLike[]): Promise<SwapHistorySection[]> => {
   const swaps: MappedSwapOperation[] = [];
 
   for (const account of accounts) {
@@ -83,7 +83,7 @@ const getCompleteSwapHistory = (accounts: AccountLike[]): SwapHistorySection[] =
     const mapFn = getSwapOperationMap(account, accounts);
 
     if (swapHistory) {
-      const mappedSwapHistory = swapHistory.map(mapFn);
+      const mappedSwapHistory = await Promise.all(swapHistory.map(mapFn));
 
       if (mappedSwapHistory) {
         const filteredMappdSwapOperations = <MappedSwapOperation[]>(

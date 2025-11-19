@@ -37,6 +37,7 @@ export async function listOperations(
             height: tx.block.height,
             time: new Date(tx.block.time),
           },
+          failed: false,
         },
       });
     }

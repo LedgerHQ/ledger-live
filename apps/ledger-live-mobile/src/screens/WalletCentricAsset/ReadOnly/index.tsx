@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import VersionNumber from "react-native-version-number";
+import { Loading } from "~/components/Loading";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
@@ -42,8 +45,23 @@ const accounts: AccountLike[] = [];
 
 const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
-  const currency = route?.params?.currency;
   const { colors } = useTheme();
+  const { currency: preloadedCurrency, currencyId } = route?.params ?? {};
+
+  const { data: assetData, isLoading: isLoadingAssetData } = useAssetsData({
+    currencyIds: currencyId ? [currencyId] : undefined,
+    product: "llm",
+    version: VersionNumber.appVersion,
+    areCurrenciesFiltered: true,
+    skip: !!preloadedCurrency,
+  });
+
+  const currency = useMemo(() => {
+    if (preloadedCurrency) return preloadedCurrency;
+    if (!currencyId || !assetData) return undefined;
+
+    return assetData.cryptoOrTokenCurrencies?.[currencyId];
+  }, [preloadedCurrency, currencyId, assetData]);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
@@ -57,8 +75,9 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
   }, []);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  const data = useMemo(
-    () => [
+  const data = useMemo(() => {
+    if (!currency) return [];
+    return [
       <Flex mt={6} onLayout={onAssetCardLayout} key="AssetGraph">
         <AssetGraph
           currentPositionY={currentPositionY}
@@ -96,9 +115,15 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           />
         )}
       </SectionContainer>,
-    ],
-    [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano],
-  );
+    ];
+  }, [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano]);
+
+  if (!currency) {
+    if (currencyId && isLoadingAssetData) {
+      return <Loading />;
+    }
+    return null;
+  }
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>

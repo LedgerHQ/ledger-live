@@ -1,6 +1,7 @@
 // TODO rewrite the test
 
 import type { AccountRaw } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
@@ -88,9 +89,13 @@ const raws: AccountRaw[] = [
   },
 ];
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
-const accounts = raws.map(a => fromAccountRaw(a));
+setCryptoAssetsStore({
+  findTokenById: async (): Promise<TokenCurrency | undefined> => undefined,
+  findTokenByAddressInCurrency: async (): Promise<TokenCurrency | undefined> => undefined,
+  getTokensSyncHash: () => Promise.resolve("0"),
+} as CryptoAssetsStore);
 
+let accounts: Awaited<ReturnType<typeof fromAccountRaw>>[];
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
@@ -101,13 +106,17 @@ const walletState: WalletState = {
   nonImportedAccountInfos: [],
 };
 
-for (const raw of raws) {
-  const r = accountRawToAccountUserData(raw);
-  walletState.accountNames.set(r.id, r.name);
-  for (const id of r.starredIds) {
-    walletState.starredAccountIds.add(id);
+beforeAll(async () => {
+  accounts = await Promise.all(raws.map(a => fromAccountRaw(a)));
+
+  for (const raw of raws) {
+    const r = accountRawToAccountUserData(raw);
+    walletState.accountNames.set(r.id, r.name);
+    for (const id of r.starredIds) {
+      walletState.starredAccountIds.add(id);
+    }
   }
-}
+});
 
 const mockedCalculateCountervalue = <T>(_: unknown, balance: T): T => balance;
 

@@ -22,6 +22,8 @@ import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -75,6 +77,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
+  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
+    useOpenStakeDrawer({
+      sourceScreenName: "asset_action",
+      currency,
+    });
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
+    useOpenReceiveDrawer({
+      sourceScreenName: "asset",
+      currency,
+    });
+  const noah = useFeature("noah");
+
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
 
@@ -89,7 +103,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               modalOnDisabledClick: {
                 component: PtxToast,
               },
-              testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -180,6 +193,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         },
                       },
                     ] as const,
+                    customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
                   },
                 ]
               : []),
@@ -196,6 +210,14 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 },
               ] as const,
+              // We have two features getting enabled at the same time that change the entry point of receive funds
+              // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
+              // if modular drawer is enabled but noah is not then go there
+              // if neither is enabled we'll go through the old flow
+              customHandler:
+                isModularDrawerEnabledReceive && !noah?.enabled
+                  ? handleOpenReceiveDrawer
+                  : undefined,
             },
             {
               id: "send",
@@ -263,6 +285,11 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     stakeLabel,
     accountCurrency?.ticker,
     route,
+    isModularDrawerEnabledStake,
+    handleOpenStakeDrawer,
+    isModularDrawerEnabledReceive,
+    handleOpenReceiveDrawer,
+    noah,
   ]);
 
   return {

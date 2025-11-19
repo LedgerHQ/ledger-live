@@ -1,5 +1,5 @@
 import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
@@ -7,7 +7,7 @@ export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency
     asset.type !== "native" && "assetReference" in asset && "assetOwner" in asset
       ? `${asset.assetReference}:${asset.assetOwner}`
       : "";
-  return findTokenById(`stellar/asset/${assetId}`);
+  return await getCryptoAssetsStore().findTokenById(`stellar/asset/${assetId}`);
 }
 
 export function getAssetFromToken(token: TokenCurrency): AssetInfo {

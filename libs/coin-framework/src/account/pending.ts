@@ -39,9 +39,11 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
  * @returns A new array with `op` prepended and any conflicting op removed
  */
 const appendPendingOp = (ops: Operation[], op: Operation) => {
-  const filtered: Operation[] = ops.filter(
-    o => o.transactionSequenceNumber !== op.transactionSequenceNumber,
-  );
+  const filtered: Operation[] = ops.filter(o => {
+    const a = o.transactionSequenceNumber;
+    const b = op.transactionSequenceNumber;
+    return a && b ? !a.eq(b) : a !== b;
+  });
   filtered.unshift(op);
   return filtered;
 };

@@ -4,7 +4,11 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ModularDrawerNavigatorStackParamList } from "../../../components/RootNavigator/types/ModularDrawerNavigator";
-import { ModularDrawerDeepLinkHandler } from "./screens/ModularDrawerDeepLinkHandler";
+import {
+  ModularDrawerDeepLinkHandler,
+  ReceiveDeepLinkHandler,
+  AddAccountDeepLinkHandler,
+} from "./screens/ModularDrawerDeepLinkHandler";
 
 const Stack = createStackNavigator<ModularDrawerNavigatorStackParamList>();
 
@@ -17,6 +21,20 @@ export default function ModularDrawerNavigator() {
       <Stack.Screen
         name={ScreenName.ModularDrawerDeepLinkHandler}
         component={ModularDrawerDeepLinkHandler}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.ReceiveDeepLinkHandler}
+        component={ReceiveDeepLinkHandler}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AddAccountDeepLinkHandler}
+        component={AddAccountDeepLinkHandler}
         options={{
           headerShown: false,
         }}

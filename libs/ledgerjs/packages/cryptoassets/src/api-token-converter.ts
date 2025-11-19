@@ -1,159 +1,144 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  convertERC20,
-  convertSplTokens,
-  convertJettonToken,
-  convertAlgorandASATokens,
-  convertVechainToken,
-  convertTRONTokens,
-  convertMultiversXESDTTokens,
-  convertCardanoNativeTokens,
-  convertStellarTokens,
-  convertSuiTokens,
-  convertAptCoinTokens,
-  convertAptFaTokens,
-} from "./legacy/legacy-utils";
-import {
-  AlgorandASAToken,
-  CardanoNativeToken,
-  ERC20Token,
-  MultiversXESDTToken,
-  StellarToken,
-  TRC10Token,
-  TRC20Token,
-} from "./types";
-import type { AptosToken } from "./data/apt_coin";
-import type { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
-import type { SuiToken } from "./data/sui";
-import type { Vip180Token } from "./data/vip180";
-import type { TonJettonToken } from "./data/ton-jetton";
-import type { SPLToken } from "./data/spl";
+import { findCryptoCurrencyById } from "./currencies";
+import type { TokenUnit } from "./cal-client/entities";
 
 export interface ApiTokenData {
   id: string;
   contractAddress: string;
   name: string;
   ticker: string;
-  units: Array<{ code: string; name: string; magnitude: number }>;
+  units: TokenUnit[];
   standard: string;
   delisted?: boolean;
   disableCountervalue?: boolean;
   tokenIdentifier?: string;
+  ledgerSignature?: string;
 }
 
-export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefined {
-  const { standard, id, contractAddress, name, ticker, units, delisted = false } = apiToken;
+/**
+ * Transforms Ledger Live token ID to backend API format for querying
+ *
+ * This handles cases where LL uses different ID conventions than backend APIs.
+ * Applied BEFORE querying the API to ensure the request uses the correct format:
+ *
+ * - MultiversX: multiversx/esdt/* → elrond/esdt/* (API uses old name) [LIVE-22557]
+ * - Stellar: UPPERCASE → lowercase (API uses lowercase) [LIVE-22558]
+ *
+ * @param legacyId - Token ID in Ledger Live format
+ * @returns Token ID in backend API format
+ */
+export function legacyIdToApiId(legacyId: string): string {
+  let apiId = legacyId;
 
-  const magnitude = units[0]?.magnitude || 0;
-
-  switch (standard) {
-    case "erc20":
-    case "bep20": {
-      const parentCurrencyId = id.split("/")[0];
-      const tokenIdentifier = id.split("/")[2] || contractAddress;
-      const erc20Data: ERC20Token = [
-        parentCurrencyId,
-        tokenIdentifier,
-        ticker,
-        magnitude,
-        name,
-        "",
-        contractAddress,
-        false,
-        delisted,
-      ];
-      return convertERC20(erc20Data);
-    }
-    case "spl": {
-      const parentCurrencyId = id.split("/")[0];
-      const splData: SPLToken = [id, parentCurrencyId, name, ticker, contractAddress, magnitude];
-      return convertSplTokens(splData);
-    }
-    case "jetton": {
-      const jettonData: TonJettonToken = [contractAddress, name, ticker, magnitude, delisted];
-      return convertJettonToken(jettonData);
-    }
-    case "asa": {
-      const tokenId = id.split("/")[2] || contractAddress;
-      const asaData: AlgorandASAToken = [tokenId, ticker, name, contractAddress, magnitude];
-      return convertAlgorandASATokens(asaData);
-    }
-    case "esdt": {
-      const tokenIdentifier = id.split("/")[2] || contractAddress;
-      const esdtData: MultiversXESDTToken = [ticker, tokenIdentifier, magnitude, "", name];
-      return convertMultiversXESDTTokens(esdtData);
-    }
-    case "trc10": {
-      const tokenId = parseInt(id.split("/")[2] || contractAddress);
-      const trc10Data: TRC10Token = [
-        tokenId,
-        ticker,
-        name,
-        contractAddress,
-        magnitude,
-        delisted,
-        "",
-      ];
-      return convertTRONTokens("trc10")(trc10Data);
-    }
-    case "trc20": {
-      const tokenId = id.split("/")[2] || contractAddress;
-      const trc20Data: TRC20Token = [
-        tokenId,
-        ticker,
-        name,
-        contractAddress,
-        magnitude,
-        delisted,
-        "",
-      ];
-      return convertTRONTokens("trc20")(trc20Data);
-    }
-    case "vip180": {
-      const tokenIdentifier = id.split("/")[2] || contractAddress;
-      const vip180Data: Vip180Token = [tokenIdentifier, ticker, name, contractAddress, magnitude];
-      return convertVechainToken(vip180Data);
-    }
-    case "native": {
-      const parentCurrencyId = id.split("/")[0];
-      if (parentCurrencyId !== "cardano") return undefined;
-
-      const tokenIdentifier = id.split("/")[2] || contractAddress;
-      const parts = tokenIdentifier.split(".");
-      const [policyId, assetName = ""] = parts;
-
-      const cardanoData: CardanoNativeToken = [
-        "cardano",
-        policyId,
-        assetName,
-        name,
-        ticker,
-        magnitude,
-        delisted,
-      ];
-      return convertCardanoNativeTokens(cardanoData);
-    }
-    case "stellar": {
-      const parts = contractAddress.split(":");
-      const assetCode = parts[0] || ticker;
-      const assetIssuer = parts[1] || contractAddress;
-
-      const stellarData: StellarToken = [assetCode, assetIssuer, "stellar", name, magnitude];
-      return convertStellarTokens(stellarData);
-    }
-    case "coin": {
-      const aptCoinData: AptosToken = [id, ticker, name, contractAddress, magnitude, delisted];
-      return convertAptCoinTokens(aptCoinData);
-    }
-    case "fungible_asset": {
-      const aptFaData: AptosFAToken = [id, ticker, name, contractAddress, magnitude, delisted];
-      return convertAptFaTokens(aptFaData);
-    }
-    case "sui": {
-      const suiData: SuiToken = [id, name, ticker, contractAddress, magnitude, ""];
-      return convertSuiTokens(suiData);
-    }
-    default:
-      return undefined;
+  // LIVE-22557: MultiversX - API uses old "elrond" name
+  if (apiId.startsWith("multiversx/esdt/")) {
+    apiId = apiId.replace("multiversx/esdt/", "elrond/esdt/");
   }
+
+  // LIVE-22558: Stellar - API uses all lowercase (including the address part)
+  if (apiId.startsWith("stellar/asset/")) {
+    apiId = apiId.toLowerCase();
+  }
+
+  return apiId;
+}
+
+/**
+ * Converts API token data to Ledger Live TokenCurrency format
+ *
+ * This function applies client-side transformations to reconcile differences between
+ * backend APIs (CAL/DaDa) and Ledger Live's expected token format:
+ *
+ * - MultiversX: elrond/esdt/* → multiversx/esdt/* [LIVE-22557]
+ * - Stellar: Normalizes casing to stellar/asset/UPPERCASE_ADDRESS and tokenType asset → stellar [LIVE-22558]
+ * - Cardano: Reconstructs contractAddress from policyId + tokenIdentifier [LIVE-22559]
+ * - Sui: Transforms tokenType from "coin" to "sui" [LIVE-22560]
+ * - TON Jetton: Removes name prefix from ID (ton/jetton/name_address → ton/jetton/address) [LIVE-22561]
+ *
+ * @param apiToken - Token data from backend API
+ * @returns TokenCurrency object in Ledger Live format, or undefined if parent currency not found
+ */
+export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefined {
+  const {
+    standard,
+    id,
+    contractAddress,
+    name,
+    ticker,
+    units,
+    delisted = false,
+    tokenIdentifier,
+    ledgerSignature,
+  } = apiToken;
+
+  // Apply client-side patches to reconcile CAL format with LL format
+  let patchedId = id;
+  let patchedContractAddress = contractAddress;
+  let patchedStandard = standard;
+
+  // Get parent currency from the ORIGINAL ID (before transformation)
+  // This is important for currencies that changed names (elrond -> multiversx)
+  const parentCurrencyId = id.split("/")[0];
+  const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
+
+  if (!parentCurrency) {
+    return undefined;
+  }
+
+  // LIVE-22557: MultiversX - Transform elrond/* to multiversx/*
+  if (patchedId.startsWith("elrond/esdt/")) {
+    patchedId = patchedId.replace("elrond/esdt/", "multiversx/esdt/");
+  }
+
+  // LIVE-22558: Stellar - Transform to LL mixed-case format: stellar/asset/ + UPPERCASE_REST
+  // Also fix tokenType: API returns "asset", LL expects "stellar"
+  const stellarPrefix = "stellar/asset/";
+  if (patchedId.toLowerCase().startsWith(stellarPrefix)) {
+    const rest = patchedId.substring(stellarPrefix.length);
+    patchedId = stellarPrefix + rest.toUpperCase();
+    patchedStandard = patchedStandard === "asset" ? "stellar" : patchedStandard;
+  }
+
+  // LIVE-22559: Cardano - Reconstruct full assetId (policyId + assetName)
+  if (standard === "native" && tokenIdentifier) {
+    patchedContractAddress = contractAddress + tokenIdentifier;
+  }
+
+  // LIVE-22560: Sui - Transform "coin" standard to "sui" tokenType (LL format)
+  if (standard === "coin" && patchedId.startsWith("sui/")) {
+    patchedStandard = "sui";
+  }
+
+  // LIVE-22561: TON Jetton - Remove name prefix from ID (API: ton/jetton/name_address -> LL: ton/jetton/address)
+  if (patchedId.startsWith("ton/jetton/") && patchedId.indexOf("_") > 0) {
+    const parts = patchedId.split("_");
+    if (parts.length === 2) {
+      patchedId = "ton/jetton/" + parts[1];
+    }
+  }
+
+  // Construct TokenCurrency directly from API data
+  const tokenCurrency: TokenCurrency = {
+    type: "TokenCurrency",
+    id: patchedId,
+    contractAddress: patchedContractAddress,
+    parentCurrency,
+    tokenType: patchedStandard,
+    name,
+    ticker,
+    delisted,
+    disableCountervalue: !!parentCurrency.isTestnetFor || !!apiToken.disableCountervalue,
+    units: units.map(unit => ({
+      name: unit.name,
+      code: unit.code,
+      magnitude: unit.magnitude,
+    })),
+  };
+
+  // Add ledgerSignature if present
+  if (ledgerSignature) {
+    tokenCurrency.ledgerSignature = ledgerSignature;
+  }
+
+  return tokenCurrency;
 }

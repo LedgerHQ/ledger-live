@@ -34,6 +34,7 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import Config from "react-native-config";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -60,7 +61,7 @@ const AssetSelection = ({
   loadNext,
   assetsSorted,
 }: Readonly<AssetSelectionStepProps>) => {
-  const { isConnected } = useNetInfo();
+  const { isInternetReachable } = useNetInfo();
 
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -140,8 +141,13 @@ const AssetSelection = ({
   const renderContent = () => {
     if (isLoading) return <SkeletonList />;
 
-    if (hasError || !isConnected) {
-      return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
+    if (hasError || isInternetReachable === false) {
+      return (
+        <GenericError
+          onClick={refetch}
+          type={isInternetReachable === false ? "internet" : "backend"}
+        />
+      );
     }
 
     return (
@@ -162,7 +168,8 @@ const AssetSelection = ({
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
+        ListFooterComponent={loadNext ? <InfiniteLoader mock={!!Config.DETOX} size={20} /> : null}
+        testID="modular-drawer-select-crypto-scrollView"
       />
     );
   };

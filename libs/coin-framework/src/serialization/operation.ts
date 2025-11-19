@@ -53,7 +53,7 @@ export const toOperationRaw = (
   };
 
   if (transactionSequenceNumber !== undefined) {
-    copy.transactionSequenceNumber = transactionSequenceNumber;
+    copy.transactionSequenceNumber = transactionSequenceNumber.toString();
   }
 
   if (hasFailed !== undefined) {
@@ -168,7 +168,10 @@ export const fromOperationRaw = (
   };
 
   if (transactionSequenceNumber !== undefined) {
-    res.transactionSequenceNumber = transactionSequenceNumber;
+    const transactionSequenceNumberBN = new BigNumber(transactionSequenceNumber);
+    if (!transactionSequenceNumberBN.isNaN()) {
+      res.transactionSequenceNumber = transactionSequenceNumberBN;
+    }
   }
 
   if (hasFailed !== undefined) {

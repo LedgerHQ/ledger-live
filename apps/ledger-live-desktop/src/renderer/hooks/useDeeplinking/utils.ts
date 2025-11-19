@@ -35,6 +35,7 @@ type DeepLinkingEvent = {
   deeplinkChannel?: string;
   deeplinkMedium?: string;
   deeplinkCampaign?: string;
+  deeplinkLocation?: string;
   url?: string;
 };
 
@@ -42,8 +43,16 @@ const TRACKING_EVENT = "deeplink_clicked";
 
 export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
   if (event.ajsPropSource) {
-    const { ajsPropSource, ajsPropCampaign, url, currency, installApp, appName, ajsPropTrackData } =
-      event;
+    const {
+      ajsPropSource,
+      ajsPropCampaign,
+      url,
+      currency,
+      installApp,
+      appName,
+      ajsPropTrackData,
+      deeplinkLocation,
+    } = event;
     track(TRACKING_EVENT, {
       deeplinkSource: ajsPropSource,
       deeplinkCampaign: ajsPropCampaign,
@@ -51,6 +60,7 @@ export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
       currency,
       installApp,
       appName,
+      deeplinkLocation,
       ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
     });
   } else {
@@ -61,6 +71,7 @@ export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
       deeplinkChannel,
       deeplinkMedium,
       deeplinkCampaign,
+      deeplinkLocation,
     } = event;
     track(TRACKING_EVENT, {
       deeplinkSource,
@@ -69,6 +80,7 @@ export const trackDeeplinkingEvent = (event: DeepLinkingEvent) => {
       deeplinkChannel,
       deeplinkMedium,
       deeplinkCampaign,
+      deeplinkLocation,
     });
   }
 };

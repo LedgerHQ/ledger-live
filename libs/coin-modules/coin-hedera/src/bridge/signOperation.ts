@@ -1,10 +1,19 @@
 import { Observable } from "rxjs";
-import { PublicKey } from "@hashgraph/sdk";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { buildUnsignedTransaction } from "../api/network";
+import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { Transaction, HederaSigner } from "../types";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import {
+  serializeSignature,
+  serializeTransaction,
+  getHederaTransactionBodyBytes,
+  isTokenAssociateTransaction,
+} from "../logic/utils";
+import type { Transaction, HederaSigner } from "../types";
 
 export const buildSignOperation =
   (
@@ -18,18 +27,63 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const hederaTransaction = await buildUnsignedTransaction({
-            account,
-            transaction,
-          });
+          let type: Transaction["mode"];
+          let asset: AssetInfo;
+          const accountAddress = account.freshAddress;
+          const accountPublicKey = account.seedIdentifier;
+          const subAccount = findSubAccountById(account, transaction.subAccountId || "");
+          const isTokenTransaction = isTokenAccount(subAccount);
 
-          const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
+          if (isTokenAssociateTransaction(transaction)) {
+            type = HEDERA_TRANSACTION_MODES.TokenAssociate;
+            asset = {
+              type: transaction.properties.token.tokenType,
+              assetReference: transaction.properties.token.contractAddress,
+            };
+          } else if (isTokenTransaction) {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: subAccount.token.tokenType,
+              assetReference: subAccount.token.contractAddress,
+              assetOwner: accountAddress,
+            };
+          } else {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: "native",
+            };
+          }
 
-          const res = await signerContext(deviceId, async signer => {
-            await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
-              return await signer.signTransaction(bodyBytes);
-            });
-            return hederaTransaction.toBytes();
+          const customFees: FeeEstimation | undefined = transaction.maxFee
+            ? { value: BigInt(transaction.maxFee.toString()) }
+            : undefined;
+
+          const signedTx = await signerContext(deviceId, async signer => {
+            const { tx } = await craftTransaction(
+              {
+                intentType: "transaction",
+                type,
+                asset,
+                amount: BigInt(transaction.amount.toString()),
+                sender: accountAddress,
+                recipient: transaction.recipient,
+                memo: {
+                  kind: "text",
+                  type: "string",
+                  value: transaction.memo ?? "",
+                },
+              },
+              customFees,
+            );
+
+            const txBodyBytes = getHederaTransactionBodyBytes(tx);
+            const signatureBytes = await signer.signTransaction(txBodyBytes);
+
+            return combine(
+              serializeTransaction(tx),
+              serializeSignature(signatureBytes),
+              accountPublicKey,
+            );
           });
 
           o.next({
@@ -45,8 +99,7 @@ export const buildSignOperation =
             type: "signed",
             signedOperation: {
               operation,
-              // NOTE: this needs to match the inverse operation in js-broadcast
-              signature: Buffer.from(res).toString("base64"),
+              signature: signedTx,
             },
           });
 

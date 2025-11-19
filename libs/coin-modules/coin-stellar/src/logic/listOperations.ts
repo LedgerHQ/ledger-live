@@ -47,9 +47,10 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
       },
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
+      failed: operation.hasFailed ?? false,
     },
     details: {
-      sequence: operation.transactionSequenceNumber,
+      sequence: operation.transactionSequenceNumber?.toString(),
       ledgerOpType: operation.extra.ledgerOpType,
       assetAmount: operation.extra.assetAmount
         ? operation.extra.assetAmount

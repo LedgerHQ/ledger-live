@@ -1,5 +1,5 @@
 import { Page, expect, ElectronApplication } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 
 export abstract class PageHolder {
   constructor(
@@ -25,6 +25,24 @@ export abstract class Component extends PageHolder {
       )
       .first();
   protected loadingSpinner = this.page.getByTestId("loading-spinner");
+  private getAppAndVersionError = this.page.locator("#error-GetAppAndVersionUnsupportedFormat");
+  private retryButton = this.page.getByRole("button", { name: "Retry" });
+
+  recoverFromGetAppAndVersionError(interval: number = 200) {
+    const handle = setInterval(async () => {
+      try {
+        if (await this.getAppAndVersionError.isVisible({ timeout: 50 }).catch(() => false)) {
+          if (await this.retryButton.isVisible({ timeout: 50 }).catch(() => false)) {
+            await this.retryButton.click();
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }, interval);
+
+    return () => clearInterval(handle);
+  }
 
   @step("Waiting for app to fully load")
   async waitForPageDomContentLoadedState() {

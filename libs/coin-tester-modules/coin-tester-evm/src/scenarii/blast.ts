@@ -2,7 +2,7 @@ import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -39,7 +39,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
     },
   };
 
-  const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+  const MIM_ON_BLAST = tokensById[TOKEN_ID];
   if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
   const scenarioSendMIMTransaction: BlastScenarioTransaction = {
     name: "Send 80 MIM",
@@ -110,7 +110,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, blast);
 
-    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = tokensById[TOKEN_ID];
     if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     await callMyDealer({
       provider,
@@ -132,7 +132,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     await indexBlocks();
   },
   beforeAll: account => {
-    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = tokensById[TOKEN_ID];
     if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
@@ -141,7 +141,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     );
   },
   afterAll: account => {
-    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = tokensById[TOKEN_ID];
     if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(

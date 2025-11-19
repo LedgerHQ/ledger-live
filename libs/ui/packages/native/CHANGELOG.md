@@ -1,5 +1,63 @@
 # @ledgerhq/native-ui
 
+## 0.49.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12351](https://github.com/LedgerHQ/ledger-live/pull/12351) [`396766d`](https://github.com/LedgerHQ/ledger-live/commit/396766dcc6ec5eef2c6502b0935ae21bc5873bf0) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - fix: styles of AnimatedNotchedLabel that cause GenericMemoTagInput to have a truncated input label
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0
+  - @ledgerhq/ui-shared@0.5.0
+  - @ledgerhq/icons-ui@0.16.0
+
+## 0.49.0-next.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12351](https://github.com/LedgerHQ/ledger-live/pull/12351) [`396766d`](https://github.com/LedgerHQ/ledger-live/commit/396766dcc6ec5eef2c6502b0935ae21bc5873bf0) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - fix: styles of AnimatedNotchedLabel that cause GenericMemoTagInput to have a truncated input label
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0-next.0
+  - @ledgerhq/ui-shared@0.5.0-next.0
+  - @ledgerhq/icons-ui@0.16.0-next.0
+
+## 0.48.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12065](https://github.com/LedgerHQ/ledger-live/pull/12065) [`2a894ed`](https://github.com/LedgerHQ/ledger-live/commit/2a894ed2ba5300758cf1647921b00e1be0d469a7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - : replace defaultProps with default parameters
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0
+  - @ledgerhq/icons-ui@0.15.0
+
+## 0.48.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12065](https://github.com/LedgerHQ/ledger-live/pull/12065) [`2a894ed`](https://github.com/LedgerHQ/ledger-live/commit/2a894ed2ba5300758cf1647921b00e1be0d469a7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - : replace defaultProps with default parameters
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0-next.0
+  - @ledgerhq/icons-ui@0.15.0-next.0
+
 ## 0.47.0
 
 ### Minor Changes
