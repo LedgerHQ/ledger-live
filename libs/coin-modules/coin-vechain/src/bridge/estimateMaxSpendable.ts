@@ -3,8 +3,10 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { calculateGasFees } from "../common-logic";
 import type { Transaction } from "../types";
 
+const PATTERN_ADDRESS_IN_TOKEN_ACCOUNT_ID = /:(0x\w+):/;
+
 const getAddressFromTokenAccountId = (tokenAccountId: string): string | undefined =>
-  tokenAccountId.match(/:(0x\w+):/)?.[1];
+  PATTERN_ADDRESS_IN_TOKEN_ACCOUNT_ID.exec(tokenAccountId)?.[1];
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
