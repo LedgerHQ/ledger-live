@@ -6,4 +6,7 @@ import { LLDCoinFamily } from "../types";
 export type CantonFamily = LLDCoinFamily<Account, Transaction, TransactionStatus, Operation> & {
   StepReceiveFunds: React.ComponentType<ReceiveStepProps>;
   TooManyUtxosModal: React.ComponentType<{ account: Account }>;
+  PendingTransferProposals: React.ComponentType<{
+    account: Account;
+  }>;
 };
