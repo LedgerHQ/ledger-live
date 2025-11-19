@@ -14,9 +14,6 @@ describe("DeepLinks Tests", () => {
         noah: {
           enabled: false,
         },
-        llmModularDrawer: {
-          enabled: true,
-        },
       },
     });
     await app.portfolio.waitForPortfolioPageToLoad();

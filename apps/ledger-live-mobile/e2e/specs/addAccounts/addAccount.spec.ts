@@ -14,9 +14,6 @@ describe("Add account from modal", () => {
         noah: {
           enabled: false,
         },
-        llmModularDrawer: {
-          enabled: true,
-        },
       },
       knownDevices: [knownDevice],
     });
