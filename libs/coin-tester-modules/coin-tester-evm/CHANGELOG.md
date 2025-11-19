@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.11.0-next.1
+
+### Minor Changes
+
+- [#12884](https://github.com/LedgerHQ/ledger-live/pull/12884) [`20b83c7`](https://github.com/LedgerHQ/ledger-live/commit/20b83c71a0a73c506a85ce4c93483ae6878e2bde) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tester-evm): update Yoot token ID
+
 ## 1.11.0-next.0
 
 ### Minor Changes
