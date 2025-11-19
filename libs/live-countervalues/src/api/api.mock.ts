@@ -1,10 +1,8 @@
 import type { CounterValuesAPI, RateGranularity } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
-import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
+import { getBTCValues, BTCtoUSD, referenceSnapshotDate, TICKER_TO_ID_AND_VALUE } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -76,17 +74,7 @@ const increment = {
 };
 
 async function getIds(): Promise<string[]> {
-  const ids: string[] = [];
-  for (const k in getBTCValues()) {
-    const c =
-      findCryptoCurrencyByTicker(k) ||
-      findFiatCurrencyByTicker(k) ||
-      (await getCryptoAssetsStore().findTokenById(k));
-    if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
-      ids.push(c.id);
-    }
-  }
-  return ids;
+  return Object.values(TICKER_TO_ID_AND_VALUE).map(([id]) => id);
 }
 
 function getDates(granularity: RateGranularity, start: Date): Date[] {
