@@ -16,6 +16,7 @@ import type {
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "./onboard";
+import type { TransferProposal } from "../network/gateway";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
@@ -29,6 +30,18 @@ export interface CantonCurrencyBridge extends CurrencyBridge {
     creatableAccount: Account,
     partyId: string,
   ) => Observable<CantonAuthorizeProgress | CantonAuthorizeResult>;
+  transferInstruction: (
+    currency: CryptoCurrency,
+    deviceId: string,
+    account: Account,
+    partyId: string,
+    contractId: string,
+    type:
+      | "accept-transfer-instruction"
+      | "reject-transfer-instruction"
+      | "withdraw-transfer-instruction",
+    reason?: string,
+  ) => Promise<void>;
 }
 
 export type NetworkInfo = {
@@ -64,9 +77,11 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CantonResources = {
   instrumentUtxoCounts: Record<string, number>;
+  pendingTransferProposals: TransferProposal[];
 };
 export type CantonResourcesRaw = {
   instrumentUtxoCounts: Record<string, number>;
+  pendingTransferProposals: TransferProposal[];
 };
 
 export type CantonAccount = Account & {

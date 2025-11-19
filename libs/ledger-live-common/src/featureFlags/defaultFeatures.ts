@@ -700,6 +700,7 @@ export const DEFAULT_FEATURES: Features = {
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
   newSendFlow: DEFAULT_FEATURE,
+  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   lldSessionReplay: {
     ...DEFAULT_FEATURE,
     params: {

@@ -21,6 +21,7 @@ import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
+import { buildTransferInstruction } from "./acceptOffer";
 import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 
 export function createBridges(
@@ -39,6 +40,7 @@ export function createBridges(
 
   const onboardAccount = buildOnboardAccount(signerContext);
   const authorizePreapproval = buildAuthorizePreapproval(signerContext);
+  const transferInstruction = buildTransferInstruction(signerContext);
 
   const currencyBridge: CantonCurrencyBridge = {
     preload: () => Promise.resolve({}),
@@ -46,6 +48,7 @@ export function createBridges(
     scanAccounts,
     onboardAccount,
     authorizePreapproval,
+    transferInstruction,
   };
 
   const signOperation = buildSignOperation(signerContext);
