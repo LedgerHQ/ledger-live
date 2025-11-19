@@ -1152,7 +1152,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
-      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
+      "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
     },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
@@ -2328,7 +2328,7 @@
       "cancelCta" : "설정 취소",
       "notFoundEntity" : {
         "title" : "Ledger 정품 확인을 다시 시작합니다",
-        "description" : "먼저 \"나의 Ledger 공급자\" 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Wallet의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"내 Ledger 공급자\" 옆 토글 버튼을 끕니다.",
+        "description" : "먼저 \"My Ledger 서비스 제공업체\" 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Wallet의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 서비스 제공업체\" 옆 토글 버튼을 끕니다.",
         "settingsCta" : "설정으로 이동"
       }
     },
@@ -3292,7 +3292,7 @@
       "providerCTA" : "설정으로 이동",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
-          "title" : "실험 통합",
+          "title" : "실험적 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
         },
         "developerMode" : {
@@ -3300,7 +3300,7 @@
           "description" : "My Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
         },
         "managerProvider" : {
-          "title" : "내 Ledger 공급자",
+          "title" : "My Ledger 서비스 제공업체",
           "description" : "My Ledger에서 앱 공급자를 변경하면 Ledger 장치에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
         },
         "experimentalExplorers" : {
@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
     "loading" : "로딩...",
     "turnOnAndUnlockDevice" : "장치를 켜고 잠금을 해제하세요",
+    "powerOnDevice" : "{{deviceName}}의 전원을 켜고 잠금을 해제하세요",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "connectAnotherDevice" : "다른 Ledger 장치 연결하기",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -4458,6 +4459,7 @@
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
+      "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 확인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, 이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
@@ -4494,6 +4496,11 @@
     "bluetooth" : {
       "title" : "블루투스로 연결...",
       "label" : "자동으로 귀하의 Nano 장치 감지"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "내 Ledger 장치가 보이지 않나요?",
+      "scanSignersCta" : "장치 스캔하기",
+      "helpCenterCta" : "지원 받기"
     },
     "deviceNotFoundPairNewDevice" : "블루투스와 페어링",
     "headerDescription" : "{{productName}}가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요.",
@@ -6995,7 +7002,7 @@
       },
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험",
+        "experimental" : "실험적 기능",
         "debug" : "디버그"
       },
       "banner" : {
@@ -7042,7 +7049,7 @@
       "title" : "Live 앱 카탈로그",
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험",
+        "experimental" : "실험적 기능",
         "debug" : "디버그"
       },
       "banner" : {
