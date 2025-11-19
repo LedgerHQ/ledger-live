@@ -4549,7 +4549,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -7598,8 +7597,10 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": { "title": "Connect and unlock your device" },
-    "searchPlaceholder": "Search by name or address",
+    "connectYourDevice": {
+      "title": "Connect and unlock your device"
+    },
+    "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
@@ -7651,14 +7652,14 @@
     "stakeBanner": {
       "confirmFollowing": {
         "title": "Confirm Your Following",
-        "description1": "Your neuron's following needs to be confirmed in {{days}} days and {{hours}} hours",
-        "description2": "You are losing rewards, confirm neuron following to continue earning",
+        "description": "Your neuron's following needs to be confirmed in {{days}} days and {{hours}} hours",
+        "altDescription": "You are losing rewards, confirm neuron following to continue earning",
         "cta": "Confirm Following"
       },
       "syncNeurons": {
         "title": "Sync Your Staked ICP",
-        "description1": "Your staked ICP has last been synced {{days}} days and {{hours}} hours ago. If you want to see the latest details, we recommend you sync often.",
-        "description2": "We recommend syncing your neurons to see the latest details",
+        "description": "Your staked ICP has last been synced {{days}} days and {{hours}} hours ago. If you want to see the latest details, we recommend you sync often.",
+        "altDescription": "We recommend syncing your neurons to see the latest details",
         "cta": "Sync Neurons"
       },
       "lockNeurons": {
