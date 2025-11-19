@@ -626,7 +626,9 @@ const OperationD = (props: Props) => {
         />
       )}
       <OpDetailsSection>
-        <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
+        <OpDetailsTitle data-testid="operation-date-label">
+          {t("operationDetails.date")}
+        </OpDetailsTitle>
         <OpDetailsData data-testid="operation-date">{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />

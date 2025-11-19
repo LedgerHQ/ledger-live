@@ -74,8 +74,11 @@ for (const token of subAccounts) {
           await app.addAccount.addAccounts();
           await app.addAccount.done();
         }
-        await app.layout.goToPortfolio();
-        await app.portfolio.navigateToAsset(token.account.currency.name);
+        if (token.account === TokenAccount.SUI_USDC_1) {
+          await app.portfolio.navigateToAsset(token.account.currency.ticker);
+        } else {
+          await app.portfolio.navigateToAsset(token.account.currency.name);
+        }
         await app.account.navigateToToken(token.account);
         await app.account.expectLastOperationsVisibility();
         await app.account.expectTokenAccount(token.account);
