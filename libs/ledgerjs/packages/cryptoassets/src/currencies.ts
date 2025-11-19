@@ -3257,6 +3257,42 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "zec",
   },
+  zcash_dev: {
+    type: "CryptoCurrency",
+    id: "zcash_dev",
+    coinType: CoinType.ZCASH,
+    name: "Zcash Dev",
+    managerAppName: "Zcash",
+    ticker: "ZEC",
+    scheme: "zcash_dev",
+    color: "#3790ca",
+    family: "zcash",
+    blockAvgTime: 150,
+    bitcoinLikeInfo: {
+      P2PKH: 0x1cb8,
+      P2SH: 0x1cbd,
+      XPUBVersion: 0x0488b21e,
+    },
+    units: [
+      {
+        name: "zcash",
+        code: "ZEC",
+        magnitude: 8,
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://blockchair.com/zcash/transaction/$hash",
+        address: "https://blockchair.com/zcash/address/$address",
+      },
+    ],
+    explorerId: "zec",
+  },
   zclassic: {
     type: "CryptoCurrency",
     id: "zclassic",

@@ -62,6 +62,7 @@ setSupportedCurrencies([
   "tezos",
   "ethereum_classic",
   "zcash",
+  "zcash_dev",
   "decred",
   "digibyte",
   "algorand",

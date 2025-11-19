@@ -109,6 +109,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMonadTestnet: DEFAULT_FEATURE,
   currencySomnia: DEFAULT_FEATURE,
   currencyZeroGravity: DEFAULT_FEATURE,
+  currencyZcashDev: DEFAULT_FEATURE,
 };
 
 /**

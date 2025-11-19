@@ -33,6 +33,7 @@ setSupportedCurrencies([
   "tezos",
   "qtum",
   "zcash",
+  "zcash_dev",
   "bitcoin_gold",
   "stratis",
   "dogecoin",

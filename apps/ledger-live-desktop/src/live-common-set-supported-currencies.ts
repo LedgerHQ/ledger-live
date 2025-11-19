@@ -41,6 +41,7 @@ setSupportedCurrencies([
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ethereum_classic",
   "zcash",
+  "zcash_dev",
   "decred",
   "digibyte",
   "algorand",
