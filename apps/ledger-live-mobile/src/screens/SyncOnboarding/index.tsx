@@ -23,6 +23,8 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useSelector } from "react-redux";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -36,6 +38,7 @@ const DESYNC_TIMEOUT_MS = 20000;
  */
 export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
   const rootNavigation = useNavigation<RootNavigation>();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const { device } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
@@ -74,36 +77,40 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
-      rootNavigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.BaseOnboarding,
-            state: {
-              routes: [
-                {
-                  name: NavigatorName.Onboarding,
-                  state: {
-                    routes: [
-                      {
-                        name: ScreenName.OnboardingWelcome,
-                      },
-                      {
-                        name: ScreenName.OnboardingPostWelcomeSelection,
-                      },
-                      {
-                        name: ScreenName.OnboardingDeviceSelection,
-                      },
-                    ],
+      if (hasCompletedOnboarding) {
+        navigation.popToTop();
+      } else {
+        rootNavigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: NavigatorName.BaseOnboarding,
+              state: {
+                routes: [
+                  {
+                    name: NavigatorName.Onboarding,
+                    state: {
+                      routes: [
+                        {
+                          name: ScreenName.OnboardingWelcome,
+                        },
+                        {
+                          name: ScreenName.OnboardingPostWelcomeSelection,
+                        },
+                        {
+                          name: ScreenName.OnboardingDeviceSelection,
+                        },
+                      ],
+                    },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        ],
-      });
+          ],
+        });
+      }
     }
-  }, [currentStep, rootNavigation]);
+  }, [currentStep, rootNavigation, navigation, hasCompletedOnboarding]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
