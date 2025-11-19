@@ -878,16 +878,21 @@ function getSwapError(error: unknown) {
   if (typeof error === "object" && error !== null) {
     const err = error as any;
 
-    // Handle API error format: { error: { code, messageKey, message, params } }
-    const apiError = err.error;
+    // Handle Axios error format: error.response.data.error
+    const apiError = err.response?.data?.error || err.error;
     const errorMessage =
       apiError?.message || err.message || (err instanceof Error ? err.message : String(error));
     const messageKey = apiError?.messageKey || err.messageKey;
 
+    // Create a plain object with only serializable properties to avoid analytics issues
     // Preserve the original error structure for WebviewErrorDrawer to parse
-    // It checks error.swap.swap.error (line 77) and error.cause.response.data.error.messageKey (line 96)
-    swapError = {
-      ...err, // Preserve original structure (swap.swap.error, etc.)
+    // It checks error.cause.response.data.error.messageKey (line 96)
+    swapError = Object.assign(Object.create(null), {
+      message: err.message,
+      name: err.name,
+      code: err.code,
+      status: err.status,
+      swap: err.swap,
       cause: {
         message: errorMessage,
         swapCode: apiError?.code,
@@ -900,7 +905,10 @@ function getSwapError(error: unknown) {
           },
         },
       },
-    } as SwapLiveError;
+    }) as SwapLiveError;
+
+    // Add hasOwnProperty method to the plain object
+    Object.setPrototypeOf(swapError, Object.prototype);
   } else {
     swapError = {
       cause: {
