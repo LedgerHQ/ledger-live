@@ -10,6 +10,9 @@
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
+    "fee" : "수수료",
+    "stake" : "스테이킹",
+    "validator" : "검증인",
     "delete" : "삭제",
     "paste" : "붙여넣기",
     "yes" : "예",
@@ -1152,7 +1155,12 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
-      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
+      "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "유효하지 않은 제공 업체",
+      "description" : "\"My Ledger 서비스 제공 업체\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "openSettings" : "설정으로 이동"
     },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
@@ -1224,6 +1232,12 @@
     "AddressesSanctionedError" : {
       "title" : "사용자 보호 조치 실행 중",
       "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "crash" : {
@@ -2328,7 +2342,7 @@
       "cancelCta" : "설정 취소",
       "notFoundEntity" : {
         "title" : "Ledger 정품 확인을 다시 시작합니다",
-        "description" : "먼저 \"나의 Ledger 공급자\" 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Wallet의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"내 Ledger 공급자\" 옆 토글 버튼을 끕니다.",
+        "description" : "먼저 \"My Ledger 서비스 제공업체\" 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Wallet의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 서비스 제공업체\" 옆 토글 버튼을 끕니다.",
         "settingsCta" : "설정으로 이동"
       }
     },
@@ -3292,7 +3306,7 @@
       "providerCTA" : "설정으로 이동",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
-          "title" : "실험 통합",
+          "title" : "실험적 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
         },
         "developerMode" : {
@@ -3300,7 +3314,7 @@
           "description" : "My Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
         },
         "managerProvider" : {
-          "title" : "내 Ledger 공급자",
+          "title" : "My Ledger 서비스 제공업체",
           "description" : "My Ledger에서 앱 공급자를 변경하면 Ledger 장치에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
         },
         "experimentalExplorers" : {
@@ -3780,7 +3794,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-        "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다"
+        "description" : "Ledger Nano S™는 {{provider}} 사용을 지원하지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
+        "explore_compatible_devices" : "지원 장치 살펴보기",
+        "swapWithAnotherProvider" : "다른 업체로 스왑"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
@@ -4430,6 +4446,7 @@
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
     "loading" : "로딩...",
     "turnOnAndUnlockDevice" : "장치를 켜고 잠금을 해제하세요",
+    "powerOnDevice" : "{{deviceName}}의 전원을 켜고 잠금을 해제하세요",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "connectAnotherDevice" : "다른 Ledger 장치 연결하기",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -4458,6 +4475,7 @@
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
+      "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 확인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, 이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
@@ -4494,6 +4512,11 @@
     "bluetooth" : {
       "title" : "블루투스로 연결...",
       "label" : "자동으로 귀하의 Nano 장치 감지"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "내 Ledger 장치가 보이지 않나요?",
+      "scanSignersCta" : "장치 스캔하기",
+      "helpCenterCta" : "지원 받기"
     },
     "deviceNotFoundPairNewDevice" : "블루투스와 페어링",
     "headerDescription" : "{{productName}}가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요.",
@@ -5973,6 +5996,45 @@
       "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "주소 복사 완료!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "스테이킹 잔액",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 스테이킹된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "memoPlaceholder" : "메모(선택)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 스테이킹",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    }
+  },
   "stellar" : {
     "token" : "자산",
     "memo" : {
@@ -6376,9 +6438,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "메모(선택)"
   },
   "near" : {
     "info" : {
@@ -6995,7 +7054,7 @@
       },
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험",
+        "experimental" : "실험적 기능",
         "debug" : "디버그"
       },
       "banner" : {
@@ -7042,7 +7101,7 @@
       "title" : "Live 앱 카탈로그",
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험",
+        "experimental" : "실험적 기능",
         "debug" : "디버그"
       },
       "banner" : {
@@ -7304,11 +7363,11 @@
         "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
-      "recover" : {
-        "title" : "Ledger Recover 구독하기",
-        "titleCompleted" : "Ledger Recover를 구독했습니다",
-        "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
-        "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "popupLabel" : "계정 동기화 완료"
       }
     }
   },
