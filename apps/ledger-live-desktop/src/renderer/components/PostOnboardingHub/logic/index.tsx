@@ -47,6 +47,9 @@ const syncAccounts: PostOnboardingAction = {
   startAction: ({ openActivationDrawer }: StartActionArgs) => {
     openActivationDrawer?.();
   },
+  getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
+    return !!isLedgerSyncActive;
+  },
 };
 
 const customImage: PostOnboardingAction = {
