@@ -12,6 +12,7 @@ import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/a
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
+import LedgerSyncBanner from "./ledgerSyncBanner";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
@@ -51,6 +52,7 @@ export default function AccountsPage() {
         mode={mode}
       />
       <AccountsHeader />
+      <LedgerSyncBanner />
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
       <LNSUpsellBanner location="accounts" mb={30} />
     </Box>

@@ -4,8 +4,6 @@ import IconPlus from "~/renderer/icons/Plus";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import OptionsButton from "./OptionsButton";
-import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
-import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
@@ -38,7 +36,6 @@ const AccountsHeader = () => {
         {t("accounts.title")}
       </Box>
       <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
-        <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
         <Button
           small
           primary
