@@ -1446,6 +1446,12 @@
         "description" : "من أي منصة تداول أو محفظة، مباشرةً إلى جهازك Ledger.",
         "actionCompletedPopupLabel" : "تم تحويل الأصول"
       },
+      "syncAccounts" : {
+        "title" : "مزامنة حسابات الأصول المشفرة خاصتك",
+        "titleCompleted" : "تمت مزامنة حساباتك",
+        "description" : "تنشيط مزامنة Ledger Sync لمزامنة حسابات الأصول المشفرة الخاصة بك",
+        "actionCompletedPopupLabel" : "تمت مزامنة الحسابات"
+      },
       "recover" : {
         "title" : "الاشتراك في Ledger Recover",
         "description" : "استعدْ الوصول إلى محفظتك بدون الحاجة إلى عبارة الاسترداد السرية الخاصة بك.",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
       "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
@@ -2279,6 +2286,7 @@
         "label" : "الحساب للإيداع",
         "parentAccount" : "1. اختر حساب {{currencyName}}",
         "token" : "2. اختر رمز التوكن",
+        "errorLoadingTokens" : "خطأ في تحميل رموز التوكن",
         "verifyTokenType" : "يرجى التحقق أن <0>{{token}}</0> هو رمز <0>{{tokenType}}</0>. أي أصل مشفر آخر تم إرساله إلى حساب {{currency}} قد يتم فقده.",
         "warningTokenType" : "يرجى إرسال رموز <0>{{ticker}}</0> أو <0>{{tokenType}}</0> الى حسابات {{currency}}. إرسال الأصول المشفرة الأخرى قد ينتج عنه فقدان دائم للأموال.",
         "depositFromCexBannerTitle" : "إيداع الأصول المشفرة من حسابك كوينباس (Coinbase)"
@@ -5818,6 +5826,62 @@
         "quickFix" : "حل سريع: أرسل بعض الأموال لنفسك لتجميعها.",
         "warning" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة. أرسل بعض الأموال لنفسك لتجميعها.",
         "consolidate" : "تجميع"
+      },
+      "pendingTransactions" : {
+        "title" : "المعاملات المُعلَّقة ({{count}})",
+        "incoming" : {
+          "title" : "العروض الواردة ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "العروض الصادرة ({{count}})"
+        },
+        "pending" : "مُعلقّ",
+        "expired" : "منتهي الصلاحية",
+        "status" : {
+          "label" : "الحالة",
+          "expired" : "منتهي الصلاحية",
+          "incoming" : "وارد",
+          "outgoing" : "صادر"
+        },
+        "from" : "من",
+        "to" : "إلى",
+        "memo" : "ملاحظة (تسمية الوجهة)",
+        "noMemo" : "لا توجد ملاحظة",
+        "date" : "التاريخ",
+        "expiresAt" : "الصلاحية تنتهي في",
+        "expiresIn" : "الصلاحية تنتهي خلال",
+        "amount" : "المبلغ",
+        "transaction" : "المعاملة",
+        "viewTransaction" : "عرض المعاملة",
+        "action" : "الإجراء",
+        "accept" : "قبول",
+        "withdraw" : "سحب",
+        "reject" : "رفض",
+        "deviceAppModal" : {
+          "title" : "{{action}} العرض",
+          "description" : "يُرجى فتح تطبيق Canton على جهازك Ledger من أجل {{action}} هذا العرض.",
+          "contractId" : "مُعرّف العقد",
+          "cancel" : "إلغاء",
+          "openApp" : "افتح تطبيق Canton",
+          "opening" : "جارٍ الفتح...",
+          "noDevice" : "ليس هناك جهاز متصل",
+          "appOpenError" : "فشل فتح تطبيق Canton. يُرجى إعادة المحاولة.",
+          "processing" : "جارٍ معالجة {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "تم قبول العرض",
+              "description" : "عرض التحويل تم قبوله بنجاح."
+            },
+            "reject" : {
+              "title" : "تم رفض العرض",
+              "description" : "عرض التحويل تم رفضه بنجاح."
+            },
+            "withdraw" : {
+              "title" : "تم سحب العرض",
+              "description" : "عرض التحويل تم سحبه بنجاح."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7054,6 +7118,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "خطأ في الاتصال",
       "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "cryptoOrg" : {
