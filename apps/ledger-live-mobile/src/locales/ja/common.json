@@ -10,6 +10,9 @@
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
+    "fee" : "手数料",
+    "stake" : "ステーキング",
+    "validator" : "バリデータ",
     "delete" : "削除",
     "paste" : "貼り付け",
     "yes" : "はい",
@@ -1154,6 +1157,11 @@
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Walletの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "プロバイダーが無効です",
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。",
+      "openSettings" : "設定を開く"
+    },
     "GasLessThanEstimate" : {
       "title" : "低すぎる可能性があります。増やしてください"
     },
@@ -1224,6 +1232,12 @@
     "AddressesSanctionedError" : {
       "title" : "お客様の安全を確保",
       "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXOの制約により、送付数量が調整されました。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXOの制約を超えるため、この数量は送信できません。"
     }
   },
   "crash" : {
@@ -3780,7 +3794,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™は、{{provider}}に対応していません",
-        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Walletから{{provider}}でのクロスチェーンスワップが可能です",
+        "explore_compatible_devices" : "対応デバイスを探す",
+        "swapWithAnotherProvider" : "別のプロバイダーでスワップ"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
@@ -4430,6 +4446,7 @@
     "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
     "loading" : "読み込み中...",
     "turnOnAndUnlockDevice" : "デバイスの電源を入れてロックを解除する",
+    "powerOnDevice" : "{{deviceName}}の電源を入れ、ロックを解除してください。",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "connectAnotherDevice" : "別のLedgerを接続する",
     "unlockDevice" : "デバイスのロックを解除する",
@@ -4458,6 +4475,7 @@
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションに署名すると、<0><0>{{provider}}</0>の利用規約</0>に同意したことになります。",
+      "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、その際には、取引の完了に影響する可能性があります。そのような場合は、Changellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -4494,6 +4512,11 @@
     "bluetooth" : {
       "title" : "Bluetoothで接続...",
       "label" : "Nanoを自動検出します"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Ledgerデバイスが見つかりませんか？",
+      "scanSignersCta" : "デバイスをスキャン",
+      "helpCenterCta" : "サポートを利用する"
     },
     "deviceNotFoundPairNewDevice" : "Bluetoothとペアリングする",
     "headerDescription" : "{{productName}}のロックが解除され、Bluetoothが有効になっていることを確認してください。",
@@ -5973,6 +5996,45 @@
       "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "アドレスをコピーしました！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "再デリゲート",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "memoPlaceholder" : "任意のメモ",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    }
+  },
   "stellar" : {
     "token" : "資産",
     "memo" : {
@@ -6376,9 +6438,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "任意のメモ"
   },
   "near" : {
     "info" : {
@@ -7304,11 +7363,11 @@
         "description" : "{{productName}}のロック画面として設定するデジタルアートまたは写真を選択。",
         "popupLabel" : "ロック画面のカスタマイズに成功しました"
       },
-      "recover" : {
-        "title" : "Ledger Recoverのサブスクリプション契約をする",
-        "titleCompleted" : "Ledger Recoverのサブスクリプション契約済みです",
-        "description" : "シークレットリカバリーフレーズを使用せずに、ウォレットへのアクセスを復元します。",
-        "popupLabel" : "Ledger Recoverのサブスクリプション契約を正常に完了しました"
+      "syncAccounts" : {
+        "title" : "暗号資産アカウントを同期する",
+        "titleCompleted" : "アカウントの同期が完了しました",
+        "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
+        "popupLabel" : "アカウント同期済み"
       }
     }
   },
