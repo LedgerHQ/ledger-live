@@ -395,7 +395,6 @@
     "src/families/canton/react.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
-    "src/families/evm/shouldUseReceiveOptions.ts",
     "src/families/filecoin/utils.ts",
     "src/families/hedera/constants.ts",
     "src/families/hedera/utils.ts",

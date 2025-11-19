@@ -7,7 +7,11 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export const useReceiveNoahEntry = (params: NoahParams) => {
   const noah = useFeature("noah");
-  const showMenu = shouldShowNoahMenu(params, noah?.enabled ?? false);
+  const showMenu = shouldShowNoahMenu(
+    params,
+    noah?.enabled ?? false,
+    noah?.params?.activeCurrencyIds ?? [],
+  );
 
   return {
     showNoahMenu: showMenu,

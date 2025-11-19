@@ -273,8 +273,13 @@ export type Features = CurrencyFeatures & {
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
-  noah: DefaultFeature;
   cantonSkipPreapprovalStep: DefaultFeature;
+  noah: {
+    enabled: boolean;
+    params: {
+      activeCurrencyIds: string[];
+    };
+  };
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
