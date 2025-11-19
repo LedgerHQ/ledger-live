@@ -53,7 +53,7 @@ export type MinaAPIAccount = {
 };
 
 export type MinaAccountRaw = AccountRaw & {
-  resources: {
+  resources?: {
     blockProducers: ValidatorInfo[];
     stakingActive: boolean;
     delegateInfo: ValidatorInfo | undefined;
