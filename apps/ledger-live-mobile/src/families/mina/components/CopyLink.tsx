@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { IconsLegacy, Text } from "@ledgerhq/native-ui";
-import Touchable, { Props as TouchableProps } from "~/components/Touchable";
+import Touchable from "~/components/Touchable";
 import { withTheme } from "~/colors";
 
 type Props = {
-  style?: TouchableProps["style"];
+  style?: StyleProp<ViewStyle>;
   children: string | React.ReactNode;
   /**
    * String to be copied
