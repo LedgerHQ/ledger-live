@@ -52,7 +52,7 @@ import {
   renderAllowOpeningApp,
   renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
-  renderConnectYourDevice,
+  ConnectYourDevice,
   renderDeviceNotOnboarded,
   renderError,
   renderExchange,
@@ -582,15 +582,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if ((!isLoading && !device) || unresponsive || isLocked) {
-    return renderConnectYourDevice({
-      t,
-      device: selectedDevice,
-      unresponsive,
-      isLocked: isLocked === null ? undefined : isLocked,
-      colors,
-      theme,
-      onSelectDeviceLink,
-    });
+    return (
+      <ConnectYourDevice
+        device={selectedDevice}
+        unresponsive={unresponsive}
+        isLocked={isLocked === null ? undefined : isLocked}
+        onSelectDeviceLink={onSelectDeviceLink}
+      />
+    );
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
