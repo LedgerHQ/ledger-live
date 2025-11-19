@@ -38,7 +38,7 @@ function StepStatusIcon({ status, ...props }: Readonly<StepStatusIconProps>) {
       <IconWrapper>
         <CenterCircle status={status}>
           {status === "completed" && (
-            <Flex position="absolute">
+            <Flex position="absolute" data-testid="sync-onboarding-status-icon">
               <IconsLegacy.CircledCheckSolidMedium color={colors.success.c70} size={20} />
             </Flex>
           )}
