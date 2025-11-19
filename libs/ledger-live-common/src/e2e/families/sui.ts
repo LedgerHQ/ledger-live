@@ -1,15 +1,21 @@
 import { getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
-import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { Transaction } from "../models/Transaction";
+import { withDeviceController } from "../deviceInteraction/DeviceController";
 
-export async function sendSui(tx: Transaction) {
-  await getSendEvents(tx);
-  if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    await pressBoth();
-  }
-}
+export const sendSui = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
+
+      await getSendEvents(tx);
+
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);

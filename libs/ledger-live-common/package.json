@@ -161,6 +161,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",

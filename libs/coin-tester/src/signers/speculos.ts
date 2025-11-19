@@ -4,7 +4,8 @@ import fs from "fs/promises";
 import * as compose from "docker-compose";
 import axios, { AxiosError } from "axios";
 import { SignOperationEvent } from "@ledgerhq/types-live";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 import { ENV } from "../types";
 
 const { SPECULOS_API_PORT } = process.env as ENV;
@@ -48,7 +49,7 @@ export async function spawnSpeculos(
     libraries?: Array<{ name: string; endpoint: `/${string}` }>;
   },
 ): Promise<{
-  transport: SpeculosTransportHttp;
+  transport: DeviceManagementKitTransportSpeculos;
   getOnSpeculosConfirmation: (approvalText?: string) => () => Promise<void>;
 }> {
   ensureEnv();
@@ -89,12 +90,12 @@ export async function spawnSpeculos(
     },
   });
 
-  async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
+  async function checkSpeculosLogs(): Promise<DeviceManagementKitTransportSpeculos> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
     if (out.includes("Server started")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
-      return SpeculosTransportHttp.open({
+      return DeviceManagementKitTransportSpeculos.open({
         apiPort: SPECULOS_API_PORT,
       });
     }
@@ -104,27 +105,43 @@ export async function spawnSpeculos(
   }
 
   function getOnSpeculosConfirmation(approvalText = "Accept") {
-    async function onSpeculosConfirmation(e?: SignOperationEvent): Promise<void> {
-      if (e?.type === "device-signature-requested") {
-        const { data } = await axios.get(
-          `http://localhost:${SPECULOS_API_PORT}/events?currentscreenonly=true`,
-        );
+    return async function onSpeculosConfirmation(e?: SignOperationEvent): Promise<void> {
+      if (e?.type !== "device-signature-requested") return;
 
-        if (data.events[0].text !== approvalText) {
-          await axios.post(`http://localhost:${SPECULOS_API_PORT}/button/right`, {
-            action: "press-and-release",
+      const baseURL = `http://127.0.0.1:${SPECULOS_API_PORT}`;
+      const buttonClient = deviceControllerClientFactory(baseURL).buttonFactory();
+
+      const maxAttempts = 80;
+      const delayMs = 250;
+
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+          const { data } = await axios.get(`${baseURL}/events?currentscreenonly=true`, {
+            timeout: 2000,
           });
 
-          onSpeculosConfirmation(e);
-        } else {
-          await axios.post(`http://localhost:${SPECULOS_API_PORT}/button/both`, {
-            action: "press-and-release",
-          });
+          const text = data?.events?.[0]?.text;
+          if (text === approvalText) {
+            await buttonClient.both();
+            return;
+          }
+
+          // not on the approval screen yet—scroll right and retry
+          await buttonClient.right();
+        } catch (err) {
+          // retry on network issues
+          if (axios.isAxiosError(err)) {
+            // fall through to retry
+          } else {
+            throw err;
+          }
         }
-      }
-    }
 
-    return onSpeculosConfirmation;
+        await delay(delayMs);
+      }
+
+      throw new Error(`Speculos confirmation not reached after ${maxAttempts} attempts`);
+    };
   }
 
   return checkSpeculosLogs().then(transport => {
