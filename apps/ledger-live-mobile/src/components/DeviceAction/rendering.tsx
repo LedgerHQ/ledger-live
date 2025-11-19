@@ -55,6 +55,7 @@ import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -363,14 +364,14 @@ export const renderAllowRemoveCustomLockscreen = ({
 const AllowOpeningApp = ({
   t,
   navigation,
-  wording,
+  appName,
   tokenContext,
   isDeviceBlocker,
   device,
   theme,
 }: RawProps & {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  wording: string;
+  appName: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
   device: Device;
@@ -396,7 +397,7 @@ const AllowOpeningApp = ({
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
-      <TitleText>{t("DeviceAction.allowAppPermission", { wording })}</TitleText>
+      <TitleText>{t("DeviceAction.allowAppPermission", { appName })}</TitleText>
       {tokenContext ? (
         <CenteredText>
           {t("DeviceAction.allowAppPermissionSubtitleToken", {
@@ -412,14 +413,14 @@ const AllowOpeningApp = ({
 export function renderAllowOpeningApp({
   t,
   navigation,
-  wording,
+  appName,
   tokenContext,
   isDeviceBlocker,
   device,
   theme,
 }: RawProps & {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  wording: string;
+  appName: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
   device: Device;
@@ -428,7 +429,7 @@ export function renderAllowOpeningApp({
     <AllowOpeningApp
       t={t}
       navigation={navigation}
-      wording={wording}
+      appName={appName}
       tokenContext={tokenContext}
       isDeviceBlocker={isDeviceBlocker}
       device={device}
@@ -638,26 +639,22 @@ export function renderError({
 }
 
 export function RequiredFirmwareUpdate({
-  t,
   device,
   navigation,
 }: RawProps & {
   navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
 }) {
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
+  const { t } = useTranslation();
+  const track = useTrack();
+  const lastSeenDevice: DeviceModelInfo | null = useSelector(lastSeenDeviceSelector);
 
   const usbFwUpdateActivated = !!lastSeenDevice;
-
   const deviceName = getDeviceModel(device.modelId).productName;
-
-  const isDeviceConnectedViaUSB = device.wired;
-
-  const track = useTrack();
 
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
-  const onPress = () => {
+  const onGoToMyLedger = () => {
     track("button_clicked", {
       button: "OpenMyLedger",
       page: "Update_OS_To_Continue",
@@ -679,7 +676,7 @@ export function RequiredFirmwareUpdate({
                         routes: [
                           {
                             name: ScreenName.MyLedgerChooseDevice,
-                            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+                            params: { device, firmwareUpdate: device.wired },
                           },
                         ],
                       },
@@ -700,35 +697,33 @@ export function RequiredFirmwareUpdate({
         <Flex mb={5}>
           <BoxedIcon size={64} Icon={DownloadMedium} iconSize={24} iconColor="neutral.c100" />
         </Flex>
-
-        <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
-          {usbFwUpdateActivated
-            ? t("firmwareUpdateRequired.updateAvailableFromLLM.title", {
-                deviceName,
-              })
-            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.title", {
-                deviceName,
-              })}
-        </Text>
-        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
-          {usbFwUpdateActivated
-            ? t("firmwareUpdateRequired.updateAvailableFromLLM.description", {
-                deviceName,
-              })
-            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.description", {
-                deviceName,
-              })}
-        </Text>
         {usbFwUpdateActivated ? (
-          <ActionContainer marginBottom={0} marginTop={32}>
-            <StyledButton
-              type="main"
-              outline={false}
-              title={t("firmwareUpdateRequired.updateAvailableFromLLM.cta")}
-              onPress={onPress}
-            />
-          </ActionContainer>
-        ) : null}
+          <>
+            <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
+              {t("firmwareUpdateRequired.updateAvailableFromLLM.title")}
+            </Text>
+            <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+              {t("firmwareUpdateRequired.updateAvailableFromLLM.description", { deviceName })}
+            </Text>
+            <ActionContainer mb={0} mt={32}>
+              <StyledButton
+                type="main"
+                outline={false}
+                title={t("firmwareUpdateRequired.updateAvailableFromLLM.cta")}
+                onPress={onGoToMyLedger}
+              />
+            </ActionContainer>
+          </>
+        ) : (
+          <>
+            <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
+              {t("firmwareUpdateRequired.updateNotAvailableFromLLM.title")}
+            </Text>
+            <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
+              {t("firmwareUpdateRequired.updateNotAvailableFromLLM.description", { deviceName })}
+            </Text>
+          </>
+        )}
       </Flex>
     </Wrapper>
   );

@@ -65,7 +65,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
     >
       <View style={styles.container}>
         {isFirmwareUnsupportedError(error) && lastConnectedDevice ? (
-          <RequiredFirmwareUpdate t={t} navigation={navigation} device={lastConnectedDevice} />
+          <RequiredFirmwareUpdate navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>
             <GenericErrorView error={error} hasExportLogButton={!managerAppName} />

@@ -510,12 +510,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
-    const wording = allowOpeningRequestedWording || requestOpenApp;
+    const appName = allowOpeningRequestedWording || requestOpenApp!;
     return renderAllowOpeningApp({
       t,
       navigation,
       device: selectedDevice,
-      wording: wording!,
+      appName,
       tokenContext: (request as { tokenCurrency?: TokenCurrency })?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
@@ -549,7 +549,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (isFirmwareUnsupportedError(error)) {
-      return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
+      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
     }
 
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
