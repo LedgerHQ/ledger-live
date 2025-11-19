@@ -349,7 +349,6 @@ export const DeeplinksProvider = ({
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const modularDrawer = useFeature("llmModularDrawer");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -359,7 +358,7 @@ export const DeeplinksProvider = ({
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
-  const modularDrawerFlowConfigs = getDrawerFlowConfigs(modularDrawer);
+  const modularDrawerFlowConfigs = getDrawerFlowConfigs();
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
     return (

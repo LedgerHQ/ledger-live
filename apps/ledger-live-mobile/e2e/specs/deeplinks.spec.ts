@@ -76,6 +76,16 @@ describe("DeepLinks Tests", () => {
     await app.common.expectSearch(ethereumLong);
   });
 
+  it("should open Asset page for Bitcoin", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
+  });
+
+  it("should open Asset page for Ethereum", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.expectAssetPage(ethereumLong);
+  });
+
   it("should open Receive flow", async () => {
     await app.modularDrawer.openReceiveDeeplink();
     await app.modularDrawer.checkSelectAssetPage();
@@ -91,15 +101,5 @@ describe("DeepLinks Tests", () => {
     await app.modularDrawer.tapDrawerCloseButton();
     await app.modularDrawer.openAddAccountDeeplink(ethereumLong);
     await app.modularDrawer.selectNetworkIfAsked(arbitrumLong);
-  });
-
-  it("should open Asset page for Bitcoin", async () => {
-    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
-    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
-  });
-
-  it("should open Asset page for Ethereum", async () => {
-    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
-    await app.assetAccountsPage.expectAssetPage(ethereumLong);
   });
 });

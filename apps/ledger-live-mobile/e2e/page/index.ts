@@ -90,6 +90,22 @@ export class Application {
       await loadAccounts(this.testAccounts);
     }
 
+    await setFeatureFlags({
+      llmModularDrawer: {
+        enabled: true,
+        params: {
+          receive_flow: true,
+          add_account: true,
+          live_app: true,
+          live_apps_allowlist: [],
+          live_apps_blocklist: [],
+          send_flow: true,
+          enableModularization: true,
+          searchDebounceTime: 300,
+          backendEnvironment: "STAGING",
+        },
+      },
+    });
     if (featureFlags) {
       await setFeatureFlags(featureFlags);
     }
