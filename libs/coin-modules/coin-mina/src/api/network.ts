@@ -28,11 +28,10 @@ export const makeNetworkRequest = async <T>({
         retryCount: retryCount + 1,
       });
     } else if (response.status !== 200) {
-      log(
-        "error",
-        `[MINA] (makeNetworkRequest) Error: ${response.data}, status: ${response.status}`,
-      );
-      throw new Error(response.data as string);
+      const errorData =
+        typeof response.data === "object" ? JSON.stringify(response.data) : response.data;
+      log("error", `[MINA] (makeNetworkRequest) Error: ${errorData}, status: ${response.status}`);
+      throw new Error(String(errorData));
     }
     return response.data;
   } catch (error) {
