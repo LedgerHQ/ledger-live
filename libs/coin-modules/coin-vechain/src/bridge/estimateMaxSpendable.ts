@@ -29,7 +29,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
       const spendable = account.balance.minus(maxTokenFees);
 
       if (spendable.gt(0)) {
-        return account.balance.minus(maxTokenFees);
+        return spendable;
       }
     }
   }
