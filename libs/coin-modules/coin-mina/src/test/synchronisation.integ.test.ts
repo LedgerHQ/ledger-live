@@ -5,9 +5,9 @@ jest.mock("../config", () => ({
       type: "active",
     },
     infra: {
-      API_VALIDATORS_BASE_URL: "https://api.minaexplorer.com",
-      API_MINA_ROSETTA_NODE: "https://rosetta.minaprotocol.network",
-      API_MINA_GRAPHQL_NODE: "https://graphql.minaexplorer.com",
+      API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
+      API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/node/graphql",
+      API_VALIDATORS_BASE_URL: "https://mina.coin.ledger.com/node/validators",
     },
   }),
   setCoinConfig: jest.fn(),
