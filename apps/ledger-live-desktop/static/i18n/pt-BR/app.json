@@ -1446,6 +1446,12 @@
         "description" : "De qualquer corretora ou carteira, diretamente para a sua Ledger.",
         "actionCompletedPopupLabel" : "Ativos transferidos"
       },
+      "syncAccounts" : {
+        "title" : "Sincronize suas contas cripto",
+        "titleCompleted" : "Suas contas estão sincronizadas",
+        "description" : "Ative o Ledger Sync para sincronizar suas contas cripto",
+        "actionCompletedPopupLabel" : "Contas sincronizadas"
+      },
       "recover" : {
         "title" : "Inscrever-se no Ledger Recover",
         "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Ao validar esta transação,\neu aceito os <0>Termos de uso do SwapKit</0>, a tecnologia que impulsiona o NEAR Intents",
       "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
       "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
       "changellySimplifiedAcceptTerms" : "Ao assinar esta transação, você aceita os <0>Termos de uso</0> e\na <1>Política de AML/KYC</1> da Changelly. A Changelly pode aplicar procedimentos AML/KYC que podem,\nem alguns casos, afetar a conclusão de sua transação. Caso isso aconteça, você deve entrar em contato\n com o <2>suporte ao cliente</2> da Changelly.",
@@ -1978,7 +1985,7 @@
         "title" : "Atualização Disponível",
         "title_other" : "Atualizações disponíveis",
         "progressTitle" : "{{number}} atualização de aplicativo",
-        "progressTitle_other" : "{{number}} atualizações de aplicativo",
+        "progressTitle_other" : "{{number}} atualizações\nde aplicativo",
         "progressWarning" : "Não feche a Minha Ledger durante a atualização.",
         "progress" : "Atualizando todos..."
       },
@@ -2279,6 +2286,7 @@
         "label" : "Conta a creditar",
         "parentAccount" : "1. Selecione a conta {{currencyName}}",
         "token" : "2. Selecione um token",
+        "errorLoadingTokens" : "Erro ao carregar tokens",
         "verifyTokenType" : "Verifique se <0>{{token}}</0> é um token <0>{{tokenType}}</0>. Qualquer outro criptoativo enviado para uma conta de {{currency}} poderá ser perdido.",
         "warningTokenType" : "Envie apenas <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> para contas de {{currency}}. O envio de outros criptoativos poderá resultar na perda permanente dos fundos.",
         "depositFromCexBannerTitle" : "Depositar criptomoedas da sua conta Coinbase"
@@ -5758,7 +5766,7 @@
   "updatedTerms" : {
     "title" : "Atualização dos Termos de uso",
     "body" : {
-      "intro" : "Olá! Atualizamos nossos Termos de Uso do Ledger Live com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
+      "intro" : "Olá! Atualizamos nossos Termos de Uso da Ledger Wallet com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
       "bulletPoints" : ["Esclarecer quais serviços estão disponíveis e como funcionam", "Explicar como funcionam as taxas de serviços", "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"],
       "agreement" : "Ao clicar em \"Continuar\" você concorda que leu e aceitou os Termos de uso abaixo."
     },
@@ -5818,6 +5826,62 @@
         "quickFix" : "Solução rápida: envie alguns fundos para si mesmo para consolidar.",
         "warning" : "Sua conta tem muitas UTXOs pequenas. Envie alguns fundos para si mesmo para consolidar.",
         "consolidate" : "Consolidar"
+      },
+      "pendingTransactions" : {
+        "title" : "Transações pendentes ({{count}})",
+        "incoming" : {
+          "title" : "Ofertas recebidas ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ofertas de saída ({{count}})"
+        },
+        "pending" : "Pendente",
+        "expired" : "Expirada",
+        "status" : {
+          "label" : "Status",
+          "expired" : "Expirada",
+          "incoming" : "Entrada",
+          "outgoing" : "Saída"
+        },
+        "from" : "De",
+        "to" : "Para",
+        "memo" : "Memo",
+        "noMemo" : "Sem Memo",
+        "date" : "Data",
+        "expiresAt" : "Expira em",
+        "expiresIn" : "Expira em",
+        "amount" : "Quantia",
+        "transaction" : "Transação",
+        "viewTransaction" : "Ver transação",
+        "action" : "Ação",
+        "accept" : "Aceitar",
+        "withdraw" : "Sacar",
+        "reject" : "Rejeitar",
+        "deviceAppModal" : {
+          "title" : "Oferta {{action}}",
+          "description" : "Abra o aplicativo Canton no seu dispositivo Ledger para {{action}} esta oferta.",
+          "contractId" : "ID do contrato",
+          "cancel" : "Cancelar",
+          "openApp" : "Abrir o aplicativo Canton",
+          "opening" : "Abrindo…",
+          "noDevice" : "Nenhum dispositivo conectado",
+          "appOpenError" : "Não foi possível abrir o aplicativo Canton. Tente novamente.",
+          "processing" : "Processando {{action}}…",
+          "success" : {
+            "accept" : {
+              "title" : "Oferta aceita",
+              "description" : "A oferta de transferência foi aceita com sucesso."
+            },
+            "reject" : {
+              "title" : "Oferta rejeitada",
+              "description" : "A oferta de transferência foi rejeitada com sucesso."
+            },
+            "withdraw" : {
+              "title" : "Oferta retirada",
+              "description" : "A oferta de transferência foi retirada com sucesso."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7054,6 +7118,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Erro de comunicação",
       "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Quantia reduzida para se adequar às restrições UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Quantia muito grande para as restrições UTXO."
     }
   },
   "cryptoOrg" : {
@@ -7155,8 +7225,8 @@
       "transfer" : {
         "stepLabel" : "Carregar",
         "useAnotherPicture" : "Enviar outra foto",
-        "allowPreview" : "Clique em “Carregar imagem” para\npersonalizar a imagem da tela de bloqueio",
-        "allowConfirmPreview" : "Clique em “Carregar imagem” para\nrestaurar a imagem da tela de bloqueio",
+        "allowPreview" : "Clique em “Carregar foto” para\npersonalizar a imagem da tela de bloqueio",
+        "allowConfirmPreview" : "Clique em “Carregar foto” para\nrestaurar a imagem da tela de bloqueio",
         "loadingPicture" : "Carregando...",
         "voila" : "Voilà!",
         "imageLoaded" : "Imagem carregada em {{productName}}",
