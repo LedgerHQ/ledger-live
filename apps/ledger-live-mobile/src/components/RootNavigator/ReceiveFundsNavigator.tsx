@@ -23,6 +23,7 @@ import { hasClosedWithdrawBannerSelector, isOnboardingFlowSelector } from "~/red
 import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
 import { setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -31,6 +32,7 @@ export default function ReceiveFundsNavigator() {
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const dispatchRedux = useDispatch();
+  const localizedWithdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -130,7 +132,10 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedWithdrawBanner && (
-                <HelpButton url={urls.withdrawCrypto} eventButton="How to withdraw from exchange" />
+                <HelpButton
+                  url={localizedWithdrawCryptoUrl}
+                  eventButton="How to withdraw from exchange"
+                />
               )}
               <NavigationHeaderCloseButtonAdvanced
                 onClose={
