@@ -4,8 +4,13 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ]
 }

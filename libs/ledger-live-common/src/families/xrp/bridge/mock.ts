@@ -26,6 +26,7 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];
@@ -147,6 +148,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

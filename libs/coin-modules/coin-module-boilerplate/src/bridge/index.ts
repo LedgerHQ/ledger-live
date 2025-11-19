@@ -20,6 +20,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
+import { validateAddress } from "../common-logic/validateAddress";
 
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
@@ -56,6 +57,7 @@ export function createBridges(
       throw new Error("signRawOperation is not supported");
     },
     getSerializedAddressParameters,
+    validateAddress,
   };
 
   return {

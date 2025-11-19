@@ -26,6 +26,7 @@ import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { sync } from "./synchronisation";
 import { CeloSigner } from "../signer/signer";
+import { validateAddress } from "./validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -68,6 +69,7 @@ export function buildAccountBridge(
     assignToAccountRaw,
     toOperationExtraRaw,
     fromOperationExtraRaw,
+    validateAddress,
   };
 }
 

@@ -315,9 +315,15 @@
     "src/modularDrawer/types/detailedAccount.ts",
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
-    "src/test-helpers/cryptoAssetsStore.ts"
+    "src/test-helpers/cryptoAssetsStore.ts",
+    "src/bridge/generic-alpaca/registerValidateAddress.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
