@@ -19,7 +19,7 @@ describe("getBannerState", () => {
     account.neurons.fullNeurons = [];
   });
 
-  it("should return 'confirm_following' when voting power needs refresh", () => {
+  it("should return 'confirmFollowing' when voting power needs refresh", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: true,
       minDays: 1,
@@ -27,11 +27,11 @@ describe("getBannerState", () => {
       minMinutes: 3,
     });
     const result = getBannerState(account);
-    expect(result.state).toBe("confirm_following");
+    expect(result.state).toBe("confirmFollowing");
     expect(result.data).toEqual({ days: 1, hours: 2, minutes: 3 });
   });
 
-  it("should return sync_neurons when last sync is too old", () => {
+  it("should return syncNeurons when last sync is too old", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -41,11 +41,11 @@ describe("getBannerState", () => {
     (getTimeUntil as jest.Mock).mockReturnValue({ days: 15, hours: 0, minutes: 0 });
     account.neurons.lastUpdatedMSecs = Date.now() - 31 * 24 * 60 * 60 * 1000; // 15 days ago
     const result = getBannerState(account);
-    expect(result.state).toBe("sync_neurons");
+    expect(result.state).toBe("syncNeurons");
     expect(result.data).toEqual({ days: 15, hours: 0, minutes: 0 });
   });
 
-  it("should return 'lock_neurons' when there are unlocked neurons", () => {
+  it("should return 'lockNeurons' when there are unlocked neurons", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -55,10 +55,10 @@ describe("getBannerState", () => {
     (getTimeUntil as jest.Mock).mockReturnValue({ days: 0, hours: 0, minutes: 0 });
     account.neurons.fullNeurons = [{ dissolveState: "Unlocked" }] as unknown as ICPNeuron[];
     const result = getBannerState(account);
-    expect(result.state).toBe("lock_neurons");
+    expect(result.state).toBe("lockNeurons");
   });
 
-  it("should return 'add_followees' when a neuron has no followees", () => {
+  it("should return 'addFollowees' when a neuron has no followees", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -73,10 +73,10 @@ describe("getBannerState", () => {
     ] as unknown as ICPNeuron[];
     (getTimeUntil as jest.Mock).mockReturnValue({ days: 0, hours: 0, minutes: 0 });
     const result = getBannerState(account);
-    expect(result.state).toBe("add_followees");
+    expect(result.state).toBe("addFollowees");
   });
 
-  it("should return 'stake_icp' when balance is greater than 1", () => {
+  it("should return 'stakeICP' when balance is greater than 1", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -86,10 +86,10 @@ describe("getBannerState", () => {
     (getTimeUntil as jest.Mock).mockReturnValue({ days: 0, hours: 0, minutes: 0 });
     account.balance = new BigNumber(2);
     const result = getBannerState(account);
-    expect(result.state).toBe("stake_icp");
+    expect(result.state).toBe("stakeICP");
   });
 
-  it("should return default 'sync_neurons' when no other condition is met", () => {
+  it("should return default 'syncNeurons' when no other condition is met", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -97,6 +97,6 @@ describe("getBannerState", () => {
       minMinutes: 0,
     });
     const result = getBannerState(account);
-    expect(result.state).toBe("sync_neurons");
+    expect(result.state).toBe("syncNeurons");
   });
 });

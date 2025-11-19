@@ -5,12 +5,7 @@ import { LAST_SYNC_THRESHOLD_IN_DAYS } from "../consts";
 
 import { votingPowerNeedsRefresh } from "@zondax/ledger-live-icp/neurons";
 
-type BannerState =
-  | "confirm_following"
-  | "sync_neurons"
-  | "lock_neurons"
-  | "add_followees"
-  | "stake_icp";
+type BannerState = "confirmFollowing" | "syncNeurons" | "lockNeurons" | "addFollowees" | "stakeICP";
 interface getBannerStateReturn {
   state: BannerState;
   data?: {
@@ -26,7 +21,7 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
   );
   if (needsRefresh) {
     return {
-      state: "confirm_following",
+      state: "confirmFollowing",
       data: {
         days: minDays,
         hours: minHours,
@@ -40,7 +35,7 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
   const { days, hours, minutes } = getTimeUntil(lastSync / 1000, true);
   if (lastSync && days > LAST_SYNC_THRESHOLD_IN_DAYS) {
     return {
-      state: "sync_neurons",
+      state: "syncNeurons",
       data: {
         days,
         hours,
@@ -55,7 +50,7 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
   );
   if (hasUnlockedNeurons) {
     return {
-      state: "lock_neurons",
+      state: "lockNeurons",
     };
   }
 
@@ -65,20 +60,20 @@ export const getBannerState = (account: ICPAccount): getBannerStateReturn => {
   );
   if (hasNeuronsWithoutFollowees) {
     return {
-      state: "add_followees",
+      state: "addFollowees",
     };
   }
 
   // Check Stake ICP (Priority 5)
   if (account.balance.gt(1)) {
     return {
-      state: "stake_icp",
+      state: "stakeICP",
     };
   }
 
   // No banner needed
   return {
-    state: "sync_neurons",
+    state: "stakeICP",
   };
 };
 
