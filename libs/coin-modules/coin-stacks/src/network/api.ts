@@ -151,9 +151,7 @@ export const fetchAllTokenBalances = async (addr: string): Promise<Record<string
 /**
  * Fetches estimated fees for a transfer
  */
-export const fetchEstimatedFees = async (
-  request: EstimatedFeesRequest,
-): Promise<number> => {
+export const fetchEstimatedFees = async (request: EstimatedFeesRequest): Promise<number> => {
   // Cast to Record<string, unknown> to satisfy type constraints
   const feeRate = await send<number>(
     `/v2/fees/transfer`,
@@ -232,9 +230,7 @@ export const fetchFullTxs = async (
 /**
  * Broadcasts a signed transaction to the Stacks network
  */
-export const broadcastTx = async (
-  message: BroadcastTransactionRequest,
-): Promise<string> => {
+export const broadcastTx = async (message: BroadcastTransactionRequest): Promise<string> => {
   let response = await sendRaw<string>(`/v2/transactions`, message);
 
   if (response !== "") response = `0x${response}`;
