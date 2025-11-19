@@ -152,7 +152,8 @@
     "quote" : "Cotización",
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
-    }
+    },
+    "stake" : "Participación"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1446,6 +1447,12 @@
         "description" : "Desde cualquier exchange o billetera, directamente a tu Ledger.",
         "actionCompletedPopupLabel" : "Activos transferidos"
       },
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "actionCompletedPopupLabel" : "Cuentas sincronizadas"
+      },
       "recover" : {
         "title" : "Suscríbete a Ledger Recover",
         "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
@@ -1659,7 +1666,7 @@
       "title" : "Filtros",
       "show" : "Mostrar",
       "all" : "Todas",
-      "isLedgerCompatible" : "Compatible con Ledger Wallet",
+      "isLedgerCompatible" : "Compatibles con Ledger Wallet",
       "isFavorite" : "Activos destacados",
       "applyFilters" : "Aplicar filtros",
       "clearAll" : "Borrar todo"
@@ -1667,7 +1674,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
@@ -1905,6 +1912,7 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -1959,7 +1967,7 @@
       "filter" : {
         "title" : "Mostrar",
         "all" : "Todas",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "installed" : "Instaladas",
         "not_installed" : "No instaladas"
       },
@@ -1996,7 +2004,7 @@
         "updated" : "Actualizado",
         "uninstall" : "Desinstalar",
         "notEnoughSpace" : "No hay suficiente espacio",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "not_supported" : "Requiere una billetera de terceros",
         "addAccount" : "Agregar cuenta",
         "addAccountTooltip" : "Agregar cuenta {{appName}}",
@@ -2076,7 +2084,7 @@
         "installDone" : "Actualización\ninstalada",
         "restore" : "Restaurando ajustes",
         "restoreDone" : "Ajustes restaurados",
-        "apps" : "Restaurando aplicaciones",
+        "apps" : "Restaurar aplicaciones",
         "updateMCU" : "Actualización de firmware",
         "updating" : "Actualización de firmware",
         "reset" : "Preparar dispositivo",
@@ -2104,7 +2112,7 @@
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
       "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
       "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu {{deviceName}}, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
-      "sucessCTAApps" : "Restaurando aplicaciones",
+      "sucessCTAApps" : "Restaurar aplicaciones",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
         "first" : "1. Restablece tu dispositivo",
@@ -2279,6 +2287,7 @@
         "label" : "Cuenta receptora",
         "parentAccount" : "1. Selecciona la cuenta de {{currencyName}}",
         "token" : "2. Selecciona un token",
+        "errorLoadingTokens" : "Error al cargar los tokens",
         "verifyTokenType" : "Verifica que el token <0>{{token}}</0> sea un token <0>{{tokenType}}</0>. Es posible que se pierdan los activos de cualquier otro tipo si son enviados a una cuenta de {{currency}}.",
         "warningTokenType" : "Solamente debes enviar tokens <0>{{ticker}}</0> o <0>{{tokenType}}</0> una cuenta de {{currency}}. El envío de cualquier otro tipo de activos cripto puede provocar la pérdida permanente de fondos.",
         "depositFromCexBannerTitle" : "Deposita cripto desde tu cuenta de Coinbase"
@@ -7054,12 +7063,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
     "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Tarifa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Cambiar delegación",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. ",
+      "changeCTA" : "Cambiar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
