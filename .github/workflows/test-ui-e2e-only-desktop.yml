@@ -193,8 +193,7 @@ jobs:
         shell: bash
 
       - name: Run Playwright Tests
-        # Remplacer par develop avant de merger
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/qaa-865
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
