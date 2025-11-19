@@ -373,6 +373,13 @@ export type LLDCoinFamily<
   }>;
 
   /**
+   * Component to display pending transfer proposals
+   */
+  PendingTransferProposals?: React.ComponentType<{
+    account: A;
+  }>;
+
+  /**
    * Customize the way the explorer URL to a transaction is built
    */
   getTransactionExplorer?: (

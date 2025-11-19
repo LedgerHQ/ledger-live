@@ -93,6 +93,7 @@ const AccountPage = ({
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
+  const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
 
@@ -168,6 +169,8 @@ const AccountPage = ({
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
+
+          {PendingTransferProposals && <PendingTransferProposals account={account as Account} />}
 
           {account.type === "Account" && <NftEntryPoint account={account} />}
 
