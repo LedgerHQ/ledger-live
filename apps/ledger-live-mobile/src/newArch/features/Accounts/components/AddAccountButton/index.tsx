@@ -1,9 +1,11 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { track } from "~/analytics";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountButton as AddAccountButtonComponent } from "@ledgerhq/native-ui/pre-ldls/components/index";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 type Props = {
   sourceScreenName: string;
@@ -13,6 +15,17 @@ type Props = {
 
 const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency }) => {
   const { t } = useTranslation();
+  const [foundCurrency, setFoundCurrency] = useState<CryptoOrTokenCurrency | undefined>(
+    typeof currency === "string" ? findCryptoCurrencyById(currency) : currency,
+  );
+
+  useEffect(() => {
+    if (typeof currency === "string" && currency && !foundCurrency) {
+      getCryptoAssetsStore()
+        .findTokenById(currency)
+        .then(token => setFoundCurrency(token));
+    }
+  }, [currency, foundCurrency]);
 
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState<boolean>(false);
 
@@ -31,7 +44,11 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency }) =
         onClick={handleOpenAddAccountModal}
         disabled={disabled}
       />
-      <AddAccountDrawer isOpened={isAddAccountModalOpen} onClose={handleCloseAddAccountModal} />
+      <AddAccountDrawer
+        isOpened={isAddAccountModalOpen}
+        onClose={handleCloseAddAccountModal}
+        currency={foundCurrency}
+      />
     </>
   );
 };
