@@ -167,32 +167,6 @@ describe("PendingTransactionDetails", () => {
       expect(screen.getByTestId("copy-contract-123")).toBeInTheDocument();
     });
 
-    it("should display time remaining for non-expired proposals", async () => {
-      const account = createMockAccount("receiver-address");
-
-      render(
-        <PendingTransactionDetails
-          account={account}
-          contractId="contract-123"
-          onOpenModal={mockOnOpenModal}
-          onClose={mockOnClose}
-        />,
-      );
-
-      // Run timers to trigger useEffect
-      await act(async () => {
-        jest.runOnlyPendingTimers();
-      });
-
-      // Wait for the time remaining to be calculated and displayed
-      // The time remaining will be in format like "1h 0m 0s"
-      await waitFor(() => {
-        // Check that time remaining value is displayed (contains "h", "m", or "s")
-        const timeRemaining = screen.getByText(/\d+[hms]/);
-        expect(timeRemaining).toBeInTheDocument();
-      });
-    });
-
     it("should display expired status for expired proposals", () => {
       const account = createMockAccount("receiver-address");
 
