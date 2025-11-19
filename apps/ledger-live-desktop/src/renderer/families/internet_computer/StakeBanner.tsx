@@ -20,7 +20,8 @@ const bannerContent = {
   },
   lockNeurons: {
     descriptionKey: defaultDescription,
-    action: (account: ICPAccount, dispatch: Function) => onClickConfirmFollowing(account, dispatch),
+    action: (account: ICPAccount, dispatch: Function) =>
+      onClickManageNeurons(account, dispatch, false),
   },
   addFollowees: {
     descriptionKey: defaultDescription,
