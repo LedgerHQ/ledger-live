@@ -1,5 +1,8 @@
 ---
+"@ledgerhq/coin-tester-polkadot": minor
 "@ledgerhq/coin-polkadot": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-tester": minor
 ---
 
-test(polkadot): add assethub auto-migration test coverage
+test(coin-polkadot): assethub test coverage
