@@ -85,7 +85,6 @@ const StepSummary = (props: StepProps) => {
   const memo = "memo" in transaction ? transaction.memo : undefined;
 
   const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
-  const isBitcoinPsbt = transaction.family === "bitcoin" && transaction.psbt;
 
   return (
     <Box flow={4} mx={40}>
@@ -93,11 +92,6 @@ const StepSummary = (props: StepProps) => {
       {isSolanaRawTransaction ? (
         <Alert type="warning" title={t("send.steps.details.solanaRawTransaction.title")}>
           <Trans i18nKey="send.steps.details.solanaRawTransaction.description" />
-        </Alert>
-      ) : null}
-      {isBitcoinPsbt ? (
-        <Alert type="warning" title={t("send.steps.details.bitcoinPsbtTransaction.title")}>
-          <Trans i18nKey="send.steps.details.bitcoinPsbtTransaction.description" />
         </Alert>
       ) : null}
       {utxoLag ? (
@@ -167,7 +161,7 @@ const StepSummary = (props: StepProps) => {
               </Box>
             </Box>
           </Box>
-          {transaction.recipient && !isBitcoinPsbt ? (
+          {transaction.recipient ? (
             <>
               <VerticalSeparator />
               <Box horizontal alignItems="center">
@@ -214,7 +208,7 @@ const StepSummary = (props: StepProps) => {
             </Ellipsis>
           </Box>
         )}
-        {!isSolanaRawTransaction && !isBitcoinPsbt ? (
+        {!isSolanaRawTransaction ? (
           <Box horizontal justifyContent="space-between" mb={2}>
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
               <Trans i18nKey="send.steps.details.amount" />
@@ -296,7 +290,7 @@ const StepSummary = (props: StepProps) => {
           </>
         )}
 
-        {!totalSpent.eq(amount) && !isSolanaRawTransaction && !isBitcoinPsbt ? (
+        {!totalSpent.eq(amount) && !isSolanaRawTransaction ? (
           <>
             <Separator />
             <Box horizontal justifyContent="space-between">
