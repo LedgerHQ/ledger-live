@@ -8,6 +8,7 @@ import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection
 export type RequestAccountNavigatorParamList = {
   [ScreenName.RequestAccountsSelectCrypto]: {
     currencyIds?: string[];
+    useCase?: string;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   };

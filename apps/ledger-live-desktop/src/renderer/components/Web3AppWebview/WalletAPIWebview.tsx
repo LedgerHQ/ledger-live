@@ -88,13 +88,13 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       }) => {
         ipcRenderer.send("show-app", {});
 
+        // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
+        const shouldUseCurrencies =
+          (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
+
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
-
-          // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
-          const shouldUseCurrencies =
-            (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
@@ -110,7 +110,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           setDrawer(
             SelectAccountAndCurrencyDrawer,
             {
-              currencyIds,
+              currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+              useCase,
               onAccountSelected: (account, parentAccount) => {
                 setDrawer();
                 onSuccess(account, parentAccount);

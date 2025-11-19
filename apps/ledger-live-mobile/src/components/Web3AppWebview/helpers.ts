@@ -418,10 +418,10 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         useCase,
         drawerConfiguration,
       }) => {
+        // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
+        const shouldUseCurrencies =
+          (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
         if (isModularDrawerVisible) {
-          // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
-          const shouldUseCurrencies =
-            (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
           openModularDrawer?.({
@@ -461,7 +461,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             navigation.navigate(NavigatorName.RequestAccount, {
               screen: ScreenName.RequestAccountsSelectCrypto,
               params: {
-                currencyIds,
+                currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+                useCase,
                 allowAddAccount: true,
                 onSuccess,
               },
