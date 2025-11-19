@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
 import { BigNumber } from "bignumber.js";
 import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
@@ -9,7 +9,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getOperationExtra } from "@ledgerhq/coin-sui/getOperationExtra";
 import { OperationType } from "@ledgerhq/types-live";
-import { fetchSuiBannerConfig } from "./api";
+import { fetchSuiBannerConfig, registerSuiStakingPromotion, SuiBannerConfig } from "./api";
 
 export function useSuiMappedStakingPositions(account: SuiAccount) {
   const { validators } = getCurrentSuiPreloadData();
@@ -120,39 +120,36 @@ export const mapStakingPositions = (
 };
 
 /**
- * Hook to check if the Sui staking boost banner should be displayed
- * Returns true if the banner should be shown, false otherwise
+ * Hook to get Sui staking banner configuration
+ * Returns both boost and incentive banner flags
  *
- * Uses React Query for caching with 1 hour stale time
- * Defaults to false while loading or on error (fail-safe)
+ * Uses React Query for caching - cache is invalidated after successful stake registration
+ * Defaults to false for both flags while loading or on error (fail-safe)
+ *
+ * @param address - The Sui address to check registration status for
  */
-export function useShouldShowSuiStakingBoostBanner(): boolean {
+export function useSuiStakingBanners(address?: string): SuiBannerConfig {
   const { data } = useQuery({
-    queryKey: ["sui", "banner-config"],
-    queryFn: fetchSuiBannerConfig,
-    staleTime: 60 * 60 * 1000, // 1 hour
-    refetchInterval: 60 * 60 * 1000, // 1 hour
+    queryKey: ["sui", "banner-config", address],
+    queryFn: () => fetchSuiBannerConfig(address),
+    staleTime: Infinity,
     retry: 2,
   });
 
-  return data?.showBoostBanner ?? false;
+  return data ?? { showBoostBanner: false, showIncentiveBanner: false };
 }
 
 /**
- * Hook to check if the Sui staking incentive banner should be displayed
- * Returns true if the banner should be shown, false otherwise
+ * Hook to handle Sui staking promotion registration
+ * Returns a function that registers the address and invalidates the banner cache
  *
- * Uses React Query for caching with 1 hour stale time
- * Defaults to false while loading or on error (fail-safe)
+ * Call this after a successful stake transaction with >= 30 SUI on P2P validator
  */
-export function useShouldShowSuiStakingIncentiveBanner(): boolean {
-  const { data } = useQuery({
-    queryKey: ["sui", "banner-config"],
-    queryFn: fetchSuiBannerConfig,
-    staleTime: 60 * 60 * 1000, // 1 hour
-    refetchInterval: 60 * 60 * 1000, // 1 hour
-    retry: 2,
-  });
+export function useSuiStakingPromotionRegistration() {
+  const queryClient = useQueryClient();
 
-  return data?.showIncentiveBanner ?? false;
+  return async (address: string) => {
+    await registerSuiStakingPromotion(address);
+    queryClient.invalidateQueries({ queryKey: ["sui", "banner-config", address] });
+  };
 }

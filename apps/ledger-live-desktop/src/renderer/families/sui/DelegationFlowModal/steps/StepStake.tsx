@@ -3,6 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -21,6 +22,7 @@ export default function StepStake({
   error,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
+  const { showBoostBanner } = useSuiStakingBanners(account.freshAddress);
   const updateValidator = ({ address }: { address: string }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
@@ -47,9 +49,11 @@ export default function StepStake({
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />
-      <Alert type="primary" mt={4}>
-        Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th
-      </Alert>
+      {showBoostBanner && (
+        <Alert type="primary" mt={4}>
+          Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th
+        </Alert>
+      )}
     </Box>
   );
 }

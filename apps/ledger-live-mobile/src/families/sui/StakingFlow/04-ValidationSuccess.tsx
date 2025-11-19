@@ -16,6 +16,9 @@ import type {
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { SuiStakingFlowParamList } from "./types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+// import { useSuiStakingPromotionRegistration } from "@ledgerhq/live-common/families/sui/react";
+// import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+// import { BigNumber } from "bignumber.js";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidationSuccess>
@@ -25,12 +28,15 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { ticker } = getAccountCurrency(account);
+  // const registerPromotion = useSuiStakingPromotionRegistration();
+
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const validator = route.params.transaction.recipient;
   const source = route.params.source?.name ?? "unknown";
+  const transaction = route.params.transaction;
 
   useEffect(() => {
     track("staking_completed", {
@@ -40,7 +46,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation: "delegation",
       flow: "stake",
     });
-  }, [source, validator, ticker]);
+
+    // TODO: Uncomment when ready to enable promotion registration
+    // Register for promotion if staking >= 30 SUI on P2P validator
+    // const stakedAmount = new BigNumber(transaction?.amount || 0);
+    // const MIN_AMOUNT = new BigNumber(30).times(1e9); // 30 SUI in smallest unit
+    // if (
+    //   account &&
+    //   validator === P2P_SUI_VALIDATOR_ADDRESS &&
+    //   stakedAmount.gte(MIN_AMOUNT)
+    // ) {
+    //   registerPromotion(account.freshAddress);
+    // }
+  }, [source, validator, ticker, account, transaction]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

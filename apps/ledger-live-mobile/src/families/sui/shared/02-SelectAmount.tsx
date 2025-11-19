@@ -16,6 +16,7 @@ import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
@@ -43,6 +44,7 @@ function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useSelector(accountScreenSelector(route)).account as SuiAccount;
   const { locale } = useSettings();
+  const { showBoostBanner } = useSuiStakingBanners(account.freshAddress);
 
   invariant(
     account?.suiResources && route.params.transaction,
@@ -195,13 +197,14 @@ function StakingAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
-              {route.params.validator?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS && (
-                <View style={styles.alertContainer}>
-                  <Alert type="primary">
-                    <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
-                  </Alert>
-                </View>
-              )}
+              {showBoostBanner &&
+                route.params.validator?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS && (
+                  <View style={styles.alertContainer}>
+                    <Alert type="primary">
+                      <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
+                    </Alert>
+                  </View>
+                )}
               <Button
                 disabled={!!bridgePending || !!error}
                 pending={bridgePending}

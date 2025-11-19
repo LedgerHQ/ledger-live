@@ -1,4 +1,7 @@
-import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
+import {
+  useLedgerFirstShuffledValidatorsSui,
+  useSuiStakingBanners,
+} from "@ledgerhq/live-common/families/sui/react";
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -26,6 +29,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account.type === "Account", "account must be of type Account");
 
   const [searchQuery, setSearchQuery] = useState("");
+  const { showBoostBanner } = useSuiStakingBanners(account.freshAddress);
 
   const validators = useLedgerFirstShuffledValidatorsSui(searchQuery);
 
@@ -59,11 +63,13 @@ export default function SelectValidator({ navigation, route }: Props) {
       <View style={styles.header}>
         <ValidatorHead />
       </View>
-      <View style={styles.alertContainer}>
-        <Alert type="primary">
-          <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
-        </Alert>
-      </View>
+      {showBoostBanner && (
+        <View style={styles.alertContainer}>
+          <Alert type="primary">
+            <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
+          </Alert>
+        </View>
+      )}
       <FlatList
         contentContainerStyle={styles.list}
         data={validators}

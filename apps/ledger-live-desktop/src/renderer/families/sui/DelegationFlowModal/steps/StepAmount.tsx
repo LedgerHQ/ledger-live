@@ -1,6 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
+import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -22,6 +23,7 @@ const StepAmount = ({
   status,
   bridgePending,
 }: StepProps) => {
+  const { showBoostBanner } = useSuiStakingBanners(account?.freshAddress);
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
@@ -53,7 +55,7 @@ const StepAmount = ({
             bridgePending={bridgePending}
             t={t}
           />
-          {transaction.recipient === P2P_SUI_VALIDATOR_ADDRESS && (
+          {showBoostBanner && transaction.recipient === P2P_SUI_VALIDATOR_ADDRESS && (
             <Alert type="primary" mt={4}>
               Stake at least 100$ to be eligible for the APY boost
             </Alert>

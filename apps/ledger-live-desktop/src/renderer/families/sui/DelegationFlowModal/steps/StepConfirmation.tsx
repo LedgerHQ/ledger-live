@@ -14,6 +14,9 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+// import { useSuiStakingPromotionRegistration } from "@ledgerhq/live-common/families/sui/react";
+// import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+// import { BigNumber } from "bignumber.js";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -30,7 +33,10 @@ function StepConfirmation({
   signed,
   transaction,
   source,
+  account,
 }: StepProps) {
+  // const registerPromotion = useSuiStakingPromotionRegistration();
+
   useEffect(() => {
     const voteAccAddress = transaction?.recipient;
     if (optimisticOperation && voteAccAddress) {
@@ -41,8 +47,20 @@ function StepConfirmation({
         delegation: "delegation",
         flow: "stake",
       });
+
+      // TODO: Uncomment when ready to enable promotion registration
+      // Register for promotion if staking >= 30 SUI on P2P validator
+      // const stakedAmount = new BigNumber(transaction?.amount || 0);
+      // const MIN_AMOUNT = new BigNumber(30).times(1e9); // 30 SUI in smallest unit
+      // if (
+      //   account &&
+      //   voteAccAddress === P2P_SUI_VALIDATOR_ADDRESS &&
+      //   stakedAmount.gte(MIN_AMOUNT)
+      // ) {
+      //   registerPromotion(account.freshAddress);
+      // }
     }
-  }, [optimisticOperation, source, transaction?.recipient]);
+  }, [optimisticOperation, source, transaction?.recipient, transaction?.amount, account]);
 
   if (optimisticOperation) {
     return (
