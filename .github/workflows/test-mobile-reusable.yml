@@ -66,9 +66,6 @@ jobs:
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Run unit tests
         run: pnpm mobile test:jest:coverage
-      - name: Log linter output
-        if: ${{ !cancelled() }}
-        run: node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-mobile/lint-mobile.json'))"
       - uses: actions/upload-artifact@v4
         name: upload eslint json output
         if: ${{ !cancelled() }}
