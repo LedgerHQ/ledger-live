@@ -61,7 +61,8 @@
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts",
     "src/transaction/common.ts",
-    "src/utils.ts"
+    "src/utils.ts",
+    "src/setup.ts"
   ],
   "ignoreUnresolved": ["@ledgerhq/live-dmk-speculos"],
   "ignoreUnused": [
