@@ -63,9 +63,9 @@
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "11.2.1",
     "@polkadot/util-crypto": "12.6.2",
-    "bignumber.js": "^9.1.2",
-    "docker-compose": "^1.1.0",
+    "bignumber.js": "9.1.2",
     "chalk": "^4.1.2",
+    "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
     "msw": "^2.2.1"

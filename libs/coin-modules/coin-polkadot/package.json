@@ -138,7 +138,7 @@
     "@polkadot/types-known": "11.2.1",
     "@polkadot/util": "12.6.2",
     "@polkadot/util-crypto": "12.6.2",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",

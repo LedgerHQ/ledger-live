@@ -3,12 +3,7 @@ import { useDispatch } from "react-redux";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import {
-  WalletHandlers,
-  ServerConfig,
-  WalletAPIServer,
-  useWalletAPIServer as useWalletAPIServerRaw,
-} from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
@@ -313,12 +308,34 @@ export function useWalletAPIServer({
   // If we don't want the map to be empty when requesting an account
   useSetWalletAPIAccounts(accounts);
 
-  const { server, onMessage } = useWalletAPIServerRaw({
-    transport,
-    config,
-    permission,
-    customHandlers,
-  });
+  const serverRef = useRef<WalletAPIServer>();
+  // I don't really like this but it comes from the doc
+  // https://react.dev/reference/react/useRef#avoiding-recreating-the-ref-contents
+  if (serverRef.current === undefined) {
+    serverRef.current = new WalletAPIServer(transport, config, undefined, customHandlers);
+  }
+  const server = serverRef.current;
+
+  useEffect(() => {
+    if (customHandlers) {
+      server.setCustomHandlers(customHandlers);
+    }
+  }, [customHandlers, server]);
+
+  useEffect(() => {
+    server.setConfig(config);
+  }, [config, server]);
+
+  useEffect(() => {
+    server.setPermissions(permission);
+  }, [permission, server]);
+
+  const onMessage = useCallback(
+    (event: string) => {
+      transport.onMessage?.(event);
+    },
+    [transport],
+  );
 
   useEffect(() => {
     tracking.load(manifest);

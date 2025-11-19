@@ -56,7 +56,7 @@
     "@ton/core": "^0.62.0",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",

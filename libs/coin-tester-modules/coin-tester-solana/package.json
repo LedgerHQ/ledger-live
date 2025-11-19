@@ -57,8 +57,8 @@
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
@@ -66,17 +66,17 @@
     "@ledgerhq/types-live": "workspace:^",
     "@solana/spl-token": "0.4.9",
     "@solana/web3.js": "1.95.4",
-    "bignumber.js": "^9",
+    "bignumber.js": "9.1.2",
     "docker-compose": "^1",
     "msw": "^2"
   },
   "devDependencies": {
     "@types/jest": "^29",
+    "dotenv": "^16",
     "jest": "^29",
     "rimraf": "^5",
     "ts-jest": "^29",
     "ts-node": "^10",
-    "dotenv": "^16",
     "typescript": "^5"
   }
 }

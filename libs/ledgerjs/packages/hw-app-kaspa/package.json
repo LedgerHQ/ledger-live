@@ -28,7 +28,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

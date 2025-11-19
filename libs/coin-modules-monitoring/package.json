@@ -32,7 +32,7 @@
     "@types/command-line-args": "5.2.3",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "tsx": "^4.7.1"

@@ -37,7 +37,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@uiw/react-codemirror": "^4.22.2",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
     "eslint-config-next": "13.5.6",

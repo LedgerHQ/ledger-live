@@ -67,11 +67,11 @@
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "bluebird": "^3.7.2",
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
-    "ethers": "catalog:",
+    "ethers": "6.15.0",
     "msw": "^2.2.1"
   },
   "devDependencies": {

@@ -40,11 +40,11 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^"
+    "@ledgerhq/speculos-device-controller": "catalog:"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",

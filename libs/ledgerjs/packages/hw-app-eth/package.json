@@ -38,7 +38,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "semver": "^7.3.5"
   },
   "scripts": {
