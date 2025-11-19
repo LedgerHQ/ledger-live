@@ -86,7 +86,6 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
   try {
     // Should we just check for asset-hub ?
     currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
-    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
   } catch (e) {
     currentStakingProgress = {
       electionClosed: true,
@@ -94,8 +93,14 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
       maxNominatorRewardedPerValidator: 128,
       bondingDuration: 28,
     };
+  }
+
+  try {
+    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+  } catch (e) {
     minimumBondBalance = BigNumber(0);
   }
+
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
   let validators = previousValidators;
