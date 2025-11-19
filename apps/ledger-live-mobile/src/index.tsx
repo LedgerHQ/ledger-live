@@ -348,36 +348,36 @@ export default class Root extends Component {
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
                 <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                  <I18nextProvider i18n={i18n}>
-                    <LocaleProvider>
-                      <PlatformAppProviderWrapper>
-                        <SafeAreaProvider>
-                          <ModalSystemPrimer />
-                          <StorylyProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <GestureHandlerRootView style={styles.root}>
-                                  <AppProviders initialCountervalues={initialCountervalues}>
-                                    <AppGeoBlocker>
-                                      <AppVersionBlocker>
-                                        <WaitForAppReady currencyInitialized={currencyInitialized}>
+                  <WaitForAppReady currencyInitialized={currencyInitialized}>
+                    <I18nextProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <ModalSystemPrimer />
+                            <StorylyProvider>
+                              <StylesProvider>
+                                <StyledStatusBar />
+                                <NavBarColorHandler />
+                                <AuthPass>
+                                  <GestureHandlerRootView style={styles.root}>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <AppGeoBlocker>
+                                        <AppVersionBlocker>
                                           <BridgeSyncProvider>
                                             <App />
                                           </BridgeSyncProvider>
-                                        </WaitForAppReady>
-                                      </AppVersionBlocker>
-                                    </AppGeoBlocker>
-                                  </AppProviders>
-                                </GestureHandlerRootView>
-                              </AuthPass>
-                            </StylesProvider>
-                          </StorylyProvider>
-                        </SafeAreaProvider>
-                      </PlatformAppProviderWrapper>
-                    </LocaleProvider>
-                  </I18nextProvider>
+                                        </AppVersionBlocker>
+                                      </AppGeoBlocker>
+                                    </AppProviders>
+                                  </GestureHandlerRootView>
+                                </AuthPass>
+                              </StylesProvider>
+                            </StorylyProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nextProvider>
+                  </WaitForAppReady>
                 </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>
