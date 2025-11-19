@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import Body from "./Body";
 import { StepId } from "./types";
 import { useDispatch } from "react-redux";
@@ -46,6 +47,16 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
       <Modal
         name="MODAL_SEND"
         centered
+        {...(newSendFlow?.enabled
+          ? {
+              width: 460,
+              bodyStyle: {
+                borderRadius: 16,
+                // avoid the modal to scale when the skeleton are displaying
+                overflowY: "scroll",
+              },
+            }
+          : {})}
         onHide={handleReset}
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
@@ -59,9 +70,22 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
                 params={data || {}}
               />
             );
-          } else {
-            return <SendWorkflow />;
           }
+
+          const sendData = (data || {}) as {
+            account?: AccountLike | null;
+            parentAccount?: Account | null;
+          };
+
+          return (
+            <SendWorkflow
+              onClose={onClose}
+              params={{
+                account: sendData.account ?? undefined,
+                parentAccount: sendData.parentAccount ?? undefined,
+              }}
+            />
+          );
         }}
       />
     </DomainServiceProvider>

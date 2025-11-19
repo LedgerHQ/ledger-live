@@ -5,6 +5,9 @@ import { SelectAccountList } from "./components/List";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useDispatch } from "react-redux";
+import { closeModal } from "~/renderer/actions/modals";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import {
   MODULAR_DRAWER_PAGE_NAME,
@@ -24,6 +27,8 @@ export const AccountSelection = ({
   hideAddAccountButton,
   overridePageName,
 }: Props) => {
+  const newSendFlow = useFeature("newSendFlow");
+  const dispatch = useDispatch();
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     onAccountSelected,
@@ -31,7 +36,15 @@ export const AccountSelection = ({
 
   const BottomComponent = (
     <AddAccountContainer>
-      <AddAccountButton onAddAccountClick={onAddAccountClick} />
+      <AddAccountButton
+        onAddAccountClick={() => {
+          if (newSendFlow?.enabled) {
+            // Close the Send modal when starting the add account flow
+            dispatch(closeModal("MODAL_SEND"));
+          }
+          onAddAccountClick();
+        }}
+      />
     </AddAccountContainer>
   );
 
