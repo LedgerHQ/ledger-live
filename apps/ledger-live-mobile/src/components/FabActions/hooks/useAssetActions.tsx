@@ -11,7 +11,6 @@ import {
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ActionButtonEvent } from "..";
@@ -42,7 +41,6 @@ const iconStake = IconsLegacy.CoinsMedium;
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
-  const route = useRoute();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
@@ -78,11 +76,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
-  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
-    useOpenStakeDrawer({
-      sourceScreenName: "asset_action",
-      currencies: currency ? [currency.id] : undefined,
-    });
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "asset_action",
+    currencies: currency ? [currency.id] : undefined,
+  });
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "asset",
     currency,
@@ -193,17 +190,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         currency?.ticker ?? accountCurrency?.ticker ?? assetId.toUpperCase(),
                       flow: "stake",
                     },
-                    navigationParams: [
-                      NavigatorName.StakeFlow,
-                      {
-                        screen: ScreenName.Stake,
-                        params: {
-                          currencies: [assetId],
-                          parentRoute: route,
-                        },
-                      },
-                    ] as const,
-                    customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
+                    customHandler: handleOpenStakeDrawer,
                   },
                 ]
               : []),
@@ -270,8 +257,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     assetId,
     stakeLabel,
     accountCurrency?.ticker,
-    route,
-    isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
     handleOpenReceiveDrawer,
     handleOpenAddAccountDrawer,

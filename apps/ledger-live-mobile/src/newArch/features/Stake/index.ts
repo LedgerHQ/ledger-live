@@ -1,9 +1,7 @@
 import { useCallback } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useModularDrawerController, useModularDrawerVisibility } from "../ModularDrawer";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { NavigatorName, ScreenName } from "~/const";
+import { useModularDrawerController } from "../ModularDrawer";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -19,15 +17,6 @@ export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
   const { openDrawer } = useModularDrawerController();
   const { createDrawerConfiguration } = useDrawerConfiguration();
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-
-  const isModularDrawerEnabled = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
-
   const goToAccountStakeFlow = useStakingDrawer({
     navigation,
     parentRoute: route,
@@ -35,46 +24,25 @@ export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
   });
 
   const handleOpenStakeDrawer = useCallback(() => {
-    if (isModularDrawerEnabled) {
-      const stakeDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-      return openDrawer({
-        currencies,
-        areCurrenciesFiltered: currencies && currencies.length > 0,
-        flow: "stake",
-        source: sourceScreenName,
-        enableAccountSelection: true,
-        onAccountSelected: goToAccountStakeFlow,
-        useCase: "earn",
-        ...(stakeDrawerConfiguration.assets && {
-          assetsConfiguration: stakeDrawerConfiguration.assets,
-        }),
-        ...(stakeDrawerConfiguration.networks && {
-          networksConfiguration: stakeDrawerConfiguration.networks,
-        }),
-      });
-    } else {
-      // Fallback to traditional navigation
-      return navigation.navigate(NavigatorName.StakeFlow, {
-        screen: ScreenName.Stake,
-        params: {
-          currencies,
-          parentRoute: route,
-        },
-      });
-    }
-  }, [
-    isModularDrawerEnabled,
-    createDrawerConfiguration,
-    openDrawer,
-    currencies,
-    sourceScreenName,
-    goToAccountStakeFlow,
-    navigation,
-    route,
-  ]);
+    const stakeDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
+    return openDrawer({
+      currencies,
+      areCurrenciesFiltered: currencies && currencies.length > 0,
+      flow: "stake",
+      source: sourceScreenName,
+      enableAccountSelection: true,
+      onAccountSelected: goToAccountStakeFlow,
+      useCase: "earn",
+      ...(stakeDrawerConfiguration.assets && {
+        assetsConfiguration: stakeDrawerConfiguration.assets,
+      }),
+      ...(stakeDrawerConfiguration.networks && {
+        networksConfiguration: stakeDrawerConfiguration.networks,
+      }),
+    });
+  }, [createDrawerConfiguration, openDrawer, currencies, sourceScreenName, goToAccountStakeFlow]);
 
   return {
     handleOpenStakeDrawer,
-    isModularDrawerEnabled,
   };
 }

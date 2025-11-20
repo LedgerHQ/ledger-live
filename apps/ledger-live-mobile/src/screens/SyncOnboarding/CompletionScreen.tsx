@@ -30,11 +30,7 @@ import {
   /*useTranslation */
 } from "react-i18next";
 import { TrackScreen, track } from "~/analytics";
-import {
-  useModularDrawerController,
-  useModularDrawerVisibility,
-  ModularDrawerLocation,
-} from "LLM/features/ModularDrawer";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 // import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
 
 const CTAWrapper = styled(Box)`
@@ -61,13 +57,6 @@ const CompletionScreen = ({ route }: Props) => {
   const dispatch = useDispatch();
   const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
   const { isOpen: isModularDrawerOpen } = useModularDrawerController();
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-
-  const isModularDrawerEnabled = isModularDrawerVisible({
-    location: ModularDrawerLocation.RECEIVE_FLOW,
-  });
 
   const preventNavigation = useRef(true);
 
@@ -141,7 +130,7 @@ const CompletionScreen = ({ route }: Props) => {
           seedConfiguration={seedConfiguration}
         />
         {/* If the modular drawer is enabled and open, we don't want to show the onboarding success view */}
-        {!(isModularDrawerEnabled && isModularDrawerOpen) && onboardingSuccessView(true)}
+        {!isModularDrawerOpen && onboardingSuccessView(true)}
         <CTAWrapper>
           {/*  <Flex flex={1} alignItems="center" mb={57}>
             <Svg height="30" width="225">

@@ -75,11 +75,10 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
-  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
-    useOpenStakeDrawer({
-      currencies: currency ? [currency.id] : undefined,
-      sourceScreenName: route.name,
-    });
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    currencies: currency ? [currency.id] : undefined,
+    sourceScreenName: route.name,
+  });
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,
@@ -159,17 +158,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     if (canStakeCurrencyUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
-        route: [
-          NavigatorName.StakeFlow,
-          {
-            screen: ScreenName.Stake,
-            params: {
-              currencies: currency ? [currency.id] : undefined,
-              parentRoute: route,
-            },
-          },
-        ],
-        customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
+        customHandler: handleOpenStakeDrawer,
         icon: IconsLegacy.CoinsMedium,
       };
     }
@@ -213,8 +202,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
-    route,
-    isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
   ]);
 

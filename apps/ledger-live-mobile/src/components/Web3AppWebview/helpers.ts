@@ -39,15 +39,8 @@ import { walletSelector } from "~/reducers/wallet";
 import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { OpenDrawer } from "LLM/features/ModularDrawer/types";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 export function useWebView(
   {
     manifest,
@@ -87,21 +80,10 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: manifest.id,
-  });
-
-  const { openDrawer: openModularDrawer } = useModularDrawerController();
-
   const uiHook = useUiHook({
-    isModularDrawerVisible: modularDrawerVisible,
-    openModularDrawer,
     manifest,
   });
+
   const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -242,8 +224,6 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
-    isModularDrawerVisible: modularDrawerVisible,
-    openModularDrawer,
   };
 }
 
@@ -391,15 +371,14 @@ export function useWebviewState(
 }
 
 export interface Props {
-  isModularDrawerVisible: boolean;
-  openModularDrawer?: OpenDrawer;
   manifest: LiveAppManifest;
 }
 
-function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Props): UiHook {
+function useUiHook({ manifest }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
+  const { openDrawer: openModularDrawer } = useModularDrawerController();
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -413,7 +392,6 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
       "account.request": async ({
         currencyIds,
         onSuccess,
-        onCancel,
         areCurrenciesFiltered,
         useCase,
         drawerConfiguration,
@@ -421,55 +399,25 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
         const shouldUseCurrencies =
           (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
-        if (isModularDrawerVisible) {
-          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
-          openModularDrawer?.({
-            source: source,
-            flow: flow,
-            enableAccountSelection: true,
-            onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
-              onSuccess(account, parentAccount),
-            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
-            areCurrenciesFiltered,
-            useCase,
-            ...(finalDrawerConfiguration.assets && {
-              assetsConfiguration: finalDrawerConfiguration.assets,
-            }),
-            ...(finalDrawerConfiguration.networks && {
-              networksConfiguration: finalDrawerConfiguration.networks,
-            }),
-          });
-        } else {
-          if (currencyIds && currencyIds.length === 1) {
-            const currency =
-              findCryptoCurrencyById(currencyIds[0]) ||
-              (await getCryptoAssetsStore().findTokenById(currencyIds[0]));
-            if (!currency) {
-              throw new Error(`Currency not found for id ${currencyIds[0]}`);
-            }
-            navigation.navigate(NavigatorName.RequestAccount, {
-              screen: ScreenName.RequestAccountsSelectAccount,
-              params: {
-                currency,
-                allowAddAccount: true,
-                onSuccess,
-              },
-              onClose: onCancel,
-            });
-          } else {
-            navigation.navigate(NavigatorName.RequestAccount, {
-              screen: ScreenName.RequestAccountsSelectCrypto,
-              params: {
-                currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
-                useCase,
-                allowAddAccount: true,
-                onSuccess,
-              },
-              onClose: onCancel,
-            });
-          }
-        }
+        const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
+
+        openModularDrawer?.({
+          source: source,
+          flow: flow,
+          enableAccountSelection: true,
+          onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
+            onSuccess(account, parentAccount),
+          currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+          areCurrenciesFiltered,
+          useCase,
+          ...(finalDrawerConfiguration.assets && {
+            assetsConfiguration: finalDrawerConfiguration.assets,
+          }),
+          ...(finalDrawerConfiguration.networks && {
+            networksConfiguration: finalDrawerConfiguration.networks,
+          }),
+        });
       },
       "account.receive": ({
         account,
@@ -628,15 +576,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         });
       },
     }),
-    [
-      isModularDrawerVisible,
-      openModularDrawer,
-      source,
-      flow,
-      navigation,
-      device,
-      createDrawerConfiguration,
-    ],
+    [openModularDrawer, source, flow, navigation, device, createDrawerConfiguration],
   );
 }
 
@@ -671,7 +611,7 @@ export function useSelectAccount({
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
     useDappCurrentAccount(currentAccountHistDb);
-  const navigation = useNavigation();
+  const { openDrawer } = useModularDrawerController();
 
   const onSelectAccountSuccess = useCallback(
     (account: AccountLike) => {
@@ -681,33 +621,19 @@ export function useSelectAccount({
     [manifest.id, setCurrentAccountHist, setCurrentAccount],
   );
 
-  const onSelectAccount = useCallback(async () => {
-    if (currencyIds.length === 1) {
-      const currency =
-        findCryptoCurrencyById(currencyIds[0]) ||
-        (await getCryptoAssetsStore().findTokenById(currencyIds[0]));
-      if (!currency) {
-        throw new Error(`Currency not found for id ${currencyIds[0]}`);
-      }
-      navigation.navigate(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectAccount,
-        params: {
-          currency,
-          allowAddAccount: true,
-          onSuccess: onSelectAccountSuccess,
-        },
-      });
-    } else {
-      navigation.navigate(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectCrypto,
-        params: {
-          currencyIds,
-          allowAddAccount: true,
-          onSuccess: onSelectAccountSuccess,
-        },
-      });
-    }
-  }, [currencyIds, navigation, onSelectAccountSuccess]);
+  const handleAddAccountPress = () => {
+    openDrawer({
+      currencies: currencyIds,
+      areCurrenciesFiltered: true,
+      enableAccountSelection: true,
+      onAccountSelected: onSelectAccountSuccess,
+      flow: manifest.name,
+      source:
+        currentRouteNameRef.current === "Platform Catalog"
+          ? "Discover"
+          : currentRouteNameRef.current ?? "Unknown",
+    });
+  };
 
-  return { onSelectAccount, currentAccount, currencyIds, onSelectAccountSuccess };
+  return { handleAddAccountPress, currentAccount, currencyIds, onSelectAccountSuccess };
 }
