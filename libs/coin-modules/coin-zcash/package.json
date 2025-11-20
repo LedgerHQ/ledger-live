@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/coin-module-zcash",
+  "name": "@ledgerhq/coin-zcash",
   "version": "4.9.0",
   "description": "Boilerplate coin integration",
   "keywords": [
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-module-zcash",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-zcash",
   "publishConfig": {
     "access": "public"
   },
