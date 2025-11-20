@@ -105,7 +105,7 @@ for (const account of e2eDelegationAccounts) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.delegate.account.currency.ticker,
+            currency: account.delegate.account.currency.id,
             index: account.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -179,7 +179,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.delegate.account.currency.ticker,
+            currency: account.delegate.account.currency.id,
             index: account.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -256,7 +256,7 @@ test.describe("e2e delegation - Tezos", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.account.currency.ticker,
+          currency: account.account.currency.id,
           index: account.account.index,
           add: true,
           appjson: appjsonPath,
@@ -303,7 +303,7 @@ test.describe("e2e delegation - Celo", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.account.currency.ticker,
+          currency: account.account.currency.id,
           index: account.account.index,
           add: true,
           appjson: appjsonPath,
@@ -353,7 +353,7 @@ for (const validator of validators) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: validator.delegate.account.currency.ticker,
+            currency: validator.delegate.account.currency.id,
             index: validator.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -401,7 +401,7 @@ test.describe("Staking flow from different entry point", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: delegateAccount.account.currency.ticker,
+          currency: delegateAccount.account.currency.id,
           index: delegateAccount.account.index,
           add: true,
           appjson: appjsonPath,
