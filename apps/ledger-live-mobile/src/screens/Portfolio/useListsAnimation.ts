@@ -21,9 +21,9 @@ const useListsAnimation = (initialTab: TabListType) => {
   const [assetsButtonHeight, setAssetsButtonHeight] = useState<number>(0);
 
   const assetsTranslateX = useSharedValue<number>(0);
-  const assetsOpacity = useSharedValue<number>(1);
-  const accountsTranslateX = useSharedValue<number>(containerWidth);
-  const accountsOpacity = useSharedValue<number>(0);
+  const assetsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Assets ? 1 : 0);
+  const accountsTranslateX = useSharedValue<number>(0);
+  const accountsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Accounts ? 1 : 0);
 
   const handleToggle = (value: TabListType) => {
     setSelectedTab(value);
@@ -97,6 +97,11 @@ const useListsAnimation = (initialTab: TabListType) => {
   );
 
   useEffect(() => {
+    // Skip animation if containerWidth is not yet measured
+    if (containerWidth === 0) {
+      return;
+    }
+
     // Use requestAnimationFrame to ensure layout is complete before starting animations
     const rafId = requestAnimationFrame(() => {
       if (selectedTab === TAB_OPTIONS.Assets) {
