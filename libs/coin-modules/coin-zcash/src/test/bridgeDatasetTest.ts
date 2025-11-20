@@ -7,12 +7,12 @@ import { Transaction } from "../types";
 export const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";
 
 export const dataset: DatasetTest<Transaction> = {
-  implementations: ["mock", "ripplejs"],
+  implementations: ["mock", "zcashjs"],
   currencies: {
-    ripple: {
+    zcash: {
       scanAccounts: [
         {
-          name: "ripple seed 1",
+          name: "zcash seed 1",
           unstableAccounts: true,
           // our account is getting spammed...
           apdus: `
@@ -50,7 +50,7 @@ export const dataset: DatasetTest<Transaction> = {
             errors: {
               amount: new NotEnoughSpendableBalance(null, {
                 minimumAmount: formatCurrencyUnit(
-                  rippleUnit,
+                  zcashUnit,
                   BigNumber("20"),
                   {
                     disableRounding: true,
@@ -126,7 +126,7 @@ export const dataset: DatasetTest<Transaction> = {
             },
           ],
           raw: {
-            id: "ripplejs:2:ripple:rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7:",
+            id: "zcashjs:2:zcash:rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7:",
             seedIdentifier: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
             name: "XRP 1",
             derivationMode: "",
@@ -136,7 +136,7 @@ export const dataset: DatasetTest<Transaction> = {
             blockHeight: 0,
             operations: [],
             pendingOperations: [],
-            currencyId: "ripple",
+            currencyId: "zcash",
             lastSyncDate: "",
             balance: "21000310",
           },

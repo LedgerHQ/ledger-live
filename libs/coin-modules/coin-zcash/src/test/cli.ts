@@ -12,7 +12,7 @@ const options = [
   {
     name: "tag",
     type: Number,
-    desc: "ripple tag",
+    desc: "zcash tag",
   },
 ];
 
