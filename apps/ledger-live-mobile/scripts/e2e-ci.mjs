@@ -159,6 +159,7 @@ const filteredArgs = extraArgs.filter(arg => {
 if (testType === "mock") {
   filteredArgs.push("--shard");
   filteredArgs.push(shard);
+  filteredArgs.push("--runInBand");
 }
 
 if (outputFile) {

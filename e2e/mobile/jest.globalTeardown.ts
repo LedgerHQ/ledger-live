@@ -22,6 +22,7 @@ globalThis.webSocket = {
   messages: {},
   e2eBridgeServer: new Subject(),
 };
+globalThis.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
 export default async () => {
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
@@ -35,7 +36,7 @@ export default async () => {
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(ARTIFACT_ENV_PATH, flagsData + envsData);
     } catch (err) {
-      log.error("Error during CI global setup:", err);
+      log.error("Error during CI global teardown:", err);
     } finally {
       try {
         closeBridge();

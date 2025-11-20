@@ -341,6 +341,7 @@ jobs:
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
+          mkdir -p e2e/mobile/artifacts
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2"
             xcrun simctl create "iOS Simulator 2" "iPhone 15"
