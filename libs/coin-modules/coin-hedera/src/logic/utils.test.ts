@@ -460,6 +460,66 @@ describe("logic utils", () => {
     });
   });
 
+  describe("formatTransactionId", () => {
+    it("converts SDK TransactionId format to mirror node format", () => {
+      const mockTransactionId = {
+        toString: () => "0.0.8835924@1759825731.231952875",
+      } as TransactionId;
+
+      const result = formatTransactionId(mockTransactionId);
+      expect(result).toBe("0.0.8835924-1759825731-231952875");
+    });
+
+    it("handles different account ID formats", () => {
+      const mockTransactionId = {
+        toString: () => "0.0.1@1234567890.987654321",
+      } as TransactionId;
+
+      const result = formatTransactionId(mockTransactionId);
+      expect(result).toBe("0.0.1-1234567890-987654321");
+    });
+  });
+
+  describe("toEVMAddress", () => {
+    it("returns correct EVM address for valid Hedera account ID", () => {
+      const evmAddress = toEVMAddress("0.0.12345");
+      expect(evmAddress).toBe("0x0000000000000000000000000000000000003039");
+    });
+
+    it("returns null for invalid Hedera account ID", () => {
+      const evmAddress = toEVMAddress("invalid_account_id");
+      expect(evmAddress).toBeNull();
+    });
+  });
+
+  describe("fromEVMAddress", () => {
+    it("should convert a long-zero EVM address to Hedera account ID", () => {
+      const evmAddress = "0x00000000000000000000000000000000008b3ab3";
+      const result = fromEVMAddress(evmAddress);
+      expect(result).toBe("0.0.9124531");
+    });
+
+    it("should return null for non-long-zero EVM address", () => {
+      const evmAddress = "0xae2e616828973ec543bbce40cf640c012c5a3805";
+      const result = fromEVMAddress(evmAddress, 0, 0);
+      expect(result).toBeNull();
+    });
+
+    it("should handle custom shard and realm values", () => {
+      const evmAddress = "0x0000000000000000000000000000000000000064";
+      const result = fromEVMAddress(evmAddress, 1, 2);
+      expect(result).toBe("1.2.100");
+    });
+
+    it("should return null for invalid EVM addresses", () => {
+      expect(fromEVMAddress("not-an-address")).toBeNull();
+      expect(fromEVMAddress("0xInvalid")).toBeNull();
+      expect(fromEVMAddress("")).toBeNull();
+      expect(fromEVMAddress("1234567890")).toBeNull();
+      expect(fromEVMAddress(undefined as unknown as string)).toBeNull();
+    });
+  });
+
   describe("getBlockHash", () => {
     it("produces consistent 64-character hex hash", () => {
       const hash = getBlockHash(12345);
@@ -535,66 +595,6 @@ describe("logic utils", () => {
 
       expect(result.start).toMatch(/^\d+\.000000000$/);
       expect(result.end).toMatch(/^\d+\.000000000$/);
-    });
-  });
-
-  describe("formatTransactionId", () => {
-    it("converts SDK TransactionId format to mirror node format", () => {
-      const mockTransactionId = {
-        toString: () => "0.0.8835924@1759825731.231952875",
-      } as TransactionId;
-
-      const result = formatTransactionId(mockTransactionId);
-      expect(result).toBe("0.0.8835924-1759825731-231952875");
-    });
-
-    it("handles different account ID formats", () => {
-      const mockTransactionId = {
-        toString: () => "0.0.1@1234567890.987654321",
-      } as TransactionId;
-
-      const result = formatTransactionId(mockTransactionId);
-      expect(result).toBe("0.0.1-1234567890-987654321");
-    });
-  });
-
-  describe("toEVMAddress", () => {
-    it("returns correct EVM address for valid Hedera account ID", () => {
-      const evmAddress = toEVMAddress("0.0.12345");
-      expect(evmAddress).toBe("0x0000000000000000000000000000000000003039");
-    });
-
-    it("returns null for invalid Hedera account ID", () => {
-      const evmAddress = toEVMAddress("invalid_account_id");
-      expect(evmAddress).toBeNull();
-    });
-  });
-
-  describe("fromEVMAddress", () => {
-    it("should convert a long-zero EVM address to Hedera account ID", () => {
-      const evmAddress = "0x00000000000000000000000000000000008b3ab3";
-      const result = fromEVMAddress(evmAddress);
-      expect(result).toBe("0.0.9124531");
-    });
-
-    it("should return null for non-long-zero EVM address", () => {
-      const evmAddress = "0xae2e616828973ec543bbce40cf640c012c5a3805";
-      const result = fromEVMAddress(evmAddress, 0, 0);
-      expect(result).toBeNull();
-    });
-
-    it("should handle custom shard and realm values", () => {
-      const evmAddress = "0x0000000000000000000000000000000000000064";
-      const result = fromEVMAddress(evmAddress, 1, 2);
-      expect(result).toBe("1.2.100");
-    });
-
-    it("should return null for invalid EVM addresses", () => {
-      expect(fromEVMAddress("not-an-address")).toBeNull();
-      expect(fromEVMAddress("0xInvalid")).toBeNull();
-      expect(fromEVMAddress("")).toBeNull();
-      expect(fromEVMAddress("1234567890")).toBeNull();
-      expect(fromEVMAddress(undefined as unknown as string)).toBeNull();
     });
   });
 });
