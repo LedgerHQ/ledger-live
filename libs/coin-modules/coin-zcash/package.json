@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-zcash",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Zcash coin integration",
   "keywords": [
     "Ledger",
