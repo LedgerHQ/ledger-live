@@ -73,6 +73,7 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -465,21 +466,36 @@ export const FirmwareUpdate = ({
   ]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          onPress={() => {
-            if (isAllowedToClose) {
-              quitUpdate();
-            } else {
-              setIsCloseWarningOpen(true);
-            }
-          }}
-          Icon={IconsLegacy.CloseMedium}
-        />
-      ),
-    });
-  }, [navigation, quitUpdate, isAllowedToClose]);
+    const options = isBeforeOnboarding
+      ? {
+          headerLeft: () => (
+            <NavigationHeaderBackButton
+              onPress={() => {
+                if (isAllowedToClose) {
+                  quitUpdate();
+                } else {
+                  setIsCloseWarningOpen(true);
+                }
+              }}
+            />
+          ),
+        }
+      : {
+          headerRight: () => (
+            <Button
+              onPress={() => {
+                if (isAllowedToClose) {
+                  quitUpdate();
+                } else {
+                  setIsCloseWarningOpen(true);
+                }
+              }}
+              Icon={IconsLegacy.CloseMedium}
+            />
+          ),
+        };
+    navigation.setOptions(options);
+  }, [navigation, quitUpdate, isAllowedToClose, isBeforeOnboarding]);
 
   const steps: Item[] = useMemo(() => {
     const newSteps: UpdateSteps = {
