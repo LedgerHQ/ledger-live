@@ -1446,6 +1446,12 @@
         "description" : "Desde cualquier exchange o billetera, directamente a tu Ledger.",
         "actionCompletedPopupLabel" : "Activos transferidos"
       },
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "actionCompletedPopupLabel" : "Cuentas sincronizadas"
+      },
       "recover" : {
         "title" : "Suscríbete a Ledger Recover",
         "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
@@ -1659,7 +1665,7 @@
       "title" : "Filtros",
       "show" : "Mostrar",
       "all" : "Todas",
-      "isLedgerCompatible" : "Compatible con Ledger Wallet",
+      "isLedgerCompatible" : "Compatibles con Ledger Wallet",
       "isFavorite" : "Activos destacados",
       "applyFilters" : "Aplicar filtros",
       "clearAll" : "Borrar todo"
@@ -1667,7 +1673,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -1959,7 +1966,7 @@
       "filter" : {
         "title" : "Mostrar",
         "all" : "Todas",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "installed" : "Instaladas",
         "not_installed" : "No instaladas"
       },
@@ -1996,7 +2003,7 @@
         "updated" : "Actualizado",
         "uninstall" : "Desinstalar",
         "notEnoughSpace" : "No hay suficiente espacio",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "not_supported" : "Requiere una billetera de terceros",
         "addAccount" : "Agregar cuenta",
         "addAccountTooltip" : "Agregar cuenta {{appName}}",
@@ -2076,7 +2083,7 @@
         "installDone" : "Actualización\ninstalada",
         "restore" : "Restaurando ajustes",
         "restoreDone" : "Ajustes restaurados",
-        "apps" : "Restaurando aplicaciones",
+        "apps" : "Restaurar aplicaciones",
         "updateMCU" : "Actualización de firmware",
         "updating" : "Actualización de firmware",
         "reset" : "Preparar dispositivo",
@@ -2104,7 +2111,7 @@
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
       "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
       "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu {{deviceName}}, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
-      "sucessCTAApps" : "Restaurando aplicaciones",
+      "sucessCTAApps" : "Restaurar aplicaciones",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
         "first" : "1. Restablece tu dispositivo",
@@ -2279,6 +2286,7 @@
         "label" : "Cuenta receptora",
         "parentAccount" : "1. Selecciona la cuenta de {{currencyName}}",
         "token" : "2. Selecciona un token",
+        "errorLoadingTokens" : "Error al cargar los tokens",
         "verifyTokenType" : "Verifica que el token <0>{{token}}</0> sea un token <0>{{tokenType}}</0>. Es posible que se pierdan los activos de cualquier otro tipo si son enviados a una cuenta de {{currency}}.",
         "warningTokenType" : "Solamente debes enviar tokens <0>{{ticker}}</0> o <0>{{tokenType}}</0> una cuenta de {{currency}}. El envío de cualquier otro tipo de activos cripto puede provocar la pérdida permanente de fondos.",
         "depositFromCexBannerTitle" : "Deposita cripto desde tu cuenta de Coinbase"
@@ -5818,6 +5826,62 @@
         "quickFix" : "Solución rápida: Envíate fondos para consolidarlas.",
         "warning" : "Tu cuenta tiene demasiadas UTXOs pequeñas. Envíate fondos para consolidarlas.",
         "consolidate" : "Consolidar"
+      },
+      "pendingTransactions" : {
+        "title" : "Transacciones pendientes ({{count}})",
+        "incoming" : {
+          "title" : "Ofertas entrantes ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ofertas salientes ({{count}})"
+        },
+        "pending" : "Pendiente",
+        "expired" : "Caducado",
+        "status" : {
+          "label" : "Estado",
+          "expired" : "Caducado",
+          "incoming" : "Entrantes",
+          "outgoing" : "Salientes"
+        },
+        "from" : "De",
+        "to" : "A",
+        "memo" : "Memo",
+        "noMemo" : "Sin Memo",
+        "date" : "Fecha",
+        "expiresAt" : "Caduca a las",
+        "expiresIn" : "Caduca en",
+        "amount" : "Importe",
+        "transaction" : "Transacción",
+        "viewTransaction" : "Ver transacción",
+        "action" : "Acción",
+        "accept" : "Aceptar",
+        "withdraw" : "Retirar",
+        "reject" : "Rechazar",
+        "deviceAppModal" : {
+          "title" : "{{action}} oferta",
+          "description" : "Abre la app Canton en tu dispositivo Ledger para {{action}} esta oferta.",
+          "contractId" : "ID del contrato",
+          "cancel" : "Cancelar",
+          "openApp" : "Abrir app Canton",
+          "opening" : "Abriendo...",
+          "noDevice" : "No hay ningún dispositivo conectado",
+          "appOpenError" : "No se pudo abrir la app Canton. Inténtalo de nuevo.",
+          "processing" : "Procesando {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Oferta aceptada",
+              "description" : "La oferta de transferencia se ha aceptado correctamente."
+            },
+            "reject" : {
+              "title" : "Oferta rechazada",
+              "description" : "La oferta de transferencia se ha rechazado correctamente."
+            },
+            "withdraw" : {
+              "title" : "Oferta retirada",
+              "description" : "La oferta de transferencia se ha retirado correctamente."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7054,6 +7118,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
