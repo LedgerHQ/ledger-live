@@ -185,7 +185,7 @@ export type SwapNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: MinaTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
 
   [ScreenName.StacksEditMemo]: {

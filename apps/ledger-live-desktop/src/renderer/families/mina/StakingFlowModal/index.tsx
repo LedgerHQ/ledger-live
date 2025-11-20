@@ -31,7 +31,7 @@ const StakingModal: React.FC<Props> = ({ account }) => {
       centered
       onHide={handleReset}
       preventBackdropClick={isModalLocked}
-      width={stepId !== "confirmation" ? 600 : 500}
+      width={stepId === "confirmation" ? 500 : 600}
       render={({ onClose }) => (
         <Body
           stepId={stepId}
