@@ -51,6 +51,42 @@ export const buildOptimisticOperation = (
   return operation;
 };
 
+async function signTransactionWithDevice(
+  account: Account,
+  transaction: Transaction,
+  deviceId: DeviceId,
+  signerContext: SignerContext<MinaSigner>,
+): Promise<{ operation: MinaOperation; signedSerializedTx: string }> {
+  if (!transaction.fees) {
+    throw new FeeNotLoaded();
+  }
+
+  const unsigned = await buildTransaction(account, transaction);
+  const signTransactionCallback = (signer: MinaSigner) => signer.signTransaction(unsigned);
+  const { signature, returnCode, message } = await signerContext(deviceId, signTransactionCallback);
+
+  if (!signature && returnCode === MINA_CANCEL_RETURN_CODE) {
+    throw new UserRefusedOnDevice();
+  }
+
+  invariant(signature, `returnCode: ${returnCode}, message: ${message}`);
+  const encodedSignature = reEncodeRawSignature(signature);
+
+  const signedTransaction: MinaSignedTransaction = {
+    transaction: unsigned,
+    signature: encodedSignature,
+  };
+
+  const operation = buildOptimisticOperation(
+    account,
+    transaction,
+    transaction.fees.fee ?? new BigNumber(0),
+  );
+  const signedSerializedTx = JSON.stringify(signedTransaction);
+
+  return { operation, signedSerializedTx };
+}
+
 /**
  * Sign Transaction with Ledger hardware
  */
@@ -66,39 +102,17 @@ export const buildSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      async function main() {
+      const executeSignature = async () => {
         o.next({ type: "device-signature-requested" });
 
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
-        }
-
-        const unsigned = await buildTransaction(account, transaction);
-
-        const { signature, returnCode, message } = await signerContext(deviceId, signer =>
-          signer.signTransaction(unsigned),
-        );
-
-        if (!signature && returnCode === MINA_CANCEL_RETURN_CODE) {
-          throw new UserRefusedOnDevice();
-        }
-
-        invariant(signature, `returnCode: ${returnCode}, message: ${message}`);
-        const encodedSignature = reEncodeRawSignature(signature);
-
-        const signedTransaction: MinaSignedTransaction = {
-          transaction: unsigned,
-          signature: encodedSignature,
-        };
-
-        o.next({ type: "device-signature-granted" });
-
-        const operation = buildOptimisticOperation(
+        const { operation, signedSerializedTx } = await signTransactionWithDevice(
           account,
           transaction,
-          transaction.fees.fee ?? new BigNumber(0),
+          deviceId,
+          signerContext,
         );
-        const signedSerializedTx = JSON.stringify(signedTransaction);
+
+        o.next({ type: "device-signature-granted" });
 
         o.next({
           type: "signed",
@@ -107,9 +121,9 @@ export const buildSignOperation =
             signature: signedSerializedTx,
           },
         });
-      }
+      };
 
-      main().then(
+      executeSignature().then(
         () => o.complete(),
         e => o.error(e),
       );

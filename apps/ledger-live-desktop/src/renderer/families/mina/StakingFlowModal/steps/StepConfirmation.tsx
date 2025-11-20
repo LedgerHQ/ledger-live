@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { track } from "~/renderer/analytics/segment";
@@ -13,7 +13,6 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-import { useTranslation } from "react-i18next";
 
 interface StyledBoxProps {
   "data-align"?: boolean | string;
@@ -29,7 +28,13 @@ const Container = styled(Box)<StyledBoxProps>`
   }
 `;
 
-function StepConfirmation({ optimisticOperation, error, signed, transaction, source }: StepProps) {
+function StepConfirmation({
+  optimisticOperation,
+  error,
+  signed,
+  transaction,
+  source,
+}: Readonly<StepProps>) {
   useEffect(() => {
     const validatorAddress = transaction?.recipient;
     if (optimisticOperation && validatorAddress) {
@@ -89,12 +94,12 @@ export function StepConfirmationFooter({
   error,
   onClose,
   optimisticOperation,
-}: StepProps) {
-  const concernedOperation = optimisticOperation
-    ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
-      ? optimisticOperation.subOperations[0]
-      : optimisticOperation
-    : null;
+}: Readonly<StepProps>) {
+  const hasSubOperations = (optimisticOperation?.subOperations?.length ?? 0) > 0;
+
+  const concernedOperation = hasSubOperations
+    ? optimisticOperation?.subOperations?.[0]
+    : optimisticOperation;
 
   return (
     <Box horizontal alignItems="right">
@@ -118,9 +123,9 @@ export function StepConfirmationFooter({
         >
           <Trans i18nKey="common.close" />
         </Button>
-      ) : error ? (
-        <RetryButton primary ml={2} onClick={onRetry} />
-      ) : null}
+      ) : (
+        error && <RetryButton primary ml={2} onClick={onRetry} />
+      )}
     </Box>
   );
 }
