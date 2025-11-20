@@ -12,6 +12,7 @@ import { urls } from "~/utils/urls";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
 
 type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
@@ -87,6 +88,10 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
     [has32Eth, filteredProviders, selected],
   );
 
+  const restakingUrl = useLocalizedUrl(urls.ledgerAcademy.whatIsEthereumRestaking);
+  const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
+
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
@@ -160,8 +165,8 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
             onPress={() =>
               Linking.openURL(
                 selected === "restaking"
-                  ? urls.ledgerAcademy.whatIsEthereumRestaking
-                  : urls.ledgerAcademy.ethereumStakingHowToStakeEth,
+                  ? restakingUrl
+                  : howToStakeEthUrl,
               )
             }
           >
