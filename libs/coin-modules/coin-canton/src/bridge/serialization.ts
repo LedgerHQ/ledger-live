@@ -6,7 +6,7 @@ import {
   type CantonResourcesRaw,
 } from "../types";
 
-function isCantonAccount(account: Account): account is CantonAccount {
+export function isCantonAccount(account: Account): account is CantonAccount {
   return "cantonResources" in account;
 }
 
