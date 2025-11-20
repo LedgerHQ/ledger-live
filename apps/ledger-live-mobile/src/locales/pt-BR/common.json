@@ -4430,7 +4430,7 @@
     "allowSecureConnection" : "Permitir uma conexão segura com a Ledger",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
-    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
+    "powerOnDevice" : "Ligue e desbloqueie sua {{deviceName}}",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "connectAnotherDevice" : "Conectar outra Ledger",
     "unlockDevice" : "Desbloqueie seu dispositivo",
@@ -4498,8 +4498,8 @@
       "label" : "Detecta automaticamente a sua Nano"
     },
     "bleDeviceNotAvailableDrawer" : {
-      "bannerHintTitle" : "Can't see your Ledger device?",
-      "scanSignersCta" : "Scan devices",
+      "bannerHintTitle" : "Não consegue ver seu dispositivo Ledger?",
+      "scanSignersCta" : "Escanear dispositivos",
       "helpCenterCta" : "Obter suporte"
     },
     "deviceNotFoundPairNewDevice" : "Emparelhar via Bluetooth",
