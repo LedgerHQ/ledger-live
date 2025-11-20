@@ -208,11 +208,15 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
 
               if (!sa.unstableAccounts) {
-                const raws: AccountRawLike[] = flatMap(accounts, a => {
+                let raws: AccountRawLike[] = flatMap(accounts, a => {
                   const main = toAccountRaw(a);
                   if (!main.subAccounts) return [main];
                   return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
                 });
+
+                if (currency.id === "algorand") {
+                  raws = raws.slice().sort((a, b) => (a.id || "").localeCompare(b.id || ""));
+                }
                 const heads = raws.map(a => {
                   const copy = omit(
                     a,
