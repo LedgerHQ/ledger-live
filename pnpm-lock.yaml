@@ -14970,9 +14970,6 @@ packages:
   '@ledgerhq/errors@6.22.0':
     resolution: {integrity: sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ==}
 
-  '@ledgerhq/errors@6.25.0':
-    resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
-
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
@@ -45686,8 +45683,6 @@ snapshots:
 
   '@ledgerhq/errors@6.22.0': {}
 
-  '@ledgerhq/errors@6.25.0': {}
-
   '@ledgerhq/errors@6.27.0': {}
 
   '@ledgerhq/evm-tools@1.3.0':
@@ -53361,7 +53356,7 @@ snapshots:
 
   '@types/bs58@4.0.4':
     dependencies:
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       base-x: 3.0.9
 
   '@types/bs58check@2.1.2':
