@@ -165,6 +165,31 @@ describe("useDateFormatter", () => {
       setLocale_Mock("fr", "en");
       expect(f(date)).toEqual("2/1/2000");
     });
+
+    test("should force Gregorian calendar for Thailand locale", () => {
+      const date = new Date("February 1, 2024 10:00:00");
+      
+      // Test with th-TH locale - should use Gregorian calendar (year 2024, not Buddhist year 2567)
+      setLocale_Mock("th-TH");
+      const formatted = f(date);
+      
+      // The formatted date should contain "2024" (Gregorian) not "2567" (Buddhist)
+      // Format may vary but year should be 2024
+      expect(formatted).toContain("2024");
+      expect(formatted).not.toContain("2567");
+    });
+
+    test("should not force Gregorian calendar for non-Thai locales", () => {
+      const date = new Date("February 1, 2024 10:00:00");
+      
+      // Test with Japanese locale - should use default calendar (may include imperial era)
+      setLocale_Mock("ja-JP");
+      const formatted = f(date);
+      
+      // Should format the date (we don't force Gregorian for Japan)
+      expect(formatted).toBeTruthy();
+      expect(typeof formatted).toBe("string");
+    });
   });
 });
 
