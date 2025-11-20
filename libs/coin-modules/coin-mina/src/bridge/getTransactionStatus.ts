@@ -13,6 +13,49 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 
+function validateRecipient(
+  transaction: Transaction,
+  account: MinaAccount,
+  errors: StatusErrorMap,
+): void {
+  if (!transaction.recipient) {
+    errors.recipient = new RecipientRequired();
+    return;
+  }
+
+  if (!isValidAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
+    return;
+  }
+
+  if (transaction.recipient === account.freshAddress) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+}
+
+function validateAccountCreationFee(
+  transaction: Transaction,
+  account: MinaAccount,
+  errors: StatusErrorMap,
+  warnings: StatusErrorMap,
+): void {
+  if (!transaction.fees?.accountCreationFee.gt(0)) return;
+
+  const fee = formatCurrencyUnit(account.currency.units[0], transaction.fees.accountCreationFee, {
+    showCode: true,
+    disableRounding: true,
+  });
+  warnings.recipient = new AccountCreationFeeWarning(undefined, { fee });
+
+  const isAmountTooSmall =
+    transaction.amount.lt(transaction.fees.accountCreationFee) && transaction.amount.gt(0);
+  if (isAmountTooSmall) {
+    errors.amount = new AmountTooSmall(undefined, { amount: fee });
+  }
+}
+
 const getTransactionStatus: AccountBridge<
   Transaction,
   MinaAccount,
@@ -22,57 +65,25 @@ const getTransactionStatus: AccountBridge<
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
 
-  if (t.txType !== "stake") {
-    if (t.fees.fee.lte(0)) {
-      errors.fees = new FeeNotLoaded();
-    }
+  if (t.txType !== "stake" && t.fees.fee.lte(0)) {
+    errors.fees = new FeeNotLoaded();
   }
 
-  if (!t.recipient) {
-    errors.recipient = new RecipientRequired();
-  }
-
-  if (t.recipient && !isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
-    });
-  }
+  validateRecipient(t, a, errors);
 
   if (t.memo && !isValidMemo(t.memo)) {
     errors.transaction = new InvalidMemoMina();
   }
 
-  if (t.recipient === a.freshAddress) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  }
-
-  if (t.fees?.accountCreationFee.gt(0)) {
-    const fee = formatCurrencyUnit(a.currency.units[0], t.fees.accountCreationFee, {
-      showCode: true,
-      disableRounding: true,
-    });
-    warnings.recipient = new AccountCreationFeeWarning(undefined, {
-      fee,
-    });
-
-    if (t.amount.lt(t.fees.accountCreationFee) && t.amount.gt(0)) {
-      errors.amount = new AmountTooSmall(undefined, {
-        amount: fee,
-      });
-    }
-  }
+  validateAccountCreationFee(t, a, errors, warnings);
 
   const estimatedFees = t.fees.fee || new BigNumber(0);
-
   const maxAmountWithFees = getMaxAmount(a, t, estimatedFees);
-
   const totalSpent = getTotalSpent(a, t, estimatedFees);
   const amount = useAllAmount ? maxAmountWithFees : new BigNumber(t.amount);
 
-  if (t.txType !== "stake") {
-    if (amount.lte(0) && !t.useAllAmount) {
-      errors.amount = new AmountRequired();
-    }
+  if (t.txType !== "stake" && amount.lte(0) && !t.useAllAmount) {
+    errors.amount = new AmountRequired();
   }
 
   if (amount.gt(maxAmountWithFees)) {
