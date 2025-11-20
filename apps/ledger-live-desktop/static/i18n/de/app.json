@@ -86,6 +86,7 @@
     "continue" : "Weiter",
     "previous" : "Zurück",
     "learnMore" : "Weitere Informationen",
+    "learnMoreWithEllipsis" : "Weitere Informationen …",
     "help" : "Hilfe",
     "needHelp" : "Hilfe nötig?",
     "areYouSure" : "Bist du sicher?",
@@ -106,6 +107,7 @@
     "reset" : "Zurücksetzen",
     "retry" : "Wiederholen",
     "range" : "Spanne",
+    "start" : "Starten",
     "stop" : "Stoppen",
     "updateNow" : "Jetzt aktualisieren",
     "close" : "Schließen",
@@ -122,9 +124,15 @@
     "featureFlags" : "Feature-Flag",
     "ldmkEnabled" : "LDMK-Transport",
     "information" : "Information",
+    "increase" : "Erhöhen",
+    "max" : "Max.",
+    "min" : "Min.",
+    "set" : "Festlegen",
+    "follow" : "Folgen",
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
     "manage" : "Verwalten",
+    "none" : "Kein",
     "tryAgain" : "Wiederholen",
     "lockScreen" : {
       "title" : "Willkommen zurück",
@@ -203,7 +211,9 @@
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
       "SENDING" : "Senden",
       "BURN" : "Verbrannt",
-      "ASSOCIATE_TOKEN" : "Token zuordnen"
+      "ASSOCIATE_TOKEN" : "Token zuordnen",
+      "STAKE_NEURON" : "Gestaked",
+      "TOP_UP_NEURON" : "Aufgeladen"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -1446,6 +1456,12 @@
         "description" : "Von jeder Börse oder Wallet direkt zu deinem Ledger-Gerät.",
         "actionCompletedPopupLabel" : "Vermögenswerte übertragen"
       },
+      "syncAccounts" : {
+        "title" : "Deine Kryptokonten synchronisieren",
+        "titleCompleted" : "Deine Konten sind synchronisiert",
+        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
+        "actionCompletedPopupLabel" : "Konten synchronisiert"
+      },
       "recover" : {
         "title" : "Ledger Recover abonnieren",
         "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
@@ -1905,6 +1921,7 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
+      "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
       "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
       "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
@@ -2279,6 +2296,7 @@
         "label" : "Zu belastendes Konto",
         "parentAccount" : "1. {{currencyName}} Konto wählen",
         "token" : "2. Token auswählen",
+        "errorLoadingTokens" : "Fehler beim Laden der Token",
         "verifyTokenType" : "Bitte vergewissere dich, dass <0>{{token}}</0> ein <0>{{tokenType}}</0>-Token ist. Jeder andere Kryptovermögenswert, der an ein {{currency}}-Konto gesendet wird, kann verloren gehen.",
         "warningTokenType" : "Bitte sende nur <0>{{ticker}}</0> oder <0>{{tokenType}}</0>-Token an {{currency}}-Konten. Das Versenden anderer Kryptovermögenswerte kann zu deren dauerhaftem Verlust führen.",
         "depositFromCexBannerTitle" : "Kryptos von deinem Coinbase-Konto einzahlen"
@@ -7054,6 +7072,42 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "Der Mindestbetrag für {{purpose}} ist {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Die Auflösungsverzögerung muss mindestens {{min}} betragen."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Die Auflösungsverzögerung muss kürzer als {{max}} sein."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Die neue Auflösungsverzögerung muss länger sein als die aktuelle."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Das Neuron wurde nicht gefunden."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Die Prinzipal-ID ist ungültig"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Der Hotkey existiert bereits"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Der Aufteilungsbetrag ist höher als maximal erlaubt"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Bei diesem Vorgang wird der Betrag übertragen, um den Stake eines bestehenden Neurons zu erhöhen"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Bei diesem Vorgang wird der Betrag auf ein neues Neuron übertragen. Nach erfolgreicher Bestätigung steht das Neuron für weitere Vorgänge zur Verfügung."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Betrag reduziert, um UTXO-Beschränkungen zu erfüllen."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Betrag zu hoch für UTXO-Beschränkungen."
     }
   },
   "cryptoOrg" : {
@@ -7519,7 +7573,7 @@
     "connectYourDevice" : {
       "title" : "Verbinde und entsperre dein Gerät"
     },
-    "searchPlaceholder" : "Nach Name oder Adresse suchen",
+    "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
@@ -7561,5 +7615,291 @@
     "restart" : "Neustarten",
     "downloadOnLedger" : "Von Ledger.com herunterladen",
     "downloadProgress" : "Download in Bearbeitung … {{ progress }} %"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Diese Transaktion erhöht den Stake eines bestehenden Neurons. Gib den zu stakenden Betrag in das obige Betragsfeld ein.",
+      "createNeuron" : "Bei dieser Transaktion wird ein Neuron mit gestaketen ICP erstellt. Gib den zu stakenden Betrag in das obige Betragsfeld ein.",
+      "tooltip" : "Hiermit erkennt Internet Computer die Transaktion, um ICP im Neuron zu staken."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Following bestätigen",
+        "description" : "Das Following deines Neurons muss innerhalb von {{days}} Tagen und {{hours}} Stunden bestätigt werden",
+        "altDescription" : "Dir entgehen Prämien; bestätige das Following deines Neurons, um sie künftig wieder zu erhalten",
+        "cta" : "Following bestätigen"
+      },
+      "syncNeurons" : {
+        "title" : "Gestakete ICP synchronisieren",
+        "description" : "Deine gestaketen ICP wurden zuletzt vor {{days}} Tagen und {{hours}} Stunden synchronisiert. Wenn du auf dem Laufenden bleiben willst, solltest du regelmäßig synchronisieren.",
+        "altDescription" : "Wir empfehlen, deine Neuronen zu synchronisieren, um die aktuellsten Informationen anzuzeigen",
+        "cta" : "Neuronen synchronisieren"
+      },
+      "lockNeurons" : {
+        "title" : "Neuronen sperren",
+        "description" : "Mindestens ein Neuron von dir ist nicht gesperrt. Wenn du sie nicht sperrst, erhältst du keine Prämien. Das liegt daran, dass Neuronen für ihre Beteiligung an der ICP-Governance Prämien erhalten und nur Neuronen, die seit mehr als sechs Monaten gesperrt sind, stimmberechtigt sind.",
+        "cta" : "Neuronen verwalten"
+      },
+      "addFollowees" : {
+        "title" : "Followees hinzufügen",
+        "description" : "Mindestens ein Neuron von dir hat keine Followees. Ohne Followees erhältst du möglicherweise keine Prämien. Um Prämien zu bekommen, müssen Neuronen entweder direkt abstimmen (z. B. mit der NNS-DApp) oder Neuronen folgen, die dies tun.",
+        "cta" : "Neuronen verwalten"
+      },
+      "stakeICP" : {
+        "title" : "ICP staken",
+        "description" : "Stake ICP und erhalte Prämien, indem du dich an der Governance beteiligst.",
+        "cta" : "ICP staken"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "ICP staken",
+        "tooltip" : "Erstelle Neuronen, um ICP zu staken"
+      },
+      "manageNeurons" : {
+        "title" : "Neuronen verwalten",
+        "tooltip" : "Verwalte aktive Neuronen"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "Die Gesamtzahl der ICP-Token, die aktuell in Neuronen gestaket sind. Gestakete ICP bringen dir Prämien und können für Governance genutzt werden.",
+      "totalMaturityTooltip" : "Die gesammelten Prämien aus dem Staking, inklusive gestakete und liquide Fälligkeit. Diese Prämien kannst du entweder wieder staken oder als liquide ICP abheben.",
+      "totalMaturity" : "Gesamtfälligkeit",
+      "stakedBalance" : "Kontostand gestaked",
+      "stakedMaturity" : "Gestakete Fälligkeit",
+      "stakedMaturityTooltip" : "Der Teil der fälligen Prämien, der automatisch in Neuronen gestaket wurde, um weitere Prämien zu verdienen.",
+      "liquidMaturity" : "Liquide Fälligkeit",
+      "liquidMaturityTooltip" : "Der Teil der fälligen Prämien, der als liquide ICP-Token ausgezahlt oder in Neuronen gestaket werden kann."
+    },
+    "confirmation" : {
+      "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf.",
+      "success" : "{{action}} erfolgreich",
+      "syncAccounts" : "Synchronisiere deine Konten, um die Aktualisierungen anzuzeigen"
+    },
+    "sync" : "Sync",
+    "lastSynced" : "Letzte Synchronisierung",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Zeit bis zum Prämienverfall",
+      "warnbox" : "Keine Neuronen gefunden. Du kannst versuchen, die über die NNS-DApp erstellten Neuronen zu synchronisieren, oder per Staking neue Neuronen erstellen."
+    },
+    "common" : {
+      "neuronId" : "Neuronen-ID",
+      "neuronIds" : "Neuronen-IDs",
+      "state" : "Status",
+      "action" : "Aktion",
+      "balance" : "Saldo",
+      "maturity" : "Fälligkeit",
+      "currentBalance" : "Aktueller Saldo",
+      "amount" : "Betrag",
+      "stake" : "Staken",
+      "followees" : "Followees",
+      "votingPower" : "Stimmrecht",
+      "hotkey" : "Hotkey",
+      "neuron" : "Neuron",
+      "disburse" : "Auszahlen",
+      "startDissolving" : "Auflösung starten",
+      "stopDissolving" : "Auflösung beenden",
+      "dissolveDelay" : "Auflösungsverzögerung",
+      "dissolveState" : "Auflösungszustand",
+      "dissolveStateUnlocked" : "Entsperrt",
+      "dissolveStateLocked" : "Gesperrt",
+      "dissolveStateDissolving" : "Auflösung in Bearbeitung",
+      "dissolveStateDissolved" : "Auflösung abgeschlossen",
+      "inactiveNeuron" : "Inaktives Neuron",
+      "activeNeuron" : "Aktives Neuron",
+      "confirmFollowing" : "Following bestätigen"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Stimmrecht neu laden"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Neuronen verwalten",
+      "stakeMaturity" : {
+        "title" : "Fälligkeit staken",
+        "description" : "Hier wählst du aus, welchen Anteil der Fälligkeit du in diesem Neuron staken möchtest.",
+        "confirmStake" : "Stake bestätigen",
+        "maturityAvailable" : "Fälligkeit verfügbar"
+      },
+      "splitNeuron" : {
+        "title" : "Neuron teilen",
+        "transactionFee" : "Transaktionsgebühr",
+        "confirmSplit" : "Teilen bestätigen"
+      },
+      "setDissolveDelay" : {
+        "title" : "Auflösungsverzögerung festlegen",
+        "balance" : "Saldo",
+        "dissolveDelay" : "Auflösungsverzögerung",
+        "dissolveDelayTooltip" : "Die Auflösungsverzögerung ist die Zeit, für die du mindestens warten musst, bis das Neuron entsperrt wird und die ICP wieder verfügbar sind. Beachte, dass die Auflösungsverzögerung erst dann abnimmt, wenn sich das Neuron im Auflösungszustand befindet.",
+        "votingPowerDescription" : "Stimmberechtigt sind Neuronen mit einer Auflösungsverzögerung von mindestens 6 Monaten.",
+        "dissolveDelayInput" : "Auflösungsverzögerung (in Tagen)",
+        "inputPlaceholder" : "Auflösungsverzögerung eingeben",
+        "updateDelay" : "Verzögerung aktualisieren"
+      },
+      "selectFollowees" : {
+        "title" : "Neuronen-ID des Followees",
+        "placeholder" : "Neuronen-ID eingeben",
+        "options" : "Optionen für Following"
+      },
+      "selectTopics" : {
+        "title" : "Themen auswählen",
+        "warnbox" : "Folge Neuronen, um deine Abstimmung zu automatisieren und maximale Prämien zu erzielen. Du kannst Neuronen zu bestimmten Themen oder zu allen Themen folgen.",
+        "listOfTopics" : "Liste der verfügbaren Themen zum Folgen",
+        "addAction" : "Followee hinzufügen"
+      },
+      "addHotKey" : {
+        "title" : "Hotkey hinzufügen"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "Dieses Neuron wird über einen Hotkey gesteuert und kann über die Ledger Live-Oberfläche nur eingeschränkt gesteuert werden.",
+          "hotkeyControl" : "Hotkey-Steuerung",
+          "votingPower" : "Stimmrecht",
+          "noVotingPower" : "Kein Stimmrecht"
+        },
+        "votingPower" : {
+          "title" : "Stimmrecht",
+          "titleTooltip" : "Die Auflösungsverzögerung muss mindestens 6 Monate betragen, damit das Neuron stimmberechtigt ist.",
+          "value" : "Wert",
+          "staked" : "Gestakete ICP",
+          "increaseStake" : "Stake vergrößern",
+          "ageBonus" : "Altersbonus",
+          "ageBonusTooltip" : "Dein Neuron kann gesperrt, entsperrt oder in Auflösung sein. Im gesperrten Zustand sammelt es Altersbonus, während seine Auflösungsverzögerung gleich bleibt. Wenn sich das Neuron in Auflösung befindet, wird sein Altersbonus auf 0 gesetzt, während die Auflösungsverzögerung allmählich abnimmt. Erreicht die Auflösungsverzögerung 0, dann wird das Neuron entsperrt, und die darin gehaltenen ICP können an ein beliebiges ICP-Konto überwiesen werden.",
+          "dissolveDelayBonus" : "Auflösungsverzögerungsbonus",
+          "dissolveDelayBonusTooltip" : "Der Auflösungsverzögerungsbonus ist ein Bonus, der auf Basis der Auflösungsverzögerung zum Stimmgewicht des Neurons hinzugefügt wird. Je länger die Auflösungsverzögerung, desto höher ist der Bonus.",
+          "confirmFollowing" : "Following bestätigen",
+          "confirmFollowingTooltip" : "ICP-Neuronen, die 6 Monate lang inaktiv waren, erhalten keine Stimmrechtsprämien mehr. Damit dir keine Prämien entgehen, kannst du manuell abstimmen, deine Auswahl bearbeiten oder dein Following bestätigen."
+        },
+        "maturity" : {
+          "title" : "Fälligkeit",
+          "description" : "Verdiene dir Prämien, indem du über Vorschläge abstimmst und/oder aktiven Neuronen folgst.",
+          "staked" : "Gestaked",
+          "stakedTooltip" : "Die gestakete Fälligkeit trägt zum Stimmgewicht des Neurons bei, kann aber nicht in ein neues Neuron überführt werden.",
+          "available" : "Verfügbar",
+          "availableTooltip" : "Die verfügbare Fälligkeit kann gestaket oder verbrannt werden, um ein Neuron zu generieren, das einen ICP-Betrag enthält, der einem nicht deterministischen, als „Fälligkeitsmodulation“ (engl. „Maturity Modulation“) bezeichneten Prozess unterliegt.",
+          "stakeAction" : "Staken",
+          "spawnNeuronAction" : "Neuron generieren"
+        },
+        "hotKeys" : {
+          "title" : "Hotkeys",
+          "description" : "Mit Hotkeys kannst du dein Neuron über die Ledger Live-Oberfläche steuern.",
+          "addHotKey" : "Hotkey hinzufügen",
+          "removeAction" : "Entfernen",
+          "noHotKeys" : "Keine Hotkeys gefunden"
+        },
+        "advancedDetails" : {
+          "title" : "Erweiterte Details und Einstellungen",
+          "dateCreated" : "Datum der Erstellung",
+          "dissolveDate" : "Auflösungsdatum",
+          "neuronAccount" : "Neuronenkonto",
+          "splitNeuronAction" : "Neuron teilen",
+          "autoStakeMaturityAction" : "Fälligkeit automatisch staken"
+        },
+        "following" : {
+          "title" : "Following",
+          "description" : "Beim Following delegierst du deine Stimmen an einen anderen Neuroneneigentümer. Du erhältst auch dann Prämien, wenn du dein Stimmrecht abtrittst. Du kannst dein Following jederzeit ändern.",
+          "warnbox" : "Ohne Followees erhältst du möglicherweise keine Prämien. Um Prämien zu bekommen, müssen Neuronen entweder direkt abstimmen (z. B. mit der NNS-DApp) oder Neuronen folgen, die dies tun.",
+          "followNeuronsAction" : "Neuronen folgen"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "Wähle ein Neuron aus der nachstehenden Liste aus, um die Einstellungen für Staking, Fälligkeit und Auflösungsverzögerung zu verwalten."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Stake wird vergrößert",
+        "create_neuron" : "Neuron wird erstellt",
+        "start_dissolving" : "Auflösung wird gestartet",
+        "stop_dissolving" : "Auflösung wird angehalten",
+        "list_neurons" : "Neuronen werden aufgelistet",
+        "disburse" : "Neuronen werden ausgezahlt",
+        "spawn_neuron" : "Neuron wird generiert",
+        "add_hot_key" : "Hotkey wird hinzugefügt",
+        "stake_maturity" : "Fälligkeit wird gestaket",
+        "refresh_voting_power" : "Stimmrecht wird neu geladen",
+        "increase_dissolve_delay" : "Auflösungsverzögerung wird verlängert",
+        "auto_stake_maturity" : "Fälligkeit wird automatisch gestaket",
+        "spawn_neuron_from_maturity" : "Neuron wird aus Fälligkeit generiert",
+        "set_auto_stake_maturity" : "Fälligkeit für automatisches Staken wird festgelegt",
+        "set_dissolve_delay" : "Auflösungsverzögerung wird festgelegt",
+        "remove_hot_key" : "Hotkey wird entfernt",
+        "follow" : "Neuronen wird gefolgt",
+        "split_neuron" : "Neuron wird geteilt"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "Alle außer Governance und SNS & Neurons' Fund",
+          "description" : "Folge den Neuronen zu allen Themenvorschlägen außer Governance und SNS & Neurons' Fund."
+        },
+        "1" : {
+          "title" : "Neuronenverwaltung",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Wechselkurs",
+          "description" : "Alle Vorschläge, die „Echtzeitinformationen“ über den ICP-Wert liefern, gemessen anhand eines SZR des IWF. Dadurch kann der NNS ICP zu einem Kurs in Zyklen (die die Berechnung der Leistung ermöglichen) umrechnen, der die realen Kosten konstant hält."
+        },
+        "3" : {
+          "title" : "Netzökonomie",
+          "description" : "Vorschläge, die die Netzökonomie regeln, zum Beispiel wie die Prämien an die Betreiber von Knotenpunkten verteilt werden."
+        },
+        "4" : {
+          "title" : "Governance",
+          "description" : "Alle Vorschläge zur Verbesserung der Governance, beispielsweise das Sperren von schädlichen Canistern, die dem Netzwerk schaden."
+        },
+        "5" : {
+          "title" : "Knotenadministrator",
+          "description" : "Alle Vorschläge, die in irgendeiner Weise die Verwaltung von Knotenrechnern betreffen, insbesondere das Aktualisieren oder Konfigurieren des Betriebssystems, das Aktualisieren oder Konfigurieren des VM-Frameworks und das Aktualisieren oder Konfigurieren der Knotenreplikationssoftware."
+        },
+        "6" : {
+          "title" : "Teilnehmerverwaltung",
+          "description" : "Alle Vorschläge, die sich mit der Verwaltung von Netzwerkteilnehmern befassen, etwa das Vergeben und Entziehen von DCIDs (Rechenzentrumskennungen) oder NOIDs (Knotenbetreiberkennungen)."
+        },
+        "7" : {
+          "title" : "Subnetzverwaltung",
+          "description" : "Alle Vorschläge, die sich mit Subnetzen befassen, beispielsweise das Erstellen neuer Subnetze, das Hinzufügen und Entfernen von Subnetzknoten und das Teilen von Subnetzen."
+        },
+        "8" : {
+          "title" : "Protokoll-Canister-Verwaltung",
+          "description" : "Alle Vorschläge zur Verwaltung von Protokoll-Canistern, die als Bestandteil des ICP-Protokolls gelten und für dessen ordnungsgemäße Funktion wesentlich sind."
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "Vorschläge, die KYC-Infos für regulatorische Zwecke aktualisieren, z. B. während der ersten Genesis-Verteilung von ICP in Form von Neuronen."
+        },
+        "10" : {
+          "title" : "Prämien für Knotenbetreiber",
+          "description" : "Vorschläge, die Knotenbetreiber mit einer Prämie vergüten"
+        },
+        "12" : {
+          "title" : "Bereitstellung der IC-Betriebssystemversion",
+          "description" : "Vorschläge für die Abwicklung von Updates zur Replikationsversion eines Subnetzes"
+        },
+        "13" : {
+          "title" : "Wahl der IC-Betriebssystemversion",
+          "description" : "Vorschläge zur Zulassung und Abwicklung von Replikationsversionen"
+        },
+        "14" : {
+          "title" : "SNS & Neurons' Fund",
+          "description" : "Vorschläge zum SNS and Neurons' Fund"
+        },
+        "15" : {
+          "title" : "Verwaltung von API-Grenzknoten",
+          "description" : "Vorschläge zur Verwaltung von API-Grenzknoten"
+        },
+        "16" : {
+          "title" : "Subnetzvermietung",
+          "description" : "Alle Vorschläge, die mit der Vermietung eines Subnetzes zu tun haben, beispielsweise Anfragen zur Anmietung von Subnetzen."
+        },
+        "17" : {
+          "title" : "Protokoll-Canister-Verwaltung",
+          "description" : "Alle Vorschläge zur Verwaltung von Protokoll-Canistern, die als Bestandteil des ICP-Protokolls gelten und für dessen ordnungsgemäße Funktion wesentlich sind."
+        },
+        "18" : {
+          "title" : "Verwaltung des Servicenervensystems",
+          "description" : "Alle Vorschläge zur Verwaltung von Canistern für Servicenervensysteme (SNS), einschließlich der Aktualisierung relevanter Canister und der Verwaltung von WASMs für SNS-Framework-Canister über SNS-W."
+        }
+      }
+    }
   }
 }
