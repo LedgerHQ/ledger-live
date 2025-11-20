@@ -22,7 +22,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
     });
 
@@ -31,7 +31,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -40,7 +40,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -49,7 +49,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -59,7 +59,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(0);
       const gasPrice = new BigNumber(0);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(amount)).toBe(true);
     });
   });

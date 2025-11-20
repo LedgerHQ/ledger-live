@@ -10,6 +10,7 @@ import {
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "./../constants";
 import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
   transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);
@@ -71,10 +72,11 @@ const prepareTransaction = async (
   }
 
   const aptosClient = new AptosAPI(account.currency.id);
+  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
 
   if (transaction.useAllAmount) {
     if (transaction.mode === "send") {
-      transaction.amount = getMaxSendBalance(account, transaction);
+      transaction.amount = getMaxSendBalance(tokenAccount || account, account);
     } else if (
       transaction.mode === "restake" ||
       transaction.mode === "unstake" ||
@@ -88,7 +90,7 @@ const prepareTransaction = async (
       );
     } else if (transaction.mode === "stake") {
       // Reserve a certain amount to cover future network fees to deactivate and withdraw
-      transaction.amount = getMaxSendBalance(account, transaction).minus(
+      transaction.amount = getMaxSendBalance(tokenAccount || account, account).minus(
         APTOS_DELEGATION_RESERVE_IN_OCTAS,
       );
     }
