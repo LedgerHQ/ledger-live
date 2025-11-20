@@ -48,7 +48,7 @@ const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
     <AccountBanner
       title={title}
       description={description}
-      cta={!hasDelegation ? cta : t("mina.stakeBanner.changeCTA")}
+      cta={hasDelegation ? t("mina.stakeBanner.changeCTA") : cta}
       onClick={onClick}
       display={true}
       linkText={linkText}
