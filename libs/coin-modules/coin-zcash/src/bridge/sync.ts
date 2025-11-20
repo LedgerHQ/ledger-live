@@ -47,11 +47,7 @@ const operationAdapter =
     return op;
   };
 
-const filterOperations = (
-  transactions: ZcashOperation[],
-  accountId: string,
-  address: string,
-) => {
+const filterOperations = (transactions: ZcashOperation[], accountId: string, address: string) => {
   return transactions
     .filter(
       ({ tx, meta }: ZcashOperation) =>
