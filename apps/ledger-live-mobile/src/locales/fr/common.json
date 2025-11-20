@@ -983,7 +983,7 @@
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
     },
     "CardanoStakeKeyDepositError" : {
-      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce dépôt"
+      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce placement"
     },
     "CardanoFeeHigh" : {
       "title" : "Frais de réseau anormalement élevés",
@@ -1154,6 +1154,11 @@
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Wallet, accédez aux Paramètres, sélectionnez Fonctionnalités expérimentales, puis choisissez un autre fournisseur."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Fournisseur non valide",
+      "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Wallet, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur.",
+      "openSettings" : "Accéder aux Paramètres"
+    },
     "GasLessThanEstimate" : {
       "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "Restez en sécurité",
       "description" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Montant réduit pour respecter les limites UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Montant supérieur aux limites UTXO"
     }
   },
   "crash" : {
@@ -1918,7 +1929,7 @@
               "label" : "Achetez un nouvel appareil Ledger."
             },
             "1" : {
-              "label" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Live."
+              "label" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans Ledger Wallet."
             },
             "2" : {
               "label" : "Entrez votre phrase de récupération sur votre nouvel appareil pour restaurer l’accès à vos cryptos."
@@ -2669,7 +2680,7 @@
         "description" : "Importez vos comptes depuis Ledger Wallet pour ordinateur."
       },
       "add" : {
-        "title" : "Utilisez votre appareil Ledger",
+        "title" : "Utiliser votre appareil Ledger",
         "description" : "Créez ou importez vos comptes crypto avec votre appareil Ledger"
       },
       "walletSync" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
-        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live."
+        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges interchaînes sur {{provider}} via Ledger Wallet.",
+        "explore_compatible_devices" : "Voir les appareils compatibles",
+        "swapWithAnotherProvider" : "Choisir un autre prestataire"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
@@ -3831,7 +3844,7 @@
         "amountSupplied" : "Montant placé",
         "amountSuppliedTooltip" : "Montant prêté sur le réseau",
         "currencyAPY" : "APY",
-        "currencyAPYTooltip" : "Rendement annuel d’un dépôt sans cesse capitalisé",
+        "currencyAPYTooltip" : "Rendement annuel d’un placement sans cesse capitalisé",
         "accruedInterests" : "Solde des récompenses",
         "accruedInterestsTooltip" : "Récompenses gagnées avec vos actifs prêtés",
         "interestEarned" : "Intérêts gagnés",
@@ -3978,7 +3991,7 @@
         },
         "validation" : {
           "success" : "Dépôt bien versé",
-          "info" : "Vous commencerez à percevoir des récompenses une fois que le réseau aura confirmé le dépôt.",
+          "info" : "Vous commencerez à percevoir des récompenses une fois le placement confirmé sur le réseau.",
           "extraInfo" : "Il peut y avoir un délai avant que les transactions apparaissent dans un explorateur et soient confirmées.",
           "button" : {
             "done" : "Terminé",
@@ -4430,6 +4443,7 @@
     "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
     "loading" : "Chargement...",
     "turnOnAndUnlockDevice" : "Allumez votre appareil Ledger et déverrouillez-le",
+    "powerOnDevice" : "Allumez et déverrouillez votre {{deviceName}}",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "connectAnotherDevice" : "Connecter un autre appareil Ledger",
     "unlockDevice" : "Déverrouillez votre appareil.",
@@ -4458,6 +4472,7 @@
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "acceptTerms" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "nearIntentsAcceptTerms" : "En validant cette transaction, \nj’accepte les <0>Conditions d’utilisation de SwapKit</0>, la technologie utilisée par NEAR Intents.",
       "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -4494,6 +4509,11 @@
     "bluetooth" : {
       "title" : "Se connecter via Bluetooth",
       "label" : "Détectez automatiquement votre Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Vous ne voyez pas votre appareil Ledger ?",
+      "scanSignersCta" : "Scanner les appareils",
+      "helpCenterCta" : "Obtenir de l’aide"
     },
     "deviceNotFoundPairNewDevice" : "Appairer via Bluetooth",
     "headerDescription" : "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
@@ -4868,7 +4888,7 @@
         "restoreLanguage" : "Restauration de la langue",
         "imageLoadRequested" : "Appuyez sur Charger pour restaurer le fond d’écran",
         "imageCommitRequested" : "Appuyez sur Conserver pour confirmer le fond d’écran",
-        "allowLanguageInstallation" : "Appuyez sur Autoriser pour restaurer la langue",
+        "allowLanguageInstallation" : "Appuyez sur \"Install\" (Installer) pour restaurer la langue",
         "allowAppsRestoration" : "Appuyez sur Autoriser pour restaurer les apps",
         "errors" : {
           "description" : "S’il s’agit d’une erreur, réessayez maintenant.",
@@ -7304,11 +7324,11 @@
         "description" : "Choisissez une œuvre d’art numérique ou image comme fond d’écran de votre {{productName}}.",
         "popupLabel" : "Fond d’écran personnalisé"
       },
-      "recover" : {
-        "title" : "Vous abonner à Ledger Recover",
-        "titleCompleted" : "Abonné(e) à Ledger Recover",
-        "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
-        "popupLabel" : "Vous êtes abonné(e) à Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Synchroniser vos comptes crypto",
+        "titleCompleted" : "Vos comptes sont synchronisés",
+        "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
+        "popupLabel" : "Comptes synchronisés"
       }
     }
   },
