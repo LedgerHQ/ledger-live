@@ -44,7 +44,7 @@ import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
-import { useVersionedStakePrograms } from "~/newArch/hooks/useVersionedStakePrograms";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
