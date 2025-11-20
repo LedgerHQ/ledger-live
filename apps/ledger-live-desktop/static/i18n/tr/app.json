@@ -86,6 +86,7 @@
     "continue" : "Devam",
     "previous" : "Geri",
     "learnMore" : "Daha fazla bilgi",
+    "learnMoreWithEllipsis" : "Daha fazla bilgi edinin...",
     "help" : "Yardım",
     "needHelp" : "Yardım mı gerekli?",
     "areYouSure" : "Emin misiniz?",
@@ -106,6 +107,7 @@
     "reset" : "Sıfırla",
     "retry" : "Tekrar dene",
     "range" : "Dönem",
+    "start" : "Başla",
     "stop" : "Durdur",
     "updateNow" : "Şimdi güncelle",
     "close" : "Kapat",
@@ -122,9 +124,15 @@
     "featureFlags" : "Özellik bayrağı",
     "ldmkEnabled" : "LDMK taşıma",
     "information" : "Bilgi",
+    "increase" : "Artır",
+    "max" : "Maks.",
+    "min" : "Min.",
+    "set" : "Belirle",
+    "follow" : "Takip Et",
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
     "manage" : "Yönet",
+    "none" : "Yok",
     "tryAgain" : "Tekrar dene",
     "lockScreen" : {
       "title" : "Tekrar hoş geldiniz",
@@ -203,7 +211,9 @@
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
       "BURN" : "Yakıldı",
-      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
+      "STAKE_NEURON" : "Stake edildi",
+      "TOP_UP_NEURON" : "Bakiye yüklendi"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1446,6 +1456,12 @@
         "description" : "Herhangi bir borsadan veya cüzdandan doğrudan Ledger cihazınıza aktarın.",
         "actionCompletedPopupLabel" : "Varlıklar aktarıldı"
       },
+      "syncAccounts" : {
+        "title" : "Kripto hesaplarınızı senkronize edin",
+        "titleCompleted" : "Hesaplarınız senkronize edildi",
+        "description" : "Kripto hesaplarınızı senkronize etmek için Ledger Sync’i etkinleştirin",
+        "actionCompletedPopupLabel" : "Hesaplar senkronize edildi"
+      },
       "recover" : {
         "title" : "Ledger Recover'a abone olun",
         "description" : "Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.",
@@ -1905,6 +1921,7 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
+      "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
       "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
@@ -2279,6 +2296,7 @@
         "label" : "Alacak hesap",
         "parentAccount" : "1. {{currencyName}} hesabı seçin",
         "token" : "2. Token seçin",
+        "errorLoadingTokens" : "Token’lar yüklenirken bir hata oluştu",
         "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
         "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
@@ -7054,6 +7072,42 @@
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "{{purpose}} için minimum tutar: {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Çözme süresi en az {{min}} olmalıdır."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Çözme süresi {{max}} değerinden az olmalıdır."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Yeni çözme süresi, mevcut çözme süresinden büyük olmalıdır."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Nöron bulunamadı."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Ana kimlik geçersiz"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Kısayol tuşu zaten mevcut"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Bölüm tutarı, izin verilen maksimum tutardan fazla"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Bu işlem, mevcut bir nöronun stake’ini artıracak tutarı aktaracaktır"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Bu işlem ilgili tutarı yeni bir nörona aktaracaktır. Nöron, başarıyla onaylandıktan sonra başka işlemler için kullanılabilecektir."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Miktar, UTXO kısıtlamalarına uyacak şekilde azaltıldı."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
     }
   },
   "cryptoOrg" : {
@@ -7519,7 +7573,7 @@
     "connectYourDevice" : {
       "title" : "Cihazınızı bağlayın ve kilidini açın"
     },
-    "searchPlaceholder" : "İsim veya adrese göre ara",
+    "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
@@ -7561,5 +7615,291 @@
     "restart" : "Yeniden başlat",
     "downloadOnLedger" : "Ledger.com'dan indirin",
     "downloadProgress" : "İndiriliyor... %{{ progress }}"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Bu işlem mevcut bir nöronun stake’ini artıracaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "createNeuron" : "Bu işlem, stake edilen ICP ile bir nöron oluşturacaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "tooltip" : "Internet Computer bunu, ICP’yi nörona stake etme işlemini tanımlamak için kullanır."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Takibinizi Onaylayın",
+        "description" : "Nöronu takibiniz {{days}} gün {{hours}} saat içinde onaylanmalıdır",
+        "altDescription" : "Ödüller kaybediyorsunuz, kazanmaya devam etmek için nöron takibini onaylayın",
+        "cta" : "Takibi Onaylayın"
+      },
+      "syncNeurons" : {
+        "title" : "Stake Edilen ICP’lerinizi Senkronize Edin",
+        "description" : "Stake edilen ICP’leriniz en son {{days}} gün {{hours}} saat önce senkronize edildi. En son bilgileri görmek istiyorsanız sık sık senkronize etmenizi öneririz.",
+        "altDescription" : "En son bilgileri görmek için nöronlarınızı senkronize etmenizi öneririz",
+        "cta" : "Nöronları Senkronize Et"
+      },
+      "lockNeurons" : {
+        "title" : "Nöronları Kilitle",
+        "description" : "Bir veya daha fazla nöronunuz kilitli değil. Nöronları kilitlemezseniz ödül alamazsınız. Bunun nedeni, nöronların ICP’lerin yönetişimine katılarak ödüller kazanması ve sadece altı aydan uzun süredir kilitli olan nöronların oy verebilmesidir.",
+        "cta" : "Nöronları Yönet"
+      },
+      "addFollowees" : {
+        "title" : "Takip Edileni Ekleyin",
+        "description" : "Bir veya daha fazla nöronunuzun hiçbir takip edileni yok. Takip edilenler olmadığında ödül kazanamayabilirsiniz. Ödül kazanabilmek için nöronların doğrudan oy vermesi (örneğin NNS dApp’i ile) veya oy veren nöronları takip etmesi gerekir.",
+        "cta" : "Nöronları Yönet"
+      },
+      "stakeICP" : {
+        "title" : "ICP Stake Edin",
+        "description" : "ICP stake edip yönetişimine katılarak ödüller kazanın.",
+        "cta" : "ICP Stake Et"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "ICP Stake Edin",
+        "tooltip" : "ICP stake etmek için nöronlar oluşturun"
+      },
+      "manageNeurons" : {
+        "title" : "Nöronları Yönetin",
+        "tooltip" : "Aktif nöronları yönetin"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
+      "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir.",
+      "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
+      "stakedBalance" : "Stake Bakiyesi",
+      "stakedMaturity" : "Stake Edilmiş Ödül Miktarı",
+      "stakedMaturityTooltip" : "Vade ödüllerinin otomatik olarak nöronlara yeniden stake edilen kısmı ek ödüller kazandırmaya devam eder.",
+      "liquidMaturity" : "Likit Ödül",
+      "liquidMaturityTooltip" : "Vade ödüllerinin likit ICP token’ları olarak alınabilen veya nöronlara stake edilebilen kısmı."
+    },
+    "confirmation" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "success" : "{{action}} başarılı",
+      "syncAccounts" : "Güncellenen değişiklikleri görmek için lütfen hesaplarınızı senkronize edin"
+    },
+    "sync" : "Senkronizasyon",
+    "lastSynced" : "Son Senkronizasyon",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Ödül Kaybına Kalan Süre",
+      "warnbox" : "Hiçbir nöron bulunamadı, NNS dApp’i aracılığıyla oluşturulan mevcut nöronları senkronize etmeyi deneyin veya yeni nöronlar oluşturmak için stake edin."
+    },
+    "common" : {
+      "neuronId" : "Nöron Kimliği",
+      "neuronIds" : "Nöron Kimlikleri",
+      "state" : "Durum",
+      "action" : "Eylem",
+      "balance" : "Bakiye",
+      "maturity" : "Vade Ödülü",
+      "currentBalance" : "Güncel Bakiye",
+      "amount" : "Miktar",
+      "stake" : "Stake edin",
+      "followees" : "Takip Edilenler",
+      "votingPower" : "Oylama Gücü",
+      "hotkey" : "Kısayol Tuşu",
+      "neuron" : "Nöron",
+      "disburse" : "Dağıt",
+      "startDissolving" : "Çözmeye Başla",
+      "stopDissolving" : "Çözmeyi Durdur",
+      "dissolveDelay" : "Çözme Süresi",
+      "dissolveState" : "Çözme Durumu",
+      "dissolveStateUnlocked" : "Kilidi Açık",
+      "dissolveStateLocked" : "Kilitli",
+      "dissolveStateDissolving" : "Çözülüyor",
+      "dissolveStateDissolved" : "Çözüldü",
+      "inactiveNeuron" : "Devre Dışı Nöron",
+      "activeNeuron" : "Aktif Nöron",
+      "confirmFollowing" : "Takibi Onaylayın"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Oylama Gücünü Yenileyin"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Nöronları Yönetin",
+      "stakeMaturity" : {
+        "title" : "Vade Ödüllerini Stake Edin",
+        "description" : "Bu nörona, kullanılabilir ödüllerin ne kadarının stake edileceğini seçin.",
+        "confirmStake" : "Staking’i Onaylayın",
+        "maturityAvailable" : "Kullanılabilir Ödüller"
+      },
+      "splitNeuron" : {
+        "title" : "Nöronu Bölün",
+        "transactionFee" : "İşlem Ücreti",
+        "confirmSplit" : "Bölmeyi Onaylayın"
+      },
+      "setDissolveDelay" : {
+        "title" : "Çözme Süresini Belirleyin",
+        "balance" : "Bakiye",
+        "dissolveDelay" : "Çözme Süresi",
+        "dissolveDelayTooltip" : "Çözme süresi, nöronun kilidinin açılması ve ICP’nin yeniden kullanılabilmesi için beklemeniz gereken minimum süredir. Çözme süresinin sadece nöron çözme durumundayken azaldığını unutmayın.",
+        "votingPowerDescription" : "Oylama gücü sadece nöron süresi en az 6 ay olan nöronlara verilir.",
+        "dissolveDelayInput" : "Çözme Süresi (gün olarak)",
+        "inputPlaceholder" : "Çözme süresini girin",
+        "updateDelay" : "Süreyi Güncelleyin"
+      },
+      "selectFollowees" : {
+        "title" : "Takip Edilenin Nöron Kimliği",
+        "placeholder" : "Nöron kimliğini girin",
+        "options" : "Takip Seçenekleri"
+      },
+      "selectTopics" : {
+        "title" : "Konu Seçin",
+        "warnbox" : "Oylamayı otomatik bir hâle getirmek için nöronları takip edin ve aldığınız oylama ödüllerini en üst düzeye çıkarın. Belirli konulardaki veya tüm konulardaki nöronları takip edebilirsiniz.",
+        "listOfTopics" : "Takip edilebilecek konular listesi",
+        "addAction" : "Takip Edilen Ekleyin"
+      },
+      "addHotKey" : {
+        "title" : "Kısayol Tuşu Ekleyin"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "Bu nöron bir kısayol tuşuyla kontrol edilir ve Ledger Live arayüzünden kontrolü sınırlıdır.",
+          "hotkeyControl" : "Kısayol Tuşu Kontrolü",
+          "votingPower" : "Oylama Gücü",
+          "noVotingPower" : "Oylama Gücü Yok"
+        },
+        "votingPower" : {
+          "title" : "Oylama Gücü",
+          "titleTooltip" : "Nöronun oylama gücüne sahip olabilmesi için çözme süresi en az 6 ay olmalıdır.",
+          "value" : "Değer",
+          "staked" : "Stake Edilen ICP",
+          "increaseStake" : "Stake'i Artır",
+          "ageBonus" : "Dönem Bonusu",
+          "ageBonusTooltip" : "Nöronunuz kilitli, kilidi açılmış veya çözülüyor durumunda olabilir. Kilitli durumdayken dönem bonusu biriktirir ve çözme süresi sabit kalır. Nöron çözülüyor durumundaysa dönem bonusu 0 olur ve çözme süresi zamanla azalır. Çözme süresi 0 olduğunda nöronun kilidi açılır ve içindeki ICP herhangi bir ICP hesabına gönderilebilir.",
+          "dissolveDelayBonus" : "Çözme Süresi Bonusu",
+          "dissolveDelayBonusTooltip" : "Çözme süresi bonusu, çözme süresine bağlı olarak nöronun oylama gücüne eklenebilen bonustur. Çözme süresi ne kadar uzun olursa bonus da o kadar fazla olur.",
+          "confirmFollowing" : "Takibi Onaylayın",
+          "confirmFollowingTooltip" : "6 ay boyunca devre dışı olan ICP nöronları, oylama ödüllerini kaybetmeye başlar. Ödülleri kaybetmemek için manuel olarak oylayın, takip edilenleri düzenleyin ve onaylayın."
+        },
+        "maturity" : {
+          "title" : "Vade Ödülü",
+          "description" : "Teklifleri oylayarak ve/veya aktif nöronları takip ederek ödüller kazanın.",
+          "staked" : "Stake edildi",
+          "stakedTooltip" : "Stake edilen ödüller nöronun oylama gücüne katkıda bulunur, ancak staking ödülleri ile yeni bir nöron oluşturulamaz.",
+          "available" : "Mevcut",
+          "availableTooltip" : "Kullanılabilir ödüller, stake edilebilir veya ödül modülasyonu olarak adlandırılan ve deterministik olmayan bir sürece tabi olan bir miktar ICP içeren bir nöron oluşturmak üzere yakılabilir.",
+          "stakeAction" : "Stake edin",
+          "spawnNeuronAction" : "Nöron Oluşturun"
+        },
+        "hotKeys" : {
+          "title" : "Kısayol Tuşları",
+          "description" : "Kısayol Tuşları, nöronunuzu Ledger Live arayüzünden kontrol edebilmenize olanak tanır.",
+          "addHotKey" : "Kısayol Tuşu Ekle",
+          "removeAction" : "Kaldır",
+          "noHotKeys" : "Hiçbir Kısayol Tuşu Bulunamadı"
+        },
+        "advancedDetails" : {
+          "title" : "Gelişmiş Bilgiler ve Ayarlar",
+          "dateCreated" : "Oluşturulma Tarihi",
+          "dissolveDate" : "Çözülme Tarihi",
+          "neuronAccount" : "Nöron Hesabı",
+          "splitNeuronAction" : "Nöronu Bölün",
+          "autoStakeMaturityAction" : "Ödüllerin Otomatik Stake'i"
+        },
+        "following" : {
+          "title" : "Takip",
+          "description" : "Takip, oylarınızın yetkisini başka bir nöron sahibine devretmenize olanak sağlar. Oylama haklarınızı devrettiğinizde ödüller kazanmaya devam edersiniz. Takip edilenleri istediğiniz zaman değiştirebilirsiniz.",
+          "warnbox" : "Takip edilenler olmadığında ödül kazanamayabilirsiniz. Ödül kazanabilmek için nöronların doğrudan oy vermesi (örneğin NNS dApp’i ile) veya oy veren nöronları takip etmesi gerekir.",
+          "followNeuronsAction" : "Nöronları Takip Edin"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "Staking, vade ödülü ve çözme süresi ayarlarını yönetmek için aşağıdaki listeden bir nöron seçin."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Stake'i Artırma",
+        "create_neuron" : "Nöron Oluşturma",
+        "start_dissolving" : "Çözmeyi Başlatma",
+        "stop_dissolving" : "Çözmeyi Durdurma",
+        "list_neurons" : "Nöronları Listeleme",
+        "disburse" : "Nöron Dağıtma",
+        "spawn_neuron" : "Nöron Oluşturma",
+        "add_hot_key" : "Kısayol Tuşu Ekleme",
+        "stake_maturity" : "Staking Vade Ödülü",
+        "refresh_voting_power" : "Oylama Gücünü Yenileme",
+        "increase_dissolve_delay" : "Çözme Süresini Artırma",
+        "auto_stake_maturity" : "Ödülleri Otomatik Stake Etme",
+        "spawn_neuron_from_maturity" : "Ödülden Nöron Oluşturma",
+        "set_auto_stake_maturity" : "Otomatik Ödül Stake'ini Belirleme",
+        "set_dissolve_delay" : "Çözme Süresini Belirleme",
+        "remove_hot_key" : "Kısayol Tuşunu Kaldırma",
+        "follow" : "Nöronları Takip Etme",
+        "split_neuron" : "Nöron Bölme"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "\"Yönetişim\" ve \"SNS ile Nöronlar Fonu\" Dışındaki Tüm Konular",
+          "description" : "\"Yönetişim\" ve \"SNS ile Nöronlar Fonu\" dışındaki tüm teklif konularıyla ilgili nöronları takip edin."
+        },
+        "1" : {
+          "title" : "Nöron Yönetimi",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Takas kuru",
+          "description" : "IMF SDR tarafından sağlanan veriler ışığında ICP’nin değeri hakkında \"gerçek zamanlı\" bilgiler sağlayarak sistemin (NNS), gerçek hayattaki maliyetini sabit tutacak bir şekilde ICP’yi \"cycle\"lara (hesaplama birimine) dönüştürmesine olanak sağlayan tüm teklifler."
+        },
+        "3" : {
+          "title" : "Ağ Ekonomisi",
+          "description" : "Ağ ekonomisini yöneten teklifler, örneğin node operatörlerine hangi ödüllerin verileceğinin belirlenmesi."
+        },
+        "4" : {
+          "title" : "Yönetişim",
+          "description" : "Yönetişimi yöneten tüm teklifler. Örneğin, ağa zarar veren kötü amaçlı akıllı sözleşmelerin dondurulması."
+        },
+        "5" : {
+          "title" : "Node Yöneticisi",
+          "description" : "İşletim sisteminin yükseltilmesi veya yapılandırılması, sanal makine altyapısının yükseltilmesi veya yapılandırılması ve node çoğaltma yazılımının yükseltilmesi veya yapılandırılması da dâhil, ancak bunlarla sınırlı olmaksızın node makinelerini bir şekilde yöneten tüm teklifler."
+        },
+        "6" : {
+          "title" : "Katılımcı Yönetimi",
+          "description" : "Ağ katılımcılarını yöneten tüm teklifler. Örneğin DCID’lerin (veri merkezi kimlikleri) veya NOID’lerin (node operatörü kimlikleri) verilmesi ve iptal edilmesi."
+        },
+        "7" : {
+          "title" : "Alt Ağ Yönetimi",
+          "description" : "Ağ alt ağlarını yöneten tüm teklifler. Örneğin yeni alt ağların oluşturulması, alt ağ node'larını ekleme, kaldırma ve alt ağları bölme."
+        },
+        "8" : {
+          "title" : "Protokol Akıllı Sözleşmesi Yönetimi",
+          "description" : "ICP protokolünün bir parçası addedilen ve düzgün bir şekilde çalışması için çok önemli olan protokol akıllı sözleşmelerinin yönetimine yönelik tüm teklifler."
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "Mevzuat uyarınca KYC bilgilerini güncelleyen teklifler. Örneğin, ICP’nin nöronlar şeklindeki ilk Genesis dağıtımı sırasında."
+        },
+        "10" : {
+          "title" : "Node Sağlayıcısı Ödülleri",
+          "description" : "Node sağlayıcılarını ödüllendiren teklifler"
+        },
+        "12" : {
+          "title" : "IC İşletim Sistemi Sürümünün Kullanıma Sunulması",
+          "description" : "Bir alt ağın çoğaltılmış sürümünün güncellemelerini ele alan teklifler"
+        },
+        "13" : {
+          "title" : "IC İşletim Sistemi Sürümü Seçimi",
+          "description" : "Çoğaltılmış sürümlerin onaylanmasına veya kullanımdan kaldırılmasına ilişkin teklifler"
+        },
+        "14" : {
+          "title" : "SNS ile Nöronlar Fonu",
+          "description" : "SNS ile Nöronlar Fonu ile ilgili teklifler"
+        },
+        "15" : {
+          "title" : "API Sınır Node'u Yönetimi",
+          "description" : "API sınır node'larının yönetimiyle ilgili teklifler"
+        },
+        "16" : {
+          "title" : "Alt Ağ Kiralama",
+          "description" : "Alt ağ kiralamayla ilgili tüm teklifler. Örneğin, bir alt ağ kiralama talebi."
+        },
+        "17" : {
+          "title" : "Protokol Akıllı Sözleşmesi Yönetimi",
+          "description" : "ICP protokolünün bir parçası addedilen ve düzgün bir şekilde çalışması için çok önemli olan protokol akıllı sözleşmelerinin yönetimine yönelik tüm teklifler."
+        },
+        "18" : {
+          "title" : "Hizmet Sinir Sistemi Yönetimi",
+          "description" : "Hizmet sinir sistemlerine (SNS) ait dosyaların yönetimiyle ilgili tüm öneriler: buna ilgili dosyaların güncellenmesi ve SNS-W aracılığıyla SNS çerçevesine ait WASM dosyalarının yönetimi de dahildir."
+        }
+      }
+    }
   }
 }
