@@ -14958,9 +14958,6 @@ packages:
   '@ledgerhq/errors@6.25.0':
     resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
 
-  '@ledgerhq/errors@6.25.0':
-    resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
-
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
@@ -43230,7 +43227,7 @@ snapshots:
 
   '@expo/spawn-async@1.7.2':
     dependencies:
-      cross-spawn: 7.0.6
+      cross-spawn: 7.0.3
 
   '@expo/vector-icons@14.0.4':
     dependencies:
@@ -45628,8 +45625,6 @@ snapshots:
   '@ledgerhq/errors@5.50.0': {}
 
   '@ledgerhq/errors@6.19.1': {}
-
-  '@ledgerhq/errors@6.25.0': {}
 
   '@ledgerhq/errors@6.25.0': {}
 
@@ -53306,7 +53301,7 @@ snapshots:
 
   '@types/bs58@4.0.4':
     dependencies:
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       base-x: 3.0.9
 
   '@types/bs58check@2.1.2':
@@ -55504,9 +55499,9 @@ snapshots:
     dependencies:
       acorn: 7.4.1
 
-  acorn-jsx@5.3.2(acorn@8.15.0):
+  acorn-jsx@5.3.2(acorn@8.13.0):
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.13.0
 
   acorn-walk@7.2.0: {}
 
@@ -60869,7 +60864,7 @@ snapshots:
       '@ungap/structured-clone': 1.2.0
       ajv: 6.12.6
       chalk: 4.1.2
-      cross-spawn: 7.0.6
+      cross-spawn: 7.0.3
       debug: 4.3.4
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
@@ -60911,8 +60906,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.13.0
+      acorn-jsx: 5.3.2(acorn@8.13.0)
       eslint-visitor-keys: 3.4.3
 
   esprima@1.2.2: {}
@@ -61075,7 +61070,7 @@ snapshots:
 
   execa@5.0.0:
     dependencies:
-      cross-spawn: 7.0.6
+      cross-spawn: 7.0.3
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1
