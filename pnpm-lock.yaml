@@ -15,6 +15,9 @@ catalogs:
     '@ledgerhq/device-signer-kit-ethereum':
       specifier: 1.9.2
       version: 1.9.2
+    '@ledgerhq/device-signer-kit-solana':
+      specifier: 1.4.0
+      version: 1.4.0
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.0
       version: 1.3.0
@@ -54,9 +57,15 @@ catalogs:
     '@reduxjs/toolkit':
       specifier: 2.8.2
       version: 2.8.2
+    '@types/bs58':
+      specifier: ^4.0.1
+      version: 4.0.4
     axios:
       specifier: 1.12.2
       version: 1.12.2
+    bs58:
+      specifier: ^4.0.1
+      version: 4.0.1
     electron:
       specifier: 38.2.0
       version: 38.2.0
@@ -2491,7 +2500,7 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       bs58check:
         specifier: ^2.1.2
@@ -2531,7 +2540,7 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/bs58check':
         specifier: ^2.1.2
@@ -3918,7 +3927,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       expect:
         specifier: ^27.4.6
@@ -3958,7 +3967,7 @@ importers:
         specifier: 0.2.36
         version: 0.2.36(@swc/core@1.4.11)
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/invariant':
         specifier: ^2.2.2
@@ -5658,7 +5667,7 @@ importers:
         specifier: ^3.0.4
         version: 3.1.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       date-fns:
         specifier: ^2.23.0
@@ -5718,7 +5727,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       rxjs:
-        specifier: ^7.8.1
+        specifier: 7.8.1
         version: 7.8.1
       semver:
         specifier: ^7.3.5
@@ -5779,7 +5788,7 @@ importers:
         specifier: ^14.1.2
         version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/bs58':
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/cbor':
         specifier: 6.0.0
@@ -6282,7 +6291,7 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       bs58:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       bs58check:
         specifier: ^2.1.2
@@ -8625,6 +8634,12 @@ importers:
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../coin-modules/coin-solana
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 0.11.1(rxjs@7.8.1)
+      '@ledgerhq/device-signer-kit-solana':
+        specifier: 'catalog:'
+        version: 1.4.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8646,6 +8661,15 @@ importers:
       '@ledgerhq/ledger-trust-service':
         specifier: workspace:^
         version: link:../ledger-services/trust
+      '@types/bs58':
+        specifier: 'catalog:'
+        version: 4.0.4
+      bs58:
+        specifier: 'catalog:'
+        version: 4.0.1
+      rxjs:
+        specifier: 7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7
         version: 7.7.1
@@ -14827,6 +14851,11 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.10.0
 
+  '@ledgerhq/context-module@1.9.0':
+    resolution: {integrity: sha512-LoBEsK9Puu/dC0OqP9CTsIaTCpdQ6MKpvDcZYTbkNHwCuL5AfJMv781+ypK9RCerWd4PDoZMcDiOIaELLbjtug==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.9.2
+
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     peerDependencies:
@@ -14883,6 +14912,11 @@ packages:
       '@ledgerhq/context-module': ^1.10.0
       '@ledgerhq/device-management-kit': 0.11.0
 
+  '@ledgerhq/device-signer-kit-solana@1.4.0':
+    resolution: {integrity: sha512-AqtZ1awAc1607dH4ODevUsVd+NpN2LeGbsr+wgRPgYlD1WWufvgdDYcBjYI9+5LtcSIeoZ01DIcrD3Z7hpLcNA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.9.2
+
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.0':
     resolution: {integrity: sha512-XjV7HiAgBt8mqxo1j+LrfPeXBJMcaHQaD/XyDg/tv1SGuv5FZBy1F6zO0divP98Oq4nGUGpRyNAm6lSQjBX3Lg==}
     peerDependencies:
@@ -14921,6 +14955,9 @@ packages:
 
   '@ledgerhq/errors@6.22.0':
     resolution: {integrity: sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ==}
+
+  '@ledgerhq/errors@6.25.0':
+    resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
 
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
@@ -18099,6 +18136,12 @@ packages:
     peerDependencies:
       typescript: '>=5'
 
+  '@solana/codecs-core@2.3.0':
+    resolution: {integrity: sha512-oG+VZzN6YhBHIoSKgS5ESM9VIGzhWjEHEGNPSibiDTxFhsFWxNaz8LbMDPjBUE69r9wmdGLkrQ+wVPbnJcZPvw==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: '>=5.3.3'
+
   '@solana/codecs-data-structures@2.0.0-rc.1':
     resolution: {integrity: sha512-rinCv0RrAVJ9rE/rmaibWJQxMwC5lSaORSZuwjopSUE6T0nb/MVg6Z1siNCXhh/HFTOg0l8bNvZHgBcN/yvXog==}
     peerDependencies:
@@ -18108,6 +18151,12 @@ packages:
     resolution: {integrity: sha512-J5i5mOkvukXn8E3Z7sGIPxsThRCgSdgTWJDQeZvucQ9PT6Y3HiVXJ0pcWiOWAoQ3RX8e/f4I3IC+wE6pZiJzDQ==}
     peerDependencies:
       typescript: '>=5'
+
+  '@solana/codecs-numbers@2.3.0':
+    resolution: {integrity: sha512-jFvvwKJKffvG7Iz9dmN51OGB7JBcy2CJ6Xf3NqD/VP90xak66m/Lg48T01u5IQ/hc15mChVHiBm+HHuOFDUrQg==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: '>=5.3.3'
 
   '@solana/codecs-strings@2.0.0-rc.1':
     resolution: {integrity: sha512-9/wPhw8TbGRTt6mHC4Zz1RqOnuPTqq1Nb4EyuvpZ39GW6O2t2Q7Q0XxiB3+BdoEjwA2XgPw6e2iRfvYgqty44g==}
@@ -18126,6 +18175,13 @@ packages:
     peerDependencies:
       typescript: '>=5'
 
+  '@solana/errors@2.3.0':
+    resolution: {integrity: sha512-66RI9MAbwYV0UtP7kGcTBVLxJgUxoZGm8Fbc0ah+lGiAw17Gugco6+9GrJCV83VyF2mDWyYnYM9qdI3yjgpnaQ==}
+    engines: {node: '>=20.18.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.3.3'
+
   '@solana/options@2.0.0-rc.1':
     resolution: {integrity: sha512-mLUcR9mZ3qfHlmMnREdIFPf9dpMc/Bl66tLSOOWxw4ml5xMT2ohFn7WGqoKcu/UHkT9CrC6+amEdqCNvUqI7AA==}
     peerDependencies:
@@ -18143,6 +18199,12 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.95.3
 
+  '@solana/spl-token@0.4.14':
+    resolution: {integrity: sha512-u09zr96UBpX4U685MnvQsNzlvw9TiY005hk1vJmJr7gMJldoPG1eYU5/wNEyOA5lkMLiR/gOi9SFD4MefOYEsA==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@solana/web3.js': ^1.95.5
+
   '@solana/spl-token@0.4.9':
     resolution: {integrity: sha512-g3wbj4F4gq82YQlwqhPB0gHFXfgsC6UmyGMxtSLf/BozT/oKd59465DbnlUK8L8EcimKMavxsVAMoLcEdeCicg==}
     engines: {node: '>=16'}
@@ -18151,6 +18213,9 @@ packages:
 
   '@solana/web3.js@1.95.4':
     resolution: {integrity: sha512-sdewnNEA42ZSMxqkzdwEWi6fDgzwtJHaQa5ndUGEJYtoOnM6X5cvPmjoTUp7/k7bRrVAxfBgDnvQQHD6yhlLYw==}
+
+  '@solana/web3.js@1.98.4':
+    resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
 
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
@@ -22024,6 +22089,9 @@ packages:
   base-x@4.0.0:
     resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
 
+  base-x@5.0.1:
+    resolution: {integrity: sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg==}
+
   base32.js@0.1.0:
     resolution: {integrity: sha512-n3TkB02ixgBOhTvANakDb4xaMXnYUVkNoRFJjQflcqMQhyEKxEHdj3E6N8t8sUQ0mjH/3/JxzlXuz3ul/J90pQ==}
     engines: {node: '>=0.12.0'}
@@ -22320,6 +22388,9 @@ packages:
 
   bs58@5.0.0:
     resolution: {integrity: sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==}
+
+  bs58@6.0.0:
+    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
 
   bs58check@2.1.2:
     resolution: {integrity: sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA==}
@@ -23009,6 +23080,10 @@ packages:
   commander@12.1.0:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
     engines: {node: '>=18'}
+
+  commander@14.0.2:
+    resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
+    engines: {node: '>=20'}
 
   commander@2.13.0:
     resolution: {integrity: sha512-MVuS359B+YzaWqjCL/c+22gfryv+mCBPHAv3zyVI2GN8EY6IRP8VwtasXn8jyyhvvq84R4ImN1OKRtcbIasjYA==}
@@ -45280,6 +45355,19 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/context-module@1.9.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.11.1(rxjs@7.8.1)
+      axios: 1.8.2
+      crypto-js: 4.2.0
+      ethers: 6.15.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons(@types/react@18.2.73)(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(styled-system@5.1.5)':
     dependencies:
       react: 18.3.1
@@ -45381,6 +45469,27 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/device-signer-kit-solana@1.4.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))(typescript@5.4.3)':
+    dependencies:
+      '@ledgerhq/context-module': 1.9.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.11.1(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 1.1.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))
+      '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
+      '@solana/web3.js': 1.98.4(typescript@5.4.3)
+      bs58: 6.0.0
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      semver: 7.7.2
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - fastestsmallesttextencoderdecoder
+      - typescript
+      - utf-8-validate
+
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.0(@ledgerhq/device-management-kit@0.11.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.11.1(rxjs@7.8.1)
@@ -45428,7 +45537,7 @@ snapshots:
 
   '@ledgerhq/domain-service@1.2.12':
     dependencies:
-      '@ledgerhq/errors': 6.22.0
+      '@ledgerhq/errors': 6.25.0
       '@ledgerhq/logs': 6.12.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
@@ -45441,6 +45550,8 @@ snapshots:
   '@ledgerhq/errors@6.19.1': {}
 
   '@ledgerhq/errors@6.22.0': {}
+
+  '@ledgerhq/errors@6.25.0': {}
 
   '@ledgerhq/errors@6.27.0': {}
 
@@ -50175,6 +50286,11 @@ snapshots:
       '@solana/errors': 2.0.0-rc.1(typescript@5.8.3)
       typescript: 5.8.3
 
+  '@solana/codecs-core@2.3.0(typescript@5.4.3)':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.4.3)
+      typescript: 5.4.3
+
   '@solana/codecs-data-structures@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
       '@solana/codecs-core': 2.0.0-rc.1(typescript@5.4.3)
@@ -50200,6 +50316,12 @@ snapshots:
       '@solana/codecs-core': 2.0.0-rc.1(typescript@5.8.3)
       '@solana/errors': 2.0.0-rc.1(typescript@5.8.3)
       typescript: 5.8.3
+
+  '@solana/codecs-numbers@2.3.0(typescript@5.4.3)':
+    dependencies:
+      '@solana/codecs-core': 2.3.0(typescript@5.4.3)
+      '@solana/errors': 2.3.0(typescript@5.4.3)
+      typescript: 5.4.3
 
   '@solana/codecs-strings@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
@@ -50249,6 +50371,12 @@ snapshots:
       commander: 12.1.0
       typescript: 5.8.3
 
+  '@solana/errors@2.3.0(typescript@5.4.3)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.2
+      typescript: 5.4.3
+
   '@solana/options@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
       '@solana/codecs-core': 2.0.0-rc.1(typescript@5.4.3)
@@ -50287,6 +50415,14 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
+  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)':
+    dependencies:
+      '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
+      '@solana/web3.js': 1.98.4(typescript@5.4.3)
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - typescript
+
   '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.95.4)(typescript@5.4.3)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
@@ -50302,6 +50438,29 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
+
+  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)':
+    dependencies:
+      '@solana/codecs': 2.0.0-rc.1(typescript@5.4.3)
+      '@solana/web3.js': 1.98.4(typescript@5.4.3)
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - typescript
+
+  '@solana/spl-token@0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)':
+    dependencies:
+      '@solana/buffer-layout': 4.0.1
+      '@solana/buffer-layout-utils': 0.2.0
+      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
+      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
+      '@solana/web3.js': 1.98.4(typescript@5.4.3)
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - fastestsmallesttextencoderdecoder
+      - typescript
+      - utf-8-validate
 
   '@solana/spl-token@0.4.9(@solana/web3.js@1.95.4)(typescript@5.4.3)':
     dependencies:
@@ -50353,6 +50512,29 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - utf-8-validate
+
+  '@solana/web3.js@1.98.4(typescript@5.4.3)':
+    dependencies:
+      '@babel/runtime': 7.27.1
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@solana/buffer-layout': 4.0.1
+      '@solana/codecs-numbers': 2.3.0(typescript@5.4.3)
+      agentkeepalive: 4.6.0
+      bn.js: 5.2.2
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      fast-stable-stringify: 1.0.0
+      jayson: 4.1.2
+      node-fetch: 2.7.0
+      rpc-websockets: 9.0.4
+      superstruct: 2.0.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
       - utf-8-validate
 
   '@stablelib/binary@1.0.1':
@@ -56369,6 +56551,8 @@ snapshots:
 
   base-x@4.0.0: {}
 
+  base-x@5.0.1: {}
+
   base32.js@0.1.0: {}
 
   base64-arraybuffer@0.2.0: {}
@@ -56762,6 +56946,10 @@ snapshots:
   bs58@5.0.0:
     dependencies:
       base-x: 4.0.0
+
+  bs58@6.0.0:
+    dependencies:
+      base-x: 5.0.1
 
   bs58check@2.1.2:
     dependencies:
@@ -57588,6 +57776,8 @@ snapshots:
   commander@11.0.0: {}
 
   commander@12.1.0: {}
+
+  commander@14.0.2: {}
 
   commander@2.13.0: {}
 
