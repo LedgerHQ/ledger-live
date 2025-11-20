@@ -15,31 +15,30 @@ async function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [];
 
   if (transaction.txType === "stake") {
-    fields.push({
-      type: "text",
-      label: "Type",
-      value: "Delegation",
-    });
-
-    fields.push({
-      type: "text",
-      label: "Delegator",
-      value: account.freshAddress,
-    });
-
-    fields.push({
-      type: "text",
-      label: "Delegate",
-      value: transaction.recipient,
-    });
-
-    fields.push({
-      type: "text",
-      label: "Fee",
-      value: formatCurrencyUnit(account.currency.units[0], transaction.fees.fee, {
-        showCode: true,
-      }),
-    });
+    fields.push(
+      {
+        type: "text",
+        label: "Type",
+        value: "Delegation",
+      },
+      {
+        type: "text",
+        label: "Delegator",
+        value: account.freshAddress,
+      },
+      {
+        type: "text",
+        label: "Delegate",
+        value: transaction.recipient,
+      },
+      {
+        type: "text",
+        label: "Fee",
+        value: formatCurrencyUnit(account.currency.units[0], transaction.fees.fee, {
+          showCode: true,
+        }),
+      },
+    );
   }
 
   return fields;

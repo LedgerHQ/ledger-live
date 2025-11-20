@@ -92,7 +92,7 @@ function StakingValidator({ navigation, route }: Props) {
             <FlatList
               data={validators}
               renderItem={renderItem}
-              keyExtractor={item => item.address}
+              keyExtractor={validator => validator.address}
               contentContainerStyle={styles.list}
               showsVerticalScrollIndicator={false}
             />

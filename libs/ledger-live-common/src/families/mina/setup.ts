@@ -8,6 +8,7 @@ import {
   MinaAccount,
   MinaAccountRaw,
   MinaOperation,
+  MinaSigner,
 } from "@ledgerhq/coin-mina/types";
 import { MinaApp } from "@zondax/ledger-mina-js";
 import Transport from "@ledgerhq/hw-transport";
