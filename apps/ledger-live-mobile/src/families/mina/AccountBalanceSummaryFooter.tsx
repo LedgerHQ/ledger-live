@@ -12,9 +12,9 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 
-type Props = {
+type Props = Readonly<{
   account: MinaAccount;
-};
+}>;
 type InfoName = "delegatedTo" | "stakedBalance" | "producerAddress";
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {

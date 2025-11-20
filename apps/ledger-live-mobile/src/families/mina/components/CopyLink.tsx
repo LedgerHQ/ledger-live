@@ -41,7 +41,7 @@ class CopyLink extends PureComponent<Props, State> {
     Clipboard.setString(string);
 
     this.setState({ copied: true });
-    onCopy && onCopy();
+    onCopy?.();
     this.timeout = setTimeout(() => {
       this.setState({ copied: false });
     }, 3000);
