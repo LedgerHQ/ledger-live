@@ -13,14 +13,17 @@ import type { DeviceInfo } from "@ledgerhq/types-live";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
-export default async function (transport: Transport): Promise<DeviceInfo> {
+export default async function getDeviceInfo(
+  transport: Transport,
+  { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+): Promise<DeviceInfo> {
   const tracer = new LocalTracer("hw", {
     ...transport.getTraceContext(),
     function: "getDeviceInfo",
   });
   tracer.trace("Starting get device info");
 
-  const probablyOnDashboard = await getAppAndVersion(transport)
+  const probablyOnDashboard = await getAppAndVersion(transport, { abortTimeoutMs })
     .then(({ name }) => isDashboardName(name))
     .catch(e => {
       tracer.trace(`Error from getAppAndVersion: ${e}`, { error: e });
@@ -42,7 +45,7 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     throw new DeviceOnDashboardExpected();
   }
 
-  const res = await getVersion(transport).catch(e => {
+  const res = await getVersion(transport, { abortTimeoutMs }).catch(e => {
     tracer.trace(`Error from getVersion: ${e}`, { error: e });
     if (e instanceof TransportStatusError) {
       if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {

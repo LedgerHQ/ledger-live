@@ -81,9 +81,14 @@ describe("DeviceManagementKitTransport", () => {
     const expected = Buffer.from([0x90, 0x00]);
     const apdu = Buffer.from([0x00, 0x01, 0x02, 0x03]);
 
-    const response = await transport.exchange(apdu);
+    const response = await transport.exchange(apdu, { abortTimeoutMs: 500 });
 
     expect(response).toEqual(expected);
+    expect(deviceManagementKit.sendApdu).toHaveBeenCalledWith({
+      sessionId: "session-123",
+      apdu: new Uint8Array(apdu),
+      abortTimeout: 500,
+    });
   });
 
   it("should listen to available disconnected devices", async () => {

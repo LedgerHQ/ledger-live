@@ -258,7 +258,10 @@ export class DeviceManagementKitTransport extends Transport {
     this.dmk.disconnect({ sessionId: this.sessionId });
   };
 
-  async exchange(apdu: Buffer): Promise<Buffer> {
+  async exchange(
+    apdu: Buffer,
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> {
     const devices = this.dmk.listConnectedDevices();
 
     // If the device is not connected, connect to new session
@@ -277,6 +280,7 @@ export class DeviceManagementKitTransport extends Transport {
       .sendApdu({
         sessionId: this.sessionId,
         apdu: new Uint8Array(apdu),
+        abortTimeout: abortTimeoutMs,
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
