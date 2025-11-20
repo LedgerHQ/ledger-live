@@ -8,7 +8,7 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
+import zcashCoinConfig, { type BoilerplateCoinConfig } from "../config";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
 import type { Transaction } from "../types";
@@ -25,7 +25,7 @@ export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
   coinConfig: CoinConfig<BoilerplateCoinConfig>,
 ) {
-  boilerplateCoinConfig.setCoinConfig(coinConfig);
+  zcashCoinConfig.setCoinConfig(coinConfig);
 
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));

@@ -10,11 +10,11 @@ import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-fr
 import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
 
-const currency = getCryptoCurrencyById("boilerplate");
+const currency = getCryptoCurrencyById("zcash");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
 
-const boilerplateSpec: AppSpec<Transaction> = {
+const zcashSpec: AppSpec<Transaction> = {
   name: "BOILERPLATE",
   currency,
   appQuery: {
@@ -71,6 +71,6 @@ const boilerplateSpec: AppSpec<Transaction> = {
   ],
 };
 export default {
-  boilerplateSpec,
+  zcashSpec,
 };
 */

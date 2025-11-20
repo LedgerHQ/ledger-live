@@ -4,7 +4,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 
 // We create an empty transaction that will be filled later
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => ({
-  family: "boilerplate",
+  family: "zcash",
   amount: new BigNumber(0),
   recipient: "",
   fee: null,

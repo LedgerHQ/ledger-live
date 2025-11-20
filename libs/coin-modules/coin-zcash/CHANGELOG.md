@@ -1,4 +1,4 @@
-# @ledgerhq/coin-module-boilerplate
+# @ledgerhq/coin-module-zcash
 
 ## 4.9.0
 
@@ -622,7 +622,7 @@
 
 ### Minor Changes
 
-- [#9877](https://github.com/LedgerHQ/ledger-live/pull/9877) [`bcf621c`](https://github.com/LedgerHQ/ledger-live/commit/bcf621c2ac602b7fdd58a826640615174d917b35) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-module-boilerplate): fix typos in coin boilerplate
+- [#9877](https://github.com/LedgerHQ/ledger-live/pull/9877) [`bcf621c`](https://github.com/LedgerHQ/ledger-live/commit/bcf621c2ac602b7fdd58a826640615174d917b35) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-module-zcash): fix typos in coin zcash
 
 ### Patch Changes
 
@@ -639,7 +639,7 @@
 
 ### Minor Changes
 
-- [#9877](https://github.com/LedgerHQ/ledger-live/pull/9877) [`bcf621c`](https://github.com/LedgerHQ/ledger-live/commit/bcf621c2ac602b7fdd58a826640615174d917b35) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-module-boilerplate): fix typos in coin boilerplate
+- [#9877](https://github.com/LedgerHQ/ledger-live/pull/9877) [`bcf621c`](https://github.com/LedgerHQ/ledger-live/commit/bcf621c2ac602b7fdd58a826640615174d917b35) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-module-zcash): fix typos in coin zcash
 
 ### Patch Changes
 
@@ -890,7 +890,7 @@
 
 ### Minor Changes
 
-- [#8809](https://github.com/LedgerHQ/ledger-live/pull/8809) [`ddf8d85`](https://github.com/LedgerHQ/ledger-live/commit/ddf8d857aa6a044281ea7207c648a0a1c9b72742) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: coin module boilerplate
+- [#8809](https://github.com/LedgerHQ/ledger-live/pull/8809) [`ddf8d85`](https://github.com/LedgerHQ/ledger-live/commit/ddf8d857aa6a044281ea7207c648a0a1c9b72742) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: coin module zcash
 
 ### Patch Changes
 
@@ -902,7 +902,7 @@
 
 ### Minor Changes
 
-- [#8809](https://github.com/LedgerHQ/ledger-live/pull/8809) [`ddf8d85`](https://github.com/LedgerHQ/ledger-live/commit/ddf8d857aa6a044281ea7207c648a0a1c9b72742) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: coin module boilerplate
+- [#8809](https://github.com/LedgerHQ/ledger-live/pull/8809) [`ddf8d85`](https://github.com/LedgerHQ/ledger-live/commit/ddf8d857aa6a044281ea7207c648a0a1c9b72742) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: coin module zcash
 
 ### Patch Changes
 

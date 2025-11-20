@@ -93,7 +93,7 @@ export const dataset: DatasetTest<Transaction> = {
             {
               name: "recipient and sender must not be the same",
               transaction: fromTransactionRaw({
-                family: "boilerplate",
+                family: "zcash",
                 recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
                 amount: "10000000",
                 fee: "1",
@@ -111,7 +111,7 @@ export const dataset: DatasetTest<Transaction> = {
             {
               name: "Operation with tag succeed",
               transaction: fromTransactionRaw({
-                family: "boilerplate",
+                family: "zcash",
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
                 fee: "1",

@@ -8,24 +8,24 @@ import type {
 } from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
-  family: "boilerplate";
+  family: "zcash";
   serverFee: BigNumber;
   baseReserve: BigNumber;
 };
 
 export type NetworkInfoRaw = {
-  family: "boilerplate";
+  family: "zcash";
   serverFee: string;
   baseReserve: string;
 };
 
 export type Transaction = TransactionCommon & {
-  family: "boilerplate";
+  family: "zcash";
   fee: BigNumber | null | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
-  family: "boilerplate";
+  family: "zcash";
   fee: string | null | undefined;
 };
 

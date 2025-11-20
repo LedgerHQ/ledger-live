@@ -1,11 +1,11 @@
 {
-  "name": "@ledgerhq/coin-module-boilerplate",
+  "name": "@ledgerhq/coin-module-zcash",
   "version": "4.9.0",
   "description": "Boilerplate coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "boilerplate",
+    "zcash",
     "Hardware Wallet"
   ],
   "repository": {
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-module-boilerplate",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-module-zcash",
   "publishConfig": {
     "access": "public"
   },

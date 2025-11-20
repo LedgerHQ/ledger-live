@@ -6,7 +6,7 @@ describe("createTransaction", () => {
     expect(createTransaction({} as AccountLike<Account>).amount.toNumber()).toEqual(0);
   });
 
-  it("should create a transaction with boilerplate family", () => {
-    expect(createTransaction({} as AccountLike<Account>).family).toEqual("boilerplate");
+  it("should create a transaction with zcash family", () => {
+    expect(createTransaction({} as AccountLike<Account>).family).toEqual("zcash");
   });
 });
