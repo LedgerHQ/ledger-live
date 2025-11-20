@@ -52,7 +52,7 @@ describe("Tezos Api - Mainnet", () => {
   });
 
   describe("encode", () => {
-    it("encode without failing", async () => {
+    it("encode a reveal operation without failing", async () => {
       // When
       const result = await module.craftTransaction(
         {

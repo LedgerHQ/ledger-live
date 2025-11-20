@@ -58,7 +58,9 @@ export async function craftTransaction(
     } catch (error) {
       // for some unknown reason, on some addresses the estimation fails with "inconsistent_hash" error, we fall back to
       // another method from the SDK
-      log("estimate-error", "error estimating reveal fees, trying using getRevealGasLimit", { error });
+      log("estimate-error", "error estimating reveal fees, trying using getRevealGasLimit", {
+        error,
+      });
       revealFees = {
         gasLimit: getRevealGasLimit(address),
       };
