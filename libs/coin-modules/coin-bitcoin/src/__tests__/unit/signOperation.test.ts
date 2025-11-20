@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom, skip, toArray } from "rxjs";
-import buildSignOperation from "../../signOperation";
+import buildSignRawOperation from "../../signRawOperation";
 import type { Account, Operation } from "@ledgerhq/types-live";
 
 // ---- Mocks ---------------------------------------------------------------
@@ -88,67 +88,7 @@ const EXPECTED_PSBT_FEE = 5000; // sats
 // -------------------------------------------------------------------------
 
 describe("signOperation (PSBT path)", () => {
-  test("finalize=false → psbtSigned in rawData, signature falls back to PSBT b64, value/fee come from PSBT", async () => {
-    const signer: MockSigner = {
-      signPsbtV2Buffer: jest.fn().mockResolvedValue({
-        psbt: Buffer.from(PSBT_V2_B64, "base64"),
-        tx: "", // not finalized → no raw tx
-      }),
-    };
-    const signerContext = makeSignerContext(signer);
-    const signOperation = buildSignOperation(signerContext);
-
-    const account = makeAccount();
-    const transaction = {
-      family: "bitcoin",
-      amount: new BigNumber(0), // typical for PSBT
-      useAllAmount: false,
-      feesStrategy: "medium",
-      psbt: PSBT_V2_B64,
-      finalizePsbt: false,
-    } as any;
-
-    const emissions = await firstValueFrom(
-      signOperation({ account, deviceId: "mock", transaction }).pipe(toArray()),
-    );
-
-    // Events should include requested and granted
-    const types = emissions.map(e => e.type);
-    expect(types).toContain("device-signature-requested");
-    expect(types).toContain("device-signature-granted");
-
-    const signedEvt = emissions.find(e => e.type === "signed") as any;
-    expect(signedEvt).toBeTruthy();
-
-    const { signedOperation } = signedEvt;
-    const op: Operation = signedOperation.operation;
-
-    // rawData contains the PSBT back (base64)
-    expect(signedOperation.rawData?.psbtSigned).toBe(PSBT_V2_B64);
-
-    // Signature falls back to PSBT b64 when tx is empty (non-finalized)
-    expect(signedOperation.signature).toBe(PSBT_V2_B64);
-
-    // value/fee parsed from PSBT (overrides mocked calculateFees=1000)
-    expect(op.fee.toNumber()).toBe(EXPECTED_PSBT_FEE);
-    expect(op.value.toNumber()).toBe(EXPECTED_PSBT_FEE);
-
-    // PSBT branch sets empty senders/recipients
-    expect(op.senders).toEqual([]);
-    expect(op.recipients).toEqual([]);
-
-    // Ensure signer was called with expected options
-    expect(signer.signPsbtV2Buffer).toHaveBeenCalledTimes(1);
-    const [psbtBuf, opts] = signer.signPsbtV2Buffer.mock.calls[0];
-    expect(Buffer.isBuffer(psbtBuf)).toBe(true);
-    expect(opts).toMatchObject({
-      finalizePsbt: false,
-      accountPath: "m/84'/0'/0'/0'",
-      addressFormat: "p2wpkh",
-    });
-  });
-
-  test("finalize=true → returns tx hex in signature and psbtSigned in rawData; value/fee from PSBT", async () => {
+  test("returns tx hex in signature and psbtSigned in rawData; value/fee from PSBT", async () => {
     const txHex = "01020304";
     const signer: MockSigner = {
       signPsbtV2Buffer: jest.fn().mockResolvedValue({
@@ -157,21 +97,18 @@ describe("signOperation (PSBT path)", () => {
       }),
     };
     const signerContext = makeSignerContext(signer);
-    const signOperation = buildSignOperation(signerContext);
+    const signOperation = buildSignRawOperation(signerContext);
 
     const account = makeAccount();
-    const transaction = {
-      family: "bitcoin",
-      amount: new BigNumber(0),
-      useAllAmount: false,
-      feesStrategy: "medium",
-      psbt: PSBT_V2_B64,
-      finalizePsbt: true,
-    } as any;
 
     const emissions = await firstValueFrom(
-      signOperation({ account, deviceId: "mock", transaction }).pipe(toArray()),
+      signOperation({ account, deviceId: "mock", transaction: PSBT_V2_B64 }).pipe(toArray()),
     );
+
+    // Events should include requested and granted
+    const types = emissions.map(e => e.type);
+    expect(types).toContain("device-signature-requested");
+    expect(types).toContain("device-signature-granted");
 
     const signedEvt = emissions.find(e => e.type === "signed") as any;
     const { signedOperation } = signedEvt;
@@ -190,7 +127,6 @@ describe("signOperation (PSBT path)", () => {
     // Options propagated
     const [, opts] = (signer.signPsbtV2Buffer as jest.Mock).mock.calls[0];
     expect(opts).toMatchObject({
-      finalizePsbt: true,
       accountPath: "m/84'/0'/0'/0'",
       addressFormat: "p2wpkh",
     });
@@ -201,18 +137,14 @@ describe("signOperation (PSBT path)", () => {
       signPsbtV2Buffer: jest.fn(),
     };
     const signerContext = makeSignerContext(signer);
-    const signOperation = buildSignOperation(signerContext);
+    const signOperation = buildSignRawOperation(signerContext);
 
     const account = makeAccount();
-    const transaction = {
-      family: "bitcoin",
-      amount: new BigNumber(0),
-      psbt: "!!!not-base64!!!",
-      finalizePsbt: false,
-    } as any;
 
     await expect(
-      firstValueFrom(signOperation({ account, deviceId: "mock", transaction }).pipe(skip(1))),
+      firstValueFrom(
+        signOperation({ account, deviceId: "mock", transaction: "!!!not-base64!!!" }).pipe(skip(1)),
+      ),
     ).rejects.toThrow(/Invalid PSBT/);
   });
 });
