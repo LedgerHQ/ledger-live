@@ -16,7 +16,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "freshAddressPath": "44'/637'/0'/0'/0'",
     "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
     "index": 0,
-    "operationsCount": 7,
+    "operationsCount": 8,
     "pendingOperations": [],
     "seedIdentifier": "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
     "spendableBalance": "19949100",
@@ -25,6 +25,17 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "syncHash": undefined,
     "used": true,
     "xpub": "d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
+  },
+  {
+    "balance": "30000000",
+    "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+    "operationsCount": 2,
+    "parentId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+    "pendingOperations": [],
+    "spendableBalance": "30000000",
+    "swapHistory": [],
+    "tokenId": "aptos/coin/dstapt_0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::stakedaptos",
+    "type": "TokenAccountRaw",
   },
   {
     "aptosResources": {
@@ -49,6 +60,17 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "syncHash": undefined,
     "used": true,
     "xpub": "6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e",
+  },
+  {
+    "balance": "20000000",
+    "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+    "operationsCount": 1,
+    "parentId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+    "pendingOperations": [],
+    "spendableBalance": "20000000",
+    "swapHistory": [],
+    "tokenId": "aptos/coin/dstapt_0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::stakedaptos",
+    "type": "TokenAccountRaw",
   },
   {
     "aptosResources": {
@@ -100,6 +122,27 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "transactionSequenceNumber": "10",
       "type": "IN",
       "value": "100000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0x9e074a52c774ef1338724cfa72edde9af38cad6f4ddf0139ca9741ebdd7c7e79",
+      "blockHeight": 302075105,
+      "extra": {
+        "version": "2463221055",
+      },
+      "fee": "50900",
+      "hasFailed": false,
+      "hash": "0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df-OUT",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": "2",
+      "type": "FEES",
+      "value": "50900",
     },
     {
       "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
@@ -230,6 +273,50 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
   ],
   [
     {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+      "blockHash": "0x9e074a52c774ef1338724cfa72edde9af38cad6f4ddf0139ca9741ebdd7c7e79",
+      "blockHeight": 302075105,
+      "extra": {
+        "version": "2463221055",
+      },
+      "fee": "50900",
+      "hasFailed": false,
+      "hash": "0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df-OUT",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": "2",
+      "type": "OUT",
+      "value": "20000000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+      "blockHash": "0xc63f03f1a7778ffc70cecd027865d11e3562686fe4e27acf239f184df4aa01c0",
+      "blockHeight": 302069858,
+      "extra": {
+        "version": "2463179091",
+      },
+      "fee": "50900",
+      "hasFailed": false,
+      "hash": "0xad157eb4b6fb91b5bee3b0110d7321dbcf2138988709aa1692d0621b9b2136b2",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xad157eb4b6fb91b5bee3b0110d7321dbcf2138988709aa1692d0621b9b2136b2-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": "85",
+      "type": "IN",
+      "value": "50000000",
+    },
+  ],
+  [
+    {
       "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
       "blockHash": "0xb71a59a5f43dc73c945da97ef88043721dab81f658df7a4a4207f95ce7cad0ee",
       "blockHeight": 366009981,
@@ -333,6 +420,29 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "transactionSequenceNumber": "0",
       "type": "IN",
       "value": "20000",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+      "blockHash": "0x9e074a52c774ef1338724cfa72edde9af38cad6f4ddf0139ca9741ebdd7c7e79",
+      "blockHeight": 302075105,
+      "extra": {
+        "version": "2463221055",
+      },
+      "fee": "50900",
+      "hasFailed": false,
+      "hash": "0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0x2395c1d7e358ab02ea44cfd616c966da80edc688c1d9a1c0ef7926577bdb20df-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": "2",
+      "type": "IN",
+      "value": "20000000",
     },
   ],
   [],
