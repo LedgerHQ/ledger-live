@@ -51,6 +51,7 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -60,6 +61,7 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
+import { initMixpanel } from "./analytics/mixpanel";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -69,7 +71,7 @@ const Card = lazy(() => import("~/renderer/screens/card"));
 const Manager = lazy(() => import("~/renderer/screens/manager"));
 const Exchange = lazy(() => import("~/renderer/screens/exchange"));
 const Earn = lazy(() => import("~/renderer/screens/earn"));
-const Receive = lazy(() => import("~/renderer/screens/receive"));
+const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 
@@ -210,6 +212,14 @@ export default function Default() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
+  const mixpanelFF = useFeature("lldSessionReplay");
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
+
+  useEffect(() => {
+    if (mixpanelFF?.enabled && shareAnalytics) {
+      initMixpanel(mixpanelFF?.params?.sampling);
+    }
+  }, [mixpanelFF, shareAnalytics]);
 
   useEffect(() => {
     // WebHID is now always enabled, set provider if specified
@@ -378,7 +388,7 @@ export default function Default() {
                                     render={withSuspense(MarketCoin)}
                                   />
                                   <Route path="/market" render={withSuspense(Market)} />
-                                  <Route path="/receive" render={withSuspense(Receive)} />
+                                  <Route path="/bank" render={withSuspense(Bank)} />
                                 </Switch>
                               </Page>
                               <Drawer />

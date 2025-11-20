@@ -266,6 +266,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
   SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
+  SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS = "SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
   SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
@@ -399,6 +400,9 @@ export type SettingsSetHasBeenRedirectedToPostOnboardingPayload =
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsIsOnboardingFlowPayload = void | SettingsState["isOnboardingFlow"];
+export type SettingsIsOnboardingFlowReceiveSuccessPayload =
+  | void
+  | SettingsState["isOnboardingFlowReceiveSuccess"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
@@ -454,6 +458,7 @@ export type SettingsPayload =
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsIsOnboardingFlowPayload
+  | SettingsIsOnboardingFlowReceiveSuccessPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload

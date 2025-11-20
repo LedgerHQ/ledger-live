@@ -1,8 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { lldRTKApiMiddlewares } from "./reducers/rtkQueryApi";
 
 type Props = {
   state?: State;
@@ -21,8 +20,7 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
         immutableCheck: false,
       }).concat(
         logger,
-        assetsDataApi.middleware,
-        cryptoAssetsApi.middleware,
+        ...lldRTKApiMiddlewares,
         ...(analyticsMiddleware ? [analyticsMiddleware] : []),
         ...(dbMiddleware ? [dbMiddleware] : []),
       ),

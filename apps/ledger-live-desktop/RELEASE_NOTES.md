@@ -1,3 +1,7 @@
+# 2.133.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.132.0
 
 Ledger Live™ is now Ledger Wallet™

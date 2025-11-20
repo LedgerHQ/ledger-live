@@ -40,6 +40,10 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
   getTransactions: (address: string, strategy: BridgeStrategy) => ScenarioTransaction<T, A>[];
+  getInternalTransactions?: (
+    address: string,
+    strategy: BridgeStrategy,
+  ) => Promise<ScenarioTransaction<T, A>[]>;
   beforeSync?: () => Promise<void> | void;
   mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
   beforeAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
@@ -102,7 +106,10 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
     );
 
     const scenarioTransactions = scenario.getTransactions(account.freshAddress, strategy);
-
+    const internalScenarioTransactions = await scenario.getInternalTransactions?.(
+      account.freshAddress,
+      strategy,
+    );
     for (const testTransaction of scenarioTransactions) {
       console.log("\n");
       console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
@@ -226,6 +233,80 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       await scenario.afterEach?.(scenarioAccount);
       console.log("After each ✔️");
       console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓"));
+    }
+
+    if (internalScenarioTransactions && internalScenarioTransactions.length > 0) {
+      for (const internalTestTransaction of internalScenarioTransactions) {
+        console.log("\n");
+        console.log(chalk.cyan("Transaction:", chalk.bold(internalTestTransaction.name), "◌"));
+
+        await scenario.beforeEach?.(scenarioAccount);
+        console.log("Before each ✔️");
+
+        if (internalScenarioTransactions.indexOf(internalTestTransaction) > 0) {
+          await scenario.beforeSync?.();
+          scenarioAccount = await firstValueFrom(
+            accountBridge
+              .sync(scenarioAccount, { paginationConfig: {} })
+              .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+          );
+        }
+
+        const previousAccount = Object.freeze(scenarioAccount);
+
+        const retry_limit = retryLimit ?? 10;
+
+        async function expectHandler(retry: number) {
+          await scenario.beforeSync?.();
+          scenarioAccount = await firstValueFrom(
+            accountBridge
+              .sync({ ...scenarioAccount }, { paginationConfig: {} })
+              .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+          );
+
+          if (!(await internalTestTransaction.expect)) {
+            console.warn(
+              chalk.yellow(
+                `No expects in the transaction ${chalk.bold(
+                  await internalTestTransaction.name,
+                )}. You might want to add tests in this transaction.`,
+              ),
+            );
+
+            return;
+          }
+
+          try {
+            await internalTestTransaction.expect?.(previousAccount, scenarioAccount);
+          } catch (err) {
+            if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
+              if (retry === 0) {
+                console.error(
+                  chalk.red(
+                    `Retried ${retry_limit} time(s) and could not assert all expects for transaction ${chalk.bold(
+                      await internalTestTransaction.name,
+                    )}`,
+                  ),
+                );
+
+                throw err;
+              }
+
+              console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
+              await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
+              await expectHandler(retry - 1);
+            } else {
+              throw err;
+            }
+          }
+        }
+        await expectHandler(retry_limit);
+      }
+      scenarioAccount = await firstValueFrom(
+        accountBridge
+          .sync(account, { paginationConfig: {} })
+          .pipe(reduce((acc, f) => f(acc), account)),
+      );
     }
 
     console.log("\n");

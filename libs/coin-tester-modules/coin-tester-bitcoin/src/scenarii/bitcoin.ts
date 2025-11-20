@@ -10,10 +10,17 @@ import { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import { BitcoinConfigInfo, setCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
 import { defaultNanoApp } from "../constants";
-import { loadWallet, mineToWalletAddress, sendTo } from "../helpers";
+import {
+  loadWallet,
+  mineToWalletAddress,
+  sendTo,
+  sendTransaction,
+  replaceTransaction,
+  getRawMempool,
+} from "../helpers";
 import { makeAccount } from "../fixtures";
 import { killAtlas, spawnAtlas } from "../atlas";
-import { findNewUtxo, waitForExplorerSync } from "../utils";
+import { findNewUtxo, waitForExplorerSync, waitForTxInMempool } from "../utils";
 import {
   assertCommonTxProperties,
   assertUtxoExcluded,
@@ -213,6 +220,52 @@ const makeScenarioTransactions = (): BitcoinScenarioTransaction[] => {
   ];
 };
 
+// TODO: RBF and CTFP scenarios are not supported on Ledger Live yet That is why they are made using regtest for now
+// TODO: once RBF and CTFP are supported natively in Ledger Live, we can move these scenarios to use bitcoin module instead of regtest helpers
+const makeInternalScenarioTransactions = async () => {
+  const scenarioReplaceBtcTransaction: BitcoinScenarioTransaction = {
+    name: "Send Replace BTC transaction",
+    expect: async (previousAccount, currentAccount) => {
+      const txId = await sendTransaction((currentAccount as BitcoinAccount).freshAddress, 0.003);
+      // Waiting a bit before replacing...
+      await waitForTxInMempool(txId, 10000); // waits up to 10s
+
+      const replacementTxid = await replaceTransaction(
+        txId,
+        (currentAccount as BitcoinAccount).freshAddress,
+      );
+      const mempool = await getRawMempool();
+      expect(mempool.includes(txId)).toBe(false);
+      expect(mempool.includes(replacementTxid)).toBe(true);
+
+      // Ensure explorer is synced after replacement
+      await waitForExplorerSync();
+    },
+  };
+  const scenarioCancelBtcTransaction: BitcoinScenarioTransaction = {
+    name: "Send Cancel BTC transaction",
+    expect: async (previousAccount, currentAccount) => {
+      await mineToWalletAddress("2");
+      const txId = await sendTransaction("bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz", 0.003);
+      // Waiting a bit before replacing...
+      await waitForTxInMempool(txId, 10000); // waits up to 10s
+
+      const replacementTxid = await replaceTransaction(
+        txId,
+        (currentAccount as BitcoinAccount).freshAddress,
+      );
+      const mempool = await getRawMempool();
+      expect(mempool.includes(txId)).toBe(false);
+      expect(mempool.includes(replacementTxid)).toBe(true);
+
+      // Ensure explorer is synced after cancellation
+      await waitForExplorerSync();
+    },
+  };
+
+  return [scenarioReplaceBtcTransaction, scenarioCancelBtcTransaction];
+};
+
 export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   name: "Ledger Live Basic Bitcoin Transactions",
   setup: async () => {
@@ -282,6 +335,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     };
   },
   getTransactions: () => makeScenarioTransactions(),
+  getInternalTransactions: () => makeInternalScenarioTransactions(),
   beforeAll: async account => {
     firstUtxoHash = (account as BitcoinAccount).bitcoinResources.utxos[0].hash;
     firstUtxoOutputIndex = (account as BitcoinAccount).bitcoinResources.utxos[0].outputIndex;
@@ -291,6 +345,11 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   afterEach: async () => {
     // Mine 2 blocks after each transaction to confirm it
     await mineToWalletAddress("2");
+    await waitForExplorerSync();
+  },
+  afterAll: async account => {
+    await waitForExplorerSync();
+    expect(account.operations.length).toBeGreaterThanOrEqual(14);
   },
   beforeEach: async () => {
     // Make sure explorer is in sync before each transaction

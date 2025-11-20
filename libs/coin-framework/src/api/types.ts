@@ -64,6 +64,9 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
     block: BlockInfo; // block metadata
     fees: bigint; // network fees paid
     date: Date; // tx date (may differ from block time)
+
+    /** If the transaction has failed, fees have been paid but other balance changes are not effective.*/
+    failed: boolean;
   };
 };
 
@@ -336,7 +339,7 @@ export type TransactionIntent<
   useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
   senderPublicKey?: string;
-  sequence?: number;
+  sequence?: bigint;
   expiration?: number;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
@@ -459,7 +462,7 @@ export type AlpacaApi<
     transaction: string,
     sender: string,
     publicKey: string,
-    sequence: number,
+    sequence: bigint,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
@@ -534,7 +537,7 @@ export type BridgeApi<
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<number>;
+  getSequence: (address: string) => Promise<bigint>;
   getChainSpecificRules?: () => ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;

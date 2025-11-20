@@ -16,16 +16,13 @@ import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 import onboarding, { OnboardingState } from "./onboarding";
+import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 
-export type State = {
+export type State = LLDRTKApiState & {
   accounts: AccountsState;
   application: ApplicationState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
-  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
@@ -44,8 +41,6 @@ export type State = {
 export default combineReducers({
   accounts,
   application,
-  assetsDataApi: assetsDataApi.reducer,
-  cryptoAssetsApi: cryptoAssetsApi.reducer,
   countervalues,
   devices,
   dynamicContent,
@@ -59,5 +54,6 @@ export default combineReducers({
   wallet,
   walletSync,
   trustchain,
+  ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_, action) => action }),
 });

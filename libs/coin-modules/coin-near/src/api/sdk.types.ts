@@ -9,20 +9,24 @@ export type NearAccountDetails = {
 };
 
 export type NearTransaction = {
-  sender: string;
-  receiver: string;
-  hash: string;
-  fee: string;
-  success: boolean;
-  height: number;
-  block_hash: string;
-  time: string;
+  signer_account_id: string;
+  receiver_account_id: string;
+  transaction_hash: string;
+  outcomes_agg: {
+    transaction_fee: string;
+  };
+  outcomes: { status: boolean };
+  block: {
+    block_height: number;
+  };
+  included_in_block_hash: string;
+  block_timestamp: string;
   actions: [
     {
-      data: {
-        deposit: string;
-        method_name: string;
-      };
+      action: string;
+      deposit: string;
+      fee: string;
+      method: string;
     },
   ];
 };

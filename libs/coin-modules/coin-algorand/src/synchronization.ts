@@ -2,7 +2,7 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { findTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -21,6 +21,8 @@ import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq
 import { AlgorandAccount, AlgorandOperation } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
+
+const SECONDS_TO_MILLISECONDS = 1000;
 
 const getASAOperationAmount = (transaction: AlgoTransaction, accountAddress: string): BigNumber => {
   let assetAmount = new BigNumber(0);
@@ -156,7 +158,7 @@ const mapTransactionToOperation = (
 ): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
-  const date = new Date(parseInt(tx.timestamp) * 1000);
+  const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const fee = tx.fee;
   const memo = tx.note;
   const senders: string[] = getOperationSenders(tx);
@@ -195,7 +197,7 @@ const mapTransactionToASAOperation = (
 ): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
-  const date = new Date(parseInt(tx.timestamp) * 1000);
+  const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const fee = tx.fee;
   const senders: string[] = getOperationSenders(tx);
   const recipients: string[] = getOperationRecipients(tx);
@@ -362,7 +364,7 @@ async function buildSubAccounts({
 
   // filter by token existence
   await promiseAllBatched(3, assets, async asset => {
-    const token = findTokenById(addPrefixToken(asset.assetId));
+    const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(asset.assetId));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];

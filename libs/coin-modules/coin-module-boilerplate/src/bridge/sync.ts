@@ -40,7 +40,7 @@ const operationAdapter =
       senders: [Account],
       recipients: [Destination],
       date: new Date(),
-      transactionSequenceNumber: Sequence,
+      transactionSequenceNumber: new BigNumber(Sequence),
       extra: {},
     };
 

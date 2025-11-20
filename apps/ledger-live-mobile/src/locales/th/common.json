@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "loading" : "กำลังโหลด...",
     "turnOnAndUnlockDevice" : "เปิดเครื่องและปลดล็อกอุปกรณ์ของคุณ",
+    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
     "connectAndUnlockDevice" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ",
     "connectAnotherDevice" : "เชื่อมต่อกับ Ledger เครื่องอื่น",
     "unlockDevice" : "ปลดล็อกอุปกรณ์ของคุณ",
@@ -4458,6 +4459,7 @@
         "provider" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
       "acceptTerms" : "การลงชื่อในธุรกรรมนี้จะถือว่าคุณยอมรับเงื่อนไขการใช้งานของ <0><0>{{provider}}</0>",
+      "nearIntentsAcceptTerms" : "เมื่อยืนยันธุรกรรมนี้\n ถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งานของ SwapKit</0> ซึ่งเป็นเทคโนโลยีเบื้องหลัง NEAR Intents",
       "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ<1>นโยบาย AML/KYC</1> ของ Changelly ในบางกรณี Changelly อาจดำเนินการตรวจสอบ AML/KYC ซึ่งอาจกระทบต่อการทำธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าว โปรดติดต่อ <2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
@@ -4494,6 +4496,11 @@
     "bluetooth" : {
       "title" : "เชื่อมต่อผ่านบลูทูธ...",
       "label" : "ตรวจสอบ Nano ของคุณโดยอัตโนมัติ"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Can't see your Ledger device?",
+      "scanSignersCta" : "Scan devices",
+      "helpCenterCta" : "Get support"
     },
     "deviceNotFoundPairNewDevice" : "จับคู่กับบลูทูธ",
     "headerDescription" : "โปรดตรวจสอบให้แน่ใจว่ามีการปลดล็อก {{productName}} แล้วโดยมีการเปิดใช้งานบลูทูธ",

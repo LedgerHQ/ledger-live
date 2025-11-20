@@ -1,9 +1,19 @@
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
-import { getCurrentBlock } from "./helpers";
+import { getCurrentBlock, getRawMempool } from "./helpers";
 import network from "@ledgerhq/live-network/network";
 
-function sleep(ms: number) {
+export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function waitForTxInMempool(txId: string, timeout = 10000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const mempool = await getRawMempool();
+    if (mempool.includes(txId)) return true;
+    await sleep(500);
+  }
+  throw new Error(`Transaction ${txId} not found in mempool after ${timeout}ms`);
 }
 
 export async function waitForExplorerSync(

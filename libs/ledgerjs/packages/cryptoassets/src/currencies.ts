@@ -631,8 +631,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.cantonloop.com/party/$address",
+        tx: "https://ccview.io/updates/$hash",
+        address: "https://ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network"],
@@ -663,8 +663,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.testnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.testnet.cantonloop.com/party/$address",
+        tx: "https://testnet.ccview.io/updates/$hash",
+        address: "https://testnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_testnet"],
@@ -695,8 +695,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.devnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.devnet.cantonloop.com/party/$address",
+        tx: "https://devnet.ccview.io/updates/$hash",
+        address: "https://devnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_devnet"],

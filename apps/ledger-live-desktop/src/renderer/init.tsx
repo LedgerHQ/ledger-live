@@ -4,7 +4,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
-import "../config/bridge-setup";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
@@ -21,6 +20,7 @@ import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency, prepareCurrency } from "~/renderer/bridge/cache";
+import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -105,17 +105,21 @@ async function init() {
       const timemachine = require("timemachine");
       timemachine.config({
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        dateString: require("../../tests/time").default,
+        dateString: require("../../tests/time.js").default,
       });
     }
   }
   if (window.localStorage.getItem("hard-reset")) {
     await hardReset();
   }
+
   const store = createStore({
     dbMiddleware,
     analyticsMiddleware,
   });
+
+  setupCryptoAssetsStore(store);
+
   if (getEnv("PLAYWRIGHT_RUN")) {
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }

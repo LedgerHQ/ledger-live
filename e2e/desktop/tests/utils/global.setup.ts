@@ -1,10 +1,10 @@
-import fs from "fs";
 import { FullConfig } from "@playwright/test";
 import { responseLogfilePath } from "./networkResponseLogger";
+import { unlink } from "fs";
 
 export default async function globalSetup(_config: FullConfig) {
   if (responseLogfilePath) {
-    fs.unlink(responseLogfilePath, error => {
+    unlink(responseLogfilePath, error => {
       if (error) {
         console.log("Could not remove response.log file");
       }

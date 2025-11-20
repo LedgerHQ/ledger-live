@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -90,7 +90,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@zondax/ledger-live-icp": "1.4.0",
+    "@zondax/ledger-live-icp": "1.4.1",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

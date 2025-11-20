@@ -15,7 +15,6 @@ export async function loadWallet(name: string): Promise<void> {
     console.log(`✅ Wallet "${name}" created and loaded:`, res);
 
     // Optionally verify that the wallet is accessible
-    await client.getBalance({ minconf: 0 });
     return;
   } catch (error: any) {
     const message = error?.message || "Unknown error";
@@ -249,113 +248,66 @@ export const sendRaw = async (recipientAddress: string, amount: number, sequence
   }
 };
 
-export const sendToReplaceCurrentTx = async (recipientAddress: string, amount: number) => {
-  if (!recipientAddress || amount <= 0) {
-    console.error("Invalid parameters: Provide a valid address and positive amount.");
-    return;
-  }
+export async function sendTransaction(
+  recipientAddress: string,
+  amount: number,
+  rbf: boolean = true,
+): Promise<string> {
+  // Send an RBF-enabled transaction
+  const txid = await client.sendToAddress(recipientAddress, amount, "", "", rbf);
 
-  console.log(
-    `Sending replaceable transaction to ${recipientAddress} with amount ${amount} BTC...`,
-  );
+  // Log details
+  const mempoolEntry = await client.getMempoolEntry(txid);
+  console.log("BIP125 replaceable:", mempoolEntry["bip125-replaceable"]);
+  return txid;
+}
 
-  try {
-    // Step 1: Get an unspent UTXO
-    const unspent = await client.listUnspent({
-      query_options: { minimumSumAmount: amount },
-    });
+export async function replaceTransaction(
+  originalTxid: string,
+  newRecipientAddress: string,
+  feeBumpPercent: number = 0.1, // 10% bump
+): Promise<string> {
+  const rawTx = await client.getRawTransaction(originalTxid, true);
+  const input = rawTx.vin[0];
+  const originalOutputValue = rawTx.vout[0].value;
 
-    if (!unspent.length) {
-      console.error("No suitable UTXOs available.");
-      return;
-    }
-
-    const utxo = unspent[0];
-
-    // Step 2: Create the replaceable transaction (RBF enabled)
-    const rawTx1 = await client.createRawTransaction({
-      inputs: [
-        {
-          txid: utxo.txid,
-          vout: utxo.vout,
-          sequence: 4294967293, // RBF enabled
-        },
-      ],
-      outputs: {
-        [recipientAddress]: amount,
-      },
-    });
-
-    // Step 3: Fund & Sign the transaction
-    const fundedTx1 = await client.fundRawTransaction({
-      hexstring: rawTx1,
-      options: { feeRate: 0.0004 }, // Increase fee rate
-    });
-    const signedTx1 = await client.signRawTransactionWithWallet({
-      hexstring: fundedTx1.hex,
-    });
-
-    // Step 4: Broadcast the transaction
-    const txId1 = await client.sendRawTransaction({ hexstring: signedTx1.hex });
-    console.log(`Transaction sent (TXID: ${txId1}), waiting before replacing...`);
-    console.log(`If you need to, make a tx that sends funds to ${recipientAddress}`);
-  } catch (error: any) {
-    console.error("Error in sendReplaceableTransaction:", error.message);
-  }
-};
-
-export const sendReplaceableTransaction = async (recipientAddress: string, amount: number) => {
-  if (!recipientAddress || amount <= 0) {
-    console.error("Invalid parameters: Provide a valid address and positive amount.");
-    return;
-  }
-
-  console.log(
-    `Sending replaceable transaction to ${recipientAddress} with amount ${amount} BTC...`,
-  );
+  // Try to estimate the original feerate
+  let originalFeerate = 0.00001; // fallback (BTC/vB)
+  let vsize = 200; // default guess
 
   try {
-    // Step 1: Get an unspent UTXO
-    const unspent = await client.listUnspent({
-      query_options: { minimumSumAmount: amount },
-    });
-
-    if (!unspent.length) {
-      console.error("No suitable UTXOs available.");
-      return;
-    }
-
-    const utxo = unspent[0];
-
-    // Step 2: Create the first replaceable transaction (RBF enabled)
-    const rawTx1 = await client.createRawTransaction({
-      inputs: [
-        {
-          txid: utxo.txid,
-          vout: utxo.vout,
-          sequence: 4294967293, // RBF enabled
-        },
-      ],
-      outputs: {
-        [recipientAddress]: amount,
-      },
-    });
-
-    // Step 3: Fund & Sign the first transaction
-    const fundedTx1 = await client.fundRawTransaction({
-      hexstring: rawTx1,
-      options: { feeRate: 0.0002 }, // Increase fee rate
-    });
-    const signedTx1 = await client.signRawTransactionWithWallet({
-      hexstring: fundedTx1.hex,
-    });
-
-    // Step 4: Broadcast the first transaction
-    const txId1 = await client.sendRawTransaction({ hexstring: signedTx1.hex });
-    console.log(`First transaction sent (TXID: ${txId1}), waiting before replacing...`);
-  } catch (error: any) {
-    console.error("Error in sendReplaceableTransaction:", error.message);
+    const entry = await client.getMempoolEntry(originalTxid);
+    originalFeerate = entry.fees.base / entry.vsize;
+    vsize = entry.vsize;
+  } catch {
+    console.warn("⚠️ Could not get mempool entry, using fallback feerate.");
   }
+
+  const newFeerate = originalFeerate * (1 + feeBumpPercent);
+  const estimatedFee = newFeerate * vsize;
+
+  // Adjust amount by the new fee
+  const adjustedAmount = Number(originalOutputValue - estimatedFee).toFixed(8);
+
+  if (Number(adjustedAmount) <= 0) {
+    throw new Error(`❌ Adjusted amount <= 0 (fee too large)`);
+  }
+
+  const newRawTx = await client.createRawTransaction([{ txid: input.txid, vout: input.vout }], {
+    [newRecipientAddress]: adjustedAmount,
+  });
+
+  const signed = await client.signRawTransactionWithWallet(newRawTx);
+
+  const replacementTxid = await client.sendRawTransaction(signed.hex, 0);
+  console.log(`✅ Replaced TX: ${originalTxid} → ${replacementTxid}`);
+
+  return replacementTxid;
+}
+
+export const getRawMempool = async () => {
+  const mempool = await client.getRawMempool();
+  return mempool;
 };
 
 /*Available commands:

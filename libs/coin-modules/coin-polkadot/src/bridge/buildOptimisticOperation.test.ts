@@ -26,7 +26,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: 1,
+          transactionSequenceNumber: new BigNumber(1),
         },
       ],
     } as PolkadotAccount;
@@ -52,7 +52,7 @@ describe("buildOptimisticOperation", () => {
       senders: [account.freshAddress],
       recipients: [transaction.recipient].filter(Boolean),
       accountId: account.id,
-      transactionSequenceNumber: account.pendingOperations[0].transactionSequenceNumber! + 1,
+      transactionSequenceNumber: account.pendingOperations[0].transactionSequenceNumber!.plus(1),
       date: expect.any(Date),
       extra: expect.any(Object),
     });
@@ -65,7 +65,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -88,7 +88,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -114,7 +114,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -136,7 +136,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -158,7 +158,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -184,7 +184,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -205,7 +205,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -226,7 +226,7 @@ describe("buildOptimisticOperation", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -251,7 +251,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: 0,
+          transactionSequenceNumber: new BigNumber(0),
         },
       ],
     } as PolkadotAccount;
@@ -262,7 +262,9 @@ describe("buildOptimisticOperation", () => {
 
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
-    expect(operation.transactionSequenceNumber).toEqual(account.polkadotResources.nonce);
+    expect(operation.transactionSequenceNumber?.toNumber()).toEqual(
+      account.polkadotResources.nonce,
+    );
   });
 
   it("should build correctly the nonce on an OUT operation when account nonce is bigger than 0 and account has no operations", () => {
@@ -279,7 +281,9 @@ describe("buildOptimisticOperation", () => {
 
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
-    expect(operation.transactionSequenceNumber).toEqual(account.polkadotResources.nonce);
+    expect(operation.transactionSequenceNumber?.toNumber()).toEqual(
+      account.polkadotResources.nonce,
+    );
   });
 
   it("should build correctly the nonce on an OUT operation when account nonce is bigger than 0 and transaction sequence number of last operation account is not a number", () => {
@@ -289,7 +293,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: "random string",
+          transactionSequenceNumber: new BigNumber("random string"),
         },
       ] as unknown as Operation[],
     } as PolkadotAccount;
@@ -300,7 +304,9 @@ describe("buildOptimisticOperation", () => {
 
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
-    expect(operation.transactionSequenceNumber).toEqual(account.polkadotResources.nonce);
+    expect(operation.transactionSequenceNumber?.toNumber()).toEqual(
+      account.polkadotResources.nonce,
+    );
   });
 
   it("should build correctly the nonce on an OUT operation when account has no nonce and account has no operations", () => {
@@ -314,14 +320,14 @@ describe("buildOptimisticOperation", () => {
 
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
-    expect(operation.transactionSequenceNumber).toEqual(0);
+    expect(operation.transactionSequenceNumber?.toNumber()).toEqual(0);
   });
 
   it("should build correctly the nonce on an OUT operation when transaction sequence number of last pending operation is bigger than 0", () => {
     const account = {
       pendingOperations: [
         {
-          transactionSequenceNumber: 1,
+          transactionSequenceNumber: new BigNumber(1),
         },
       ],
     } as PolkadotAccount;
@@ -333,7 +339,7 @@ describe("buildOptimisticOperation", () => {
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
     expect(operation.transactionSequenceNumber).toEqual(
-      account.pendingOperations[0].transactionSequenceNumber! + 1,
+      account.pendingOperations[0].transactionSequenceNumber!.plus(1),
     );
   });
 
@@ -344,7 +350,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: 2,
+          transactionSequenceNumber: new BigNumber(2),
         },
       ],
     } as PolkadotAccount;
@@ -356,7 +362,7 @@ describe("buildOptimisticOperation", () => {
     const fee = BigNumber(0);
     const operation = buildOptimisticOperation(account, transaction, fee);
     expect(operation.transactionSequenceNumber).toEqual(
-      account.pendingOperations[0].transactionSequenceNumber! + 1,
+      account.pendingOperations[0].transactionSequenceNumber!.plus(1),
     );
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.97.1",
+  "version": "3.98.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -179,7 +179,7 @@
     "react-native-config": "1.5.3",
     "react-native-device-info": "11.1.0",
     "react-native-easy-markdown": "2.0.0",
-    "react-native-fast-crypto": "2.2.0",
+    "react-native-fast-crypto": "3",
     "react-native-fast-image": "8.6.3",
     "react-native-fast-pbkdf2": "0.3.1",
     "react-native-fast-shadow": "0.1.1",
@@ -214,7 +214,7 @@
     "react-native-version-number": "0.3.6",
     "react-native-video": "6.14.0",
     "react-native-webview": "13.13.5",
-    "react-redux": "7.2.9",
+    "react-redux": "catalog:",
     "redux": "4.2.1",
     "redux-actions": "2.6.5",
     "reselect": "4.0.0",

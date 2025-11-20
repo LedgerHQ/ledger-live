@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BASIC_REFETCH,
   REFETCH_TIME_ONE_MINUTE,
@@ -11,7 +10,7 @@ import {
   isAvailableOnSwap,
   isDataStale,
 } from "../utils";
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
 describe("Market utils", () => {
   describe("isDataStale", () => {
@@ -75,27 +74,23 @@ describe("Market utils", () => {
         expect(isAvailableOnBuy(undefined, () => true)).toBeFalsy();
       });
 
-      it("Should return true when internalCurrency.id is available and isCurrencyAvailable returns true", () => {
+      it("Should return true when ledgerIds is available and isCurrencyAvailable returns true", () => {
         const isAvailable = isAvailableOnBuy(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => true,
         );
         expect(isAvailable).toBeTruthy();
       });
 
-      it("Should return false when internalCurrency.id is available but isCurrencyAvailable returns false", () => {
+      it("Should return false when ledgerIds is available but isCurrencyAvailable returns false", () => {
         const isAvailable = isAvailableOnBuy(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -106,18 +101,18 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => true,
         );
         expect(isAvailable).toBeTruthy();
       });
 
-      it("Should return false when neither internalCurrency nor ledgerIds are available", () => {
+      it("Should return false when no ledgerIds are available", () => {
         const isAvailable = isAvailableOnBuy(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -131,27 +126,23 @@ describe("Market utils", () => {
         expect(isAvailableOnSwap(undefined, new Set(["btc"]))).toBeFalsy();
       });
 
-      it("Should return true when internalCurrency.id is in the swap set", () => {
+      it("Should return true when ledgerIds is in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
       });
 
-      it("Should return false when internalCurrency.id is not in the swap set", () => {
+      it("Should return false when ledgerIds is not in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["ltc"]),
         );
         expect(isAvailable).toBeFalsy();
@@ -162,18 +153,18 @@ describe("Market utils", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
       });
 
-      it("Should return false when neither internalCurrency.id nor any ledgerIds are in the swap set", () => {
+      it("Should return false when no ledgerIds are in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
-          } as CurrencyData,
+          } as MarketCurrencyData,
           new Set(["btc"]),
         );
         expect(isAvailable).toBeFalsy();

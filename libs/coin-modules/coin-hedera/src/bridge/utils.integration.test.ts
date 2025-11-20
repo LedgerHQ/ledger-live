@@ -5,11 +5,7 @@ import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-st
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
-import {
-  getMockedCurrency,
-  getMockedTokenCurrency,
-  getTokenCurrencyFromCAL,
-} from "../test/fixtures/currency.fixture";
+import { getMockedTokenCurrency, getTokenCurrencyFromCAL } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
@@ -18,7 +14,6 @@ import {
   applyPendingExtras,
   calculateAmount,
   getSubAccounts,
-  getSyncHash,
   mergeSubAccounts,
   patchOperationWithExtra,
   prepareOperations,
@@ -138,24 +133,6 @@ describe("utils", () => {
       });
 
       expect(result).toEqual({ amount, totalSpent });
-    });
-  });
-
-  describe("getSyncHash", () => {
-    const mockedCurrency = getMockedCurrency();
-
-    test("returns a consistent hash for same input", () => {
-      const hash1 = getSyncHash(mockedCurrency, []);
-      const hash2 = getSyncHash(mockedCurrency, []);
-
-      expect(hash2).toBe(hash1);
-    });
-
-    test("produces different hash if blacklistedTokenIds changes", () => {
-      const hash1 = getSyncHash(mockedCurrency, []);
-      const hash2 = getSyncHash(mockedCurrency, ["random_token"]);
-
-      expect(hash1).not.toBe(hash2);
     });
   });
 

@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Icons, Link, Text } from "@ledgerhq/react-ui";
 import { Trans } from "react-i18next";
-import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { AppBlocker } from "LLD/features/AppBlockers/components/AppBlocker";
 
 export function AppGeoBlocker({ children }: { children: React.ReactNode }) {
-  const { blocked } = useOFACGeoBlockCheck({
-    onFinish: () => window.api?.appLoaded(),
-    geoBlockingFeatureFlagKey: "lldOfacGeoBlocking",
-  });
+  const { data: blocked, isLoading } = ofacGeoBlockApi.useCheckQuery();
+
+  useEffect(() => {
+    if (isLoading) return;
+    globalThis.api?.appLoaded();
+  }, [isLoading]);
 
   const localizedLearnMoreUrl = useLocalizedUrl(urls.geoBlock.learnMore);
 
@@ -19,7 +21,7 @@ export function AppGeoBlocker({ children }: { children: React.ReactNode }) {
 
   return (
     <AppBlocker
-      blocked={blocked}
+      blocked={blocked ?? false}
       IconComponent={() => (
         <Icons.DeleteCircleFill size="L" color="error.c60" data-testID="delete-icon" />
       )}

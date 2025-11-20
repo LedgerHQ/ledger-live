@@ -12,17 +12,18 @@ import {
 // Mock crypto assets store for testing
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({
-  findTokenById: (_: string) => undefined,
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  findTokenById: async (_: string) => undefined,
+  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+  getTokensSyncHash: () => Promise.resolve("0"),
 } as unknown as CryptoAssetsStore);
 
 // Mock account factory using fromAccountRaw for proper Account structure
-const createMockAccount = (
+const createMockAccount = async (
   id: string,
   name: string,
   currencyId: string = "ethereum",
   balance: string = "1000000000000000000",
-): Account => {
+): Promise<Account> => {
   const accountRaw: AccountRaw = {
     id,
     seedIdentifier: "seed",
@@ -42,17 +43,25 @@ const createMockAccount = (
     creationDate: new Date().toISOString(),
   };
 
-  return fromAccountRaw(accountRaw);
+  return await fromAccountRaw(accountRaw);
 };
 
 describe("importAccountsReduce", () => {
-  const existingAccount1 = createMockAccount("js:1:ethereum:0x01:", "Existing Account 1");
-  const existingAccount2 = createMockAccount("js:1:ethereum:0x02:", "Existing Account 2");
-  const existingAccounts = [existingAccount1, existingAccount2];
+  let existingAccount1: Account;
+  let existingAccount2: Account;
+  let existingAccounts: Account[];
+  let newAccount1: Account;
+  let newAccount2: Account;
+  let updatedAccount1: Account;
 
-  const newAccount1 = createMockAccount("js:1:ethereum:0x03:", "New Account 1");
-  const newAccount2 = createMockAccount("js:1:ethereum:0x04:", "New Account 2");
-  const updatedAccount1 = createMockAccount("js:1:ethereum:0x01:", "Updated Account 1");
+  beforeAll(async () => {
+    existingAccount1 = await createMockAccount("js:1:ethereum:0x01:", "Existing Account 1");
+    existingAccount2 = await createMockAccount("js:1:ethereum:0x02:", "Existing Account 2");
+    existingAccounts = [existingAccount1, existingAccount2];
+    newAccount1 = await createMockAccount("js:1:ethereum:0x03:", "New Account 1");
+    newAccount2 = await createMockAccount("js:1:ethereum:0x04:", "New Account 2");
+    updatedAccount1 = await createMockAccount("js:1:ethereum:0x01:", "Updated Account 1");
+  });
 
   describe("create mode", () => {
     it("should add new accounts when mode is 'create'", () => {
@@ -120,8 +129,8 @@ describe("importAccountsReduce", () => {
       expect(result.filter(acc => acc.id === "js:1:ethereum:0x01:")).toHaveLength(1);
     });
 
-    it("should handle account id remapping after sync", () => {
-      const remappedAccount = createMockAccount("js:1:ethereum:0x05:", "Remapped Account");
+    it("should handle account id remapping after sync", async () => {
+      const remappedAccount = await createMockAccount("js:1:ethereum:0x05:", "Remapped Account");
 
       const items: ImportItem[] = [
         {
@@ -182,8 +191,8 @@ describe("importAccountsReduce", () => {
       expect(result[1]).toBe(existingAccount2);
     });
 
-    it("should handle update when account id changed after sync", () => {
-      const updatedAccountWithNewId = createMockAccount(
+    it("should handle update when account id changed after sync", async () => {
+      const updatedAccountWithNewId = await createMockAccount(
         "js:1:ethereum:0x99:",
         "Updated with new ID",
       );

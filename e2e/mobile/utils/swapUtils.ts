@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
-
   if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
@@ -11,9 +10,13 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-  await app.common.performSearch(account.currency.name);
-  await app.stake.selectCurrency(account.currency.id);
-  await app.common.selectFirstAccount();
+  if (await app.modularDrawer.isFlowEnabled("live_app")) {
+    await app.modularDrawer.selectAsset(account);
+  } else {
+    await app.common.performSearch(account.currency.name);
+    await app.stake.selectCurrency(account.currency.id);
+    await app.common.selectFirstAccount();
+  }
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
@@ -26,7 +29,6 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);
-
   if (continueToQuotes) {
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();

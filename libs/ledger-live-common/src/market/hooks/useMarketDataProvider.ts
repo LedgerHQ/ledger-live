@@ -6,8 +6,6 @@ import {
   getSupportedCoinsList,
   supportedCounterCurrencies,
 } from "../api";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { listTokens } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { useMemo } from "react";
@@ -18,14 +16,12 @@ import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers
 import {
   MarketCurrencyRequestParams,
   MarketListRequestParams,
-  CurrencyData,
+  MarketCurrencyData,
   HashMapBody,
   MarketItemResponse,
   MarketListRequestResult,
   Order,
 } from "../utils/types";
-
-const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 export function useMarketDataProvider() {
   const supportedCurrenciesInLIve = listSupportedCurrencies();
@@ -65,7 +61,7 @@ export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestPa
     queryFn: () => fetchCurrency({ id, counterCurrency }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    select: data => format(data, cryptoCurrenciesList),
+    select: data => format(data),
   });
 
 export const useSupportedCounterCurrencies = () =>
@@ -104,7 +100,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
       ],
       queryFn: () => fetchList({ ...props, page, search }),
       select: (data: MarketItemResponse[]) => ({
-        formattedData: currencyFormatter(data, cryptoCurrenciesList),
+        formattedData: currencyFormatter(data),
         page,
       }),
       refetchOnMount: false,
@@ -118,7 +114,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
 function combineMarketData(
   results: UseQueryResult<
     {
-      formattedData: CurrencyData[];
+      formattedData: MarketCurrencyData[];
       page: number;
     },
     Error

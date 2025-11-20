@@ -2,7 +2,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { GenericTransaction } from "./types";
@@ -21,6 +21,23 @@ function assetInfosFallback(transaction: GenericTransaction): {
   };
 }
 
+function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
+  const value = estimation?.parameters?.[field];
+
+  if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") return;
+
+  switch (field) {
+    case "type":
+      dest[field] = Number(value.toString());
+      return;
+    case "storageLimit":
+      dest[field] = new BigNumber(value.toString());
+      return;
+    default:
+      return;
+  }
+}
+
 export function genericPrepareTransaction(
   network: string,
   kind,
@@ -31,13 +48,12 @@ export function genericPrepareTransaction(
       kind,
     );
     const { assetReference, assetOwner } = getAssetFromToken
-      ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
-    let fees: BigNumber | bigint | null = customParametersFees || null;
-    if (fees === null) {
-      fees = (
-        await estimateFees(
+    const estimation: FeeEstimation = customParametersFees
+      ? { value: BigInt(customParametersFees.toFixed()) }
+      : await estimateFees(
           transactionToIntent(
             account,
             {
@@ -45,14 +61,13 @@ export function genericPrepareTransaction(
             },
             computeIntentType,
           ),
-        )
-      ).value;
-    }
+        );
+    const fees = new BigNumber(estimation.value.toString());
 
-    if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
+    if (!bnEq(transaction.fees, fees)) {
       const next: GenericTransaction = {
         ...transaction,
-        fees: new BigNumber(fees.toString()),
+        fees,
         assetReference,
         assetOwner,
         customFees: {
@@ -62,35 +77,15 @@ export function genericPrepareTransaction(
         },
       };
 
-      // propagate storageLimit fee parameter when present (ex: tezos)
-      const feeEstimation = await estimateFees(
-        transactionToIntent(
-          account,
-          {
-            ...transaction,
-          },
-          computeIntentType,
-        ),
-      );
-      const params = feeEstimation?.parameters;
-      if (params) {
-        const storageLimit = params["storageLimit"];
-        if (
-          storageLimit !== undefined &&
-          (typeof storageLimit === "bigint" ||
-            typeof storageLimit === "number" ||
-            typeof storageLimit === "string")
-        ) {
-          next.storageLimit = new BigNumber(storageLimit.toString());
-        }
+      // Propagate needed fields
+      const fieldsToPropagate = ["type", "storageLimit"];
+
+      for (const field of fieldsToPropagate) {
+        propagateField(estimation, field, next);
       }
 
       // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
-      if (
-        transaction.useAllAmount ||
-        transaction["mode"] === "stake" ||
-        transaction["mode"] === "unstake"
-      ) {
+      if (transaction.useAllAmount || ["stake", "unstake"].includes(transaction.mode ?? "")) {
         const { amount } = await validateIntent(
           transactionToIntent(
             account,
@@ -109,16 +104,16 @@ export function genericPrepareTransaction(
   };
 }
 
-export function getAssetInfos(
+export async function getAssetInfos(
   tr: GenericTransaction,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
-): {
+): Promise<{
   assetReference: string;
   assetOwner: string;
-} {
+}> {
   if (tr.subAccountId) {
-    const { token } = decodeTokenAccountId(tr.subAccountId);
+    const { token } = await decodeTokenAccountId(tr.subAccountId);
 
     if (!token) return assetInfosFallback(tr);
 

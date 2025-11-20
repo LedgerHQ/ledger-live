@@ -5,12 +5,12 @@ import Graph from "~/components/Graph";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
-import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { LoadingIndicator } from "./Loading";
 
 type GraphProps = {
   chartData?: MarketCoinDataChart;
-  currencyId: string;
+  currency: CryptoOrTokenCurrency;
   width: number;
   loading: boolean;
   range: KeysPriceChange;
@@ -18,13 +18,12 @@ type GraphProps = {
 
 export const LargeMoverGraph: React.FC<GraphProps> = ({
   chartData,
-  currencyId,
+  currency,
   width,
   loading,
   range,
 }) => {
   const theme = useTheme();
-  const currency: CryptoOrTokenCurrency | undefined = getCryptoCurrencyById(currencyId);
 
   const data = useMemo(
     () =>

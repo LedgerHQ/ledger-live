@@ -1,7 +1,7 @@
-import { test } from "../fixtures/common";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { test } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 import {
   Account,
   TokenAccount,
@@ -106,7 +106,10 @@ for (const token of subAccountReceive) {
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
         await app.account.clickAddToken();
-        await app.receive.selectToken(token.account);
+        if (token.shouldSelectTokenOnReceiveFlow) {
+          // e.g. for Hedera. This works together with the fact a family activate or not the receiveTokensConfig
+          await app.receive.selectToken(token.account);
+        }
 
         await app.receive.continue();
 

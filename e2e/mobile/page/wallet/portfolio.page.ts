@@ -165,7 +165,6 @@ export default class PortfolioPage {
     jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeGreaterThan(5);
     await app.addAccount.tapAddNewOrExistingAccountButton();
     await app.addAccount.importWithYourLedger();
-    await this.checkSelectAssetPage();
   }
 
   @Step("Count Accounts")
