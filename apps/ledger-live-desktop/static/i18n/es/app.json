@@ -86,6 +86,7 @@
     "continue" : "Continuar",
     "previous" : "Anterior",
     "learnMore" : "Más información",
+    "learnMoreWithEllipsis" : "Más información...",
     "help" : "Ayuda",
     "needHelp" : "¿Necesitas ayuda?",
     "areYouSure" : "¿Deseas continuar?",
@@ -106,6 +107,7 @@
     "reset" : "Restablecer",
     "retry" : "Reintentar",
     "range" : "Rango",
+    "start" : "Comenzar",
     "stop" : "Detener",
     "updateNow" : "Actualizar ahora",
     "close" : "Cerrar",
@@ -122,9 +124,15 @@
     "featureFlags" : "Indicador de función",
     "ldmkEnabled" : "Transporte LDMK",
     "information" : "Información",
+    "increase" : "Aumentar",
+    "max" : "Máx.",
+    "min" : "Mín.",
+    "set" : "Establecer",
+    "follow" : "Seguir",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
     "manage" : "Administrar",
+    "none" : "Ninguno",
     "tryAgain" : "Inténtalo de nuevo",
     "lockScreen" : {
       "title" : "Bienvenidos",
@@ -203,7 +211,9 @@
       "WITHDRAW_UNSTAKED" : "Retirado",
       "SENDING" : "Enviando",
       "BURN" : "Quemado",
-      "ASSOCIATE_TOKEN" : "Asociar token"
+      "ASSOCIATE_TOKEN" : "Asociar token",
+      "STAKE_NEURON" : "En participación",
+      "TOP_UP_NEURON" : "Recargado"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -1446,6 +1456,12 @@
         "description" : "Desde cualquier exchange o billetera, directamente a tu Ledger.",
         "actionCompletedPopupLabel" : "Activos transferidos"
       },
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "actionCompletedPopupLabel" : "Cuentas sincronizadas"
+      },
       "recover" : {
         "title" : "Suscríbete a Ledger Recover",
         "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
@@ -1659,7 +1675,7 @@
       "title" : "Filtros",
       "show" : "Mostrar",
       "all" : "Todas",
-      "isLedgerCompatible" : "Compatible con Ledger Wallet",
+      "isLedgerCompatible" : "Compatibles con Ledger Wallet",
       "isFavorite" : "Activos destacados",
       "applyFilters" : "Aplicar filtros",
       "clearAll" : "Borrar todo"
@@ -1667,7 +1683,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
@@ -1905,6 +1921,7 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
@@ -1959,7 +1976,7 @@
       "filter" : {
         "title" : "Mostrar",
         "all" : "Todas",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "installed" : "Instaladas",
         "not_installed" : "No instaladas"
       },
@@ -1996,7 +2013,7 @@
         "updated" : "Actualizado",
         "uninstall" : "Desinstalar",
         "notEnoughSpace" : "No hay suficiente espacio",
-        "supported" : "Compatible con Ledger Wallet",
+        "supported" : "Compatibles con Ledger Wallet",
         "not_supported" : "Requiere una billetera de terceros",
         "addAccount" : "Agregar cuenta",
         "addAccountTooltip" : "Agregar cuenta {{appName}}",
@@ -2076,7 +2093,7 @@
         "installDone" : "Actualización\ninstalada",
         "restore" : "Restaurando ajustes",
         "restoreDone" : "Ajustes restaurados",
-        "apps" : "Restaurando aplicaciones",
+        "apps" : "Restaurar aplicaciones",
         "updateMCU" : "Actualización de firmware",
         "updating" : "Actualización de firmware",
         "reset" : "Preparar dispositivo",
@@ -2104,7 +2121,7 @@
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
       "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
       "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu {{deviceName}}, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
-      "sucessCTAApps" : "Restaurando aplicaciones",
+      "sucessCTAApps" : "Restaurar aplicaciones",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
         "first" : "1. Restablece tu dispositivo",
@@ -2279,6 +2296,7 @@
         "label" : "Cuenta receptora",
         "parentAccount" : "1. Selecciona la cuenta de {{currencyName}}",
         "token" : "2. Selecciona un token",
+        "errorLoadingTokens" : "Error al cargar los tokens",
         "verifyTokenType" : "Verifica que el token <0>{{token}}</0> sea un token <0>{{tokenType}}</0>. Es posible que se pierdan los activos de cualquier otro tipo si son enviados a una cuenta de {{currency}}.",
         "warningTokenType" : "Solamente debes enviar tokens <0>{{ticker}}</0> o <0>{{tokenType}}</0> una cuenta de {{currency}}. El envío de cualquier otro tipo de activos cripto puede provocar la pérdida permanente de fondos.",
         "depositFromCexBannerTitle" : "Deposita cripto desde tu cuenta de Coinbase"
@@ -7054,6 +7072,42 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "La cantidad mínima para {{purpose}} es {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "El retardo de disolución debe ser de al menos {{min}}."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "El retardo de disolución debe ser menor que {{max}}."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "El nuevo retardo de disolución debe ser mayor que el retardo de disolución actual."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "No se encontró la neurona."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "El ID principal no es válido."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "La hotkey ya existe"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "La cantidad de división es mayor que el máximo permitido"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Esta operación transferirá la cantidad para aumentar la participación de una neurona existente"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Esta operación transferirá la cantidad a una neurona nueva. Una vez que realice la confirmación, la neurona estará disponible para realizar más operaciones."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
@@ -7519,7 +7573,7 @@
     "connectYourDevice" : {
       "title" : "Conecta y desbloquea tu dispositivo"
     },
-    "searchPlaceholder" : "Buscar por nombre o dirección",
+    "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
@@ -7561,5 +7615,291 @@
     "restart" : "Reiniciar",
     "downloadOnLedger" : "Descargar desde Ledger.com",
     "downloadProgress" : "Descargando... {{ progress }}%"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Esta transacción aumentará la participación de una neurona existente. Especifica la cantidad que quieres poner en participación en el campo de cantidad que aparece arriba.",
+      "createNeuron" : "Esta transacción creará una neurona con los ICP que pongas en participación. Especifica la cantidad que quieres poner en participación en el campo de cantidad que aparece arriba.",
+      "tooltip" : "Internet Computer usa esta información para identificar la transacción con la que pondrás en participación tus ICP en la neurona."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Confirma el seguimiento",
+        "description" : "Debes confirmar el seguimiento de la neurona en {{days}} días y {{hours}} horas.",
+        "altDescription" : "Estás perdiendo recompensas: Confirma el seguimiento de la neurona para seguir ganándolas.",
+        "cta" : "Confirmar seguimiento"
+      },
+      "syncNeurons" : {
+        "title" : "Sincroniza los ICP que tienes puestos en participación",
+        "description" : "Tus ICP puestos en participación se sincronizaron por última vez hace {{days}} días y {{hours}} horas. Si quieres ver los datos más recientes, te recomendamos que sincronices con frecuencia.",
+        "altDescription" : "Te recomendamos que sincronices las neuronas para ver los datos más recientes",
+        "cta" : "Sincronizar neuronas"
+      },
+      "lockNeurons" : {
+        "title" : "Bloquear neuronas",
+        "description" : "Al menos una de las neuronas no está bloqueada. Si no las bloqueas, no podrás obtener recompensas. Las neuronas reportan recompensas por participar en la gobernanza de ICP, pero solo pueden votar las neuronas que llevan bloqueadas más de seis meses.",
+        "cta" : "Gestionar neuronas"
+      },
+      "addFollowees" : {
+        "title" : "Agregar seguidos",
+        "description" : "Al menos una de las neuronas no tiene seguidos. Sin seguidos, podrías no obtener recompensas. Para obtener recompensas, las neuronas deben votar directamente (por ejemplo, con la dApp NNS) o seguir a neuronas que lo hagan.",
+        "cta" : "Gestionar neuronas"
+      },
+      "stakeICP" : {
+        "title" : "Poner en participación ICP",
+        "description" : "Pon ICP en participación y obtén recompensas por colaborar en su gobernanza.",
+        "cta" : "Poner en participación ICP"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "Poner en participación ICP",
+        "tooltip" : "Crear neuronas para poner en participación ICP"
+      },
+      "manageNeurons" : {
+        "title" : "Gestionar neuronas",
+        "tooltip" : "Gestionar neuronas activas"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "La cantidad total de tokens ICP puestos en participación en neuronas actualmente. Los ICP puestos en participación reportan recompensas de voto y se pueden usar para la gobernanza.",
+      "totalMaturityTooltip" : "El total de recompensas acumuladas por la puesta en participación, incluidas las de madurez líquida y puesta en participación. Estas recompensas se pueden volver a poner en participación o reclamarse como ICP líquido.",
+      "totalMaturity" : "Madurez total",
+      "stakedBalance" : "Saldo en participación",
+      "stakedMaturity" : "Madurez puesta en participación",
+      "stakedMaturityTooltip" : "La parte de recompensas de madurez que se ha puesto automáticamente en participación de nuevo en neuronas, con lo que siguen reportando recompensas adicionales.",
+      "liquidMaturity" : "Madurez líquida",
+      "liquidMaturityTooltip" : "La parte de recompensas de madurez que está disponible para reclamar como tokens ICP líquidos o que se puede poner en participación en neuronas."
+    },
+    "confirmation" : {
+      "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo.",
+      "success" : "Operación de {{action}} realizada correctamente",
+      "syncAccounts" : "Sincroniza tus cuentas para ver los cambios actualizados."
+    },
+    "sync" : "Sincronización",
+    "lastSynced" : "Última sincronización",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Tiempo hasta la pérdida de la recompensa",
+      "warnbox" : "No se encontró ninguna neurona. Prueba a sincronizar las neuronas existentes creadas mediante la dApp NNS o pon en participación para crear neuronas nuevas."
+    },
+    "common" : {
+      "neuronId" : "ID de la neurona",
+      "neuronIds" : "IDs de las neuronas",
+      "state" : "Estado",
+      "action" : "Acción",
+      "balance" : "Saldo",
+      "maturity" : "Madurez",
+      "currentBalance" : "Saldo actual",
+      "amount" : "Importe",
+      "stake" : "Participar",
+      "followees" : "Seguidos",
+      "votingPower" : "Poder de voto",
+      "hotkey" : "Hotkey",
+      "neuron" : "Neurona",
+      "disburse" : "Desembolsar",
+      "startDissolving" : "Iniciar disolución",
+      "stopDissolving" : "Detener disolución",
+      "dissolveDelay" : "Retardo de disolución",
+      "dissolveState" : "Estado de disolución",
+      "dissolveStateUnlocked" : "Desbloqueado",
+      "dissolveStateLocked" : "Bloqueado",
+      "dissolveStateDissolving" : "Disolviendo",
+      "dissolveStateDissolved" : "Disuelta",
+      "inactiveNeuron" : "Neurona inactiva",
+      "activeNeuron" : "Neurona activa",
+      "confirmFollowing" : "Confirmar seguimiento"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Actualizar poder de voto"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Gestionar neuronas",
+      "stakeMaturity" : {
+        "title" : "Madurez puesta en participación",
+        "description" : "Elige qué cantidad de la madurez disponible quieres poner en participación en esta neurona.",
+        "confirmStake" : "Confirmar puesta en participación",
+        "maturityAvailable" : "Madurez disponible"
+      },
+      "splitNeuron" : {
+        "title" : "Dividir neurona",
+        "transactionFee" : "Tarifa de la transacción",
+        "confirmSplit" : "Confirmar división"
+      },
+      "setDissolveDelay" : {
+        "title" : "Definir retardo de disolución",
+        "balance" : "Saldo",
+        "dissolveDelay" : "Retardo de disolución",
+        "dissolveDelayTooltip" : "El retardo de disolución es la cantidad de tiempo mínima que tienes que esperar para que la neurona se desbloquee y los ICP estén disponibles de nuevo. Ten en cuenta que el retardo de disolución solo disminuye cuando la neurona está en estado de disolución.",
+        "votingPowerDescription" : "El poder de voto se concede a las neuronas que tienen un retardo de disolución mínimo de 6 meses.",
+        "dissolveDelayInput" : "Retardo de disolución (en días)",
+        "inputPlaceholder" : "Especifica el retardo de disolución",
+        "updateDelay" : "Actualizar retardo"
+      },
+      "selectFollowees" : {
+        "title" : "ID de la neurona seguida",
+        "placeholder" : "Especifica el ID de la neurona",
+        "options" : "Opciones de seguimiento"
+      },
+      "selectTopics" : {
+        "title" : "Seleccionar temas",
+        "warnbox" : "Sigue neuronas para automatizar tus votos y recibir las recompensas de voto máximas. Puedes seguir neuronas de temas concretos o de todos los temas.",
+        "listOfTopics" : "Lista de temas disponibles para seguir",
+        "addAction" : "Agregar seguido"
+      },
+      "addHotKey" : {
+        "title" : "Agregar hotkey"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "Esta neurona está controlada por una hotkey y tiene control limitado desde la interfaz de Ledger Live.",
+          "hotkeyControl" : "Control de hotkey",
+          "votingPower" : "Poder de voto",
+          "noVotingPower" : "Sin poder de voto"
+        },
+        "votingPower" : {
+          "title" : "Poder de voto",
+          "titleTooltip" : "El retardo de disolución debe ser de al menos 6 meses para que la neurona tenga poder de voto.",
+          "value" : "Valor",
+          "staked" : "ICP puestos en participación",
+          "increaseStake" : "Aumentar participación",
+          "ageBonus" : "Bonificación por antigüedad",
+          "ageBonusTooltip" : "La neurona puede estar bloqueada, desbloqueada o en disolución. En el estado bloqueada, acumula bonificaciones por antigüedad, mientras que su retardo de disolución se mantiene constante. Si la neurona está en estado de disolución, su bonificación por antigüedad se establece en 0, mientras que el retardo de disolución disminuye a medida que pasa el tiempo. Cuando el retardo de disolución llega a 0, la neurona se desbloquea y los ICP que esta contiene se pueden enviar a cualquier cuenta de ICP.",
+          "dissolveDelayBonus" : "Bonificación por retardo de disolución",
+          "dissolveDelayBonusTooltip" : "La bonificación por retardo de disolución es una bonificación que se añade al poder de voto de la neurona en función del retardo de disolución. Cuanto más prolongado es el retardo de disolución, mayor es la bonificación.",
+          "confirmFollowing" : "Confirmar seguimiento",
+          "confirmFollowingTooltip" : "Las neuronas de ICP que permanecen 6 meses inactivas dejan de recibir recompensas de votación. Para no perder recompensas de votación, vota manualmente o edita o confirma tu seguimiento."
+        },
+        "maturity" : {
+          "title" : "Madurez",
+          "description" : "Gana recompensas por votar propuestas o seguir a neuronas activas.",
+          "staked" : "En participación",
+          "stakedTooltip" : "La madurez puesta en participación contribuye al poder de voto de la neurona, pero no puede usarse para generar una nueva neurona.",
+          "available" : "Disponible",
+          "availableTooltip" : "La madurez disponible se puede poner en participación o quemar para generar una neurona que contendrá una cantidad de ICP que estará sujeta a un proceso no determinista denominado modulación de la madurez.",
+          "stakeAction" : "Participar",
+          "spawnNeuronAction" : "Generar neurona"
+        },
+        "hotKeys" : {
+          "title" : "Hotkeys",
+          "description" : "Las hotkeys son una forma de controlar la neurona desde la interfaz de Ledger Live.",
+          "addHotKey" : "Agregar hotkey",
+          "removeAction" : "Eliminar",
+          "noHotKeys" : "No se encontró ninguna hotkey"
+        },
+        "advancedDetails" : {
+          "title" : "Ajustes y detalles avanzados",
+          "dateCreated" : "Fecha de creación",
+          "dissolveDate" : "Fecha de disolución",
+          "neuronAccount" : "Cuenta de neurona",
+          "splitNeuronAction" : "Dividir neurona",
+          "autoStakeMaturityAction" : "Puesta en participación automática de la madurez"
+        },
+        "following" : {
+          "title" : "Siguiendo",
+          "description" : "Seguir te permite delegar tus votos en el titular de otra neurona. Si delegas tus derechos de voto, seguirás recibiendo recompensas. Puedes cambiar tu seguimiento en cualquier momento.",
+          "warnbox" : "Sin seguidos, podrías no obtener recompensas. Para obtener recompensas, las neuronas deben votar directamente (por ejemplo, con la dApp NNS) o seguir a neuronas que lo hagan.",
+          "followNeuronsAction" : "Seguir neuronas"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "Selecciona una neurona de la siguiente lista para gestionar su participación, madurez y ajustes de retardo de disolución."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Aumentar participación",
+        "create_neuron" : "Creando neurona",
+        "start_dissolving" : "Iniciando disolución",
+        "stop_dissolving" : "Deteniendo disolución",
+        "list_neurons" : "Lista de neuronas",
+        "disburse" : "Desembolsando neurona",
+        "spawn_neuron" : "Generando neurona",
+        "add_hot_key" : "Agregando hotkey",
+        "stake_maturity" : "Madurez puesta en participación",
+        "refresh_voting_power" : "Actualizando poder de voto",
+        "increase_dissolve_delay" : "Aumentando retardo de disolución",
+        "auto_stake_maturity" : "Madurez puesta en participación automáticamente",
+        "spawn_neuron_from_maturity" : "Generando neurona a partir de madurez",
+        "set_auto_stake_maturity" : "Estableciendo madurez de puesta en participación automática",
+        "set_dissolve_delay" : "Estableciendo retardo de disolución",
+        "remove_hot_key" : "Quitando hotkey",
+        "follow" : "Siguiendo a neuronas",
+        "split_neuron" : "Dividiendo neurona"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "Todo excepto gobernanza, fondo de neuronas y SNS",
+          "description" : "Sigue a neuronas que traten todos los temas de propuesta, salvo gobernanza, fondo de neuronas y SNS."
+        },
+        "1" : {
+          "title" : "Gestión de neuronas",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Tasa de cambio",
+          "description" : "Todas las propuestas que proporcionan información \"en tiempo real\" sobre el valor del ICP, según el DEG del FMI, lo que permite al NNS convertir ICP en ciclos (que proporcionan capacidad de cálculo) a un tipo de cambio que mantiene constante su costo en el mundo real."
+        },
+        "3" : {
+          "title" : "Economía de red",
+          "description" : "Propuestas que administran la economía de la red. Se encargan de labores como, por ejemplo, determinar qué recompensas deben pagarse a los operadores de los nodos."
+        },
+        "4" : {
+          "title" : "Gobernanza",
+          "description" : "Todas las propuestas que administran la gobernanza; por ejemplo, para congelar canisters malintencionados que dañan la red."
+        },
+        "5" : {
+          "title" : "Administración de nodos",
+          "description" : "Todas las propuestas que administran de algún modo las máquinas nodo, incluidas, entre otras, la actualización o configuración del sistema operativo, del framework de máquinas virtuales y del software de réplica del nodo."
+        },
+        "6" : {
+          "title" : "Gestión de participantes",
+          "description" : "Todas las propuestas que administran los participantes de la red, por ejemplo conceder y revocar DCIDs (identidades del centro de procesamiento de datos) o NOIDs (identidades del operador de nodos)."
+        },
+        "7" : {
+          "title" : "Gestión de subredes",
+          "description" : "Todas las propuestas que administran subredes como, por ejemplo, crear subredes nuevas, agregar o quitar nodos de la subred, y dividir subredes."
+        },
+        "8" : {
+          "title" : "Gestión de canisters del protocolo",
+          "description" : "Todas las propuestas para gestionar los canisters del protocolo, que se consideran parte del protocolo ICP y son básicos para su correcto funcionamiento."
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "Propuestas que actualizan la información de KYC con fines de cumplimiento normativo, por ejemplo durante la distribución Génesis inicial del ICP en forma de neuronas."
+        },
+        "10" : {
+          "title" : "Recompensas para proveedores de nodos",
+          "description" : "Propuestas que recompensan a proveedores de nodos."
+        },
+        "12" : {
+          "title" : "Implementación de versiones del SO de IC",
+          "description" : "Propuestas para gestionar actualizaciones de las versiones de réplica de las subredes."
+        },
+        "13" : {
+          "title" : "Elección de versión del SO de IC",
+          "description" : "Propuestas relacionadas con la aprobación y la retirada de versiones de réplica."
+        },
+        "14" : {
+          "title" : "Fondo de neuronas y SNS",
+          "description" : "Propuestas relacionadas con el fondo de neuronas y el SNS"
+        },
+        "15" : {
+          "title" : "Gestión de nodos perimetrales de la API",
+          "description" : "Propuestas relacionadas con la gestión de nodos perimetrales de la API."
+        },
+        "16" : {
+          "title" : "Alquiler de subredes",
+          "description" : "Todas las propuestas relacionadas con el alquiler de subredes, por ejemplo una solicitud de alquiler de una subred."
+        },
+        "17" : {
+          "title" : "Gestión de canisters del protocolo",
+          "description" : "Todas las propuestas para gestionar los canisters del protocolo, que se consideran parte del protocolo ICP y son básicos para su correcto funcionamiento."
+        },
+        "18" : {
+          "title" : "Gestión de sistemas nerviosos de servicio",
+          "description" : "Todas las propuestas para gestionar los canisters de los sistemas nerviosos de servicio (SNS), incluidas las actualizaciones de los canisters correspondientes y la gestión de los WASMs del canister del framework SNS a través de SNS-W."
+        }
+      }
+    }
   }
 }
