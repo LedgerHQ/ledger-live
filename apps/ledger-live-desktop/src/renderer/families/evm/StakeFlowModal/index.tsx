@@ -76,7 +76,7 @@ const StakeModal = ({ account, source }: Props) => {
   }, [selected, setIsScrollable]);
 
   // Localized URLs for the footer Learn More link
-  const restakingUrl = useLocalizedUrl(urls.ledgerAcademy.whatIsEthereumRestaking);
+  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
   const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
 
   if (!ethStakingProviders?.enabled) {

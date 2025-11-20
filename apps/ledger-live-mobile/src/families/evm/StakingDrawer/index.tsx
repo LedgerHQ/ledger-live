@@ -88,7 +88,7 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
     [has32Eth, filteredProviders, selected],
   );
 
-  const restakingUrl = useLocalizedUrl(urls.ledgerAcademy.whatIsEthereumRestaking);
+  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
   const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
 
 
