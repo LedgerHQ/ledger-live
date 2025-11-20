@@ -17,7 +17,7 @@ import {
   fromOperationExtraRaw,
 } from "./serialization";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import resolver from "../signer/hw-getAddress";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { broadcast } from "./broadcast";
 
@@ -25,9 +25,9 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { sync } from "./synchronisation";
-import { CeloSigner } from "../signer/signer";
+import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
-export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
@@ -43,7 +43,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): C
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<CeloSigner>,
+  signerContext: SignerContext<EvmSigner>,
 ): AccountBridge<Transaction, CeloAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
@@ -71,7 +71,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CeloSigner>) {
+export function createBridges(signerContext: SignerContext<EvmSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

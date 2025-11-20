@@ -43,7 +43,6 @@
         "lib/*",
         "lib/bridge/*",
         "lib/logic/*",
-        "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
       ]
@@ -64,10 +63,6 @@
       "require": "./lib/test/cli-transaction.js",
       "default": "./lib-es/test/cli-transaction.js"
     },
-    "./hw-getAddress": {
-      "require": "./lib/signer/hw-getAddress.js",
-      "default": "./lib-es/signer/hw-getAddress.js"
-    },
     "./preload": {
       "require": "./lib/bridge/preload.js",
       "default": "./lib-es/bridge/preload.js"
@@ -83,10 +78,6 @@
     "./bridge": {
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
-    },
-    "./signer": {
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
     },
     "./specs": {
       "require": "./lib/test/bot-specs.js",

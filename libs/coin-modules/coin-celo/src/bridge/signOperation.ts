@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
+import { Observable, tap } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
@@ -8,16 +8,18 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "../types/types";
 import buildTransaction from "./buildTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
 import { determineFees } from "../network/sdk";
-import { CeloSigner } from "../signer";
 import { CeloTx } from "@celo/connect";
+import { rlpEncodedTx } from "@celo/wallet-base";
+import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import type { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<CeloSigner>): AccountBridge<Transaction>["signOperation"] =>
+  (signerContext: SignerContext<EvmSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,
@@ -51,23 +53,36 @@ export const buildSignOperation =
         });
         await determineFees(finalTransaction);
 
-        const rlpEncodedTransaction = await signerContext(deviceId, signer => {
-          return signer.rlpEncodedTxForLedger(finalTransaction);
+        const rlpEncodedTransaction = rlpEncodedTx(finalTransaction);
+        const signature = await signerContext(deviceId, signer => {
+          return new Promise<{ s: Buffer; v: number; r: Buffer }>((resolve, reject) => {
+            signer
+              .signTransaction(
+                account.freshAddressPath,
+                trimLeading0x(rlpEncodedTransaction.rlpEncode),
+              )
+              .pipe(
+                tap(event => {
+                  if (event.type === "signer.evm.signing") {
+                    o.next({ type: "device-signature-requested" });
+                  }
+                  if (event.type === "signer.evm.signed") {
+                    const response = event.value;
+                    const convertedResponse = { ...response, v: response.v.toString() };
+                    const signature = parseSigningResponse(convertedResponse, chainId!);
+                    resolve(signature);
+                  }
+                }),
+              )
+              .subscribe({
+                error: error => {
+                  reject(error);
+                },
+              });
+          });
         });
-        o.next({ type: "device-signature-requested" });
 
-        const response = (await signerContext(deviceId, signer => {
-          return signer.signTransaction(
-            account.freshAddressPath,
-            trimLeading0x(rlpEncodedTransaction.rlpEncode),
-          );
-        })) as EvmSignature;
-
-        const convertedResponse = { ...response, v: response.v.toString() };
         if (cancelled) return;
-
-        const signature = parseSigningResponse(convertedResponse, chainId!);
-
         o.next({ type: "device-signature-granted" });
         const encodedTransaction = await encodeTransaction(rlpEncodedTransaction, signature);
         const [_, recoveredAddress] = recoverTransaction(encodedTransaction.raw);

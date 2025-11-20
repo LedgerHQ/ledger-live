@@ -146,7 +146,6 @@
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-canton": "pnpm --filter hw-app-canton",
-    "ljs:hw-app-celo": "pnpm --filter hw-app-celo",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
     "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
     "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
