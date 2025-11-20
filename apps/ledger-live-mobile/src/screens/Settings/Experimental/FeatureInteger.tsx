@@ -67,9 +67,6 @@ const FeatureInteger = ({
 
     return () => {
       if (Platform.OS === "android") {
-        // Deprecated: https://reactnative.dev/docs/keyboard#removelistener
-        // Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
-        // Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
         listeners.forEach(listener => listener.remove());
       }
     };
@@ -79,17 +76,17 @@ const FeatureInteger = ({
     if (!enabled) {
       setInputValue(String(constraintValue(value)));
     }
-  }, [enabled, value, setInputValue, constraintValue]);
+  }, [enabled, value, constraintValue]);
 
   const onInputChange = useCallback(
     (str: string) => {
       if (!enabled) return;
       const sanitized = str.replace(/[^0-9]/g, "");
+      setInputValue(sanitized);
       if (sanitized.length > 0) {
         const parsed = constraintValue(parseInt(sanitized, 10));
         onChange(name, parsed);
       }
-      setInputValue(sanitized);
     },
     [name, onChange, constraintValue, enabled],
   );
@@ -98,18 +95,14 @@ const FeatureInteger = ({
     (e: boolean) => {
       setEnabled(!!e);
       if (e) {
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.focus();
-          }
-        }, 100);
+        requestAnimationFrame(() => inputRef.current?.focus());
         onChange(name, constraintValue(value));
       } else {
         onChange(name, getEnvDefault(name));
         Keyboard.dismiss();
       }
     },
-    [setEnabled, name, onChange, value, constraintValue, inputRef],
+    [name, onChange, value, constraintValue, inputRef],
   );
 
   return (
@@ -123,19 +116,17 @@ const FeatureInteger = ({
             onChange={readOnly ? undefined : onEnableChange}
           />
         </Box>
-        <TextInput
-          ref={inputRef}
-          style={[
-            { color: colors.darkBlue },
-            enabled ? { ...styles.input, borderColor: colors.lightFog } : styles.inputHidden,
-          ]}
-          keyboardType="numeric"
-          value={enabled ? inputValue : ""}
-          onChangeText={onInputChange}
-          editable={enabled}
-          showSoftInputOnFocus={enabled}
-          autoFocus={false}
-        />
+        {enabled && (
+          <TextInput
+            ref={inputRef}
+            style={[{ color: colors.darkBlue }, { ...styles.input, borderColor: colors.lightFog }]}
+            keyboardType="numeric"
+            value={inputValue}
+            onChangeText={onInputChange}
+            editable={true}
+            autoFocus={false}
+          />
+        )}
       </Flex>
     </>
   );
@@ -155,9 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     ...getFontStyle({ semiBold: true }),
     borderWidth: 1,
-  },
-  inputHidden: {
-    display: "none",
   },
 });
 
