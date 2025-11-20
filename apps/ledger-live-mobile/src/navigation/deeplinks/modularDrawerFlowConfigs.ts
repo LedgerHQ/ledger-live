@@ -1,4 +1,3 @@
-import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { ScreenName, NavigatorName } from "~/const";
 
 export interface ScreenConfig {
@@ -11,28 +10,17 @@ export interface DrawerFlowConfigs {
 
 /**
  * Helper to create modular drawer or classic flow configs for deeplinks
- * @param modularDrawer - The modular drawer feature flag
  * @returns Configuration object for modular drawer and classic flows
  */
-export function getDrawerFlowConfigs(
-  modularDrawer: Feature_ModularDrawer | null,
-): DrawerFlowConfigs {
-  const isModularDrawerEnabled = modularDrawer?.enabled;
-
-  if (isModularDrawerEnabled) {
-    return {
-      modularDrawer: {
-        [NavigatorName.ModularDrawer]: {
-          screens: {
-            [ScreenName.AddAccountDeepLinkHandler]: "add-account",
-            [ScreenName.ReceiveDeepLinkHandler]: "receive",
-          },
+export function getDrawerFlowConfigs(): DrawerFlowConfigs {
+  return {
+    modularDrawer: {
+      [NavigatorName.ModularDrawer]: {
+        screens: {
+          [ScreenName.AddAccountDeepLinkHandler]: "add-account",
+          [ScreenName.ReceiveDeepLinkHandler]: "receive",
         },
       },
-    };
-  }
-
-  return {
-    modularDrawer: {},
+    },
   };
 }
