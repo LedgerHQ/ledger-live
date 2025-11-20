@@ -267,11 +267,12 @@ export function useDeepLinkHandler() {
           );
           break;
         }
-        case "delegate":
         case "receive":
+          dispatch(openModal("MODAL_RECEIVE", undefined));
+          break;
+        case "delegate":
         case "send": {
-          const modal =
-            url === "send" ? "MODAL_SEND" : url === "receive" ? "MODAL_RECEIVE" : "MODAL_DELEGATE";
+          const modal = url === "send" ? "MODAL_SEND" : "MODAL_DELEGATE";
           const { currency, recipient, amount } = query;
 
           if (url === "delegate" && currency !== "tezos") return;
