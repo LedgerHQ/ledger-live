@@ -69,7 +69,6 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
     },
     details: {
       sequence: op.transactionSequenceNumber,
-      status: op.hasFailed ? "failed" : "success",
       ...(asset.type === "token"
         ? {
             ledgerOpType: op.type,

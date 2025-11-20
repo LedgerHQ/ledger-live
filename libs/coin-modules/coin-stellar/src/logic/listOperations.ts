@@ -56,7 +56,6 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
         ? operation.extra.assetAmount
         : operation.value.toString(),
       memo: operation.extra.memo,
-      status: operation.hasFailed ? "failed" : "success",
     },
     type: operation.type,
     value: BigInt(operation.value.toString()),

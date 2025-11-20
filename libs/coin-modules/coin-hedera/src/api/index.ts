@@ -106,7 +106,6 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
           details: {
             ...liveOp.extra,
             ledgerOpType: liveOp.type,
-            status: liveOp.hasFailed ? "failed" : "success",
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
           },
           tx: {

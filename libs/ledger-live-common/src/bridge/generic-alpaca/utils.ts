@@ -107,7 +107,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.memo = op.details.memo as string;
   }
   const bnFees = new BigNumber(op.tx.fees.toString());
-  const hasFailed = op.details?.status === "failed";
+  const hasFailed = op.tx.failed;
 
   let value: BigNumber;
   if (hasFailed) {
