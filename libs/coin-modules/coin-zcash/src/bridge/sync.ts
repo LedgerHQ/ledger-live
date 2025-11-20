@@ -6,7 +6,7 @@ import { getTransactions } from "../network/indexer";
 import { getAccountInfo, getBlockHeight } from "../network/node";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { BoilerplateOperation } from "../network/types";
+import { ZcashOperation } from "../network/types";
 import coinConfig from "../config";
 
 const operationAdapter =
@@ -14,7 +14,7 @@ const operationAdapter =
   ({
     meta: { delivered_amount },
     tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
-  }: BoilerplateOperation) => {
+  }: ZcashOperation) => {
     const type = Account === address ? "OUT" : "IN";
     let value =
       delivered_amount && typeof delivered_amount === "string"
@@ -48,13 +48,13 @@ const operationAdapter =
   };
 
 const filterOperations = (
-  transactions: BoilerplateOperation[],
+  transactions: ZcashOperation[],
   accountId: string,
   address: string,
 ) => {
   return transactions
     .filter(
-      ({ tx, meta }: BoilerplateOperation) =>
+      ({ tx, meta }: ZcashOperation) =>
         tx.TransactionType === "Payment" && typeof meta.delivered_amount === "string",
     )
     .map(operationAdapter(accountId, address))

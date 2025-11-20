@@ -1,12 +1,12 @@
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type BoilerplateConfig = {
+export type ZcashConfig = {
   nodeUrl: string;
   minReserve: number;
 };
 
-export type BoilerplateCoinConfig = CurrencyConfig & BoilerplateConfig;
+export type ZcashCoinConfig = CurrencyConfig & ZcashConfig;
 
-const coinConfig = buildCoinConfig<BoilerplateCoinConfig>();
+const coinConfig = buildCoinConfig<ZcashCoinConfig>();
 
 export default coinConfig;

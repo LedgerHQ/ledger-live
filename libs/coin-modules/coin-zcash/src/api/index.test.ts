@@ -1,9 +1,9 @@
 import { createApi } from ".";
-import { BoilerplateConfig } from "../config";
+import { ZcashConfig } from "../config";
 
 describe("createApi", () => {
   it("should return every api methods", () => {
-    const api = createApi({} as BoilerplateConfig);
+    const api = createApi({} as ZcashConfig);
     expect(api.broadcast).toBeDefined();
     expect(api.combine).toBeDefined();
     expect(api.craftTransaction).toBeDefined();

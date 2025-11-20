@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/coin-zcash",
   "version": "4.9.0",
-  "description": "Boilerplate coin integration",
+  "description": "Zcash coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",

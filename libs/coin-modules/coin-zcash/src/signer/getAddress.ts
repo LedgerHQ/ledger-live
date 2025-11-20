@@ -1,13 +1,13 @@
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { BoilerplateAddress, BoilerplateSigner } from "../types";
+import { ZcashAddress, ZcashSigner } from "../types";
 
-const getAddress = (signerContext: SignerContext<BoilerplateSigner>): GetAddressFn => {
+const getAddress = (signerContext: SignerContext<ZcashSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
     const { address, publicKey } = (await signerContext(deviceId, signer =>
       signer.getAddress(path),
-    )) as BoilerplateAddress;
+    )) as ZcashAddress;
 
     return {
       path,

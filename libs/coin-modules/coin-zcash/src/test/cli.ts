@@ -27,7 +27,7 @@ function inferTransactions(
   }: { inferAmount: (account: AccountLike, fee?: string) => BigNumber | null | undefined },
 ): Transaction[] {
   return transactions.flatMap(({ transaction, account }) => {
-    invariant(transaction.family === "zcash", "Boilerplate family");
+    invariant(transaction.family === "zcash", "Zcash family");
     return {
       ...transaction,
       fee: inferAmount(account, opts.fee || "0.001brp"),

@@ -1,6 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
-import { BoilerplateOperation } from "../../network/types";
+import { ZcashOperation } from "../../network/types";
 
 /**
  * Returns list of operations associated to an account.
@@ -20,7 +20,7 @@ export async function listOperations(
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: BoilerplateOperation): Operation => {
+  (operation: ZcashOperation): Operation => {
     const {
       meta: { delivered_amount },
       tx: { Fee, hash, inLedger, date, Account, Destination },

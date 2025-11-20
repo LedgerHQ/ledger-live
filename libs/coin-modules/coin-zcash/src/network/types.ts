@@ -1,4 +1,4 @@
-export type BoilerplateOperation = {
+export type ZcashOperation = {
   meta: {
     delivered_amount: string;
   };
@@ -47,5 +47,5 @@ export type SubmitReponse = {
 
 export type AccountTxResponse = {
   account: string;
-  transactions: BoilerplateOperation[];
+  transactions: ZcashOperation[];
 } & ResponseStatus;

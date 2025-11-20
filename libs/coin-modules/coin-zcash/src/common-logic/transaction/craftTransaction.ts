@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { BoilerplateNativeTransaction } from "../../types";
+import { ZcashNativeTransaction } from "../../types";
 
-const encodeNativeTx = (nativeTx: BoilerplateNativeTransaction) => JSON.stringify(nativeTx);
+const encodeNativeTx = (nativeTx: ZcashNativeTransaction) => JSON.stringify(nativeTx);
 
 export async function craftTransaction(
   account: {
@@ -15,10 +15,10 @@ export async function craftTransaction(
     fee?: BigNumber;
   },
 ): Promise<{
-  nativeTransaction: BoilerplateNativeTransaction;
+  nativeTransaction: ZcashNativeTransaction;
   serializedTransaction: string;
 }> {
-  const nativeTransaction: BoilerplateNativeTransaction = {
+  const nativeTransaction: ZcashNativeTransaction = {
     TransactionType: "Payment",
     Account: account.address,
     Amount: transaction.amount.toString(),

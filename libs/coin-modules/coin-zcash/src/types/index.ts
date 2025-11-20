@@ -1,7 +1,7 @@
 export * from "./bridge";
 export * from "./signer";
 
-export type BoilerplateNativeTransaction = {
+export type ZcashNativeTransaction = {
   TransactionType: "Payment";
   Account: string;
   Amount: string;

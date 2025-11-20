@@ -1,11 +1,11 @@
-export type BoilerplateAddress = {
+export type ZcashAddress = {
   publicKey: string;
   address: string;
 };
 
-export type BoilerplateSignature = string; // `0x${string}`
+export type ZcashSignature = string; // `0x${string}`
 
-export interface BoilerplateSigner {
-  getAddress(path: string): Promise<BoilerplateAddress>;
-  signTransaction(path: string, rawTx: string): Promise<BoilerplateSignature>;
+export interface ZcashSigner {
+  getAddress(path: string): Promise<ZcashAddress>;
+  signTransaction(path: string, rawTx: string): Promise<ZcashSignature>;
 }
