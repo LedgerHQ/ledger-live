@@ -1154,6 +1154,11 @@
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Geçersiz Sağlayıcı",
+      "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin.",
+      "openSettings" : "Ayarlara git"
+    },
     "GasLessThanEstimate" : {
       "title" : "Bu çok düşük olabilir. Lütfen arttırın"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Miktar, UTXO kısıtlamalarına uyacak şekilde azaltıldı."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
     }
   },
   "crash" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
-        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Wallet üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
+        "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
+        "swapWithAnotherProvider" : "Başka bir sağlayıcıyla takas edin"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
@@ -4430,6 +4443,7 @@
     "allowSecureConnection" : "Ledger ile güvenli bir bağlantının kurulmasına izin verin",
     "loading" : "Yükleniyor...",
     "turnOnAndUnlockDevice" : "Cihazınızı çalıştırın ve kilidini açın",
+    "powerOnDevice" : "{{deviceName}} cihazınızı çalıştırın ve kilidini açın",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
     "connectAnotherDevice" : "Başka Ledger bağla",
     "unlockDevice" : "Cihazınızın kilidini açın",
@@ -4458,6 +4472,7 @@
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
+      "nearIntentsAcceptTerms" : "Bu işlemi doğrulayarak,\nNEAR Intents’e güç sağlayan teknoloji olan <0>SwapKit’in Kullanım Koşullarını</0> kabul ediyorum",
       "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
@@ -4494,6 +4509,11 @@
     "bluetooth" : {
       "title" : "Bluetooth ile bağlanın...",
       "label" : "Nano'nuzu otomatik olarak algılayın"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Ledger cihazınızı göremiyor musunuz?",
+      "scanSignersCta" : "Cihazları tarayın",
+      "helpCenterCta" : "Destek alın"
     },
     "deviceNotFoundPairNewDevice" : "Bluetooth ile eşleyin",
     "headerDescription" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun.",
@@ -7304,11 +7324,11 @@
         "description" : "{{productName}} cihazınızda kilit ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
-      "recover" : {
-        "title" : "Ledger Recover'a abone olun",
-        "titleCompleted" : "Ledger Recover'a abone oldunuz",
-        "description" : "Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.",
-        "popupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
+      "syncAccounts" : {
+        "title" : "Kripto hesaplarınızı senkronize edin",
+        "titleCompleted" : "Hesaplarınız senkronize edildi",
+        "description" : "Kripto hesaplarınızı senkronize etmek için Ledger Sync’i etkinleştirin",
+        "popupLabel" : "Hesaplar senkronize edildi"
       }
     }
   },
