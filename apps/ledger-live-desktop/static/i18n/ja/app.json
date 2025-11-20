@@ -86,6 +86,7 @@
     "continue" : "続行",
     "previous" : "前",
     "learnMore" : "詳細はこちら",
+    "learnMoreWithEllipsis" : "もっと詳しく...",
     "help" : "ヘルプ",
     "needHelp" : "お困りですか？",
     "areYouSure" : "本当によろしいですか？",
@@ -106,6 +107,7 @@
     "reset" : "リセット",
     "retry" : "再試行",
     "range" : "表示範囲",
+    "start" : "スタート",
     "stop" : "停止",
     "updateNow" : "今すぐアップデート",
     "close" : "閉じる",
@@ -122,9 +124,15 @@
     "featureFlags" : "機能フラグ",
     "ldmkEnabled" : "LDMKトランスポート",
     "information" : "インフォメーション",
+    "increase" : "増加",
+    "max" : "最大",
+    "min" : "分",
+    "set" : "設定",
+    "follow" : "フォロー",
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
     "manage" : "管理",
+    "none" : "なし",
     "tryAgain" : "再試行",
     "lockScreen" : {
       "title" : "おかえりなさい",
@@ -203,7 +211,9 @@
       "WITHDRAW_UNSTAKED" : "引き出し済み",
       "SENDING" : "送信中",
       "BURN" : "バーン済み",
-      "ASSOCIATE_TOKEN" : "トークンの関連付け"
+      "ASSOCIATE_TOKEN" : "トークンの関連付け",
+      "STAKE_NEURON" : "ステーキング済み",
+      "TOP_UP_NEURON" : "チャージ済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -1446,6 +1456,12 @@
         "description" : "あらゆる取引所やウォレットから、直接Ledgerにアクセス。",
         "actionCompletedPopupLabel" : "転送済み資産"
       },
+      "syncAccounts" : {
+        "title" : "暗号資産アカウントを同期する",
+        "titleCompleted" : "アカウントの同期が完了しました",
+        "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
+        "actionCompletedPopupLabel" : "アカウント同期済み"
+      },
       "recover" : {
         "title" : "Ledger Recoverのサブスクリプション契約をする",
         "description" : "シークレットリカバリーフレーズを使用せずに、ウォレットへのアクセスを復元します。",
@@ -1905,6 +1921,7 @@
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
+      "nearIntentsAcceptTerms" : "この取引を承認することにより、\nお客様はNEAR Intentsの基盤技術である<0>SwapKitの利用規約</0>に同意したことになります。",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
       "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、\n取引の完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
@@ -2279,6 +2296,7 @@
         "label" : "受取アカウント",
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
+        "errorLoadingTokens" : "トークンの読み込みエラー",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
         "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
         "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
@@ -7054,6 +7072,42 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "{{purpose}}の最小数量は{{amount}}です。"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "ロック期間は、少なくとも{{min}}である必要があります。"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "ロック期間は、{{max}}未満である必要があります。"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "新しい解放遅延（ロック期間）は、現在の解放遅延よりも大きくする必要があります。"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "ニューロンが見つかりませんでした。"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "プリンシパルIDが無効です"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "ホットキーは既に存在します"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "分割数量が最大許容額を超えています"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "この操作は、既存のニューロンのステーキングを増やすために当該数量を転送します"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "この操作により、当該数量が新しいニューロンに転送されます。検証が成功すると、ニューロンはさらなる操作に使用できるようになります。"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXOの制約により、送付数量が調整されました。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXOの制約を超えるため、この数量は送信できません。"
     }
   },
   "cryptoOrg" : {
@@ -7519,7 +7573,7 @@
     "connectYourDevice" : {
       "title" : "デバイスを接続してロックを解除する"
     },
-    "searchPlaceholder" : "名前またはアドレスで検索",
+    "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
@@ -7561,5 +7615,291 @@
     "restart" : "再起動",
     "downloadOnLedger" : "Ledger.comでダウンロード",
     "downloadProgress" : "ダウンロード中...{{ progress }}%"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "このトランザクションにより、既存ニューロンのステーキングが増加します。上記の数量フィールドにステーキングする希望数量を入力してください。",
+      "createNeuron" : "このトランザクションにより、ステーキングされたICPを保持するニューロンが作成されます。上記の数量フィールドに、ステーキングしたいICPの数量を入力してください。",
+      "tooltip" : "Internet Computerは、これを使用してトランザクションを識別し、ICPをニューロンにステーキングします。"
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "フォローの確定",
+        "description" : "Neuronのフォローは、{{days}}日と{{hours}}時間後に確定する必要があります",
+        "altDescription" : "報酬を失います。引き続き報酬を獲得するには、Neuronのフォローを確定してください。",
+        "cta" : "フォローを確定"
+      },
+      "syncNeurons" : {
+        "title" : "ステーキングしたICPの同期",
+        "description" : "ステーキングされたICPは、{{days}}日と{{hours}}時間前に最後に同期されました。最新の詳細情報を確認したい場合は、頻繁に同期することをお勧めします。",
+        "altDescription" : "最新の詳細情報を確認するには、Neuronを同期することをお勧めします",
+        "cta" : "ニューロンを同期する"
+      },
+      "lockNeurons" : {
+        "title" : "ニューロンのロック",
+        "description" : "1つまたは複数のニューロンがロックされていません。ロックしないと報酬を獲得できません。これは、ニューロンがICPのガバナンスに参加することで報酬を獲得し、6か月以上ロックされているニューロンのみが投票資格を持つためです。",
+        "cta" : "ニューロンを管理する"
+      },
+      "addFollowees" : {
+        "title" : "フォロー対象を追加",
+        "description" : "1つまたは複数のニューロンにフォロー対象がいません。フォロー対象がいない場合、報酬を受け取れない可能性があります。報酬を得るには、ニューロンは直接投票するか（例えば、NNS Dappを使用）、投票するニューロンをフォローする必要があります。",
+        "cta" : "ニューロンを管理する"
+      },
+      "stakeICP" : {
+        "title" : "ICPをステーキング",
+        "description" : "ICPをステーキングし、そのガバナンスに参加することで報酬を獲得します。",
+        "cta" : "ICPをステーキング"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "ICPをステーキング",
+        "tooltip" : "ICPをステーキングするためのニューロンを作成する"
+      },
+      "manageNeurons" : {
+        "title" : "ニューロンを管理する",
+        "tooltip" : "活動中のニューロンを管理する"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "現在ニューロンにステーキングされているICPトークンの合計量。ステーキングされたICPは投票報酬を獲得し、ガバナンスに使用できます。",
+      "totalMaturityTooltip" : "ステーキングで得られた報酬の合計（ステーキングおよび流動性ステーキングの満期分を含む）。これらの報酬は、再ステーキングすることも、流動的なICPとして受け取ることもできます。",
+      "totalMaturity" : "満期の報酬合計",
+      "stakedBalance" : "ステーキング済み残高",
+      "stakedMaturity" : "ステーキング済みの満期の報酬",
+      "stakedMaturityTooltip" : "満期の報酬の一部です、これは、自動的にニューロンに再ステーキングされ、追加報酬を獲得し続けます。",
+      "liquidMaturity" : "流動的満期報酬",
+      "liquidMaturityTooltip" : "満期の報酬の一部です。これは、流動的（引き出し可能）なICPトークンとして受け取ったり、ニューロンにステーキングしたりできます。"
+    },
+    "confirmation" : {
+      "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
+      "success" : "{{action}}に成功しました",
+      "syncAccounts" : "更新された変更を確認するには、アカウントを同期してください。"
+    },
+    "sync" : "Sync",
+    "lastSynced" : "最終同期",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "報酬損失までの時間",
+      "warnbox" : "ニューロンが見つかりません。NNS dap（自律分散型アプリケーション）またはステーキングを通じて作成された既存のニューロンを同期して、新しいニューロンを作成してみてください。"
+    },
+    "common" : {
+      "neuronId" : "ニューロンID",
+      "neuronIds" : "ニューロンID",
+      "state" : "都道府県",
+      "action" : "アクション",
+      "balance" : "残高",
+      "maturity" : "満期",
+      "currentBalance" : "現在の残高",
+      "amount" : "数量",
+      "stake" : "ステーキング",
+      "followees" : "フォロー対象",
+      "votingPower" : "投票権",
+      "hotkey" : "ホットキー",
+      "neuron" : "ニューロン",
+      "disburse" : "放出",
+      "startDissolving" : "解放開始",
+      "stopDissolving" : "解放停止",
+      "dissolveDelay" : "解放遅延",
+      "dissolveState" : "解放状態",
+      "dissolveStateUnlocked" : "ロック解除されました",
+      "dissolveStateLocked" : "ロックされました",
+      "dissolveStateDissolving" : "解放中",
+      "dissolveStateDissolved" : "解放済み",
+      "inactiveNeuron" : "停止中のニューロン",
+      "activeNeuron" : "活動中のニューロン",
+      "confirmFollowing" : "フォローを確定"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "投票権の更新"
+    },
+    "manageNeuronFlow" : {
+      "title" : "ニューロンを管理する",
+      "stakeMaturity" : {
+        "title" : "満期のステーキング",
+        "description" : "このニューロンにステーキングできる満期の報酬を選択します。",
+        "confirmStake" : "ステーキングを確定",
+        "maturityAvailable" : "利用可能な満期の報酬"
+      },
+      "splitNeuron" : {
+        "title" : "ニューロン分割",
+        "transactionFee" : "トランザクション手数料",
+        "confirmSplit" : "分割を確定"
+      },
+      "setDissolveDelay" : {
+        "title" : "解放遅延の設定",
+        "balance" : "残高",
+        "dissolveDelay" : "解放遅延",
+        "dissolveDelayTooltip" : "解放遅延（ロック期間）は、ニューロンがロック解除され、ICPが再び利用可能になるまで待機する必要がある最小時間です。解放遅延は、ニューロンが解放に向かっている状態にある場合にのみ、減少することに注意してください。",
+        "votingPowerDescription" : "投票権は、少なくとも6か月の解放遅延（ロック期間）を有するニューロンに与えられます。",
+        "dissolveDelayInput" : "解放遅延（日数）",
+        "inputPlaceholder" : "解放遅延を入力",
+        "updateDelay" : "遅延を更新"
+      },
+      "selectFollowees" : {
+        "title" : "フォロー対象のニューロンID",
+        "placeholder" : "ニューロンIDを入力",
+        "options" : "フォローのオプション"
+      },
+      "selectTopics" : {
+        "title" : "トピックを選択",
+        "warnbox" : "ニューロンに従って投票を自動化し、最大の投票報酬を受け取ります。特定のトピック、またはすべてのトピックのニューロンをフォローできます。",
+        "listOfTopics" : "フォローできるトピックのリスト",
+        "addAction" : "フォロー対象を追加"
+      },
+      "addHotKey" : {
+        "title" : "ホットキーを追加"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "このニューロンはホットキーによって制御され、Ledger Liveインターフェースからの制御は制限されています。",
+          "hotkeyControl" : "ホットキーコントロール",
+          "votingPower" : "投票権",
+          "noVotingPower" : "投票権なし"
+        },
+        "votingPower" : {
+          "title" : "投票権",
+          "titleTooltip" : "ニューロンが投票権を持つためには、解放遅延（ロック期間）は少なくとも6か月必要です。",
+          "value" : "価値",
+          "staked" : "ステーキングされたICP",
+          "increaseStake" : "ステーキングを増やす",
+          "ageBonus" : "年齢ボーナス",
+          "ageBonusTooltip" : "ニューロンはロックされたり、ロック解除されたり、解放に向かっている状態になったりする可能性があります。ロックされた状態では、年齢ボーナスが蓄積されますが、解放遅延（ロック期間）は一定のままです。ニューロンが解放に向かっている状態にある場合、その年齢ボーナスは0に設定され、解放遅延（ロック期間）は時間とともに減少します。解放遅延が0に達すると、ニューロンはロック解除され、そこに保持されているICPを、任意のICPアカウントに送信できるようになります。",
+          "dissolveDelayBonus" : "解放遅延ボーナス",
+          "dissolveDelayBonusTooltip" : "解放遅延（ロック期間）ボーナスは、解放遅延に基づいてニューロンの投票権に追加されるボーナスです。解放遅延が長いほど、ボーナスが高くなります。",
+          "confirmFollowing" : "フォローを確定",
+          "confirmFollowingTooltip" : "6か月間停止中のICPニューロンは、投票報酬を失い始めます。報酬を見逃さないようにするには、手動で投票するか、フォローを編集または確定してください。"
+        },
+        "maturity" : {
+          "title" : "満期",
+          "description" : "提案に投票したり、活動中のニューロンをフォローしたりすることで報酬を獲得できます。",
+          "staked" : "ステーキング済み",
+          "stakedTooltip" : "ステーキングされた成熟報酬は、ニューロンの投票権に貢献しますが、新しいニューロンを生成することはできません。",
+          "available" : "利用可能",
+          "availableTooltip" : "利用可能な成熟報酬は、ステーキングするか、バーン（焼却）して新たなニューロンを生成できます。その際に生成されるICPの量は、成熟報酬の変動処理と呼ばれる、非決定論的な処理の影響を受けます。",
+          "stakeAction" : "ステーキング",
+          "spawnNeuronAction" : "ニューロンを生成"
+        },
+        "hotKeys" : {
+          "title" : "ホットキー",
+          "description" : "ホットキーは、Ledger Liveインターフェースからニューロンを制御する方法です。",
+          "addHotKey" : "ホットキーを追加",
+          "removeAction" : "削除",
+          "noHotKeys" : "ホットキーが見つかりません"
+        },
+        "advancedDetails" : {
+          "title" : "高度な詳細＆設定",
+          "dateCreated" : "作成日",
+          "dissolveDate" : "解放日",
+          "neuronAccount" : "ニューロンアカウント",
+          "splitNeuronAction" : "ニューロン分割",
+          "autoStakeMaturityAction" : "満期の自動ステーキング"
+        },
+        "following" : {
+          "title" : "フォロー",
+          "description" : "フォローすると、投票を別のニューロン保有者にデリゲート（委任）できます。投票権をデリゲートした場合でも報酬を獲得できます。フォローはいつでも変更できます。",
+          "warnbox" : "フォロー対象がいない場合、報酬を受け取れない可能性があります。報酬を得るには、ニューロンは直接投票するか（例えば、NNS Dappを使用）、投票するニューロンをフォローする必要があります。",
+          "followNeuronsAction" : "ニューロンをフォロー"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "以下のリストからニューロンを選択して、そのステーキング、成熟報酬、および解放遅延（ロック期間）設定を管理します。"
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "ステーキングを増やす",
+        "create_neuron" : "ニューロンを作成",
+        "start_dissolving" : "解放開始",
+        "stop_dissolving" : "解放停止",
+        "list_neurons" : "ニューロンをリスト化",
+        "disburse" : "ニューロンを放出",
+        "spawn_neuron" : "ニューロンを生成",
+        "add_hot_key" : "ホットキーを追加",
+        "stake_maturity" : "ステーキングの満期",
+        "refresh_voting_power" : "投票権を更新",
+        "increase_dissolve_delay" : "解放遅延を増やす",
+        "auto_stake_maturity" : "成熟報酬を自動ステーキング",
+        "spawn_neuron_from_maturity" : "成熟報酬からニューロンを生成",
+        "set_auto_stake_maturity" : "成熟報酬の自動ステーキングを設定",
+        "set_dissolve_delay" : "解放遅延を設定",
+        "remove_hot_key" : "ホットキーを削除",
+        "follow" : "ニューロンをフォロー",
+        "split_neuron" : "ニューロンを分割"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "ガバナンスと、SNS＆Neurons' Fundを除くすべて",
+          "description" : "ガバナンストピックと、SNS & Neurons' Fundを除くすべての提案トピックについて、ニューロンをフォローします。"
+        },
+        "1" : {
+          "title" : "ニューロン管理",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "取引レート",
+          "description" : "ICPの価値をIMFのSDRで測定した、「リアルタイム」の情報を提供するすべての提案。その仕組により、NNSはICPを、計算に必要なサイクル（cycles：ガス代のような計算コスト）に変換します。その際の変換レートは、サイクル（cycles）の現実世界での価値が、常に一定になるように調整されています。"
+        },
+        "3" : {
+          "title" : "ネットワーク経済",
+          "description" : "ネットワーク経済を管理する提案。例えば、ノードオペレーターにどのような報酬を支払うべきかを決定します。"
+        },
+        "4" : {
+          "title" : "ガバナンス",
+          "description" : "ガバナンスを実行するすべての提案。例えば、ネットワークに悪影響を与えるキャニスター（＝アプリやサービス実行単位）を凍結するようなもの。"
+        },
+        "5" : {
+          "title" : "ノード管理者",
+          "description" : "OSのアップグレードまたは構成、仮想マシンフレームワークのアップグレードまたは構成、ノードレプリカソフトウェアのアップグレードまたは構成など、何らかの方法でノードマシンを管理するすべての提案。"
+        },
+        "6" : {
+          "title" : "参加者管理",
+          "description" : "ネットワーク参加者を管理するすべての提案。例えば、DCID（データセンターID）またはNOID（ノードオペレーターID）の付与と取り消しなど。"
+        },
+        "7" : {
+          "title" : "サブネット管理",
+          "description" : "ネットワークサブネットを管理するすべての提案。例えば、新しいサブネットの作成、サブネットノードの追加と削除、サブネットの分割など。"
+        },
+        "8" : {
+          "title" : "プロトコルキャニスター管理",
+          "description" : "ICPプロトコルの一部とみなされ、その適切な機能に不可欠な、プロトコルキャニスターを管理するためのすべての提案。"
+        },
+        "9" : {
+          "title" : "本人確認手続き",
+          "description" : "規制目的で、例えば、ニューロン形式でのICPの初期ジェネシス（Genesis）配布中などに、KYC（本人確認）情報を更新する提案。"
+        },
+        "10" : {
+          "title" : "ノードプロバイダー報酬",
+          "description" : "ノードプロバイダーに報酬を与える提案"
+        },
+        "12" : {
+          "title" : "IC OSバージョンの展開",
+          "description" : "サブネットのレプリカバージョンの更新を処理する提案"
+        },
+        "13" : {
+          "title" : "IC OSバージョンの決定投票",
+          "description" : "レプリカ版の祝福と廃止に関する提案"
+        },
+        "14" : {
+          "title" : "SNS & Neurons' Fund",
+          "description" : "SNSとNeurons' Fundに関する提案"
+        },
+        "15" : {
+          "title" : "API境界ノード管理",
+          "description" : "API境界ノードの管理に関する提案"
+        },
+        "16" : {
+          "title" : "サブネットレンタル",
+          "description" : "サブネットのレンタルに関連するすべての提案（サブネットレンタル要求など）。"
+        },
+        "17" : {
+          "title" : "プロトコルキャニスター管理",
+          "description" : "ICPプロトコルの一部とみなされ、その適切な機能に不可欠な、プロトコルキャニスターを管理するためのすべての提案。"
+        },
+        "18" : {
+          "title" : "サービス神経系管理",
+          "description" : "関連するキャニスターのアップグレードや、SNS-Wを介したSNSフレームワークキャニスターWASMの管理など、サービス神経系（SNS）のキャニスターを管理するためのすべての提案。"
+        }
+      }
+    }
   }
 }
