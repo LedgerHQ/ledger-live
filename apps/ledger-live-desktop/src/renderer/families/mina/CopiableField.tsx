@@ -21,10 +21,10 @@ const CopiableFieldContainer = styled.div`
   }
 `;
 
-type CopiableFieldProps = {
+type CopiableFieldProps = Readonly<{
   value: string;
   children?: React.ReactNode;
-};
+}>;
 
 export function CopiableField({ value, children }: CopiableFieldProps) {
   return (

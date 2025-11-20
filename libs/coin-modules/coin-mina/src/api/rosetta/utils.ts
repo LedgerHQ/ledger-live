@@ -14,11 +14,9 @@ export const addNetworkIdentifier = <T extends object>(data: T): T & NetworkIden
   };
 };
 
-type Address = string;
-
 interface AccountIdentifier {
   account_identifier: {
-    address: Address;
+    address: string;
     metadata: {
       token_id: string;
     };
@@ -29,7 +27,7 @@ interface Operation {
   operation_identifier: { index: number };
   type: string;
   account: {
-    address: Address;
+    address: string;
     metadata: {
       token_id: string;
     };
@@ -42,7 +40,7 @@ interface Operation {
     };
   };
   metadata?: {
-    delegate_change_target?: string | undefined;
+    delegate_change_target?: string;
   };
   related_operations?: Array<{ index: number }>;
 }
@@ -56,7 +54,7 @@ interface TransactionPayload {
  * @param address - The account address
  * @returns Account identifier object
  */
-export const buildAccountIdentifier = (address: Address): AccountIdentifier => {
+export const buildAccountIdentifier = (address: string): AccountIdentifier => {
   if (!address) {
     throw new Error("Address is required");
   }
@@ -79,8 +77,8 @@ export const buildAccountIdentifier = (address: Address): AccountIdentifier => {
  * @returns Transaction payload for delegate change
  */
 export function makeDelegateChangePayload(
-  from: Address,
-  to: Address,
+  from: string,
+  to: string,
   feeNano: number,
 ): TransactionPayload {
   if (!from || !to) {
@@ -92,34 +90,46 @@ export function makeDelegateChangePayload(
 
   return {
     operations: [
-      makeOperation(0, [], "fee_payment", from, feeNano, false),
-      makeOperation(1, [], "delegate_change", from, 0, true, true, to),
+      makeOperation({
+        idx: 0,
+        relatedIdxs: [],
+        opType: "fee_payment",
+        addr: from,
+        value: feeNano,
+        isPositive: false,
+      }),
+      makeOperation({
+        idx: 1,
+        relatedIdxs: [],
+        opType: "delegate_change",
+        addr: from,
+        value: 0,
+        isPositive: true,
+        isStake: true,
+        to,
+      }),
     ],
   };
 }
 
+interface MakeOperationOptions {
+  idx: number;
+  relatedIdxs: number[];
+  opType: string;
+  addr: string;
+  value: number;
+  isPositive: boolean;
+  isStake?: boolean;
+  to?: string;
+}
+
 /**
  * Creates an operation object for Rosetta API
- * @param idx - Operation index
- * @param relatedIdxs - Related operation indices
- * @param opType - Operation type
- * @param addr - Address
- * @param value - Operation value
- * @param isPositive - Whether the value is positive
- * @param isStake - Whether this is a staking operation
- * @param to - Target address for delegate change
+ * @param options - Operation configuration options
  * @returns Operation object
  */
-function makeOperation(
-  idx: number,
-  relatedIdxs: number[],
-  opType: string,
-  addr: Address,
-  value: number,
-  isPositive: boolean,
-  isStake = false,
-  to?: Address,
-): Operation {
+function makeOperation(options: MakeOperationOptions): Operation {
+  const { idx, relatedIdxs, opType, addr, value, isPositive, isStake = false, to } = options;
   if (!addr) {
     throw new Error("Address is required");
   }
@@ -162,11 +172,14 @@ function makeOperation(
     };
   }
 
+  const metadata: Operation["metadata"] = {};
+  if (to) {
+    metadata.delegate_change_target = to;
+  }
+
   return {
     ...baseOperation,
-    metadata: {
-      delegate_change_target: to,
-    },
+    metadata,
   };
 }
 
@@ -179,8 +192,8 @@ function makeOperation(
  * @returns Transaction payload for transfer
  */
 export function makeTransferPayload(
-  from: Address,
-  to: Address,
+  from: string,
+  to: string,
   feeNano: number,
   valueNano: number,
 ): TransactionPayload {
@@ -193,9 +206,30 @@ export function makeTransferPayload(
 
   return {
     operations: [
-      makeOperation(0, [], "fee_payment", from, feeNano, false),
-      makeOperation(1, [], "payment_source_dec", from, valueNano, false),
-      makeOperation(2, [1], "payment_receiver_inc", to, valueNano, true),
+      makeOperation({
+        idx: 0,
+        relatedIdxs: [],
+        opType: "fee_payment",
+        addr: from,
+        value: feeNano,
+        isPositive: false,
+      }),
+      makeOperation({
+        idx: 1,
+        relatedIdxs: [],
+        opType: "payment_source_dec",
+        addr: from,
+        value: valueNano,
+        isPositive: false,
+      }),
+      makeOperation({
+        idx: 2,
+        relatedIdxs: [1],
+        opType: "payment_receiver_inc",
+        addr: to,
+        value: valueNano,
+        isPositive: true,
+      }),
     ],
   };
 }
