@@ -4,8 +4,8 @@ import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { track } from "~/analytics";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountButton as AddAccountButtonComponent } from "@ledgerhq/native-ui/pre-ldls/components/index";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 type Props = {
   sourceScreenName: string;

@@ -1,8 +1,8 @@
 import { getTokenFromAsset } from "./getTokenFromAsset";
 import { getMockedCurrency, getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+setupMockCryptoAssetsStore();
 
 describe("getTokenFromAsset", () => {
   const mockCurrency = getMockedCurrency();
@@ -15,8 +15,10 @@ describe("getTokenFromAsset", () => {
   it("returns token from token asset", async () => {
     const asset1 = { type: "hts", assetReference: mockToken.contractAddress };
 
-    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
-      findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockToken),
+    const findTokenByAddressInCurrencyMock = jest.fn().mockResolvedValue(mockToken);
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
     });
 
     const result = await getTokenFromAsset(mockCurrency, asset1);

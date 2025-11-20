@@ -11,7 +11,7 @@ import * as uniswapModule from "../src/modules/Uniswap";
 import { ResolutionConfig } from "../src/services/types";
 import { ledgerService } from "../src/Eth";
 
-const loadConfig = getLoadConfig();
+const loadConfig = getLoadConfig({ staticERC20Signatures: { 1: signatureCALEth } });
 const resolutionConfig: ResolutionConfig = {
   nft: true,
   erc20: true,

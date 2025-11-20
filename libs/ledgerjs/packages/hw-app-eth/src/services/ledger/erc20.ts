@@ -1,6 +1,5 @@
 import axios from "axios";
 import { log } from "@ledgerhq/logs";
-import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets-evm-signatures/data/evm/index";
 import { getLoadConfig } from "./loadConfig";
 import { LoadConfig } from "../types";
 
@@ -40,18 +39,31 @@ export const byContractAddressAndChainId = (
   contract: string,
   chainId: number,
   erc20SignaturesBlob?: string | null,
+  userLoadConfig?: LoadConfig,
 ): ReturnType<API["byContractAndChainId"]> => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
     try {
       return parse(erc20SignaturesBlob).byContractAndChainId(asContractAddress(contract), chainId);
     } catch (e) {
-      return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
+      // Fall through to static fallback if dynamic CAL parsing fails
     }
   }
 
-  // the static fallback when dynamic cal is not provided
-  return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
+  // Static fallback from injected signatures (for external library users)
+  const loadConfig = userLoadConfig ? getLoadConfig(userLoadConfig) : null;
+  if (loadConfig?.staticERC20Signatures?.[chainId]) {
+    try {
+      return parse(loadConfig.staticERC20Signatures[chainId]).byContractAndChainId(
+        asContractAddress(contract),
+        chainId,
+      );
+    } catch (e) {
+      log("error", `Failed to parse static ERC20 signatures for chainId ${chainId}: ${String(e)}`);
+    }
+  }
+
+  return null;
 };
 
 export type TokenInfo = {
@@ -108,18 +120,3 @@ const parse = (erc20SignaturesBlob: string): API => {
       map[String(chainId) + ":" + contractAddress],
   };
 };
-
-// this internal get() will lazy load and cache the data from the erc20 data blob
-const get: (chainId: number) => API | null = (() => {
-  const cache: Record<number, API> = {};
-  return chainId => {
-    if (cache[chainId]) return cache[chainId];
-
-    const signatureBlob: string | undefined = signaturesByChainId[chainId];
-    if (!signatureBlob) return null;
-
-    const api = parse(signatureBlob);
-    cache[chainId] = api;
-    return api;
-  };
-})();

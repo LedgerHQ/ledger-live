@@ -4214,9 +4214,6 @@ importers:
       '@mysten/sui':
         specifier: 1.38.0
         version: 1.38.0(typescript@5.4.3)
-      axios:
-        specifier: 'catalog:'
-        version: 1.12.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5194,9 +5191,6 @@ importers:
       '@ethersproject/hash':
         specifier: ^5.7.0
         version: 5.7.0
-      '@ledgerhq/cryptoassets-evm-signatures':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/cryptoassets-evm-signatures
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -6006,18 +6000,15 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../../env
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: 'catalog:'
-        version: 1.12.2
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       invariant:
         specifier: '2'
         version: 2.2.4
@@ -6031,9 +6022,6 @@ importers:
       '@testing-library/react':
         specifier: 14.2.2
         version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/bs58check':
-        specifier: ^2.1.0
-        version: 2.1.2
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12
@@ -6058,43 +6046,6 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-jest:
-        specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
-      ts-node:
-        specifier: ^10.7.0
-        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
-
-  libs/ledgerjs/packages/cryptoassets-evm-signatures:
-    dependencies:
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../../env
-      axios:
-        specifier: 'catalog:'
-        version: 1.12.2
-    devDependencies:
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../types-cryptoassets
-      '@types/jest':
-        specifier: ^29.5.10
-        version: 29.5.12
-      '@types/node':
-        specifier: ^22.10.10
-        version: 22.10.10
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6498,9 +6449,6 @@ importers:
       '@ethersproject/transactions':
         specifier: ^5.7.0
         version: 5.7.0
-      '@ledgerhq/cryptoassets-evm-signatures':
-        specifier: workspace:^
-        version: link:../cryptoassets-evm-signatures
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../../domain-service
@@ -43150,7 +43098,7 @@ snapshots:
 
   '@expo/spawn-async@1.7.2':
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
 
   '@expo/vector-icons@14.0.4':
     dependencies:
@@ -55416,9 +55364,9 @@ snapshots:
     dependencies:
       acorn: 7.4.1
 
-  acorn-jsx@5.3.2(acorn@8.13.0):
+  acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
 
   acorn-walk@7.2.0: {}
 
@@ -60775,7 +60723,7 @@ snapshots:
       '@ungap/structured-clone': 1.2.0
       ajv: 6.12.6
       chalk: 4.1.2
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       debug: 4.3.4
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
@@ -60817,8 +60765,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.13.0
-      acorn-jsx: 5.3.2(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       eslint-visitor-keys: 3.4.3
 
   esprima@1.2.2: {}
@@ -60981,7 +60929,7 @@ snapshots:
 
   execa@5.0.0:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1

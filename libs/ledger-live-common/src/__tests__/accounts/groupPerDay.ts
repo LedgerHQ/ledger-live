@@ -2,8 +2,7 @@ import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
 import { setSupportedCurrencies } from "../../currencies";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setup } from "../../bridge/impl";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 setSupportedCurrencies(["tezos"]);
 
@@ -14,8 +13,7 @@ LiveConfig.setConfig({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setup({} as CryptoAssetsStore);
+setupMockCryptoAssetsStore();
 
 let account: Awaited<ReturnType<typeof fromAccountRaw>>;
 

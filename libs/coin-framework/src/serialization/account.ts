@@ -19,7 +19,7 @@ import {
   toOperationRaw,
   toSwapOperationRaw,
 } from "./operation";
-import { getCryptoAssetsStore } from "../crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import invariant from "invariant";
 
 export type FromFamiliyRaw = {

@@ -1,5 +1,5 @@
 import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {

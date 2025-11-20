@@ -32,7 +32,7 @@ import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,

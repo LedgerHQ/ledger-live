@@ -1,14 +1,54 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
-import "../__tests__/fixtures/cryptoAssetsStore.fixtures";
 
 beforeAll(async () => {
-  initializeLegacyTokens(addTokensLegacy);
-  setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+  const mockStore: CryptoAssetsStore = {
+    findTokenById: async () => undefined,
+    findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+      const normalizedAddress = address.toLowerCase();
+      if (
+        normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
+        currencyId === "ethereum"
+      ) {
+        return {
+          type: "TokenCurrency",
+          id: "ethereum/erc20/usd__coin",
+          contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          parentCurrency: getCryptoCurrencyById("ethereum"),
+          tokenType: "erc20",
+          name: "USD Coin",
+          ticker: "USDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+        } as TokenCurrency;
+      }
+      if (
+        normalizedAddress === "0x29219dd400f2bf60e5a23d13be72b486d4038894" &&
+        currencyId === "sonic"
+      ) {
+        return {
+          type: "TokenCurrency",
+          id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+          contractAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+          parentCurrency: getCryptoCurrencyById("sonic"),
+          tokenType: "erc20",
+          name: "Bridged USDC (Sonic Labs)",
+          ticker: "USDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "Bridged USDC (Sonic Labs)", code: "USDC", magnitude: 6 }],
+        } as TokenCurrency;
+      }
+      return undefined;
+    },
+    getTokensSyncHash: async () => "",
+  };
+  setCryptoAssetsStore(mockStore);
 });
 
 describe("getTokenFromAsset", () => {
@@ -38,10 +78,8 @@ describe("getTokenFromAsset", () => {
   });
 
   it("does not compute the token of an unknown asset, trusting the CAL", async () => {
-    const findTokenByAddressInCurrency = jest.spyOn(
-      legacyCryptoAssetsStore,
-      "findTokenByAddressInCurrency",
-    );
+    const mockStore = getCryptoAssetsStore();
+    const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
 
     expect(
       await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {

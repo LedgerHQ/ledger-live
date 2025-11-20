@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 import { Middleware } from "@reduxjs/toolkit";
+import throttle from "lodash/throttle";
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -17,6 +18,11 @@ import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  extractTokensFromState,
+  PERSISTENCE_VERSION,
+  type PersistedTokens,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 import { marketStoreSelector } from "../reducers/market";
 
@@ -38,6 +44,22 @@ function accountsExportSelector(state: State) {
   }
   return all;
 }
+
+// Throttled save for crypto assets cache (save at most once per 5 seconds)
+const saveCryptoAssetsCache = throttle((state: State) => {
+  try {
+    const tokens = extractTokensFromState(state);
+    if (tokens.length > 0) {
+      const persistedData: PersistedTokens = {
+        version: PERSISTENCE_VERSION,
+        tokens,
+      };
+      setKey("app", "cryptoAssets", persistedData);
+    }
+  } catch (error) {
+    console.error("Failed to save crypto assets cache:", error);
+  }
+}, 5000);
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
   if (!isActionWithType(action)) {
@@ -65,6 +87,12 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     next(action);
     const state = store.getState();
     setKey("app", "market", marketStoreSelector(state));
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("cryptoAssetsApi/")) {
+    // Handle RTK Query crypto assets actions (throttled save)
+    const res = next(action);
+    const state = store.getState();
+    saveCryptoAssetsCache(state);
+    return res;
   } else {
     const oldState = store.getState();
     const res = next(action);

@@ -17,13 +17,13 @@ import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { ExplorerApi } from "../network/explorer/types";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
 import { attachOperations, mergeSubAccounts, createSwapHistoryMap, getSyncHash } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
 import { getCoinConfig } from "../config";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
