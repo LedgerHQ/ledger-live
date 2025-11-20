@@ -12,11 +12,11 @@ const truncateAddress = (address: string, startLength = 10, endLength = 10): str
   return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
 };
 
-type Props = {
+type Props = Readonly<{
   validator: ValidatorInfo;
   onSelect: () => void;
   isSelected: boolean;
-};
+}>;
 
 export default function ValidatorRow({ validator, onSelect, isSelected }: Props) {
   const { colors } = useTheme();
