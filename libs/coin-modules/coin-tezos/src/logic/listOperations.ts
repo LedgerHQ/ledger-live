@@ -165,7 +165,6 @@ function convertOperation(
       counter: operation.counter,
       gasLimit: operation.gasLimit,
       storageLimit: operation.storageLimit,
-      status: hasFailed ? "failed" : operation.status,
       ledgerOpType: getLedgerOpType(operation, normalizedType),
     },
   };
