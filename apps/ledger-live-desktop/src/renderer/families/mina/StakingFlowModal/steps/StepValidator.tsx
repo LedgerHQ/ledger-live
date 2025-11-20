@@ -39,7 +39,12 @@ const StepValidator = ({ account, transaction, onUpdateTransaction, error }: Ste
   );
 };
 
-export function StepValidatorFooter({ transitionTo, onClose, transaction, account }: StepProps) {
+export function StepValidatorFooter({
+  transitionTo,
+  onClose,
+  transaction,
+  account,
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
   if (!account) return null;
 
