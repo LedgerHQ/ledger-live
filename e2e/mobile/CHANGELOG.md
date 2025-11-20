@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.7.0
+
+### Minor Changes
+
+- [#12566](https://github.com/LedgerHQ/ledger-live/pull/12566) [`68cbd45`](https://github.com/LedgerHQ/ledger-live/commit/68cbd45fed262e95d301351e55852dcfc020e542) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add Deeplinks for asset page
+
+- [#12529](https://github.com/LedgerHQ/ledger-live/pull/12529) [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup llmMarketQuickActions Feature flag
+
 ## 0.7.0-next.0
 
 ### Minor Changes
