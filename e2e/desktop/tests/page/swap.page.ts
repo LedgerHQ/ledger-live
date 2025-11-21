@@ -258,11 +258,7 @@ export class SwapPage extends AppPage {
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [
-      Provider.ONE_INCH.uiName,
-      Provider.VELORA.uiName,
-      Provider.MOONPAY.uiName,
-    ].includes(provider)
+    const buttonText = [Provider.VELORA.uiName, Provider.MOONPAY.uiName].includes(provider)
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
