@@ -36,6 +36,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^"
   },

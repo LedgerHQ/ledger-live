@@ -44,6 +44,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
+import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 
 export type { SetHeaderOptionsRequest };
 
@@ -257,15 +258,15 @@ export default function SelectDevice({
 
         if (!deviceModel) return;
 
+        const newDevice = {
+          deviceName: name,
+          modelId: deviceModel.id,
+          deviceId: id,
+          wired,
+        };
+
         setDevice((maybeDevice: Device | undefined) => {
-          return (
-            maybeDevice || {
-              deviceName: name,
-              modelId: deviceModel.id,
-              deviceId: id,
-              wired,
-            }
-          );
+          return maybeDevice || newDevice;
         });
       }
     });
@@ -273,7 +274,7 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
-    const devices: DisplayedDevice[] = bleKnownDevices
+    let devices: DisplayedDevice[] = bleKnownDevices
       .map(device => {
         const matchingScannedDevice = findMatchingNewDevice(
           {
@@ -294,10 +295,10 @@ export default function SelectDevice({
       .sort((a, b) => Number(b.available) - Number(a.available));
 
     if (USBDevice) {
-      devices.push({ ...USBDevice, available: true });
+      devices = [{ ...USBDevice, available: true }, ...devices];
     }
     if (ProxyDevice) {
-      devices.push({ ...ProxyDevice, available: true });
+      devices = [{ ...ProxyDevice, available: true }, ...devices];
     }
 
     return filterByDeviceModelId
@@ -535,7 +536,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8} mb={bottom}>
+            <Flex alignItems="center" my={8} mb={bottom + TAB_BAR_HEIGHT + 8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>

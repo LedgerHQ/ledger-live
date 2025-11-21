@@ -10,6 +10,7 @@ export default class SwapPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
+  swapOperationDetailsScrollViewId = "swap-operation-details-scroll-view";
   deviceActionLoading = "device-action-loading";
   operationRow = {
     rowBaseId: "swap-operation-row-",
@@ -110,7 +111,7 @@ export default class SwapPage {
       normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
     );
 
-    await scrollToId(this.operationDetails.toAmount);
+    await scrollToId(this.operationDetails.toAmount, this.swapOperationDetailsScrollViewId);
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(
       normalizeText(swap.accountToCredit.accountName),
     );

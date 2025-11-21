@@ -87,4 +87,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.LargeMoverLandingPage]: LargeMoverLandingPageParams;
   [ScreenName.DebugSwipe]: undefined;
   [ScreenName.DebugModularAssetDrawer]: undefined;
+  [ScreenName.DebugTooltip]: undefined;
 };

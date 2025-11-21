@@ -4,8 +4,7 @@ import {
   getParentAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
@@ -764,14 +763,16 @@ async function getToCurrency(
 
   // In case of an SPL Token recipient and no TokenAccount exists.
   if (
-    toAccount.type !== "TokenAccount" && // it must no be a SPL Token
+    toAccount.type !== "TokenAccount" && // it must not be a SPL Token
     toAccount.currency.id === "solana" && // the target account must be a SOL Account
     tokenAddress !== toAccount.freshAddress
   ) {
-    const splTokenCurrency = listTokensForCryptoCurrency(toAccount.currency).find(
-      tk => tk.tokenType === "spl" && tk.ticker === currencyTo,
-    )!;
-    return splTokenCurrency;
+    // tokenAddress is the SPL token mint address for Solana tokens
+    const splTokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      tokenAddress,
+      "solana",
+    );
+    if (splTokenCurrency && splTokenCurrency.ticker === currencyTo) return splTokenCurrency;
   }
 
   return newTokenAccount?.token ?? getCurrencyForAccount(toAccount);

@@ -9,7 +9,7 @@ export type JWT = {
   accessToken: string;
   permissions: {
     [trustchainId: string]: {
-      [path: string]: string[];
+      [path: string]: string;
     };
   };
 };

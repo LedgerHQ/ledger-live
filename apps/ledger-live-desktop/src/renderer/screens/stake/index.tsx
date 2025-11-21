@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { useCallback, useMemo } from "react";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistory } from "react-router-dom";
@@ -36,7 +35,9 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
-  const list = enabledCurrencies.concat(partnerSupportedAssets);
+  const list = useMemo(() => {
+    return enabledCurrencies.concat(partnerSupportedAssets);
+  }, [enabledCurrencies, partnerSupportedAssets]);
   const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
@@ -130,9 +131,7 @@ const useStakeFlow = () => {
       dispatch(setFlowValue(DRAWER_FLOW));
       dispatch(setSourceValue(source || ""));
 
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || list,
-      });
+      const cryptoCurrencies = currencies || list;
 
       trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
@@ -158,7 +157,7 @@ const useStakeFlow = () => {
           ? earnDrawerConfigurationFlag.params
           : {};
         openAssetAndAccountDrawer({
-          currencies: cryptoCurrencies.map(c => c.id),
+          currencies: cryptoCurrencies,
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
@@ -169,7 +168,7 @@ const useStakeFlow = () => {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
-            currencies: cryptoCurrencies,
+            currencyIds: cryptoCurrencies,
             flow: DRAWER_FLOW,
             source: source ?? "",
             onAccountSelected: (account, parentAccount) =>

@@ -1,5 +1,9 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
+import {
+  PostOnboardingAction,
+  PostOnboardingActionId,
+  StartActionArgs,
+} from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
@@ -14,7 +18,7 @@ const assetsTransfer: PostOnboardingAction = {
   description: "postOnboarding.actions.assetsTransfer.description",
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  startAction: ({ openModalCallback }) => openModalCallback("MODAL_RECEIVE"),
+  startAction: ({ openModalCallback }: StartActionArgs) => openModalCallback?.("MODAL_RECEIVE"),
 };
 
 const buyCrypto: PostOnboardingAction = {
@@ -26,7 +30,8 @@ const buyCrypto: PostOnboardingAction = {
   actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
   buttonLabelForAnalyticsEvent: "Buy Crypto",
   shouldCompleteOnStart: true,
-  startAction: ({ navigationCallback }) => navigationCallback({ pathname: "/exchange" }),
+  startAction: ({ navigationCallback }: StartActionArgs) =>
+    navigationCallback?.({ pathname: "/exchange" }),
 };
 
 const syncAccounts: PostOnboardingAction = {
@@ -39,8 +44,11 @@ const syncAccounts: PostOnboardingAction = {
   description: "postOnboarding.actions.syncAccounts.description",
   actionCompletedPopupLabel: "postOnboarding.actions.syncAccounts.popupLabel",
   buttonLabelForAnalyticsEvent: "Sync accounts",
-  startAction: ({ openActivationDrawer }) => {
-    openActivationDrawer();
+  startAction: ({ openActivationDrawer }: StartActionArgs) => {
+    openActivationDrawer?.();
+  },
+  getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
+    return !!isLedgerSyncActive;
   },
 };
 
@@ -51,12 +59,12 @@ const customImage: PostOnboardingAction = {
   titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: ({ deviceModelId }) =>
+  startAction: ({ deviceModelId }: StartActionArgs) =>
     setDrawer(
       CustomImage,
       {
         isFromPostOnboardingEntryPoint: true,
-        deviceModelId,
+        deviceModelId: deviceModelId || null,
       },
       { forceDisableFocusTrap: true },
     ),

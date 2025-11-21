@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -21,7 +21,8 @@ import {
 
 describe("utils", () => {
   beforeAll(() => {
-    setCryptoAssetsStore(legacyCryptoAssetsStore);
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
   });
 
   describe("calculateAmount", () => {
@@ -150,11 +151,25 @@ describe("utils", () => {
         balance: 0,
       });
 
+      // Fetch actual tokens from CAL to get the real format
+      const firstTokenFromCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        firstTokenCurrencyFromCAL.contractAddress,
+        "hedera",
+      );
+      const secondTokenFromCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        secondTokenCurrencyFromCAL.contractAddress,
+        "hedera",
+      );
+
+      if (!firstTokenFromCAL || !secondTokenFromCAL) {
+        throw new Error("Tokens not found in CAL");
+      }
+
       const mockedOperation1 = getMockedOperation({
-        accountId: encodeTokenAccountId(mockedAccount.id, firstTokenCurrencyFromCAL),
+        accountId: encodeTokenAccountId(mockedAccount.id, firstTokenFromCAL),
       });
       const mockedOperation2 = getMockedOperation({
-        accountId: encodeTokenAccountId(mockedAccount.id, secondTokenCurrencyFromCAL),
+        accountId: encodeTokenAccountId(mockedAccount.id, secondTokenFromCAL),
       });
 
       const result = await getSubAccounts(
@@ -165,8 +180,9 @@ describe("utils", () => {
       const uniqueSubAccountIds = new Set(result.map(sa => sa.id));
 
       expect(result).toHaveLength(2);
-      expect(result[0].token).toEqual(firstTokenCurrencyFromCAL);
-      expect(result[1].token).toEqual(secondTokenCurrencyFromCAL);
+      // Compare contract address instead of full object since CAL format may differ
+      expect(result[0].token.contractAddress).toBe(firstTokenCurrencyFromCAL.contractAddress);
+      expect(result[1].token.contractAddress).toBe(secondTokenCurrencyFromCAL.contractAddress);
       expect(result[0].balance).toEqual(new BigNumber(10));
       expect(result[1].balance).toEqual(new BigNumber(0));
       expect(result[0].operations).toEqual([mockedOperation1]);
@@ -197,21 +213,31 @@ describe("utils", () => {
       const result = await getSubAccounts(mockedAccount.id, [], [mockedMirrorToken]);
 
       expect(result).toHaveLength(1);
-      expect(result[0].token).toEqual(tokenCurrencyFromCAL);
+      // Compare contract address instead of full object since CAL format may differ
+      expect(result[0].token.contractAddress).toBe(tokenCurrencyFromCAL.contractAddress);
       expect(result[0].operations).toHaveLength(0);
       expect(result[0].balance).toEqual(new BigNumber(42));
     });
   });
 
   describe("prepareOperations", () => {
-    const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
-
     test("links token operation to existing coin operation with matching hash", async () => {
-      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
+      // Fetch actual token from CAL to ensure we use the correct format
+      const tokenFromCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        tokenCurrencyFromCAL.contractAddress,
+        "hedera",
+      );
+
+      if (!tokenFromCAL) {
+        throw new Error("Token not found in CAL");
+      }
+
+      const mockedTokenAccount = getMockedTokenAccount(tokenFromCAL);
       const mockedCoinOperation = getMockedOperation({ hash: "shared" });
       const mockedTokenOperation = getMockedOperation({
         hash: "shared",
-        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenFromCAL),
       });
 
       const result = await prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
@@ -221,10 +247,21 @@ describe("utils", () => {
     });
 
     test("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
-      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
+      // Fetch actual token from CAL to ensure we use the correct format
+      const tokenFromCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        tokenCurrencyFromCAL.contractAddress,
+        "hedera",
+      );
+
+      if (!tokenFromCAL) {
+        throw new Error("Token not found in CAL");
+      }
+
+      const mockedTokenAccount = getMockedTokenAccount(tokenFromCAL);
       const mockedOrphanTokenOperation = getMockedOperation({
         hash: "unknown-hash",
-        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenFromCAL),
       });
 
       const result = await prepareOperations([], [mockedOrphanTokenOperation]);

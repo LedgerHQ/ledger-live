@@ -14,6 +14,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.MinaEditMemo>
@@ -32,7 +33,7 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo: memo && memo.toString(),
@@ -88,7 +89,7 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.value"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { MinaEditMemo as component, options };
 const styles = StyleSheet.create({

@@ -3,7 +3,7 @@ import { Range, projectRangeIndex, reverseRangeIndex } from "@ledgerhq/live-comm
 import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import Slider from "@react-native-community/slider";
@@ -14,23 +14,33 @@ const FeeSlider = React.memo(
   ({
     value,
     onChange,
+    onDragging,
     range,
   }: {
     value: BigNumber;
     onChange: (arg: BigNumber) => void;
+    onDragging?: (arg: BigNumber) => void;
     range: Range;
   }) => {
     const { colors } = useTheme();
     const index = reverseRangeIndex(range, value);
+
+    const handleValueChange = useCallback(
+      (i: number) => onDragging?.(projectRangeIndex(range, i)),
+      [range, onDragging],
+    );
+
     const setValueIndex = useCallback(
-      (i: number | string) => onChange(projectRangeIndex(range, i as number)),
+      (i: number) => onChange(projectRangeIndex(range, i)),
       [range, onChange],
     );
+
     return (
       <Slider
         value={index}
         step={1}
-        onValueChange={setValueIndex}
+        onValueChange={handleValueChange}
+        onSlidingComplete={setValueIndex}
         minimumValue={0}
         maximumValue={range.steps - 1}
         thumbTintColor={colors.live}
@@ -51,9 +61,15 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
   const { colors } = useTheme();
   const { t } = useTranslation();
   const unit = getDefaultFeeUnit(account.currency);
+  const [displayValue, setDisplayValue] = useState(feeAmount);
 
-  const onChangeF = useCallback(
+  const handleDragging = useCallback((value: BigNumber) => {
+    setDisplayValue(value);
+  }, []);
+
+  const handleChange = useCallback(
     (value: BigNumber) => {
+      setDisplayValue(value);
       onChange(value);
     },
     [onChange],
@@ -75,12 +91,17 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
                 },
               ]}
             >
-              <CurrencyUnitValue unit={unit} value={feeAmount} />
+              <CurrencyUnitValue unit={unit} value={displayValue} />
             </LText>
           </View>
         </View>
         <View style={styles.container}>
-          <FeeSlider value={feeAmount} range={range} onChange={onChangeF} />
+          <FeeSlider
+            value={feeAmount}
+            range={range}
+            onChange={handleChange}
+            onDragging={handleDragging}
+          />
           <View style={styles.textContainer}>
             <LText color="grey" style={styles.currencyUnitText}>
               {t("fees.speed.slow")}

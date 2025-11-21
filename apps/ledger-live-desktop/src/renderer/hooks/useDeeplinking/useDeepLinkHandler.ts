@@ -6,7 +6,7 @@ import {
   findCryptoCurrencyById,
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -121,6 +121,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
       } = query;
 
       trackDeeplinkingEvent({
@@ -136,6 +137,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
         url,
       });
 
@@ -265,11 +267,12 @@ export function useDeepLinkHandler() {
           );
           break;
         }
-        case "delegate":
         case "receive":
+          dispatch(openModal("MODAL_RECEIVE", undefined));
+          break;
+        case "delegate":
         case "send": {
-          const modal =
-            url === "send" ? "MODAL_SEND" : url === "receive" ? "MODAL_RECEIVE" : "MODAL_DELEGATE";
+          const modal = url === "send" ? "MODAL_SEND" : "MODAL_DELEGATE";
           const { currency, recipient, amount } = query;
 
           if (url === "delegate" && currency !== "tezos") return;

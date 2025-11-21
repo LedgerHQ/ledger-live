@@ -9,7 +9,7 @@ export enum TokensDataTags {
  *
  * @param networkFamily - Filter by network families (e.g., "ethereum", "polygon")
  * @param isStaging - Use staging or production environment
- * @param pageSize - Number of items per page (default: 100, options: 10, 100, 1000)
+ * @param pageSize - Number of items per page (default: 1000, options: 10, 100, 1000)
  * @param output - Specify output fields (default: all fields, values: id, name, ticker, units, delisted)
  * @param limit - Maximum number of assets to return
  * @param ref - Reference to the source of the data Default: "branch:main"  Examples:

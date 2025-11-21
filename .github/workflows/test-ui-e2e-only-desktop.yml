@@ -57,7 +57,12 @@ on:
         description: "Firmware version to use for selected device"
         required: false
         type: string
-        default: "1.4.1"
+        default: "1.5.0"
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -96,6 +101,11 @@ on:
         description: "Firmware version to use for selected device"
         required: true
         type: string
+      smoke_tests:
+        description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -112,7 +122,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
-      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
+      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -167,11 +177,25 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}
 
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
+            if [ -n "${{ inputs.test_filter }}" ]; then
+              echo "filter=@smoke ${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            else
+              echo "filter=@smoke" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "filter=${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Run Playwright Tests
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
-          test_filter: ${{ inputs.test_filter }}
+          test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
           shard_index: ${{ matrix.shardIndex }}
           shard_total: ${{ matrix.shardTotal }}
@@ -181,7 +205,7 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
@@ -221,7 +245,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: linux-speculos
+          platform: ${{ inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
@@ -385,7 +409,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                         "emoji": true
                       }
                     },

@@ -262,13 +262,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
    */
   const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(
-      addKnownDevice({
-        id: device.deviceId,
-        name: device.deviceName ?? device.modelId,
-        modelId: device.modelId,
-      }),
-    );
+    if (!device.wired) {
+      dispatchRedux(
+        addKnownDevice({
+          id: device.deviceId,
+          name: device.deviceName ?? device.modelId,
+          modelId: device.modelId,
+        }),
+      );
+    }
   }, [device, dispatchRedux]);
 
   /**

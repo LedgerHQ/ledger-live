@@ -106,6 +106,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
   currencyMonad: DEFAULT_FEATURE,
+  currencyMonadTestnet: DEFAULT_FEATURE,
+  currencySomnia: DEFAULT_FEATURE,
+  currencyZeroGravity: DEFAULT_FEATURE,
 };
 
 /**
@@ -563,6 +566,7 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
+      postOnboarding: true,
     },
   },
   lldLedgerSyncEntryPoints: {
@@ -660,6 +664,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkConnectApp: DEFAULT_FEATURE,
+  ldmkSolanaSigner: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
@@ -696,12 +701,14 @@ export const DEFAULT_FEATURES: Features = {
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
   newSendFlow: DEFAULT_FEATURE,
+  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   lldSessionReplay: {
     ...DEFAULT_FEATURE,
     params: {
       sampling: 100,
     },
   },
+  zcashShielded: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

@@ -102,7 +102,6 @@ describe("listOperations", () => {
             counter: operation.counter,
             gasLimit: operation.gasLimit,
             storageLimit: operation.storageLimit,
-            status: operation.status,
             ledgerOpType: expectedLedgerOpType,
           },
           senders: [someSenderAddress],
@@ -165,7 +164,6 @@ describe("listOperations", () => {
         counter: 65214462,
         gasLimit: 4,
         storageLimit: 5,
-        status: operation.status,
         ledgerOpType: expectedLedgerOpType,
       });
     },

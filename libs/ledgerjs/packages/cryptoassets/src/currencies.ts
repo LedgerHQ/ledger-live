@@ -4840,6 +4840,69 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  monad_testnet: {
+    type: "CryptoCurrency",
+    id: "monad_testnet",
+    coinType: CoinType.ETH,
+    name: "Monad Testnet",
+    managerAppName: "Ethereum",
+    ticker: "MON",
+    scheme: "monad_testnet",
+    color: "#836EF9",
+    family: "evm",
+    units: ethereumUnits("MON", "MON"),
+    ethereumLikeInfo: {
+      chainId: 10143,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.monadexplorer.com/tx/$hash",
+        address: "https://testnet.monadexplorer.com/address/$address",
+      },
+    ],
+  },
+  somnia: {
+    type: "CryptoCurrency",
+    id: "somnia",
+    coinType: CoinType.ETH,
+    name: "Somnia",
+    managerAppName: "Ethereum",
+    ticker: "SOMI",
+    scheme: "somnia",
+    color: "#6F0191",
+    family: "evm",
+    units: ethereumUnits("SOMI", "SOMI"),
+    ethereumLikeInfo: {
+      chainId: 5031,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.somnia.network/tx/$hash",
+        address: "https://explorer.somnia.network/address/$address",
+      },
+    ],
+  },
+  zero_gravity: {
+    type: "CryptoCurrency",
+    id: "zero_gravity",
+    coinType: CoinType.ETH,
+    name: "0G",
+    managerAppName: "Ethereum",
+    ticker: "0G",
+    scheme: "zero_gravity",
+    color: "#9200E1",
+    family: "evm",
+    units: ethereumUnits("0G", "0G"),
+    ethereumLikeInfo: {
+      chainId: 16661,
+    },
+    explorerViews: [
+      {
+        tx: "https://chainscan.0g.ai/tx/$hash",
+        address: "https://chainscan.0g.ai/address/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};

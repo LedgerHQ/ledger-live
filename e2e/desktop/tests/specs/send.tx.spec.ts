@@ -205,7 +205,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-3924",
   },
   {
-    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
+    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
   },
   {
@@ -237,7 +237,16 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            ...(transaction.transaction.accountToDebit === Account.BTC_NATIVE_SEGWIT_1
+              ? ["@smoke"]
+              : []),
+          ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {

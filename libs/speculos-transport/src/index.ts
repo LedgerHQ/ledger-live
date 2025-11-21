@@ -1,7 +1,7 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
@@ -13,7 +13,7 @@ export type SpeculosDevice = {
   ports: ReturnType<typeof getPorts>;
 };
 
-export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+export type SpeculosTransport = DeviceManagementKitTransportSpeculos | SpeculosTransportWebsocket;
 
 export { DeviceModelId };
 
@@ -29,7 +29,7 @@ export type SpeculosDeviceInternal =
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
-      transport: SpeculosTransportHttp;
+      transport: DeviceManagementKitTransportSpeculos;
       destroy: () => Promise<unknown>;
     };
 
@@ -318,7 +318,7 @@ export async function createSpeculosDevice(
       destroy,
     };
   } else {
-    transport = await SpeculosTransportHttp.open({
+    transport = await DeviceManagementKitTransportSpeculos.open({
       apiPort: ports.apiPort?.toString(),
     });
 

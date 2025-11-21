@@ -11,7 +11,7 @@ import {
 } from "../types";
 
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   SolanaRecipientMemoIsRequired,
@@ -32,7 +32,7 @@ import {
 } from "@solana/spl-token";
 import { calculateToken2022TransferFees } from "../helpers/token";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import usdcTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
 
 const USDC_TOKEN = usdcTokenData as unknown as TokenCurrency;
@@ -64,20 +64,15 @@ const mainAccId = encodeAccountId({
 
 const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(mainAccId, testData.ataAddress1);
 
-setCryptoAssetsStoreGetter(
-  () =>
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    ({
-      findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
-        if (address === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") {
-          return USDC_TOKEN;
-        }
-        return undefined;
-      },
-      findTokenById: async () => undefined,
-      getTokensSyncHash: (_: string) => Promise.resolve("0"),
-    }) as CryptoAssetsStore,
-);
+setupMockCryptoAssetsStore({
+  findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+    if (address === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") {
+      return USDC_TOKEN;
+    }
+    return undefined;
+  },
+  getTokensSyncHash: async () => "0",
+});
 
 // Create a mock token for testing
 const wSolToken: TokenCurrency = {

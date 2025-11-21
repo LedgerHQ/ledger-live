@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Tooltip from "~/renderer/components/Tooltip";
 import CryptoCurrencyIcon from "./CryptoCurrencyIcon";
@@ -21,8 +20,7 @@ const CryptoCurrencyIconWithCount = ({ currency, withTooltip, inactive, count }:
       {count > 0 && <Chip>{`+${count}`}</Chip>}
     </Wrapper>
   );
-  const isToken =
-    currency.type === "CryptoCurrency" && listTokenTypesForCryptoCurrency(currency).length > 0;
+  const isToken = currency.type === "CryptoCurrency" && (currency.tokenTypes || []).length > 0;
   if (withTooltip && count > 0) {
     return (
       <Tooltip

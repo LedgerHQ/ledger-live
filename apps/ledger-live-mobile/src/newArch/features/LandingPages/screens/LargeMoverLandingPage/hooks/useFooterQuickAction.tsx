@@ -4,7 +4,7 @@ import { EntryOf } from "~/types/helpers";
 import { useTranslation } from "react-i18next";
 import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import useQuickActions, { QuickActionProps } from "~/hooks/useQuickActions";
 import { PAGE_NAME } from "../const";
@@ -33,7 +33,7 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
     a => getAccountCurrency(a).id === quickActionsProps.currency?.id,
   );
 
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { quickActionsList } = useQuickActions({ ...quickActionsProps, accounts });
   function trackQuickAction(
     prop: (typeof QUICK_ACTIONS)[keyof typeof QUICK_ACTIONS],
@@ -59,7 +59,13 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
           children: t(prop.name),
           onPress: () => {
             trackQuickAction(prop, quickActionsProps);
-            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            if (quickActionsItem.customHandler) {
+              quickActionsItem.customHandler();
+              return;
+            }
+            if (quickActionsItem.route) {
+              navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            }
           },
           disabled: quickActionsItem.disabled,
         };

@@ -1,9 +1,11 @@
 import { of, throwError } from "rxjs";
 import { retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DeviceBusyError } from "@ledgerhq/device-management-kit";
 import { concatMap } from "rxjs/operators";
 import { TransportRef } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
+import { isDmkError } from "./core";
 
 // Needs to mock the timer from rxjs used in the retry mechanism
 jest.mock("rxjs", () => {
@@ -328,6 +330,24 @@ describe("retryOnErrorsCommandWrapper", () => {
         },
         error: error => done(error),
       });
+    });
+  });
+
+  describe("isDmkError (deviceSDK/tasks/core)", () => {
+    it("returns true for a DMK error instance", () => {
+      expect(isDmkError(new DeviceBusyError())).toBe(true);
+    });
+
+    it("returns false for a regular Error instance", () => {
+      expect(isDmkError(new Error("error"))).toBe(false);
+    });
+
+    it("returns false for a string error (e.g. 'Invalid extension provided')", () => {
+      expect(isDmkError("Invalid extension provided")).toBe(false);
+    });
+
+    it("returns false for undefined", () => {
+      expect(isDmkError(undefined)).toBe(false);
     });
   });
 });

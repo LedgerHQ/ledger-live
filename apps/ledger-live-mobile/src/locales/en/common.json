@@ -1154,6 +1154,11 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "InvalidGetFirmwareMetadataResponseError": {
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "openSettings": "Go to settings"
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning": {
+      "title": "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError": {
+      "title": "Amount too large for UTXO constraints."
     }
   },
   "crash": {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice": {
         "title": "Ledger Nano S™ is not compatible with {{provider}}",
-        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live"
+        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Wallet",
+        "explore_compatible_devices": "Explore compatible devices",
+        "swapWithAnotherProvider": "Swap with another provider"
       },
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
@@ -7317,11 +7330,11 @@
         "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
-      "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "titleCompleted": "Subscribed to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
-        "popupLabel": "Successfully subscribed to Ledger Recover"
+      "syncAccounts": {
+        "title": "Sync your crypto accounts",
+        "titleCompleted": "Your accounts are synchronized",
+        "description": "Activate Ledger Sync to sync your crypto accounts",
+        "popupLabel": "Accounts synced"
       }
     }
   },

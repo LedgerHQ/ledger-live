@@ -118,7 +118,7 @@ jobs:
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -205,7 +205,7 @@ jobs:
           install-proto: "true"
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -236,16 +236,15 @@ jobs:
         run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
+          path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ inputs.ios-js-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
   skip-ios-js:
     name: "iOS Build JS - Skip"

@@ -2,10 +2,9 @@ name: "Cache upload"
 description: "Compress and upload cache files to S3"
 inputs:
   endpoint:
-    description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
+    description: the S3 endpoint URL, e.g., 'bucket.s3.amazonaws.com'
     type: string
     required: false
-    default: 's3.amazonaws.com'
   key:
     type: string
     required: true
@@ -69,7 +68,7 @@ runs:
         echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
         aws configure set default.s3.max_concurrent_requests 240
         aws configure set default.s3.multipart_chunksize 2MB
-        aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}  --no-progress
+        aws s3 cp --endpoint-url https://${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }} --region ${{ inputs.region }} /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}

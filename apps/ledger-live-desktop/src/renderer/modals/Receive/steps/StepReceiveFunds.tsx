@@ -44,6 +44,7 @@ import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -185,8 +186,13 @@ const StepReceiveFunds = (props: StepProps) => {
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const stakePrograms = useVersionedStakePrograms();
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
+  // Check if the received currency has a redirect configured in stakePrograms
+  // If so, the user should use the Earn live app instead of the old staking modal
+  const hasStakeProgramsRedirect =
+    !!receivedCurrencyId && !!stakePrograms?.params?.redirects?.[receivedCurrencyId];
   const isStakingEnabledForAccount =
     !!receivedCurrencyId &&
     receiveStakingFlowConfig?.enabled &&
@@ -250,7 +256,8 @@ const StepReceiveFunds = (props: StepProps) => {
       isStakingEnabledForAccount &&
       !isFromPostOnboardingEntryPoint &&
       !isSPLToken &&
-      !isOnboardingReceiveFlow
+      !isOnboardingReceiveFlow &&
+      !hasStakeProgramsRedirect
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -294,6 +301,7 @@ const StepReceiveFunds = (props: StepProps) => {
     completeAction,
     isSPLToken,
     isOnboardingReceiveFlow,
+    hasStakeProgramsRedirect,
   ]);
 
   // when address need verification we trigger it on device

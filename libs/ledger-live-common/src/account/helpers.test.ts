@@ -1,8 +1,8 @@
 import { loadBlacklistedTokenSections } from "./helpers";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("../bridge/crypto-assets/index");
+jest.mock("@ledgerhq/cryptoassets/state");
 
 const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
   typeof getCryptoAssetsStore

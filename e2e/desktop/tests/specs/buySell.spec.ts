@@ -43,7 +43,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       operation: OperationType.Buy,
     },
     xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523, B2CQA-3449",
-    provider: Provider.TRANSAK,
+    provider: Provider.MOONPAY,
   },
 ];
 
@@ -145,7 +145,14 @@ for (const asset of assets) {
     test(
       `Buy [${crypto.currency.name}] asset from portfolio page`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,

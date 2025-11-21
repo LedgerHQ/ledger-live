@@ -94,7 +94,7 @@ jobs:
           FILTER: ${{ needs.is-affected.outputs.coins }}
           VERBOSE_FILE: logs.txt
         run: |
-          if [ -z $FILTER ]; then
+          if [ -z "$FILTER" ]; then
             echo "No coin module affected"
           else
             cmd="pnpm --no-bail"

@@ -19,6 +19,7 @@ import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId | null;
+    isLedgerSyncActive: boolean;
   };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
@@ -34,9 +35,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     tagLabel,
     buttonLabelForAnalyticsEvent,
     completed,
-    getIsAlreadyCompleted,
     deviceModelId,
     shouldCompleteOnStart,
+    getIsAlreadyCompletedByState,
+    isLedgerSyncActive,
   } = props;
   const { t } = useTranslation();
   const dispatch: Dispatch = useDispatch();
@@ -53,8 +55,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
   const initIsActionCompleted = useCallback(async () => {
-    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
-  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive]);
 
   useEffect(() => {
     initIsActionCompleted();

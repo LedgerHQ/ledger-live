@@ -1,20 +1,20 @@
-<img src="https://user-images.githubusercontent.com/4631227/191834116-59cf590e-25cc-4956-ae5c-812ea464f324.png" height="100" />
 
-## @ledgerhq/cryptoassets
+# @ledgerhq/cryptoassets
 
 Ledger's material for crypto currencies, tokens and fiats. Also includes signatures required by Nano devices for these tokens.
 
-**DO NOT EDIT because this library is generated.**
+This library provides dynamic RTK Query-based token lookup capabilities through the **CAL (Crypto Assets List) Client**. Static token data has been removed in favor of the async API.
 
-## Usage
+## CAL Client
 
-There are two modes of usage of this library.
+The **CAL (Crypto Assets List) Client** is the main interface for fetching and managing token data dynamically via API.
 
-*   The all-in way: you want to have all the data available (ERC20 token loaded,...). To do this, you simply import `@ledgerhq/cryptoassets`
-*   The custom way: you can import individual data piece from `@ledgerhq/cryptoassets/data/*`. For instance, importing the ERC20 signatures can be done with `@ledgerhq/cryptoassets/data/erc20-signatures` sub module.
+**📚 [See the complete CAL Client documentation →](./src/cal-client/README.md)**
 
-## Importing CAL tokens in cryptoassets data
+## Deprecated / Future Changes
 
-```bash
-pnpm import:cal-tokens
-```
+The following parts of this library are planned to be moved or removed:
+
+- **`abandonseed`**: Will be moved back into individual coin modules
+- **`api-token-converter` / `api-asset-converter`**: Will no longer be needed as the conversion logic will be handled differently
+- **`currencies`**: Will eventually be imported from a backend service instead of being bundled

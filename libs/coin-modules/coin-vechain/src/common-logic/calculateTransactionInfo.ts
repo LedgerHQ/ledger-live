@@ -4,6 +4,16 @@ import { Transaction, TransactionInfo } from "../types";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
 import { calculateGasFees } from "./calculateGasFees";
 
+const getTokenAccount = (
+  subAccountId: string | null | undefined,
+  subAccounts: TokenAccount[] | undefined,
+) =>
+  subAccountId && subAccounts
+    ? subAccounts.find(subAccount => {
+        return subAccount.id === subAccountId;
+      })
+    : undefined;
+
 // Here there is a circular dependency between values, that is why we need the do-while loop
 // dependencies are:
 // useAllAmount: USER
@@ -27,12 +37,7 @@ export const calculateTransactionInfo = async (
   const { subAccounts } = account;
   const { amount: oldAmount, subAccountId, useAllAmount } = transaction;
 
-  const tokenAccount =
-    subAccountId && subAccounts
-      ? (subAccounts.find(subAccount => {
-          return subAccount.id === subAccountId;
-        }) as TokenAccount)
-      : undefined;
+  const tokenAccount = getTokenAccount(subAccountId, subAccounts);
   const isTokenAccount = !!tokenAccount;
 
   let amount = oldAmount;
@@ -52,7 +57,8 @@ export const calculateTransactionInfo = async (
       amountBackup = amount;
 
       const estimatedGasAndFees =
-        fixedMaxTokenFees || (await calculateGasFees(tempTransaction, isTokenAccount));
+        fixedMaxTokenFees ||
+        (await calculateGasFees(tempTransaction, isTokenAccount, account.freshAddress));
 
       maxEstimatedGasFees = estimatedGasAndFees.estimatedGasFees;
       maxEstimatedGas = estimatedGasAndFees.estimatedGas;

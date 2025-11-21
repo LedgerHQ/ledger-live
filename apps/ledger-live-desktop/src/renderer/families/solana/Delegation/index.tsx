@@ -16,6 +16,7 @@ import Text from "~/renderer/components/Text";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import { DelegateModalName } from "../modals";
@@ -57,6 +58,7 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
     [account, dispatch],
   );
   const explorerView = getDefaultExplorerView(account.currency);
+  const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const onExternalLink = useCallback(
     ({ meta, stake }: SolanaStakeWithMeta) => {
       const url =
@@ -65,10 +67,10 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
           explorerView &&
           getAddressExplorer(explorerView, stake.delegation.voteAccAddr));
       if (url) {
-        openURL(url);
+        openURL(url === urls.ledgerValidator ? ledgerValidatorUrl : url);
       }
     },
-    [explorerView],
+    [explorerView, ledgerValidatorUrl],
   );
   const hasStakes = stakesWithMeta.length > 0;
   return (

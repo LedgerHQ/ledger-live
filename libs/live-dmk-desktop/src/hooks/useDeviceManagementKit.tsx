@@ -5,16 +5,27 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
-import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { LocalTracer } from "@ledgerhq/logs";
+
+const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
 let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
+    const userId = getEnv("USER_ID");
+    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
+    tracer.trace("Initialize DeviceManagementKit", {
+      firmwareDistributionSalt,
+    });
+
     instance = new DeviceManagementKitBuilder()
       .addTransport(webHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
+      .addConfig({ firmwareDistributionSalt })
       .build();
   }
 

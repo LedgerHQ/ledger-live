@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Flex, Icons, NumberedList, ProgressBar, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
@@ -6,7 +6,6 @@ import { CameraView, BarcodeScanningResult } from "expo-camera";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 import ScanTargetSvg from "./CameraScreen/ScanTargetSvg";
-import { InteractionManager } from "react-native";
 
 type Props = {
   onResult: (data: string) => void;
@@ -20,10 +19,6 @@ const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
   const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     onResult(data);
   };
-
-  const [ready, setReady] = useState(false);
-
-  const onCameraReady = () => InteractionManager.runAfterInteractions(() => setReady(true)); //  prevents 'transparent' camera viewfinder (Fixes LIVE-22200)
 
   return (
     <Flex
@@ -53,13 +48,11 @@ const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
                     backgroundColor: colors.neutral.c50,
                     width: 280,
                     height: 280,
-                    display: ready ? "flex" : "none",
                   }}
                   barcodeScannerSettings={{
                     barcodeTypes: ["qr"],
                   }}
                   onBarcodeScanned={onBarCodeScanned}
-                  onCameraReady={onCameraReady}
                 />
               ) : null
             }

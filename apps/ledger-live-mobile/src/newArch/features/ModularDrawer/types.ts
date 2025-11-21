@@ -1,6 +1,4 @@
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export enum ModularDrawerStep {
@@ -27,12 +25,10 @@ export type DrawerBaseParams = {
 
 export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
-  accounts$?: Observable<WalletAPIAccount[]>;
 } & TExtras;
 
 export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
   callbackId?: string;
-  accountsObservableId?: string;
 } & TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (

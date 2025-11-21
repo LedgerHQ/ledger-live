@@ -1,8 +1,5 @@
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -10,14 +7,12 @@ import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection
 
 export type RequestAccountNavigatorParamList = {
   [ScreenName.RequestAccountsSelectCrypto]: {
-    accounts$?: Observable<WalletAPIAccount[]>;
-    currencies: CryptoOrTokenCurrency[];
+    currencyIds?: string[];
+    useCase?: string;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   };
   [ScreenName.RequestAccountsSelectAccount]: {
-    accounts$?: Observable<WalletAPIAccount[]>;
-    currencies?: CryptoOrTokenCurrency[];
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;

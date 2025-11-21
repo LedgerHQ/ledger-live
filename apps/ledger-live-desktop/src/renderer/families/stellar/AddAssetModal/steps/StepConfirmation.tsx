@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -13,7 +12,8 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-import { getAssetObject } from "../fields/AssetSelector";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import invariant from "invariant";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -25,17 +25,14 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
-  const options = account && listTokensForCryptoCurrency(account.currency);
-  const token = useMemo(
-    () =>
-      transaction &&
-      options &&
-      options.find(({ id }) => {
-        const { assetCode, assetIssuer } = getAssetObject(id);
-        return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
-      }),
-    [options, transaction],
+  invariant(account, "Account should be present");
+  invariant(transaction, "Transaction should be present");
+
+  const { token, loading } = useTokenByAddressInCurrency(
+    transaction.assetOwner!,
+    account.currency.id,
   );
+
   if (optimisticOperation) {
     return (
       <Container>
@@ -45,28 +42,30 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
           priority={10}
           accountId={optimisticOperation.accountId}
         />
-        <SuccessDisplay
-          title={
-            <Trans
-              i18nKey={`stellar.addAsset.steps.confirmation.success.title`}
-              values={{
-                token: token?.name,
-              }}
-            />
-          }
-          description={
-            <div>
+        {!loading && (
+          <SuccessDisplay
+            title={
               <Trans
-                i18nKey={`stellar.addAsset.steps.confirmation.success.text`}
+                i18nKey={`stellar.addAsset.steps.confirmation.success.title`}
                 values={{
                   token: token?.name,
                 }}
-              >
-                <b></b>
-              </Trans>
-            </div>
-          }
-        />
+              />
+            }
+            description={
+              <div>
+                <Trans
+                  i18nKey={`stellar.addAsset.steps.confirmation.success.text`}
+                  values={{
+                    token: token?.name,
+                  }}
+                >
+                  <b></b>
+                </Trans>
+              </div>
+            }
+          />
+        )}
       </Container>
     );
   }

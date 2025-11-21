@@ -1,0 +1,166 @@
+name: Notify E2E Required
+
+on:
+  workflow_call:
+    inputs:
+      affected_paths:
+        description: "Comma-separated list of affected paths from Turbo"
+        required: true
+        type: string
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  notify:
+    name: "Analyze and notify"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Analyze E2E requirements
+        id: analyze
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const paths = '${{ inputs.affected_paths }}';
+
+            // Get all changed files to check for dependency updates
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+
+            const criticalLibsChanged = files.some(f => {
+              const filename = f.filename;
+              return (
+                filename === 'libs/ledger-live-common/package.json' ||
+                filename.startsWith('libs/coin-modules/') && filename.endsWith('/package.json') ||
+                filename.startsWith('libs/coin-framework/') && filename.endsWith('/package.json')
+              );
+            });
+            
+            // Get affected coin modules
+            const affectedCoins = new Set();
+            files.forEach(f => {
+              const coinMatch = f.filename.match(/libs\/coin-modules\/coin-([^\/]+)\//);
+              if (coinMatch) {
+                affectedCoins.add(coinMatch[1]);
+              }
+            });
+            
+            // Check if changes are ONLY in specific coin modules (no LLC, coin-framework, or app changes)
+            const onlyCoinsChanged = affectedCoins.size > 0 && 
+                                     !paths.includes('ledger-live-common') &&
+                                     !paths.includes('coin-framework') &&
+                                     !paths.includes('ledger-live-desktop') &&
+                                     !paths.includes('ledger-live-mobile') &&
+                                     !criticalLibsChanged;
+            
+            const requiresDesktopE2E = paths.includes('ledger-live-desktop') || 
+                                       paths.includes('ledger-live-common') ||
+                                       paths.includes('coin-framework') ||
+                                       criticalLibsChanged ||
+                                       (paths.includes('coin-modules') && !onlyCoinsChanged);
+            
+            const requiresMobileE2E = paths.includes('ledger-live-mobile') ||
+                                      paths.includes('ledger-live-common') ||
+                                      paths.includes('coin-framework') ||
+                                      criticalLibsChanged ||
+                                      (paths.includes('coin-modules') && !onlyCoinsChanged);
+            
+            const needsE2E = requiresDesktopE2E || requiresMobileE2E || onlyCoinsChanged;
+            
+            core.setOutput('needs_e2e', needsE2E);
+            core.setOutput('desktop', requiresDesktopE2E);
+            core.setOutput('mobile', requiresMobileE2E);
+            core.setOutput('only_coins', onlyCoinsChanged);
+            core.setOutput('coins', Array.from(affectedCoins).join(', '));
+
+      - name: Post PR comment
+        if: steps.analyze.outputs.needs_e2e == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const desktop = '${{ steps.analyze.outputs.desktop }}' === 'true';
+            const mobile = '${{ steps.analyze.outputs.mobile }}' === 'true';
+            const onlyCoins = '${{ steps.analyze.outputs.only_coins }}' === 'true';
+            const coins = '${{ steps.analyze.outputs.coins }}';
+            
+            const workflowUrl = 'https://github.com/LedgerHQ/ledger-live/actions/workflows';
+            const branch = context.payload.pull_request.head.ref;
+            
+            // Helper function to build E2E section
+            const buildE2ESection = (platform, workflowName, device, isTargeted) => {
+              const emoji = platform === 'Desktop' ? '🖥️' : '📱';
+              const title = isTargeted ? `#### ${emoji} ${platform}\n` : `### ${emoji} ${platform}\n`;
+              let section = title;
+              section += `**[-> Run ${platform} E2E](${workflowUrl}/${workflowName})**\n`;
+              section += `- Select "Run workflow"\n`;
+              section += `- Branch: \`${branch}\`\n`;
+              section += `- Device: ${device}\n`;
+              if (isTargeted) {
+                section += `- **Filter by coin:** Use the coin filter to test only \`${coins}\`\n`;
+              }
+              section += '\n';
+              return section;
+            };
+            
+            let message = '## ⚠️ E2E tests are required\n\n';
+            message += 'Changes detected require e2e testing before merge (even before asking for any review).\n\n';
+            
+            if (onlyCoins && coins) {
+              // Targeted E2E for specific coin modules only
+              message += '### 🎯 Targeted E2E Tests (Coin Modules Only)\n\n';
+              message += `**Affected coins:** \`${coins}\`\n\n`;
+              message += 'Only these specific coin modules have changed. You can run targeted E2E tests:\n\n';
+              message += buildE2ESection('Desktop', 'test-ui-e2e-only-desktop.yml', 'nanoSP or stax', true);
+              message += buildE2ESection('Mobile', 'test-mobile-e2e-reusable.yml', 'nanoX', true);
+            } else {
+              // Full E2E tests required
+              if (desktop) {
+                message += buildE2ESection('Desktop', 'test-ui-e2e-only-desktop.yml', 'nanoSP or stax', false);
+              }
+            
+              if (mobile) {
+                message += buildE2ESection('Mobile', 'test-mobile-e2e-reusable.yml', 'nanoX', false);
+              }
+            
+              if (coins) {
+                message += `**Affected coins modules:** \`${coins}\`\n\n`;
+              }
+            }
+            
+            // Check if the bot already commented the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('E2E tests are required')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: message
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: message
+              });
+            }

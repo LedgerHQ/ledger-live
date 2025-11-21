@@ -1,0 +1,180 @@
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
+index 80c68034b193a47bedb56ca527352de9548e8ac6..90041e4684a0df1234c56d29d9f70db4cbd2564e 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
+@@ -95,6 +95,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         mRNCWebViewClient.setBasicAuthCredential(credential);
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++        mRNCWebViewClient.setAllowsUnsecureHttps(allowsUnsecureHttps);
++    }
++
+     public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
+         this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
+     }
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+index 0287e1c56b07b6c23b4049f3992d88b86fdc5c79..477d537122e07ebd45ff0639744df3c09fc31b3a 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+@@ -42,6 +42,7 @@ public class RNCWebViewClient extends WebViewClient {
+     protected static final int SHOULD_OVERRIDE_URL_LOADING_TIMEOUT = 250;
+ 
+     protected boolean mLastLoadFailed = false;
++    protected boolean mAllowsUnsecureHttps = false;
+     protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
+     protected @Nullable RNCBasicAuthCredential basicAuthCredential = null;
+ 
+@@ -49,6 +50,10 @@ public class RNCWebViewClient extends WebViewClient {
+         basicAuthCredential = credential;
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++        mAllowsUnsecureHttps = allowsUnsecureHttps;
++    }
++
+     @Override
+     public void onPageFinished(WebView webView, String url) {
+         super.onPageFinished(webView, url);
+@@ -167,7 +172,12 @@ public class RNCWebViewClient extends WebViewClient {
+         // Cancel request after obtaining top-level URL.
+         // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
+         // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
+-        handler.cancel();
++
++        if (mAllowsUnsecureHttps) {
++            handler.proceed();
++        } else {
++            handler.cancel();
++        }
+ 
+         int code = error.getPrimaryError();
+         String description = "";
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
+index f83033b3597a425da159555233bacce250ccfce0..4d546d26664ff76e60017ed2d4c06be27c172a7e 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
+@@ -563,6 +563,10 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
+         setupWebChromeClient(view)
+     }
+ 
++    fun setAllowsUnsecureHttps(viewWrapper: RNCWebViewWrapper, value: Boolean) {
++        viewWrapper.webView.setAllowsUnsecureHttps(value)
++    }
++
+     fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
+         val view = viewWrapper.webView
+         val layerType = when (layerTypeString) {
+diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+index 4709e2822499067cef3a4ce571991b96f844e085..723fcc9ff0d80b5e9c4a43e7495d17bd8aca369a 100644
+--- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -88,6 +88,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+         mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
+     }
+ 
++    @ReactProp(name = "allowsUnsecureHttps")
++    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
++        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
++    }
++
+     @Override
+     @ReactProp(name = "allowsProtectedMedia")
+     public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
+diff --git a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+index 974337f41ce01a5102eeafa6e54fbb3b949c48d7..f721441973bfe695fb5e5e49eff6a3565797319e 100644
+--- a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -67,6 +67,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
+         mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
+     }
+ 
++    @ReactProp(name = "allowsUnsecureHttps")
++    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
++        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
++    }
++
+     @ReactProp(name = "allowsProtectedMedia")
+     public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
+         mRNCWebViewManagerImpl.setAllowsProtectedMedia(view, value);
+diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
+index 1f6bbfd697a4e0b0aef2db344386b786839a1969..c8546386b7c1e2279effd99551f21fb2df8e7e54 100644
+--- a/apple/RNCWebViewImpl.h
++++ b/apple/RNCWebViewImpl.h
+@@ -82,6 +82,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
+ @property (nonatomic, assign) BOOL allowsInlineMediaPlayback;
+ @property (nonatomic, assign) BOOL allowsPictureInPictureMediaPlayback;
+ @property (nonatomic, assign) BOOL webviewDebuggingEnabled;
++@property (nonatomic, assign) BOOL allowsUnsecureHttps;
+ @property (nonatomic, assign) BOOL allowsAirPlayForMediaPlayback;
+ @property (nonatomic, assign) BOOL bounces;
+ @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
+diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
+index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..3de79e49648c78664395b9db1c2130a87cc94609 100644
+--- a/apple/RNCWebViewImpl.m
++++ b/apple/RNCWebViewImpl.m
+@@ -1161,6 +1161,12 @@ - (void)                    webView:(WKWebView *)webView
+     completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
+     return;
+   }
++  if (_allowsUnsecureHttps == true) {
++    SecTrustRef trust = [[challenge protectionSpace] serverTrust];
++    NSURLCredential *useCredential = [NSURLCredential credentialForTrust:trust];
++    completionHandler(NSURLSessionAuthChallengeUseCredential, useCredential);
++    return;
++  }
+   if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
+     SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
+     if (localCertificate != nil) {
+diff --git a/apple/RNCWebViewManager.mm b/apple/RNCWebViewManager.mm
+index f8f375f23b12039b64b7900034c8978e0235a8e7..a6103fca6e633b5bd0b356bd3612a86be36323d8 100644
+--- a/apple/RNCWebViewManager.mm
++++ b/apple/RNCWebViewManager.mm
+@@ -64,6 +64,7 @@ - (RNCView *)view
+ RCT_EXPORT_VIEW_PROPERTY(allowsInlineMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsPictureInPictureMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(webviewDebuggingEnabled, BOOL)
++RCT_EXPORT_VIEW_PROPERTY(allowsUnsecureHttps, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsAirPlayForMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
+diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
+index 998cc88f03f3fbcd0a47f227c01f738dbf4c58bf..d4863a01293decaff966f9561e7dde1e09f1961a 100644
+--- a/lib/WebViewTypes.d.ts
++++ b/lib/WebViewTypes.d.ts
+@@ -475,6 +475,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
+      * @platform ios
+      */
+     allowUniversalAccessFromFileURLs?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform ios
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Function that is invoked when the WebKit WebView content process gets terminated.
+      * @platform ios
+@@ -757,6 +762,11 @@ export interface MacOSWebViewProps extends WebViewSharedProps {
+      * @platform macos
+      */
+     allowUniversalAccessFromFileURLs?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform macos
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Function that is invoked when the WebKit WebView content process gets terminated.
+      * @platform macos
+@@ -893,6 +903,11 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+      * Sets ability to open fullscreen videos on Android devices.
+      */
+     allowsFullscreenVideo?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform android
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Configuring Dark Theme
+      *

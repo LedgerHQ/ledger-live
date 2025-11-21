@@ -3,10 +3,10 @@ import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-initializeLegacyTokens(addTokens);
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;
@@ -53,19 +53,6 @@ describe("getAccountTuplesForCurrency", () => {
       const results = getAccountTuplesForCurrency(ethCurrency, allAccounts);
 
       expect(results).toHaveLength(0);
-    });
-
-    test("filters based on the accountId map", () => {
-      const ethCurrency = getCryptoCurrencyById("ethereum");
-      const ethAccounts = [getEthAccount(), getEthAccount(), getEthAccount(), getEthAccount()];
-
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        ethAccounts,
-        new Map([[ethAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(1);
     });
   });
 
@@ -129,23 +116,6 @@ describe("getAccountTuplesForCurrency", () => {
 
       const results = getAccountTuplesForCurrency(aaveToken, allAccounts);
       expect(results).toHaveLength(0);
-    });
-
-    test("does not filter based on the accountId map", () => {
-      const aaveAccounts = [
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-      ];
-
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        aaveAccounts,
-        new Map([[aaveAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(4);
     });
   });
 });

@@ -244,14 +244,26 @@ describe("1 output without discard", () => {
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 
-  test("should throw an error if UTXO count exceeds maximum limit", () => {
+  test("should throw an error if balance is higher than the sum of 88 UTXO", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(100, BigNumber(1_0000_0000), "0");
     const feeRate = 1;
     const isEcdsaRecipient = false;
 
     expect(() => {
-      selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000_0000), feeRate);
-    }).toThrow("UTXO count exceeds the limit of 88 for a TX.");
+      selectUtxos(utxos, isEcdsaRecipient, BigNumber(99_0000_0000), feeRate);
+    }).toThrow("UTXO total amount is not sufficient for sending amount 9900000000");
+  });
+
+  test("should be fine, if less than 88 UTXOs needed for a set of 100 UTXO", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(100, BigNumber(1_0000_0000), "0");
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, BigNumber(80_0000_0000), feeRate);
+
+    expect(selectedUtxos.utxos.length).toBe(81);
+    expect(selectedUtxos.fee.toNumber()).toBe(81 * 1118 + 918);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(1_0000_0000 - (81 * 1118 + 918));
   });
 
   test("should throw an error if discarded change exceeds maximum allowable discard value", () => {
@@ -262,6 +274,21 @@ describe("1 output without discard", () => {
     expect(() => {
       selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000), feeRate);
     }).toThrow(/Change \d+ Sompis is too high to be discarded./);
+  });
+
+  test("Send maximum amount for 88/100 UTXOs", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(100, BigNumber(1_0000_0000), "0");
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+
+    const expectedFee = 88 * 1118 + 506;
+
+    const maxAmount = BigNumber(88_0000_0000).minus(expectedFee);
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, maxAmount, feeRate);
+
+    expect(selectedUtxos.utxos.length).toBe(88);
+    expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 
   test("should throw - UTXOs can't be determined to fulfill the specified amount", () => {

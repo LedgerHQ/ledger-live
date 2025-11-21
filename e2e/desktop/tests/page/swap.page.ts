@@ -24,6 +24,10 @@ export class SwapPage extends AppPage {
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
   private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
+  private quotesCountdown = "quotes-countdown";
+  private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
+  private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private continueBtn = this.page.locator("#sign-summary-continue-button");
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -61,12 +65,26 @@ export class SwapPage extends AppPage {
   @step("Get provider list")
   async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
-    await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
+    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
     return await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
+  }
+
+  @step("Check elements presence on swap approval step")
+  async checkElementsPresenceOnSwapApprovalStep(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
+    await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
+    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
+    await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
+  }
+
+  @step("Click Continue button")
+  async clickContinueButton() {
+    await this.continueBtn.click();
   }
 
   @step("Check quotes container infos")
@@ -109,7 +127,7 @@ export class SwapPage extends AppPage {
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
-  @step("Select specific provider $0")
+  @step("Select specific provider")
   async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 

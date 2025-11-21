@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const NavigationHeaderBackImage = () => (
-  <Flex p={6}>
+  <Flex>
     <Icons.ArrowLeft />
   </Flex>
 );

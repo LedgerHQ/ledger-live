@@ -1,16 +1,13 @@
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
-import { createCryptoAssetsHooks } from "@ledgerhq/cryptoassets/hooks";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { setup } from "@ledgerhq/live-common/bridge/impl";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import type { Store } from "@reduxjs/toolkit";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client";
 
-initializeLegacyTokens(addTokens);
+export function setupCryptoAssetsStore(store: Store): void {
+  const cryptoAssetsStore = createRtkCryptoAssetsStore(cryptoAssetsApi, async <T>(action: T) => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return store.dispatch(action as Parameters<typeof store.dispatch>[0]) as unknown;
+  });
 
-export const cryptoAssetsHooks = createCryptoAssetsHooks({});
-
-export function setupCryptoAssetsStore(_store: Store) {
-  setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
-  setup(legacyCryptoAssetsStore);
+  // Set as global store in cryptoassets (single source of truth)
+  setCryptoAssetsStore(cryptoAssetsStore);
 }

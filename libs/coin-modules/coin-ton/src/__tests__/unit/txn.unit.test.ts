@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
 import { Builder, Slice } from "@ton/core";
 import flatMap from "lodash/flatMap";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { TonJettonTransfer, TonTransaction } from "../../bridge/bridgeHelpers/api.types";
 import {
   dataToSlice,
@@ -17,9 +18,9 @@ import {
   mockAddress,
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+setupMockCryptoAssetsStore();
 
 describe("Transaction functions", () => {
   describe("mapTxToOps", () => {
@@ -139,24 +140,35 @@ describe("Transaction functions", () => {
 
   describe("mapJettonToOps", () => {
     beforeEach(() => {
-      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-        findTokenByAddressInCurrency: jest.fn().mockResolvedValue({
-          id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
-          type: "TokenCurrency",
-          contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
-          parentCurrency: {
-            id: "ton",
-            type: "CryptoCurrency",
-          },
-          ticker: "NOT",
-          units: [
-            {
+      setupMockCryptoAssetsStore({
+        findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+          // The address is converted to lowercase in mapJettonTxToOps
+          // jetton_master from fixtures: "0:2F956143C461769579BAEF2E32CC2D7BC18283F40D20BB03E432CD603AC33FFC"
+          // Converted to friendly format and lowercased
+          if (
+            address === "eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not" ||
+            address.includes("2f956143c461769579baef2e32cc2d7bc18283f40d20bb03e432cd603ac33ffc")
+          ) {
+            return {
+              id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              type: "TokenCurrency" as const,
+              contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
+              parentCurrency: getCryptoCurrencyById("ton"),
+              tokenType: "jetton",
               name: "NOT",
-              code: "NOT",
-              magnitude: 9,
-            },
-          ],
-        }),
+              ticker: "NOT",
+              units: [
+                {
+                  name: "NOT",
+                  code: "NOT",
+                  magnitude: 9,
+                },
+              ],
+            };
+          }
+          return undefined;
+        },
+        getTokensSyncHash: async () => "0",
       });
     });
 

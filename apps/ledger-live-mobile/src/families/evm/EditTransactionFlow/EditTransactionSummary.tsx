@@ -13,7 +13,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
 import React, { Component, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
@@ -92,12 +92,15 @@ function EditTransactionSummary({ navigation, route }: Props) {
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(nextNavigation, {
-        ...route.params,
-        transaction,
-        status,
-        selectDeviceLink: true,
-      })
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+        nextNavigation,
+        {
+          ...route.params,
+          transaction,
+          status,
+          selectDeviceLink: true,
+        },
+      )
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
 

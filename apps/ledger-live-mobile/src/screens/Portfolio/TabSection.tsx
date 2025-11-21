@@ -39,7 +39,7 @@ type TabSectionProps = {
   accountsLength: number;
   assetsAnimatedStyle: BaseAnimationStyle;
   accountsAnimatedStyle: BaseAnimationStyle;
-  containerHeight: number;
+  containerHeight?: number;
   maxItemsToDysplay: number;
 };
 

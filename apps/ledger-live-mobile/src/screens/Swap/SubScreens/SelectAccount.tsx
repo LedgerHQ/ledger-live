@@ -15,12 +15,11 @@ import AccountCard from "~/components/AccountCard";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import KeyboardView from "~/components/KeyboardView";
 import { formatSearchResults, SearchResult } from "~/helpers/formatAccountSearchResults";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { sharedSwapTracking } from "../utils";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import type { SelectAccountParamList } from "../types";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
@@ -148,20 +147,21 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
       account: "account",
       button: "new source account",
     });
-    navigation.navigate(NavigatorName.AssetSelection, {
-      screen: ScreenName.AddAccountsSelectCrypto,
-      params: {
-        returnToSwap: true,
-        filterCurrencyIds: selectableCurrencyIds,
-        onSuccess: () => {
-          navigation.navigate(ScreenName.SwapSelectAccount, params);
-        },
-        analyticsPropertyFlow: "swap",
-        context: AddAccountContexts.AddAccounts,
-        sourceScreenName: ScreenName.SwapSelectAccount,
-      },
-    });
-  }, [navigation, params, selectableCurrencyIds, track]);
+
+    // navigation.navigate(NavigatorName.AssetSelection, {
+    //   screen: ScreenName.AddAccountsSelectCrypto,
+    //   params: {
+    //     returnToSwap: true,
+    //     filterCurrencyIds: selectableCurrencyIds,
+    //     onSuccess: () => {
+    //       navigation.navigate(ScreenName.SwapSelectAccount, params);
+    //     },
+    //     analyticsPropertyFlow: "swap",
+    //     context: AddAccountContexts.AddAccounts,
+    //     sourceScreenName: ScreenName.SwapSelectAccount,
+    //   },
+    // });
+  }, [track]);
 
   const renderList = useCallback(
     (items: typeof allAccounts) => {

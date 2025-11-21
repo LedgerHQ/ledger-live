@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";

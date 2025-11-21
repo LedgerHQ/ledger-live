@@ -63,7 +63,8 @@ const CheckCard: React.FC<CheckCardProps> = ({
             <Link
               Icon={ExternalLinkMedium}
               onPress={onLearnMore}
-              style={{ justifyContent: "flex-start" }}
+              iconPosition="right"
+              style={{ paddingHorizontal: 12 }}
             >
               {learnMore}
             </Link>

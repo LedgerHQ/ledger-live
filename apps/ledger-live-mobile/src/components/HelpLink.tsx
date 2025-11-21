@@ -1,15 +1,15 @@
 import React, { memo } from "react";
-import { StyleSheet, Linking } from "react-native";
+import { StyleSheet, Linking, ViewStyle, StyleProp } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import Touchable, { Props as TouchableProps } from "./Touchable";
+import Touchable from "./Touchable";
 import LText from "./LText";
 import { urls } from "~/utils/urls";
 import Help from "~/icons/Help";
 
 type Props = {
   url?: string;
-  style?: TouchableProps["style"];
+  style?: StyleProp<ViewStyle>;
   color?: string;
 };
 

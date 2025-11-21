@@ -5,7 +5,6 @@ import {
   getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
@@ -193,7 +192,7 @@ const OperationD = (props: Props) => {
     [operation.subOperations],
   );
   const internalOperations = operation.internalOperations || [];
-  const isToken = listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
+  const isToken = (mainAccount.currency.tokenTypes || []).length > 0;
   const openOperation = useCallback(
     (type: openOperationType, operation: Operation, parentOperation?: Operation) => {
       const data = {
@@ -626,7 +625,9 @@ const OperationD = (props: Props) => {
         />
       )}
       <OpDetailsSection>
-        <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
+        <OpDetailsTitle data-testid="operation-date-label">
+          {t("operationDetails.date")}
+        </OpDetailsTitle>
         <OpDetailsData data-testid="operation-date">{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />

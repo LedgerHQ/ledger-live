@@ -21,10 +21,6 @@ export type NetworkBasedAddAccountNavigator = {
     returnToSwap?: boolean;
     onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };
-  [ScreenName.SelectAccounts]: CommonParams & {
-    createTokenAccount?: boolean;
-  };
-
   [ScreenName.AddAccountsSuccess]: CommonParams & {
     accountsToAdd: Account[];
   };

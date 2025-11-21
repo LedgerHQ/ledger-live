@@ -4,10 +4,8 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
@@ -121,7 +119,7 @@ type Props =
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
   // type of component accepting mostly the same params as this one.
-  (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+  (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
     route.name.replace("ConnectDevice", "SelectDevice"),
     {
       ...route.params,
@@ -134,12 +132,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { transaction, status } = useBridgeTransaction(() => ({
-    account: mainAccount,
-    transaction: route.params.transaction,
-  }));
+  const { appName, onSuccess, onError, analyticsPropertyFlow, transaction, status } = route.params;
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandler({
     account,

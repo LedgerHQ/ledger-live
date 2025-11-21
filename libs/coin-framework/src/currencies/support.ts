@@ -26,6 +26,8 @@ export function listSupportedCurrencies(): CryptoCurrency[] {
     : userSupportedCurrencies.concat(experimentals);
 }
 
+// TODO: remove or refactor if needed using map of supported currencies and only the id
+// We can even cache and use the set created in setSupportedCurrencies
 export function isCurrencySupported(currency: CryptoCurrency): boolean {
   return listSupportedCurrencies().includes(currency);
 }

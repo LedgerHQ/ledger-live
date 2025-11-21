@@ -267,6 +267,7 @@ export enum SettingsActionTypes {
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
   SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
   SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS = "SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS",
+  SETTINGS_SET_IS_POST_ONBOARDING_FlOW = "SETTINGS_SET_IS_POST_ONBOARDING_FlOW",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
   SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
@@ -307,7 +308,6 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING = "SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
-  SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
@@ -373,7 +373,6 @@ export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
-export type SettingsSetClosedNetworkBannerPayload = boolean;
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
@@ -403,6 +402,9 @@ export type SettingsIsOnboardingFlowPayload = void | SettingsState["isOnboarding
 export type SettingsIsOnboardingFlowReceiveSuccessPayload =
   | void
   | SettingsState["isOnboardingFlowReceiveSuccess"];
+
+export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOnboardingFlow"];
+
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
@@ -459,11 +461,11 @@ export type SettingsPayload =
   | SettingsCompleteOnboardingPayload
   | SettingsIsOnboardingFlowPayload
   | SettingsIsOnboardingFlowReceiveSuccessPayload
+  | SettingsIsPostOnboardingFlowPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt

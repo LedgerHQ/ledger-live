@@ -87,7 +87,7 @@ export async function runNavigateToBuyFromAccountPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
       await app.accounts.openViaDeeplink();
-      await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
+      await app.account.goToAccountByName(getParentAccountName(buySell.crypto));
       if (buySell.crypto.tokenType) {
         await app.account.navigateToTokenInAccount(buySell.crypto);
       }

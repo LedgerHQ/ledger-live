@@ -8,6 +8,7 @@ import { getThorClient } from "./getThorClient";
 export const calculateGasFees = async (
   transaction: Transaction,
   isTokenAccount: boolean,
+  originAddress: string,
 ): Promise<{
   estimatedGas: number;
   estimatedGasFees: BigNumber;
@@ -16,12 +17,14 @@ export const calculateGasFees = async (
 }> => {
   if (transaction.recipient && parseAddress(transaction.recipient)) {
     let clauses;
+
     if (isTokenAccount) {
       clauses = await calculateClausesVtho(transaction.recipient, transaction.amount);
     } else {
       clauses = await calculateClausesVet(transaction.recipient, transaction.amount);
     }
-    const gasEstimation = await estimateGas(clauses, transaction.recipient);
+
+    const gasEstimation = await estimateGas(clauses, originAddress);
     const thorClient = getThorClient();
     const body = await thorClient.transactions.buildTransactionBody(
       clauses,

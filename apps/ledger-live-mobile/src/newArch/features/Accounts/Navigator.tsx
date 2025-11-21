@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -13,7 +13,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
-import SelectAccounts from "./screens/SelectAccounts";
 import AddAccountsWarning from "./screens/AddAccountWarning";
 import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
@@ -43,9 +42,11 @@ export default function Navigator() {
 
   const exitProcess = useCallback(() => {
     const rootParent = navigation.getParent();
-    // this is the only way to go back to the root navigator
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    navigation.replace(rootParent?.getState().routeNames[0] as any);
+    if (rootParent) {
+      // Navigate to the first route instead of replace to ensure proper screen lifecycle
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      rootParent.navigate(rootParent.getState().routeNames[0] as any);
+    }
   }, [navigation]);
 
   const onClose = useCallback(() => {
@@ -102,14 +103,7 @@ export default function Navigator() {
         }}
       />
       {/* Select Accounts */}
-      <Stack.Screen
-        name={ScreenName.SelectAccounts}
-        component={SelectAccounts}
-        options={{
-          headerTitle: "",
-        }}
-        initialParams={route.params}
-      />
+
       {accountListUIFF?.enabled && (
         <Stack.Screen
           name={ScreenName.AccountsList}
@@ -160,4 +154,4 @@ export default function Navigator() {
   );
 }
 
-const Stack = createStackNavigator<NetworkBasedAddAccountNavigator & AccountsListNavigator>();
+const Stack = createNativeStackNavigator<NetworkBasedAddAccountNavigator & AccountsListNavigator>();

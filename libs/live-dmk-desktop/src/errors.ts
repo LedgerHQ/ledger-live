@@ -2,6 +2,7 @@ import {
   DeviceBusyError,
   DeviceDisconnectedBeforeSendingApdu,
   DeviceDisconnectedWhileSendingError,
+  InvalidGetFirmwareMetadataResponseError,
   DmkError,
 } from "@ledgerhq/device-management-kit";
 import { WebHidSendReportError } from "@ledgerhq/device-transport-kit-web-hid";
@@ -26,6 +27,13 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     );
   }
 
+  return false;
+};
+
+export const isInvalidGetFirmwareMetadataResponseError = (error: unknown): boolean => {
+  if (error) {
+    return error instanceof InvalidGetFirmwareMetadataResponseError;
+  }
   return false;
 };
 

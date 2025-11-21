@@ -1,7 +1,10 @@
-import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
+import {
+  PostOnboardingAction,
+  PostOnboardingActionId,
+  StartActionArgs,
+} from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
-import { getStoreValue } from "~/store";
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -12,15 +15,7 @@ export const assetsTransferAction: PostOnboardingAction = {
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  getNavigationParams: () => [
-    NavigatorName.ReceiveFunds,
-    {
-      screen: ScreenName.ReceiveSelectCrypto,
-      params: {
-        device: null,
-      },
-    },
-  ],
+  getNavigationParams: () => [undefined],
 };
 
 export const buyCryptoAction: PostOnboardingAction = {
@@ -64,28 +59,20 @@ export const customImageAction: PostOnboardingAction = {
   ],
 };
 
-export const recoverAction: PostOnboardingAction = {
-  id: PostOnboardingActionId.recover,
-  Icon: Icons.ShieldCheck,
-  title: "postOnboarding.actions.recover.title",
-  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
-  description: "postOnboarding.actions.recover.description",
-  buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
-  shouldCompleteOnStart: true,
-  getIsAlreadyCompleted: async ({ protectId }) => {
-    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
-
-    return recoverSubscriptionState === "BACKUP_DONE";
+export const syncAccountsAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.syncAccounts,
+  featureFlagId: "llmLedgerSyncEntryPoints",
+  featureFlagParamId: "postOnboarding",
+  Icon: Icons.Refresh,
+  title: "postOnboarding.actions.syncAccounts.title",
+  titleCompleted: "postOnboarding.actions.syncAccounts.titleCompleted",
+  description: "postOnboarding.actions.syncAccounts.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.syncAccounts.popupLabel",
+  buttonLabelForAnalyticsEvent: "Sync accounts",
+  getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
+    return !!isLedgerSyncActive;
   },
-  getNavigationParams: ({ protectId }) => [
-    NavigatorName.Base,
-    {
-      screen: ScreenName.Recover,
-      params: {
-        platform: protectId,
-        redirectTo: "upsell",
-        source: "llm-postonboarding-banner",
-      },
-    },
-  ],
+  startAction: ({ openActivationDrawer }: StartActionArgs) => {
+    openActivationDrawer?.();
+  },
 };

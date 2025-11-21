@@ -32,6 +32,7 @@ export default class OnboardingStepsPage {
   deviceNotCompatibleClose = "onboarding-deviceNotCompatible-close";
 
   newWallet = "onboarding-useCase-newWallet";
+  scrollListContainer = "onboarding-view-scroll-list-container";
   stepNewDeviceTitle = (index: number) => `onboarding-stepNewDevice-title${index}`;
   slideBullet = (index: number) => `slide-bullet-${index}`;
   stepNewDeviceCta = "onboarding-stepNewDevice-cta";
@@ -66,9 +67,12 @@ export default class OnboardingStepsPage {
 
   async chooseToExploreApp() {
     await tapByElement(this.exploreAppButton());
-    for (let i = 0; i < 4; i++) {
-      await tapById(this.discoverLiveTitle(i));
-    }
+    // In test mode, the carousel is skipped and only the last slide
+    // is shown. This avoids all carousel animation/clipping issues
+    // with the new React Native New Architecture. Just wait for the
+    // final slide and tap the explore button.
+    await waitForElementById(this.discoverLiveTitle(3));
+    await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);
   }
 
@@ -91,7 +95,7 @@ export default class OnboardingStepsPage {
   }
 
   async chooseDevice(device: ModelId) {
-    await scrollToId(this.selectDevice(device));
+    await scrollToId(this.selectDevice(device), this.scrollListContainer);
     await tapById(this.selectDevice(device));
   }
 

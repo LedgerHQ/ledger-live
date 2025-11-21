@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -18,9 +19,10 @@ import { ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: undefined,
 };
 
@@ -54,8 +56,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     setSatPerByte && setSatPerByte(BigNumber(ownSatPerByte || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-    // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
+    popToScreen(navigation, currentNavigation, {
       ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
@@ -103,7 +104,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
                 },
               ]}
             >
-              <Trans i18nKey="common.satPerByte" />
+              {t("common.satPerByte")}
             </LText>
           </View>
           <View style={styles.flex}>

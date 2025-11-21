@@ -149,6 +149,9 @@ export type CurrencyFeatures = {
   currencyAssetHubPolkadot: DefaultFeature;
   currencyPolkadot: DefaultFeature;
   currencyMonad: DefaultFeature;
+  currencyMonadTestnet: DefaultFeature;
+  currencySomnia: DefaultFeature;
+  currencyZeroGravity: DefaultFeature;
 };
 
 /**
@@ -237,6 +240,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
+  ldmkSolanaSigner: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -269,8 +273,10 @@ export type Features = CurrencyFeatures & {
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
+  cantonSkipPreapprovalStep: DefaultFeature;
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
+  zcashShielded: DefaultFeature;
 };
 
 /**
@@ -628,6 +634,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
   manager: boolean;
