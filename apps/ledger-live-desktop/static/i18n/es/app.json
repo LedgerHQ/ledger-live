@@ -5168,7 +5168,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Frase de Recuperación",
           "hideRecoveryPhrase" : "Oculta tu Frase de Recuperación",
-          "pairNano" : "Conectar Nano"
+          "pairNano" : "Conectar Nano",
+          "secureYourCrypto" : "Protege tus cripto"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5461,29 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Protege tus cripto",
+            "description" : "Transfiere tus primeras cripto desde un exchange o wallet a tu Ledger Wallet para disfrutar de la máxima seguridad.",
+            "buttons" : {
+              "next" : "Proteger mis cripto",
+              "nextSecondary" : "Quizás más tarde",
+              "prev" : "Paso anterior"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Todo listo",
+            "description" : "Tu dispositivo Ledger ya está preparado. Si has enviado cripto, las recibirás en cuestión de minutos.",
+            "buttons" : {
+              "next" : "Continuar"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Todo listo",
+            "description" : "Tu dispositivo Ledger está preparado, ya puedes proteger tus activos con él.",
+            "buttons" : {
+              "next" : "Continuar"
             }
           }
         }
@@ -5826,6 +5850,62 @@
         "quickFix" : "Solución rápida: Envíate fondos para consolidarlas.",
         "warning" : "Tu cuenta tiene demasiadas UTXOs pequeñas. Envíate fondos para consolidarlas.",
         "consolidate" : "Consolidar"
+      },
+      "pendingTransactions" : {
+        "title" : "Transacciones pendientes ({{count}})",
+        "incoming" : {
+          "title" : "Ofertas entrantes ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ofertas salientes ({{count}})"
+        },
+        "pending" : "Pendiente",
+        "expired" : "Caducado",
+        "status" : {
+          "label" : "Estado",
+          "expired" : "Caducado",
+          "incoming" : "Entrantes",
+          "outgoing" : "Salientes"
+        },
+        "from" : "De",
+        "to" : "A",
+        "memo" : "Memo",
+        "noMemo" : "Sin Memo",
+        "date" : "Fecha",
+        "expiresAt" : "Caduca a las",
+        "expiresIn" : "Caduca en",
+        "amount" : "Importe",
+        "transaction" : "Transacción",
+        "viewTransaction" : "Ver transacción",
+        "action" : "Acción",
+        "accept" : "Aceptar",
+        "withdraw" : "Retirar",
+        "reject" : "Rechazar",
+        "deviceAppModal" : {
+          "title" : "{{action}} oferta",
+          "description" : "Abre la app Canton en tu dispositivo Ledger para {{action}} esta oferta.",
+          "contractId" : "ID del contrato",
+          "cancel" : "Cancelar",
+          "openApp" : "Abrir app Canton",
+          "opening" : "Abriendo...",
+          "noDevice" : "No hay ningún dispositivo conectado",
+          "appOpenError" : "No se pudo abrir la app Canton. Inténtalo de nuevo.",
+          "processing" : "Procesando {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Oferta aceptada",
+              "description" : "La oferta de transferencia se ha aceptado correctamente."
+            },
+            "reject" : {
+              "title" : "Oferta rechazada",
+              "description" : "La oferta de transferencia se ha rechazado correctamente."
+            },
+            "withdraw" : {
+              "title" : "Oferta retirada",
+              "description" : "La oferta de transferencia se ha retirado correctamente."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7062,6 +7142,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
