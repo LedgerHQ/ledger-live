@@ -24,7 +24,6 @@ export async function craftTransaction(
 
   let tokenType: TOKEN_TYPE | undefined;
   const contractAddress = getContractAddress(transactionIntent);
-  let balance: AptosBalance | undefined;
 
   if (transactionIntent.asset.type !== "native") {
     tokenType = transactionIntent.asset.type as TOKEN_TYPE;

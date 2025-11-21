@@ -40,14 +40,9 @@ export const getMaxSendBalance = (
   const totalGas = gas.multipliedBy(gasPrice);
 
   return parentAccount
-    ? getMaxSendBalanceFromTokenAccount(account as TokenAccount, totalGas)
+    ? account.spendableBalance
     : getMaxSendBalanceFromAccount(account as Account, totalGas);
 };
-
-const getMaxSendBalanceFromTokenAccount = (tokenAccount: TokenAccount, totalGas: BigNumber) =>
-  tokenAccount.spendableBalance.gt(totalGas)
-    ? tokenAccount.spendableBalance.minus(totalGas)
-    : new BigNumber(0);
 
 const getMaxSendBalanceFromAccount = (account: Account, totalGas: BigNumber) =>
   account.spendableBalance.gt(totalGas)
