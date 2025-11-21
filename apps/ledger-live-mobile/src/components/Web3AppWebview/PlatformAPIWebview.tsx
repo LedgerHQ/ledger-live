@@ -49,13 +49,7 @@ import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 
@@ -105,20 +99,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
     const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
-    const { isModularDrawerVisible } = useModularDrawerVisibility({
-      modularDrawerFeatureFlagKey: "llmModularDrawer",
-    });
-    const modularDrawerVisible = isModularDrawerVisible({
-      location: ModularDrawerLocation.LIVE_APP,
-      liveAppId: manifest.id,
-    });
-
     const { openDrawer: openModularDrawer } = useModularDrawerController();
 
     const requestAccount = useCallback(
       ({
         currencies,
-        allowAddAccount = true,
         includeTokens,
       }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
       // }: RequestAccountParams) =>
@@ -127,7 +112,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowAddAccount?: boolean;
         includeTokens?: boolean;
       }): Promise<RawPlatformAccount> =>
-        new Promise((resolve, reject) => {
+        new Promise(resolve => {
           tracking.platformRequestAccountRequested(manifest);
 
           /**
@@ -157,66 +142,20 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               ),
             );
           };
-          const onClose = () => {
-            tracking.platformRequestAccountFail(manifest);
-            reject(new Error("User cancelled"));
-          };
 
-          if (modularDrawerVisible) {
-            openModularDrawer({
-              currencies: currencyIds,
-              areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
-              enableAccountSelection: true,
-              onAccountSelected: onSuccess,
-              flow: manifest.name,
-              source:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current ?? "Unknown",
-            });
-          } else {
-            if (currencyIds && currencyIds.length === 1) {
-              Promise.resolve(
-                findCryptoCurrencyById(currencyIds[0]) ||
-                  getCryptoAssetsStore().findTokenById(currencyIds[0]),
-              ).then(currency => {
-                if (!currency) {
-                  tracking.platformRequestAccountFail(manifest);
-                  reject(new Error("Currency not found"));
-                  return;
-                }
-                navigation.navigate(NavigatorName.RequestAccount, {
-                  screen: ScreenName.RequestAccountsSelectAccount,
-                  params: {
-                    currency,
-                    allowAddAccount,
-                    onSuccess,
-                  },
-                  onClose,
-                });
-              });
-            } else {
-              navigation.navigate(NavigatorName.RequestAccount, {
-                screen: ScreenName.RequestAccountsSelectCrypto,
-                params: {
-                  currencyIds,
-                  allowAddAccount,
-                  onSuccess,
-                },
-                onClose,
-              });
-            }
-          }
+          openModularDrawer({
+            currencies: currencyIds,
+            areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
+            enableAccountSelection: true,
+            onAccountSelected: onSuccess,
+            flow: manifest.name,
+            source:
+              currentRouteNameRef.current === "Platform Catalog"
+                ? "Discover"
+                : currentRouteNameRef.current ?? "Unknown",
+          });
         }),
-      [
-        tracking,
-        manifest,
-        modularDrawerVisible,
-        deactivatedCurrencyIds,
-        walletState,
-        openModularDrawer,
-        navigation,
-      ],
+      [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
     );
 
     const receiveOnAccount = useCallback(
