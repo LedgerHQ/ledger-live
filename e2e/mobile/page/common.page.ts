@@ -126,13 +126,4 @@ export default class CommonPage {
   async enableSynchronization() {
     await device.enableSynchronization();
   }
-
-  // Switching from webview to native view causes Detox issues. This workaround waits for a non existing element to flush detox queue
-  async flushDetoxSyncQueue(): Promise<void> {
-    try {
-      await waitForElementById("__flush_queue__", 500);
-    } catch {
-      console.log("Intentional failure to flush detox queue");
-    }
-  }
 }
