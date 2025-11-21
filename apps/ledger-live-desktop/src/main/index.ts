@@ -209,7 +209,11 @@ app.on("ready", async () => {
             w.close();
           }
         })
-        .catch((err: unknown) => console.log(err));
+        .catch((err: unknown) => {
+          console.log(err);
+          status = 1;
+          app.quit();
+        });
     }
   });
 

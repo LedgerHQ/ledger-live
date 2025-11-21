@@ -61,11 +61,10 @@ const TAB_KEY = 9;
 
 function onAppClose() {
   console.log("app-close message received");
-  const timer = setTimeout(() => window.close(), 18000);
   try {
+    expectOperatingSystemSupportStatus();
     track("app_close");
   } finally {
-    clearTimeout(timer);
     window.close();
   }
 }
