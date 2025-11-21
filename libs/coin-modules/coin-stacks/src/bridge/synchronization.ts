@@ -23,9 +23,8 @@ import {
   sip010OpToParentOp,
 } from "./utils/misc";
 import { log } from "@ledgerhq/logs";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TransactionResponse } from "../network";
-import { TokenPrefix } from "../types";
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
@@ -57,7 +56,8 @@ export async function createTokenAccount(
   initialAccount?: Account,
 ): Promise<TokenAccount | null> {
   try {
-    const token = await getCryptoAssetsStore().findTokenById(TokenPrefix + tokenId);
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, "stacks");
+
     if (!tokenId || !token) {
       log("error", `stacks token not found, addr: ${tokenId}`);
       return null;

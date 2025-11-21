@@ -17,7 +17,6 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape } from "./synchronization";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
-import { preload, hydrate } from "./preload";
 
 function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -28,8 +27,8 @@ function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): Curren
   });
 
   return {
-    preload,
-    hydrate,
+    preload: () => Promise.resolve({}),
+    hydrate: () => {},
     scanAccounts,
   };
 }

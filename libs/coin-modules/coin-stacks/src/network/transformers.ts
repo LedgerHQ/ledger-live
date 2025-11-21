@@ -1,7 +1,6 @@
 import { TransactionResponse } from "../types/api";
 import { fetchFungibleTokenMetadataCached } from "./api";
-import { TokenPrefix } from "../types";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // Extracts token transfer transactions from a transaction list
 export const extractTokenTransferTransactions = (
@@ -32,8 +31,9 @@ const getAssetIdFromContractId = async (contractId: string): Promise<string | un
   if (metadata.results.length > 1) {
     // If multiple results, find which one exists in the token registry
     for (const result of metadata.results) {
-      const token = await getCryptoAssetsStore().findTokenById(
-        TokenPrefix + result.asset_identifier,
+      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        result.asset_identifier,
+        "stacks",
       );
       if (token) {
         return result.asset_identifier;
@@ -57,7 +57,10 @@ export const findFinalTokenId = async (
   }
 
   // Check if token exists in the local registry
-  const registeredToken = await getCryptoAssetsStore().findTokenById(TokenPrefix + tokenId);
+  const registeredToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    tokenId,
+    "stacks",
+  );
 
   if (registeredToken) {
     return tokenId;
@@ -82,8 +85,9 @@ export const findFinalTokenId = async (
     // Check if this result matches our criteria:
     // 1. It exists in the token registry
     // 2. The asset name matches what we're looking for
-    const isRegistered = await getCryptoAssetsStore().findTokenById(
-      TokenPrefix + result.asset_identifier,
+    const isRegistered = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      result.asset_identifier,
+      "stacks",
     );
     const isMatchingAsset = resultAssetName === assetName;
 
@@ -155,7 +159,7 @@ export const extractContractTransactions = async (
     const finalTokenId = await findFinalTokenId(tokenId, finalTokenIdMap);
     finalTokenIdMap[tokenId] = finalTokenId;
 
-    addTransactionToMap(contractTxsMap, finalTokenId, tx);
+    addTransactionToMap(contractTxsMap, finalTokenId.toLowerCase(), tx);
   }
 
   return contractTxsMap;

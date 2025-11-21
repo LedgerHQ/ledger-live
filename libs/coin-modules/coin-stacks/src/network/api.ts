@@ -138,7 +138,7 @@ export const fetchAllTokenBalances = async (addr: string): Promise<Record<string
     const response = await fetchTokenBalancesPage(addr, offset, limit);
     // Map token balances to a more convenient format
     for (const item of response.results) {
-      tokenBalanceMap[item.token] = item.balance;
+      tokenBalanceMap[item.token.toLowerCase()] = item.balance;
     }
 
     offset += limit;

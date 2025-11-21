@@ -80,13 +80,14 @@ function extractBaseRawData(data: Record<string, unknown>): BaseRawData {
 }
 
 // Extracts contract address, name, and asset name from TokenAccount
+// CARE: usage of asset name is case-sensitive
 // Returns null if subAccount is undefined
 export const getTokenContractDetails = (subAccount?: TokenAccount) => {
   if (!subAccount) return null;
 
-  const contractAddress = subAccount.token.contractAddress;
-  const contractName = subAccount.token.id.split(".").pop()?.split("::")[0] ?? "";
-  const assetName = subAccount.token.id.split(".").pop()?.split("::")[1] ?? "";
+  const contractAddress = subAccount.token.contractAddress.split(".").shift() ?? "";
+  const contractName = subAccount.token.contractAddress.split(".").pop()?.split("::")[0] ?? "";
+  const assetName = subAccount.token.contractAddress.split(".").pop()?.split("::")[1] ?? "";
 
   return { contractAddress, contractName, assetName };
 };

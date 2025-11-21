@@ -1,6 +1,5 @@
 import { AnchorMode } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
-import { StacksSip010Token } from "@ledgerhq/cryptoassets/data/stacks-sip010";
 
 import {
   Operation,
@@ -48,11 +47,4 @@ export type StacksOperation = Operation<StacksOperationExtra>;
 
 export type StacksOperationExtra = {
   memo?: string | undefined;
-};
-
-/**
- * Stacks currency data that will be preloaded.
- */
-export type StacksPreloadData = {
-  tokens: StacksSip010Token[];
 };
