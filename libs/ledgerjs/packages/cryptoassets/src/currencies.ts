@@ -3260,6 +3260,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   zcash_dev: {
     type: "CryptoCurrency",
     id: "zcash_dev",
+    isTestnetFor: "zcash",
     coinType: CoinType.ZCASH,
     name: "Zcash Dev",
     managerAppName: "Zcash",
