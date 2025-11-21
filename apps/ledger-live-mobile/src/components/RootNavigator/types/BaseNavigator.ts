@@ -75,7 +75,6 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
-import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
@@ -314,8 +313,6 @@ export type BaseNavigatorStackParamList = {
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
-  // MODULAR DRAWER
-  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
   [ScreenName.MockedModularDrawer]: undefined;
 
   [ScreenName.FirmwareUpdate]: {

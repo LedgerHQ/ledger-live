@@ -4,6 +4,8 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer/hooks/use
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer/ModularDrawerWrapper";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 
+export { handleModularDrawerDeeplink } from "./handleModularDrawerDeeplink";
+
 export {
   ModularDrawer,
   ModularDrawerStep,

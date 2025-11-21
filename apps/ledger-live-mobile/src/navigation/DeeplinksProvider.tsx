@@ -30,6 +30,7 @@ import {
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
+import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
@@ -41,7 +42,6 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
-import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -358,8 +358,6 @@ export const DeeplinksProvider = ({
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
-  const modularDrawerFlowConfigs = getDrawerFlowConfigs();
-
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
     return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -375,11 +373,6 @@ export const DeeplinksProvider = ({
                     ...linkingOptions().config.screens[NavigatorName.Base],
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
-
-                      /**
-                       * Modular drawer flows (add-account & receive)
-                       */
-                      ...modularDrawerFlowConfigs.modularDrawer,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
@@ -544,7 +537,7 @@ export const DeeplinksProvider = ({
           };
         },
         getStateFromPath: (path, config) => {
-          const url = new URL(`ledgerlive://${path}`);
+          const url = new URL(`ledgerwallet://${path}`);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
           const {
@@ -601,6 +594,11 @@ export const DeeplinksProvider = ({
 
           if (isStorylyLink(url.toString())) {
             storylyContext.setUrl(url.toString());
+          }
+
+          // Handle modular drawer deeplinks (receive & add-account)
+          if (hostname === "receive" || hostname === "add-account") {
+            return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
           }
 
           if (hostname === "earn") {
@@ -709,7 +707,6 @@ export const DeeplinksProvider = ({
     );
   }, [
     hasCompletedOnboarding,
-    modularDrawerFlowConfigs,
     llmAccountListUI?.enabled,
     AccountsListScreenName,
     userAcceptedTerms,

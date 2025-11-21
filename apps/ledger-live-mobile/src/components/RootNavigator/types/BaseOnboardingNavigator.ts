@@ -7,7 +7,6 @@ import { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
 import { PasswordModifyFlowParamList } from "./PasswordModifyFlowNavigator";
 import { SyncOnboardingStackParamList } from "./SyncOnboardingNavigator";
-import { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { ReceiveFundsStackParamList } from "./ReceiveFundsNavigator";
 import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
@@ -34,7 +33,6 @@ export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.PasswordModifyFlow]: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.SyncOnboarding]: NavigatorScreenParams<SyncOnboardingStackParamList>;
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
-  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
   [NavigatorName.AccountSettings]: NavigatorScreenParams<AccountSettingsNavigatorParamList>;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>

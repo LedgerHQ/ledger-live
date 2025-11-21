@@ -18,7 +18,6 @@ import { StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -132,11 +131,6 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.WalletSync}
         component={WalletSyncNavigator}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.ModularDrawer}
-        component={ModularDrawerNavigator}
         options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack.Navigator>
