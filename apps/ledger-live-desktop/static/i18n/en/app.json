@@ -5193,7 +5193,8 @@
           "pinCode": "PIN",
           "recoveryPhrase": "Recovery phrase",
           "hideRecoveryPhrase": "Hide recovery phrase",
-          "pairNano": "Connect nano"
+          "pairNano": "Connect nano",
+          "secureYourCrypto": "Secure your crypto"
         },
         "screens": {
           "importYourRecoveryPhrase": {
@@ -5485,6 +5486,29 @@
             "help": {
               "help": "Need help",
               "descr": "Don't know what you have to do? Get some help to close this step."
+            }
+          },
+          "secureYourCrypto": {
+            "title": "Secure your crypto",
+            "description": "Move your first crypto from an exchange or wallet to your Ledger Wallet for maximum security.",
+            "buttons": {
+              "next": "Secure my crypto",
+              "nextSecondary": "Maybe later",
+              "prev": "Previous step"
+            }
+          },
+          "welcomeToWalletWithFunds": {
+            "title": "Everything's in place",
+            "description": "Your Ledger device is ready. If you have sent crypto, you’ll receive it in a few minutes.",
+            "buttons": {
+              "next": "Continue"
+            }
+          },
+          "welcomeToWalletWithoutFunds": {
+            "title": "Everything's in place",
+            "description": "Your Ledger device is ready — you can now secure your assets with it.",
+            "buttons": {
+              "next": "Continue"
             }
           }
         }
