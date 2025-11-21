@@ -1154,6 +1154,11 @@
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Wallet, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Proveedor no válido",
+      "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Wallet, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto.",
+      "openSettings" : "Ir a Ajustes"
+    },
     "GasLessThanEstimate" : {
       "title" : "Puede que sea demasiado bajo. Auméntalo"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "Queremos garantizar tu seguridad",
       "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "crash" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
-        "description" : "El Ledger Nano S™ no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Stax™ o el Ledger Flex™ para permutas intercadena en {{provider}} desde Ledger Live."
+        "description" : "El Ledger Nano S™ no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Stax™ o el Ledger Flex™ para permutas intercadena en {{provider}} desde Ledger Wallet.",
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "swapWithAnotherProvider" : "Permutar con otro proveedor"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Explorar dispositivos compatibles",
@@ -7311,11 +7324,11 @@
         "description" : "Elige cualquier obra de arte digital o imagen para establecerla como pantalla de bloqueo de tu {{productName}}.",
         "popupLabel" : "Pantalla de bloqueo personalizada correctamente"
       },
-      "recover" : {
-        "title" : "Suscríbete a Ledger Recover",
-        "titleCompleted" : "Te has suscrito a Ledger Recover",
-        "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
-        "popupLabel" : "Te has suscrito correctamente a Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "popupLabel" : "Cuentas sincronizadas"
       }
     }
   },
