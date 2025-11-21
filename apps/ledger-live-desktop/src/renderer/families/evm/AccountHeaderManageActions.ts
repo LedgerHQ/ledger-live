@@ -6,7 +6,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 

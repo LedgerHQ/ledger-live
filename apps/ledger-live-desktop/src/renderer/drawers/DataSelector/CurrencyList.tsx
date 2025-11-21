@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";
 import { VirtualList } from "@ledgerhq/react-ui/pre-ldls/index";
-import { ListWrapper } from "~/newArch/features/ModularDrawer/components/ListWrapper";
+import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
 type Props = {
   currencies: CryptoOrTokenCurrency[];
   onCurrencySelect: (currency: CryptoOrTokenCurrency) => void;

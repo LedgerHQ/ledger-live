@@ -20,7 +20,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { openModal } from "~/renderer/actions/modals";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
 import { useHistory } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
