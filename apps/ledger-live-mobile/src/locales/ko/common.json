@@ -1154,6 +1154,11 @@
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "유효하지 않은 제공 업체",
+      "description" : "\"My Ledger 서비스 제공 업체\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "openSettings" : "설정으로 이동"
+    },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "사용자 보호 조치 실행 중",
       "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "crash" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-        "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다"
+        "description" : "Ledger Nano S™는 {{provider}} 사용을 지원하지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
+        "explore_compatible_devices" : "지원 장치 살펴보기",
+        "swapWithAnotherProvider" : "다른 업체로 스왑"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
@@ -7311,11 +7324,11 @@
         "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
-      "recover" : {
-        "title" : "Ledger Recover 구독하기",
-        "titleCompleted" : "Ledger Recover를 구독했습니다",
-        "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
-        "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "popupLabel" : "계정 동기화 완료"
       }
     }
   },
