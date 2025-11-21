@@ -90,6 +90,7 @@ declare global {
   var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
+  var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }

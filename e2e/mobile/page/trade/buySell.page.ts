@@ -140,7 +140,10 @@ export default class BuySellPage {
     paymentMethod: string,
   ) {
     try {
-      const currentUrl = await getCurrentWebviewUrl();
+      const currentUrl = await waitForCurrentWebviewUrlToContain(
+        provider.toLocaleLowerCase(),
+        5000,
+      );
       jestExpect(currentUrl.toLowerCase()).toContain(provider.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(buySell.crypto.currency.ticker.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(buySell.fiat.currencyTicker.toLowerCase());

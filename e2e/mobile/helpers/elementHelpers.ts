@@ -353,6 +353,30 @@ export const WebElementHelpers = {
     return String(url);
   },
 
+  async waitForCurrentWebviewUrlToContain(
+    substring: string,
+    timeout = 1000,
+  ): Promise<string> {
+    const start = Date.now();
+    let lastErr: Error | undefined;
+
+    while (Date.now() - start < timeout) {
+      try {
+        const currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
+        if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
+          return currentUrl;
+        }
+      } catch (e) {
+        lastErr = e instanceof Error ? e : new Error(String(e));
+      }
+      await delay(100);
+    }
+
+    throw new Error(
+      `Webview URL did not contain '${substring}' within ${timeout}ms: ${lastErr?.message}`,
+    );
+  },
+
   async isWebElementEnabled(element: WebElement) {
     const isEnabled = await element.runScript(
       (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {
