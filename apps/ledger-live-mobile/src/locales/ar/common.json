@@ -1154,6 +1154,11 @@
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح ”Settings (الإعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "مزوّد غير صالح",
+      "description" : "يجب عليك تغيير إعداد ”My Ledger Provider (مزوّد جهازي Ledger)“. لتغييره، افتح ”Settings (إعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر.",
+      "openSettings" : "انتقل إلى الإعدادات"
+    },
     "GasLessThanEstimate" : {
       "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "crash" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
-        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live"
+        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Wallet",
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "swapWithAnotherProvider" : "المبادلة عن طريق مزود آخر"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
@@ -7311,11 +7324,11 @@
         "description" : "اختر أي فن رقمي أو صورة للتعيين كشاشة قَفل {{productName}} الخاص بك.",
         "popupLabel" : "تم تخصيص شاشة القَفل بنجاح"
       },
-      "recover" : {
-        "title" : "الاشتراك في Ledger Recover",
-        "titleCompleted" : "مشترك في Ledger Recover",
-        "description" : "استعدْ الوصول إلى محفظتك بدون الحاجة إلى عبارة الاسترداد السرية الخاصة بك.",
-        "popupLabel" : "تم الاشتراك بنجاح في Ledger Recover"
+      "syncAccounts" : {
+        "title" : "مزامنة حسابات الأصول المشفرة خاصتك",
+        "titleCompleted" : "تمت مزامنة حساباتك",
+        "description" : "تنشيط مزامنة Ledger Sync لمزامنة حسابات الأصول المشفرة الخاصة بك",
+        "popupLabel" : "تمت مزامنة الحسابات"
       }
     }
   },
