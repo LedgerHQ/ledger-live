@@ -48,6 +48,11 @@ module.exports = {
             group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
             message: "Please remove the /lib import from live-common import.",
           },
+          {
+            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+            message:
+              "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+          },
         ],
         paths: [
           "lodash", // you must use the lodash/fp module import style to avoid importing the entire library

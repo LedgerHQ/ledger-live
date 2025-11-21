@@ -13,7 +13,7 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type {
   CantonCurrencyBridge,
   CantonOnboardResult,

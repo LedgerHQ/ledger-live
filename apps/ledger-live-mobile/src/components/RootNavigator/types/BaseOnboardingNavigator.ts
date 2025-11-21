@@ -9,7 +9,7 @@ import { PasswordModifyFlowParamList } from "./PasswordModifyFlowNavigator";
 import { SyncOnboardingStackParamList } from "./SyncOnboardingNavigator";
 import { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { ReceiveFundsStackParamList } from "./ReceiveFundsNavigator";
-import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 import { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";

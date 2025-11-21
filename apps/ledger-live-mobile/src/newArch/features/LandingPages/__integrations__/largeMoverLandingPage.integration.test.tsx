@@ -11,7 +11,7 @@ import { LargeMoverLandingPage } from "../screens/LargeMoverLandingPage";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
 
-jest.mock("~/newArch/components/Swiper/components/Swiper", () => {
+jest.mock("LLM/components/Swiper/components/Swiper", () => {
   type Card = { id: string | number };
   type Props = {
     cardContainerStyle?: Record<string, unknown>;
