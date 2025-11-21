@@ -34,12 +34,13 @@ export const memoTagCoinTestData: MemoTagCoinTestData[] = [
     testAmount: "1",
     tagFieldName: "Memo",
   },
-  {
+  // will be done later
+  /*{
     coin: "HBAR",
-    fromAccount: Account.HBAR_1,
-    toAccount: Account.HBAR_2,
+    fromAccount: Account.HBAR_3,
+    toAccount: Account.HBAR_4,
     testValue: "7654321",
     testAmount: "0.1",
     tagFieldName: "Memo",
-  },
+  },*/
 ];

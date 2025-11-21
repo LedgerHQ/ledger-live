@@ -9,7 +9,7 @@ test.describe("MemoTag Feature", () => {
     ({ coin, fromAccount, toAccount, testValue, testAmount, tagFieldName }) => {
       test.describe(`${coin} Send Flow with Memo Tag`, () => {
         test.use({
-          userdata: "memo-tag-assets",
+          userdata: "app",
         });
 
         test(

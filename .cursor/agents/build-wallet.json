@@ -1,0 +1,27 @@
+{
+  "name": "Build wallet",
+  "description": "Agent that executes build commands sequentially: install dependencies, build ledger-live-desktop, build dependencies, build CLI, and build desktop testing version",
+  "commands": [
+    {
+      "command": "pnpm i",
+      "description": "Install dependencies"
+    },
+    {
+      "command": "pnpm build:lld",
+      "description": "Build ledger-live-desktop"
+    },
+    {
+      "command": "pnpm build:lld:deps",
+      "description": "Build ledger-live-desktop dependencies"
+    },
+    {
+      "command": "pnpm build:cli",
+      "description": "Build CLI"
+    },
+    {
+      "command": "pnpm desktop build:testing",
+      "description": "Build desktop testing version"
+    }
+  ]
+}
+

@@ -7,11 +7,12 @@ export class MemoTagPage extends PageHolder {
   private continueButton = this.page.getByRole("button", { name: "Continue" });
   private amountInput = this.page.getByTestId("modal-amount-field");
   private memoTagSummary = this.page.getByTestId("modal-content");
-  private dontShowAgainCheckbox = this.page.getByTestId("memo-tag-show-again-checkbox");
+  //private dontShowAgainCheckbox = this.page.getByTestId("memo-tag-show-again-checkbox");
+  private dontShowAgainCheckbox = this.page.getByTestId("check-icon");
   private dontShowAgainChecked = this.page.getByTestId("check-icon");
   private warningMemoTagByText = this.page.getByText("Need Tag/Memo?");
-  private addTagButtonById = this.page.getByTestId("memo-tag-add-button");
-  private dontAddTagButtonById = this.page.getByTestId("memo-tag-dont-add-button");
+  private addTagButtonById = this.page.getByRole("button", { name: "Add Tag", exact: true });
+  private dontAddTagButtonById = this.page.getByRole("button", { name: "Don’t add Tag" });
   private tagInput = this.page.getByTestId("memo-tag-input");
 
   @step("Verify learn more link is visible")
