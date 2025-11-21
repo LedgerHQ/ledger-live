@@ -31,10 +31,9 @@ const Root = (props: Props) => {
           </Label>
         </Box>
       )}
-      <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
-        <Box grow={1}>
-          <MemoValueField {...props} />
-        </Box>
+
+      <Box flow={1}>
+        <MemoValueField {...props} />
       </Box>
     </Box>
   );
