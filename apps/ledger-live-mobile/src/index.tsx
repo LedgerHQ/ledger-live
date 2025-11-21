@@ -81,6 +81,7 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
+import { logStartupEvent, useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import {
   TrackingConsent,
@@ -123,6 +124,7 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  useLogStartupEvent("App render");
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
@@ -290,11 +292,13 @@ function AppView() {
 }
 
 function RebootProvider({ children }: { children: React.ReactNode }) {
+  useLogStartupEvent("RebootProvider render");
   const rebootId = useSelector(rebootIdSelector);
   return <React.Fragment key={rebootId}>{children}</React.Fragment>;
 }
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
+  useLogStartupEvent("StylesProvider render");
   const { theme } = useSettings();
   const osTheme = useSelector(osThemeSelector);
   const dispatch = useDispatch();
@@ -341,6 +345,7 @@ export default class Root extends Component {
   };
 
   render() {
+    logStartupEvent("Root render");
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
         {({ ready, initialCountervalues, currencyInitialized }) =>
