@@ -33,6 +33,7 @@ import {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
+import { getOperatingSystemSupportStatus } from "~/support/os";
 
 // End import timing, start initialization
 console.timeEnd("T-imports");
@@ -198,7 +199,8 @@ app.on("ready", async () => {
 
   let status: number = 0;
   window.on("close", e => {
-    if (status === 0) {
+    const isOSsupported = getOperatingSystemSupportStatus();
+    if (status === 0 && isOSsupported) {
       e.preventDefault();
       getMainWindowAsync()
         .then(w => {
