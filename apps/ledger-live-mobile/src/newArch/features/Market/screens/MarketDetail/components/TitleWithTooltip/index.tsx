@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Pressable, StyleSheet, Image } from "react-native";
-import { StyledIconContainer } from "../../../../components/MarketRowItem/MarketRowItem.styled";
+import { StyledIconContainer } from "LLM/features/Market/components/MarketRowItem/MarketRowItem.styled";
 
 interface TitleWithTooltipProps {
   name?: string;
