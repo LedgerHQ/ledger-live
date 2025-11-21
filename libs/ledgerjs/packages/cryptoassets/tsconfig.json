@@ -3,6 +3,5 @@
   "compilerOptions": {
     "outDir": "lib"
   },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.template.ts"]
+  "include": ["src/**/*"]
 }

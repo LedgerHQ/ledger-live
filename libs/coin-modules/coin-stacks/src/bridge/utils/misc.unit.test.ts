@@ -2,11 +2,11 @@ import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { fetchFullTxs } from "../../network/index";
 import { Operation } from "@ledgerhq/types-live";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import * as api from "../../network/api";
 
 // Mock the CryptoAssets module
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+jest.mock("@ledgerhq/cryptoassets/state");
 
 // Mock the API module to prevent actual network calls
 jest.mock("../../network/api", () => {
@@ -23,6 +23,7 @@ beforeEach(() => {
   // Mock CryptoAssetsStore
   (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
     findTokenById: jest.fn().mockResolvedValue(null),
+    findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
   });
 
   // Mock fetchFungibleTokenMetadataCached to return empty results by default

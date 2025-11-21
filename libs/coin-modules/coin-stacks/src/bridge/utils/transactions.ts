@@ -85,9 +85,12 @@ function extractBaseRawData(data: Record<string, unknown>): BaseRawData {
 export const getTokenContractDetails = (subAccount?: TokenAccount) => {
   if (!subAccount) return null;
 
-  const contractAddress = subAccount.token.contractAddress.split(".").shift() ?? "";
-  const contractName = subAccount.token.contractAddress.split(".").pop()?.split("::")[0] ?? "";
-  const assetName = subAccount.token.contractAddress.split(".").pop()?.split("::")[1] ?? "";
+  // Contract address format: "ADDRESS.CONTRACT-NAME::ASSET-NAME"
+  const tokenId = subAccount.token.contractAddress;
+
+  const contractAddress = tokenId.split(".").shift()?.toUpperCase() ?? "";
+  const contractName = tokenId.split(".").pop()?.split("::")[0] ?? "";
+  const assetName = tokenId.split(".").pop()?.split("::")[1] ?? "";
 
   return { contractAddress, contractName, assetName };
 };

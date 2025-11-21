@@ -6,17 +6,17 @@ import { fromTransactionRaw } from "../bridge/transaction";
 import BigNumber from "bignumber.js";
 import {
   AmountRequired,
+  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  InvalidAddress,
 } from "@ledgerhq/errors";
 import { getSubAccount } from "../bridge/utils/token";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
-
-const TOKEN_ACCOUNT_ID = `js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2FSP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx~!dash!~token%3A%3Aststx`;
+// SKULLCOIN token account ID from the snapshot
+const TOKEN_ACCOUNT_ID = `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:+stacks%2Fsip010%2Fskullcoin~!underscore!~sp3brxz9y7p5yp28psr8yjt39rt51zzbsectcadgr.skullcoin~!dash!~stxcity%3A%3Askull`;
 
 const stacks: CurrenciesData<Transaction> = {
   IgnorePrepareTransactionFields: ["fee"],
@@ -128,7 +128,7 @@ const stacks: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
-        // Token tests
+        // Token tests using SKULLCOIN (available in crypto assets registry)
         {
           name: "Token transfer with valid amount",
           transaction: fromTransactionRaw({
@@ -154,7 +154,7 @@ const stacks: CurrenciesData<Transaction> = {
             network: "mainnet",
             anchorMode: AnchorMode.Any,
             recipient: ACCOUNT_1,
-            amount: "1000000000000000",
+            amount: "10000000000000000",
             subAccountId: TOKEN_ACCOUNT_ID,
           }),
           expectedStatus: {

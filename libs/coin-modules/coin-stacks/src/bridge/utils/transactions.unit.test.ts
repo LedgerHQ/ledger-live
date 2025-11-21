@@ -60,8 +60,7 @@ describe("transactions utility functions", () => {
     test("should extract token contract details from TokenAccount", () => {
       const tokenAccount = {
         token: {
-          contractAddress: "SP123456789ABCDEF",
-          id: "SP123456789ABCDEF.token-contract::TOKEN-X",
+          contractAddress: "SP123456789ABCDEF.token-contract::TOKEN-X",
         },
       } as TokenAccount;
 
@@ -77,8 +76,7 @@ describe("transactions utility functions", () => {
     test("should handle missing contractName or assetName in token id", () => {
       const tokenAccount = {
         token: {
-          contractAddress: "SP123456789ABCDEF",
-          id: "SP123456789ABCDEF.token-contract",
+          contractAddress: "SP123456789ABCDEF.token-contract",
         },
       } as TokenAccount;
 

@@ -145,9 +145,9 @@ describe("Stacks API", () => {
 
       expect(network).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
-        "SP123.TOKEN-A": "10000",
-        "SP456.TOKEN-B": "20000",
-        "SP789.TOKEN-C": "30000",
+        "sp123.token-a": "10000",
+        "sp456.token-b": "20000",
+        "sp789.token-c": "30000",
       });
     });
   });

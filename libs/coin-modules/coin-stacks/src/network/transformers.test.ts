@@ -5,10 +5,10 @@ import {
   extractContractTransactions,
 } from "./transformers";
 import * as api from "./api";
-import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 
 // Mock the CryptoAssets module
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+jest.mock("@ledgerhq/cryptoassets/state");
 
 // Mock the API module to prevent actual network calls
 jest.mock("./api", () => {
@@ -171,6 +171,7 @@ describe("Stacks API Transformers", () => {
       // Mock CryptoAssetsStore
       (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
         findTokenById: jest.fn().mockResolvedValue(null),
+        findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
       });
 
       // Mock fetchFungibleTokenMetadataCached to return empty results by default
@@ -186,15 +187,15 @@ describe("Stacks API Transformers", () => {
       // We expect two tokens with transfer function
       expect(Object.keys(result)).toHaveLength(2);
 
-      // Check SP456.TOKEN-B::TOKEN-B
-      expect(result["SP456.TOKEN-B::TOKEN-B"]).toBeDefined();
-      expect(result["SP456.TOKEN-B::TOKEN-B"]).toHaveLength(1);
-      expect(result["SP456.TOKEN-B::TOKEN-B"][0].tx?.tx_id).toEqual("0xghi789");
+      // Check sp456.token-b::token-b
+      expect(result["sp456.token-b::token-b"]).toBeDefined();
+      expect(result["sp456.token-b::token-b"]).toHaveLength(1);
+      expect(result["sp456.token-b::token-b"][0].tx?.tx_id).toEqual("0xghi789");
 
-      // Check SP789.TOKEN-C::TOKEN-C
-      expect(result["SP789.TOKEN-C::TOKEN-C"]).toBeDefined();
-      expect(result["SP789.TOKEN-C::TOKEN-C"]).toHaveLength(1);
-      expect(result["SP789.TOKEN-C::TOKEN-C"][0].tx?.tx_id).toEqual("0xjkl012");
+      // Check sp789.token-c::token-c
+      expect(result["sp789.token-c::token-c"]).toBeDefined();
+      expect(result["sp789.token-c::token-c"]).toHaveLength(1);
+      expect(result["sp789.token-c::token-c"][0].tx?.tx_id).toEqual("0xjkl012");
     });
 
     it("should exclude non-contract calls", async () => {
