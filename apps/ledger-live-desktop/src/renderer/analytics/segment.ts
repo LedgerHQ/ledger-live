@@ -16,7 +16,7 @@ import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
-import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
 import {

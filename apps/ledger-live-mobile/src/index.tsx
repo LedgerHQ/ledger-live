@@ -49,7 +49,7 @@ import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
-import { ModalSystemPrimer } from "~/newArch/components/ModalSystemPrimer";
+import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -194,7 +194,7 @@ function App() {
   ]);
 
   useEffect(() => {
-    /* 
+    /*
     / To capture all tracking events under the same flow we have these states set
     / and to prevent the flow state leaking we reset them here
     */

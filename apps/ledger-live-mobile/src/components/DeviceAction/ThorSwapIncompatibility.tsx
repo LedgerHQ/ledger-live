@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components/native";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import Animation from "../Animation";
 import Button from "../Button";

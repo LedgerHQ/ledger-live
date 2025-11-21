@@ -13,7 +13,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { mockChartData, mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
 
-jest.mock("~/newArch/components/Swiper/components/Swiper", () => ({
+jest.mock("LLM/components/Swiper/components/Swiper", () => ({
   SwiperComponent: function MockSwiperComponent(props: React.PropsWithChildren<object>) {
     return (
       <View testID="mock-swiper">
