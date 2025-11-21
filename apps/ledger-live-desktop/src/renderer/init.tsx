@@ -59,10 +59,11 @@ import { track } from "./analytics/segment";
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
 
+let SKIP_APP_CLOSE_TRACK = false;
 function onAppClose() {
   console.log("app-close message received");
   try {
-    track("app_close");
+    if (!SKIP_APP_CLOSE_TRACK) track("app_close");
   } finally {
     window.close();
   }
@@ -290,6 +291,7 @@ function r(Comp: JSX.Element) {
 }
 init()
   .catch(e => {
+    SKIP_APP_CLOSE_TRACK = true;
     logger.critical(e);
     r(<AppError error={e} />);
   })
