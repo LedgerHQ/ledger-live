@@ -34,11 +34,13 @@ describe("Market integration test - Title Tooltip", () => {
     await user.longPress(titlePressable);
 
     // Wait for tooltip to appear - verify there are now multiple "Bitcoin" texts (header + tooltip)
-    await waitFor(() => {
-      const allBitcoinTexts = screen.getAllByText("Bitcoin");
-      // Should have at least 2: one in header and one in tooltip
-      expect(allBitcoinTexts.length).toBeGreaterThanOrEqual(2);
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        const allBitcoinTexts = screen.getAllByText("Bitcoin");
+        // Should have at least 2: one in header and one in tooltip
+        expect(allBitcoinTexts.length).toBeGreaterThanOrEqual(2);
+      },
+      { timeout: 3000 },
+    );
   }, 10000);
 });
-
