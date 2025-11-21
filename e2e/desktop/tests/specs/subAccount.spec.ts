@@ -50,7 +50,14 @@ for (const token of subAccounts) {
     test(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: token.xrayTicket1,
@@ -138,7 +145,14 @@ for (const token of subAccounts) {
     test(
       `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: token.xrayTicket2,
@@ -330,7 +344,7 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,

@@ -39,9 +39,9 @@ runs:
           # If test_filter contains a space but not a pipe, treat as OR by replacing spaces with pipes
           if [[ "${{ inputs.test_filter }}" == *' '* && "${{ inputs.test_filter }}" != *'|'* ]]; then
             or_filter=$(echo "${{ inputs.test_filter }}" | sed 's/ /|/g')
-            grep_filter="(?=.*$device_tag)(${or_filter})"
+            grep_filter="$device_tag.*($or_filter)|($or_filter).*$device_tag"
           else
-            grep_filter="(?=.*$device_tag)(${{ inputs.test_filter }})"
+            grep_filter="$device_tag.*(${{ inputs.test_filter }})|(${{ inputs.test_filter }}).*$device_tag"
           fi
         else
           grep_filter="$device_tag"

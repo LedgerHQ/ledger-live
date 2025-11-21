@@ -444,7 +444,14 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
     test(
       `Swap using a different seed - ${swap.accountToDebit.currency.name} → ${swap.accountToCredit.currency.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(swap.accountToDebit === Account.BTC_NATIVE_SEGWIT_1 ? ["@smoke"] : []),
+        ],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp }) => {
@@ -989,7 +996,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Account page",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2989",

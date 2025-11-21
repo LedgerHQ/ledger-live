@@ -38,7 +38,14 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Receive`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(account.account === Account.SOL_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,

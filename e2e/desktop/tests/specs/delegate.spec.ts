@@ -117,7 +117,14 @@ for (const account of e2eDelegationAccounts) {
     test(
       `[${account.delegate.account.currency.name}] Delegate`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(account.delegate.account === Account.ATOM_1 ? ["@smoke"] : []),
+        ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {

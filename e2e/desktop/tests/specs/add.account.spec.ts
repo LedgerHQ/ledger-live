@@ -35,7 +35,14 @@ for (const currency of currencies) {
     test(
       `[${currency.currency.name}] Add account`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: currency.xrayTicket,

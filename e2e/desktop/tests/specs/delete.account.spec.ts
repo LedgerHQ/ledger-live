@@ -39,7 +39,14 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Delete Account`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
