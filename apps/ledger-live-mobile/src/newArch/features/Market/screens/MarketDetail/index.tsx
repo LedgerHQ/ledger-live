@@ -27,6 +27,7 @@ import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowItem.styled";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import TitleWithTooltip from "./components/TitleWithTooltip";
 
 interface ViewProps {
   loading: boolean;
@@ -86,9 +87,7 @@ function View({
                 />
               </StyledIconContainer>
             )}
-            <Text ml={3} variant="large" fontSize={22}>
-              {name}
-            </Text>
+            <TitleWithTooltip name={name} image={image} />
           </Flex>
         }
         TopRightSection={
