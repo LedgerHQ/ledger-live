@@ -3,6 +3,7 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "i18next";
 import { getTimeZone } from "react-native-localize";
+import { useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
@@ -76,6 +77,7 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
+  useLogStartupEvent("LocaleProvider render");
   const { language } = useSettings();
   const supportedLocales = useSupportedLocales();
   const dispatch = useDispatch();

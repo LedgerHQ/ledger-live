@@ -5,11 +5,13 @@ import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppBlocker from "../AppBlocker";
 import { Button } from "@ledgerhq/native-ui";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
+  useLogStartupEvent("AppGeoBlocker render");
   const { blocked } = useContext(InitialQueriesContext).ofacResult;
   const { colors } = useTheme();
   const { t } = useTranslation();
