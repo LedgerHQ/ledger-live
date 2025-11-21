@@ -1,6 +1,5 @@
 import React from "react";
-import { screen } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { render, act, fireEvent, screen } from "@tests/test-renderer";
 import { TestButtonPage } from "./shared";
 import { State } from "~/reducers/types";
 import {
@@ -43,9 +42,10 @@ describe("AddAccount", () => {
     // Wait for the drawer to open
     expect(await screen.findByText(/add another account/i));
     expect(await screen.findByText(/Use your Ledger device/i));
-    expect(await screen.findByText(/Use Ledger Sync/i));
-    // On press add with wallet sync
-    await user.press(screen.getByText(/Use Ledger Sync/i));
+    // This is a workaround to avoid the press event being ignored using onPressIn
+    await act(async () => {
+      fireEvent.press(await screen.findByText(/Use Ledger Sync/i));
+    });
     expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
     expect(await screen.findByText(/Scan QR code/i));
   });

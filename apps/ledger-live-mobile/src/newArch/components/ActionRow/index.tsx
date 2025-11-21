@@ -1,7 +1,7 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import Touchable from "~/components/Touchable";
 import styled from "styled-components/native";
+import { Pressable } from "react-native";
 
 type ActionRowProps = {
   title: string;
@@ -10,7 +10,7 @@ type ActionRowProps = {
   testID?: string;
   onPress?: () => void;
 };
-const TouchableCard = styled(Touchable)`
+const TouchableCard = styled(Pressable)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
   border-radius: 8px;
   padding: 16px;
@@ -39,7 +39,12 @@ const ActionRow: React.FC<ActionRowProps> = ({
   onPress,
 }: ActionRowProps) => {
   return (
-    <TouchableCard onPress={onPress} testID={testID}>
+    <TouchableCard
+      onPressIn={onPress}
+      testID={testID}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+      hitSlop={16}
+    >
       {icon}
       <Flex flexDirection={"column"} rowGap={4} flex={1}>
         <CardTitle>{title}</CardTitle>
