@@ -59,7 +59,7 @@ for (const asset of assets) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: crypto.currency.id,
+            currency: crypto.currency.speculosApp.name,
             index: crypto.index,
             add: true,
             appjson: appjsonPath,
@@ -198,7 +198,7 @@ test.describe("Sell flow - ", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: crypto.currency.id,
+          currency: crypto.currency.speculosApp.name,
           index: crypto.index,
           add: true,
           appjson: appjsonPath,
