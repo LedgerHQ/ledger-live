@@ -47,6 +47,7 @@ jobs:
 
       - name: Run live-common-affected
         uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+        id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
