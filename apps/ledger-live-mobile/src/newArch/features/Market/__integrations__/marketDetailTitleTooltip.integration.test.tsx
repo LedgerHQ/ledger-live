@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render,screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 
 describe("Market integration test - Title Tooltip", () => {
