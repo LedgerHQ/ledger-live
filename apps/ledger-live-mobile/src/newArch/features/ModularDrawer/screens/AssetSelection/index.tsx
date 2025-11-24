@@ -153,6 +153,7 @@ const AssetSelection = ({
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
