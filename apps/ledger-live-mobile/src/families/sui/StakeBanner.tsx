@@ -25,7 +25,7 @@ const SuiStakeBanner: React.FC<Props> = ({ account }) => {
       {
         screen: ScreenName.SuiStakingValidator,
         params: {
-          account,
+          accountId: account.id,
         },
       },
     );
