@@ -7,7 +7,6 @@ import bs58 from "bs58";
 
 coinConfig.setCoinConfig(() => ({
   legacyOCMSMaxVersion: "1.8.0",
-  queuedInterval: 1,
   token2022Enabled: false,
   status: { type: "active" },
 }));

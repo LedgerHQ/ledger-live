@@ -434,17 +434,18 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
         type: "active",
       },
       token2022Enabled: true,
-      queuedInterval: 100,
       legacyOCMSMaxVersion: "1.8.0",
     });
     solanaCoinConfig.setCoinConfig(coinConfig);
-    // Make sure the cache is not used, otherwise data is not refreshed frequently
-    // enough to work within the context of the coin tester
-    const getAPI = (config: Config) => Promise.resolve(getChainAPI(config));
+    const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
     const { accountBridge, currencyBridge } = makeBridges({
-      getAPI,
-      getQueuedAPI: getAPI,
-      getQueuedAndCachedAPI: getAPI,
+      getAPI: (config: Config) => {
+        const endpoint = config.endpoint;
+        if (!chainAPICache.has(endpoint)) {
+          chainAPICache.set(endpoint, getChainAPI(config));
+        }
+        return chainAPICache.get(endpoint)!;
+      },
       signerContext,
     });
 

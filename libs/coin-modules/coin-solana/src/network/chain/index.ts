@@ -154,44 +154,38 @@ export function getChainAPI(
           fetch(url, options);
         };
 
-  let _connection: Connection;
-  const connection = () => {
-    if (!_connection) {
-      _connection = new Connection(config.endpoint, {
-        ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
-        commitment: "confirmed",
-        confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
-      });
-    }
-    return _connection;
-  };
+  const connection = new Connection(config.endpoint, {
+    ...(fetchMiddleware ? { fetchMiddleware } : {}),
+    fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
+    commitment: "confirmed",
+    confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+  });
 
   return {
     getBalance: (address: string) =>
-      connection().getBalance(new PublicKey(address)).catch(remapErrors),
+      connection.getBalance(new PublicKey(address)).catch(remapErrors),
 
     getLatestBlockhash: (commitmentOrConfig?: Commitment | GetLatestBlockhashConfig) =>
-      connection().getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
+      connection.getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
 
     getFeeForMessage: (msg: VersionedMessage) =>
-      connection()
+      connection
         .getFeeForMessage(msg)
         .then(r => r.value)
         .catch(remapErrors),
 
     getBalanceAndContext: (address: string) =>
-      connection().getBalanceAndContext(new PublicKey(address)).catch(remapErrors),
+      connection.getBalanceAndContext(new PublicKey(address)).catch(remapErrors),
 
     getParsedTokenAccountsByOwner: (address: string) =>
-      connection()
+      connection
         .getParsedTokenAccountsByOwner(new PublicKey(address), {
           programId: TOKEN_PROGRAM_ID,
         })
         .catch(remapErrors),
 
     getParsedToken2022AccountsByOwner: (address: string) =>
-      connection()
+      connection
         .getParsedTokenAccountsByOwner(new PublicKey(address), {
           programId: TOKEN_2022_PROGRAM_ID,
         })
@@ -199,7 +193,7 @@ export function getChainAPI(
 
     getStakeAccountsByStakeAuth: makeLRUCache(
       (authAddr: string) =>
-        connection()
+        connection
           .getParsedProgramAccounts(StakeProgram.programId, {
             filters: [
               {
@@ -217,7 +211,7 @@ export function getChainAPI(
 
     getStakeAccountsByWithdrawAuth: makeLRUCache(
       (authAddr: string) =>
-        connection()
+        connection
           .getParsedProgramAccounts(StakeProgram.programId, {
             filters: [
               {
@@ -234,51 +228,48 @@ export function getChainAPI(
     ),
 
     getInflationReward: (addresses: string[]) =>
-      connection()
-        .getInflationReward(addresses.map(addr => new PublicKey(addr)))
-        .catch(remapErrors),
+      connection.getInflationReward(addresses.map(addr => new PublicKey(addr))).catch(remapErrors),
 
-    getVoteAccounts: () => connection().getVoteAccounts().catch(remapErrors),
+    getVoteAccounts: () => connection.getVoteAccounts().catch(remapErrors),
 
     getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) => {
       const callback = () => {
-        return connection().getSignaturesForAddress(new PublicKey(address), opts);
+        return connection.getSignaturesForAddress(new PublicKey(address), opts);
       };
       return callback().catch(remapErrorsWithRetry(callback));
     },
 
     getParsedTransactions: (signatures: string[]) =>
-      connection()
+      connection
         .getParsedTransactions(signatures, {
           maxSupportedTransactionVersion: 0,
         })
         .catch(remapErrors),
 
     getAccountInfo: (address: string) =>
-      connection()
+      connection
         .getParsedAccountInfo(new PublicKey(address))
         .then(r => r.value)
         .catch(remapErrors),
 
     getMultipleAccounts: (addresses: string[]) =>
-      connection()
+      connection
         .getMultipleParsedAccounts(addresses.map(address => new PublicKey(address)))
         .then(r => r.value)
         .catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
-        const conn = connection();
         const commitment = "confirmed";
 
-        const signature = await conn.sendRawTransaction(buffer, {
+        const signature = await connection.sendRawTransaction(buffer, {
           preflightCommitment: commitment,
         });
 
         if (!recentBlockhash) {
-          recentBlockhash = await conn.getLatestBlockhash(commitment);
+          recentBlockhash = await connection.getLatestBlockhash(commitment);
         }
-        const { value: status } = await conn.confirmTransaction(
+        const { value: status } = await connection.confirmTransaction(
           {
             blockhash: recentBlockhash.blockhash,
             lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
@@ -312,15 +303,15 @@ export function getChainAPI(
     },
 
     getAssocTokenAccMinNativeBalance: () =>
-      getMinimumBalanceForRentExemptAccount(connection()).catch(remapErrors),
+      getMinimumBalanceForRentExemptAccount(connection).catch(remapErrors),
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
-      connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
+      connection.getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
 
-    getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
+    getEpochInfo: () => connection.getEpochInfo().catch(remapErrors),
 
     getRecentPrioritizationFees: (accounts: string[]) => {
-      return connection()
+      return connection
         .getRecentPrioritizationFees({
           lockedWritableAccounts: accounts.map(acc => new PublicKey(acc)),
         })
@@ -345,7 +336,7 @@ export function getChainAPI(
           recentBlockhash: PublicKey.default.toString(),
         }).compileToLegacyMessage(),
       );
-      const rpcResponse = await connection().simulateTransaction(testTransaction, {
+      const rpcResponse = await connection.simulateTransaction(testTransaction, {
         replaceRecentBlockhash: true,
         sigVerify: false,
       });
@@ -353,6 +344,6 @@ export function getChainAPI(
     },
 
     config,
-    connection: connection(),
+    connection,
   };
 }
