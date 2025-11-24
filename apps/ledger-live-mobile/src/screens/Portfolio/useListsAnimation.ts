@@ -1,5 +1,5 @@
 import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { TAB_OPTIONS } from "./TabSection";
 import { track } from "~/analytics";
 import { LayoutChangeEvent } from "react-native/Libraries/Types/CoreEventTypes";
@@ -49,36 +49,8 @@ const useListsAnimation = (initialTab: TabListType) => {
   const handleLayout = (event: LayoutChangeEvent) => {
     // Get the width of the container and set it to the state so we can use the width in the animation
     const { width } = event.nativeEvent.layout;
-    const isFirstLayout = containerWidth === 0;
 
     setContainerWidth(width);
-
-    // On first layout, set positions instantly without animation to avoid clipping issues on CI
-    // On subsequent layouts, also set positions to ensure correct state after navigation
-    if (width > 0) {
-      const shouldAnimate = !isFirstLayout && hasSetInitialPositions.current;
-      hasSetInitialPositions.current = true;
-
-      if (selectedTab === TAB_OPTIONS.Assets) {
-        assetsTranslateX.value = shouldAnimate
-          ? withTiming(0, { duration: ANIMATION_DURATION })
-          : 0;
-        assetsOpacity.value = shouldAnimate ? withTiming(1, { duration: ANIMATION_DURATION }) : 1;
-        accountsTranslateX.value = shouldAnimate
-          ? withTiming(width / 3, { duration: ANIMATION_DURATION })
-          : width / 3;
-        accountsOpacity.value = shouldAnimate ? withTiming(0, { duration: ANIMATION_DURATION }) : 0;
-      } else {
-        assetsTranslateX.value = shouldAnimate
-          ? withTiming(-width / 3, { duration: ANIMATION_DURATION })
-          : -width / 3;
-        assetsOpacity.value = shouldAnimate ? withTiming(0, { duration: ANIMATION_DURATION }) : 0;
-        accountsTranslateX.value = shouldAnimate
-          ? withTiming(-width / 2, { duration: ANIMATION_DURATION })
-          : -width / 2;
-        accountsOpacity.value = shouldAnimate ? withTiming(1, { duration: ANIMATION_DURATION }) : 1;
-      }
-    }
   };
 
   const handleButtonLayout = (tab: TabListType, event: LayoutChangeEvent) => {
@@ -110,6 +82,30 @@ const useListsAnimation = (initialTab: TabListType) => {
     // Set the height of the accounts list every time there is a change in the list
     setAccountsHeight(height);
   };
+
+  const forceRefresh = useCallback(() => {
+    // Force re-render positions when screen regains focus (e.g., after navigation)
+    if (containerWidth > 0) {
+      if (selectedTab === TAB_OPTIONS.Assets) {
+        assetsTranslateX.value = 0;
+        assetsOpacity.value = 1;
+        accountsTranslateX.value = containerWidth / 3;
+        accountsOpacity.value = 0;
+      } else {
+        assetsTranslateX.value = -containerWidth / 3;
+        assetsOpacity.value = 0;
+        accountsTranslateX.value = -containerWidth / 2;
+        accountsOpacity.value = 1;
+      }
+    }
+  }, [
+    containerWidth,
+    selectedTab,
+    assetsTranslateX,
+    assetsOpacity,
+    accountsTranslateX,
+    accountsOpacity,
+  ]);
 
   const assetsAnimatedStyle = useAnimatedStyle(
     () => ({
@@ -188,6 +184,7 @@ const useListsAnimation = (initialTab: TabListType) => {
     assetsAnimatedStyle,
     accountsAnimatedStyle,
     containerHeight,
+    forceRefresh,
   };
 };
 

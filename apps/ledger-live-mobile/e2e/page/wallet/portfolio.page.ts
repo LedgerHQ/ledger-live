@@ -77,9 +77,6 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await waitFor(element(by.id(this.assetItemId(currencyName))))
-      .toExist()
-      .withTimeout(60000 * 3);
     await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));
   }

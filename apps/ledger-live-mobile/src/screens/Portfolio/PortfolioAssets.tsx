@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { shallowEqual, useSelector } from "react-redux";
 
 import { GestureResponderEvent } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
 import { track, TrackScreen } from "~/analytics";
@@ -67,7 +67,10 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     assetsAnimatedStyle,
     containerHeight,
     accountsAnimatedStyle,
+    forceRefresh,
   } = useListsAnimation(initialSelectedTab);
+
+  useFocusEffect(useCallback(() => forceRefresh(), [forceRefresh]));
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
   const showAccounts = selectedTab === TAB_OPTIONS.Accounts;
