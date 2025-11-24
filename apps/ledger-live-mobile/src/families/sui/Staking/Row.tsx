@@ -33,7 +33,11 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
       onPress={() => onPress(stakingPosition)}
     >
       <View style={[styles.icon]}>
-        <ValidatorImage size={42} name={validator.name ?? ""} url={validator.imageUrl} />
+        <ValidatorImage
+          size={42}
+          name={validator.name ?? ""}
+          url={validator.imageUrl}
+        />
       </View>
 
       <View style={styles.nameWrapper}>

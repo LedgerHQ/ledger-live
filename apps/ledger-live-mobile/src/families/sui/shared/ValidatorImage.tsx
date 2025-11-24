@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Circle from "~/components/Circle";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 
@@ -10,13 +10,25 @@ type Props = {
 };
 
 const ValidatorImage = ({ size = 64, url, name }: Props) => {
+  const [imageError, setImageError] = useState(false);
+
+  if (url && !imageError) {
+    return (
+      <Circle crop size={size}>
+        <Image
+          source={{ uri: url }}
+          style={{ width: size, height: size }}
+          onError={() => setImageError(true)}
+        />
+      </Circle>
+    );
+  }
+
+  const displayLabel = name && name.trim() ? name : "?";
+  
   return (
     <Circle crop size={size}>
-      {url ? (
-        <Image src={url} style={{ width: size, height: size }} />
-      ) : (
-        <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
-      )}
+      <FirstLetterIcon label={displayLabel} round size={size} fontSize={24} />
     </Circle>
   );
 };
