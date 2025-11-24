@@ -16,7 +16,7 @@ import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
-  MIN_USD_FOR_PROMO,
+  MIN_COUNTER_VALUE_FOR_PROMO,
   P2P_SUI_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/sui/constants";
 import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
@@ -211,7 +211,7 @@ function StakingAmount({ navigation, route }: Props) {
               )}
               {showBoostBanner &&
                 route.params.validator?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS &&
-                counterValueUSD < MIN_USD_FOR_PROMO && (
+                counterValueUSD < MIN_COUNTER_VALUE_FOR_PROMO && (
                   <View style={styles.alertContainer}>
                     <Alert type="primary">
                       <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />

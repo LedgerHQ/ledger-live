@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Button, Text } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
 import { useDispatch } from "react-redux";
@@ -25,6 +25,7 @@ const ClickableText = styled(Text)`
 const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
   const { colors } = useTheme();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { showBoostBanner, showIncentiveBanner } = useSuiStakingBanners(account.freshAddress);
 
   const handleStakeClick = () => {
@@ -67,10 +68,10 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
                 message: (
                   <Box shrink>
                     <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c100">
-                      Sui x Ledger Stake boost
+                      <Trans i18nKey="sui.staking.banner.boost.title" />
                     </Text>
                     <Text color="neutral.c90">
-                      Stake Sui with Ledger validator and get 60% boosted rewards during 60 days
+                      <Trans i18nKey="sui.staking.banner.boost.description" />
                     </Text>
                   </Box>
                 ),
@@ -83,10 +84,10 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
                       pl={2}
                       onClick={handleHowItWorksClick}
                     >
-                      How it works
+                      <Trans i18nKey="sui.staking.banner.boost.howItWorks" />
                     </ClickableText>
                     <Button variant="main" onClick={handleStakeClick}>
-                      <Trans i18nKey="Stake with Ledger" />
+                      <Trans i18nKey="sui.staking.banner.boost.stakeWithLedger" />
                     </Button>
                   </Box>
                 ),
@@ -98,12 +99,12 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
 
       {showIncentiveBanner && (
         <AccountBanner
-          title="Sui x Ledger incentives"
-          description="Your stake is eligible to the staking incentive programs. Extra rewards will be distributed at the end of the staking period"
-          cta="Stake with Ledger"
+          title={t("sui.staking.banner.incentive.title")}
+          description={t("sui.staking.banner.incentive.description")}
+          cta={t("sui.staking.banner.boost.stakeWithLedger")}
           onClick={handleStakeClick}
           display={true}
-          linkText="Learn more"
+          linkText={t("sui.staking.banner.incentive.learnMore")}
           linkUrl="https://www.ledger.com/sui-incentives"
         />
       )}

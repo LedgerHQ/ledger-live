@@ -22,7 +22,7 @@ import {
   useSuiStakingBanners,
 } from "@ledgerhq/live-common/families/sui/react";
 import {
-  MIN_USD_FOR_PROMO,
+  MIN_COUNTER_VALUE_FOR_PROMO,
   P2P_SUI_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/sui/constants";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -68,7 +68,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     if (
       isAccount(account) &&
       validator === P2P_SUI_VALIDATOR_ADDRESS &&
-      stakedAmountUSD >= MIN_USD_FOR_PROMO &&
+      stakedAmountUSD >= MIN_COUNTER_VALUE_FOR_PROMO &&
       bannerConfig.isRegisterable
     ) {
       registerPromotion(account.freshAddress);

@@ -15,7 +15,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import {
   P2P_SUI_VALIDATOR_ADDRESS,
-  MIN_USD_FOR_PROMO,
+  MIN_COUNTER_VALUE_FOR_PROMO,
 } from "@ledgerhq/live-common/families/sui/constants";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { StepProps } from "../types";
@@ -38,7 +38,9 @@ const StepAmount = ({
     to: counterValueCurrency,
     value: status?.amount?.toNumber() || 0,
   });
-  const meetsMinimumPromoAmount = counterValue ? counterValue >= MIN_USD_FOR_PROMO : false;
+  const meetsMinimumPromoAmount = counterValue
+    ? counterValue >= MIN_COUNTER_VALUE_FOR_PROMO
+    : false;
 
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
@@ -75,7 +77,7 @@ const StepAmount = ({
             transaction.recipient === P2P_SUI_VALIDATOR_ADDRESS &&
             !meetsMinimumPromoAmount && (
               <Alert type="primary" mt={4}>
-                Stake at least 100$ to be eligible for the APY boost
+                <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
               </Alert>
             )}
         </Fragment>
