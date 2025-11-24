@@ -156,9 +156,32 @@ test("shortAddressPreview", () => {
 });
 test("accountWithMandatoryTokens ethereum", () => {
   const currency = getCryptoCurrencyById("ethereum");
+  // Create 5 mock tokens for the test
+  const mockTokens: TokenCurrency[] = Array(5)
+    .fill(null)
+    .map((_, i) => ({
+      type: "TokenCurrency" as const,
+      id: `${currency.id}/erc20/mock_token_${i}`,
+      contractAddress: `0x${i.toString(16).padStart(40, "0")}`,
+      parentCurrency: currency,
+      tokenType: "erc20" as const,
+      name: `Mock Token ${i}`,
+      ticker: `MOCK${i}`,
+      units: [
+        {
+          name: `Mock Token ${i}`,
+          code: `MOCK${i}`,
+          magnitude: 18,
+        },
+      ],
+      delisted: false,
+      disableCountervalue: false,
+    }));
   const account = genAccount("", {
     currency,
     subAccountsCount: 5,
+    tokensData: mockTokens,
+    tokenIds: mockTokens.map(t => t.id),
   });
   const enhance = accountWithMandatoryTokens(account, [TOKEN]);
   const doubleEnhance = accountWithMandatoryTokens(enhance, [TOKEN]);
