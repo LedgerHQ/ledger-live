@@ -119,12 +119,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex
-              my={isSyncIncr1Enabled ? 0 : 5}
-              flexDirection="row"
-              justifyContent="flex-start"
-              alignItems="center"
-            >
+            <Flex my={5} pl={5} flexDirection="row" justifyContent="flex-start" alignItems="center">
               <NavigationHeaderBackButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
