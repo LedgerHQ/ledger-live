@@ -19093,6 +19093,8 @@ function main(ref) {
               const [first, second, third] = m;
               if (first.startsWith("coin-modules/")) {
                 coins.add(first.replace(/^.*coin-/, ""));
+              } else if (first.startsWith("live-common/src/families/")) {
+                coins.add(first.replace(/^live-common\/src\/families\//, ""));
               }
               if (second === "families") {
                 return `${second}/${third}`;
