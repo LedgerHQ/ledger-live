@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import Body from "./Body";
 import { StepId } from "./types";
 import { useDispatch } from "react-redux";
@@ -47,20 +46,11 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
       <Modal
         name="MODAL_SEND"
         centered
-        {...(newSendFlow?.enabled
-          ? {
-              width: 460,
-              bodyStyle: {
-                borderRadius: 16,
-                // avoid the modal to scale when the skeleton are displaying
-                overflowY: "scroll",
-              },
-            }
-          : {})}
         onHide={handleReset}
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => {
+          const sendData = data || {};
           if (!newSendFlow?.enabled) {
             return (
               <Body
@@ -72,20 +62,19 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
             );
           }
 
-          const sendData = (data || {}) as {
-            account?: AccountLike | null;
-            parentAccount?: Account | null;
-          };
+          // New send flow enabled
+          if (sendData.account) {
+            // Temporary placeholder while the new modal-based steps are being implemented.
+            return (
+              <div style={{ padding: 24 }}>
+                <p>New send flow (work in progress)</p>
+                <p>Selected account: {sendData.account?.id}</p>
+              </div>
+            );
+          }
 
-          return (
-            <SendWorkflow
-              onClose={onClose}
-              params={{
-                account: sendData.account ?? undefined,
-                parentAccount: sendData.parentAccount ?? undefined,
-              }}
-            />
-          );
+          // No preselected account: start the MAD-based account selection flow.
+          return <SendWorkflow onClose={onClose} params={{}} />;
         }}
       />
     </DomainServiceProvider>
