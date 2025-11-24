@@ -29,6 +29,7 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
+import Concordium from "./Concordium";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -84,6 +85,7 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
+      <Concordium />
       <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />

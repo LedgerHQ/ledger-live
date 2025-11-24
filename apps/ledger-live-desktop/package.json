@@ -57,6 +57,9 @@
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
     "@electron/fuses": "2.0.0",
+    "@concordium/id-app-sdk": "0.1.4",
+    "@walletconnect/sign-client": "2.23.0",
+    "@walletconnect/types": "2.23.0",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
