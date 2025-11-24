@@ -78,10 +78,6 @@ const TabSection: React.FC<TabSectionProps> = ({
       onLayout={handleLayout}
       width="200%"
       testID="portfolio-assets-layout"
-      {...(containerHeight !== undefined && {
-        height: containerHeight,
-        maxHeight: containerHeight,
-      })}
       overflowY="hidden"
     >
       <Animated.View

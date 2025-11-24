@@ -21,9 +21,10 @@ const useListsAnimation = (initialTab: TabListType) => {
   const [assetsButtonHeight, setAssetsButtonHeight] = useState<number>(0);
   const hasSetInitialPositions = useRef<boolean>(false);
 
-  const assetsTranslateX = useSharedValue<number>(0);
+  // Position the selected tab at 0, and the hidden tab far off-screen to prevent overlap/interference
+  const assetsTranslateX = useSharedValue<number>(initialTab === TAB_OPTIONS.Assets ? 0 : -1000);
   const assetsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Assets ? 1 : 0);
-  const accountsTranslateX = useSharedValue<number>(0);
+  const accountsTranslateX = useSharedValue<number>(initialTab === TAB_OPTIONS.Accounts ? 0 : 1000);
   const accountsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Accounts ? 1 : 0);
 
   const handleToggle = (value: TabListType) => {
@@ -50,23 +51,34 @@ const useListsAnimation = (initialTab: TabListType) => {
     const { width } = event.nativeEvent.layout;
     const isFirstLayout = containerWidth === 0;
 
+    setContainerWidth(width);
+
     // On first layout, set positions instantly without animation to avoid clipping issues on CI
-    if (isFirstLayout && width > 0 && !hasSetInitialPositions.current) {
+    // On subsequent layouts, also set positions to ensure correct state after navigation
+    if (width > 0) {
+      const shouldAnimate = !isFirstLayout && hasSetInitialPositions.current;
       hasSetInitialPositions.current = true;
+
       if (selectedTab === TAB_OPTIONS.Assets) {
-        assetsTranslateX.value = 0;
-        assetsOpacity.value = 1;
-        accountsTranslateX.value = width / 3;
-        accountsOpacity.value = 0;
+        assetsTranslateX.value = shouldAnimate
+          ? withTiming(0, { duration: ANIMATION_DURATION })
+          : 0;
+        assetsOpacity.value = shouldAnimate ? withTiming(1, { duration: ANIMATION_DURATION }) : 1;
+        accountsTranslateX.value = shouldAnimate
+          ? withTiming(width / 3, { duration: ANIMATION_DURATION })
+          : width / 3;
+        accountsOpacity.value = shouldAnimate ? withTiming(0, { duration: ANIMATION_DURATION }) : 0;
       } else {
-        assetsTranslateX.value = -width / 3;
-        assetsOpacity.value = 0;
-        accountsTranslateX.value = -width / 2;
-        accountsOpacity.value = 1;
+        assetsTranslateX.value = shouldAnimate
+          ? withTiming(-width / 3, { duration: ANIMATION_DURATION })
+          : -width / 3;
+        assetsOpacity.value = shouldAnimate ? withTiming(0, { duration: ANIMATION_DURATION }) : 0;
+        accountsTranslateX.value = shouldAnimate
+          ? withTiming(-width / 2, { duration: ANIMATION_DURATION })
+          : -width / 2;
+        accountsOpacity.value = shouldAnimate ? withTiming(1, { duration: ANIMATION_DURATION }) : 1;
       }
     }
-
-    setContainerWidth(width);
   };
 
   const handleButtonLayout = (tab: TabListType, event: LayoutChangeEvent) => {
