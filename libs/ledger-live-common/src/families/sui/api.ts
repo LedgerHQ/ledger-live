@@ -4,6 +4,7 @@
 export type SuiBannerConfig = {
   showBoostBanner: boolean;
   showIncentiveBanner: boolean;
+  isRegisterable: boolean;
 };
 
 type Promotion = {
@@ -11,7 +12,16 @@ type Promotion = {
   currencyFrom: string | null;
   currencyTo: string;
   endDate: string;
-  registerable?: boolean;
+  product: string;
+  isRegisterable: boolean;
+  displayUntil: string | null;
+};
+
+type RegistrationStatus = {
+  isRegistered: boolean;
+  meetsRequirements: boolean;
+  ticketCount: number | null;
+  totalVolume: number | null;
 };
 
 const PROMOTIONAL_API_BASE = "https://promotional-campaign.ledger-test.com/api/v1";
@@ -25,30 +35,31 @@ const SUI_PROMOTION_ID = "earn-sui-reward-dec2025";
  *
  * Logic:
  * 1. Call /promotions to check if earn-sui-reward-dec2025 is live
- * 2. If not live OR not registerable (2000 participants reached): show nothing
+ * 2. If not live OR isRegisterable=false (2000 participants reached): show nothing
  * 3. If live and if address is a valid SUI address, call /promotions/earn-sui-reward-dec2025?address=X
- * 4. If address is registered (staked amount > 30 SUI): show banner 2 ("stake eligible")
- * 5. If address not registered and promo still registerable (participants < 2000): show banner 1
+ * 4. Response body contains isRegistered and meetsRequirements:
+ *    - If meetsRequirements=true AND isRegistered=false: show boost banner (eligible but not registered yet)
+ *    - If isRegistered=true: show incentive banner (registered and eligible for rewards)
  */
 export async function fetchSuiBannerConfig(address?: string): Promise<SuiBannerConfig> {
   try {
     // Step 1: Check if promotion is live
     const promotionsResponse = await fetch(`${PROMOTIONAL_API_BASE}/promotions`);
     if (!promotionsResponse.ok) {
-      return { showBoostBanner: false, showIncentiveBanner: false };
+      return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
     }
 
     const promotions: Promotion[] = await promotionsResponse.json();
     const suiPromotion = promotions.find(p => p.promotionId === SUI_PROMOTION_ID);
 
     // Step 2: If promotion not live or not registerable, show nothing
-    if (!suiPromotion || suiPromotion.registerable === false) {
-      return { showBoostBanner: false, showIncentiveBanner: false };
+    if (!suiPromotion || !suiPromotion.isRegisterable) {
+      return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
     }
 
     // Step 3: If no address provided or invalid SUI address, show boost banner (user can still register)
     if (!address || !isValidSuiAddress(address)) {
-      return { showBoostBanner: true, showIncentiveBanner: false };
+      return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
     }
 
     // Step 4: Check if address is registered
@@ -56,19 +67,22 @@ export async function fetchSuiBannerConfig(address?: string): Promise<SuiBannerC
       `${PROMOTIONAL_API_BASE}/promotions/${SUI_PROMOTION_ID}?address=${address}`,
     );
 
-    // Step 5: If registered (200), show incentive banner. If not (404), show boost banner
-    if (registrationResponse.ok) {
-      return { showBoostBanner: false, showIncentiveBanner: true };
-    } else if (registrationResponse.status === 404) {
-      return { showBoostBanner: true, showIncentiveBanner: false };
+    if (!registrationResponse.ok) {
+      return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
     }
 
-    // Fallback for unexpected status codes
-    return { showBoostBanner: false, showIncentiveBanner: false };
+    const registrationStatus: RegistrationStatus = await registrationResponse.json();
+
+    // Step 5: Determine which banner to show based on registration status
+    if (registrationStatus.isRegistered) {
+      return { showBoostBanner: false, showIncentiveBanner: true, isRegisterable: true };
+    } else if (registrationStatus.meetsRequirements) {
+      return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
+    } else {
+      return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
+    }
   } catch (error) {
-    // Fail-safe: don't show banners on error
-    console.error("Failed to fetch Sui banner config:", error);
-    return { showBoostBanner: false, showIncentiveBanner: false };
+    return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
   }
 }
 
@@ -82,7 +96,8 @@ function isValidSuiAddress(address: string): boolean {
 
 /**
  * Registers an address for the Sui staking promotion
- * Should be called after a successful stake transaction with >= 30 SUI on P2P validator
+ * Should be called after a successful stake transaction with >= $100 USD on P2P validator
+ * Caller should check isRegisterable before calling this function
  *
  * @param address - The Sui address to register
  * @returns Promise that resolves when registration is complete
@@ -90,7 +105,6 @@ function isValidSuiAddress(address: string): boolean {
 export async function registerSuiStakingPromotion(address: string): Promise<void> {
   try {
     if (!isValidSuiAddress(address)) {
-      console.warn("Invalid SUI address provided for registration:", address);
       return;
     }
 
@@ -110,6 +124,5 @@ export async function registerSuiStakingPromotion(address: string): Promise<void
     }
   } catch (error) {
     // Fail silently - registration failure shouldn't block the user
-    console.error("Error registering for Sui staking promotion:", error);
   }
 }

@@ -2,11 +2,14 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { Button, Text } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import TopBanner from "~/renderer/components/TopBanner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
+import { canStake } from "@ledgerhq/live-common/families/sui/logic";
+import { openModal } from "~/renderer/actions/modals";
 import { radii } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
@@ -21,11 +24,23 @@ const ClickableText = styled(Text)`
 
 const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const { showBoostBanner, showIncentiveBanner } = useSuiStakingBanners(account.freshAddress);
 
   const handleStakeClick = () => {
-    // TODO: Open SUI delegation modal
-    console.log("Stake with Ledger clicked!");
+    if (!canStake(account)) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_SUI_DELEGATE", {
+          account,
+        }),
+      );
+    }
   };
 
   const handleHowItWorksClick = () => {

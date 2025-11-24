@@ -121,10 +121,10 @@ export const mapStakingPositions = (
 
 /**
  * Hook to get Sui staking banner configuration
- * Returns both boost and incentive banner flags
+ * Returns both boost and incentive banner flags, plus isRegisterable status
  *
  * Uses React Query for caching - cache is invalidated after successful stake registration
- * Defaults to false for both flags while loading or on error (fail-safe)
+ * Defaults to false for all flags while loading or on error (fail-safe)
  *
  * @param address - The Sui address to check registration status for
  */
@@ -136,14 +136,15 @@ export function useSuiStakingBanners(address?: string): SuiBannerConfig {
     retry: 2,
   });
 
-  return data ?? { showBoostBanner: false, showIncentiveBanner: false };
+  return data ?? { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
 }
 
 /**
  * Hook to handle Sui staking promotion registration
  * Returns a function that registers the address and invalidates the banner cache
+ * Caller should check isRegisterable before calling
  *
- * Call this after a successful stake transaction with >= 30 SUI on P2P validator
+ * Call this after a successful stake transaction with >= $100 USD on P2P validator
  */
 export function useSuiStakingPromotionRegistration() {
   const queryClient = useQueryClient();

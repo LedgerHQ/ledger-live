@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
@@ -13,10 +15,17 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { StepProps } from "../types";
-// import { useSuiStakingPromotionRegistration } from "@ledgerhq/live-common/families/sui/react";
-// import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
-// import { BigNumber } from "bignumber.js";
+import {
+  useSuiStakingPromotionRegistration,
+  useSuiStakingBanners,
+} from "@ledgerhq/live-common/families/sui/react";
+import {
+  MIN_USD_FOR_PROMO,
+  P2P_SUI_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/sui/constants";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -35,7 +44,15 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  // const registerPromotion = useSuiStakingPromotionRegistration();
+  const bannerConfig = useSuiStakingBanners(account?.freshAddress);
+  const registerPromotion = useSuiStakingPromotionRegistration();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const counterValue = useCalculate({
+    from: account?.currency,
+    to: counterValueCurrency,
+    value: optimisticOperation?.value?.toNumber() || 0,
+  });
 
   useEffect(() => {
     const voteAccAddress = transaction?.recipient;
@@ -48,19 +65,26 @@ function StepConfirmation({
         flow: "stake",
       });
 
-      // TODO: Uncomment when ready to enable promotion registration
-      // Register for promotion if staking >= 30 SUI on P2P validator
-      // const stakedAmount = new BigNumber(transaction?.amount || 0);
-      // const MIN_AMOUNT = new BigNumber(30).times(1e9); // 30 SUI in smallest unit
-      // if (
-      //   account &&
-      //   voteAccAddress === P2P_SUI_VALIDATOR_ADDRESS &&
-      //   stakedAmount.gte(MIN_AMOUNT)
-      // ) {
-      //   registerPromotion(account.freshAddress);
-      // }
+      const stakedAmountUSD = counterValue || 0;
+
+      if (
+        account &&
+        voteAccAddress === P2P_SUI_VALIDATOR_ADDRESS &&
+        stakedAmountUSD >= MIN_USD_FOR_PROMO &&
+        bannerConfig.isRegisterable
+      ) {
+        registerPromotion(account.freshAddress);
+      }
     }
-  }, [optimisticOperation, source, transaction?.recipient, transaction?.amount, account]);
+  }, [
+    optimisticOperation,
+    source,
+    transaction?.recipient,
+    counterValue,
+    account,
+    bannerConfig.isRegisterable,
+    registerPromotion,
+  ]);
 
   if (optimisticOperation) {
     return (

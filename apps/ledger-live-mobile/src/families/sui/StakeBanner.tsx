@@ -24,10 +24,12 @@ const SuiStakeBanner: React.FC<Props> = ({ account }) => {
       NavigatorName.SuiDelegateFlow,
       {
         screen: ScreenName.SuiStakingValidator,
-        params: { accountId: account.id },
+        params: {
+          account,
+        },
       },
     );
-  }, [navigation, account.id]);
+  }, [navigation, account]);
 
   const handleHowItWorksClick = useCallback(() => {
     Linking.openURL("https://www.ledger.com/sui-staking-boost");
