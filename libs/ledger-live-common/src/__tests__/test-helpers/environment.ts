@@ -9,6 +9,7 @@ import { setWalletAPIVersion } from "../../wallet-api/version";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
+  "aleo",
   "avalanche_c_chain",
   "axelar",
   "stargaze",
