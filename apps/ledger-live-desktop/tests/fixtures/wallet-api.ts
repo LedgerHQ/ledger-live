@@ -573,6 +573,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "bitcoin_regtest",
+    ticker: "BTC",
+    name: "Bitcoin Regtest",
+    family: "bitcoin",
+    color: "#00ff00",
+    decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
     id: "ethereum_sepolia",
     ticker: "ETH",
     name: "Ethereum Sepolia",
