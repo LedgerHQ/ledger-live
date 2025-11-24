@@ -34,7 +34,6 @@ export class ModularScanAccountsDrawer extends Drawer {
 
   @step("Select first account")
   async selectFirstAccount() {
-    const stopRecovery = this.recoverFromGetAppAndVersionError();
     await this.confirmButton.waitFor({ state: "visible" });
     if (await this.deselectAllButton.isVisible()) {
       await this.deselectAllButton.click();
@@ -42,6 +41,5 @@ export class ModularScanAccountsDrawer extends Drawer {
     }
     await this.clickConfirmButton();
     await expect(this.successAddLabel).toBeVisible();
-    stopRecovery();
   }
 }
