@@ -76,11 +76,8 @@ export async function fetchSuiBannerConfig(address?: string): Promise<SuiBannerC
     // Step 5: Determine which banner to show based on registration status
     if (registrationStatus.isRegistered) {
       return { showBoostBanner: false, showIncentiveBanner: true, isRegisterable: true };
-    } else if (registrationStatus.meetsRequirements) {
-      return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
-    } else {
-      return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
     }
+    return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
   } catch (error) {
     return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
   }
