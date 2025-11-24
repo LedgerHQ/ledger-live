@@ -1,33 +1,33 @@
-import React, { memo, useMemo, useState } from "react";
-import { useTheme } from "styled-components/native";
+import {
+  KeysPriceChange,
+  MarketCoinDataChart,
+  MarketCurrencyChartDataRequestParams,
+  MarketCurrencyData,
+} from "@ledgerhq/live-common/market/utils/types";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
-import { FlatList, Image, RefreshControl } from "react-native";
-import { useTranslation } from "react-i18next";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import SafeAreaView from "~/components/SafeAreaView";
-import { useLocale } from "~/context/Locale";
 import { counterValueFormatter, getDateFormatter } from "LLM/features/Market/utils";
-import DeltaVariation from "../../components/DeltaVariation";
-import MarketStats from "./components/MarketStats";
-import AccountRow from "~/screens/Accounts/AccountRow";
+import React, { memo, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FlatList, Image, RefreshControl } from "react-native";
+import { useTheme } from "styled-components/native";
+import { Item } from "~/components/Graph/types";
+import { MarketQuickActions } from "~/components/MarketQuickActions";
+import SafeAreaView from "~/components/SafeAreaView";
 import Button from "~/components/wrappedUi/Button";
-import MarketGraph from "./components/MarketGraph";
 import { ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { MarketQuickActions } from "~/components/MarketQuickActions";
-import BackButton from "./components/BackButton";
-import { Item } from "~/components/Graph/types";
-import {
-  MarketCurrencyData,
-  MarketCoinDataChart,
-  KeysPriceChange,
-  MarketCurrencyChartDataRequestParams,
-} from "@ledgerhq/live-common/market/utils/types";
-import usePullToRefresh from "../../hooks/usePullToRefresh";
-import useMarketDetailViewModel from "./useMarketDetailViewModel";
+import { useLocale } from "~/context/Locale";
+import AccountRow from "~/screens/Accounts/AccountRow";
+import DeltaVariation from "../../components/DeltaVariation";
 import { StyledIconContainer } from "../../components/MarketRowItem/MarketRowItem.styled";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import usePullToRefresh from "../../hooks/usePullToRefresh";
+import BackButton from "./components/BackButton";
+import MarketGraph from "./components/MarketGraph";
+import MarketStats from "./components/MarketStats";
 import TitleWithTooltip from "./components/TitleWithTooltip";
+import useMarketDetailViewModel from "./useMarketDetailViewModel";
 
 interface ViewProps {
   loading: boolean;
@@ -87,7 +87,7 @@ function View({
                 />
               </StyledIconContainer>
             )}
-            <TitleWithTooltip name={name} image={image} />
+            <TitleWithTooltip name={name} />
           </Flex>
         }
         TopRightSection={

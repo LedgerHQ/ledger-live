@@ -1,14 +1,12 @@
-import React, { useState, useCallback } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Pressable, StyleSheet, Image } from "react-native";
-import { StyledIconContainer } from "LLM/features/Market/components/MarketRowItem/MarketRowItem.styled";
+import React, { useCallback, useState } from "react";
+import { Pressable, StyleSheet } from "react-native";
 
 interface TitleWithTooltipProps {
   name?: string;
-  image?: string;
 }
 
-const TitleWithTooltip: React.FC<TitleWithTooltipProps> = ({ name, image }) => {
+const TitleWithTooltip: React.FC<TitleWithTooltipProps> = ({ name }) => {
   const [showTitleTooltip, setShowTitleTooltip] = useState(false);
 
   const handleLongPress = useCallback(() => {
@@ -45,22 +43,7 @@ const TitleWithTooltip: React.FC<TitleWithTooltipProps> = ({ name, image }) => {
           maxWidth="90%"
           style={styles.tooltip}
         >
-          {image && (
-            <StyledIconContainer>
-              <Image
-                source={{ uri: image }}
-                style={{ width: 32, height: 32 }}
-                resizeMode="contain"
-              />
-            </StyledIconContainer>
-          )}
-          <Text
-            paddingLeft={2}
-            variant="large"
-            fontSize={18}
-            color="neutral.c00"
-            ml={image ? 2 : 0}
-          >
+          <Text variant="body" fontSize={14} color="neutral.c00">
             {name}
           </Text>
         </Flex>
