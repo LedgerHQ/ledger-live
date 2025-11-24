@@ -382,6 +382,7 @@
     "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/exchange/swap/hooks/wrapper.tsx",
+    "src/families/aleo/types.ts",
     "src/families/aptos/config.ts",
     "src/families/aptos/constants.ts",
     "src/families/aptos/logic.ts",

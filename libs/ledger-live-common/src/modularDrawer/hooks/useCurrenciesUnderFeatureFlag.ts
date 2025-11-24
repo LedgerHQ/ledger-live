@@ -7,6 +7,7 @@ import useEnv from "../../hooks/useEnv";
 export function useCurrenciesUnderFeatureFlag() {
   const mock = useEnv("MOCK");
 
+  const aleo = useFeature("currencyAleo");
   const aptos = useFeature("currencyAptos");
   const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
@@ -88,6 +89,7 @@ export function useCurrenciesUnderFeatureFlag() {
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aleo,
       aptos,
       aptos_testnet: aptosTestnet,
       axelar,
@@ -168,6 +170,7 @@ export function useCurrenciesUnderFeatureFlag() {
       concordium_testnet: concordiumTestnet,
     }),
     [
+      aleo,
       aptos,
       aptosTestnet,
       axelar,
