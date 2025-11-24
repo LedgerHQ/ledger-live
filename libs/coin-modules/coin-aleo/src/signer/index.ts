@@ -1,1 +1,1 @@
-export { default as getAddress } from "./getAddress";
+export { default } from "./getAddress";

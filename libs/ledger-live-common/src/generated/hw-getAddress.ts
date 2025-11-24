@@ -1,3 +1,4 @@
+import { resolver as aleo } from "../families/aleo/setup";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as aptos } from "../families/aptos/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
@@ -27,6 +28,7 @@ import { resolver as sui } from "../families/sui/setup";
 import { resolver as mina } from "../families/mina/setup";
 
 export default {
+  aleo,
   algorand,
   aptos,
   bitcoin,
