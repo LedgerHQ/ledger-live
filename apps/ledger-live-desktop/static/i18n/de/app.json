@@ -1446,6 +1446,12 @@
         "description" : "Von jeder Börse oder Wallet direkt zu deinem Ledger-Gerät.",
         "actionCompletedPopupLabel" : "Vermögenswerte übertragen"
       },
+      "syncAccounts" : {
+        "title" : "Deine Kryptokonten synchronisieren",
+        "titleCompleted" : "Deine Konten sind synchronisiert",
+        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
+        "actionCompletedPopupLabel" : "Konten synchronisiert"
+      },
       "recover" : {
         "title" : "Ledger Recover abonnieren",
         "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
+      "nearIntentsAcceptTerms" : "Durch Bestätigen dieser Transaktion \nakzeptiere ich die <0>Nutzungsbedingungen von SwapKit</0>, der Technologie, die NEAR Intents zugrunde liegt",
       "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
       "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
       "changellySimplifiedAcceptTerms" : "Durch Validieren dieser Transaktion stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly kann AML-/KYC-Verfahren anwenden, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
@@ -2279,6 +2286,7 @@
         "label" : "Zu belastendes Konto",
         "parentAccount" : "1. {{currencyName}} Konto wählen",
         "token" : "2. Token auswählen",
+        "errorLoadingTokens" : "Fehler beim Laden der Token",
         "verifyTokenType" : "Bitte vergewissere dich, dass <0>{{token}}</0> ein <0>{{tokenType}}</0>-Token ist. Jeder andere Kryptovermögenswert, der an ein {{currency}}-Konto gesendet wird, kann verloren gehen.",
         "warningTokenType" : "Bitte sende nur <0>{{ticker}}</0> oder <0>{{tokenType}}</0>-Token an {{currency}}-Konten. Das Versenden anderer Kryptovermögenswerte kann zu deren dauerhaftem Verlust führen.",
         "depositFromCexBannerTitle" : "Kryptos von deinem Coinbase-Konto einzahlen"
@@ -5160,7 +5168,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Wiederherstellungsphrase",
           "hideRecoveryPhrase" : "Wiederherstellungsphrase ausblenden",
-          "pairNano" : "Nano verbinden"
+          "pairNano" : "Nano verbinden",
+          "secureYourCrypto" : "Deine Kryptos schützen"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5452,6 +5461,29 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Deine Kryptos schützen",
+            "description" : "Übertrage deine ersten Kryptos von einer Börse oder Wallet in dein Ledger Wallet, um sie optimal zu schützen.",
+            "buttons" : {
+              "next" : "Meine Kryptos schützen",
+              "nextSecondary" : "Vielleicht später",
+              "prev" : "Vorheriger Schritt"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Alles ist an Ort und Stelle",
+            "description" : "Dein Ledger-Gerät ist startklar. Falls du Krypto geschickt hast, empfängst du sie in wenigen Minuten.",
+            "buttons" : {
+              "next" : "Weiter"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Alles ist an Ort und Stelle",
+            "description" : "Dein Ledger-Gerät ist startklar. Jetzt kannst du deine Assets damit schützen.",
+            "buttons" : {
+              "next" : "Weiter"
             }
           }
         }
@@ -5818,6 +5850,62 @@
         "quickFix" : "Schnelle Abhilfe: Schick ein paar Assets an dich selbst, um sie zu bündeln.",
         "warning" : "Auf deinem Konto sind zu viele kleine UTXOs. Schick ein paar Assets an dich selbst, um sie zu konsolidieren.",
         "consolidate" : "Konsolidieren"
+      },
+      "pendingTransactions" : {
+        "title" : "Schwebende Transaktionen ({{count}})",
+        "incoming" : {
+          "title" : "Eingehende Angebote ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ausgehende Angebote ({{count}})"
+        },
+        "pending" : "Ausstehend",
+        "expired" : "Abgelaufen",
+        "status" : {
+          "label" : "Status",
+          "expired" : "Abgelaufen",
+          "incoming" : "Eingehend",
+          "outgoing" : "Ausgehend"
+        },
+        "from" : "Von",
+        "to" : "An",
+        "memo" : "Memo",
+        "noMemo" : "Kein Memo",
+        "date" : "Datum",
+        "expiresAt" : "Läuft ab am",
+        "expiresIn" : "Läuft ab in",
+        "amount" : "Betrag",
+        "transaction" : "Transaktion",
+        "viewTransaction" : "Transaktion anzeigen",
+        "action" : "Aktion",
+        "accept" : "Akzeptieren",
+        "withdraw" : "Abheben",
+        "reject" : "Ablehnen",
+        "deviceAppModal" : {
+          "title" : "Angebot {{action}}",
+          "description" : "Bitte öffne die Canton-App auf deinem Ledger-Gerät, um dieses Angebot zu {{action}}.",
+          "contractId" : "Vertrags-ID",
+          "cancel" : "Abbrechen",
+          "openApp" : "Canton-App öffnen",
+          "opening" : "Wird geöffnet …",
+          "noDevice" : "Kein Gerät angeschlossen",
+          "appOpenError" : "Die Canton-App konnte nicht geöffnet werden. Bitte versuche es noch einmal.",
+          "processing" : "Vorgang „{{action}}“ wird bearbeitet …",
+          "success" : {
+            "accept" : {
+              "title" : "Angebot angenommen",
+              "description" : "Das Transferangebot wurde angenommen."
+            },
+            "reject" : {
+              "title" : "Angebot abgelehnt",
+              "description" : "Das Transferangebot wurde abgelehnt."
+            },
+            "withdraw" : {
+              "title" : "Angebot zurückgezogen",
+              "description" : "Das Transferangebot wurde zurückgezogen."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7054,6 +7142,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Betrag reduziert, um UTXO-Beschränkungen zu erfüllen."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Betrag zu hoch für UTXO-Beschränkungen."
     }
   },
   "cryptoOrg" : {
