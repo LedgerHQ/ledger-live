@@ -41,18 +41,18 @@ import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import {
-    useFetchCurrencyAll,
-    useFetchCurrencyFrom,
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import {
-    hasCompletedOnboardingSelector,
-    hasSeenAnalyticsOptInPromptSelector,
-    shareAnalyticsSelector,
-    areSettingsLoaded,
+  hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  shareAnalyticsSelector,
+  areSettingsLoaded,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -259,13 +259,13 @@ export default function Default() {
       return;
     }
 
-    const wasHardReset = window.sessionStorage.getItem("hard-reset-performed") === "1";
+    const wasHardReset = window.localStorage.getItem("hard-reset") === "1";
 
     // If we just did a hard reset and onboarding is not completed, force redirect to onboarding
     // even if we're on the settings page (where the reset button is)
     if (wasHardReset && !hasCompletedOnboarding) {
       history.replace("/onboarding");
-      window.sessionStorage.removeItem("hard-reset-performed");
+      window.localStorage.removeItem("hard-reset");
       updateIdentify();
       return;
     }

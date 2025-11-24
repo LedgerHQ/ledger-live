@@ -30,9 +30,6 @@ export async function hardReset() {
 export function useHardReset() {
   return () => {
     window.localStorage.setItem("hard-reset", "1");
-    // Set a flag in sessionStorage to track that we just did a reset
-    // This persists across the reload and helps with redirect logic
-    window.sessionStorage.setItem("hard-reset-performed", "1");
     reload();
   };
 }

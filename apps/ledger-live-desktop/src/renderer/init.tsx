@@ -42,7 +42,7 @@ import {
   languageSelector,
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
-  filterTokenOperationsZeroAmountSelector
+  filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
@@ -115,7 +115,7 @@ async function init() {
 
   if (wasHardReset) {
     await hardReset();
-    window.localStorage.removeItem("hard-reset");
+    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
   }
 
   const store = createStore({
@@ -171,11 +171,11 @@ async function init() {
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
-  
+
   if (wasHardReset) {
     settingsToLoad.hasCompletedOnboarding = false;
   }
-  
+
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
   }
