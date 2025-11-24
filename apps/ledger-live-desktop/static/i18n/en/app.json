@@ -6386,7 +6386,11 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+    },
+    "SwapQuoteLowLiquidity": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one."
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
