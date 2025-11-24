@@ -8191,7 +8191,11 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+    },
+    "swapRateExpiredError": {
+      "title": "Rate Expired",
+      "description": "Exchange rate expired. Please refresh and try again."
     },
     "default": {
       "title": "Something went wrong",
