@@ -4968,6 +4968,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  aleo: {
+    type: "CryptoCurrency",
+    id: "aleo",
+    coinType: CoinType.ALEO,
+    name: "Aleo",
+    managerAppName: "Aleo",
+    ticker: "ALEO",
+    scheme: "aleo",
+    color: "#121212",
+    family: "aleo",
+    units: [
+      {
+        name: "Aleo",
+        code: "ALEO",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.aleo.org/transaction/$hash",
+        address: "https://explorer.aleo.org/address/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
