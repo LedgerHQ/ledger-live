@@ -1,181 +1,63 @@
-import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { TAB_OPTIONS } from "./TabSection";
-import { track } from "~/analytics";
 import { LayoutChangeEvent } from "react-native/Libraries/Types/CoreEventTypes";
-import { useDispatch } from "react-redux";
-import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 
 export type TabListType = (typeof TAB_OPTIONS)[keyof typeof TAB_OPTIONS];
 
-const ANIMATION_DURATION = 250;
+/**
+ * Default height for the lists and buttons. Set to ~400px which is approximately the max height
+ * for the limited list display. This allows content to render immediately without timing issues.
+ */
+export const DEFAULT_HEIGHT = 400;
 
-const useListsAnimation = (initialTab: TabListType) => {
-  const dispatch = useDispatch();
-  const [selectedTab, setSelectedTab] = useState<TabListType>(initialTab);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
-  const [assetsHeight, setAssetsHeight] = useState<number>(0);
-  const [accountsHeight, setAccountsHeight] = useState<number>(0);
-  const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
+/**
+ * Hook to manage height calculations for the portfolio tabs animation.
+ * Tab state management is handled by the parent component (PortfolioAssets).
+ *
+ * @param selectedTab - The currently selected tab (controlled by parent)
+ */
+const useListsAnimation = (selectedTab: TabListType) => {
+  const [assetsHeight, setAssetsHeight] = useState<number>(DEFAULT_HEIGHT);
+  const [accountsHeight, setAccountsHeight] = useState<number>(DEFAULT_HEIGHT);
   const [accountsButtonHeight, setAccountsButtonHeight] = useState<number>(0);
   const [assetsButtonHeight, setAssetsButtonHeight] = useState<number>(0);
-  const hasSetInitialPositions = useRef<boolean>(false);
-
-  const assetsTranslateX = useSharedValue<number>(0);
-  const assetsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Assets ? 1 : 0);
-  const accountsTranslateX = useSharedValue<number>(0);
-  const accountsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Accounts ? 1 : 0);
-
-  const handleToggle = (value: TabListType) => {
-    setSelectedTab(value);
-    dispatch(setSelectedTabPortfolioAssets(value));
-
-    // Only update if we have actual measurements
-    const isAssets = value === TAB_OPTIONS.Assets;
-    const height = isAssets ? assetsHeight : accountsHeight;
-    const buttonHeight = isAssets ? assetsButtonHeight : accountsButtonHeight;
-
-    if (height > 0 || buttonHeight > 0) {
-      setContainerHeight(height + buttonHeight);
-    }
-
-    track("button_clicked", {
-      button: value,
-      page: "Wallet",
-    });
-  };
-
-  const handleLayout = (event: LayoutChangeEvent) => {
-    // Get the width of the container and set it to the state so we can use the width in the animation
-    const { width } = event.nativeEvent.layout;
-    const isFirstLayout = containerWidth === 0;
-
-    // On first layout, set positions instantly without animation to avoid clipping issues on CI
-    if (isFirstLayout && width > 0 && !hasSetInitialPositions.current) {
-      hasSetInitialPositions.current = true;
-      if (selectedTab === TAB_OPTIONS.Assets) {
-        assetsTranslateX.value = 0;
-        assetsOpacity.value = 1;
-        accountsTranslateX.value = width / 3;
-        accountsOpacity.value = 0;
-      } else {
-        assetsTranslateX.value = -width / 3;
-        assetsOpacity.value = 0;
-        accountsTranslateX.value = -width / 2;
-        accountsOpacity.value = 1;
-      }
-    }
-
-    setContainerWidth(width);
-  };
 
   const handleButtonLayout = (tab: TabListType, event: LayoutChangeEvent) => {
-    // Get Height of the buttons section
     const { height } = event.nativeEvent.layout;
-    if (height === 0) return; // avoid layout blinking when switching tabs
+    if (height === 0) return;
     if (tab === TAB_OPTIONS.Assets) setAssetsButtonHeight(height);
     else setAccountsButtonHeight(height);
   };
 
-  useEffect(() => {
-    // Set the height of the container based on the selected tab
-    // Only update if we have actual measurements (avoid setting to 0 on first render)
-    const isAssets = selectedTab === TAB_OPTIONS.Assets;
-    const height = isAssets ? assetsHeight : accountsHeight;
-    const buttonHeight = isAssets ? assetsButtonHeight : accountsButtonHeight;
-
-    if (height > 0 || buttonHeight > 0) {
-      setContainerHeight(height + buttonHeight);
+  const handleAssetsContentSizeChange = (_width: number, height: number) => {
+    if (height > 0) {
+      setAssetsHeight(height);
     }
-  }, [selectedTab, assetsHeight, accountsHeight, assetsButtonHeight, accountsButtonHeight]);
-
-  const handleAssetsContentSizeChange = (width: number, height: number) => {
-    // Set the height of the assets list every time there is a change in the list
-    setAssetsHeight(height);
   };
 
-  const handleAccountsContentSizeChange = (width: number, height: number) => {
-    // Set the height of the accounts list every time there is a change in the list
-    setAccountsHeight(height);
+  const handleAccountsContentSizeChange = (_width: number, height: number) => {
+    if (height > 0) {
+      setAccountsHeight(height);
+    }
   };
 
-  const assetsAnimatedStyle = useAnimatedStyle(
-    () => ({
-      transform: [{ translateX: assetsTranslateX.value }],
-      opacity: assetsOpacity.value,
-    }),
-    [assetsTranslateX, assetsOpacity],
-  );
+  // Calculate the current height based on selected tab
+  const currentHeight =
+    selectedTab === TAB_OPTIONS.Assets
+      ? assetsHeight + assetsButtonHeight
+      : accountsHeight + accountsButtonHeight;
 
-  const accountsAnimatedStyle = useAnimatedStyle(
-    () => ({
-      transform: [{ translateX: accountsTranslateX.value }],
-      opacity: accountsOpacity.value,
-    }),
-    [accountsTranslateX, accountsOpacity],
-  );
-
-  useEffect(() => {
-    // Skip animation if containerWidth is not yet measured or initial positions not set
-    if (containerWidth === 0 || !hasSetInitialPositions.current) {
-      return;
-    }
-
-    // Use requestAnimationFrame to ensure layout is complete before starting animations
-    const rafId = requestAnimationFrame(() => {
-      if (selectedTab === TAB_OPTIONS.Assets) {
-        // Assets tab is selected so here is the default position
-        assetsTranslateX.value = withTiming(0, {
-          duration: ANIMATION_DURATION,
-        });
-        assetsOpacity.value = withTiming(1, {
-          duration: ANIMATION_DURATION,
-        });
-        // Accounts tab is not selected so here is the end position
-        accountsTranslateX.value = withTiming(containerWidth / 3, {
-          duration: ANIMATION_DURATION,
-        });
-        accountsOpacity.value = withTiming(0, {
-          duration: ANIMATION_DURATION,
-        });
-      } else {
-        // Assets tab is not selected so here is the end position
-        assetsTranslateX.value = withTiming(-containerWidth / 3, {
-          duration: ANIMATION_DURATION,
-        });
-        assetsOpacity.value = withTiming(0, {
-          duration: ANIMATION_DURATION,
-        });
-        // Accounts tab is selected so here is the default position
-        accountsTranslateX.value = withTiming(-containerWidth / 2, {
-          duration: ANIMATION_DURATION,
-        });
-        accountsOpacity.value = withTiming(1, {
-          duration: ANIMATION_DURATION,
-        });
-      }
-    });
-
-    return () => cancelAnimationFrame(rafId);
-  }, [
-    selectedTab,
-    containerWidth,
-    assetsTranslateX,
-    accountsTranslateX,
-    assetsOpacity,
-    accountsOpacity,
-  ]);
+  // Pre-calculated heights for each tab
+  const assetsFullHeight = assetsHeight + assetsButtonHeight;
+  const accountsFullHeight = accountsHeight + accountsButtonHeight;
 
   return {
-    handleToggle,
-    handleLayout,
     handleButtonLayout,
     handleAssetsContentSizeChange,
     handleAccountsContentSizeChange,
-    selectedTab,
-    assetsAnimatedStyle,
-    accountsAnimatedStyle,
-    containerHeight,
+    currentHeight,
+    assetsFullHeight,
+    accountsFullHeight,
   };
 };
 
