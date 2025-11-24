@@ -1,3 +1,25 @@
+/**
+ * @module accounts
+ *
+ * This module is responsible for synchronizing account data across Live instances in the
+ * WalletSync system. It manages the lifecycle of accounts (adding, removing, and
+ * maintaining account information) to ensure that all synchronized Live instances have
+ * access to the same set of accounts.
+ *
+ * Key responsibilities:
+ * - Tracks locally added/removed accounts and prepares them for synchronization
+ * - Resolves incoming account updates from other Live instances by converting account
+ *   descriptors into full Account objects through bridge synchronization
+ * - Manages non-imported accounts with exponential backoff retry logic for accounts
+ *   that failed to import (e.g., due to network issues, invalid data, or missing currencies)
+ * - Handles account ID migrations and deduplication when accounts resolve to the same ID
+ * - Performs full account synchronization to validate account data and populate
+ *   all necessary fields before adding accounts to the local wallet
+ *
+ * The module maintains a list of accounts and tracks failed import attempts,
+ * allowing the system to retry importing accounts that previously failed with
+ * an exponential backoff strategy to avoid excessive retry attempts.
+ */
 import { Account, AccountBridge, BridgeCacheSystem, TransactionCommon } from "@ledgerhq/types-live";
 import { WalletSyncDataManager, WalletSyncDataManagerResolutionContext } from "../types";
 import { z } from "zod";
