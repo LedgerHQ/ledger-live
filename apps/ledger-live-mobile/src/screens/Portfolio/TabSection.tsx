@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { TabSelector } from "@ledgerhq/native-ui";
@@ -78,11 +78,16 @@ const TabSection: React.FC<TabSectionProps> = ({
       onLayout={handleLayout}
       width="200%"
       testID="portfolio-assets-layout"
-      height={containerHeight}
-      maxHeight={containerHeight}
+      {...(containerHeight !== undefined && {
+        height: containerHeight,
+        maxHeight: containerHeight,
+      })}
       overflowY="hidden"
     >
-      <Animated.View style={[{ flex: 1 }, assetsAnimatedStyle]}>
+      <Animated.View
+        style={[{ flex: 1 }, assetsAnimatedStyle]}
+        pointerEvents={showAssets ? "auto" : "none"}
+      >
         <AssetsListView
           sourceScreenName={ScreenName.Portfolio}
           limitNumberOfAssets={maxItemsToDysplay}
@@ -99,7 +104,10 @@ const TabSection: React.FC<TabSectionProps> = ({
           </Box>
         )}
       </Animated.View>
-      <Animated.View style={[{ flex: 1 }, accountsAnimatedStyle]}>
+      <Animated.View
+        style={[{ flex: 1 }, accountsAnimatedStyle]}
+        pointerEvents={showAccounts ? "auto" : "none"}
+      >
         <AccountsListView
           sourceScreenName={ScreenName.Portfolio}
           limitNumberOfAccounts={maxItemsToDysplay}
@@ -129,4 +137,4 @@ const TabSection: React.FC<TabSectionProps> = ({
   </>
 );
 
-export default memo(TabSection);
+export default TabSection;
