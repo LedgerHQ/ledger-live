@@ -7,11 +7,11 @@ import {
 import { SpeculosDevice } from "./speculos";
 import https from "https";
 
-const { SEED, GITHUB_TOKEN, AWS_ROLE, CLUSTER, SPECULOS_IMAGE_TAG } = process.env;
+const { SEED, GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
-const GITHUB_REF = "main";
+const GITHUB_REF = "TSDINT-990";
 const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
@@ -152,8 +152,6 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
       coin_app_version: appVersion,
       device: reverseModelMap[model],
       device_os_version: firmware,
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
       seed: SEED,
       run_id: runId,
       additional_args,
@@ -192,8 +190,6 @@ export async function releaseSpeculosDeviceCI(runId: string) {
     ref: GITHUB_REF,
     inputs: {
       run_id: runId.toString(),
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
     },
   };
   await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });

@@ -450,8 +450,6 @@ jobs:
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
-          CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
           GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
