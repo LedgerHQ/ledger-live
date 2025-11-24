@@ -1,4 +1,4 @@
-import { expect, waitFor, element, by } from "detox";
+import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
