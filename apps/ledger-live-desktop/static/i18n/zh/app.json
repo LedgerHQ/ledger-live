@@ -1446,6 +1446,12 @@
         "description" : "从任何交易所或钱包直接转入您的 Ledger。",
         "actionCompletedPopupLabel" : "资产已转移"
       },
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "actionCompletedPopupLabel" : "账户已同步"
+      },
       "recover" : {
         "title" : "订阅 Ledger Recover",
         "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
+      "nearIntentsAcceptTerms" : "验证此交易，\n即表示我接受 <0>SwapKit 的使用条款</0>（为 Near Intents 提供技术支持）",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
       "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
       "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服。</2>",
@@ -2279,6 +2286,7 @@
         "label" : "信贷账户",
         "parentAccount" : "1. 选择 {{currencyName}} 账户",
         "token" : "2. 选择代币",
+        "errorLoadingTokens" : "加载代币时出错",
         "verifyTokenType" : "请验证 <0>{{token}}</0> 是 <0>{{tokenType}}</0> 代币。发送到 {{currency}} 账户的任何其他类型的加密资产都可能被丢失。",
         "warningTokenType" : "请只发送 <0>{{ticker}}</0> 或 <0>{{tokenType}}</0> 代币到 {{currency}} 账户。发送其他加密资产可能会导致资金的永久损失",
         "depositFromCexBannerTitle" : "从您的比特币基地（Coinbase）账户存入加密货币"
@@ -5160,7 +5168,8 @@
           "pinCode" : "识别码",
           "recoveryPhrase" : "恢复短语",
           "hideRecoveryPhrase" : "隐藏恢复短语",
-          "pairNano" : "连接 Nano"
+          "pairNano" : "连接 Nano",
+          "secureYourCrypto" : "保护您的加密货币"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5452,6 +5461,29 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "保护您的加密货币",
+            "description" : "开始将您的加密货币从交易所或钱包转到 Ledger Wallet，以确保最大程度的安全性。",
+            "buttons" : {
+              "next" : "保护我的加密货币",
+              "nextSecondary" : "以后再说",
+              "prev" : "上一步"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "一切准备就绪",
+            "description" : "您的 Ledger 设备已经就绪。如果您已发送加密货币，几分钟内就会收到。",
+            "buttons" : {
+              "next" : "继续"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "一切准备就绪",
+            "description" : "您的 Ledger 设备已经就绪，现可使用它来保护您的资产。",
+            "buttons" : {
+              "next" : "继续"
             }
           }
         }
@@ -5818,6 +5850,62 @@
         "quickFix" : "快速解决方案：向自己发送一些资金进行合并。",
         "warning" : "您的账户中有过多小额 UTXO。向自己发送一些资金进行合并。",
         "consolidate" : "合并"
+      },
+      "pendingTransactions" : {
+        "title" : "待处理交易 ({{count}})",
+        "incoming" : {
+          "title" : "收到的报价 ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "发出的报价 ({{count}})"
+        },
+        "pending" : "待处理",
+        "expired" : "已逾期",
+        "status" : {
+          "label" : "状态",
+          "expired" : "已逾期",
+          "incoming" : "收到",
+          "outgoing" : "发出"
+        },
+        "from" : "从",
+        "to" : "到",
+        "memo" : "备注",
+        "noMemo" : "无备注",
+        "date" : "日期",
+        "expiresAt" : "到期时间",
+        "expiresIn" : "剩余时间",
+        "amount" : "数额",
+        "transaction" : "交易",
+        "viewTransaction" : "查看交易",
+        "action" : "操作",
+        "accept" : "接受",
+        "withdraw" : "提取",
+        "reject" : "拒绝",
+        "deviceAppModal" : {
+          "title" : "{{action}}报价",
+          "description" : "请在您的 Ledger 设备上打开 Canton 应用程序以{{action}}此报价。",
+          "contractId" : "合约 ID",
+          "cancel" : "取消",
+          "openApp" : "打开 Canton 应用程序",
+          "opening" : "正在打开……",
+          "noDevice" : "未连接设备",
+          "appOpenError" : "无法打开 Canton 应用程序。请重试。",
+          "processing" : "正在处理 {{action}}……",
+          "success" : {
+            "accept" : {
+              "title" : "报价已接受",
+              "description" : "转账报价已成功接受。"
+            },
+            "reject" : {
+              "title" : "报价已拒绝",
+              "description" : "转账报价已成功拒绝。"
+            },
+            "withdraw" : {
+              "title" : "报价已撤回",
+              "description" : "转账报价已成功撤回。"
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -7054,6 +7142,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "数额已减少至符合 UTXO 限制。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "数额过大，超出 UTXO 限制。"
     }
   },
   "cryptoOrg" : {
