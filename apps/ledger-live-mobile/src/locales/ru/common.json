@@ -1154,6 +1154,11 @@
       "title" : "Поставщик недействителен",
       "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet и перейдите в «Экспериментальные функции». Там укажите другого поставщика."
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Поставщик недействителен",
+      "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet и выберите «Экспериментальные функции», после чего укажите другого поставщика.",
+      "openSettings" : "Перейти в Настройки"
+    },
     "GasLessThanEstimate" : {
       "title" : "Это слишком мало. Попробуйте больше"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "Ради вашей безопасности",
       "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Сумма уменьшена для соответствия ограничениям UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Сумма слишком велика для ограничений UTXO."
     }
   },
   "crash" : {
@@ -2338,7 +2349,7 @@
       "supportCta" : "Связаться с Поддержкой Ledger"
     },
     "allowManagerDrawer" : {
-      "title" : "Нажмите «Разрешить», чтобы начать Проверку подлинности Ledger"
+      "title" : "Одобрите Проверку подлинности на устройстве Ledger"
     },
     "genuineCheckStep" : {
       "learnMore" : "Подробнее о Проверке подлинности Ledger",
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
-        "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для кроссчейн-обменов через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™."
+        "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Wallet используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Nano™ Gen5, Ledger Stax™ или Ledger Flex™.",
+        "explore_compatible_devices" : "Совместимые устройства",
+        "swapWithAnotherProvider" : "Поменять оператора"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Совместимые устройства",
@@ -4430,6 +4443,7 @@
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
     "loading" : "Загружаем...",
     "turnOnAndUnlockDevice" : "Включите и разблокируйте устройство",
+    "powerOnDevice" : "Включите и разблокируйте {{deviceName}}",
     "connectAndUnlockDevice" : "Подключите и разблокируйте устройство",
     "connectAnotherDevice" : "Подключить другой Ledger",
     "unlockDevice" : "Разблокируйте устройство",
@@ -4458,6 +4472,7 @@
         "provider" : "Перед отправкой проверьте детали обмена на устройстве. {{providerName}} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
       },
       "acceptTerms" : "Подписывая эту транзакцию, я принимаю <0>Условия использования <0>{{provider}}</0></0>",
+      "nearIntentsAcceptTerms" : "Подтверждая эту транзакцию,\n я принимаю <0>Условия использования SwapKit</0>, технологии в основе NEAR Intents",
       "changellySimplifiedAcceptTerms" : "Подтверждая эту транзакцию, вы соглашаетесь с <0>Условиями использования</0> Changelly и её <1>Политикой AML/KYC</1>. Changelly может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC), которые в некоторых случаях могут повлиять на итог ваших транзакций. Если это произойдёт, обращайтесь в <2>Поддержку Changelly</2>.",
       "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки."
     },
@@ -4494,6 +4509,11 @@
     "bluetooth" : {
       "title" : "Подключение по Bluetooth...",
       "label" : "Автоматически определять Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "Устройство Ledger не отображается?",
+      "scanSignersCta" : "Сканировать устройства",
+      "helpCenterCta" : "Поддержка"
     },
     "deviceNotFoundPairNewDevice" : "Подключиться по Bluetooth®",
     "headerDescription" : "Обязательно разблокируйте {{productName}} и включите Bluetooth",
@@ -5529,7 +5549,7 @@
               "cta" : "Подробности"
             },
             "pending" : {
-              "title" : "Трансляция транзакции..."
+              "title" : "Транслируем транзакцию..."
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
           }
@@ -7304,11 +7324,11 @@
         "description" : "Выберите любую цифровую картинку или фото и используйте как экран блокировки {{productName}}.",
         "popupLabel" : "Экран блокировки настроен"
       },
-      "recover" : {
-        "title" : "Подписки на Ledger Recover",
-        "titleCompleted" : "Подписка на Ledger Recover оформлена",
-        "description" : "Так вы сможете восстановить доступ к кошельку без секретной фразы восстановления.",
-        "popupLabel" : "Подписка на Ledger Recover оформлена"
+      "syncAccounts" : {
+        "title" : "Синхронизация ваших счетов",
+        "titleCompleted" : "Ваши счета синхронизированы",
+        "description" : "Активируйте Ledger Sync, чтобы синхронизировать счета",
+        "popupLabel" : "Счета синхронизированы"
       }
     }
   },
