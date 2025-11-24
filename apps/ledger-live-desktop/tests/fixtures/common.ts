@@ -8,6 +8,7 @@ import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
+import { responseLogfilePath } from "tests/utils/networkResponseLogger";
 import { randomUUID } from "crypto";
 
 type TestFixtures = {
@@ -135,6 +136,56 @@ export const test = base.extend<TestFixtures>({
         console.log(txt);
       }
       safeAppendFile(logFile, `${txt}\n`);
+    });
+
+    // record network requests and responses to a file for debugging network errors
+    const networkLogFile = testInfo.outputPath("network.log");
+    page.on("request", request => {
+      const requestData = {
+        timestamp: new Date().toISOString(),
+        type: "request",
+        method: request.method(),
+        url: request.url(),
+        headers: request.headers(),
+        postData: request.postData(),
+      };
+      safeAppendFile(networkLogFile, `${JSON.stringify(requestData)}\n`);
+    });
+
+    page.on("response", response => {
+      const responseData = {
+        timestamp: new Date().toISOString(),
+        type: "response",
+        status: response.status(),
+        statusText: response.statusText(),
+        url: response.url(),
+        headers: response.headers(),
+        fromServiceWorker: response.fromServiceWorker(),
+      };
+      safeAppendFile(networkLogFile, `${JSON.stringify(responseData)}\n`);
+
+      // Also log failed requests to the main response log file
+      if (!response.ok()) {
+        safeAppendFile(
+          responseLogfilePath,
+          `[${testInfo.title}] ${response.status()} ${response.statusText()}: ${response.url()}\n`,
+        );
+      }
+    });
+
+    page.on("requestfailed", request => {
+      const failureData = {
+        timestamp: new Date().toISOString(),
+        type: "request_failed",
+        method: request.method(),
+        url: request.url(),
+        failure: request.failure()?.errorText || "Unknown error",
+      };
+      safeAppendFile(networkLogFile, `${JSON.stringify(failureData)}\n`);
+      safeAppendFile(
+        responseLogfilePath,
+        `[${testInfo.title}] REQUEST FAILED: ${request.method()} ${request.url()} - ${request.failure()?.errorText || "Unknown error"}\n`,
+      );
     });
 
     // app is loaded
