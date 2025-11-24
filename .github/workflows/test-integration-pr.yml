@@ -18,6 +18,7 @@ jobs:
     outputs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
+      coins: ${{ steps.affected.outputs.coins }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -80,11 +81,13 @@ jobs:
       - name: Test
         shell: bash
         env:
-          FILTER: ${{ needs.is-affected.outputs.paths }}
+          COINS: ${{ needs.is-affected.outputs.coins }}
           VERBOSE_FILE: logs.txt
         run: |
-          echo $FILTER | xargs pnpm common ci-test-integration
-          git diff --exit-code libs/ledger-live-common/src
+          for COIN in $COINS; do
+            echo "families/$COIN" | xargs pnpm common ci-test-integration
+            git diff --exit-code libs/ledger-live-common/src
+          done
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
         if: failure()
