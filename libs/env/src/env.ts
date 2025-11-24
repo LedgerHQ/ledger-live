@@ -978,6 +978,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "List of sanctioned addresses",
   },
+  BIG_NUMBER_DECIMAL_PLACES: {
+    def: 40,
+    parser: intParser,
+    desc: "bignumber.js decimal places configuration",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {

@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Akroma unit (AKA) 1`] = `"123.456.789,00000000- -AKA"`;
@@ -62,11 +64,11 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
@@ -208,6 +210,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
@@ -306,6 +310,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Solana unit (SOL) 1`] = `"12.345.678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -378,6 +384,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Akroma unit (AKA) 1`] = `"123,456,789.00000000- -AKA"`;
@@ -440,11 +448,11 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -586,6 +594,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Monad Testnet unit (MON) 1`] = `"0.012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Monad unit (MON) 1`] = `"0.012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
@@ -684,6 +694,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Solana unit (SOL) 1`] = `"12,345,678.900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
@@ -756,6 +768,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Akroma unit (AKA) 1`] = `"123.456.789,00000000- -AKA"`;
@@ -818,11 +832,11 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
@@ -964,6 +978,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
@@ -1062,6 +1078,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Solana unit (SOL) 1`] = `"12.345.678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -1134,6 +1152,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Aion unit (AION) 1`] = `"123 456 789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Akroma unit (AKA) 1`] = `"123 456 789,00000000- -AKA"`;
@@ -1196,11 +1216,11 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12 345 678 900,000000- -tADA"`;
 
@@ -1342,6 +1362,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
@@ -1440,6 +1462,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Solana unit (SOL) 1`] = `"12 345 678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -1512,6 +1536,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format æternity unit (AE) 1`] = `"12 345 678 900 000 000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Akroma unit (AKA) 1`] = `"123,456,789.00000000- -AKA"`;
@@ -1574,11 +1600,11 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -1720,6 +1746,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Monad Testnet unit (MON) 1`] = `"0.012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Monad unit (MON) 1`] = `"0.012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
@@ -1818,6 +1846,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Solana unit (SOL) 1`] = `"12,345,678.900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
@@ -1890,6 +1920,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Akroma unit (AKA) 1`] = `"123,456,789.00000000- -AKA"`;
@@ -1952,11 +1984,11 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -2098,6 +2130,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Monad Testnet unit (MON) 1`] = `"0.012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Monad unit (MON) 1`] = `"0.012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
@@ -2196,6 +2230,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Solana unit (SOL) 1`] = `"12,345,678.900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
@@ -2268,6 +2304,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Akroma unit (AKA) 1`] = `"123.456.789,00000000- -AKA"`;
@@ -2330,11 +2368,11 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
@@ -2476,6 +2514,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
@@ -2574,6 +2614,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Solana unit (SOL) 1`] = `"12.345.678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -2646,6 +2688,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Aion unit (AION) 1`] = `"123 456 789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Akroma unit (AKA) 1`] = `"123 456 789,00000000- -AKA"`;
@@ -2708,11 +2752,11 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cardano (Testnet) unit (ada) 1`] = `"12 345 678 900,000000- -tADA"`;
 
@@ -2854,6 +2898,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
@@ -2952,6 +2998,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Solana unit (SOL) 1`] = `"12 345 678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -3024,6 +3072,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format æternity unit (AE) 1`] = `"12 345 678 900 000 000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Akroma unit (AKA) 1`] = `"123.456.789,00000000- -AKA"`;
@@ -3086,11 +3136,11 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network unit (cc) 1`] = `"0,00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
@@ -3232,6 +3282,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Monad Testnet unit (MON) 1`] = `"0,012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Monad unit (MON) 1`] = `"0,012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
@@ -3330,6 +3382,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Solana unit (SOL) 1`] = `"12.345.678,900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
@@ -3402,6 +3456,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Akroma unit (AKA) 1`] = `"123,456,789.00000000- -AKA"`;
@@ -3464,11 +3520,11 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Testnet) unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network unit (cc) 1`] = `"0.00000000000000000000012345678900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -3610,6 +3666,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Monad Testnet unit (MON) 1`] = `"0.012345678900000000- -MON"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Monad unit (MON) 1`] = `"0.012345678900000000- -MON"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
@@ -3708,6 +3766,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Solana unit (SOL) 1`] = `"12,345,678.900000000- -SOL"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
@@ -3779,6 +3839,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format lisk unit (LSK) 1`] = `"123,456,789.00000000- -LSK"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
+
+exports[`formatCurrencyUnit with default options should correctly format 0G unit (0G) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Aion unit (AION) 1`] = `"123,456,789"`;
 
@@ -3988,6 +4050,8 @@ exports[`formatCurrencyUnit with default options should correctly format Metis u
 
 exports[`formatCurrencyUnit with default options should correctly format Mina unit (MINA) 1`] = `"12,345,678"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Monad Testnet unit (MON) 1`] = `"0.0123456"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Monad unit (MON) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Monero unit (XMR) 1`] = `"12,345.6"`;
@@ -4085,6 +4149,8 @@ exports[`formatCurrencyUnit with default options should correctly format Solana 
 exports[`formatCurrencyUnit with default options should correctly format Solana testnet unit (SOL) 1`] = `"12,345,678"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Solana unit (SOL) 1`] = `"12,345,678"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Somnia unit (SOMI) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Songbird unit (SGB) 1`] = `"0.0123456"`;
 
