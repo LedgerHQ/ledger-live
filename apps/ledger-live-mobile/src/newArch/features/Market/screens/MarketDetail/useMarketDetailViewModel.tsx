@@ -37,7 +37,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
       includeTestNetworks: false,
     },
     {
-      skip: !currency,
+      skip: !currency?.ledgerIds?.length,
     },
   );
 
