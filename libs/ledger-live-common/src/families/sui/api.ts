@@ -1,3 +1,5 @@
+import { PROMOTIONAL_API_BASE, SUI_PROMOTION_ID } from "@ledgerhq/coin-sui/constants";
+
 /**
  * Configuration for Sui staking banners
  */
@@ -23,9 +25,6 @@ type RegistrationStatus = {
   ticketCount: number | null;
   totalVolume: number | null;
 };
-
-const PROMOTIONAL_API_BASE = "https://promotional-campaign.ledger-test.com/api/v1";
-const SUI_PROMOTION_ID = "earn-sui-reward-dec2025";
 
 /**
  * Fetches the configuration for Sui staking banners
@@ -116,10 +115,11 @@ export async function registerSuiStakingPromotion(address: string): Promise<void
       }),
     });
 
+    // Fail silently - registration failure shouldn't block the user
     if (!response.ok) {
-      console.warn("Failed to register for Sui staking promotion:", response.status);
+      return;
     }
-  } catch (error) {
+  } catch {
     // Fail silently - registration failure shouldn't block the user
   }
 }
