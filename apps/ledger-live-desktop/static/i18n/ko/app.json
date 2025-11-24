@@ -36,7 +36,7 @@
       },
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험",
+        "experimental" : "실험적 기능",
         "debug" : "디버그"
       },
       "banner" : {
@@ -118,7 +118,7 @@
     "copied" : "복사됨",
     "addressCopied" : "주소 복사됨",
     "addressCopiedSuspicious" : "복사된 주소와 클립보드 주소가 일치하지 않습니다.",
-    "experimentalFeature" : "실험",
+    "experimentalFeature" : "실험적 기능",
     "featureFlags" : "기능 플래그",
     "ldmkEnabled" : "LDMK 전송",
     "information" : "정보",
@@ -1343,7 +1343,7 @@
           "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요",
           "notFoundEntityError" : {
             "title" : "Ledger 정품 확인을 다시 시작합니다",
-            "description" : "먼저 “My Ledger 공급자({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 공급자\"를 끕니다."
+            "description" : "먼저 “My Ledger 서비스 제공업체({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 서비스 제공업체\"를 끕니다."
           },
           "deviceNotGenuineError" : {
             "title" : "이 {{productName}} 장치는 정품입니다",
@@ -1445,6 +1445,12 @@
         "title" : "자산을 Ledger로 이체하세요",
         "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
         "actionCompletedPopupLabel" : "자산 이체 완료"
+      },
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "actionCompletedPopupLabel" : "계정 동기화 완료"
       },
       "recover" : {
         "title" : "Ledger Recover 구독하기",
@@ -1905,6 +1911,7 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
+      "nearIntentsAcceptTerms" : "이 트랜잭션을 승인함으로써,\n NEAR Intents의 기반 기술인 <0>SwapKit의 이용 약관</0>에 동의합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
       "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "changellySimplifiedAcceptTerms" : "트랜잭션 승인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 \n간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, \n이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 직접 문의해야 합니다.",
@@ -2279,6 +2286,7 @@
         "label" : "입금할 계정",
         "parentAccount" : "1. {{currencyName}} 계정을 선택하세요",
         "token" : "2. 토큰을 선택하세요",
+        "errorLoadingTokens" : "토큰 로드 중 오류가 발생했습니다",
         "verifyTokenType" : "<0>{{token}}</0>이 <0>{{tokenType}}</0> 토큰인지 확인하세요. 다른 암호화폐가 {{currency}} 계정으로 전송되면 소실될 수 있습니다.",
         "warningTokenType" : "<0>{{ticker}}</0> 또는 <0>{{tokenType}}</0> 토큰은 {{currency}} 계정으로만 보내세요. 다른 암호화폐를 보내면 영구적인 자금 손실을 초래할 수 있습니다.",
         "depositFromCexBannerTitle" : "코인베이스 계정의 암호화폐를 예치하세요"
@@ -4760,7 +4768,7 @@
       "providerCTA" : "설정으로 이동",
       "features" : {
         "experimentalCurrencies" : {
-          "title" : "실험 통합",
+          "title" : "실험적 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
         },
         "experimentalLanguages" : {
@@ -4788,7 +4796,7 @@
           "description" : "모든 계정에 대한 맞춤형 갭 한도입니다. 기본값(20) 이상으로 이 값을 올리면 더 많은 미사용 공용 주소에서 코인을 스캔합니다. 숙련된 사용자만 이용하세요. 계정 복원 시 호환성 문제가 발생할 수 있습니다."
         },
         "forceProvider" : {
-          "title" : "내 Ledger 공급자",
+          "title" : "My Ledger 서비스 제공업체",
           "description" : "내 Ledger에서 앱 공급자를 변경하면 Ledger 장치에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
         },
         "testAnimations" : {
@@ -5160,7 +5168,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "복구 문구",
           "hideRecoveryPhrase" : "복구 문구 숨기기",
-          "pairNano" : "Nano 연결하기"
+          "pairNano" : "Nano 연결하기",
+          "secureYourCrypto" : "소중한 암호화폐를 안전하게"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5452,6 +5461,29 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "소중한 암호화폐를 안전하게",
+            "description" : "첫 암호화폐를 거래소나 지갑에서 Ledger Wallet으로 옮기고 최고 수준의 보안을 누려보세요.",
+            "buttons" : {
+              "next" : "자산 보호 시작하기",
+              "nextSecondary" : "다음에 결정하기",
+              "prev" : "이전 단계"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "모든 준비 완료",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "buttons" : {
+              "next" : "계속"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "모든 준비 완료",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "buttons" : {
+              "next" : "계속"
             }
           }
         }
@@ -5818,6 +5850,62 @@
         "quickFix" : "빠른 해결책: 본인 주소로 자산을 추가로 송금하여 UTXO를 병합하세요.",
         "warning" : "현재 계정에 작은 단위의 UTXO가 너무 많습니다. 자산 일부를 본인 주소로 송금하여 병합하세요.",
         "consolidate" : "병합"
+      },
+      "pendingTransactions" : {
+        "title" : "보류 중인 트랜잭션({{count}})",
+        "incoming" : {
+          "title" : "입금 요청({{count}})"
+        },
+        "outgoing" : {
+          "title" : "출금 요청({{count}})"
+        },
+        "pending" : "대기 중",
+        "expired" : "만료됨",
+        "status" : {
+          "label" : "상태",
+          "expired" : "만료됨",
+          "incoming" : "입금",
+          "outgoing" : "출금"
+        },
+        "from" : "수신",
+        "to" : "발신",
+        "memo" : "메모",
+        "noMemo" : "메모 없음",
+        "date" : "날짜",
+        "expiresAt" : "만료 시간",
+        "expiresIn" : "만료 날짜",
+        "amount" : "수량",
+        "transaction" : "트랜잭션",
+        "viewTransaction" : "트랜잭션 보기",
+        "action" : "동작",
+        "accept" : "수락",
+        "withdraw" : "철회",
+        "reject" : "거부",
+        "deviceAppModal" : {
+          "title" : "요청 {{action}}",
+          "description" : "이 요청을 {{action}}하려면, Ledger 장치에서 Canton 앱을 실행하세요.",
+          "contractId" : "계약 ID",
+          "cancel" : "취소",
+          "openApp" : "Canton 앱 실행",
+          "opening" : "실행 중 ...",
+          "noDevice" : "연결된 장치 없음",
+          "appOpenError" : "Canton 앱 실행에 실패했습니다. 다시 시도해 주세요.",
+          "processing" : "{{action}} 처리 중 ...",
+          "success" : {
+            "accept" : {
+              "title" : "요청 수락됨",
+              "description" : "이체 요청이 수락되었습니다."
+            },
+            "reject" : {
+              "title" : "요청 거부됨",
+              "description" : "이체 요청이 거부되었습니다."
+            },
+            "withdraw" : {
+              "title" : "요청 철회됨",
+              "description" : "요청이 철회되었습니다."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6041,7 +6129,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
-      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다.",
+      "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다.",
       "goToSettingsCTA" : "설정으로 이동"
     },
     "HardResetFail" : {
@@ -7054,6 +7142,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "cryptoOrg" : {
