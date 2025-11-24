@@ -51,7 +51,7 @@ export default function StepStake({
       />
       {showBoostBanner && (
         <Alert type="primary" mt={4}>
-          Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th
+          <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
         </Alert>
       )}
     </Box>

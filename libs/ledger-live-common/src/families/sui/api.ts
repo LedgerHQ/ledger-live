@@ -77,7 +77,7 @@ export async function fetchSuiBannerConfig(address?: string): Promise<SuiBannerC
       return { showBoostBanner: false, showIncentiveBanner: true, isRegisterable: true };
     }
     return { showBoostBanner: true, showIncentiveBanner: false, isRegisterable: true };
-  } catch (error) {
+  } catch {
     return { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
   }
 }

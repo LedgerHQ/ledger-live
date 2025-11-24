@@ -4364,6 +4364,9 @@
       },
       "flow": {
         "steps": {
+          "validator": {
+            "boostAlert": "Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th"
+          },
           "amount": {
             "boostAlert": "Stake at least 100$ to be eligible for the APY boost"
           }
