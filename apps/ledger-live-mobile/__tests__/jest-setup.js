@@ -38,6 +38,7 @@ jest.mock("react-native-gesture-handler", () => {
     TouchableOpacity: TouchableOpacity,
     TouchableWithoutFeedback: TouchableOpacity,
     ScrollView: ScrollView,
+    Pressable: TouchableOpacity,
     RawButton: TouchableOpacity,
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
