@@ -21,7 +21,6 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { createCustomErrorClass } from "@ledgerhq/errors";
@@ -33,6 +32,7 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
+const unknownSwapError = new Error("Unknown swap error");
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -330,12 +330,12 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.error": ({ error }) => {
-            navigation.navigate(NavigatorName.CustomError, {
-              screen: ScreenName.CustomErrorScreen,
-              params: {
-                error,
-                displayError: error instanceof AddressesSanctionedError,
-              },
+            if (handleLoaderDrawer) {
+              navigation.pop();
+            }
+
+            navigation.navigate(ScreenName.SwapCustomError, {
+              error: error ?? unknownSwapError,
             });
           },
           "custom.isReady": async () => {

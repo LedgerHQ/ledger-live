@@ -96,6 +96,8 @@ export type SwapResult = {
 };
 
 export type SwapLiveError = {
+  name: string;
+  message: string;
   type?: string;
   cause: {
     message?: string;

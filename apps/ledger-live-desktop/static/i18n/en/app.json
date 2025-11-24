@@ -6409,7 +6409,7 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
