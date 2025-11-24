@@ -34,6 +34,15 @@ on:
           - stax
           - flex
         default: nanoX
+      retries:
+        description: Number of retries for the tests
+        required: true
+        type: choice
+        options:
+          - 0
+          - 1
+          - 2
+        default: 2
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -362,7 +371,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - uses: nick-fields/retry@v3
-        if: inputs.production_firebase != true
+        if: (inputs.production_firebase != true && inputs.retries != '0')
         name: install dependencies
         id: install-dependencies
         with:
@@ -372,7 +381,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
 
       - uses: nick-fields/retry@v3
-        if: inputs.production_firebase == true
+        if: (inputs.production_firebase == true && inputs.retries != '0')
         name: install dependencies
         id: install-dependencies-prod
         with:
