@@ -56,6 +56,7 @@
     "src/deviceSDK/tasks/updateFirmware.ts",
     "src/deviceWordings.ts",
     "src/domain/getTokensWithFunds.ts",
+    "src/e2e/data/assetsDrawer.ts",
     "src/e2e/index.ts",
     "src/e2e/speculos.ts",
     "src/e2e/speculosAppVersion.ts",

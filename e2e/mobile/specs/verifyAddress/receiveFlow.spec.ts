@@ -8,12 +8,6 @@ describe("Receive Flow", () => {
       speculosApp: account.currency.speculosApp,
       userdata: "EthAccountXrpAccountReadOnlyFalse",
       featureFlags: {
-        llmModularDrawer: {
-          enabled: true,
-          params: {
-            receive_flow: true,
-          },
-        },
         noah: {
           enabled: true,
         },

@@ -1,12 +1,11 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { assetAvailableNetworks } from "@ledgerhq/live-common/e2e/data/assetsDrawer";
+import { assetAvailableNetworks } from "@ledgerhq/live-common/lib/e2e/data/assetsDrawer";
 import { runSelectCryptoNetworkTest } from "./deposit";
 
 const testConfig = {
-  account: Account.ETH_1,
-  networks: assetAvailableNetworks.ETH.networks,
-  withAccount: true,
-  tmsLinks: ["B2CQA-1857"],
+  account: TokenAccount.ETH_USDT_1,
+  networks: assetAvailableNetworks.USDT.networks,
+  withAccount: false,
+  tmsLinks: ["B2CQA-1855"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
