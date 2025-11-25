@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import { Text, Button } from "@ledgerhq/react-ui/index";
 import Box from "~/renderer/components/Box";
 import SignClient from "@walletconnect/sign-client";
@@ -9,16 +9,22 @@ import {
   saveConcordiumAccount,
 } from "~/renderer/screens/dashboard/useConcordiumAccountScan";
 
-export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Testnet";
+export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Mainnet";
+// NOTE: i have issues with testnet idapp, when creating accounts it switches to mainnet
+
+export const CONCORDIUM_CHAIN_IDS = {
+  Mainnet: "concordium:9dd9ca4d19e9393877d2c44b70f89acb",
+  Testnet: "concordium:4221332d34e1694168c2a0c0b3fd0f27",
+} as const;
 
 export const DEMO_SEED_PHRASE =
-  "wish busy never sauce cheese foil process intact click slush slice like";
+  "salon ugly company broccoli close riot believe ordinary bleak science shrug milk";
 
 export default function Concordium() {
   const [client, setClient] = useState<SignClient | null>(null);
   const [session, setSession] = useState<SessionTypes.Struct | null>(null);
-  const [approval, setApproval] = useState<(() => Promise<SessionTypes.Struct>) | null>(null);
   const [uri, setUri] = useState<string | null>(null);
+  const [isPairing, setIsPairing] = useState(false);
 
   const [availableSessions, setAvailableSessions] = useState<SessionTypes.Struct[]>([]);
   const [showSessionPicker, setShowSessionPicker] = useState(false);
@@ -37,7 +43,7 @@ export default function Concordium() {
     if (client) return client;
 
     const c = await SignClient.init({
-      projectId: "TODO_WALLETCONNECT_PROJECTID",
+      projectId: "TODO",
       relayUrl: "wss://relay.walletconnect.com",
       metadata: {
         name: "Ledger Live – Concordium",
@@ -51,18 +57,46 @@ export default function Concordium() {
     return c;
   }, [client]);
 
+  // Auto-select latest session on mount or when client changes
+  const autoSelectLatestSession = useCallback(async (c: SignClient) => {
+    const all = c.session.getAll();
+    const concordiumSessions = all.filter(s => "concordium" in s.namespaces);
+
+    if (concordiumSessions.length > 0) {
+      // Sort by expiry (or you could use another criterion) - latest first
+      const sorted = concordiumSessions.sort((a, b) => b.expiry - a.expiry);
+      const latest = sorted[0];
+      console.log("[Concordium] Auto-selected latest session:", latest.topic);
+      setSession(latest);
+      return latest;
+    }
+    return null;
+  }, []);
+
+  // On mount, try to auto-select existing session
+  useEffect(() => {
+    const init = async () => {
+      const c = await getOrInitClient();
+      await autoSelectLatestSession(c);
+    };
+    init();
+  }, [getOrInitClient, autoSelectLatestSession]);
+
   const onRecoverAccount = useCallback(async () => {
     console.log("[Concordium] onRecoverAccount – TODO: implement ConcordiumIDAppSDK flow");
   }, []);
 
   const pairWithIdApp = useCallback(async () => {
     const c = await getOrInitClient();
+    setIsPairing(true);
+
+    const chainId = CONCORDIUM_CHAIN_IDS[CONCORDIUM_NETWORK];
 
     const { uri: wcUri, approval: wcApproval } = await c.connect({
       requiredNamespaces: {
         concordium: {
           methods: ["create_account", "recover_account"],
-          chains: ["concordium:919"],
+          chains: [chainId],
           events: [],
         },
       },
@@ -70,35 +104,32 @@ export default function Concordium() {
 
     if (!wcUri) {
       console.error("[Concordium] WalletConnect connect() returned no URI");
+      setIsPairing(false);
       return;
     }
 
     setUri(wcUri);
-    setApproval(() => wcApproval);
-
     console.log("[Concordium] WC URI:", wcUri);
 
     ConcordiumIDAppPoup.invokeIdAppDeepLinkPopup({
       walletConnectUri: wcUri,
     });
-  }, [getOrInitClient]);
 
-  const ensureSession = useCallback(async () => {
-    if (session) return session;
-    if (!approval) {
-      console.warn("[Concordium] No pending approval – run pairWithIdApp first or select session");
-      return null;
+    // Wait for approval and auto-set session
+    try {
+      const s = await wcApproval();
+      console.log("[Concordium] WC session established:", s.topic);
+      setSession(s);
+      setUri(null);
+    } catch (e) {
+      console.error("[Concordium] WC approval failed:", e);
+    } finally {
+      setIsPairing(false);
     }
-
-    const s = await approval();
-    console.log("[Concordium] WC session established:", s.topic);
-    setSession(s);
-    return s;
-  }, [approval, session]);
+  }, [getOrInitClient]);
 
   /**
    * Full Concordium IDApp SDK flow for *creating* an account.
-   * Called by the Concordium popup when user clicks "Create New Account".
    */
   const onCreateAccount = useCallback(async () => {
     if (!client || !session) {
@@ -126,17 +157,14 @@ export default function Concordium() {
         "Create Concordium account from Ledger Live",
       );
 
-      console.log("[Concordium] session.namespaces:", session.namespaces);
-      // Figure out the proper chainId from the approved session
       const concordiumNs = session.namespaces["concordium"];
 
       if (!concordiumNs) {
         throw new Error("[Concordium] No 'concordium' namespace in WC session");
       }
 
-      // Prefer explicit chains[], otherwise derive from accounts["namespace:chainId:address"]
       const chainIdFromNs =
-        concordiumNs.chains?.[0] ?? concordiumNs.accounts?.[0]?.split(":").slice(0, 2).join(":"); // e.g. "concordium:919"
+        concordiumNs.chains?.[0] ?? concordiumNs.accounts?.[0]?.split(":").slice(0, 2).join(":");
 
       if (!chainIdFromNs) {
         console.error("[Concordium] session.namespaces.concordium:", concordiumNs);
@@ -184,9 +212,7 @@ export default function Concordium() {
 
       accountIndexRef.current += 1;
 
-      // ✅ persist locally so the hook can list it (and then enrich via gRPC)
       saveConcordiumAccount({ address: accountAddress, txHash });
-      // Optional: immediately refresh the hook data
       refreshAccounts();
 
       return { accountAddress, txHash };
@@ -197,14 +223,16 @@ export default function Concordium() {
   }, [client, session, refreshAccounts]);
 
   const openCreatePopup = useCallback(async () => {
-    const s = await ensureSession();
-    if (!s) return;
+    if (!session) {
+      console.warn("[Concordium] No session – pair first");
+      return;
+    }
 
     ConcordiumIDAppPoup.invokeIdAppActionsPopup({
       onCreateAccount,
-      walletConnectSessionTopic: s.topic,
+      walletConnectSessionTopic: session.topic,
     });
-  }, [ensureSession, onCreateAccount]);
+  }, [session, onCreateAccount]);
 
   const openRecoverPopup = useCallback(async () => {
     ConcordiumIDAppPoup.invokeIdAppActionsPopup({
@@ -231,7 +259,13 @@ export default function Concordium() {
     setShowSessionPicker(false);
   }, []);
 
-  const status = session ? "Session active" : uri ? "Waiting approval" : "Not paired";
+  const status = session
+    ? "Session active"
+    : isPairing
+      ? "Pairing…"
+      : uri
+        ? "Waiting approval"
+        : "Not paired";
 
   return (
     <Box
@@ -267,6 +301,23 @@ export default function Concordium() {
         </Box>
       </Box>
 
+      {/* Active session info */}
+      {session && (
+        <Box
+          mb={4}
+          p={3}
+          borderRadius={8}
+          style={{ backgroundColor: "#0b1a12", border: "1px solid #1a4d2e" }}
+        >
+          <Text fontSize={12} color="success.c60">
+            Connected to: {session.peer?.metadata?.name ?? "Unknown"}
+          </Text>
+          <Text fontSize={10} color="neutral.c60" fontFamily="monospace">
+            {session.topic.slice(0, 16)}…{session.topic.slice(-8)}
+          </Text>
+        </Box>
+      )}
+
       {/* Actions */}
       <Box mb={4}>
         <Text variant="subtitle" mb={2}>
@@ -274,10 +325,10 @@ export default function Concordium() {
         </Text>
 
         <Box horizontal gap={3} flexWrap="wrap">
-          <Button onClick={pairWithIdApp} variant="shade">
-            Pair / Open IDApp
+          <Button onClick={pairWithIdApp} variant="shade" disabled={isPairing}>
+            {isPairing ? "Pairing…" : "Pair / Open IDApp"}
           </Button>
-          <Button onClick={openCreatePopup} variant="main">
+          <Button onClick={openCreatePopup} variant="main" disabled={!session}>
             Create account
           </Button>
           <Button onClick={openRecoverPopup} variant="shade">
@@ -373,19 +424,31 @@ export default function Concordium() {
               mb={2}
               p={3}
               borderRadius={8}
-              style={{ backgroundColor: "#050811", border: "1px solid #283347" }}
+              style={{
+                backgroundColor: s.topic === session?.topic ? "#0b1a12" : "#050811",
+                border: `1px solid ${s.topic === session?.topic ? "#1a4d2e" : "#283347"}`,
+              }}
             >
               <Text fontSize={12} color="neutral.c80">
                 topic:{" "}
                 <span style={{ fontFamily: "monospace" }}>
                   {s.topic.slice(0, 10)}…{s.topic.slice(-6)}
                 </span>
+                {s.topic === session?.topic && (
+                  <span style={{ color: "#4ade80", marginLeft: 8 }}>● active</span>
+                )}
               </Text>
               <Text fontSize={12} color="neutral.c80">
                 peer: {s.peer?.metadata?.name ?? "Unknown"}
               </Text>
-              <Button mt={2} variant="main" onClick={() => chooseSession(s)} small>
-                Use this session
+              <Button
+                mt={2}
+                variant={s.topic === session?.topic ? "shade" : "main"}
+                onClick={() => chooseSession(s)}
+                small
+                disabled={s.topic === session?.topic}
+              >
+                {s.topic === session?.topic ? "Currently active" : "Use this session"}
               </Button>
             </Box>
           ))}
