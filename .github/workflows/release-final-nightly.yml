@@ -2,7 +2,7 @@ name: "[Nightly] - Build & Publish - Scheduled"
 
 on:
   schedule:
-    - cron: "0 2 * * TUE-SAT"  # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
+    - cron: "0 2 * * TUE-SAT" # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
 permissions:
@@ -114,65 +114,66 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
-#      - name: tag nightly ref
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
-#        with:
-#          ref: ${{ steps.get-sha.outputs.sha }}
-#          tagName: nightly
-#          token: ${{ steps.generate-token.outputs.token }}
-#          overwrite: true
+      - name: tag nightly ref
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
+        with:
+          ref: ${{ steps.get-sha.outputs.sha }}
+          tagName: nightly
+          token: ${{ steps.generate-token.outputs.token }}
+          overwrite: true
 
-#      - uses: actions/github-script@v7
-#        name: trigger nightly build of desktop
-#        with:
-#          github-token: ${{ steps.generate-token.outputs.token }}
-#          script: |
-#            github.rest.actions.createWorkflowDispatch({
-#              owner: "ledgerhq",
-#              repo: "ledger-live-build",
-#              ref: "main",
-#              workflow_id: "nightly-desktop.yml",
-#              inputs: {
-#                  version_override: "${{ steps.post-desktop-version.outputs.version }}"
-#              }
-#            });
-#
-#      - uses: actions/github-script@v7
-#        name: trigger nightly build of mobile
-#        with:
-#          github-token: ${{ steps.generate-token.outputs.token }}
-#          script: |
-#            github.rest.actions.createWorkflowDispatch({
-#              owner: "ledgerhq",
-#              repo: "ledger-live-build",
-#              ref: "main",
-#              workflow_id: "nightly-mobile.yml",
-#              inputs: {
-#                  version_override: "${{ steps.post-mobile-version.outputs.version }}"
-#              }
-#            });
+      - uses: actions/github-script@v7
+        name: trigger nightly build of desktop
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-desktop.yml",
+              inputs: {
+                  version_override: "${{ steps.post-desktop-version.outputs.version }}"
+              }
+            });
 
-#  nightly-fail:
-#    name: Nightly Release > Failure Reporting
-#    needs: nightly-release
-#    if: failure()
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: post to a Slack channel
-#        id: slack
-#        uses: slackapi/slack-github-action@v2.0.0
-#        with:
-#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-#          method: chat.postMessage
-#          payload: |
-#            channel: "C08JQKWS9KK"
-#            text: "[Alert] Nightly Release failed"
-#            blocks:
-#              - type: "section"
-#                text:
-#                  type: "mrkdwn"
-#                  text: "*Nightly Release failed*"
-#              - type: "section"
-#                text:
-#                  type: "mrkdwn"
-#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+      - uses: actions/github-script@v7
+        name: trigger nightly build of mobile
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-mobile.yml",
+              inputs: {
+                  version_override: "${{ steps.post-mobile-version.outputs.version }}"
+              }
+            });
+
+  nightly-fail:
+    name: Nightly Release > Failure Reporting
+    needs: nightly-release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Nightly Release failed"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Nightly Release failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+
