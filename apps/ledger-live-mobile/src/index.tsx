@@ -99,7 +99,6 @@ import {
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
-import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
@@ -140,7 +139,6 @@ function App() {
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
-  useNativeStartupInfo();
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
