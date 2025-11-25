@@ -2338,27 +2338,15 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../../evm-tools
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
       invariant:
         specifier: ^2.2.2
         version: 2.2.4

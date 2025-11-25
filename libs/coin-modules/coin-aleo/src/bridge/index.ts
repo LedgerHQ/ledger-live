@@ -21,7 +21,7 @@ import { getAccountShape, sync } from "./sync";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { getTransactionStatus } from "../bridge/getTransactionStatus";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
