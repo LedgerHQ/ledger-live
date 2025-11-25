@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "출금됨",
       "SENDING" : "보내기",
       "BURN" : "소각됨",
-      "ASSOCIATE_TOKEN" : "토큰 연동"
+      "ASSOCIATE_TOKEN" : "토큰 연동",
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -5168,7 +5169,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "복구 문구",
           "hideRecoveryPhrase" : "복구 문구 숨기기",
-          "pairNano" : "Nano 연결하기"
+          "pairNano" : "Nano 연결하기",
+          "secureYourCrypto" : "소중한 암호화폐를 안전하게"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5462,29 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "소중한 암호화폐를 안전하게",
+            "description" : "첫 암호화폐를 거래소나 지갑에서 Ledger Wallet으로 옮기고 최고 수준의 보안을 누려보세요.",
+            "buttons" : {
+              "next" : "자산 보호 시작하기",
+              "nextSecondary" : "다음에 결정하기",
+              "prev" : "이전 단계"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "모든 준비 완료",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "buttons" : {
+              "next" : "계속"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "모든 준비 완료",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "buttons" : {
+              "next" : "계속"
             }
           }
         }
@@ -5826,6 +5851,62 @@
         "quickFix" : "빠른 해결책: 본인 주소로 자산을 추가로 송금하여 UTXO를 병합하세요.",
         "warning" : "현재 계정에 작은 단위의 UTXO가 너무 많습니다. 자산 일부를 본인 주소로 송금하여 병합하세요.",
         "consolidate" : "병합"
+      },
+      "pendingTransactions" : {
+        "title" : "보류 중인 트랜잭션({{count}})",
+        "incoming" : {
+          "title" : "입금 요청({{count}})"
+        },
+        "outgoing" : {
+          "title" : "출금 요청({{count}})"
+        },
+        "pending" : "대기 중",
+        "expired" : "만료됨",
+        "status" : {
+          "label" : "상태",
+          "expired" : "만료됨",
+          "incoming" : "입금",
+          "outgoing" : "출금"
+        },
+        "from" : "수신",
+        "to" : "발신",
+        "memo" : "메모",
+        "noMemo" : "메모 없음",
+        "date" : "날짜",
+        "expiresAt" : "만료 시간",
+        "expiresIn" : "만료 날짜",
+        "amount" : "수량",
+        "transaction" : "트랜잭션",
+        "viewTransaction" : "트랜잭션 보기",
+        "action" : "동작",
+        "accept" : "수락",
+        "withdraw" : "철회",
+        "reject" : "거부",
+        "deviceAppModal" : {
+          "title" : "요청 {{action}}",
+          "description" : "이 요청을 {{action}}하려면, Ledger 장치에서 Canton 앱을 실행하세요.",
+          "contractId" : "계약 ID",
+          "cancel" : "취소",
+          "openApp" : "Canton 앱 실행",
+          "opening" : "실행 중 ...",
+          "noDevice" : "연결된 장치 없음",
+          "appOpenError" : "Canton 앱 실행에 실패했습니다. 다시 시도해 주세요.",
+          "processing" : "{{action}} 처리 중 ...",
+          "success" : {
+            "accept" : {
+              "title" : "요청 수락됨",
+              "description" : "이체 요청이 수락되었습니다."
+            },
+            "reject" : {
+              "title" : "요청 거부됨",
+              "description" : "이체 요청이 거부되었습니다."
+            },
+            "withdraw" : {
+              "title" : "요청 철회됨",
+              "description" : "요청이 철회되었습니다."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6866,10 @@
       "title" : "토큰 연동 확인 불가능",
       "description" : "수령 계정에서 이 토큰을 수령할 수 있는지 확인할 수 없습니다. 주소가 잘못되었거나 네트워크 또는 서비스에 문제가 있을 수 있습니다."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM 주소 인증 필요",
+      "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
       "description" : "다른 이미지로 재시도해보세요."
@@ -7062,6 +7147,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7209,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "자세히 알아보기"
+        },
+        "evmVerificationRequired" : {
+          "text" : "ERC-20 토큰 전송 중. 이러한 유형의 트랜잭션의 경우 Ledger 장치에 보내는 사람의 계정 ID가 아닌 EVM 주소가 표시됩니다.\n승인 전 <0>이 가이드</0>를 따라 정확한 주소가 맞는지 확인하세요."
         }
       }
     },
