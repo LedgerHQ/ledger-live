@@ -467,6 +467,10 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
+  ptxSwapLiveAppOnPortfolio: {
+    enabled: false,
+  },
+
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
