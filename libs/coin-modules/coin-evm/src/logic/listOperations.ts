@@ -38,6 +38,14 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
   return BigInt(op.value.toFixed(0));
 }
 
+function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return asset.parents[op.hash].hasFailed ?? false;
+  }
+
+  return op.hasFailed ?? false;
+}
+
 function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
   const assetInfo: AssetInfo = { type: asset.type };
 
@@ -49,6 +57,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
 
   const type = extractType(asset, op);
   const value = computeValue(asset, op);
+  const failed = computeFailed(asset, op);
 
   return {
     id: op.id,
@@ -65,7 +74,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
-      failed: op.hasFailed ?? false,
+      failed,
     },
     details: {
       sequence: op.transactionSequenceNumber,
