@@ -2278,6 +2278,12 @@
     },
     "completionScreen": {
       "title": "You’re now in control"
+    },
+    "secureYourCrypto": {
+      "title": "Secure your crypto",
+      "subtitle": "Move your first crypto from an exchange or wallet to your Ledger for maximum security.",
+      "secureCryptoButton": "Secure my crypto",
+      "maybeLater": "Maybe later"
     }
   },
   "blePairingFlow": {

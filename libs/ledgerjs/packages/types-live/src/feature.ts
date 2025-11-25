@@ -278,6 +278,7 @@ export type Features = CurrencyFeatures & {
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
+  llmNanoOnboardingFundWallet: DefaultFeature;
 };
 
 /**
