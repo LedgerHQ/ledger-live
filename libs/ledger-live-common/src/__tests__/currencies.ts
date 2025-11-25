@@ -282,6 +282,11 @@ test("decodeURIScheme", () => {
     amount: new BigNumber(0.0647).times(10 ** 18),
     gasPrice: new BigNumber(77000000000),
   });
+  expect(
+    decodeURIScheme("ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8"),
+  ).toMatchObject({
+    address: "ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8",
+  });
 });
 test("sanitizeValueString", () => {
   const bitcoin = getCryptoCurrencyById("bitcoin");
