@@ -20,6 +20,9 @@ import useSpecificAccountsListViewModel, {
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AccountsListNavigator } from "./types";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type ViewProps = GenericAccountsType & Partial<SpecificAccountsType>;
 
@@ -37,7 +40,7 @@ function View({
   ticker,
 }: ViewProps) {
   const { t } = useTranslation();
-
+  const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
   return (
     <>
       <TrackScreen name={pageTrackingEvent} source={sourceScreenName} currency={currencyToTrack} />
@@ -59,6 +62,12 @@ function View({
             </Text>
           </Flex>
         )}
+        {lwmLedgerSyncOptimisation?.enabled && (
+          <Flex pt={4}>
+            <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
+          </Flex>
+        )}
+
         {canAddAccount && (
           <AddAccountButton sourceScreenName={pageTrackingEvent} currency={currency} />
         )}

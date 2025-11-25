@@ -7600,6 +7600,10 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "banner": {
+      "title": "Your wallet isn't synced",
+      "description": "Keep your portfolio up to date"
+    },
     "entryPoints": {
       "simpleCta": {
         "title": "Activate Ledger Sync"
