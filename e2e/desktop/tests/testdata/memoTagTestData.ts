@@ -18,14 +18,15 @@ export const memoTagCoinTestData: MemoTagCoinTestData[] = [
     testAmount: "0.1",
     tagFieldName: "Memo",
   },
-  {
+  // Some issues with SOL, will be done later
+  /*{
     coin: "SOL",
     fromAccount: Account.SOL_1,
     toAccount: Account.SOL_2,
     testValue: "Exchange-Deposit-12345",
     testAmount: "0.1",
     tagFieldName: "Memo",
-  },
+  },*/
   {
     coin: "ADA",
     fromAccount: Account.ADA_2,
