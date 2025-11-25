@@ -4,13 +4,52 @@ import { Text, Button } from "@ledgerhq/react-ui/index";
 import Box from "~/renderer/components/Box";
 import {
   useConcordiumAccountsScan,
-  formatMicroCcd,
   removeSavedConcordiumAccount,
 } from "./useConcordiumAccountScan";
 
 type Props = {
   network: "Mainnet" | "Testnet";
 };
+
+// Helper to safely extract value from protobuf-style objects
+function extractValue(obj: any): string {
+  if (obj === null || obj === undefined) {
+    return "—";
+  }
+  // Handle { @type, value } structure
+  if (typeof obj === "object" && "value" in obj) {
+    return extractValue(obj.value);
+  }
+  // Handle { microCcdAmount: { @type, value } } structure
+  if (typeof obj === "object" && "microCcdAmount" in obj) {
+    return extractValue(obj.microCcdAmount);
+  }
+  // Handle BigInt-style objects
+  if (typeof obj === "object" && "@type" in obj && "value" in obj) {
+    return String(obj.value);
+  }
+  // Handle plain values
+  if (typeof obj === "bigint") {
+    return obj.toString();
+  }
+  return String(obj);
+}
+
+// Format microCCD to CCD
+function formatMicroCcd(microCcd: any): string {
+  try {
+    const valueStr = extractValue(microCcd);
+    const value = BigInt(valueStr);
+    const ccd = Number(value) / 1_000_000;
+    return ccd.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 6,
+    });
+  } catch (e) {
+    console.warn("[Concordium] Failed to format microCcd:", microCcd, e);
+    return "—";
+  }
+}
 
 export default function ConcordiumAccounts({ network }: Props) {
   const { accounts, isLoading, error, refresh } = useConcordiumAccountsScan(network);
@@ -19,6 +58,16 @@ export default function ConcordiumAccounts({ network }: Props) {
     removeSavedConcordiumAccount(address);
     refresh();
   };
+
+  // Debug: log account info structure
+  React.useEffect(() => {
+    if (accounts.length > 0 && accounts[0].info) {
+      console.log(
+        "[Concordium] Account info structure:",
+        JSON.stringify(accounts[0].info, null, 2),
+      );
+    }
+  }, [accounts]);
 
   return (
     <Box mt={6}>
@@ -64,7 +113,7 @@ export default function ConcordiumAccounts({ network }: Props) {
         </Box>
       )}
 
-      {accounts.map((acc: any) => (
+      {accounts.map(acc => (
         <Box
           key={`${acc.address}-${acc.createdAt}`}
           mb={2}
@@ -117,7 +166,7 @@ export default function ConcordiumAccounts({ network }: Props) {
                   Balance
                 </Text>
                 <Text fontSize={13} color="success.c60" fontWeight="semiBold">
-                  {formatMicroCcd(acc.info.accountAmount?.microCcdAmount ?? "0")} CCD
+                  {formatMicroCcd(acc.info.accountAmount)} CCD
                 </Text>
               </Box>
 
@@ -126,7 +175,7 @@ export default function ConcordiumAccounts({ network }: Props) {
                   Nonce
                 </Text>
                 <Text fontSize={10} color="neutral.c80" fontFamily="monospace">
-                  {acc.info.accountNonce?.value ?? "—"}
+                  {extractValue(acc.info.accountNonce)}
                 </Text>
               </Box>
 
@@ -135,7 +184,7 @@ export default function ConcordiumAccounts({ network }: Props) {
                   Account Index
                 </Text>
                 <Text fontSize={10} color="neutral.c80" fontFamily="monospace">
-                  {acc.info.accountIndex ?? "—"}
+                  {extractValue(acc.info.accountIndex)}
                 </Text>
               </Box>
             </Box>
@@ -176,7 +225,7 @@ export default function ConcordiumAccounts({ network }: Props) {
             Total accounts: {accounts.length}
           </Text>
           <Text fontSize={10} color="neutral.c60">
-            On-chain: {accounts.filter((a: any) => a.info !== null).length}
+            On-chain: {accounts.filter(a => a.info !== null).length}
           </Text>
         </Box>
       )}
