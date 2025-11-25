@@ -162,11 +162,7 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
               padding: 16,
             }}
             onPress={() =>
-              Linking.openURL(
-                selected === "restaking"
-                ? restakingUrl
-                : howToStakeEthUrl,
-              )
+              Linking.openURL(selected === "restaking" ? restakingUrl : howToStakeEthUrl)
             }
           >
             <Flex flexShrink={0} alignItems="center" justifyContent="center">

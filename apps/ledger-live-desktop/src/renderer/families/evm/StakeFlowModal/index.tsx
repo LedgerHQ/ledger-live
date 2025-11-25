@@ -75,12 +75,12 @@ const StakeModal = ({ account, source }: Props) => {
     );
   }, [selected, setIsScrollable]);
 
+  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
+  const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
+
   if (!ethStakingProviders?.enabled) {
     return null;
   }
-
-  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
-  const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
 
   return (
     <Modal
@@ -214,13 +214,7 @@ const StakeModal = ({ account, source }: Props) => {
                 cursor: "pointer",
               }}
               width="100%"
-              onClick={() =>
-                openURL(
-                  selected === "restaking"
-                  ? restakingUrl
-                  : howToStakeEthUrl,
-                )
-              }
+              onClick={() => openURL(selected === "restaking" ? restakingUrl : howToStakeEthUrl)}
             >
               <Flex flexShrink={0} alignItems="center" justifyContent="center">
                 <Flex
