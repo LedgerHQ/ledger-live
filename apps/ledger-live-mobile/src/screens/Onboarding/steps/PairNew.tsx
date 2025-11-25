@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -24,7 +24,9 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
+import { OnboardingType } from "~/reducers/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -42,7 +44,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
-const ImageHeader = () => {
+const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   function renderArrowLeft() {
@@ -62,6 +64,7 @@ const ImageHeader = () => {
       height={48}
     >
       <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
+      {showSlideIndicator && <SlideIndicator slidesLength={10} activeIndex={8} />}
       <Flex width={48}>
         <Button
           Icon={renderInformation}
@@ -81,6 +84,10 @@ export default memo(function () {
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const onboardingType = useSelector(onboardingTypeSelector);
+
+  const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
+  const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
 
   const onFinish = useCallback(() => {
     if (isProtectFlow && deviceModelId) {
@@ -104,9 +111,13 @@ export default memo(function () {
       parentNav.popToTop();
     }
 
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
+    if (isFundWalletNewSetup) {
+      navigation.navigate(ScreenName.OnboardingSecureYourCrypto);
+    } else {
+      navigation.replace(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      });
+    }
 
     dispatch(setHasBeenUpsoldProtect(false));
     if (!fromAccessExistingWallet) {
@@ -122,12 +133,13 @@ export default memo(function () {
     navigation,
     fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    isFundWalletNewSetup,
   ]);
 
   return (
     <StyledSafeAreaView>
       <TrackScreen category="Onboarding" name="PairNew" />
-      <ImageHeader />
+      <ImageHeader showSlideIndicator={isFundWalletNewSetup} />
       <StyledContainerView>
         <ConnectDevice onSuccess={onFinish} />
       </StyledContainerView>
