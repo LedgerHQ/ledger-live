@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
       "SENDING" : "กำลังส่ง",
       "BURN" : "เบิร์น",
-      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
+      "CONTRACT_CALL" : "การเรียกใช้สัญญา"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -5168,7 +5169,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Recovery Phrase",
           "hideRecoveryPhrase" : "ซ่อน Recovery Phrase",
-          "pairNano" : "เชื่อมต่อ Nano"
+          "pairNano" : "เชื่อมต่อ Nano",
+          "secureYourCrypto" : "ปกป้องคริปโตของคุณ"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5462,29 @@
             "help" : {
               "help" : "ต้องการความช่วยเหลือ",
               "descr" : "ไม่แน่ใจว่าจะต้องทำอะไรบ้าง? รับความช่วยเหลือเพื่อดำเนินการขั้นตอนนี้ให้เสร็จสิ้น"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "ปกป้องคริปโตของคุณ",
+            "description" : "โอนคริปโตตัวแรกของคุณจาก Exchange หรือวอลเล็ตไปยังแอป Ledger Wallet ของคุณเพื่อความปลอดภัยสูงสุด",
+            "buttons" : {
+              "next" : "ปกป้องคริปโตของฉัน",
+              "nextSecondary" : "ไว้ทีหลัง",
+              "prev" : "ขั้นตอนก่อนหน้า"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "รวมทุกสิ่งไว้ในที่เดียว",
+            "description" : "อุปกรณ์ Ledger ของคุณพร้อมแล้ว หากคุณส่งคริปโต คุณจะได้รับในอีกไม่กี่นาที",
+            "buttons" : {
+              "next" : "ดำเนินการต่อ"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "รวมทุกสิ่งไว้ในที่เดียว",
+            "description" : "อุปกรณ์ Ledger ของคุณพร้อมแล้ว!  จากนี้คุณสามารถรักษาความปลอดภัยสินทรัพย์ได้แล้ว",
+            "buttons" : {
+              "next" : "ดำเนินการต่อ"
             }
           }
         }
@@ -5826,6 +5851,62 @@
         "quickFix" : "การแก้ไขด่วน: ส่งเงินทุนบางส่วนให้กับตัวเองเพื่อรวมเข้าด้วยกัน",
         "warning" : "บัญชีของคุณมี UTXO ขนาดเล็กมากเกินไป ส่งเงินทุนบางส่วนให้กับตัวเอง เพื่อรวม UTXO ที่เหลือเข้าด้วยกัน",
         "consolidate" : "รวมเข้าด้วยกัน"
+      },
+      "pendingTransactions" : {
+        "title" : "{{count}} ธุรกรรมที่ค้างอยู่",
+        "incoming" : {
+          "title" : "{{count}} ข้อเสนอใหม่ที่เข้ามา"
+        },
+        "outgoing" : {
+          "title" : "{{count}} ข้อเสนอที่ส่งออก"
+        },
+        "pending" : "รอดำเนินการ",
+        "expired" : "หมดอายุแล้ว",
+        "status" : {
+          "label" : "สถานะ",
+          "expired" : "หมดอายุแล้ว",
+          "incoming" : "ขาเข้า",
+          "outgoing" : "ขาออก"
+        },
+        "from" : "จาก",
+        "to" : "ไปยัง",
+        "memo" : "Memo",
+        "noMemo" : "ไม่มี Memo",
+        "date" : "วันที่",
+        "expiresAt" : "หมดอายุเมื่อ",
+        "expiresIn" : "หมดอายุเมื่อ",
+        "amount" : "จำนวน",
+        "transaction" : "ธุรกรรม",
+        "viewTransaction" : "ดูธุรกรรม",
+        "action" : "การดำเนินการ",
+        "accept" : "ยอมรับ",
+        "withdraw" : "ถอน",
+        "reject" : "ปฏิเสธ",
+        "deviceAppModal" : {
+          "title" : "{{action}} ข้อเสนอ",
+          "description" : "โปรดเปิดแอป Canton บนอุปกรณ์ Ledger ของคุณเพื่อ{{action}}ข้อเสนอนี้",
+          "contractId" : "ID สัญญา",
+          "cancel" : "ยกเลิก",
+          "openApp" : "เปิดแอป Canton",
+          "opening" : "กำลังเปิด...",
+          "noDevice" : "ระบบไม่พบอุปกรณ์ที่กำลังเชื่อมต่อ",
+          "appOpenError" : "ไม่สามารถเปิดแอป Canton ได้ โปรดลองอีกครั้ง",
+          "processing" : "กำลัง{{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "ข้อเสนอได้รับการอนุมัติแล้ว",
+              "description" : "ผู้รับได้ยอมรับข้อเสนอการโอนเรียบร้อย"
+            },
+            "reject" : {
+              "title" : "ข้อเสนอถูกปฏิเสธแล้ว",
+              "description" : "ข้อเสนอการโอนถูกผู้รับปฏิเสธ"
+            },
+            "withdraw" : {
+              "title" : "ได้ถอนข้อเสนอแล้ว",
+              "description" : "ได้ถอนข้อเสนอการโอนเรียบร้อยแล้ว"
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6866,10 @@
       "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
       "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "จำเป็นต้องมีการตรวจสอบ EVM Address",
+      "description" : "โปรดตรวจสอบ EVM Address ที่ปรากฏบนอุปกรณ์ Ledger ของคุณก่อนยืนยัน"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพ"
@@ -7062,6 +7147,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
       "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "ปรับลดจำนวนคริปโตตามเงื่อนไข UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7209,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "evmVerificationRequired" : {
+          "text" : "คุณกำลังส่งโทเคน ERC-20 สำหรับธุรกรรมประเภทนี้ อุปกรณ์ Ledger ของคุณจะแสดง EVM Address ของผู้ส่ง ไม่ใช่ ID บัญชีของผู้รับ\nโปรดทำตาม<0>คู่มือนี้</0>เพื่อยืนยันว่า Address ถูกต้องก่อนยืนยัน"
         }
       }
     },
