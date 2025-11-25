@@ -89,6 +89,11 @@ export function useConcordiumAccountsScan() {
       setIsLoading(true);
       setError(null);
 
+      console.log({ windowapi: window.api });
+      const resSet = await window.api.grpc.setLocation("node.testnet.concordium.com", 20000, false);
+      const res = await window.api.grpc.getConsensusStatus();
+      console.log({ res });
+
       try {
         const saved = loadSavedConcordiumAccounts();
         const results: ConcordiumAccountWithInfo[] = [];

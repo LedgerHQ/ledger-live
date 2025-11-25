@@ -6,9 +6,11 @@
   /!\ Everything done in this file must be safe, it can not afford to crash. /!\
 */
 
-import { ipcRenderer } from "electron";
+import { ipcRenderer, contextBridge } from "electron";
 import logo from "./logo.svg";
 import palettes from "~/renderer/styles/palettes";
+// import initializeGrpcMethods from "./grpc";
+import grpcApi from "./grpc";
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
   const rendererNode = document.getElementById("react-root");
@@ -38,7 +40,10 @@ window.api = {
   appLoaded,
   reloadRenderer,
   openWindow,
+  grpc: grpcApi,
 };
+
+// contextBridge.exposeInMainWorld("grpc", initializeGrpcMethods);
 
 /**
  * This param "theme" that we are using is set in the main thread,
