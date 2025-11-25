@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
-  findCryptoCurrencyById,
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -102,7 +101,7 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
 
       // With new Chrome behavior: host contains the main URL part, pathname contains the path
-      // ledgerlive://settings/about -> host: "settings", pathname: "/about"
+      // ledgerwallet://settings/about -> host: "settings", pathname: "/about"
       const url = urlObj.host;
       const path = pathname.replace(/(^\/+|\/+$)/g, "");
 
@@ -266,21 +265,65 @@ export function useDeepLinkHandler() {
           break;
         }
         case "receive":
-          dispatch(openModal("MODAL_RECEIVE", undefined));
-          break;
         case "delegate":
         case "send": {
-          const modal = url === "send" ? "MODAL_SEND" : "MODAL_DELEGATE";
+          const modalMap = {
+            send: "MODAL_SEND",
+            delegate: "MODAL_DELEGATE",
+            receive: "MODAL_RECEIVE",
+          } as const;
+          const modal = modalMap[url];
           const { currency, recipient, amount } = query;
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          async function handleSendDeepLink() {
+          /**
+           * Handles deep link navigation for send, receive, and delegate flows.
+           *
+           *
+           * @flow
+           * 1. **No currency parameter**
+           *    - Opens the modal without account pre-selection
+           *    - User can select any available account
+           *
+           * 2. **Currency not found**
+           *    - Redirects to Asset Flow to help user discover the asset
+           *    - (Not applicable to delegate flow)
+           *
+           * 3. **Currency found, but user has no accounts**
+           *    - Redirects to Add Account Flow
+           *    - Callback provided to reopen modal after account creation
+           *
+           * 4. **Currency found with existing accounts**
+           *    - Opens modal with first matching account pre-selected
+           *    - For tokens: includes both token account and parent account
+           *
+           * @example Basic flows
+           * ledgerwallet://send                    // Open send modal, no pre-selection
+           * ledgerwallet://receive?currency=btc    // Receive Bitcoin
+           * ledgerwallet://delegate?currency=tezos // Delegate Tezos
+           *
+           * @example Send with pre-filled data
+           * ledgerwallet://send?currency=ethereum&recipient=0x581A5bbcE3AED0B928B3F48842BaDA3F9C360d97&amount=0.0001
+           *
+           */
+          async function handleDeepLink() {
+            dispatch(closeAllModal());
+            setDrawer();
+            if (!currency) {
+              dispatch(
+                openModal(modal, {
+                  ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
+                }),
+              );
+              return;
+            }
+
             let foundCurrency;
             try {
               const currencyId = typeof currency === "string" ? currency : "";
               foundCurrency =
-                findCryptoCurrencyById(currencyId) ||
+                findCryptoCurrencyByKeyword(currencyId) ||
                 (await getCryptoAssetsStore().findTokenById(currencyId)) ||
                 null;
             } catch (error) {
@@ -291,9 +334,9 @@ export function useDeepLinkHandler() {
               account: Account | TokenAccount,
               parentAccount?: Account,
             ) => {
-              setDrawer();
               dispatch(
                 openModal(modal, {
+                  ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
                   recipient,
                   account,
                   parentAccount,
@@ -305,31 +348,34 @@ export function useDeepLinkHandler() {
               );
             };
 
-            if (!currency || !foundCurrency) {
-              // we fallback to default add account flow with asset selection
+            if (!foundCurrency) {
               openAssetFlow();
               return;
             }
-            const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
-            if (!found.length) {
+            const matchingAccounts = getAccountsOrSubAccountsByCurrency(
+              foundCurrency,
+              accounts || [],
+            );
+
+            if (!matchingAccounts.length) {
               openAddAccountFlow(foundCurrency, true, openModalWithAccount);
               return;
             }
 
-            const [chosen] = found;
-            dispatch(closeAllModal());
-            if (chosen?.type === "Account") {
-              openModalWithAccount(chosen);
+            const [selectedAccount] = matchingAccounts;
+
+            if (selectedAccount?.type === "Account") {
+              openModalWithAccount(selectedAccount);
             } else {
-              const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
-              if (parentAccount && chosen) {
-                openModalWithAccount(chosen, parentAccount);
+              const parentAccount = accounts.find(acc => acc.id === selectedAccount?.parentId);
+              if (parentAccount && selectedAccount) {
+                openModalWithAccount(selectedAccount, parentAccount);
               }
             }
           }
 
-          handleSendDeepLink();
+          handleDeepLink();
           break;
         }
         case "settings": {

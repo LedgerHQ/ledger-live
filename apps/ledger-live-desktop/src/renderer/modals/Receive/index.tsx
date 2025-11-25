@@ -46,8 +46,9 @@ function getInitialState(
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const { enabled } = useFeature("noah") || {};
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const isNoahActive = enabled === true && props?.shouldUseReceiveOptions !== false;
   const initialState = getInitialState(
-    enabled === true,
+    isNoahActive,
     props?.account,
     props?.parentAccount,
     isOnboardingReceiveFlow,
