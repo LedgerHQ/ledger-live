@@ -24,7 +24,9 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
+import { OnboardingType } from "~/reducers/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -81,6 +83,9 @@ export default memo(function () {
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const onboardingType = useSelector(onboardingTypeSelector);
+
+  const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
 
   const onFinish = useCallback(() => {
     if (isProtectFlow && deviceModelId) {
@@ -104,9 +109,13 @@ export default memo(function () {
       parentNav.popToTop();
     }
 
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
+    if (isFundWalletEnabled && onboardingType === OnboardingType.setupNew) {
+      navigation.navigate(ScreenName.OnboardingSecureYourCrypto);
+    } else {
+      navigation.replace(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      });
+    }
 
     dispatch(setHasBeenUpsoldProtect(false));
     if (!fromAccessExistingWallet) {
@@ -122,6 +131,8 @@ export default memo(function () {
     navigation,
     fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    onboardingType,
+    isFundWalletEnabled,
   ]);
 
   return (

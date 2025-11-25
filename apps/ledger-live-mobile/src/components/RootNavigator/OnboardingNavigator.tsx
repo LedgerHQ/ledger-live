@@ -44,6 +44,7 @@ import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
+import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -219,6 +220,10 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
       <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+      <Stack.Screen
+        name={ScreenName.OnboardingSecureYourCrypto}
+        component={OnboardingSecureYourCrypto}
+      />
 
       <Stack.Screen
         name={NavigatorName.AnalyticsOptInPrompt}
