@@ -52,7 +52,6 @@ describe("useTrackReceiveFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new UserRefusedOnDevice() });
 
     expect(track).toHaveBeenCalledWith(
@@ -103,7 +102,6 @@ describe("useTrackReceiveFlow", () => {
     rerender({
       ...defaultArgs,
       device: wiredDeviceMock,
-      //@ts-expect-error requestOpenApp is not null
       requestOpenApp: null,
       error: new UserRefusedOnDevice(),
     });

@@ -5,12 +5,13 @@ import { useFooterQuickActions } from "../hooks/useFooterQuickAction";
 
 export const Footer: React.FC<QuickActionProps> = props => {
   const quickActionsData = useFooterQuickActions(props);
+  const columns = Math.max(1, quickActionsData.length);
   return (
     <QuickActionList
       data={quickActionsData}
-      id={`${quickActionsData.length}_columns`}
-      key={quickActionsData.length}
-      numColumns={quickActionsData.length}
+      id={`${columns}_columns`}
+      key={columns}
+      numColumns={columns}
       isActive
       testID="button"
     />
