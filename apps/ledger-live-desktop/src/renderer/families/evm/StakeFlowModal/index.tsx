@@ -10,6 +10,7 @@ import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Modal from "~/renderer/components/Modal";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
 import { EthStakingModalBody } from "./EthStakingModalBody";
@@ -77,6 +78,9 @@ const StakeModal = ({ account, source }: Props) => {
   if (!ethStakingProviders?.enabled) {
     return null;
   }
+
+  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
+  const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
 
   return (
     <Modal
@@ -213,8 +217,8 @@ const StakeModal = ({ account, source }: Props) => {
               onClick={() =>
                 openURL(
                   selected === "restaking"
-                    ? urls.ledgerAcademy.whatIsEthereumRestaking
-                    : urls.ledgerAcademy.ethereumStakingHowToStakeEth,
+                  ? restakingUrl
+                  : howToStakeEthUrl,
                 )
               }
             >
