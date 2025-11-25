@@ -425,6 +425,7 @@ function useWebView(
 
     if (webview) {
       webview.addEventListener("did-finish-load", onLoad);
+      // A postMessage error trigger this ipc-message event
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("dom-ready", handleDomReady);
     }
