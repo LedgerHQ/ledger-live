@@ -171,5 +171,6 @@ function optimisticOpcommons(commandDescriptor: CommandDescriptor) {
     blockHash: null,
     blockHeight: null,
     extra: {},
+    transactionSequenceNumber: new BigNumber(Date.now()),
   };
 }
