@@ -6,6 +6,7 @@ import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { openURL } from "~/renderer/linking";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 interface AlertProps {
   error: Error;
@@ -38,13 +39,15 @@ const UnverifiedAssociationAlert = ({ error }: AlertProps) => {
 };
 
 const UnverifiedEvmAddressAlert = () => {
+  const evmAddressVerificationUrl = useLocalizedUrl(urls.hedera.evmAddressVerification);
+
   return (
     <Alert type="warning" mt={4} style={{ whiteSpace: "pre-wrap" }}>
       <Trans i18nKey="hedera.send.warnings.evmVerificationRequired.text">
         <Link
           color="inherit"
           textProps={{ fontWeight: "medium" }}
-          onClick={() => openURL(urls.hedera.evmAddressVerification)}
+          onClick={() => openURL(evmAddressVerificationUrl)}
         />
       </Trans>
     </Alert>
