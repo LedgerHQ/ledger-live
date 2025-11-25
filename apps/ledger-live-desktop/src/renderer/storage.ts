@@ -25,7 +25,7 @@ import logger from "./logger";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-import type { PersistedTokens } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -62,7 +62,7 @@ type DatabaseValues = {
   trustchain: TrustchainStore;
   wallet: ExportedWalletState;
   market: Market;
-  cryptoAssets: PersistedTokens;
+  cryptoAssets: PersistedCAL;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

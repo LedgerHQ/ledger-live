@@ -13,7 +13,7 @@ import type { ThunkDispatch } from "@reduxjs/toolkit";
  * Current version of the persistence format
  * Increment this when making breaking changes to the format
  */
-export const PERSISTENCE_VERSION = 1;
+export const PERSISTENCE_VERSION = 2;
 
 /**
  * Serializable token format
@@ -45,11 +45,13 @@ export interface PersistedTokenEntry {
 /**
  * Root persistence format with versioning
  */
-export interface PersistedTokens {
+export interface PersistedCAL {
   /** Format version for migration handling */
   version: number;
   /** Array of persisted tokens */
   tokens: PersistedTokenEntry[];
+  /** Mapping of currencyId to X-Ledger-Commit hash */
+  hashes?: Record<string, string>;
 }
 
 /**
@@ -120,9 +122,9 @@ export function extractTokensFromState(state: StateWithCryptoAssets): PersistedT
   const seenIds = new Set<string>();
 
   // Extract tokens from fulfilled queries
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const [_queryKey, query] of Object.entries(rtkState.queries as Record<string, any>)) {
+  for (const [_queryKey, query] of Object.entries(rtkState.queries)) {
     if (
+      query &&
       query.status === "fulfilled" &&
       query.data &&
       (query.endpointName === "findTokenById" ||
@@ -133,6 +135,7 @@ export function extractTokensFromState(state: StateWithCryptoAssets): PersistedT
       // Deduplicate by token ID
       if (token && token.id && !seenIds.has(token.id)) {
         seenIds.add(token.id);
+
         tokens.push({
           data: toTokenCurrencyRaw(token),
           timestamp: query.fulfilledTimeStamp || Date.now(),
@@ -143,6 +146,54 @@ export function extractTokensFromState(state: StateWithCryptoAssets): PersistedT
 
   log("persistence", `Extracted ${tokens.length} tokens from cache`);
   return tokens;
+}
+
+/**
+ * Extracts hashes from getTokensSyncHash queries in RTK Query state
+ * Returns a mapping of currencyId to hash
+ */
+export function extractHashesFromState(state: StateWithCryptoAssets): Record<string, string> {
+  const rtkState = state[cryptoAssetsApi.reducerPath];
+
+  if (!rtkState || !rtkState.queries) {
+    return {};
+  }
+
+  const hashes: Record<string, string> = {};
+
+  // Extract hashes from fulfilled getTokensSyncHash queries
+  for (const [queryKey, query] of Object.entries(rtkState.queries)) {
+    if (
+      query &&
+      query.status === "fulfilled" &&
+      query.endpointName === "getTokensSyncHash" &&
+      query.data &&
+      typeof query.data === "string"
+    ) {
+      // Extract currencyId from query key (format: 'getTokensSyncHash("ethereum")')
+      const match = queryKey.match(/getTokensSyncHash\("([^"]+)"\)/);
+      if (match && match[1]) {
+        hashes[match[1]] = query.data;
+      }
+    }
+  }
+
+  return hashes;
+}
+
+/**
+ * Extracts all persisted data (tokens and hashes) from RTK Query state
+ * Returns a complete PersistedCAL object ready for serialization
+ */
+export function extractPersistedCALFromState(state: StateWithCryptoAssets): PersistedCAL {
+  const tokens = extractTokensFromState(state);
+  const hashes = extractHashesFromState(state);
+
+  return {
+    version: PERSISTENCE_VERSION,
+    tokens,
+    ...(Object.keys(hashes).length > 0 && { hashes }),
+  };
 }
 
 /**
@@ -167,35 +218,71 @@ export function filterExpiredTokens(
 }
 
 /**
- * Restores tokens from persisted data to RTK Query cache
- * Uses upsertQueryEntries to insert final TokenCurrency values (no transformResponse)
- * Implements cross-caching: stores tokens by both ID and address
- *
- * @param dispatch - Redux dispatch function
- * @param tokens - Array of persisted token entries
- * @param ttl - Time-to-live in milliseconds (tokens older than this are skipped)
+ * Restores tokens from persisted data to RTK Query cache.
+ * Validates persisted hashes against current hashes and evicts cache if they differ.
  */
-export function restoreTokensToCache(
+export async function restoreTokensToCache(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch: ThunkDispatch<any, any, any>,
-  tokens: PersistedTokenEntry[],
+  persistedData: PersistedCAL,
   ttl: number,
-): void {
-  const validTokens = filterExpiredTokens(tokens, ttl);
-
+): Promise<void> {
+  const validTokens = filterExpiredTokens(persistedData.tokens, ttl);
   if (validTokens.length === 0) {
     log("persistence", "No valid tokens to restore");
     return;
   }
 
-  // Build entries for upsertQueryEntries
-  // Each token needs to be cached under both ID and address lookups
-  const entries: Array<
-    | {
-        endpointName: "findTokenById";
-        arg: { id: string };
-        value: TokenCurrency | undefined;
+  const tokensByCurrency = new Map<string, PersistedTokenEntry[]>();
+  for (const entry of validTokens) {
+    const currencyId = entry.data.parentCurrencyId;
+    if (!tokensByCurrency.has(currencyId)) {
+      tokensByCurrency.set(currencyId, []);
+    }
+    tokensByCurrency.get(currencyId)!.push(entry);
+  }
+
+  const currencyIdsToEvict = new Set<string>();
+  const hashes = persistedData.hashes || {};
+
+  for (const currencyId of tokensByCurrency.keys()) {
+    const storedHash = hashes[currencyId];
+    if (!storedHash) continue;
+
+    try {
+      const currentHashResult = await dispatch(
+        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
+      );
+      const currentHash = currentHashResult.data;
+
+      if (currentHash && currentHash !== storedHash) {
+        log(
+          "persistence",
+          `Hash changed for currencyId ${currencyId}: ${storedHash} -> ${currentHash}, skipping restore`,
+        );
+        currencyIdsToEvict.add(currencyId);
       }
+    } catch (error) {
+      log(
+        "persistence",
+        `Failed to validate hash for currencyId ${currencyId}, skipping restore`,
+        error,
+      );
+      currencyIdsToEvict.add(currencyId);
+    }
+  }
+
+  const tokensToRestore = validTokens.filter(
+    entry => !currencyIdsToEvict.has(entry.data.parentCurrencyId),
+  );
+
+  if (tokensToRestore.length === 0) {
+    log("persistence", "No tokens to restore after hash validation");
+    return;
+  }
+
+  const entries: Array<
+    | { endpointName: "findTokenById"; arg: { id: string }; value: TokenCurrency | undefined }
     | {
         endpointName: "findTokenByAddressInCurrency";
         arg: { contract_address: string; network: string };
@@ -204,25 +291,19 @@ export function restoreTokensToCache(
   > = [];
 
   let skipped = 0;
-
-  for (const entry of validTokens) {
-    // Convert Raw format back to TokenCurrency
+  for (const entry of tokensToRestore) {
     const token = fromTokenCurrencyRaw(entry.data);
-
     if (!token) {
-      // Conversion failed (e.g., parent currency not found), skip this token
       skipped++;
       continue;
     }
 
-    // Cache by ID
     entries.push({
       endpointName: "findTokenById",
       arg: { id: token.id },
       value: token,
     });
 
-    // Cross-cache by address (for findTokenByAddressInCurrency queries)
     entries.push({
       endpointName: "findTokenByAddressInCurrency",
       arg: {
@@ -233,13 +314,12 @@ export function restoreTokensToCache(
     });
   }
 
-  // Dispatch single upsertQueryEntries action with all entries
   if (entries.length > 0) {
     dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
   }
 
   log(
     "persistence",
-    `Restored ${validTokens.length - skipped} tokens to cache (${entries.length} entries, ${skipped} skipped)`,
+    `Restored ${tokensToRestore.length - skipped} tokens (${entries.length} entries, ${skipped} skipped, ${currencyIdsToEvict.size} currencies evicted)`,
   );
 }

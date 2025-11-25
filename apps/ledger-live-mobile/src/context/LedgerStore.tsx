@@ -106,7 +106,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (cryptoAssetsCache?.tokens) {
         if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
           const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-          restoreTokensToCache(store.dispatch, cryptoAssetsCache.tokens, TOKEN_CACHE_TTL);
+          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
         } else {
           // eslint-disable-next-line no-console
           console.warn(

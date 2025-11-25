@@ -19,11 +19,7 @@ import type {
 } from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-import {
-  PERSISTENCE_VERSION,
-  type PersistedTokens,
-  type PersistedTokenEntry,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -308,15 +304,11 @@ export async function saveLargeMoverState(state: LargeMoverState): Promise<void>
   await storage.save("largeMover", state);
 }
 
-export function getCryptoAssetsCacheState(): Promise<PersistedTokens | null> {
-  return storage.get("cryptoAssetsCache") as Promise<PersistedTokens | null>;
+export function getCryptoAssetsCacheState(): Promise<PersistedCAL | null> {
+  return storage.get("cryptoAssetsCache") as Promise<PersistedCAL | null>;
 }
-export async function saveCryptoAssetsCacheState(tokens: PersistedTokenEntry[]): Promise<void> {
-  if (tokens.length > 0) {
-    const persistedData: PersistedTokens = {
-      version: PERSISTENCE_VERSION,
-      tokens,
-    };
+export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): Promise<void> {
+  if (persistedData.tokens.length > 0) {
     await storage.save("cryptoAssetsCache", persistedData);
   }
 }
