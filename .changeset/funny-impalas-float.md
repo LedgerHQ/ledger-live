@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/live-common": patch
 "@ledgerhq/coin-framework": patch
 ---
 
