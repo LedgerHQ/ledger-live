@@ -29,7 +29,7 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
-import Concordium from "./Concordium";
+import Concordium from "./concordium/Concordium";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`

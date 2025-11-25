@@ -1,24 +1,22 @@
+// ~/renderer/screens/dashboard/Concordium.tsx
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { Text, Button } from "@ledgerhq/react-ui/index";
 import Box from "~/renderer/components/Box";
 import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
 import { ConcordiumIDAppPoup, ConcordiumIDAppSDK } from "@concordium/id-app-sdk";
-import {
-  useConcordiumAccountsScan,
-  saveConcordiumAccount,
-} from "~/renderer/screens/dashboard/useConcordiumAccountScan";
+import { saveConcordiumAccount } from "./useConcordiumAccountScan";
+import ConcordiumAccounts from "./ConcordiumAccounts";
 
-export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Mainnet";
-// NOTE: i have issues with testnet idapp, when creating accounts it switches to mainnet
+export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Testnet";
 
 export const CONCORDIUM_CHAIN_IDS = {
-  Mainnet: "concordium:9dd9ca4d19e9393877d2c44b70f89acb",
-  Testnet: "concordium:4221332d34e1694168c2a0c0b3fd0f27",
+  Mainnet: "ccd:9dd9ca4d19e9393877d2c44b70f89acb",
+  Testnet: "ccd:4221332d34e1694168c2a0c0b3fd0f27",
 } as const;
 
 export const DEMO_SEED_PHRASE =
-  "salon ugly company broccoli close riot believe ordinary bleak science shrug milk";
+  "question barrel tuna spoil across gaze soup verify melt noise feel measure";
 
 export default function Concordium() {
   const [client, setClient] = useState<SignClient | null>(null);
@@ -29,15 +27,8 @@ export default function Concordium() {
   const [availableSessions, setAvailableSessions] = useState<SessionTypes.Struct[]>([]);
   const [showSessionPicker, setShowSessionPicker] = useState(false);
 
-  // track account index for generateAccountWithSeedPhrase
   const accountIndexRef = useRef(0);
-
-  const {
-    accounts,
-    isLoading: isAccountsLoading,
-    error: accountsError,
-    refresh: refreshAccounts,
-  } = useConcordiumAccountsScan();
+  const accountsRef = useRef<{ refresh: () => void } | null>(null);
 
   const getOrInitClient = useCallback(async () => {
     if (client) return client;
@@ -57,13 +48,11 @@ export default function Concordium() {
     return c;
   }, [client]);
 
-  // Auto-select latest session on mount or when client changes
   const autoSelectLatestSession = useCallback(async (c: SignClient) => {
     const all = c.session.getAll();
     const concordiumSessions = all.filter(s => "concordium" in s.namespaces);
 
     if (concordiumSessions.length > 0) {
-      // Sort by expiry (or you could use another criterion) - latest first
       const sorted = concordiumSessions.sort((a, b) => b.expiry - a.expiry);
       const latest = sorted[0];
       console.log("[Concordium] Auto-selected latest session:", latest.topic);
@@ -73,7 +62,6 @@ export default function Concordium() {
     return null;
   }, []);
 
-  // On mount, try to auto-select existing session
   useEffect(() => {
     const init = async () => {
       const c = await getOrInitClient();
@@ -91,6 +79,7 @@ export default function Concordium() {
     setIsPairing(true);
 
     const chainId = CONCORDIUM_CHAIN_IDS[CONCORDIUM_NETWORK];
+    console.log({ chainId });
 
     const { uri: wcUri, approval: wcApproval } = await c.connect({
       requiredNamespaces: {
@@ -115,7 +104,6 @@ export default function Concordium() {
       walletConnectUri: wcUri,
     });
 
-    // Wait for approval and auto-set session
     try {
       const s = await wcApproval();
       console.log("[Concordium] WC session established:", s.topic);
@@ -128,9 +116,6 @@ export default function Concordium() {
     }
   }, [getOrInitClient]);
 
-  /**
-   * Full Concordium IDApp SDK flow for *creating* an account.
-   */
   const onCreateAccount = useCallback(async () => {
     if (!client || !session) {
       console.error("[Concordium] Missing WalletConnect client or session");
@@ -162,19 +147,21 @@ export default function Concordium() {
       if (!concordiumNs) {
         throw new Error("[Concordium] No 'concordium' namespace in WC session");
       }
+      console.log({ concordiumNs });
 
-      const chainIdFromNs =
-        concordiumNs.chains?.[0] ?? concordiumNs.accounts?.[0]?.split(":").slice(0, 2).join(":");
-
-      if (!chainIdFromNs) {
-        console.error("[Concordium] session.namespaces.concordium:", concordiumNs);
-        throw new Error("[Concordium] Could not determine chainId from session namespaces");
-      }
-      console.log({ session, chainIdFromNs });
-
+      const chainId = CONCORDIUM_CHAIN_IDS[CONCORDIUM_NETWORK];
+      // const chainIdFromNs =
+      //   concordiumNs.chains?.[0] ?? concordiumNs.accounts?.[0]?.split(":").slice(0, 2).join(":");
+      //
+      // if (!chainIdFromNs) {
+      //   console.error("[Concordium] session.namespaces.concordium:", concordiumNs);
+      //   throw new Error("[Concordium] Could not determine chainId from session namespaces");
+      // }
+      //
+      // console.log({ chainIdFromNs });
       const response: any = await client.request({
         topic: session.topic,
-        chainId: chainIdFromNs,
+        chainId: chainId,
         request: {
           method: "create_account",
           params: { message: createRequest },
@@ -213,14 +200,16 @@ export default function Concordium() {
       accountIndexRef.current += 1;
 
       saveConcordiumAccount({ address: accountAddress, txHash });
-      refreshAccounts();
+
+      // Trigger refresh in accounts component
+      accountsRef.current?.refresh();
 
       return { accountAddress, txHash };
     } catch (e) {
       console.error("[Concordium] create_account flow failed", e);
       throw e;
     }
-  }, [client, session, refreshAccounts]);
+  }, [client, session]);
 
   const openCreatePopup = useCallback(async () => {
     if (!session) {
@@ -240,14 +229,10 @@ export default function Concordium() {
     });
   }, [onRecoverAccount]);
 
-  // ---- list & select existing sessions ----
-
   const refreshSessions = useCallback(async () => {
     const c = await getOrInitClient();
     const all = c.session.getAll();
-
     const concordiumSessions = all.filter(s => "concordium" in s.namespaces);
-
     console.log("[Concordium] Existing sessions:", concordiumSessions);
     setAvailableSessions(concordiumSessions);
     setShowSessionPicker(true);
@@ -289,15 +274,30 @@ export default function Concordium() {
             IDApp SDK · WalletConnect pairing + actions
           </Text>
         </Box>
-        <Box
-          px={3}
-          py={1}
-          borderRadius={999}
-          style={{ backgroundColor: "#0b2438", border: "1px solid #214667" }}
-        >
-          <Text fontSize={11} color="wallet" fontWeight="semiBold">
-            {status}
-          </Text>
+        <Box horizontal alignItems="center" gap={2}>
+          <Box
+            px={2}
+            py={1}
+            borderRadius={999}
+            style={{
+              backgroundColor: CONCORDIUM_NETWORK === "Mainnet" ? "#1a2438" : "#0b2438",
+              border: `1px solid ${CONCORDIUM_NETWORK === "Mainnet" ? "#3a4a68" : "#214667"}`,
+            }}
+          >
+            <Text fontSize={10} color="neutral.c80">
+              {CONCORDIUM_NETWORK}
+            </Text>
+          </Box>
+          <Box
+            px={3}
+            py={1}
+            borderRadius={999}
+            style={{ backgroundColor: "#0b2438", border: "1px solid #214667" }}
+          >
+            <Text fontSize={11} color="wallet" fontWeight="semiBold">
+              {status}
+            </Text>
+          </Box>
         </Box>
       </Box>
 
@@ -340,65 +340,8 @@ export default function Concordium() {
         </Box>
       </Box>
 
-      {/* Saved accounts + on-chain info */}
-      <Box mt={6}>
-        <Box horizontal justifyContent="space-between" alignItems="center" mb={2}>
-          <Text variant="subtitle">Saved Concordium accounts</Text>
-          <Button small variant="shade" onClick={refreshAccounts}>
-            Refresh
-          </Button>
-        </Box>
-
-        {isAccountsLoading && (
-          <Text fontSize={12} color="neutral.c80">
-            Loading accounts…
-          </Text>
-        )}
-
-        {accountsError && (
-          <Text fontSize={12} color="error.c60">
-            {accountsError.message}
-          </Text>
-        )}
-
-        {!isAccountsLoading && !accountsError && accounts.length === 0 && (
-          <Text fontSize={12} color="neutral.c80">
-            No saved accounts yet.
-          </Text>
-        )}
-
-        {accounts.map(acc => (
-          <Box
-            key={`${acc.address}-${acc.createdAt}`}
-            mb={2}
-            p={3}
-            borderRadius={8}
-            style={{ backgroundColor: "#050811", border: "1px solid #283347" }}
-          >
-            <Text fontSize={12} color="wallet" fontFamily="monospace">
-              {acc.address}
-            </Text>
-
-            {acc.txHash && (
-              <Text fontSize={10} color="neutral.c60">
-                tx: {acc.txHash}
-              </Text>
-            )}
-
-            {acc.info && (
-              <Text fontSize={10} color="neutral.c60">
-                balance: {acc.info.accountAmount?.microCcd ?? "?"} μCCD
-              </Text>
-            )}
-
-            {acc.info === null && (
-              <Text fontSize={10} color="error.c60">
-                Account not found on-chain
-              </Text>
-            )}
-          </Box>
-        ))}
-      </Box>
+      {/* Accounts component */}
+      <ConcordiumAccounts network={CONCORDIUM_NETWORK} />
 
       {/* Session picker */}
       {showSessionPicker && (
