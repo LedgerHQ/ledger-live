@@ -8,7 +8,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 
 import Animation from "~/components/Animation";
-import { getProductName } from "~/newArch/utils/getProductName";
+import { getProductName } from "LLM/utils/getProductName";
 
 type Props = {
   device: Device;

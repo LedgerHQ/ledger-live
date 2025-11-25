@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "@tests/test-renderer";
+import { render, screen, act, fireEvent } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { BarcodeScanningResult } from "expo-camera";
@@ -45,8 +45,11 @@ describe("SynchronizeWithQrCode", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/I already turned it on/i));
-    await user.press(await screen.findByText(/scan qr code/i));
+    // This is a workaround to avoid the press event being ignored using onPressIn
+    await act(async () => {
+      fireEvent.press(await screen.findByText(/I already turned it on/i));
+      fireEvent.press(await screen.findByText(/scan qr code/i));
+    });
     await user.press(screen.queryAllByText(/show qr/i)[0]);
     expect(screen.getByTestId("ws-qr-code-displayed")).toBeVisible();
 

@@ -62,8 +62,8 @@ import {
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
-import { useOpenAssetFlow } from "~/newArch/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "~/newArch/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 const FlowStepperContainer = styled(Flex)`

@@ -916,11 +916,18 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
     async (swap: Swap, amount: string, errorMessage: string | null) => {
       const buttons = getButtonsController();
       if (errorMessage === null) {
-        await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
-        await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
+        if (isTouchDevice()) {
+          await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+          await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
+        } else {
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+          await pressUntilTextFound(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+          await buttons.both();
+        }
       } else {
         await waitFor(DeviceLabels.REVIEW_TRANSACTION);
       }
+
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       verifySwapData(swap, events, amount);
       if (isTouchDevice()) {

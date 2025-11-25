@@ -1,5 +1,5 @@
 import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TAB_OPTIONS } from "./TabSection";
 import { track } from "~/analytics";
 import { LayoutChangeEvent } from "react-native/Libraries/Types/CoreEventTypes";
@@ -19,11 +19,12 @@ const useListsAnimation = (initialTab: TabListType) => {
   const [containerHeight, setContainerHeight] = useState<number | undefined>(undefined);
   const [accountsButtonHeight, setAccountsButtonHeight] = useState<number>(0);
   const [assetsButtonHeight, setAssetsButtonHeight] = useState<number>(0);
+  const hasSetInitialPositions = useRef<boolean>(false);
 
   const assetsTranslateX = useSharedValue<number>(0);
-  const assetsOpacity = useSharedValue<number>(1);
-  const accountsTranslateX = useSharedValue<number>(containerWidth);
-  const accountsOpacity = useSharedValue<number>(0);
+  const assetsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Assets ? 1 : 0);
+  const accountsTranslateX = useSharedValue<number>(0);
+  const accountsOpacity = useSharedValue<number>(initialTab === TAB_OPTIONS.Accounts ? 1 : 0);
 
   const handleToggle = (value: TabListType) => {
     setSelectedTab(value);
@@ -47,6 +48,24 @@ const useListsAnimation = (initialTab: TabListType) => {
   const handleLayout = (event: LayoutChangeEvent) => {
     // Get the width of the container and set it to the state so we can use the width in the animation
     const { width } = event.nativeEvent.layout;
+    const isFirstLayout = containerWidth === 0;
+
+    // On first layout, set positions instantly without animation to avoid clipping issues on CI
+    if (isFirstLayout && width > 0 && !hasSetInitialPositions.current) {
+      hasSetInitialPositions.current = true;
+      if (selectedTab === TAB_OPTIONS.Assets) {
+        assetsTranslateX.value = 0;
+        assetsOpacity.value = 1;
+        accountsTranslateX.value = width / 3;
+        accountsOpacity.value = 0;
+      } else {
+        assetsTranslateX.value = -width / 3;
+        assetsOpacity.value = 0;
+        accountsTranslateX.value = -width / 2;
+        accountsOpacity.value = 1;
+      }
+    }
+
     setContainerWidth(width);
   };
 
@@ -97,6 +116,11 @@ const useListsAnimation = (initialTab: TabListType) => {
   );
 
   useEffect(() => {
+    // Skip animation if containerWidth is not yet measured or initial positions not set
+    if (containerWidth === 0 || !hasSetInitialPositions.current) {
+      return;
+    }
+
     // Use requestAnimationFrame to ensure layout is complete before starting animations
     const rafId = requestAnimationFrame(() => {
       if (selectedTab === TAB_OPTIONS.Assets) {

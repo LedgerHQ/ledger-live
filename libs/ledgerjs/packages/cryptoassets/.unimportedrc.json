@@ -12,5 +12,11 @@
     "src/cal-client/**",
     "src/legacy/legacy-data.ts"
   ],
-  "ignoreUnused": ["zod", "@reduxjs/toolkit", "@ledgerhq/logs", "@ledgerhq/types-live"]
+  "ignoreUnused": [
+    "zod",
+    "@reduxjs/toolkit",
+    "@ledgerhq/logs",
+    "@ledgerhq/errors",
+    "@ledgerhq/types-live"
+  ]
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
+import random from "lodash/random";
+import times from "lodash/times";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
@@ -45,6 +47,15 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
+const generateRandomString = (numberOfChars: number = 4): string => {
+  return (
+    "-" +
+    times(numberOfChars, () => random(35).toString(36))
+      .join("")
+      .toUpperCase()
+  );
+};
+
 export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
@@ -74,13 +85,13 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase();
   const errorCodeMatch = errorMessage && errorMessage.match(/Error code (\w+)/i);
-  const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
+  const dynamicErrorCode = generateRandomString();
 
   if (errorMessage?.includes("transaction cannot be created")) {
     track("error_message", {
       ...swapDefaultTrack,
       message: "partner_unavailable",
-      error_code: dynamicErrorCode,
+      error_code: errorCodeMatch[1],
     });
     titleKey = "errors.TransactionCannotBeCreated.title";
     descriptionKey = t("errors.TransactionCannotBeCreated.description", {
@@ -95,6 +106,19 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
       descriptionKey = "errors.SwapRateExpiredError.description";
       errorCodeSection = null;
       break;
+    case "TRANSACTION_CANNOT_BE_CREATED": {
+      track("error_message", {
+        ...swapDefaultTrack,
+        message: "partner_unavailable",
+        error_code: error?.cause?.swapCode,
+      });
+      titleKey = "errors.TransactionCannotBeCreated.title";
+      descriptionKey = t("errors.TransactionCannotBeCreated.description", {
+        errorCode: generateRandomString(),
+      });
+      errorCodeSection = null;
+      break;
+    }
   }
 
   return (

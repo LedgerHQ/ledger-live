@@ -5997,6 +5997,9 @@ importers:
 
   libs/ledgerjs/packages/cryptoassets:
     dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../../env

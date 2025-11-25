@@ -374,237 +374,259 @@ export const handlers = ({
       );
     }),
     "custom.exchange.swap": customWrapper<ExchangeSwapParams, SwapResult>(async params => {
-      if (!params) {
-        tracking.startExchangeNoParams(manifest);
-        throw new ServerError(createUnknownError({ message: "params is undefined" }));
-      }
+      try {
+        if (!params) {
+          tracking.startExchangeNoParams(manifest);
+          throw new ServerError(createUnknownError({ message: "params is undefined" }));
+        }
 
-      const {
-        provider,
-        fromAmount,
-        fromAmountAtomic,
-        quoteId,
-        toNewTokenId,
-        customFeeConfig,
-        swapAppVersion,
-        sponsored,
-      } = params;
+        const {
+          provider,
+          fromAmount,
+          fromAmountAtomic,
+          quoteId,
+          toNewTokenId,
+          customFeeConfig,
+          swapAppVersion,
+          sponsored,
+        } = params;
 
-      const trackingParams = {
-        provider: params.provider,
-        exchangeType: params.exchangeType,
-      };
+        const trackingParams = {
+          provider: params.provider,
+          exchangeType: params.exchangeType,
+        };
 
-      tracking.startExchangeRequested(trackingParams);
+        tracking.startExchangeRequested(trackingParams);
 
-      const exchangeStartParams: ExchangeStartParamsUiRequest = (await extractSwapStartParam(
-        params,
-        accounts,
-      )) as SwapStartParamsUiRequest;
+        const exchangeStartParams: ExchangeStartParamsUiRequest = (await extractSwapStartParam(
+          params,
+          accounts,
+        )) as SwapStartParamsUiRequest;
 
-      const {
-        fromCurrency,
-        fromAccount,
-        fromParentAccount,
-        toCurrency,
-        toAccount,
-        toParentAccount,
-      } = exchangeStartParams.exchange;
+        const {
+          fromCurrency,
+          fromAccount,
+          fromParentAccount,
+          toCurrency,
+          toAccount,
+          toParentAccount,
+        } = exchangeStartParams.exchange;
 
-      if (!fromAccount || !fromCurrency) {
-        throw new ServerError(createAccountNotFound(params.fromAccountId));
-      }
+        if (!fromAccount || !fromCurrency) {
+          throw new ServerError(createAccountNotFound(params.fromAccountId));
+        }
 
-      const fromAccountAddress = fromParentAccount
-        ? fromParentAccount.freshAddress
-        : (fromAccount as Account).freshAddress;
+        const fromAccountAddress = fromParentAccount
+          ? fromParentAccount.freshAddress
+          : (fromAccount as Account).freshAddress;
 
-      const toAccountAddress = toParentAccount
-        ? toParentAccount.freshAddress
-        : (toAccount as Account).freshAddress;
+        const toAccountAddress = toParentAccount
+          ? toParentAccount.freshAddress
+          : (toAccount as Account).freshAddress;
 
-      // Step 1: Open the drawer and open exchange app
-      const startExchange = async () => {
-        return new Promise<{ transactionId: string; device?: ExchangeStartResult["device"] }>(
-          (resolve, reject) => {
-            uiExchangeStart({
-              exchangeParams: exchangeStartParams,
-              onSuccess: (nonce, device) => {
-                tracking.startExchangeSuccess(trackingParams);
-                resolve({ transactionId: nonce, device });
-              },
-              onCancel: error => {
-                tracking.startExchangeFail(trackingParams);
-                reject(error);
-              },
-            });
-          },
-        );
-      };
-
-      const { transactionId, device: deviceInfo } = await startExchange();
-
-      const {
-        binaryPayload,
-        signature,
-        payinAddress,
-        swapId,
-        payinExtraId,
-        extraTransactionParameters,
-      } = await retrieveSwapPayload({
-        provider,
-        deviceTransactionId: transactionId,
-        fromAccountAddress,
-        toAccountAddress,
-        fromAccountCurrency: fromCurrency!.id,
-        toAccountCurrency: toCurrency!.id,
-        amount: fromAmount,
-        amountInAtomicUnit: fromAmountAtomic,
-        quoteId,
-        toNewTokenId,
-      }).catch((error: Error) => {
-        throw error;
-      });
-
-      // Complete Swap
-      const trackingCompleteParams = {
-        provider: params.provider,
-        exchangeType: params.exchangeType,
-      };
-      tracking.completeExchangeRequested(trackingCompleteParams);
-
-      const strategyData = {
-        recipient: payinAddress,
-        amount: fromAmountAtomic,
-        currency: fromCurrency as CryptoOrTokenCurrency,
-        customFeeConfig: customFeeConfig ?? {},
-        payinExtraId,
-        extraTransactionParameters,
-        sponsored,
-      };
-
-      const transaction: Transaction = await getStrategy(strategyData, "swap").catch(
-        async error => {
-          throw error;
-        },
-      );
-
-      const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-
-      if (transaction.family !== mainFromAccount.currency.family) {
-        return Promise.reject(
-          new Error(
-            `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
-          ),
-        );
-      }
-
-      const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
-
-      /**
-       * 'subAccountId' is used for ETH and it's ERC-20 tokens.
-       * This field is ignored for BTC
-       */
-      const subAccountId =
-        fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
-
-      const bridgeTx = accountBridge.createTransaction(fromAccount);
-      /**
-       * We append the `recipient` to the tx created from `createTransaction`
-       * to avoid having userGasLimit reset to null for ETH txs
-       * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
-       */
-      const tx = accountBridge.updateTransaction(
-        {
-          ...bridgeTx,
-          recipient: transaction.recipient,
-        },
-        {
-          ...transaction,
-          feesStrategy: params.feeStrategy.toLowerCase(),
-          subAccountId,
-        },
-      );
-
-      // Get amountExpectedTo and magnitudeAwareRate from binary payload
-      const decodePayload = await decodeSwapPayload(binaryPayload);
-      const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
-      const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
-      const refundAddress = decodePayload.refundAddress;
-      const payoutAddress = decodePayload.payoutAddress;
-
-      // tx.amount should be BigNumber
-      tx.amount = new BigNumber(tx.amount);
-
-      return new Promise((resolve, reject) =>
-        uiSwap({
-          exchangeParams: {
-            exchangeType: ExchangeType.SWAP,
-            provider: params.provider,
-            transaction: tx,
-            signature: signature,
-            binaryPayload: binaryPayload,
-            exchange: {
-              fromAccount,
-              fromParentAccount,
-              toAccount,
-              toParentAccount,
-              fromCurrency: fromCurrency!,
-              toCurrency: toCurrency!,
+        // Step 1: Open the drawer and open exchange app
+        const startExchange = async () => {
+          return new Promise<{ transactionId: string; device?: ExchangeStartResult["device"] }>(
+            (resolve, reject) => {
+              uiExchangeStart({
+                exchangeParams: exchangeStartParams,
+                onSuccess: (nonce, device) => {
+                  tracking.startExchangeSuccess(trackingParams);
+                  resolve({ transactionId: nonce, device });
+                },
+                onCancel: error => {
+                  tracking.startExchangeFail(trackingParams);
+                  reject(error);
+                },
+              });
             },
-            feesStrategy: params.feeStrategy,
-            swapId: swapId,
-            amountExpectedTo: amountExpectedTo.toNumber(),
-            magnitudeAwareRate,
-            refundAddress,
-            payoutAddress,
-            sponsored,
-          },
-          onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
-            tracking.completeExchangeSuccess({
-              ...trackingParams,
-              currency: transaction.family,
-            });
+          );
+        };
 
-            setBroadcastTransaction({
-              provider,
-              result: { operation: operationHash, swapId },
-              sourceCurrencyId: fromCurrency.id,
-              targetCurrencyId: toCurrency?.id,
-              hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
-              swapAppVersion,
-              fromAccountAddress,
-              toAccountAddress,
-              fromAmount,
-            });
+        const { transactionId, device: deviceInfo } = await startExchange();
 
-            resolve({ operationHash, swapId });
+        const {
+          binaryPayload,
+          signature,
+          payinAddress,
+          swapId,
+          payinExtraId,
+          extraTransactionParameters,
+        } = await retrieveSwapPayload({
+          provider,
+          deviceTransactionId: transactionId,
+          fromAccountAddress,
+          toAccountAddress,
+          fromAccountCurrency: fromCurrency!.id,
+          toAccountCurrency: toCurrency!.id,
+          amount: fromAmount,
+          amountInAtomicUnit: fromAmountAtomic,
+          quoteId,
+          toNewTokenId,
+        }).catch((error: Error) => {
+          throw error;
+        });
+
+        // Complete Swap
+        const trackingCompleteParams = {
+          provider: params.provider,
+          exchangeType: params.exchangeType,
+        };
+        tracking.completeExchangeRequested(trackingCompleteParams);
+
+        const strategyData = {
+          recipient: payinAddress,
+          amount: fromAmountAtomic,
+          currency: fromCurrency as CryptoOrTokenCurrency,
+          customFeeConfig: customFeeConfig ?? {},
+          payinExtraId,
+          extraTransactionParameters,
+          sponsored,
+        };
+
+        const transaction: Transaction = await getStrategy(strategyData, "swap").catch(
+          async error => {
+            throw error;
           },
-          onCancel: error => {
-            postSwapCancelled({
-              provider: provider,
+        );
+
+        const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+
+        if (transaction.family !== mainFromAccount.currency.family) {
+          return Promise.reject(
+            new Error(
+              `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
+            ),
+          );
+        }
+
+        const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+
+        /**
+         * 'subAccountId' is used for ETH and it's ERC-20 tokens.
+         * This field is ignored for BTC
+         */
+        const subAccountId =
+          fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
+
+        const bridgeTx = accountBridge.createTransaction(fromAccount);
+        /**
+         * We append the `recipient` to the tx created from `createTransaction`
+         * to avoid having userGasLimit reset to null for ETH txs
+         * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
+         */
+        const tx = accountBridge.updateTransaction(
+          {
+            ...bridgeTx,
+            recipient: transaction.recipient,
+          },
+          {
+            ...transaction,
+            feesStrategy: params.feeStrategy.toLowerCase(),
+            subAccountId,
+          },
+        );
+
+        // Get amountExpectedTo and magnitudeAwareRate from binary payload
+        const decodePayload = await decodeSwapPayload(binaryPayload);
+        const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+        const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+        const refundAddress = decodePayload.refundAddress;
+        const payoutAddress = decodePayload.payoutAddress;
+
+        // tx.amount should be BigNumber
+        tx.amount = new BigNumber(tx.amount);
+
+        return new Promise((resolve, reject) =>
+          uiSwap({
+            exchangeParams: {
+              exchangeType: ExchangeType.SWAP,
+              provider: params.provider,
+              transaction: tx,
+              signature: signature,
+              binaryPayload: binaryPayload,
+              exchange: {
+                fromAccount,
+                fromParentAccount,
+                toAccount,
+                toParentAccount,
+                fromCurrency: fromCurrency!,
+                toCurrency: toCurrency!,
+              },
+              feesStrategy: params.feeStrategy,
               swapId: swapId,
-              swapStep: getSwapStepFromError(error),
-              statusCode: error.name,
-              errorMessage: error.message,
-              sourceCurrencyId: fromCurrency.id,
-              targetCurrencyId: toCurrency?.id,
-              hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
-              swapType: quoteId ? "fixed" : "float",
-              swapAppVersion,
-              fromAccountAddress,
-              toAccountAddress,
+              amountExpectedTo: amountExpectedTo.toNumber(),
+              magnitudeAwareRate,
               refundAddress,
               payoutAddress,
-              fromAmount,
-              seedIdFrom: mainFromAccount.seedIdentifier,
-              seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
-            });
+              sponsored,
+            },
+            onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
+              tracking.completeExchangeSuccess({
+                ...trackingParams,
+                currency: transaction.family,
+              });
 
-            reject(error);
-          },
-        }),
-      );
+              setBroadcastTransaction({
+                provider,
+                result: { operation: operationHash, swapId },
+                sourceCurrencyId: fromCurrency.id,
+                targetCurrencyId: toCurrency?.id,
+                hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
+                swapAppVersion,
+                fromAccountAddress,
+                toAccountAddress,
+                fromAmount,
+              });
+
+              resolve({ operationHash, swapId });
+            },
+            onCancel: error => {
+              postSwapCancelled({
+                provider: provider,
+                swapId: swapId,
+                swapStep: getSwapStepFromError(error),
+                statusCode: error.name,
+                errorMessage: error.message,
+                sourceCurrencyId: fromCurrency.id,
+                targetCurrencyId: toCurrency?.id,
+                hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
+                swapType: quoteId ? "fixed" : "float",
+                swapAppVersion,
+                fromAccountAddress,
+                toAccountAddress,
+                refundAddress,
+                payoutAddress,
+                fromAmount,
+                seedIdFrom: mainFromAccount.seedIdentifier,
+                seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
+              });
+
+              reject(error);
+            },
+          }),
+        );
+      } catch (error) {
+        // Skip DrawerClosedError
+        if (isDrawerClosedError(error)) {
+          throw error;
+        }
+        // Global catch for any errors during the swap process
+        // Convert the error to SwapLiveError format for WebviewErrorDrawer
+        const swapError = getSwapError(error);
+
+        return new Promise((resolve, reject) => {
+          uiError({
+            error: swapError,
+            onSuccess: () => {
+              reject(error);
+            },
+            onCancel: () => {
+              reject(error);
+            },
+          });
+        });
+      }
     }),
 
     "custom.isReady": customWrapper<void, void>(async () => {
@@ -843,4 +865,56 @@ async function getStrategy(
       `Failed to execute transaction strategy for family: ${family}. Reason: ${errorMessage}`,
     );
   }
+}
+
+function isDrawerClosedError(error: unknown) {
+  return (
+    error && typeof error === "object" && "name" in error && error.name === "DrawerClosedError"
+  );
+}
+
+function getSwapError(error: unknown) {
+  let swapError: SwapLiveError;
+  if (typeof error === "object" && error !== null) {
+    const err = error as any;
+
+    // Handle Axios error format: error.response.data.error
+    const apiError = err.response?.data?.error || err.error;
+    const errorMessage =
+      apiError?.message || err.message || (err instanceof Error ? err.message : String(error));
+    const messageKey = apiError?.messageKey || err.messageKey;
+
+    // Create a plain object with only serializable properties to avoid analytics issues
+    // Preserve the original error structure for WebviewErrorDrawer to parse
+    // It checks error.cause.response.data.error.messageKey (line 96)
+    swapError = Object.assign(Object.create(null), {
+      message: err.message,
+      name: err.name,
+      code: err.code,
+      status: err.status,
+      swap: err.swap,
+      cause: {
+        message: errorMessage,
+        swapCode: apiError?.code,
+        response: {
+          data: {
+            error: {
+              messageKey: messageKey,
+              message: errorMessage,
+            },
+          },
+        },
+      },
+    }) as SwapLiveError;
+
+    // Add hasOwnProperty method to the plain object
+    Object.setPrototypeOf(swapError, Object.prototype);
+  } else {
+    swapError = {
+      cause: {
+        message: error instanceof Error ? error.message : String(error),
+      },
+    };
+  }
+  return swapError;
 }

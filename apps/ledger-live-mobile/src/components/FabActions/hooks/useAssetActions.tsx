@@ -23,7 +23,7 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { useModularDrawerController } from "~/newArch/features/ModularDrawer";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;

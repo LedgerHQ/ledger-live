@@ -6,6 +6,7 @@ export default class PortfolioPage {
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
+  assetsListId = "AssetsList";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
   managerTabBarId = "TabBarManager";
@@ -76,7 +77,7 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));
   }
 }

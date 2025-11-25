@@ -3,7 +3,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle } from "../shared";
 import { Flex } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import NewSeedIllustration from "~/newArch/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel/NewSeedIllustration";
+import NewSeedIllustration from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel/NewSeedIllustration";
 
 export function SecureYourCrypto() {
   const { t } = useTranslation();

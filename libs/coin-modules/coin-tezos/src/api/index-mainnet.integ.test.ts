@@ -50,4 +50,24 @@ describe("Tezos Api - Mainnet", () => {
       expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
   });
+
+  describe("encode", () => {
+    it("encode a reveal operation without failing", async () => {
+      // When
+      const result = await module.craftTransaction(
+        {
+          intentType: "transaction",
+          asset: { type: "native" },
+          type: "send",
+          sender: "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3",
+          senderPublicKey: "03576c19462a7d0cc3d121b1b00e92258b5f71d643c99a599fc1683f03abb7a1c2",
+          recipient: "tz2TLTEWhG87pPKK7MxYLavitGGwje1znRwQ",
+          amount: BigInt(500000),
+        },
+        { value: BigInt(832) },
+      );
+
+      expect(result.transaction).toBeDefined();
+    });
+  });
 });

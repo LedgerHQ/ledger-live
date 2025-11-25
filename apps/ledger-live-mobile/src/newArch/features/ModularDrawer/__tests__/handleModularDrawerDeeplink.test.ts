@@ -5,7 +5,7 @@ import {
   getCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import { getStateFromPath } from "@react-navigation/native";
-import { callbackRegistry } from "~/newArch/features/ModularDrawer/hooks/useCallbackRegistry/registries";
+import { callbackRegistry } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 
 jest.mock("~/reducers/modularDrawer", () => ({
   ...jest.requireActual("~/reducers/modularDrawer"),
@@ -21,7 +21,7 @@ jest.mock("@react-navigation/native", () => ({
   getStateFromPath: jest.fn(),
 }));
 
-jest.mock("~/newArch/features/ModularDrawer/hooks/useCallbackRegistry/registries", () => ({
+jest.mock("LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries", () => ({
   callbackRegistry: {
     register: jest.fn(),
     unregister: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock("~/newArch/features/ModularDrawer/hooks/useCallbackRegistry/registries
   },
 }));
 
-jest.mock("~/newArch/features/ModularDrawer/utils/callbackIdGenerator", () => ({
+jest.mock("LLM/features/ModularDrawer/utils/callbackIdGenerator", () => ({
   generateCallbackId: jest.fn(() => "test-callback-id"),
 }));
 

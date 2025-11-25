@@ -10,7 +10,7 @@ import Animation from "./Animation";
 import LText from "./LText";
 import { useAccountName } from "~/reducers/wallet";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { getProductName } from "~/newArch/utils/getProductName";
+import { getProductName } from "LLM/utils/getProductName";
 
 type Props = {
   device: Device;

@@ -4,7 +4,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
-import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 

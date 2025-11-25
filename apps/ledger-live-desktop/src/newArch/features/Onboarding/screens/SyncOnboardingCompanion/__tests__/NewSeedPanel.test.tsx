@@ -16,7 +16,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
-  ...jest.requireActual("~/newArch/features/ModularDrawer/hooks/useOpenAssetFlow"),
+  ...jest.requireActual("LLD/features/ModularDrawer/hooks/useOpenAssetFlow"),
   useOpenAssetFlow: jest.fn(),
 }));
 

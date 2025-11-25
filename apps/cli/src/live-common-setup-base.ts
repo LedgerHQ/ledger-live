@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 import winston from "winston";
-import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
+import BigNumber from "bignumber.js";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
@@ -211,3 +212,5 @@ listen(log => {
 
 const value = "cli/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
+
+BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

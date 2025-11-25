@@ -443,7 +443,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
       ...(isOffline ? { isOffline: "true" } : {}),
       ...(state?.defaultAccount
         ? {
-            fromAccountId: accountToWalletAPIAccount(
+            toAccountId: accountToWalletAPIAccount(
               walletState,
               state?.defaultAccount,
               state?.defaultParentAccount,
