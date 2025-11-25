@@ -12,7 +12,7 @@ import { urls } from "~/utils/urls";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
