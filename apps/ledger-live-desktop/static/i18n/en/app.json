@@ -7681,5 +7681,15 @@
     "restart": "Restart",
     "downloadOnLedger": "Download on Ledger.com",
     "downloadProgress": "Downloading... {{ progress }}%"
+  },
+  "zcash": {
+    "account": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "Balance that can be transfered",
+      "transparentBalance": "Transparent balance",
+      "transparentBalanceTooltip": "Balance that is visible to the public",
+      "privateBalance": "Private balance",
+      "privateBalanceTooltip": "Balance that is hidden from the public"
+    }
   }
 }
