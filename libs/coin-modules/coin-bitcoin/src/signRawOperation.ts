@@ -22,7 +22,7 @@ export const buildSignRawOperation =
 
         const networkParams = getNetworkParameters(currency.id);
         const sigHashType = networkParams.sigHash;
-        if (isNaN(sigHashType)) {
+        if (Number.isNaN(sigHashType)) {
           throw new Error("sigHashType should not be NaN");
         }
 
