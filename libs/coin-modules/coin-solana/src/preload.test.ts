@@ -39,7 +39,7 @@ describe("preloadWithAPI", () => {
       id: "solana",
     } as unknown as CryptoCurrency;
 
-    const result = await preloadWithAPI(currency, () => Promise.resolve({} as unknown as ChainAPI));
+    const result = await preloadWithAPI(currency, {} as unknown as ChainAPI);
     expect(result).toEqual({
       validators: expect.arrayContaining([
         ...validators,
@@ -71,7 +71,7 @@ describe("preloadWithAPI", () => {
     const currency = {
       id: "solana_devnet",
     } as unknown as CryptoCurrency;
-    const result = await preloadWithAPI(currency, () => Promise.resolve(api));
+    const result = await preloadWithAPI(currency, api);
     expect(result).toEqual({
       validators: expect.arrayContaining([
         {
@@ -110,7 +110,7 @@ describe("preloadWithAPI", () => {
       id: "solana_testnet",
     } as unknown as CryptoCurrency;
 
-    const result = await preloadWithAPI(currency, () => Promise.resolve({} as unknown as ChainAPI));
+    const result = await preloadWithAPI(currency, {} as unknown as ChainAPI);
     expect(result).toEqual({
       validators: expect.arrayContaining(validators),
       validatorsWithMeta: [],

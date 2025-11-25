@@ -61,7 +61,6 @@
     "invariant": "^2.2.2",
     "ky": "1.7.5",
     "lodash": "^4.17.21",
-    "object-hash": "^2.2.0",
     "rxjs": "^7.8.1",
     "semver": "7.7.1",
     "superstruct": "0.16.7"
@@ -75,7 +74,6 @@
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "@types/object-hash": "^2.1.0",
     "@types/semver": "7.7.0",
     "axios": "catalog:",
     "eslint-plugin-jest": "^27.4.2",

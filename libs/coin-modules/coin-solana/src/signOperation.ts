@@ -98,7 +98,7 @@ function getResolution(
 export const buildSignOperation =
   (
     signerContext: SignerContext<SolanaSigner>,
-    api: () => Promise<ChainAPI>,
+    api: ChainAPI,
   ): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, deviceModelId, transaction, certificateSignatureKind }) =>
     new Observable(subscriber => {
@@ -106,7 +106,7 @@ export const buildSignOperation =
         const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
           account.freshAddress,
           transaction,
-          await api(),
+          api,
         );
 
         subscriber.next({

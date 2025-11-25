@@ -34,32 +34,29 @@ import {
 import nftResolvers from "../nftResolvers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
-  const prepareTransaction: AccountBridge<
-    Transaction,
-    SolanaAccount
-  >["prepareTransaction"] = async (mainAccount, transaction) => {
+function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
+  const prepareTransaction: AccountBridge<Transaction, SolanaAccount>["prepareTransaction"] = (
+    mainAccount,
+    transaction,
+  ) => {
     const config: Config = {
       endpoint: endpointByCurrencyId(mainAccount.currency.id),
     };
 
-    const chainAPI = await getChainAPI(config);
+    const chainAPI = getChainAPI(config);
     return prepareTransactionWithAPI(mainAccount, transaction, chainAPI);
   };
 
   return prepareTransaction;
 }
 
-function makeSyncAndScan(
-  getChainAPI: (config: Config) => Promise<ChainAPI>,
-  getAddress: GetAddressFn,
-) {
-  const getAccountShape: GetAccountShape<SolanaAccount> = async info => {
+function makeSyncAndScan(getChainAPI: (config: Config) => ChainAPI, getAddress: GetAddressFn) {
+  const getAccountShape: GetAccountShape<SolanaAccount> = info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.currency.id),
     };
 
-    const chainAPI = await getChainAPI(config);
+    const chainAPI = getChainAPI(config);
     return getAccountShapeWithAPI(info, chainAPI);
   };
   return {
@@ -68,11 +65,11 @@ function makeSyncAndScan(
   };
 }
 
-function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<ChainAPI>) {
+function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
   const estimateMaxSpendable: AccountBridge<
     Transaction,
     SolanaAccount
-  >["estimateMaxSpendable"] = async arg => {
+  >["estimateMaxSpendable"] = arg => {
     const { account, parentAccount } = arg;
 
     const currencyId =
@@ -86,7 +83,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<Chain
       endpoint: endpointByCurrencyId(currencyId),
     };
 
-    const api = await getChainAPI(config);
+    const api = getChainAPI(config);
 
     return estimateMaxSpendableWithAPI(arg, api);
   };
@@ -107,38 +104,36 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<Chain
 }
 
 function makeBroadcast(
-  getChainAPI: (config: Config) => Promise<ChainAPI>,
+  getChainAPI: (config: Config) => ChainAPI,
 ): AccountBridge<Transaction, SolanaAccount>["broadcast"] {
-  return async info => {
+  return info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
-    const api = await getChainAPI(config);
+    const api = getChainAPI(config);
     return broadcastWithAPI(info, api);
   };
 }
 
 function makeSign(
-  getChainAPI: (config: Config) => Promise<ChainAPI>,
+  getChainAPI: (config: Config) => ChainAPI,
   signerContext: SignerContext<SolanaSigner>,
 ): AccountBridge<Transaction, SolanaAccount>["signOperation"] {
   return info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
-    const api = () => getChainAPI(config);
+    const api = getChainAPI(config);
     return buildSignOperation(signerContext, api)(info);
   };
 }
 
-function makePreload(
-  getChainAPI: (config: Config) => Promise<ChainAPI>,
-): CurrencyBridge["preload"] {
+function makePreload(getChainAPI: (config: Config) => ChainAPI): CurrencyBridge["preload"] {
   const preload: CurrencyBridge["preload"] = (currency): Promise<SolanaPreloadDataV1> => {
     const config: Config = {
       endpoint: endpointByCurrencyId(currency.id),
     };
-    const api = () => getChainAPI(config);
+    const api = getChainAPI(config);
     return preloadWithAPI(currency, api);
   };
   return preload;
@@ -152,29 +147,25 @@ function getPreloadStrategy() {
 
 export function makeBridges({
   getAPI,
-  getQueuedAPI,
-  getQueuedAndCachedAPI,
   signerContext,
 }: {
-  getAPI: (config: Config) => Promise<ChainAPI>;
-  getQueuedAPI: (config: Config) => Promise<ChainAPI>;
-  getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
+  getAPI: (config: Config) => ChainAPI;
   signerContext: SignerContext<SolanaSigner>;
 }): {
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus>;
 } {
   const getAddress = resolver(signerContext);
-  const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
+  const { sync, scan } = makeSyncAndScan(getAPI, getAddress);
 
   const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
     createTransaction,
     updateTransaction,
-    estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
+    estimateMaxSpendable: makeEstimateMaxSpendable(getAPI),
     getTransactionStatus,
     sync,
     receive: makeAccountBridgeReceive(getAddress),
-    prepareTransaction: makePrepare(getQueuedAndCachedAPI),
+    prepareTransaction: makePrepare(getAPI),
     broadcast: makeBroadcast(getAPI),
     signOperation: makeSign(getAPI, signerContext),
     signRawOperation: () => {
@@ -190,7 +181,7 @@ export function makeBridges({
   };
 
   const currencyBridge: CurrencyBridge = {
-    preload: makePreload(getQueuedAndCachedAPI),
+    preload: makePreload(getAPI),
     hydrate: (_data: unknown, _currency: CryptoCurrency) => {},
     scanAccounts: scan,
     getPreloadStrategy,

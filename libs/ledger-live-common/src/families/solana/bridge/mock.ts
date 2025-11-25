@@ -1,16 +1,9 @@
-import {
-  ChainAPI,
-  Config,
-  cached,
-  getChainAPI,
-  logged,
-  queued,
-} from "@ledgerhq/coin-solana/network/index";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { ChainAPI, Config, getChainAPI, logged } from "@ledgerhq/coin-solana/network/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { Message, MessageV0 } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
 import { getMockedMethods } from "./mock-data";
@@ -33,7 +26,7 @@ function mockChainAPI(config: Config): ChainAPI {
         if (mocks.length === 0) {
           throw new Error(`no mock found for api method: ${method}`);
         }
-        return function (...rawArgs: any[]) {
+        return function (...rawArgs: unknown[]) {
           const args = preprocessArgs(method, rawArgs);
           const mock = mocks.find(({ params: mockArgs }) => isEqual(args)(mockArgs));
           if (mock === undefined) {
@@ -56,7 +49,7 @@ function removeUndefineds(input: unknown): unknown {
     : input;
 }
 
-function preprocessArgs(method: keyof ChainAPI, args: any) {
+function preprocessArgs(method: keyof ChainAPI, args: unknown[]) {
   if (method === "getFeeForMessage") {
     // getFeeForMessage needs some args preprocessing
     if (args.length === 1 && (args[0] instanceof Message || args[0] instanceof MessageV0)) {
@@ -126,16 +119,15 @@ const signerContext = <T>(
 // Uncomment fs module in logged.ts
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function createMockDataForAPI() {
-  const apiGetter = makeLRUCache(
-    (config: Config) =>
-      Promise.resolve(cached(queued(logged(getChainAPI(config), "/tmp/log"), 100))),
-    config => config.endpoint,
-    minutes(1000),
-  );
+  const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
   return {
-    getAPI: apiGetter,
-    getQueuedAPI: apiGetter,
-    getQueuedAndCachedAPI: apiGetter,
+    getAPI: (config: Config) => {
+      const endpoint = config.endpoint;
+      if (!chainAPICache.has(endpoint)) {
+        chainAPICache.set(endpoint, logged(getChainAPI(config), "/tmp/log"));
+      }
+      return chainAPICache.get(endpoint)!;
+    },
     signerContext,
   };
 }
@@ -143,9 +135,7 @@ function createMockDataForAPI() {
 function getMockedAPIs() {
   const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
   return {
-    getAPI: (_: Config) => Promise.resolve(mockedAPI),
-    getQueuedAPI: (_: Config) => Promise.resolve(mockedAPI),
-    getQueuedAndCachedAPI: (_: Config) => Promise.resolve(mockedAPI),
+    getAPI: (_: Config) => mockedAPI,
     signerContext,
   };
 }

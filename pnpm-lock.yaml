@@ -3941,9 +3941,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      object-hash:
-        specifier: ^2.2.0
-        version: 2.2.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -3978,9 +3975,6 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
-      '@types/object-hash':
-        specifier: ^2.1.0
-        version: 2.2.1
       '@types/semver':
         specifier: 7.7.0
         version: 7.7.0
