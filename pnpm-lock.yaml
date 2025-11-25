@@ -1450,9 +1450,6 @@ importers:
       semver:
         specifier: 7.5.4
         version: 7.5.4
-      storyly-react-native-fabric:
-        specifier: 4.17.0
-        version: 4.17.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       styled-components:
         specifier: 5.3.11
         version: 5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1)
@@ -33843,13 +33840,6 @@ packages:
     peerDependenciesMeta:
       prettier:
         optional: true
-
-  storyly-react-native-fabric@4.17.0:
-    resolution: {integrity: sha512-UTQ69oKimfvuZZhAhIjqpzj/Aa7pWJamxBh5MocqASSKV3OkjAZ4TBOyYApvcjHr7us2WMQK2qeZ806m1otyBw==}
-    engines: {node: '>= 18.0.0'}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
 
   storyly-web@4.5.4:
     resolution: {integrity: sha512-1TaHP0fjD50EABk86PEykVmE/JfVYpk6WMzG9gKOWuL5iOGaiqWnd3iIGWb9Lo76NzTeZWFGuFdy0DBxe5iRmQ==}
@@ -74133,11 +74123,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  storyly-react-native-fabric@4.17.0(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-native: 0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   storyly-web@4.5.4:
     dependencies:

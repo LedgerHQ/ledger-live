@@ -108,7 +108,6 @@ module.exports = {
         "src/screens/Settings/Debug/**/*",
         "src/screens/FeatureFlagsSettings/**/*",
         "src/components/AnalyticsConsole/**/*",
-        "src/components/StorylyStories/**/*",
         "src/screens/Settings/Experimental/**/*",
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",

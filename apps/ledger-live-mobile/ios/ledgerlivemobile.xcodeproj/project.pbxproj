@@ -605,13 +605,11 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenTelemetrySwiftApi/OpenTelemetryApi.framework/OpenTelemetryApi",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly/Storyly.framework/Storyly",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenTelemetryApi.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Storyly.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

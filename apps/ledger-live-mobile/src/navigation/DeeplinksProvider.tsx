@@ -28,7 +28,6 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 
@@ -64,10 +63,6 @@ function isWalletConnectLink(url: string) {
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
-}
-
-function isStorylyLink(url: string) {
-  return url.startsWith("ledgerlive://storyly?") || url.startsWith("ledgerwallet://storyly?");
 }
 
 function getProxyURL(url: string, customBuySellUiAppId?: string) {
@@ -346,7 +341,6 @@ export const DeeplinksProvider = ({
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
-  const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
 
@@ -525,10 +519,6 @@ export const DeeplinksProvider = ({
               return;
             }
 
-            if (isStorylyLink(url)) {
-              storylyContext.setUrl(url);
-            }
-
             listener(getProxyURL(url, buySellUiManifestId));
           });
           // Clean up the event listeners
@@ -591,10 +581,6 @@ export const DeeplinksProvider = ({
             });
 
           const platform = pathname.split("/")[1];
-
-          if (isStorylyLink(url.toString())) {
-            storylyContext.setUrl(url.toString());
-          }
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
@@ -712,7 +698,6 @@ export const DeeplinksProvider = ({
     userAcceptedTerms,
     buySellUiManifestId,
     dispatch,
-    storylyContext,
     liveAppProviderInitialized,
     manifests,
     onDeeplinkReceived,
