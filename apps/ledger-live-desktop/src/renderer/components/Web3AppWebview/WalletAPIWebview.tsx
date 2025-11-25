@@ -393,6 +393,8 @@ function useWebView(
     mevProtected,
   });
 
+  /* A postMessage error (ex: libs/ledger-live-common/src/wallet-api/useDappLogic.ts:562) trigger this with a eth_sendTransaction event
+        while a postMessage result don't, do you know why? Does this return an ipc-message event? (line 428) */
   const handleMessage = useCallback(
     (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {

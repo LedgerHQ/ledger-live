@@ -559,7 +559,7 @@ export function useDappLogic({
               tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
-                  id: data.id,
+                  id: data.id, // can we generate a random id here or we must return this one?
                   jsonrpc: "2.0",
                   error: rejectedError("Transaction declined"),
                 }),
