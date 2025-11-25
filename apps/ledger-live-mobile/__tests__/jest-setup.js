@@ -1,4 +1,3 @@
-import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
@@ -9,7 +8,6 @@ import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
-
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
@@ -31,13 +29,15 @@ const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 // as the former breaks tests trying to press buttons
 jest.mock("react-native-gesture-handler", () => {
   const RN = require("react-native");
+  const RNGH = jest.requireActual("react-native-gesture-handler");
   const TouchableOpacity = RN.TouchableOpacity;
   const ScrollView = RN.ScrollView;
 
   return {
-    TouchableOpacity: TouchableOpacity,
+    ...RNGH,
+    TouchableOpacity,
     TouchableWithoutFeedback: TouchableOpacity,
-    ScrollView: ScrollView,
+    ScrollView,
     Pressable: TouchableOpacity,
     RawButton: TouchableOpacity,
     BaseButton: TouchableOpacity,

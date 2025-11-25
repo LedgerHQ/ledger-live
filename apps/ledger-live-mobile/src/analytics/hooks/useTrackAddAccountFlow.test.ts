@@ -37,7 +37,6 @@ describe("useTrackAddAccountFlow", () => {
       },
     );
 
-    // @ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new UserRefusedOnDevice() });
 
     expect(track).toHaveBeenCalledWith(

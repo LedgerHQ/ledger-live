@@ -21,10 +21,10 @@ describe("useFetchWithTimeout", () => {
       .mockImplementation(() => new Promise(resolve => setTimeout(() => resolve("data"), 600)));
     const { result } = renderHook(() => useFetchWithTimeout(300));
 
-    act(() => {
+    await act(async () => {
       const fetchPromise = result.current(fetchFunction);
       jest.advanceTimersByTime(400);
-      return expect(fetchPromise).rejects.toThrow("Fetch timed out");
+      await expect(fetchPromise).rejects.toThrow("Fetch timed out");
     });
 
     jest.runAllTimers();
