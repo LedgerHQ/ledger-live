@@ -1154,6 +1154,11 @@
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Walletの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "プロバイダーが無効です",
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。",
+      "openSettings" : "設定を開く"
+    },
     "GasLessThanEstimate" : {
       "title" : "低すぎる可能性があります。増やしてください"
     },
@@ -1224,6 +1229,12 @@
     "AddressesSanctionedError" : {
       "title" : "お客様の安全を確保",
       "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXOの制約により、送付数量が調整されました。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXOの制約を超えるため、この数量は送信できません。"
     }
   },
   "crash" : {
@@ -3780,7 +3791,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™は、{{provider}}に対応していません",
-        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Walletから{{provider}}でのクロスチェーンスワップが可能です",
+        "explore_compatible_devices" : "対応デバイスを探す",
+        "swapWithAnotherProvider" : "別のプロバイダーでスワップ"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
@@ -7311,11 +7324,11 @@
         "description" : "{{productName}}のロック画面として設定するデジタルアートまたは写真を選択。",
         "popupLabel" : "ロック画面のカスタマイズに成功しました"
       },
-      "recover" : {
-        "title" : "Ledger Recoverのサブスクリプション契約をする",
-        "titleCompleted" : "Ledger Recoverのサブスクリプション契約済みです",
-        "description" : "シークレットリカバリーフレーズを使用せずに、ウォレットへのアクセスを復元します。",
-        "popupLabel" : "Ledger Recoverのサブスクリプション契約を正常に完了しました"
+      "syncAccounts" : {
+        "title" : "暗号資産アカウントを同期する",
+        "titleCompleted" : "アカウントの同期が完了しました",
+        "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
+        "popupLabel" : "アカウント同期済み"
       }
     }
   },
