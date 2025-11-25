@@ -9,10 +9,8 @@ import {
   saveConcordiumAccount,
 } from "~/renderer/screens/dashboard/useConcordiumAccountScan";
 
-// const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Testnet";
-export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Mainnet";
+export const CONCORDIUM_NETWORK: "Testnet" | "Mainnet" = "Testnet";
 
-// ⚠️ DEMO ONLY – replace with real seed from your key management
 export const DEMO_SEED_PHRASE =
   "wish busy never sauce cheese foil process intact click slush slice like";
 
@@ -28,7 +26,6 @@ export default function Concordium() {
   // track account index for generateAccountWithSeedPhrase
   const accountIndexRef = useRef(0);
 
-  // ---- accounts (saved locally + enriched via gRPC in the hook) ----
   const {
     accounts,
     isLoading: isAccountsLoading,
