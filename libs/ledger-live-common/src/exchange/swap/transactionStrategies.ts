@@ -300,6 +300,7 @@ export const transactionStrategy: {
   canton: defaultTransaction,
   cardano: cardanoTransaction,
   casper: defaultTransaction,
+  concordium: defaultTransaction,
   celo: defaultTransaction,
   cosmos: cosmosTransaction,
   evm: evmTransaction,

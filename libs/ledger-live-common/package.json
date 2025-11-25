@@ -152,6 +152,7 @@
     "@ledgerhq/coin-internet_computer": "workspace:^",
     "@ledgerhq/coin-kaspa": "workspace:^",
     "@ledgerhq/coin-mina": "workspace:^",
+    "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
