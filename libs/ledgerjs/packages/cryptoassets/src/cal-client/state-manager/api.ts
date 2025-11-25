@@ -6,6 +6,7 @@ import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPaginatio
 import { TOKEN_OUTPUT_FIELDS } from "./fields";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { convertApiToken, legacyIdToApiId } from "../../api-token-converter";
+import { log } from "@ledgerhq/logs";
 import { z } from "zod";
 
 /**
@@ -198,6 +199,22 @@ export const cryptoAssetsApi = createApi({
               error: error instanceof Error ? error.message : "Unknown error",
             },
           };
+        }
+      },
+      async onQueryStarted(currencyId, { dispatch, queryFulfilled, getCacheEntry }) {
+        try {
+          const previousHash = getCacheEntry()?.data as string | undefined;
+          const { data: newHash } = await queryFulfilled;
+
+          if (previousHash && newHash && previousHash !== newHash) {
+            log(
+              "cryptoassets",
+              `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
+            );
+            dispatch(cryptoAssetsApi.util.invalidateTags([TokensDataTags.Tokens]));
+          }
+        } catch {
+          // Query failed, skip eviction
         }
       },
     }),

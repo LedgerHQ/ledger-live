@@ -9,7 +9,7 @@ import { getReduxStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   extractTokensFromState,
   PERSISTENCE_VERSION,
-  type PersistedTokens,
+  type PersistedCAL,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 export type LiveDataJobOpts = ScanCommonOpts &
@@ -66,7 +66,7 @@ export default {
         const reduxStore = getReduxStore();
         const state = reduxStore.getState();
         const tokens = extractTokensFromState(state);
-        const persistedTokens: PersistedTokens = { version: PERSISTENCE_VERSION, tokens };
+        const persistedTokens: PersistedCAL = { version: PERSISTENCE_VERSION, tokens };
         appjsondata.data.cryptoAssets = persistedTokens;
 
         if (opts.appjson) {

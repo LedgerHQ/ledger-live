@@ -134,7 +134,7 @@ async function init() {
     if (persistedData?.tokens) {
       if (persistedData.version === PERSISTENCE_VERSION) {
         const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        restoreTokensToCache(store.dispatch, persistedData.tokens, TOKEN_CACHE_TTL);
+        await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
       } else {
         logger.warn(
           `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
