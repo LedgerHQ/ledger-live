@@ -10,7 +10,6 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
@@ -28,7 +27,6 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
-  const { setUrl } = useStorylyContext();
   const navigateToHome = useCallback(() => history.push("/"), [history]);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
@@ -399,9 +397,6 @@ export function useDeepLinkHandler() {
         case "recover-restore-flow":
           navigate("/recover-restore");
           break;
-        case "storyly":
-          setUrl(deeplink);
-          break;
         case "post-onboarding": {
           postOnboardingDeeplinkHandler(query.device);
           break;
@@ -426,7 +421,6 @@ export function useDeepLinkHandler() {
       openAddAccountFlow,
       openAssetFlow,
       postOnboardingDeeplinkHandler,
-      setUrl,
       tryRedirectToPostOnboardingOrRecover,
     ],
   );

@@ -17,7 +17,6 @@ import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
 import LottieTester from "../Experimental/LottieTester";
-import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
@@ -107,9 +106,6 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <FeatureToggle featureId="storyly">
-        <StorylyTester />
-      </FeatureToggle>
       <ExchangeDeveloperMode />
       <ExchangeTestPartnerMode />
       <FeatureToggle featureId="lldWalletSync">

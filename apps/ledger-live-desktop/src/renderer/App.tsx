@@ -27,7 +27,6 @@ import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -87,12 +86,10 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                             <PostOnboardingProviderWrapped>
                               <PlatformAppProviderWrapper>
                                 <DrawerProvider>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
                                 </DrawerProvider>
                               </PlatformAppProviderWrapper>
                             </PostOnboardingProviderWrapped>
