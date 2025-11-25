@@ -112,7 +112,7 @@
     "fuse.js": "6.6.2",
     "i18next": "catalog:",
     "invariant": "2.2.4",
-    "json-rpc-2.0": "0.2.19",
+    "json-rpc-2.0": "1.7.0",
     "jsqr": "1.4.0",
     "lodash": "4.17.21",
     "mixpanel-browser": "2.71.1",

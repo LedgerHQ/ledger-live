@@ -637,8 +637,8 @@ importers:
         specifier: 2.2.4
         version: 2.2.4
       json-rpc-2.0:
-        specifier: 0.2.19
-        version: 0.2.19
+        specifier: 1.7.0
+        version: 1.7.0
       jsqr:
         specifier: 1.4.0
         version: 1.4.0
@@ -1280,8 +1280,8 @@ importers:
         specifier: 0.7.3
         version: 0.7.3(jotai@2.12.4(@types/react@18.2.73)(react@18.3.1))
       json-rpc-2.0:
-        specifier: 0.2.19
-        version: 0.2.19
+        specifier: 1.7.0
+        version: 1.7.0
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -5682,8 +5682,8 @@ importers:
         specifier: 2.12.4
         version: 2.12.4(@types/react@18.2.73)(react@18.3.1)
       json-rpc-2.0:
-        specifier: ^0.2.19
-        version: 0.2.19
+        specifier: 1.7.0
+        version: 1.7.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -28382,9 +28382,6 @@ packages:
 
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
-
-  json-rpc-2.0@0.2.19:
-    resolution: {integrity: sha512-tegZKneDQjWintJS5Zlw8xNvJK0/xq4sct2M5AgfFmcCJFMjvrLgk1noH7OPfFgEQ+ScueuWdaGfikCPr+qBtg==}
 
   json-rpc-2.0@1.7.0:
     resolution: {integrity: sha512-asnLgC1qD5ytP+fvBP8uL0rvj+l8P6iYICbzZ8dVxCpESffVjzA7KkYkbKCIbavs7cllwH1ZUaNtJwphdeRqpg==}
@@ -66644,8 +66641,6 @@ snapshots:
   json-parse-better-errors@1.0.2: {}
 
   json-parse-even-better-errors@2.3.1: {}
-
-  json-rpc-2.0@0.2.19: {}
 
   json-rpc-2.0@1.7.0: {}
 
