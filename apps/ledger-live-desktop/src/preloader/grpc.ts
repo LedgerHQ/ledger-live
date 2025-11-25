@@ -10,8 +10,35 @@ import {
   Energy,
   BlockHash,
   TransactionHash,
+  AccountTransaction,
+  AccountTransactionType,
+  buildBasicAccountSigner,
+  CcdAmount,
+  ConcordiumGRPCWebClient,
+  ConcordiumHdWallet,
+  getAccountAddress,
+  SimpleTransferPayload,
+  TransactionExpiry,
+  signTransaction,
 } from "@concordium/web-sdk";
 import { TokenId } from "@concordium/web-sdk/plt";
+// ~/renderer/screens/dashboard/concordiumSimpleTransfer.ts
+
+export type ConcordiumNetwork = "Mainnet" | "Testnet";
+
+type SendSimpleTransferParams = {
+  seedPhrase: string;
+  network: ConcordiumNetwork;
+  identityProviderIndex: number;
+  identityIndex: number;
+  credNumber: number;
+  // nodeAddress: string; // e.g. "node.testnet.concordium.com"
+  // nodePort: number; // e.g. 20000
+  fromAddressBase58: string;
+  toAddressBase58: string;
+  amountMicroCcd: bigint; // 5_000_000n, etc.
+  expiryMs?: number; // default: 6 min
+};
 
 import { ConcordiumGRPCNodeClient, credentials } from "@concordium/web-sdk/nodejs";
 import type { Buffer } from "buffer/";
@@ -64,6 +91,81 @@ async function getConsensusStatusAndCryptographicParameters(
   } catch (error) {
     return { successful: false, error: error as Error };
   }
+}
+
+export async function sendSimpleTransfer({
+  seedPhrase,
+  network,
+  identityProviderIndex,
+  identityIndex,
+  credNumber,
+  // nodeAddress,
+  // nodePort,
+  fromAddressBase58,
+  toAddressBase58,
+  amountMicroCcd,
+  expiryMs = 6 * 60 * 1000, // 6 minutes
+}: SendSimpleTransferParams): Promise<{ txHash: string; sender: string }> {
+  // 1. Derive wallet & client
+  const wallet = ConcordiumHdWallet.fromSeedPhrase(seedPhrase, network);
+  console.log({ wallet, seedPhrase, network });
+
+  // 2. Cryptographic params → credential id → sender address
+  const cryptographicParameters = await client.getCryptographicParameters();
+  const credId = wallet.getCredentialId(
+    identityProviderIndex,
+    identityIndex,
+    credNumber,
+    cryptographicParameters,
+  );
+  // ✅ Hex string
+  const credIdHex = credId.toString("hex");
+
+  // ✅ This now matches the expected type
+  const sender2 = getAccountAddress(credIdHex);
+  const sender3 = getAccountAddress(credId.toString("hex"));
+
+  // console.log({ credIdHex, sender });
+  // 3. Build payload
+  const sender = AccountAddress.fromBase58(fromAddressBase58);
+  console.log({ credIdHex, sender, sender2, sender3 });
+  const toAddress = AccountAddress.fromBase58(toAddressBase58);
+  const amount = CcdAmount.fromMicroCcd(amountMicroCcd.toString());
+
+  const payload: SimpleTransferPayload = {
+    amount,
+    toAddress,
+  };
+
+  // 4. Expiry + nonce
+  const expiry = TransactionExpiry.fromDate(new Date(Date.now() + expiryMs));
+  const { nonce } = await client.getNextAccountNonce(sender);
+  console.log({ nonce });
+
+  const header: AccountTransactionHeader = {
+    expiry,
+    nonce,
+    sender,
+  };
+
+  const transaction: AccountTransaction = {
+    type: AccountTransactionType.Transfer,
+    payload,
+    header,
+  };
+
+  // 5. Sign
+  const signingKey = wallet.getAccountSigningKey(identityProviderIndex, identityIndex, credNumber);
+
+  const signer = buildBasicAccountSigner(signingKey.toString("hex"));
+  console.log({ signingKey, signer });
+  const signature = await signTransaction(transaction, signer);
+
+  // 6. Send
+  const txHash = await client.sendAccountTransaction(transaction, signature);
+
+  // NOTE: maybe use txHash.toHexString()
+  return { txHash: txHash.toString(), sender: sender.address };
 }
 
 const exposedMethods: GRPC = {
@@ -140,6 +242,7 @@ const exposedMethods: GRPC = {
     client
       .getPassiveDelegationInfo(blockHash ? BlockHash.fromHexString(blockHash) : undefined)
       .then(stringify),
+  sendSimpleTransfer: (params: any) => sendSimpleTransfer(params).then(stringify),
 };
 
 export default exposedMethods;

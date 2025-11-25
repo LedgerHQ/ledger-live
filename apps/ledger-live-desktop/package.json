@@ -76,6 +76,8 @@
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ldls-design-core": "catalog:",
     "@ledgerhq/ldls-ui-react": "0.0.49",
+    "@ledgerhq/hw-transport-webhid": "workspace:^",
+    "@blooo/hw-app-concordium": "^1.1.3",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

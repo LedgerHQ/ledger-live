@@ -169,6 +169,7 @@ export type GRPC = {
    * @returns stringified {@linkcode PassiveDelegationStatus}
    */
   getPassiveDelegationInfo: (blockHash?: string) => Promise<string>;
+  sendSimpleTransfer: (params: any) => Promise<string>;
 };
 
 export type FileMethods = {

@@ -484,6 +484,9 @@ importers:
 
   apps/ledger-live-desktop:
     dependencies:
+      '@blooo/hw-app-concordium':
+        specifier: ^1.1.3
+        version: 1.1.3(@concordium/web-sdk@10.0.2)
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
@@ -541,6 +544,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
+      '@ledgerhq/hw-transport-webhid':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-webhid
       '@ledgerhq/ldls-design-core':
         specifier: 'catalog:'
         version: 0.0.32(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
@@ -595,6 +601,12 @@ importers:
       '@noble/curves':
         specifier: 1.9.7
         version: 1.9.7
+      '@protobuf-ts/grpc-transport':
+        specifier: 2.11.1
+        version: 2.11.1
+      '@protobuf-ts/runtime':
+        specifier: 2.11.1
+        version: 2.11.1
       '@radix-ui/react-checkbox':
         specifier: ^1.3.2
         version: 1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -613,12 +625,6 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@protobuf-ts/grpc-transport':
-        specifier: 2.11.1
-        version: 2.11.1
-      '@protobuf-ts/runtime':
-        specifier: 2.11.1
-        version: 2.11.1
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -12045,6 +12051,11 @@ packages:
 
   '@blooo/hw-app-acre@1.1.1':
     resolution: {integrity: sha512-wWYUGR0sj4Yyy3GtiFRpRuaBdIgzbg8BnXCfUeduUzjQaMWzQ66wSvaJn4pHrIAdGwmdyqJWn3UqFgb1YPq0VQ==}
+
+  '@blooo/hw-app-concordium@1.1.3':
+    resolution: {integrity: sha512-OJu0VQrY1kMBbO6ZOAVLyhP/jByFs5XoE9r3c9namqMvCVPbdcO3Zxgo5feCNlIZWQZNzPaRxWQWxTa6h/grnA==}
+    peerDependencies:
+      '@concordium/web-sdk': '>= 10'
 
   '@braze/react-native-sdk@18.0.0':
     resolution: {integrity: sha512-6VEFpvDObYqr9nMfNHUTVpIQXS3ibJTbEnIZs8/2rw0qyn3cZdMPDHBWTawR8GuQiKHF0UwGLJiEkCu2mOozDw==}
@@ -41989,6 +42000,13 @@ snapshots:
       typescript: 5.8.3
       varuint-bitcoin: 1.1.2
 
+  '@blooo/hw-app-concordium@1.1.3(@concordium/web-sdk@10.0.2)':
+    dependencies:
+      '@concordium/web-sdk': 10.0.2
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      bip32-path: 0.4.2
+
   '@braze/react-native-sdk@18.0.0': {}
 
   '@braze/web-sdk@4.10.2': {}
@@ -43210,7 +43228,7 @@ snapshots:
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.5.4
+      semver: 7.7.1
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -48012,7 +48030,7 @@ snapshots:
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.5.4
+      semver: 7.7.1
 
   '@npmcli/fs@3.1.1':
     dependencies:
@@ -48962,12 +48980,6 @@ snapshots:
 
   '@protobuf-ts/grpc-transport@2.11.1':
     dependencies:
-      '@protobuf-ts/runtime': 2.11.1
-      '@protobuf-ts/runtime-rpc': 2.11.1
-
-  '@protobuf-ts/grpc-transport@2.11.1(@grpc/grpc-js@1.13.4)':
-    dependencies:
-      '@grpc/grpc-js': 1.13.4
       '@protobuf-ts/runtime': 2.11.1
       '@protobuf-ts/runtime-rpc': 2.11.1
 

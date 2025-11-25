@@ -341,7 +341,7 @@ export default function Concordium() {
       </Box>
 
       {/* Accounts component */}
-      <ConcordiumAccounts network={CONCORDIUM_NETWORK} />
+      <ConcordiumAccounts network={CONCORDIUM_NETWORK} seedPhrase={DEMO_SEED_PHRASE} />
 
       {/* Session picker */}
       {showSessionPicker && (
