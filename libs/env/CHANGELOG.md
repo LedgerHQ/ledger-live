@@ -1,5 +1,17 @@
 # @ledgerhq/live-env
 
+## 2.21.0
+
+### Minor Changes
+
+- [#12635](https://github.com/LedgerHQ/ledger-live/pull/12635) [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: mixpanel session replay
+
+## 2.21.0-next.0
+
+### Minor Changes
+
+- [#12635](https://github.com/LedgerHQ/ledger-live/pull/12635) [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: mixpanel session replay
+
 ## 2.20.0
 
 ### Minor Changes

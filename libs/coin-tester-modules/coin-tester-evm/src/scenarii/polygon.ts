@@ -17,7 +17,7 @@ import { USDC_ON_POLYGON } from "../tokenFixtures";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
-const yootTokenId = "1988";
+const yootTokenId = "1953";
 const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";
 const platinumTokenId = "4";
 

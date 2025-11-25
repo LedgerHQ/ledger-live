@@ -1,5 +1,57 @@
 # @ledgerhq/coin-evm
 
+## 2.35.0
+
+### Minor Changes
+
+- [#12572](https://github.com/LedgerHQ/ledger-live/pull/12572) [`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - BREAKING: CryptoAssetsStore interface is now fully async. All token lookup methods return Promises. Bot system and coin modules updated to support async token operations.
+
+- [#12402](https://github.com/LedgerHQ/ledger-live/pull/12402) [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9) Thanks [@qperrot](https://github.com/qperrot)! - Fix transactionSequenceNumber type
+
+- [#12248](https://github.com/LedgerHQ/ledger-live/pull/12248) [`f0e3f10`](https://github.com/LedgerHQ/ledger-live/commit/f0e3f10aaddadc03d7ebac577c4d4a0dd4d3d044) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): dynamically adjust transaction type
+
+- [#12500](https://github.com/LedgerHQ/ledger-live/pull/12500) [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - LIVE-21900 EVM/Hedera/Cardano/TON: sync hash calculation to not depends on listTokens()
+
+- [#12469](https://github.com/LedgerHQ/ledger-live/pull/12469) [`479abcc`](https://github.com/LedgerHQ/ledger-live/commit/479abcc77310297226726271d3bdad7668a084ee) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(llc): enable transaction replacement in generic adapter
+
+- [#12604](https://github.com/LedgerHQ/ledger-live/pull/12604) [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - coin-modules/alpaca: add transaction status to operations
+
+### Patch Changes
+
+- Updated dependencies [[`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c), [`b69c97d`](https://github.com/LedgerHQ/ledger-live/commit/b69c97d979ba97154c9abfda6abfc2a36becee4f), [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9), [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515), [`938b970`](https://github.com/LedgerHQ/ledger-live/commit/938b970e15118dc706c759a3bec27dc01c3dd268), [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73), [`c0b5b9f`](https://github.com/LedgerHQ/ledger-live/commit/c0b5b9f4cdcb2ea3e15419cbf3d1a14f725c3e6a), [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec)]:
+  - @ledgerhq/cryptoassets@13.33.0
+  - @ledgerhq/coin-framework@6.9.0
+  - @ledgerhq/live-env@2.21.0
+  - @ledgerhq/domain-service@1.4.1
+  - @ledgerhq/evm-tools@1.8.1
+  - @ledgerhq/live-network@2.1.1
+
+## 2.35.0-next.0
+
+### Minor Changes
+
+- [#12572](https://github.com/LedgerHQ/ledger-live/pull/12572) [`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - BREAKING: CryptoAssetsStore interface is now fully async. All token lookup methods return Promises. Bot system and coin modules updated to support async token operations.
+
+- [#12402](https://github.com/LedgerHQ/ledger-live/pull/12402) [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9) Thanks [@qperrot](https://github.com/qperrot)! - Fix transactionSequenceNumber type
+
+- [#12248](https://github.com/LedgerHQ/ledger-live/pull/12248) [`f0e3f10`](https://github.com/LedgerHQ/ledger-live/commit/f0e3f10aaddadc03d7ebac577c4d4a0dd4d3d044) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): dynamically adjust transaction type
+
+- [#12500](https://github.com/LedgerHQ/ledger-live/pull/12500) [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - LIVE-21900 EVM/Hedera/Cardano/TON: sync hash calculation to not depends on listTokens()
+
+- [#12469](https://github.com/LedgerHQ/ledger-live/pull/12469) [`479abcc`](https://github.com/LedgerHQ/ledger-live/commit/479abcc77310297226726271d3bdad7668a084ee) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(llc): enable transaction replacement in generic adapter
+
+- [#12604](https://github.com/LedgerHQ/ledger-live/pull/12604) [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - coin-modules/alpaca: add transaction status to operations
+
+### Patch Changes
+
+- Updated dependencies [[`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c), [`b69c97d`](https://github.com/LedgerHQ/ledger-live/commit/b69c97d979ba97154c9abfda6abfc2a36becee4f), [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9), [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515), [`938b970`](https://github.com/LedgerHQ/ledger-live/commit/938b970e15118dc706c759a3bec27dc01c3dd268), [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73), [`c0b5b9f`](https://github.com/LedgerHQ/ledger-live/commit/c0b5b9f4cdcb2ea3e15419cbf3d1a14f725c3e6a), [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec)]:
+  - @ledgerhq/cryptoassets@13.33.0-next.0
+  - @ledgerhq/coin-framework@6.9.0-next.0
+  - @ledgerhq/live-env@2.21.0-next.0
+  - @ledgerhq/domain-service@1.4.1-next.0
+  - @ledgerhq/evm-tools@1.8.1-next.0
+  - @ledgerhq/live-network@2.1.1-next.0
+
 ## 2.34.0
 
 ### Minor Changes
