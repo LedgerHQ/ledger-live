@@ -70,7 +70,6 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -360,25 +359,23 @@ export default class Root extends Component {
                         <PlatformAppProviderWrapper>
                           <SafeAreaProvider>
                             <ModalSystemPrimer />
-                            <StorylyProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <BridgeSyncProvider>
-                                            <App />
-                                          </BridgeSyncProvider>
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
-                              </StylesProvider>
-                            </StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <BridgeSyncProvider>
+                                          <App />
+                                        </BridgeSyncProvider>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
                           </SafeAreaProvider>
                         </PlatformAppProviderWrapper>
                       </LocaleProvider>

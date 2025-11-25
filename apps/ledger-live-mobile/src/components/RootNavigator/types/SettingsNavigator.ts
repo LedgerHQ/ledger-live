@@ -75,7 +75,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.PostOnboardingDebugScreen]: undefined;
   [ScreenName.DebugSnackbars]: undefined;
   [ScreenName.DebugTransactionsAlerts]: undefined;
-  [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
   [ScreenName.DebugFirmwareUpdate]: undefined;
   [ScreenName.DebugCustomImageGraphics]: undefined;
