@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from "@reduxjs/toolkit/query/react";
 import type { ApiTokenResponse } from "../entities";
 import { ApiTokenResponseSchema } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
@@ -81,9 +81,8 @@ function validateAndTransformSingleTokenResponse(response: unknown): TokenCurren
   return result;
 }
 
-export const cryptoAssetsApi = createApi({
-  reducerPath: "cryptoAssetsApi",
-  baseQuery: fetchBaseQuery({
+const baseQueryWithRetry = retry(
+  fetchBaseQuery({
     baseUrl: "",
     prepareHeaders: headers => {
       headers.set("Content-Type", "application/json");
@@ -91,6 +90,14 @@ export const cryptoAssetsApi = createApi({
       return headers;
     },
   }),
+  {
+    maxRetries: 3,
+  },
+);
+
+export const cryptoAssetsApi = createApi({
+  reducerPath: "cryptoAssetsApi",
+  baseQuery: baseQueryWithRetry,
   tagTypes: [TokensDataTags.Tokens],
   endpoints: build => ({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
