@@ -70,6 +70,8 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     forceRefresh,
   } = useListsAnimation(initialSelectedTab);
 
+  // Force re-render positions when screen gains focus after navigation
+  // (e.g., returning from Add Account or from the Assets screen)
   useFocusEffect(useCallback(() => forceRefresh(), [forceRefresh]));
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
