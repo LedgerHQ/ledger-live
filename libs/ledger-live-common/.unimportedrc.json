@@ -463,7 +463,8 @@
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/walletSync/getEnvironmentParams.ts",
-    "src/utils/addressUtils.ts"
+    "src/utils/addressUtils.ts",
+    "src/hooks/useHtmlLinkSegments.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",
