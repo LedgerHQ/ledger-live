@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
       "SENDING" : "Senden",
       "BURN" : "Verbrannt",
-      "ASSOCIATE_TOKEN" : "Token zuordnen"
+      "ASSOCIATE_TOKEN" : "Token zuordnen",
+      "CONTRACT_CALL" : "Vertragsaufruf"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -5168,7 +5169,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Wiederherstellungsphrase",
           "hideRecoveryPhrase" : "Wiederherstellungsphrase ausblenden",
-          "pairNano" : "Nano verbinden"
+          "pairNano" : "Nano verbinden",
+          "secureYourCrypto" : "Deine Kryptos schützen"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5462,29 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Deine Kryptos schützen",
+            "description" : "Übertrage deine ersten Kryptos von einer Börse oder Wallet in dein Ledger Wallet, um sie optimal zu schützen.",
+            "buttons" : {
+              "next" : "Meine Kryptos schützen",
+              "nextSecondary" : "Vielleicht später",
+              "prev" : "Vorheriger Schritt"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Alles ist an Ort und Stelle",
+            "description" : "Dein Ledger-Gerät ist startklar. Falls du Krypto geschickt hast, empfängst du sie in wenigen Minuten.",
+            "buttons" : {
+              "next" : "Weiter"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Alles ist an Ort und Stelle",
+            "description" : "Dein Ledger-Gerät ist startklar. Jetzt kannst du deine Assets damit schützen.",
+            "buttons" : {
+              "next" : "Weiter"
             }
           }
         }
@@ -5826,6 +5851,62 @@
         "quickFix" : "Schnelle Abhilfe: Schick ein paar Assets an dich selbst, um sie zu bündeln.",
         "warning" : "Auf deinem Konto sind zu viele kleine UTXOs. Schick ein paar Assets an dich selbst, um sie zu konsolidieren.",
         "consolidate" : "Konsolidieren"
+      },
+      "pendingTransactions" : {
+        "title" : "Schwebende Transaktionen ({{count}})",
+        "incoming" : {
+          "title" : "Eingehende Angebote ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ausgehende Angebote ({{count}})"
+        },
+        "pending" : "Ausstehend",
+        "expired" : "Abgelaufen",
+        "status" : {
+          "label" : "Status",
+          "expired" : "Abgelaufen",
+          "incoming" : "Eingehend",
+          "outgoing" : "Ausgehend"
+        },
+        "from" : "Von",
+        "to" : "An",
+        "memo" : "Memo",
+        "noMemo" : "Kein Memo",
+        "date" : "Datum",
+        "expiresAt" : "Läuft ab am",
+        "expiresIn" : "Läuft ab in",
+        "amount" : "Betrag",
+        "transaction" : "Transaktion",
+        "viewTransaction" : "Transaktion anzeigen",
+        "action" : "Aktion",
+        "accept" : "Akzeptieren",
+        "withdraw" : "Abheben",
+        "reject" : "Ablehnen",
+        "deviceAppModal" : {
+          "title" : "Angebot {{action}}",
+          "description" : "Bitte öffne die Canton-App auf deinem Ledger-Gerät, um dieses Angebot zu {{action}}.",
+          "contractId" : "Vertrags-ID",
+          "cancel" : "Abbrechen",
+          "openApp" : "Canton-App öffnen",
+          "opening" : "Wird geöffnet …",
+          "noDevice" : "Kein Gerät angeschlossen",
+          "appOpenError" : "Die Canton-App konnte nicht geöffnet werden. Bitte versuche es noch einmal.",
+          "processing" : "Vorgang „{{action}}“ wird bearbeitet …",
+          "success" : {
+            "accept" : {
+              "title" : "Angebot angenommen",
+              "description" : "Das Transferangebot wurde angenommen."
+            },
+            "reject" : {
+              "title" : "Angebot abgelehnt",
+              "description" : "Das Transferangebot wurde abgelehnt."
+            },
+            "withdraw" : {
+              "title" : "Angebot zurückgezogen",
+              "description" : "Das Transferangebot wurde zurückgezogen."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6866,10 @@
       "title" : "Tokenzuordnung kann nicht verifiziert werden",
       "description" : "Wir konnten nicht überprüfen, ob das Zielkonto dieses Token empfangen kann. Möglicherweise ist die Adresse ungültig oder es liegt ein Problem mit dem Netzwerk oder dem Service vor."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM-Adressverifizierung erforderlich",
+      "description" : "Bitte kontrolliere vor der Bestätigung die EVM-Adresse, die auf deinem Ledger-Gerät angezeigt wird."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
       "description" : "Bitte versuchen Sie es erneut mit einem Bild."
@@ -7062,6 +7147,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Betrag reduziert, um UTXO-Beschränkungen zu erfüllen."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Betrag zu hoch für UTXO-Beschränkungen."
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7209,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Weitere Informationen"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Du sendest ein ERC20-Token. Bei dieser Transaktionsart zeigt dein Ledger-Gerät nicht die Konto-ID, sondern die EVM-Adresse des Absenders an.\nBitte überprüfe <0>wie in dieser Anleitung beschrieben</0>, ob die Adresse korrekt ist, bevor du die Bestätigung abgibst."
         }
       }
     },
