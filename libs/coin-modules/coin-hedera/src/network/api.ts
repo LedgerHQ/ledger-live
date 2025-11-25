@@ -57,6 +57,12 @@ async function getAccount(address: string): Promise<HederaMirrorAccount> {
   }
 }
 
+// keeps old behavior when all pages are fetched
+const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
+  if (fetchAllPages) return "gt";
+  return order === "asc" ? "gt" : "lt";
+};
+
 async function getAccountTransactions({
   address,
   pagingToken,
@@ -77,14 +83,8 @@ async function getAccountTransactions({
     order,
   });
 
-  // keeps old behavior when all pages are fetched
-  const getTimestampDirection = () => {
-    if (fetchAllPages) return "gt";
-    return order === "asc" ? "gt" : "lt";
-  };
-
   if (pagingToken) {
-    params.append("timestamp", `${getTimestampDirection()}:${pagingToken}`);
+    params.append("timestamp", `${getPaginationDirection(fetchAllPages, order)}:${pagingToken}`);
   }
 
   let nextCursor: string | null = null;
@@ -269,13 +269,28 @@ async function getTransactionsByTimestampRange(
   return transactions;
 }
 
-async function getNodes(): Promise<HederaMirrorNode[]> {
+async function getNodes({
+  cursor,
+  limit = 100,
+  order = "desc",
+  fetchAllPages,
+}: {
+  cursor?: string;
+  limit?: number;
+  order?: "asc" | "desc";
+  fetchAllPages: boolean;
+}): Promise<{ nodes: HederaMirrorNode[]; nextCursor: string | null }> {
   const nodes: HederaMirrorNode[] = [];
   const params = new URLSearchParams({
-    order: "desc",
-    limit: "100",
+    order,
+    limit: limit.toString(),
   });
 
+  if (cursor) {
+    params.append("node.id", `${getPaginationDirection(fetchAllPages, order)}:${cursor}`);
+  }
+
+  let nextCursor: string | null = null;
   let nextPath: string | null = `/api/v1/network/nodes?${params.toString()}`;
 
   while (nextPath) {
@@ -286,9 +301,25 @@ async function getNodes(): Promise<HederaMirrorNode[]> {
     const newNodes = res.data.nodes;
     nodes.push(...newNodes);
     nextPath = res.data.links.next;
+
+    // stop fetching if pagination mode is used and we reached the limit
+    if (!fetchAllPages && nodes.length >= limit) {
+      break;
+    }
   }
 
-  return nodes;
+  // ensure we don't exceed the limit in pagination mode
+  if (!fetchAllPages && nodes.length > limit) {
+    nodes.splice(limit);
+  }
+
+  // set the next cursor only if we have more nodes to fetch
+  if (!fetchAllPages && nextPath) {
+    const lastNode = nodes.at(-1);
+    nextCursor = lastNode?.node_id?.toString() ?? null;
+  }
+
+  return { nodes, nextCursor };
 }
 
 export const apiClient = {

@@ -21,6 +21,7 @@ import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
+  TINYBAR_SCALE,
 } from "../constants";
 import { apiClient } from "../network/api";
 import type {
@@ -492,4 +493,11 @@ export const hasSpecificIntentData = <Type extends "staking" | "erc20">(
   expectedType: Type,
 ): txIntent is Extract<TransactionIntent<HederaMemo, HederaTxData>, { data: { type: Type } }> => {
   return "data" in txIntent && txIntent.data.type === expectedType;
+};
+
+export const calculateAPY = (rewardRateStart: number): number => {
+  const dailyRate = rewardRateStart / 10 ** TINYBAR_SCALE;
+  const annualRate = dailyRate * 365;
+
+  return annualRate;
 };

@@ -7,6 +7,7 @@ import {
   Long,
   TokenAssociateTransaction,
   TransferTransaction,
+  AccountUpdateTransaction,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
@@ -121,6 +122,37 @@ describe("createApi", () => {
       expect(rawTx.transactionMemo).toBe("token association");
     });
 
+    it.each([HEDERA_TRANSACTION_MODES.Delegate, HEDERA_TRANSACTION_MODES.Undelegate])(
+      "returns serialized %s transaction",
+      async type => {
+        const { transaction: hex } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: {
+            type: "native",
+          },
+          type,
+          amount: BigInt(0),
+          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          memo: {
+            kind: "text",
+            type: "string",
+            value: type,
+          },
+        });
+
+        const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
+
+        expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
+        invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
+        expect(rawTx.accountId).toEqual(
+          AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
+        );
+        expect(rawTx.transactionMemo).toBe(type);
+      },
+    );
+
     it("applies customFees properly", async () => {
       const customFees: FeeEstimation = {
         value: BigInt(1000),
@@ -220,6 +252,32 @@ describe("createApi", () => {
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
+
+    it.each([
+      HEDERA_TRANSACTION_MODES.Delegate,
+      HEDERA_TRANSACTION_MODES.Undelegate,
+      HEDERA_TRANSACTION_MODES.ClaimRewards,
+      HEDERA_TRANSACTION_MODES.Redelegate,
+    ])("returns fee for %s transaction", async type => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: type,
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
   });
 
   describe("getBalance", () => {
@@ -267,6 +325,29 @@ describe("createApi", () => {
       expect(associatedTokenWithBalance?.value).toBeGreaterThan(0n);
       expect(associatedTokenWithoutBalance?.value).toBe(0n);
       expect(notAssociatedToken?.value).toBe(undefined);
+    });
+
+    it("returns stake information for delegated account", async () => {
+      const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.activeStaking.accountId);
+      const nativeBalance = balances.find(b => b.asset.type === "native");
+
+      expect(nativeBalance?.stake).toMatchObject({
+        uid: MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
+        address: MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
+        asset: { type: "native" },
+        state: "active",
+        amount: expect.any(BigInt),
+        amountDeposited: expect.any(BigInt),
+        amountRewarded: expect.any(BigInt),
+        delegate: expect.any(String),
+      });
+    });
+
+    it("returns no stake information for non-delegated account", async () => {
+      const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.inactiveStaking.accountId);
+      const nativeBalance = balances.find(b => b.asset.type === "native");
+
+      expect(nativeBalance?.stake).toBe(undefined);
     });
   });
 
@@ -485,6 +566,28 @@ describe("createApi", () => {
       });
     });
 
+    it("returns claim rewards operations with correct metadata", async () => {
+      const lastPagingToken = "1761825341.000000000";
+      const block = await api.lastBlock();
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.activeStaking.accountId, {
+        minHeight: block.height,
+        order: "desc",
+        limit: 10,
+        lastPagingToken,
+      });
+
+      const rewardOps = ops.filter(op => op.type === "REWARD");
+      const updateAccountOps = ops.filter(op => op.type === "UPDATE_ACCOUNT");
+
+      expect(updateAccountOps.length).toBeGreaterThan(0);
+      expect(updateAccountOps[0]).toMatchObject({
+        asset: { type: "native" },
+        details: { memo: "Restake" },
+      });
+      expect(rewardOps.length).toBeGreaterThan(0);
+      expect(rewardOps[0].value).toBeGreaterThan(BigInt(0));
+    });
+
     it.each(["desc", "asc"] as const)(
       "returns paginated operations for account with high activity (%s)",
       async order => {
@@ -532,5 +635,25 @@ describe("createApi", () => {
         expect(firstPage1Timestamp < lastPage2Timestamp).toBe(order === "asc");
       },
     );
+  });
+
+  describe("getValidators", () => {
+    it("returns validators with APY information", async () => {
+      const result = await api.getValidators();
+
+      expect(result.items.length).toBeGreaterThan(0);
+      result.items.forEach(item => {
+        expect(item).toMatchObject({
+          address: expect.any(String),
+          nodeId: expect.any(String),
+          name: expect.any(String),
+          description: expect.any(String),
+          balance: expect.any(BigInt),
+          apy: expect.any(Number),
+        });
+        expect(item.apy).toBeGreaterThanOrEqual(0);
+        expect(item.apy).toBeLessThanOrEqual(1);
+      });
+    });
   });
 });

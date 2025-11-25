@@ -536,17 +536,17 @@ describe("getNodes", () => {
       }),
     );
 
-    const result = await apiClient.getNodes();
+    const result = await apiClient.getNodes({ fetchAllPages: true });
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-    expect(result.map(n => n.node_id)).toEqual([0, 1]);
+    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1]);
     expect(requestUrl).toContain("/api/v1/network/nodes");
     expect(requestUrl).toContain("limit=100");
     expect(requestUrl).toContain("order=desc");
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 
-  it("should keep fetching if links.next is present and new nodes are returned", async () => {
+  it("should keep fetching if fetchAllPages and links.next is present", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         getMockResponse({
@@ -567,9 +567,37 @@ describe("getNodes", () => {
         }),
       );
 
-    const result = await apiClient.getNodes();
+    const result = await apiClient.getNodes({ fetchAllPages: true });
 
-    expect(result.map(n => n.node_id)).toEqual([0, 1, 2]);
+    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1, 2]);
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it("should paginate if fetchAllPages is not set", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [
+            { node_id: 0, node_account_id: "0.0.3" },
+            { node_id: 1, node_account_id: "0.0.4" },
+          ],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getNodes({
+      limit: 2,
+      fetchAllPages: false,
+    });
+
+    expect(result.nodes.map(tx => tx.node_id)).toEqual([0, 1]);
+    expect(result.nextCursor).toBe("1");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 });

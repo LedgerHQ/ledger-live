@@ -60,6 +60,7 @@ import {
   getChecksum,
   mapIntentToSDKOperation,
   getOperationDetailsExtraFields,
+  calculateAPY,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -949,6 +950,20 @@ describe("logic utils", () => {
         { key: "gasUsed", value: "950" },
         { key: "gasLimit", value: "2000" },
       ]);
+    });
+  });
+
+  describe("calculateAPY", () => {
+    it("should calculate APY correctly for a typical reward rate", () => {
+      const result = calculateAPY(3538);
+
+      expect(result).toBeCloseTo(0.01291, 5);
+    });
+
+    it("should return 0 for zero reward rate", () => {
+      const result = calculateAPY(0);
+
+      expect(result).toBe(0);
     });
   });
 });
