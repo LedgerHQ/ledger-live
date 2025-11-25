@@ -1662,7 +1662,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-slider (4.5.6):
+  - react-native-slider (5.1.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1675,7 +1675,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-slider/common (= 4.5.6)
+    - react-native-slider/common (= 5.1.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -1684,7 +1684,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-slider/common (4.5.6):
+  - react-native-slider/common (5.1.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3014,7 +3014,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: df7caae89026a8ab2ecdd82839978f657701f51d
   react-native-safe-area-context: afc464441362333ffe4cd96f3e623e374362a2f6
-  react-native-slider: eec56ab0c824fbe25ab410bc66c5c2afdda030c4
+  react-native-slider: 2143c90e24be2cb572a6bd5a04fd85c0a150a7d0
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
