@@ -50,7 +50,7 @@ jobs:
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
-        
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
@@ -91,6 +91,7 @@ jobs:
       - name: git add
         run: |
           git add .
+
       - name: commit changes
         uses: planetscale/ghcommit-action@v0.2.9
         with:
@@ -99,41 +100,43 @@ jobs:
           branch: hotfix
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
       - name: Get date
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-#      - name: create PR to main
-#        run: |
-#          gh pr create \
-#            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
-#            -F ./.github/templates/hotfix.md \
-#            --base main \
-#            --head hotfix
-#        env:
-#          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-##
-#  create-hotfix-fail:
-#    name: Create Hotfix > Failure Reporting
-#    needs: create-hotfix
-#    if: failure()
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: post to a Slack channel
-#        id: slack
-#        uses: slackapi/slack-github-action@v2.0.0
-#        with:
-#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-#          method: chat.postMessage
-#          payload: |
-#            channel: "C08JQKWS9KK"
-#            text: "[Alert] Create Hotfix failed"
-#            blocks:
-#              - type: "section"
-#                text:
-#                  type: "mrkdwn"
-#                  text: "*Create Hotfix failed*"
-#              - type: "section"
-#                text:
-#                  type: "mrkdwn"
-#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+
+      - name: create PR to main
+        run: |
+          gh pr create \
+            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+            -F ./.github/templates/hotfix.md \
+            --base main \
+            --head hotfix
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  create-hotfix-fail:
+    name: Create Hotfix > Failure Reporting
+    needs: create-hotfix
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Create Hotfix failed"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Create Hotfix failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
