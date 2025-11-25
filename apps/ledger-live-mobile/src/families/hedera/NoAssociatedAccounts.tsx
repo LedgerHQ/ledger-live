@@ -4,13 +4,18 @@ import { urls } from "~/utils/urls";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 // "no associated accounts" text when adding/importing accounts
 function NoAssociatedAccounts() {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const createAccountSupportUrl = useLocalizedUrl(urls.hedera.supportArticleLink);
 
-  const onPress = useCallback(() => Linking.openURL(urls.hedera.supportArticleLink), []);
+  const onPress = useCallback(() => {
+    Linking.openURL(createAccountSupportUrl);
+  }, [createAccountSupportUrl]);
+
   return (
     <>
       <Flex flex={1} alignSelf="stretch" alignItems="center">

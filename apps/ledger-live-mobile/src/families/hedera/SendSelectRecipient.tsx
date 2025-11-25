@@ -4,6 +4,7 @@ import { Linking, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/utils";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";
 import TranslatedError from "~/components/TranslatedError";
@@ -37,9 +38,11 @@ const UnverifiedAssociationAlert = ({ error }: AlertProps) => {
 };
 
 const UnverifiedEvmAddressAlert = () => {
+  const evmAddressVerificationUrl = useLocalizedUrl(urls.hedera.evmAddressVerification);
+
   const goToLink = useCallback(() => {
-    Linking.openURL(urls.hedera.evmAddressVerification);
-  }, []);
+    Linking.openURL(evmAddressVerificationUrl);
+  }, [evmAddressVerificationUrl]);
 
   return (
     <Alert type="warning">
