@@ -2,7 +2,7 @@ import { create } from "superstruct";
 import { getChainAPI } from ".";
 import { PARSED_PROGRAMS } from "./program/constants";
 import { PublicKeyFromString } from "./validators/pubkey";
-import { getMaybeTokenAccount } from "./web3";
+import { getMaybeTokenAccount, getTransactions } from "./web3";
 
 const api = getChainAPI({
   endpoint: "https://solana.coin.ledger.com",
@@ -73,4 +73,24 @@ describe("findTokenAccAddress", () => {
 
     expect(ata).toEqual(address);
   });
+});
+
+describe("getTransactions", () => {
+  it.each([
+    {
+      address: "Cv9b7PuxVdKXTKTBXvZSQfSqbMNmPHP8brv77ZL2D95m",
+      untilTxSignature: undefined,
+    },
+    {
+      address: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+      untilTxSignature: undefined,
+    },
+  ])(
+    "returns the expected transactions without any fail transactions",
+    async ({ address, untilTxSignature }) => {
+      const txs = await getTransactions(address, untilTxSignature, api);
+      const hasError = txs.some(tx => tx.info.err);
+      expect(hasError).toBe(false);
+    },
+  );
 });
