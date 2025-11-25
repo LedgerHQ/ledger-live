@@ -110,8 +110,12 @@ async function init() {
       });
     }
   }
-  if (window.localStorage.getItem("hard-reset")) {
+  const hardResetFlag = window.localStorage.getItem("hard-reset");
+  const wasHardReset = hardResetFlag === "1";
+
+  if (wasHardReset) {
     await hardReset();
+    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
   }
 
   const store = createStore({
@@ -165,14 +169,18 @@ async function init() {
   });
   const initialSettings = (await getKey("app", "settings")) || {};
 
-  fetchSettings(
-    deepLinkUrl
-      ? {
-          ...initialSettings,
-          deepLinkUrl,
-        }
-      : initialSettings,
-  )(store.dispatch);
+  // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
+  const settingsToLoad = { ...initialSettings };
+
+  if (wasHardReset) {
+    settingsToLoad.hasCompletedOnboarding = false;
+  }
+
+  if (deepLinkUrl) {
+    settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  fetchSettings(settingsToLoad)(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
 
