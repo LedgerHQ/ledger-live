@@ -26,6 +26,7 @@ export type Transaction = TransactionCommon & {
 } & (
     | {
         mode: HEDERA_TRANSACTION_MODES.Send;
+        gasLimit?: BigNumber;
         properties?: never;
       }
     | {
@@ -45,6 +46,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 } & (
     | {
         mode: HEDERA_TRANSACTION_MODES.Send;
+        gasLimit?: string;
         properties?: never;
       }
     | {
@@ -59,7 +61,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 
 export type TransactionTokenAssociate = Extract<
   Transaction,
-  { mode: typeof HEDERA_TRANSACTION_MODES.TokenAssociate }
+  { mode: HEDERA_TRANSACTION_MODES.TokenAssociate }
 >;
 
 export type TransactionStatus = TransactionStatusCommon;
@@ -89,6 +91,9 @@ export type HederaOperationExtra = {
   transactionId?: string;
   associatedTokenId?: string;
   pagingToken?: string;
+  gasConsumed?: number;
+  gasLimit?: number;
+  gasUsed?: number;
   memo?: string | null;
 };
 

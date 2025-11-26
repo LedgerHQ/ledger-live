@@ -1089,6 +1089,10 @@
       "title": "Unable to verify token association",
       "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
     },
+    "HederaRecipientEvmAddressVerificationRequired": {
+      "title": "EVM address verification required",
+      "description": "Please verify the EVM address visible on your Ledger device before confirming."
+    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -2762,7 +2766,8 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "ASSOCIATE_TOKEN": "Associate token"
+      "ASSOCIATE_TOKEN": "Associate token",
+      "CONTRACT_CALL": "Contract call"
     }
   },
   "operationDetails": {
@@ -7242,6 +7247,9 @@
         },
         "unverifiedAssociation": {
           "learnMore": "Learn more"
+        },
+        "evmVerificationRequired": {
+          "text": "You are sending an ERC-20 token. For this type of transaction, your Ledger device will display the sender's EVM address, not their Account ID.\nPlease follow <0>this guide</0> to verify the address is correct before confirming."
         }
       }
     },
