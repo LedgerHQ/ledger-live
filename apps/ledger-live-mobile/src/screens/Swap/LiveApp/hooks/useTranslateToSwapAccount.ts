@@ -9,7 +9,7 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
   toAccountId?: string;
-  toToken?: string;
+  toTokenId?: string;
   amountFrom?: string;
   affiliate?: string;
 };
