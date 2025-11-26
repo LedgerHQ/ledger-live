@@ -14,7 +14,7 @@ describe("buildOptimisticOperation", () => {
     const result = buildOptimisticOperation(account, transaction, fee);
 
     // THEN
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui--OUT",
       hash: "",
       type: "OUT",
@@ -30,6 +30,7 @@ describe("buildOptimisticOperation", () => {
         transferAmount: new BigNumber(3000000000),
       },
     });
+    expect(result.transactionSequenceNumber).toBeInstanceOf(BigNumber);
   });
 
   it("should calculate correct value for OUT type", () => {
@@ -49,5 +50,23 @@ describe("buildOptimisticOperation", () => {
     // THEN
     expect(result.value).toEqual(amount.plus(fee));
     expect(result.fee).toEqual(fee);
+  });
+
+  it("should generate unique transactionSequenceNumber for multiple pending operations", async () => {
+    // GIVEN
+    const account: SuiAccount = createFixtureAccount();
+    const transaction: Transaction = createFixtureTransaction();
+    const fee = new BigNumber(10);
+
+    // WHEN
+    const result1 = buildOptimisticOperation(account, transaction, fee);
+    // Small delay to ensure different timestamps
+    await new Promise(resolve => setTimeout(resolve, 5));
+    const result2 = buildOptimisticOperation(account, transaction, fee);
+
+    // THEN
+    expect(result1.transactionSequenceNumber).toBeInstanceOf(BigNumber);
+    expect(result2.transactionSequenceNumber).toBeInstanceOf(BigNumber);
+    expect(result1.transactionSequenceNumber!.eq(result2.transactionSequenceNumber!)).toBe(false);
   });
 });
