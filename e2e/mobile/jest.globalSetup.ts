@@ -163,6 +163,7 @@ export default async function setup(): Promise<void> {
   global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
   global.tapWebElementByTestId = WebElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
+  global.waitForCurrentWebviewUrlToContain = WebElementHelpers.waitForCurrentWebviewUrlToContain;
   global.waitForWebElementToBeEnabled = WebElementHelpers.waitForWebElementToBeEnabled;
   global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
 }
