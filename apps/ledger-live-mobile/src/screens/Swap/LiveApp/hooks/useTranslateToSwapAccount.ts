@@ -9,7 +9,7 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
   toAccountId?: string;
-  toToken?: string;
+  toTokenId?: string;
   amountFrom?: string;
   affiliate?: string;
 };
@@ -79,7 +79,7 @@ export const useTranslateToSwapAccount = (
         ).id;
       }
 
-      newParams.toToken = currency.id;
+      newParams.toTokenId = currency.id;
       return newParams;
     }
 
