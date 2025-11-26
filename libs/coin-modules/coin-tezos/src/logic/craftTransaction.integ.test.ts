@@ -99,4 +99,35 @@ describe("Tezos Api", () => {
       ]),
     );
   });
+
+  it("should craft a send transaction from tz2 address with correct compressedreveal public key", async () => {
+    // Given: LAMA account from production environment
+    const tz2Address = "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3";
+    const expectedPublicKey = "sppk7but7h93Ws1XhAPvdBcttVmoBDGHxdpaU8dPy5549f3eLJFAjag";
+
+    // When: craft a send transaction with the public key
+    const result = await craftTransaction(
+      { address: tz2Address },
+      {
+        type: "send",
+        recipient: "tz2VYbGhf44HDDYP2fepNA7n7MDHWuBe6RxD",
+        amount: BigInt(1000000),
+        fee: { fees: BigInt(500).toString(), gasLimit: "10000", storageLimit: "0" },
+      },
+      {
+        publicKey: expectedPublicKey,
+        publicKeyHash: tz2Address,
+      },
+    );
+
+    // Then: verify the reveal operation contains the correct public key
+    expect(result.type).toBe("OUT");
+    expect(result.contents.length).toBeGreaterThanOrEqual(2); // Should have reveal + transaction
+
+    const revealOp = result.contents.find(op => op.kind === OpKind.REVEAL);
+    expect(revealOp).toBeDefined();
+    expect(revealOp).toHaveProperty("public_key");
+    expect((revealOp as any).public_key).toBe(expectedPublicKey);
+    expect((revealOp as any).source).toBe(tz2Address);
+  });
 });
