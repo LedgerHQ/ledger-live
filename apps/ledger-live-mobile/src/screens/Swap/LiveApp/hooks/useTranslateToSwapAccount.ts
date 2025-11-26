@@ -8,8 +8,8 @@ import { DefaultAccountSwapParamList } from "../../types";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
-  fromAccountId?: string;
-  fromToken?: string;
+  toAccountId?: string;
+  toToken?: string;
   amountFrom?: string;
   affiliate?: string;
 };
@@ -48,7 +48,7 @@ export const useTranslateToSwapAccount = (
 
     // A specific account was given
     if (defaultAccount) {
-      newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
+      newParams.toAccountId = walletApi.accountToWalletAPIAccount(
         walletState,
         defaultAccount,
         params?.defaultParentAccount,
@@ -72,14 +72,14 @@ export const useTranslateToSwapAccount = (
           isTokenAccount(account) ? currentAccount.id === account.parentId : false,
         );
 
-        newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
+        newParams.toAccountId = walletApi.accountToWalletAPIAccount(
           walletState,
           account,
           isAccount(parentAccount) ? parentAccount : undefined,
         ).id;
       }
 
-      newParams.fromToken = currency.id;
+      newParams.toToken = currency.id;
       return newParams;
     }
 
