@@ -938,10 +938,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
 
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.currency.name,
-        electronApp,
-      );
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );
 
@@ -961,14 +958,8 @@ test.describe("Swap flow from different entry point", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.currency.name,
-        electronApp,
-      );
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.accountName,
-        electronApp,
-      );
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 
@@ -986,10 +977,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.layout.goToMarket();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
-      await app.swap.expectSelectedAssetDisplayed(
-        swapEntryPoint.swap.accountToDebit.currency.name,
-        electronApp,
-      );
+      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );
 
