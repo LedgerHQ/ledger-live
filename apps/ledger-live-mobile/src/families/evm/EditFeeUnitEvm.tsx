@@ -45,6 +45,7 @@ const FeeSlider = React.memo(
         maximumValue={range.steps - 1}
         thumbTintColor={colors.live}
         minimumTrackTintColor={colors.live}
+        style={{ height: 60 }}
       />
     );
   },
