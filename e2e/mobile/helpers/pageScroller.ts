@@ -18,7 +18,7 @@ export class PageScroller {
       return;
     }
 
-    const scrollContainer = this.getScrollElement(scrollViewId);
+    const scrollContainer = await this.getScrollElement(scrollViewId);
 
     let direction = initialDirection;
     let stallCount = 0;
@@ -56,11 +56,16 @@ export class PageScroller {
     }
   }
 
-  private getScrollElement(
+  private async getScrollElement(
     scrollViewId?: string | RegExp,
-  ): Detox.IndexableNativeElement | NativeElement {
+  ): Promise<Detox.IndexableNativeElement | NativeElement> {
     if (scrollViewId) {
-      return element(by.id(scrollViewId));
+      const scrollElement = by.id(scrollViewId);
+      if (await this.isVisible(scrollElement, 2000)) {
+        return element(scrollElement);
+      } else {
+        throw new Error(`Scroll view with id ${scrollViewId} not found or not visible.`);
+      }
     }
     const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
     return element(by.type(type)).atIndex(0);

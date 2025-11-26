@@ -191,10 +191,10 @@ export default class PortfolioPage {
 
   @Step("Check asset transaction history")
   async checkTransactionAllocationSection() {
-    await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView, 400);
+    await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
     await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
-    await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 300, "bottom");
+    await scrollToId(this.seeAllTransactionsButton);
     await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
     await tapById(this.seeAllTransactionsButton);
     jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
