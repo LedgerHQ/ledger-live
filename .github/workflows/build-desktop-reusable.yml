@@ -40,7 +40,7 @@ jobs:
             },
             {
               name: "Windows",
-              os: "windows-2022",
+              os: "ledger-live-windows-8CPU-32RAM",
               dotnet: true,
               image: "win-x64.exe",
               output-name: "win",
