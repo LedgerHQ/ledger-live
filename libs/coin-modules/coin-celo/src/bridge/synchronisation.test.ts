@@ -3,11 +3,11 @@ import BigNumber from "bignumber.js";
 import { lockedGold, nonVoting, electionConfig } from "./__mocks__/celokit.mock";
 import { getAccountShape } from "./synchronisation";
 
-const getAccountShapeEVM = jest.fn();
+const getAccount = jest.fn();
 
-jest.mock("@ledgerhq/coin-evm/bridge/synchronization", () => {
+jest.mock("./account-sync-helpers", () => {
   return {
-    getAccountShape: () => getAccountShapeEVM(),
+    getAccount: () => getAccount(),
   };
 });
 
@@ -57,7 +57,7 @@ electionConfig.mockResolvedValue({ maxNumGroupsVotedFor: 10 });
 describe("When getting the account shape", () => {
   it("returns the account with correct balance and spendable balance", async () => {
     // Given
-    getAccountShapeEVM.mockResolvedValueOnce({ ...defaultShape });
+    getAccount.mockResolvedValueOnce({ ...defaultShape });
 
     // When
     const result = await getAccountShape(info, config);
@@ -70,7 +70,7 @@ describe("When getting the account shape", () => {
 
   it("returns the account with 0 operations", async () => {
     // Given
-    getAccountShapeEVM.mockResolvedValueOnce({ ...defaultShape });
+    getAccount.mockResolvedValueOnce({ ...defaultShape });
 
     // When
     const result = await getAccountShape(info, config);
@@ -81,7 +81,7 @@ describe("When getting the account shape", () => {
   });
 
   it("returns the account with 1 operations", async () => {
-    getAccountShapeEVM.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
+    getAccount.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
     // Given
     const info = {
       address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
@@ -102,7 +102,7 @@ describe("When getting the account shape", () => {
   });
 
   it("returns the account with correct id, and celo resources", async () => {
-    getAccountShapeEVM.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
+    getAccount.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
     // Given
     const info = {
       address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",

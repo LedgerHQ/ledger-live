@@ -12,6 +12,7 @@ module.exports = {
     ],
   },
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  modulePathIgnorePatterns: ["lib/", "lib-es/"],
   workerThreads: true,
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   reporters: [

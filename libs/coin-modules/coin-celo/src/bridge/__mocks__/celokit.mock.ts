@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { add } from "lodash";
 export const mockCeloKit = jest.fn();
 
 export const lockedGold = jest.fn();
