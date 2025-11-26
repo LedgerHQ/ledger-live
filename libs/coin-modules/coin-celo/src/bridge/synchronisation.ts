@@ -1,12 +1,14 @@
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
 import { CeloAccount } from "../types/types";
 import { celoKit } from "../network/sdk";
-import { getAccountShape as evmGetAccountShape } from "@ledgerhq/coin-evm/bridge/synchronization";
 import { BigNumber } from "bignumber.js";
+import { getAccount } from "./account-sync-helpers";
+
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { SyncConfig } from "@ledgerhq/types-live";
 
 const kit = celoKit();
 
@@ -28,7 +30,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const pendingWithdrawals = accountRegistrationStatus ? await getPendingWithdrawals(address) : [];
   const votes = accountRegistrationStatus ? await getVotes(address) : [];
 
-  const fromEvm = await evmGetAccountShape(info, config);
+  const fromEvm = await getAccount(info, config);
   const lockedBalance = await lockedGold.getAccountTotalLockedGold(address);
   const nonvotingLockedBalance = await lockedGold.getAccountNonvotingLockedGold(address);
 
