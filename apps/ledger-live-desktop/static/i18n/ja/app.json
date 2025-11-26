@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "引き出し済み",
       "SENDING" : "送信中",
       "BURN" : "バーン済み",
-      "ASSOCIATE_TOKEN" : "トークンの関連付け"
+      "ASSOCIATE_TOKEN" : "トークンの関連付け",
+      "CONTRACT_CALL" : "コントラクトコール"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -618,9 +619,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "テスト"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "テスト"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5166,8 @@
           "pinCode" : "PINコード",
           "recoveryPhrase" : "リカバリーフレーズ",
           "hideRecoveryPhrase" : "リカバリーフレーズを非表示にする",
-          "pairNano" : "Nanoを接続する"
+          "pairNano" : "Nanoを接続する",
+          "secureYourCrypto" : "暗号資産を保護"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5459,29 @@
             "help" : {
               "help" : "お困りですか？",
               "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "暗号資産を保護",
+            "description" : "取引所やウォレットから最初の暗号資産をLedger Walletに移動させて、セキュリティを最大限に高めましょう。",
+            "buttons" : {
+              "next" : "暗号資産を守る",
+              "nextSecondary" : "後で",
+              "prev" : "前のステップ"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "準備が整いました",
+            "description" : "Ledgerデバイスの準備が整いました。暗号資産を送付済みの場合は、数分以内に受け取れます。",
+            "buttons" : {
+              "next" : "続行"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "準備が整いました",
+            "description" : "Ledgerデバイスの準備が整いました。これで、資産を安全に管理できるようになりました。",
+            "buttons" : {
+              "next" : "続行"
             }
           }
         }
@@ -5826,6 +5848,62 @@
         "quickFix" : "簡単な解決策：ご自身に送金してUTXOを統合する。",
         "warning" : "アカウントに少額のUTXOが多すぎます。ご自身に送金してUTXOを統合してください。",
         "consolidate" : "統合する"
+      },
+      "pendingTransactions" : {
+        "title" : "保留中のトランザクション ({{count}}",
+        "incoming" : {
+          "title" : "受信オファー ({{count}}"
+        },
+        "outgoing" : {
+          "title" : "送信オファー ({{count}}"
+        },
+        "pending" : "保留中",
+        "expired" : "期限切れ",
+        "status" : {
+          "label" : "ステータス",
+          "expired" : "期限切れ",
+          "incoming" : "受信",
+          "outgoing" : "送信"
+        },
+        "from" : "送付元",
+        "to" : "送付先",
+        "memo" : "メモ",
+        "noMemo" : "メモなし",
+        "date" : "日付",
+        "expiresAt" : "有効期限（日時）",
+        "expiresIn" : "残り有効期間",
+        "amount" : "数量",
+        "transaction" : "トランザクション",
+        "viewTransaction" : "トランザクションを表示",
+        "action" : "アクション",
+        "accept" : "同意する",
+        "withdraw" : "出金",
+        "reject" : "拒否",
+        "deviceAppModal" : {
+          "title" : "{{action}}オファー",
+          "description" : "このオファーを{{action}}するには、LedgerデバイスでCantonアプリを開いてください。",
+          "contractId" : "コントラクトID",
+          "cancel" : "キャンセル",
+          "openApp" : "Cantonアプリを開く",
+          "opening" : "起動中...",
+          "noDevice" : "デバイスが接続されていません",
+          "appOpenError" : "Cantonアプリの起動に失敗しました。もう一度お試しください。",
+          "processing" : "{{action}}を処理中",
+          "success" : {
+            "accept" : {
+              "title" : "オファーを承諾しました",
+              "description" : "送金オファーは正常に承諾されました。"
+            },
+            "reject" : {
+              "title" : "オファーを拒否しました",
+              "description" : "送金オファーは正常に拒否されました。"
+            },
+            "withdraw" : {
+              "title" : "オファーを取り下げました",
+              "description" : "送金オファーは正常に取り下げられました。"
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6863,10 @@
       "title" : "トークンの関連付けを確認できませんでした",
       "description" : "送付先アカウントがこのトークンを受け取れるか確認できませんでした。アドレスが無効であるか、ネットワークまたはサービスの問題が発生している可能性があります。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVMアドレスの検証が必要です",
+      "description" : "承認する前に、Ledgerデバイスに表示されているEVMアドレスを検証してください。"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "ファイルからの画像の読み込みに失敗しました。",
       "description" : "画像でもう一度お試しください。"
@@ -7062,6 +7144,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXOの制約により、送付数量が調整されました。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXOの制約を超えるため、この数量は送信できません。"
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7206,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "詳細はこちら"
+        },
+        "evmVerificationRequired" : {
+          "text" : "ERC-20トークンを送信しようとしています。このタイプのトランザクションでは、LedgerデバイスにアカウントIDではなく、送信者のEVMアドレスが表示されます。\n承認する前に、<0>こちらのガイド</0>に従い、アドレスが正しいことを確認してください。"
         }
       }
     },
@@ -7569,5 +7660,15 @@
     "restart" : "再起動",
     "downloadOnLedger" : "Ledger.comでダウンロード",
     "downloadProgress" : "ダウンロード中...{{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Available balance",
+      "availableBalanceTooltip" : "Balance that can be transfered",
+      "transparentBalance" : "Transparent balance",
+      "transparentBalanceTooltip" : "Balance that is visible to the public",
+      "privateBalance" : "Private balance",
+      "privateBalanceTooltip" : "Balance that is hidden from the public"
+    }
   }
 }
