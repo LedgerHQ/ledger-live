@@ -514,7 +514,7 @@ export function runSwapCheckProvider(
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
   const handleSwapPageFlow = async (account: Account) => {
     await app.swapLiveApp.expectSwapLiveApp();
-    await app.swapLiveApp.checkAssetFrom(account.currency.ticker, "");
+    await app.swapLiveApp.checkAssetTo(account.currency.ticker, "");
   };
 
   describe("Swap - Entry Points", () => {
