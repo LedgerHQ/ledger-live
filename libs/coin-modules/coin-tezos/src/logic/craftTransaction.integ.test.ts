@@ -121,13 +121,16 @@ describe("Tezos Api", () => {
     );
 
     // Then: verify the reveal operation contains the correct public key
-    expect(result.type).toBe("OUT");
-    expect(result.contents.length).toBeGreaterThanOrEqual(2); // Should have reveal + transaction
-
-    const revealOp = result.contents.find(op => op.kind === OpKind.REVEAL);
-    expect(revealOp).toBeDefined();
-    expect(revealOp).toHaveProperty("public_key");
-    expect((revealOp as any).public_key).toBe(expectedPublicKey);
-    expect((revealOp as any).source).toBe(tz2Address);
+    expect(result).toEqual({
+      type: "OUT",
+      contents: [
+        expect.objectContaining({
+          kind: OpKind.REVEAL,
+          public_key: expectedPublicKey,
+          source: tz2Address,
+        }),
+        expect.objectContaining({ kind: OpKind.TRANSACTION }),
+      ],
+    });
   });
 });
