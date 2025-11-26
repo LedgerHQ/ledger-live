@@ -65,7 +65,7 @@ jobs:
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_URL }}
-          npmrc-location: "~/.npmrc"
+          npmrc-location: "$HOME/.npmrc"
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop

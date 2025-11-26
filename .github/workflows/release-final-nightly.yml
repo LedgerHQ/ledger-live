@@ -42,7 +42,7 @@ jobs:
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_URL }}
-          npmrc-location: "~/.npmrc"
+          npmrc-location: "$HOME/.npmrc"
 
       - name: Get checked out commit SHA
         id: get-sha
@@ -78,7 +78,7 @@ jobs:
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
-          npmrc-location: "~/.npmrc"
+          npmrc-location: "$HOME/.npmrc"
 
       - name: publish nightly
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
