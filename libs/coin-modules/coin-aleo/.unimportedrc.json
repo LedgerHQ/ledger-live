@@ -13,7 +13,18 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnused": ["@ledgerhq/live-env", "rxjs"],
+  "ignoreUnused": ["@ledgerhq/live-env", "rxjs", "@ledgerhq/devices", "@ledgerhq/cryptoassets"],
   "ignoreUnresolved": [],
-  "ignoreUnimported": ["src/globals.d.ts"]
+  "ignoreUnimported": [
+    "src/globals.d.ts",
+    "src/index.ts",
+    "src/cryptoAssetsStore.ts",
+    "src/network/index.ts",
+    "src/signer/index.ts",
+    "src/test/bot-specs.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/speculos-deviceActions.ts"
+  ]
 }
