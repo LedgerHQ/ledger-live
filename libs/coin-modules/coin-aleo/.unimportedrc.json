@@ -1,10 +1,11 @@
 {
   "entry": [
+    "src/account.ts",
     "src/api/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
-    "src/signer/index.ts",
-    "src/test/index.ts",
-    "src/index.ts"
+    "src/logic/index.ts",
+    "src/bridge/index.ts",
+    "src/test/cli.ts",
+    "src/transaction.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
