@@ -67,10 +67,10 @@ jobs:
 
       - name: Login to JFrog Ledger
         id: jfrog-login
-        uses: LedgerHQ/actions-security/actions/jfrog-login@1.4.0
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
 
       - name: Configure npmrc
-        uses: LedgerHQ/actions-security/actions/jfrog-npm@0.3.0
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         id: jfrog-npm
         if: ${{ vars.ARTIFACTORY_URL != '' && matrix.output-name != 'mac' }}
         with:
