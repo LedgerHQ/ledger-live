@@ -112,7 +112,7 @@ describe("Tezos Api", () => {
         type: "send",
         recipient: "tz2VYbGhf44HDDYP2fepNA7n7MDHWuBe6RxD",
         amount: BigInt(1000000),
-        fee: { fees: BigInt(500).toString(), gasLimit: "10000", storageLimit: "0" },
+        fee: { fees: "500", gasLimit: "10000", storageLimit: "0" },
       },
       {
         publicKey: expectedPublicKey,
