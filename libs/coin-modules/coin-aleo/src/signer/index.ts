@@ -1,3 +1,1 @@
-import getAddress from "./getAddress";
-
-export default getAddress;
+export { default as getAddress } from "./getAddress";
