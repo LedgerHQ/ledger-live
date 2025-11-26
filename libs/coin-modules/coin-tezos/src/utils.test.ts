@@ -13,4 +13,3 @@ describe("normalizePublicKeyForAddress", () => {
     expect(result).toBe(expectedPublicKey);
   });
 });
-
