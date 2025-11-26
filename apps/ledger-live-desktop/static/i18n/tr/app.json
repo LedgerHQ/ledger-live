@@ -203,7 +203,8 @@
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
       "BURN" : "Yakıldı",
-      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
+      "CONTRACT_CALL" : "Sözleşme çağrısı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -618,9 +619,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "Test"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "Test"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5166,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Kurtarma ifadesi",
           "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
-          "pairNano" : "Nano'yu bağla"
+          "pairNano" : "Nano'yu bağla",
+          "secureYourCrypto" : "Kriptolarınızı güvende tutun"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5459,29 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Kriptolarınızı güvende tutun",
+            "description" : "Maksimum güvenlik için ilk kriptolarınızı bir borsadan veya cüzdandan Ledger Wallet’ınıza taşıyın.",
+            "buttons" : {
+              "next" : "Kriptolarınızı güvende tutun",
+              "nextSecondary" : "Belki sonra",
+              "prev" : "Önceki adım"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Her şey yerli yerinde",
+            "description" : "Ledger cihazınız hazır. Kripto gönderdiyseniz onu birkaç dakika içinde alacaksınız.",
+            "buttons" : {
+              "next" : "Devam"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Her şey yerli yerinde",
+            "description" : "Ledger cihazınız hazır - artık varlıklarınızı onunla güvenceye alabilirsiniz.",
+            "buttons" : {
+              "next" : "Devam"
             }
           }
         }
@@ -5826,6 +5848,62 @@
         "quickFix" : "Hızlı Düzeltme: Birleştirmek için kendinize biraz fon gönderin.",
         "warning" : "Hesabınızda çok sayıda küçük UTXO var. Birleştirmek için kendinize biraz fon gönderin.",
         "consolidate" : "Birleştir"
+      },
+      "pendingTransactions" : {
+        "title" : "Bekleyen İşlemler ({{count}})",
+        "incoming" : {
+          "title" : "Gelen Teklifler ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Giden Teklifler ({{count}})"
+        },
+        "pending" : "Beklemede",
+        "expired" : "Süresi doldu",
+        "status" : {
+          "label" : "Durum",
+          "expired" : "Süresi doldu",
+          "incoming" : "Gelen",
+          "outgoing" : "Giden"
+        },
+        "from" : "Gönderici",
+        "to" : "Alıcı",
+        "memo" : "Memo",
+        "noMemo" : "Memo Yok",
+        "date" : "Tarih",
+        "expiresAt" : "Süresinin dolacağı zaman:",
+        "expiresIn" : "Süresinin dolmasına kalan süre:",
+        "amount" : "Miktar",
+        "transaction" : "İşlem",
+        "viewTransaction" : "İşlemi görüntüle",
+        "action" : "Eylem",
+        "accept" : "Kabul et",
+        "withdraw" : "Çekim",
+        "reject" : "Reddet",
+        "deviceAppModal" : {
+          "title" : "{{action}} Teklifi",
+          "description" : "Bu teklifi {{action}} için lütfen Ledger cihazınızda Canton uygulamasını açın.",
+          "contractId" : "Sözleşme Kimliği",
+          "cancel" : "İptal et",
+          "openApp" : "Canton Uygulamasını açın",
+          "opening" : "Açılıyor...",
+          "noDevice" : "Bağlı hiçbir cihaz yok",
+          "appOpenError" : "Canton uygulaması açılamadı. Lütfen tekrar deneyin.",
+          "processing" : "{{action}} işleniyor...",
+          "success" : {
+            "accept" : {
+              "title" : "Teklif Kabul Edildi",
+              "description" : "Transfer teklifi başarıyla kabul edildi."
+            },
+            "reject" : {
+              "title" : "Teklif Reddedildi",
+              "description" : "Transfer teklifi başarıyla reddedildi."
+            },
+            "withdraw" : {
+              "title" : "Teklif Geri Çekildi",
+              "description" : "Transfer teklifi başarıyla geri çekildi."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6863,10 @@
       "title" : "Token ilişkilendirmesi doğrulanamıyor",
       "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM adresi doğrulaması gerekiyor",
+      "description" : "Onaylamadan önce, Ledger cihazınızda görüntülenen EVM adresini lütfen doğrulayın."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -7062,6 +7144,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Miktar, UTXO kısıtlamalarına uyacak şekilde azaltıldı."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7206,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Daha fazla bilgi"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Bir ERC-20 token’ı gönderiyorsunuz. Ledger cihazınız bu işlem türünde gönderenin Hesap Kimliğini değil, EVM adresini gösterir.\nOnaylamadan önce adresin doğru olduğunu doğrulamak için lütfen bu <0>bu rehberdeki</0> yönergeleri izleyin."
         }
       }
     },
@@ -7569,5 +7660,15 @@
     "restart" : "Yeniden başlat",
     "downloadOnLedger" : "Ledger.com'dan indirin",
     "downloadProgress" : "İndiriliyor... %{{ progress }}"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Mevcut bakiye",
+      "availableBalanceTooltip" : "Transfer edilebilir bakiye",
+      "transparentBalance" : "Şeffaf bakiye",
+      "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
+      "privateBalance" : "Gizli bakiye",
+      "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+    }
   }
 }
