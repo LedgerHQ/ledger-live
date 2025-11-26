@@ -38,7 +38,7 @@ jobs:
       - name: Configure npmrc
         id: jfrog-npm
         if: ${{ vars.ARTIFACTORY_URL != '' }} #Feature flag - to be removed when all is migrated
-        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_URL }}
@@ -70,15 +70,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot nightly
 
-      #Jfrog publishing - if statements to be removed when all is migrated
-
-      - name: clean npmrc
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: rm -f ~/.npmrc
+        #Jfrog publishing - if statements to be removed when all is migrated
 
       - name: Configure npmrc
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
@@ -86,7 +82,7 @@ jobs:
 
       - name: publish nightly
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: pnpm changeset publish --tag nightly --no-git-tag
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
 
       #NPM publishing - to be removed when all is migrated
 

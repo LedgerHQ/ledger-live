@@ -57,7 +57,7 @@ jobs:
       - name: Configure npmrc
         id: jfrog-npm
         if: ${{ vars.ARTIFACTORY_URL != '' }}
-        uses: LedgerHQ/actions-security/actions/jfrog-npm@feat/npmrc-location
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_URL }}
@@ -89,10 +89,37 @@ jobs:
         uses: actions/setup-node@v4
         with:
           registry-url: "https://registry.npmjs.org"
+
+      #Jfrog publishing - if statements to be removed when all is migrated
+
+      - name: Configure npmrc
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
+        with:
+          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+          npmrc-location: "~/.npmrc"
+
+      - name: publish nightly
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+
+      #NPM publishing - to be removed when all is migrated
+
+      - name: authenticate with npm
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
+
       - name: publish release
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      #End NPM publishing
+
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
         id: desktop-changed
