@@ -67,13 +67,13 @@ jobs:
 
       - name: Login to JFrog Ledger
         id: jfrog-login
-        if: ${{ vars.ARTIFACTORY_URL != '' && matrix.output-name != 'mac' }}
+        if: ${{ vars.ARTIFACTORY_URL != '' && matrix.config.output-name != 'mac' }}
         uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
 
       - name: Configure npmrc
         uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         id: jfrog-npm
-        if: ${{ vars.ARTIFACTORY_URL != '' && matrix.output-name != 'mac' }}
+        if: ${{ vars.ARTIFACTORY_URL != '' && matrix.config.output-name != 'mac' }}
         with:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_URL }}
