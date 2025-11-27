@@ -56,6 +56,17 @@ export const reverseModelMap: Record<string, string> = {};
 for (const k in modelMap) {
   reverseModelMap[modelMap[k]] = k;
 }
+
+const getSpeculosModel = (model: DeviceModelId): string => {
+  switch (model) {
+    case DeviceModelId.europa:
+      return "flex";
+    case DeviceModelId.apex:
+      return "apex_p";
+    default:
+      return model.toLowerCase();
+  }
+};
 /**
  * Release a speculos device
  */
@@ -193,11 +204,7 @@ export async function createSpeculosDevice(
     `${speculosID}`,
     process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
     "--model",
-    model.toLowerCase() === "europa"
-      ? "flex"
-      : model.toLowerCase() === "apex"
-        ? "apex_p"
-        : model.toLowerCase(),
+    getSpeculosModel(model),
     appPath,
     ...(dependency
       ? [
