@@ -109,6 +109,7 @@ export type GetBalanceResponse =
 export type InstrumentBalance = {
   instrument_id: string;
   amount: string;
+  admin_id: string;
   locked: boolean;
   utxo_count: number;
 };
