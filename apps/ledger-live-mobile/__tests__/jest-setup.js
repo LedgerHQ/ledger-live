@@ -24,27 +24,6 @@ NativeModules.RNAnalytics = {};
 
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
-const createSwipeableMock = () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  return React.forwardRef(({ children }, ref) => {
-    const swipeableRef = {
-      close: () => {},
-      openLeft: () => {},
-      openRight: () => {},
-    };
-
-    if (typeof ref === "function") {
-      ref(swipeableRef);
-    } else if (ref && typeof ref === "object") {
-      ref.current = swipeableRef;
-    }
-
-    return <View>{children}</View>;
-  });
-};
-
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity
 // as the former breaks tests trying to press buttons
@@ -53,8 +32,6 @@ jest.mock("react-native-gesture-handler", () => {
   const RNGH = jest.requireActual("react-native-gesture-handler");
   const TouchableOpacity = RN.TouchableOpacity;
   const ScrollView = RN.ScrollView;
-  const Swipeable = createSwipeableMock();
-  
 
   return {
     ...RNGH,
@@ -66,11 +43,8 @@ jest.mock("react-native-gesture-handler", () => {
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
     BorderlessButton: TouchableOpacity,
-    Swipeable,
   };
 });
-
-jest.mock("react-native-gesture-handler/ReanimatedSwipeable", () => createSwipeableMock());
 
 jest.mock("react-native-haptic-feedback", () => ({
   default: {
