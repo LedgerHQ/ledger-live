@@ -30,8 +30,15 @@ const txInfoToOperationAdapter =
       fee: { value: fee },
       transfers: [{ value: transferValue, details }],
     } = txInfo;
+
     let type: OperationType = "UNKNOWN";
-    if (txInfo.type === "Send" && transferValue === "0") {
+    if (details.operationType === "transfer-proposal") {
+      type = "TRANSFER_PROPOSAL";
+    } else if (details.operationType === "transfer-rejected") {
+      type = "TRANSFER_REJECTED";
+    } else if (details.operationType === "transfer-withdrawn") {
+      type = "TRANSFER_WITHDRAWN";
+    } else if (txInfo.type === "Send" && transferValue === "0") {
       type = "FEES";
     } else if (txInfo.type === "Send") {
       type = senders.includes(partyId) ? "OUT" : "IN";
