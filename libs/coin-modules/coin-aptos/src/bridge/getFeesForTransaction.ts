@@ -40,10 +40,6 @@ export const getFee = async (
 
   let gasLimit = DEFAULT_GAS;
   let gasPrice = DEFAULT_GAS_PRICE;
-  transaction.options = {
-    maxGasAmount: gasLimit.toString(),
-    gasUnitPrice: gasPrice.toString(),
-  };
 
   if (account.xpub) {
     try {
@@ -51,10 +47,9 @@ export const getFee = async (
       const tx = await buildTransaction(account, transaction, aptosClient);
       const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
-      const gasMultiplier = STAKING_TX_MODES.includes(transaction.mode)
-        ? ESTIMATE_GAS_MUL_FOR_STAKING
-        : ESTIMATE_GAS_MUL;
-      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(gasMultiplier).integerValue();
+      gasLimit = new BigNumber(completedTx.gas_used)
+        .multipliedBy(getGasMultiplier(transaction))
+        .integerValue();
       gasPrice = new BigNumber(completedTx.gas_unit_price);
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
@@ -76,6 +71,11 @@ export const getFee = async (
       res.fees = expectedGas;
       res.estimate.maxGasAmount = gasLimit.toString();
       res.estimate.gasUnitPrice = completedTx.gas_unit_price;
+
+      transaction.options = {
+        maxGasAmount: gasLimit.toString(),
+        gasUnitPrice: completedTx.gas_unit_price,
+      };
     } catch (error: any) {
       log(error.message);
       throw error;
@@ -100,4 +100,10 @@ export const getEstimatedGas = async (
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
   return await CACHE(account, transaction, aptosClient);
+};
+
+export const getGasMultiplier = (transaction: Transaction) => {
+  return STAKING_TX_MODES.includes(transaction.mode)
+    ? ESTIMATE_GAS_MUL_FOR_STAKING
+    : ESTIMATE_GAS_MUL;
 };

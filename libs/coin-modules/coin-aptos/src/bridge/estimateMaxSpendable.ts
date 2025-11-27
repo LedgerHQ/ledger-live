@@ -24,7 +24,12 @@ const estimateMaxSpendable = async ({
   let gasUnitPrice = new BigNumber(DEFAULT_GAS_PRICE);
 
   if (transaction) {
-    const { estimate } = await getEstimatedGas(mainAccount, transaction, aptosClient);
+    const amount = transaction.amount.isZero() ? account.spendableBalance : transaction.amount;
+    const { estimate } = await getEstimatedGas(
+      mainAccount,
+      { ...transaction, amount },
+      aptosClient,
+    );
 
     maxGasAmount = BigNumber(estimate.maxGasAmount);
     gasUnitPrice = BigNumber(estimate.gasUnitPrice);

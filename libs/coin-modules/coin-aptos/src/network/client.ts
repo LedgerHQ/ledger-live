@@ -251,7 +251,6 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
-        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
