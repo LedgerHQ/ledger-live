@@ -94,6 +94,7 @@ export default memo(function () {
   const onboardingType = useSelector(onboardingTypeSelector);
 
   const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
+  const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
 
   const onFinish = useCallback(() => {
     if (isProtectFlow && deviceModelId) {
@@ -117,7 +118,7 @@ export default memo(function () {
       parentNav.popToTop();
     }
 
-    if (isFundWalletEnabled && onboardingType === OnboardingType.setupNew) {
+    if (isFundWalletNewSetup) {
       navigation.navigate(ScreenName.OnboardingSecureYourCrypto);
     } else {
       navigation.replace(NavigatorName.Base, {
@@ -139,14 +140,13 @@ export default memo(function () {
     navigation,
     fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    onboardingType,
-    isFundWalletEnabled,
+    isFundWalletNewSetup,
   ]);
 
   return (
     <StyledSafeAreaView>
       <TrackScreen category="Onboarding" name="PairNew" />
-      <ImageHeader showSlideIndicator={isFundWalletEnabled} />
+      <ImageHeader showSlideIndicator={isFundWalletNewSetup} />
       <StyledContainerView>
         <ConnectDevice onSuccess={onFinish} />
       </StyledContainerView>
