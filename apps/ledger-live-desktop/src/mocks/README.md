@@ -8,7 +8,7 @@ To test 500 error handling in the application (especially in asset selection):
 
 1. Launch the application in development mode with MSW enabled:
    ```bash
-   pnpm desktop start:msw
+   pnpm dev:lld:msw 
    ```
 
 2. Go to **Settings > Developer**
