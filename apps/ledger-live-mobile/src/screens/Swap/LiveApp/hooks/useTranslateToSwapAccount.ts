@@ -2,7 +2,9 @@ import { useSelector } from "react-redux";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { walletSelector } from "~/reducers/wallet";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 
 import { DefaultAccountSwapParamList } from "../../types";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
@@ -54,6 +56,12 @@ export const useTranslateToSwapAccount = (
         params?.defaultParentAccount,
       ).id;
 
+      // Set toTokenId only if the account is a token account
+      if (isTokenAccount(defaultAccount)) {
+        const currency = getAccountCurrency(defaultAccount);
+        newParams.toTokenId = walletApi.currencyToWalletAPICurrency(currency).id;
+      }
+
       return newParams;
     }
 
@@ -79,7 +87,10 @@ export const useTranslateToSwapAccount = (
         ).id;
       }
 
-      newParams.toTokenId = currency.id;
+      // Set toTokenId only if the currency is a token
+      if (isTokenCurrency(defaultCurrency)) {
+        newParams.toTokenId = currency.id;
+      }
       return newParams;
     }
 
