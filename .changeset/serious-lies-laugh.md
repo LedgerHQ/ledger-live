@@ -1,8 +1,8 @@
 ---
-"@ledgerhq/types-live": patch
-"@ledgerhq/coin-canton": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/types-live": minor
+"@ledgerhq/coin-canton": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 feat: canton added new tx types for offer

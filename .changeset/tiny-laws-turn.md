@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 fix: canton removed failing test

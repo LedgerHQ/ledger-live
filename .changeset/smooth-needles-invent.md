@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-canton": minor
 ---
 
 fix: canton balance new instrument_id

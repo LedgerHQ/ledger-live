@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Fixed event tracking for receive options menu

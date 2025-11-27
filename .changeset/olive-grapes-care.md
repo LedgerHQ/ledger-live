@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-vechain": patch
+"@ledgerhq/coin-vechain": minor
 ---
 
 improve accuracy of gas estimation by setting the transaction caller to origin's address, rather than the recipient's address
