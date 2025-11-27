@@ -9,26 +9,35 @@ import { setIsOnboardingFlow, setIsOnboardingFlowReceiveSuccess } from "~/action
 import { useNavigation } from "@react-navigation/core";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
-import { NavigatorName } from "~/const";
 import { track } from "~/analytics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+
+type NavigationProps = RootComposite<
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingSecureYourCrypto>
+>;
 
 export default function OnboardingSecureYourCrypto() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const baseNavigation = useNavigation<RootNavigation>();
+
   const [isInitialised, setIsInitialised] = useState<boolean>(false);
   const isOnboardingFlowReceiveSuccess = useSelector(isOnboardingFlowReceiveSuccessSelector);
 
-  const handleReceiveFlowSuccess = useCallback(() => {
-    dispatch(setIsOnboardingFlowReceiveSuccess(false));
+  const handleReceiveFlowSuccess = useCallback(
+    (receiveFlowSuccess: boolean) => {
+      dispatch(setIsOnboardingFlowReceiveSuccess(false));
 
-    baseNavigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }, [dispatch, baseNavigation]);
+      navigation.navigate(ScreenName.OnboardingFundSuccess, { receiveFlowSuccess });
+    },
+    [dispatch, navigation],
+  );
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "sync-onboarding-companion",
@@ -48,7 +57,7 @@ export default function OnboardingSecureYourCrypto() {
 
   const handleMaybeLater = useCallback(() => {
     track("button_clicked", { button: "Maybe later", flow: "onboarding" });
-    handleReceiveFlowSuccess();
+    handleReceiveFlowSuccess(false);
   }, [handleReceiveFlowSuccess]);
 
   useEffect(() => {
@@ -56,7 +65,7 @@ export default function OnboardingSecureYourCrypto() {
       if (isOnboardingFlowReceiveSuccess) dispatch(setIsOnboardingFlowReceiveSuccess(false));
       setIsInitialised(true);
     } else if (isOnboardingFlowReceiveSuccess) {
-      handleReceiveFlowSuccess();
+      handleReceiveFlowSuccess(true);
     }
   }, [isOnboardingFlowReceiveSuccess, handleReceiveFlowSuccess, dispatch, isInitialised]);
 
