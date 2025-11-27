@@ -6,7 +6,7 @@ const transactionE2E = {
   errorMessage: new RegExp(/\d+(\.\d{1,10})? ETH needed for network fees\.[\s\S]*Learn More/),
   ctaBanner: true,
   quotesVisible: true,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runTooLowAmountForQuoteSwapsTest(

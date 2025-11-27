@@ -12,6 +12,7 @@ import {
 } from "../../../apps/ledger-live-mobile/src/actions/types";
 import { FeatureId } from "@ledgerhq/types-live";
 import { log as detoxLog } from "detox";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const RESPONSE_TIMEOUT = 10000;
 
@@ -185,10 +186,11 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
+  const deviceModel = getSpeculosModel();
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address: proxyAddress, model: process.env.SPECULOS_DEVICE }),
+    payload: JSON.stringify({ address: proxyAddress, model: deviceModel }),
   });
 }
 

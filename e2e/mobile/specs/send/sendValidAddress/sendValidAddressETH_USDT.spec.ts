@@ -10,6 +10,6 @@ runSendValidAddressTest(
   transaction,
   ["B2CQA-2703", "B2CQA-475"],
   "Recipient and Amount",
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   transaction.accountToDebit.currency.name,
 );
