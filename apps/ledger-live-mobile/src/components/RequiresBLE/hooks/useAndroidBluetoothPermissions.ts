@@ -175,12 +175,21 @@ export const useAndroidBluetoothPermissions = (
     let cancelled = false;
 
     async function asyncRequestBluetoothPermissions() {
-      const res = await requestBluetoothPermissions();
+      /*
+       * First do a simple check to avoid this issue: https://github.com/facebook/react-native/issues/53887
+       * or the permission state might be stuck in "unknown" state.
+       */
+      const checkResult = await checkBluetoothPermissions();
+      if (cancelled) return;
+      setHasPermissions(checkResult ? "granted" : "denied");
+      if (checkResult) return;
+
+      const requestResult = await requestBluetoothPermissions();
 
       if (!cancelled) {
         /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
-        setNeverAskAgain(res.generalStatus === RESULTS.NEVER_ASK_AGAIN);
-        setHasPermissions(res.allGranted ? "granted" : "denied");
+        setNeverAskAgain(requestResult.generalStatus === RESULTS.NEVER_ASK_AGAIN);
+        setHasPermissions(requestResult.allGranted ? "granted" : "denied");
       }
     }
 
