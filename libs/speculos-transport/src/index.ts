@@ -45,6 +45,7 @@ export function getMemorySpeculosDeviceInternal(id: string): SpeculosDeviceInter
 export const modelMap: Record<string, DeviceModelId> = {
   stax: DeviceModelId.stax,
   flex: DeviceModelId.europa,
+  apex_p: DeviceModelId.apex,
   nanos: DeviceModelId.nanoS,
   "nanos+": DeviceModelId.nanoSP,
   nanox: DeviceModelId.nanoX,
@@ -55,6 +56,17 @@ export const reverseModelMap: Record<string, string> = {};
 for (const k in modelMap) {
   reverseModelMap[modelMap[k]] = k;
 }
+
+const getSpeculosModel = (model: DeviceModelId): string => {
+  switch (model) {
+    case DeviceModelId.europa:
+      return "flex";
+    case DeviceModelId.apex:
+      return "apex_p";
+    default:
+      return model.toLowerCase();
+  }
+};
 /**
  * Release a speculos device
  */
@@ -192,7 +204,7 @@ export async function createSpeculosDevice(
     `${speculosID}`,
     process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
     "--model",
-    model.toLowerCase() === "europa" ? "flex" : model.toLowerCase(),
+    getSpeculosModel(model),
     appPath,
     ...(dependency
       ? [

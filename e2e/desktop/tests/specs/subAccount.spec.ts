@@ -56,6 +56,7 @@ for (const token of subAccounts) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
         ],
         annotation: {
@@ -105,7 +106,7 @@ for (const token of subAccountReceive) {
     test(
       `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: token.xrayTicket,
@@ -151,6 +152,7 @@ for (const token of subAccounts) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -202,7 +204,7 @@ for (const transaction of transactionE2E) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
       {
-        tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -290,7 +292,7 @@ for (const transaction of transactionsAddressInvalid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -344,7 +346,7 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -420,7 +422,7 @@ for (const transaction of tokenTransactionInvalid) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} ${transaction.tx.accountToDebit.index} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -472,7 +474,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   test(
     `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2703, B2CQA-475, B2CQA-3901",
@@ -536,7 +538,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
   test(
     `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
     },
     async ({ app }) => {
