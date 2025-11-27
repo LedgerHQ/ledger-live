@@ -40,7 +40,6 @@ const targets = [
   "EditOperationPanel",
   "MemoTagInput",
   "MemoTagSummary",
-  "ShouldUseReceiveOptions",
 ];
 
 async function genTarget(target) {

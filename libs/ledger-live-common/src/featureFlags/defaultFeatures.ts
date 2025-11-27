@@ -703,7 +703,12 @@ export const DEFAULT_FEATURES: Features = {
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
-  noah: DEFAULT_FEATURE,
+  noah: {
+    ...DEFAULT_FEATURE,
+    params: {
+      activeCurrencyIds: [],
+    },
+  },
   newSendFlow: DEFAULT_FEATURE,
   cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   lldSessionReplay: {
