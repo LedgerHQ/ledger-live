@@ -126,7 +126,11 @@ export function makeGetAccountShape(
 
     const balancesData = (balances || []).reduce(
       (acc, balance) => {
-        acc[balance.instrumentId] = balance;
+        if (balance.locked) {
+          acc[`Locked${balance.instrumentId}`] = balance;
+        } else {
+          acc[balance.instrumentId] = balance;
+        }
         return acc;
       },
       {} as Record<string, CantonBalance>,
