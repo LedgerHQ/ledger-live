@@ -64,6 +64,7 @@ import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -202,8 +203,9 @@ export default function Default() {
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
 
   const dmk = useDeviceManagementKit();
+  const checkAccountsWithFunds = useCheckAccountWithFunds();
 
-  useAccountsWithFundsListener(accounts, updateIdentify);
+  useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();

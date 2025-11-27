@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FeatureId } from ".";
+import { Account, FeatureId } from ".";
 
 /**
  * Unique identifier of a post onboarding action.
@@ -120,7 +120,10 @@ export type PostOnboardingAction = {
   /**
    * Check if passed state shows the action has already been completed
    */
-  getIsAlreadyCompletedByState?: (args: { isLedgerSyncActive?: boolean }) => boolean;
+  getIsAlreadyCompletedByState?: (args: {
+    isLedgerSyncActive?: boolean;
+    accounts?: Account[];
+  }) => boolean;
 
   /**
    * Used to set the action as complete when clicking on it.

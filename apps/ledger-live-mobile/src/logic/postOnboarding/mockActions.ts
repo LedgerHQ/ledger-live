@@ -45,6 +45,9 @@ export const buyCryptoMock: PostOnboardingAction = {
       },
     },
   ],
+  getIsAlreadyCompletedByState: ({ accounts }) => {
+    return !!accounts && accounts.some(account => account?.balance.isGreaterThan(0));
+  },
 };
 
 export const customImageMock: PostOnboardingAction = {

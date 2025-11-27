@@ -20,6 +20,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { accountsSelector } from "~/reducers/accounts";
 
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const PostOnboardingHub = () => {
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const closePostOnboarding = useCompletePostOnboarding();
   const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+  const accounts = useSelector(accountsSelector);
 
   const { isActivationDrawerVisible, closeActivationDrawer, openActivationDrawer } =
     useLedgerSyncEntryPointViewModel({
@@ -104,6 +106,7 @@ const PostOnboardingHub = () => {
                   productName={productName}
                   openActivationDrawer={openActivationDrawer}
                   isLedgerSyncActive={isLedgerSyncActive}
+                  accounts={accounts}
                 />
                 {index !== arr.length - 1 && <Divider />}
               </React.Fragment>

@@ -102,6 +102,7 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -231,7 +232,9 @@ function App() {
     }
   }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
-  useAccountsWithFundsListener(accounts, updateIdentify);
+  const checkAccountsWithFunds = useCheckAccountWithFunds();
+
+  useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();

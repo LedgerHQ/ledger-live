@@ -19,7 +19,7 @@ import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
-import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
@@ -30,7 +30,6 @@ import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/in
 import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { useAccountName } from "~/renderer/reducers/wallet";
-import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
@@ -190,7 +189,6 @@ const StepReceiveFunds = ({
     onResetSkip();
   }, [device, isAddressVerified, onChangeAddressVerified, onResetSkip, transitionTo]);
 
-  const completeAction = useCompleteActionCallback();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
@@ -199,9 +197,6 @@ const StepReceiveFunds = ({
     receiveStakingFlowConfig?.enabled &&
     receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
   const onFinishReceiveFlow = useCallback(() => {
-    if (!isOnboardingReceiveFlow) {
-      completeAction(PostOnboardingActionId.assetsTransfer);
-    }
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
@@ -235,7 +230,6 @@ const StepReceiveFunds = ({
     name,
     onClose,
     transitionTo,
-    completeAction,
     isOnboardingReceiveFlow,
   ]);
   return (
