@@ -2284,6 +2284,12 @@
       "subtitle": "Move your first crypto from an exchange or wallet to your Ledger for maximum security.",
       "secureCryptoButton": "Secure my crypto",
       "maybeLater": "Maybe later"
+    },
+    "fundSuccess": {
+      "title": "Welcome to your Ledger Wallet",
+      "receiveSuccess": "If you sent crypto, you’ll receive it in a few minutes",
+      "later": "Your first step will be to deposit your first crypto",
+      "exploreLedger": "Explore Ledger Wallet"
     }
   },
   "blePairingFlow": {

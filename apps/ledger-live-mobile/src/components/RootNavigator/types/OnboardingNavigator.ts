@@ -49,6 +49,7 @@ export type OnboardingNavigatorParamList = {
     fromAccessExistingWallet?: boolean;
   };
   [ScreenName.OnboardingSecureYourCrypto]: undefined;
+  [ScreenName.OnboardingFundSuccess]: { receiveFlowSuccess: boolean };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
   };

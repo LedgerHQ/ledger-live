@@ -48,6 +48,7 @@ import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYou
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -224,6 +225,8 @@ export default function OnboardingNavigator() {
         name={ScreenName.OnboardingSecureYourCrypto}
         component={OnboardingSecureYourCrypto}
       />
+
+      <Stack.Screen name={ScreenName.OnboardingFundSuccess} component={OnboardingFundSuccess} />
 
       <Stack.Screen
         name={NavigatorName.AnalyticsOptInPrompt}
