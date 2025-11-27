@@ -209,10 +209,9 @@ function App() {
     const setUserEquipmentId = async () => {
       const { user } = await getOrCreateUser();
       if (!user) return;
-      const { id } = user; // id is the user uuid aka equipment ID (used
-      // in segment)
+      const { datadogId } = user;
       DdSdkReactNative.setUserInfo({
-        id,
+        id: datadogId,
       });
     };
     initializeDatadogProvider(
