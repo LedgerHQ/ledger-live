@@ -89,6 +89,8 @@ const ModularDrawerAddAccountFlowManager = ({
   const dispatch = useDispatch();
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
+
+    console.log("step", step);
     switch (step) {
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
         return (
