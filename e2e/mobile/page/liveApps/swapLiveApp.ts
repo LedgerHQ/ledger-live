@@ -2,6 +2,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
+import { floatNumberRegex } from "@ledgerhq/live-common/lib/e2e/data/regexes";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -163,7 +164,7 @@ export default class SwapLiveAppPage {
       `[data-testid^='${this.quoteCardProviderName}']`,
     );
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
+    jestExpect(numberOfQuotesText).toMatch(new RegExp(`${providerList.length} quotes? found`));
     return providerList;
   }
 
@@ -274,6 +275,7 @@ export default class SwapLiveAppPage {
   @Step("Click on swap max")
   async clickSwapMax() {
     await tapWebElementByTestId(this.swapMaxToggle);
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
   }
 
   @Step("Retrieve send currency amount value")
