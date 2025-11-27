@@ -3,6 +3,7 @@ import { version } from "../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
+import { sanitizeError } from "./index";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -73,7 +74,7 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
     }
     fs.writeFileSync(jsonFilePath, JSON.stringify(appCatalog, null, 2), "utf8");
   } catch (error) {
-    console.error("Unable to create app version file:", error);
+    console.error("Unable to create app version file:", sanitizeError(error));
   }
 }
 
