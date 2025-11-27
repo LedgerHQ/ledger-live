@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -44,7 +44,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
-const ImageHeader = () => {
+const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   function renderArrowLeft() {
@@ -64,6 +64,14 @@ const ImageHeader = () => {
       height={48}
     >
       <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
+      {showSlideIndicator && (
+        <SlideIndicator
+          slidesLength={10}
+          activeIndex={8}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onChange={() => {}}
+        />
+      )}
       <Flex width={48}>
         <Button
           Icon={renderInformation}
@@ -138,7 +146,7 @@ export default memo(function () {
   return (
     <StyledSafeAreaView>
       <TrackScreen category="Onboarding" name="PairNew" />
-      <ImageHeader />
+      <ImageHeader showSlideIndicator={isFundWalletEnabled} />
       <StyledContainerView>
         <ConnectDevice onSuccess={onFinish} />
       </StyledContainerView>

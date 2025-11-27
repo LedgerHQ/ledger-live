@@ -13,6 +13,7 @@ import { NavigatorName } from "~/const";
 import { track } from "~/analytics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
+import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 
 export default function OnboardingSecureYourCrypto() {
   const { t } = useTranslation();
@@ -71,8 +72,8 @@ export default function OnboardingSecureYourCrypto() {
         <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={handleMaybeLater} />
 
         <SlideIndicator
-          slidesLength={4}
-          activeIndex={3}
+          slidesLength={FUND_WALLET_STEPS_LENGTH}
+          activeIndex={9}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onChange={() => {}}
         />
