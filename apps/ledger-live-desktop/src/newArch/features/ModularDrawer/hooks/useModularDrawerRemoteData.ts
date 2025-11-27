@@ -60,7 +60,7 @@ export function useModularDrawerRemoteData({
   });
 
   return {
-    error,
+    error: !!error, // Convert to boolean to avoid exposing error details (HTML from 500 responses)
     refetch,
     loadingStatus,
     assetsToDisplay,

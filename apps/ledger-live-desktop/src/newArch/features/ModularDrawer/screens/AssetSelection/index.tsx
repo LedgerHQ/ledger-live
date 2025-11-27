@@ -58,8 +58,8 @@ const AssetSelection = ({
         />
       )}
       <SearchInputContainer />
-      {error && refetch ? (
-        <GenericError onClick={refetch} />
+      {error ? (
+        <GenericError onClick={refetch || (() => {})} />
       ) : (
         <AssetsList
           assetsToDisplay={assetsToDisplay}

@@ -3,9 +3,20 @@ async function enableMocking() {
 
   if (mswEnabled) {
     try {
-      const { startWorker } = await import("~/mocks/browser");
+      const { startWorker, toggleSimulate500Error } = await import("~/mocks/browser");
 
       await startWorker();
+
+      // Expose toggle function globally for debugging
+      if (__DEV__) {
+        (window as any).__LEDGER_LIVE__ = {
+          ...(window as any).__LEDGER_LIVE__,
+          toggleSimulate500Error,
+        };
+        console.log(
+          "[MSW] Use window.__LEDGER_LIVE__.toggleSimulate500Error(true/false) to simulate 500 errors",
+        );
+      }
     } catch (error) {
       console.error("MSW: Failed to start Mock Service Worker:", error);
     }

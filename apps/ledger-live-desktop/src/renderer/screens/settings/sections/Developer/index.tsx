@@ -30,6 +30,7 @@ import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
+import Simulate500ErrorToggle from "./Simulate500ErrorToggle";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -125,6 +126,15 @@ const Default = () => {
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
+      
+      {__DEV__ && (
+        <Row
+          title="Simulate 500 Error (DADA API)"
+          desc="Enable this to simulate a 500 error when fetching assets. Useful for testing error handling in asset selection."
+        >
+          <Simulate500ErrorToggle />
+        </Row>
+      )}
     </Body>
   );
 };
