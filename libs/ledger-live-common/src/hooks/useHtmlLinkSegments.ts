@@ -27,7 +27,7 @@ export const splitHtmlLinkSegments = (input: string): HtmlLinkSegment[] => {
   ANCHOR_OPEN_REGEX.lastIndex = 0;
 
   const extractHrefValue = (tag: string): string | null => {
-    const match = tag.match(HREF_ATTR_REGEX);
+    const match = HREF_ATTR_REGEX.exec(tag);
     if (!match) return null;
     return match[1] ?? match[2] ?? match[3] ?? null;
   };
