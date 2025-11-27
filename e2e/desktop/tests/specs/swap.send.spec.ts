@@ -29,13 +29,13 @@ const swaps = [
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2744, B2CQA-2432, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
+    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke", "@swapSmoke"],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2749, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
+    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke", "@swapSmoke"],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
@@ -47,7 +47,7 @@ const swaps = [
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@swapSmoke"],
   },
   {
     fromAccount: Account.SOL_1,
