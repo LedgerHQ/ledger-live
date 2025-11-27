@@ -14,7 +14,7 @@ import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -24,7 +24,6 @@ import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { HtmlTextRenderer } from "./HtmlTextRenderer";
 
 const { height } = getWindowDimensions();
 
@@ -39,8 +38,8 @@ const RemoveContainer = styled(TouchableHighlight)`
   width: 90px;
 `;
 
-const NotificationCenter: React.FC = () => {
-  const rowRefs = useRef<Map<string, React.RefObject<SwipeableMethods | null>>>(new Map());
+export default function NotificationCenter() {
+  const rowRefs = new Map();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -114,7 +113,6 @@ const NotificationCenter: React.FC = () => {
         contentcard: item.title,
       });
 
-      rowRefs.current.delete(item.id);
       dispatch(setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)));
     },
     [dispatch, logDismissCard, notificationCards, trackContentCardEvent],
@@ -130,17 +128,6 @@ const NotificationCenter: React.FC = () => {
   // ---------------
 
   // ----- Render functions --------
-  const getRowRef = useCallback(
-    (id: string) => {
-      if (!rowRefs.current.has(id)) {
-        rowRefs.current.set(id, React.createRef<SwipeableMethods | null>());
-      }
-      // rowRefs.current has just been populated above when missing
-      return rowRefs.current.get(id)!;
-    },
-    [rowRefs],
-  );
-
   const renderRightActions = (
     _progress: Animated.AnimatedInterpolation<string | number>,
     dragX: Animated.AnimatedInterpolation<string | number>,
@@ -165,19 +152,20 @@ const NotificationCenter: React.FC = () => {
   const ListItem = (card: NotificationContentCard) => {
     const time = getTime(card.createdAt);
     const hasLink = !!card.link && !!card.cta;
-    const swipeableRef = getRowRef(card.id);
 
     return (
       <Swipeable
         key={card.id}
         renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, card)}
-        ref={swipeableRef}
+        ref={ref => {
+          if (ref && !rowRefs.get(card.id)) {
+            rowRefs.set(card.id, ref);
+          }
+        }}
         onBegan={() => {
           // Close row when starting swipe another
-          [...rowRefs.current.entries()].forEach(([id, ref]) => {
-            if (id !== card.id) {
-              ref.current?.close();
-            }
+          [...rowRefs.entries()].forEach(([id, ref]) => {
+            if (id !== card.id && ref) ref.close();
           });
         }}
       >
@@ -189,17 +177,6 @@ const NotificationCenter: React.FC = () => {
             })}
             showLinkCta={hasLink}
             {...card}
-            description={
-              card.description ? (
-                <HtmlTextRenderer
-                  html={card.description}
-                  variant="bodyLineHeight"
-                  fontWeight="medium"
-                  color="neutral.c70"
-                  numberOfLines={3}
-                />
-              ) : undefined
-            }
           />
         </Box>
       </Swipeable>
@@ -241,9 +218,9 @@ const NotificationCenter: React.FC = () => {
       />
     </Container>
   );
-};
+}
 
-const EmptyComponent: React.FC = () => {
+function EmptyComponent() {
   const { t } = useTranslation();
   return (
     <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
@@ -255,6 +232,4 @@ const EmptyComponent: React.FC = () => {
       </Text>
     </Flex>
   );
-};
-
-export default NotificationCenter;
+}
