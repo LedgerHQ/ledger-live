@@ -126,7 +126,7 @@ const Default = () => {
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
-      
+
       {__DEV__ && (
         <Row
           title="Simulate 500 Error (DADA API)"

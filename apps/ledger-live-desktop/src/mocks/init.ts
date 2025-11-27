@@ -9,8 +9,10 @@ async function enableMocking() {
 
       // Expose toggle function globally for debugging
       if (__DEV__) {
-        (window as any).__LEDGER_LIVE__ = {
-          ...(window as any).__LEDGER_LIVE__,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
+        const globalWindow = window as any;
+        globalWindow.__LEDGER_LIVE__ = {
+          ...globalWindow.__LEDGER_LIVE__,
           toggleSimulate500Error,
         };
         console.log(
