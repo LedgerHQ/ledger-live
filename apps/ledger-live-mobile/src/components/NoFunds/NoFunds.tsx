@@ -55,7 +55,7 @@ type ButtonItem = {
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route.params ?? {};
+  const { account, parentAccount, entryPoint } = route.params;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
@@ -87,15 +87,22 @@ export default function NoFunds({ route }: Readonly<Props>) {
       button: "receive",
       page,
     });
+
+    const shouldCreateTokenAccount =
+      account.type === "TokenAccount" &&
+      !parentAccount?.subAccounts?.some(subAccount => subAccount.id === account.id);
+
     onNavigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: {
+        account,
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
+        createTokenAccount: shouldCreateTokenAccount,
       },
     });
-  }, [account.id, currency, onNavigate, page, parentAccount?.id, track]);
+  }, [account, currency, onNavigate, page, parentAccount, track]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
@@ -143,7 +150,6 @@ export default function NoFunds({ route }: Readonly<Props>) {
   ];
 
   const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency.ticker);
-
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">
       <TrackScreen category="NoFundsFlow" name="ServiceModal" />
