@@ -55,7 +55,7 @@ type ButtonItem = {
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route.params ?? {};
+  const { account, parentAccount, entryPoint } = route.params;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
@@ -83,11 +83,6 @@ export default function NoFunds({ route }: Readonly<Props>) {
   );
 
   const onReceiveFunds = useCallback(() => {
-    if (!account) {
-      console.warn("No account provided to NoFunds, skipping receive navigation");
-      return;
-    }
-
     track("button_clicked", {
       button: "receive",
       page,
@@ -155,7 +150,6 @@ export default function NoFunds({ route }: Readonly<Props>) {
   ];
 
   const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency.ticker);
-
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">
       <TrackScreen category="NoFundsFlow" name="ServiceModal" />
