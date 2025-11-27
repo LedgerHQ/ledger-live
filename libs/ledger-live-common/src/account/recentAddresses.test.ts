@@ -1,4 +1,4 @@
-import { RecentAddressesStore, RecentAddressesStoreImpl } from ".";
+import { RecentAddressesStore, setupRecentAddressesStore, getRecentAddressesStore } from ".";
 import { RECENT_ADDRESSES_COUNT_LIMIT } from "./recentAddresses";
 
 describe("RecentAddressesStore", () => {
@@ -7,7 +7,8 @@ describe("RecentAddressesStore", () => {
 
   beforeEach(() => {
     onAddAddressCompleteMock.mockClear();
-    store = new RecentAddressesStoreImpl({}, onAddAddressCompleteMock);
+    setupRecentAddressesStore({}, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
   });
 
   it("should add one address and return this only address", async () => {
