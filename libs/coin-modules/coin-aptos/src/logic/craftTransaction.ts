@@ -5,7 +5,6 @@ import buildTransaction, { isTokenType } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, type TOKEN_TYPE } from "../constants";
-import type { AptosBalance } from "../types";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
