@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
 import { BigNumber } from "bignumber.js";
 import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
 import { getAccountCurrency } from "../../account";
@@ -8,6 +9,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getOperationExtra } from "@ledgerhq/coin-sui/getOperationExtra";
 import { OperationType } from "@ledgerhq/types-live";
+import { fetchSuiBannerConfig, registerSuiStakingPromotion, SuiBannerConfig } from "./api";
 
 export function useSuiMappedStakingPositions(account: SuiAccount) {
   const { validators } = getCurrentSuiPreloadData();
@@ -69,13 +71,11 @@ function reorderValidators(validators: SuiValidator[]): SuiValidator[] {
   );
 
   // move Ledger validator to the first position
-  const ledgerValidator = sortedValidators.find(
-    v => v.suiAddress === FIGMENT_SUI_VALIDATOR_ADDRESS,
-  );
+  const ledgerValidator = sortedValidators.find(v => v.suiAddress === P2P_SUI_VALIDATOR_ADDRESS);
 
   if (ledgerValidator) {
     const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      v => v.suiAddress !== FIGMENT_SUI_VALIDATOR_ADDRESS,
+      v => v.suiAddress !== P2P_SUI_VALIDATOR_ADDRESS,
     );
     sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 
@@ -118,3 +118,39 @@ export const mapStakingPositions = (
     };
   });
 };
+
+/**
+ * Hook to get Sui staking banner configuration
+ * Returns both boost and incentive banner flags, plus isRegisterable status
+ *
+ * Uses React Query for caching - cache is invalidated after successful stake registration
+ * Defaults to false for all flags while loading or on error (fail-safe)
+ *
+ * @param address - The Sui address to check registration status for
+ */
+export function useSuiStakingBanners(address?: string): SuiBannerConfig {
+  const { data } = useQuery({
+    queryKey: ["sui", "banner-config", address],
+    queryFn: () => fetchSuiBannerConfig(address),
+    staleTime: Infinity,
+    retry: 2,
+  });
+
+  return data ?? { showBoostBanner: false, showIncentiveBanner: false, isRegisterable: false };
+}
+
+/**
+ * Hook to handle Sui staking promotion registration
+ * Returns a function that registers the address and invalidates the banner cache
+ * Caller should check isRegisterable before calling
+ *
+ * Call this after a successful stake transaction with >= $100 USD on P2P validator
+ */
+export function useSuiStakingPromotionRegistration() {
+  const queryClient = useQueryClient();
+
+  return async (address: string) => {
+    await registerSuiStakingPromotion(address);
+    queryClient.invalidateQueries({ queryKey: ["sui", "banner-config", address] });
+  };
+}

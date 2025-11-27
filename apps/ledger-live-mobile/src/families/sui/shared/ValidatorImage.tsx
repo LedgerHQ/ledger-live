@@ -13,7 +13,7 @@ const ValidatorImage = ({ size = 64, url, name }: Props) => {
   return (
     <Circle crop size={size}>
       {url ? (
-        <Image src={url} style={{ width: size, height: size }} />
+        <Image source={{ uri: url }} style={{ width: size, height: size }} />
       ) : (
         <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
       )}

@@ -1,15 +1,25 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
+import Alert from "~/renderer/components/Alert";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
+import {
+  P2P_SUI_VALIDATOR_ADDRESS,
+  MIN_COUNTER_VALUE_FOR_PROMO,
+} from "@ledgerhq/live-common/families/sui/constants";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { StepProps } from "../types";
+
 const StepAmount = ({
   t,
   account,
@@ -20,6 +30,18 @@ const StepAmount = ({
   status,
   bridgePending,
 }: StepProps) => {
+  const { showBoostBanner } = useSuiStakingBanners(account?.freshAddress);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const counterValue = useCalculate({
+    from: account?.currency,
+    to: counterValueCurrency,
+    value: status?.amount?.toNumber() || 0,
+  });
+  const meetsMinimumPromoAmount = counterValue
+    ? counterValue >= MIN_COUNTER_VALUE_FOR_PROMO
+    : false;
+
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
@@ -51,6 +73,13 @@ const StepAmount = ({
             bridgePending={bridgePending}
             t={t}
           />
+          {showBoostBanner &&
+            transaction.recipient === P2P_SUI_VALIDATOR_ADDRESS &&
+            !meetsMinimumPromoAmount && (
+              <Alert type="primary" mt={4}>
+                <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
+              </Alert>
+            )}
         </Fragment>
       )}
     </Box>
