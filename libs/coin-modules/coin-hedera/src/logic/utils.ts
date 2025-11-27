@@ -7,7 +7,7 @@ import {
   Transaction as HederaSDKTransaction,
   TransactionId,
 } from "@hashgraph/sdk";
-import { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
@@ -242,6 +242,10 @@ export const safeParseAccountId = (
   }
 };
 
+export function getBlockHash(blockHeight: number): string {
+  return createHash("sha256").update(blockHeight.toString()).digest("hex");
+}
+
 /**
  * Calculates a synthetic block height based on Hedera consensus timestamp.
  *
@@ -260,10 +264,30 @@ export function getSyntheticBlock(
   }
 
   const blockHeight = Math.floor(seconds / blockWindowSeconds);
-  const blockHash = createHash("sha256").update(blockHeight.toString()).digest("hex");
+  const blockHash = getBlockHash(blockHeight);
   const blockTime = new Date(seconds * 1000);
 
   return { blockHeight, blockHash, blockTime };
+}
+
+/**
+ * Calculates the timestamp range based on a synthetic block height.
+ *
+ * @param blockHeight - The synthetic block height
+ * @param blockWindowSeconds - Duration of one synthetic block in seconds (default: 10)
+ * @returns Hedera timestamp range as a string
+ */
+export function getTimestampRangeFromBlockHeight(
+  blockHeight: number,
+  blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
+) {
+  const startTimestamp = blockHeight * blockWindowSeconds;
+  const endTimestamp = (blockHeight + 1) * blockWindowSeconds;
+
+  return {
+    start: `${startTimestamp}.000000000`,
+    end: `${endTimestamp}.000000000`,
+  };
 }
 
 export const formatTransactionId = (transactionId: TransactionId): string => {

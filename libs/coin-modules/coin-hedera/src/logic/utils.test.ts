@@ -33,6 +33,8 @@ import {
   fromEVMAddress,
   toEVMAddress,
   formatTransactionId,
+  getTimestampRangeFromBlockHeight,
+  getBlockHash,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -515,6 +517,84 @@ describe("logic utils", () => {
       expect(fromEVMAddress("")).toBeNull();
       expect(fromEVMAddress("1234567890")).toBeNull();
       expect(fromEVMAddress(undefined as unknown as string)).toBeNull();
+    });
+  });
+
+  describe("getBlockHash", () => {
+    it("produces consistent 64-character hex hash", () => {
+      const hash = getBlockHash(12345);
+
+      expect(hash).toMatch(/^[0-9a-f]{64}$/);
+    });
+
+    it("produces same hash for same block height", () => {
+      const hash1 = getBlockHash(100);
+      const hash2 = getBlockHash(100);
+
+      expect(hash1).toBe(hash2);
+    });
+
+    it("produces different hashes for different block heights", () => {
+      const hash1 = getBlockHash(100);
+      const hash2 = getBlockHash(101);
+
+      expect(hash1).not.toBe(hash2);
+    });
+  });
+
+  describe("getTimestampRangeFromBlockHeight", () => {
+    it("calculates consensus timestamp for block height 0 with default window", () => {
+      const result = getTimestampRangeFromBlockHeight(0);
+
+      expect(result).toEqual({
+        start: "0.000000000",
+        end: "10.000000000",
+      });
+    });
+
+    it("calculates consensus timestamp for block height 1 with default window", () => {
+      const result = getTimestampRangeFromBlockHeight(1);
+
+      expect(result).toEqual({
+        start: "10.000000000",
+        end: "20.000000000",
+      });
+    });
+
+    it("calculates consensus timestamp with custom block window of 1 second", () => {
+      const result = getTimestampRangeFromBlockHeight(42, 1);
+
+      expect(result).toEqual({
+        start: "42.000000000",
+        end: "43.000000000",
+      });
+    });
+
+    it("handles large block heights correctly", () => {
+      const result = getTimestampRangeFromBlockHeight(1000000);
+
+      expect(result).toEqual({
+        start: "10000000.000000000",
+        end: "10000010.000000000",
+      });
+    });
+
+    it("ensures start and end timestamps are within the same block window", () => {
+      const blockHeight = 50;
+      const blockWindowSeconds = 10;
+      const result = getTimestampRangeFromBlockHeight(blockHeight, blockWindowSeconds);
+
+      const startSeconds = parseInt(result.start.split(".")[0]);
+      const endSeconds = parseInt(result.end.split(".")[0]);
+
+      expect(endSeconds - startSeconds).toBe(blockWindowSeconds);
+    });
+
+    it("maintains correct nanosecond precision format", () => {
+      const result = getTimestampRangeFromBlockHeight(123);
+
+      expect(result.start).toMatch(/^\d+\.000000000$/);
+      expect(result.end).toMatch(/^\d+\.000000000$/);
     });
   });
 });
