@@ -30,7 +30,7 @@ export function setupRecentAddressesStore(
 
 class RecentAddressesStoreImpl implements RecentAddressesStore {
   private addressesByCurrency: RecentAddressesCache = {};
-  private onAddAddressComplete: (addressesByCurrency: Record<string, string[]>) => void;
+  private readonly onAddAddressComplete: (addressesByCurrency: Record<string, string[]>) => void;
 
   constructor(
     addressesByCurrency: RecentAddressesCache,
@@ -67,7 +67,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     }
 
     const addresses = this.addressesByCurrency[currency];
-    const addressIndex = addresses.findIndex(storedAddress => storedAddress === address);
+    const addressIndex = addresses.indexOf(address);
     if (addressIndex !== -1) {
       addresses.splice(addressIndex, 1);
     } else if (addresses.length >= RECENT_ADDRESSES_COUNT_LIMIT) {

@@ -3,13 +3,18 @@
  * The Wallet store is a store that contains the user data related to accounts.
  * It essentially is the whole user's wallet.
  */
-import { Account, AccountLike, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AccountRaw,
+  AccountUserData,
+  RecentAddressesState,
+} from "@ledgerhq/types-live";
 import { getDefaultAccountName, getDefaultAccountNameForCurrencyIndex } from "./accountName";
 import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DistantState } from "./walletsync";
 import { NonImportedAccountInfo } from "./walletsync/modules/accounts";
-import { RecentAddressesState } from "@ledgerhq/types-live";
 
 export type WSState = {
   data: DistantState | null;

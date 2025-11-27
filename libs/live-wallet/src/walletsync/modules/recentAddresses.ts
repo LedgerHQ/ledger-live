@@ -70,7 +70,7 @@ function sameDistantState(
       return (
         localData[key] &&
         localData[key].length === distantState[key].length &&
-        !distantState[key].find(
+        !distantState[key].some(
           data =>
             data.index < 0 ||
             data.index >= localData[key].length ||
@@ -112,10 +112,10 @@ const manager: WalletSyncDataManager<RecentAddressesState, RecentAddressesState,
       return { hasChanges: false };
     }
 
-    return Promise.resolve({
+    return {
       hasChanges: true,
       update: toState(incomingState),
-    });
+    };
   },
   applyUpdate(_localData, update) {
     return update;
