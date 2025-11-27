@@ -59,7 +59,7 @@ const swaps = [
     fromAccount: Account.SOL_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2776, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+    tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@swapSmoke"],
   },
   {
     fromAccount: TokenAccount.ETH_USDC_1,
