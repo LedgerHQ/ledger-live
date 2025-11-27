@@ -83,19 +83,31 @@ export default function NoFunds({ route }: Readonly<Props>) {
   );
 
   const onReceiveFunds = useCallback(() => {
+    if (!account) {
+      console.warn("No account provided to NoFunds, skipping receive navigation");
+      return;
+    }
+
     track("button_clicked", {
       button: "receive",
       page,
     });
+
+    const shouldCreateTokenAccount =
+      account.type === "TokenAccount" &&
+      !parentAccount?.subAccounts?.some(subAccount => subAccount.id === account.id);
+
     onNavigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: {
+        account,
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
+        createTokenAccount: shouldCreateTokenAccount,
       },
     });
-  }, [account.id, currency, onNavigate, page, parentAccount?.id, track]);
+  }, [account, currency, onNavigate, page, parentAccount, track]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
