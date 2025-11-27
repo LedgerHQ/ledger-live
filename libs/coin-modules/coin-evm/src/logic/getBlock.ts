@@ -17,4 +17,3 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     transactions: [],
   };
 }
-
