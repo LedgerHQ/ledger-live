@@ -29,7 +29,7 @@ runs:
       uses: tj-actions/branch-names@v6
     - name: Publish report on Allure Server
       id: publish-report
-      uses: LedgerHQ/send-to-allure-server-action@2.1.2
+      uses: LedgerHQ/send-to-allure-server-action@qaa_clean_results
       with:
         allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
         build-name: ${{ github.workflow }}-${{ inputs.platform }}
