@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-canton
 
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`364d4ed`](https://github.com/LedgerHQ/ledger-live/commit/364d4ed5099087eea580399b4e8e6a83aa761f16), [`38d5880`](https://github.com/LedgerHQ/ledger-live/commit/38d5880ca6c3cc8808182e9d0f046b204914d34a), [`aadcec6`](https://github.com/LedgerHQ/ledger-live/commit/aadcec66847b800f79452ba1df09149e0a1cb9e8), [`50db851`](https://github.com/LedgerHQ/ledger-live/commit/50db851e152a0fc7ca78fea8a4f34e2de1ce9bc5)]:
+  - @ledgerhq/coin-canton@0.11.0-next.0
+
 ## 0.5.1
 
 ### Patch Changes
