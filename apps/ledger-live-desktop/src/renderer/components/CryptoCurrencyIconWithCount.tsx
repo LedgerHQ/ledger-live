@@ -16,7 +16,7 @@ type Props = {
 const CryptoCurrencyIconWithCount = ({ currency, withTooltip, inactive, count }: Props) => {
   const content = (
     <Wrapper>
-      <CryptoCurrencyIcon circle currency={currency} size={32} inactive={inactive} />
+      <CryptoCurrencyIcon circle currency={currency} size={44} inactive={inactive} />
       {count > 0 && <Chip>{`+${count}`}</Chip>}
     </Wrapper>
   );

@@ -29,7 +29,7 @@ function SummaryFromSection({ token }: Readonly<Props>) {
       data={
         <View style={styles.container}>
           <View style={styles.currencyIcon}>
-            <CurrencyIcon size={16} forceIconScale={2} currency={token} circle />
+            <CurrencyIcon size={16} currency={token} circle />
           </View>
           <LText numberOfLines={1} style={styles.text}>
             {token.name}

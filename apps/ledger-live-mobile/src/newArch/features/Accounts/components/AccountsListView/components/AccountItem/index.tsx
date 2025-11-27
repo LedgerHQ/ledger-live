@@ -2,7 +2,7 @@ import React from "react";
 import useAccountItemModel, { AccountItemProps } from "./useAccountItemModel";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import CounterValue from "~/components/CounterValue";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -45,7 +45,7 @@ const View: React.FC<ViewProps> = ({
         <Text numberOfLines={1} variant="body" color="neutral.c70" flexShrink={1}>
           {formattedAddress}
         </Text>
-        <ParentCurrencyIcon forceIconScale={2} currency={currency} size={20} />
+        <CurrencyIcon currency={currency} size={20} circle hideNetwork />
       </Flex>
     </Flex>
     {!hideBalanceInfo && (

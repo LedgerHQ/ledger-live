@@ -59,7 +59,7 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
               </Text>
               <Box horizontal alignItems="center">
                 <Box marginRight={7}>
-                  <CryptoCurrencyIcon size={16} currency={currency} />
+                  <CryptoCurrencyIcon size={22} currency={currency} />
                 </Box>
                 <Text
                   ff="Inter"

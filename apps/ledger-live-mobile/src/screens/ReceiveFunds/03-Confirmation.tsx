@@ -381,7 +381,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 >
                   <CurrencyIcon
                     currency={currency}
-                    color={colors.constant.white}
                     bg={getCurrencyColor(currency) || colors.constant.black}
                     size={48}
                     circle

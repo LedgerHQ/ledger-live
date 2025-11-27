@@ -55,7 +55,7 @@ type RowProps = {
 const Row = ({ app, state, dispatch, deviceInfo }: RowProps) => (
   <Flex flexDirection="row" py={4} alignItems="center" justifyContent="space-between">
     <Flex flexDirection="row" alignItems="center">
-      <AppIcon app={app} size={24} radius={8} />
+      <AppIcon app={app} size={24} />
       <Text variant="large" fontWeight="semiBold" color="neutral.c100" ml={4}>
         {app.name}
       </Text>

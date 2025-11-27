@@ -1,11 +1,11 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import LText from "./LText";
 import { ensureContrast, rgba } from "../colors";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import { getValidCryptoIconSizeNative } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: Props) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const isToken = currency.type === "TokenCurrency";
   const backgroundColorContrast = ensureContrast(
     color || rgba(getCurrencyColor(currency), isToken ? 1 : 1),
@@ -27,11 +27,14 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: 
     initialBackgroundColor !== backgroundColorContrast
       ? backgroundColorContrast
       : initialBackgroundColor;
-  const c = ensureContrast("#FFF", backgroundColor);
-  const ticker = isToken ? currency.ticker[0] : currency.ticker;
-  const MaybeIconComponent = !isToken
-    ? getCryptoCurrencyIcon(currency)
-    : getTokenCurrencyIcon(currency);
+
+  const ledgerId = currency.id;
+  const tickerProp = currency.ticker;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const iconTheme = dark ? "dark" : "light";
+  const iconSize = Math.round(size * sizeRatio);
+  const validIconSize = getValidCryptoIconSizeNative(iconSize);
+
   return (
     <View
       style={[
@@ -44,19 +47,14 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: 
       ]}
       testID={testID}
     >
-      {MaybeIconComponent ? (
-        <MaybeIconComponent size={size * sizeRatio} color={c} />
-      ) : (
-        <LText
-          semiBold
-          style={{
-            color: c,
-            fontSize: size / 2,
-          }}
-        >
-          {ticker}
-        </LText>
-      )}
+      <CryptoIcon
+        ledgerId={ledgerId}
+        ticker={tickerProp}
+        size={validIconSize}
+        theme={iconTheme}
+        backgroundColor={colors.background}
+        {...(network && { network })}
+      />
     </View>
   );
 }

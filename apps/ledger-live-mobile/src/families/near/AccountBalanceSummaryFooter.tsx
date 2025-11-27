@@ -1,7 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import invariant from "invariant";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
@@ -87,12 +86,10 @@ export default function AccountBalanceFooter({ account }: Props) {
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("near");
-  const NearIcon = getCryptoCurrencyIcon(currency);
-  invariant(NearIcon, "Icon is expected");
   return {
     available: [
       {
-        Icon: () => <NearIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={20} />,
         title: t("near.info.available.title"),
         description: t("near.info.available.description"),
       },

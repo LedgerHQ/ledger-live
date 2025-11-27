@@ -2,13 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
 import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import invariant from "invariant";
 import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -121,13 +120,13 @@ export default function AccountBalanceFooter({ account }: Props) {
 
 function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
-  const CosmosIcon = getCryptoCurrencyIcon(account.currency);
   const crypto = cryptoFactory(account.currency.id);
-  invariant(CosmosIcon, "Icon is expected");
   return {
     available: [
       {
-        Icon: () => <CosmosIcon color={account.currency.color} size={18} />,
+        Icon: () => (
+          <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size={20} />
+        ),
         title: t("cosmos.info.available.title", {
           currencyTicker: account.currency.ticker,
         }),

@@ -74,7 +74,7 @@ const TokenBarIndicator = styled.div`
   width: 15px;
   border-left: 1px solid ${p => p.theme.colors.palette.divider};
   z-index: 2;
-  margin-left: 29px;
+  margin-left: 33px;
   position: absolute;
   left: 0;
   margin-top: -16px;
