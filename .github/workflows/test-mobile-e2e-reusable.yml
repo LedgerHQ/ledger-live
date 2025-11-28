@@ -522,7 +522,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
+      AVD_API: 36
       AVD_ARCH: x86_64
       AVD_PROFILE: pixel_7_pro
       AVD_TARGET: google_apis
@@ -696,6 +696,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 10
+        continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
