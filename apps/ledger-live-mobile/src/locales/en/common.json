@@ -2287,7 +2287,7 @@
     },
     "fundSuccess": {
       "title": "Welcome to your Ledger Wallet",
-      "receiveSuccess": "If you sent crypto, you’ll receive it in a few minutes",
+      "receiveSuccess": "Your Ledger device is ready. If you have sent crypto to your Ledger wallet, you’ll receive it in a few minutes.",
       "maybeLater": "Your first step will be to deposit your first crypto",
       "exploreLedger": "Explore Ledger Wallet"
     }
