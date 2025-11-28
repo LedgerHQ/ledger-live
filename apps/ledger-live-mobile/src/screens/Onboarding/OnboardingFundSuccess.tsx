@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { Flex, Text, IconsLegacy, SlideIndicator, BoxedIcon, Icons } from "@ledgerhq/native-ui";
+import React, { useCallback, useEffect } from "react";
+import { Flex, Text, SlideIndicator, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
 import { useNavigation, useRoute } from "@react-navigation/core";
@@ -12,6 +12,7 @@ import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { ScreenName } from "~/const";
+import { BackHandler } from "react-native";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingFundSuccess>
@@ -24,44 +25,33 @@ export default function OnboardingFundSuccess() {
 
   const { receiveFlowSuccess } = route.params;
 
-  const handleClose = useCallback(() => {
+  const handleExploreWallet = useCallback(() => {
+    track("button_clicked", { button: "Explore Ledger Wallet", flow: "onboarding" });
     baseNavigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
   }, [baseNavigation]);
 
-  const handleBackButton = useCallback(() => {
-    track("button_clicked", {
-      button: "Back",
-      flow: "onboarding",
-    });
-
-    handleClose();
-  }, [handleClose]);
-
-  const handleExploreWallet = useCallback(() => {
-    track("button_clicked", { button: "Explore Ledger Wallet", flow: "onboarding" });
-    handleClose();
-  }, [handleClose]);
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
+    return () => subscription.remove();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Flex
         flexDirection="row"
-        justifyContent="space-between"
+        justifyContent="center"
         alignItems="center"
         width="100%"
         height={48}
       >
-        <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={handleBackButton} />
-
         <SlideIndicator
           slidesLength={FUND_WALLET_STEPS_LENGTH}
           activeIndex={9}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onChange={() => {}}
         />
-        <Flex width={48}>{/* <InfoButton target={stepData.drawer} /> */}</Flex>
       </Flex>
       <Flex flexGrow={1} flex={1} mx={6} justifyContent="center" alignItems="center">
         <Flex justifyContent="center" alignItems="center">
@@ -69,12 +59,12 @@ export default function OnboardingFundSuccess() {
             backgroundColor="opacityDefault.c10"
             borderColor="transparent"
             variant="circle"
-            size={60}
-            Icon={<Icons.CheckmarkCircleFill color="success.c60" size="L" />}
+            size={72}
+            Icon={<Icons.CheckmarkCircleFill color="success.c70" size="XL" />}
           />
         </Flex>
         <Text
-          mt={4}
+          mt={6}
           fontSize="h1"
           fontFamily="Inter"
           textAlign="center"
@@ -101,6 +91,7 @@ export default function OnboardingFundSuccess() {
 
       <Button
         mx={7}
+        mb={8}
         type="main"
         size="large"
         onPress={handleExploreWallet}
