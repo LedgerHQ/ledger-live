@@ -1,7 +1,7 @@
 async function enableMocking() {
   const mswEnabled = process.env.ENABLE_MSW === "true";
 
-  if (mswEnabled) {
+  if (mswEnabled && __DEV__) {
     try {
       const { startWorker, toggleSimulate500Error } = await import("~/mocks/browser");
 

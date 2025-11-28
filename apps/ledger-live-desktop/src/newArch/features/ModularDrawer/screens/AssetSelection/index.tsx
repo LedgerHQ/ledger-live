@@ -18,7 +18,7 @@ export type AssetSelectionStepProps = {
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   loadNext?: () => void;
   error?: boolean;
-  refetch?: () => void;
+  refetch: () => void;
   assetsSorted?: AssetData[];
 };
 
