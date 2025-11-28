@@ -751,7 +751,7 @@ describe("logic utils", () => {
   });
 
   describe("sortValidators", () => {
-    it("sorts validators by active stake ASC, Ledger node first if set", () => {
+    it("sorts validators by active stake DESC, Ledger node first if set", () => {
       setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 2);
 
       const validators = [
@@ -761,9 +761,10 @@ describe("logic utils", () => {
       ] as HederaValidator[];
 
       const sorted = sortValidators(validators);
+
       expect(sorted[0].nodeId).toBe(2);
-      expect(sorted[1].nodeId).toBe(3);
-      expect(sorted[2].nodeId).toBe(1);
+      expect(sorted[1].nodeId).toBe(1);
+      expect(sorted[2].nodeId).toBe(3);
     });
   });
 
@@ -808,11 +809,7 @@ describe("logic utils", () => {
       expect(getDefaultValidator(mockValidators)?.nodeId).toBe(2);
     });
 
-    it("returns validator with lowest activeStake if no Ledger node", () => {
-      expect(getDefaultValidator(mockValidators)?.nodeId).toBe(2);
-    });
-
-    it("returns null if validators empty", () => {
+    it("returns null if no Ledger validator is present", () => {
       expect(getDefaultValidator([])).toBeNull();
     });
   });

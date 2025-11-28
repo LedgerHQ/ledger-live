@@ -377,14 +377,14 @@ export const extractCompanyFromNodeDescription = (description: string): string =
 export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
   const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
 
-  // sort validators by active stake in ASC order, with Ledger node first if it exists
+  // sort validators by active stake in DESC order, with Ledger node first if it exists
   return [...validators].sort((a, b) => {
     if (typeof ledgerNodeId === "number") {
       if (a.nodeId === ledgerNodeId) return -1;
       if (b.nodeId === ledgerNodeId) return 1;
     }
 
-    return a.activeStake.toNumber() - b.activeStake.toNumber();
+    return b.activeStake.toNumber() - a.activeStake.toNumber();
   });
 };
 
@@ -418,20 +418,9 @@ export const getValidatorFromAccount = (account: HederaAccount): HederaValidator
 };
 
 export const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
-  if (validators.length === 0) return null;
   const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  const ledgerValidator = validators.find(v => v.nodeId === ledgerNodeId);
 
-  if (ledgerValidator) {
-    return ledgerValidator;
-  }
-
-  const lowestActiveStakeValidator = validators.reduce(
-    (prev, current) => (current.activeStake.lt(prev.activeStake) ? current : prev),
-    validators[0],
-  );
-
-  return lowestActiveStakeValidator;
+  return validators.find(v => v.nodeId === ledgerNodeId) ?? null;
 };
 
 export const getDelegationStatus = (

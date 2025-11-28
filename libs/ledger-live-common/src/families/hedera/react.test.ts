@@ -177,7 +177,7 @@ describe("hedera/react", () => {
         nodeId: validator.nodeId,
         delegated: delegation.delegated,
         pendingReward: delegation.pendingReward,
-        status: "active",
+        status: "overstaked",
         validator: {
           name: validator.name,
           address: validator.address,

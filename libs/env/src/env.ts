@@ -243,9 +243,9 @@ const envDefinitions = {
     desc: "solana transaction broadcast confirmation timeout",
   },
   HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID: {
-    def: "0.0.801",
+    def: "0.0.163372",
     parser: stringParser,
-    desc: "account id that receives 1 tinybar from send transfer that is made to trigger rewards claiming",
+    desc: "dead address that receives 1 tinybar from tx that is made to trigger rewards claiming",
   },
   HEDERA_STAKING_REWARD_ACCOUNT_ID: {
     def: "0.0.800",

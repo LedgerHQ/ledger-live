@@ -178,7 +178,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "100000000",
         "nodeId": 7,
-        "pendingReward": "95886",
+        "pendingReward": "102735",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,

@@ -23,7 +23,7 @@ type Props = {
 
 const ValidatorsListField = ({ account, selectedValidatorNodeId, onChangeValidator }: Props) => {
   const [search, setSearch] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true);
   const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency, search);
 
@@ -52,7 +52,7 @@ const ValidatorsListField = ({ account, selectedValidatorNodeId, onChangeValidat
   const getDisplayedValidators = () => {
     if (showAll) return validators;
     if (value) return [value];
-    return [];
+    return [validators[0]];
   };
 
   return (

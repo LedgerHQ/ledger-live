@@ -53,7 +53,14 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
-      const transaction = bridge.createTransaction(account);
+      const t = bridge.createTransaction(account);
+
+      const transaction = bridge.updateTransaction(t, {
+        mode: HEDERA_TRANSACTION_MODES.Delegate,
+        properties: {
+          stakingNodeId: defaultValidator?.nodeId ?? null,
+        },
+      });
 
       return {
         account,
@@ -189,9 +196,11 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
-          <TranslatedError error={error} />
-        </Text>
+        {selectedValidator && (
+          <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
+            <TranslatedError error={error} />
+          </Text>
+        )}
         <Button
           event="SummaryContinue"
           type="primary"
