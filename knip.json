@@ -46,7 +46,8 @@
       "ignore": [
         "src/newArch/features/Collectibles/**",
         ".storybook/stub.ts",
-        "src/renderer/mockServiceWorker.js"
+        "src/renderer/mockServiceWorker.js",
+        "src/newArch/utils/cn.ts"
       ],
       "ignoreBinaries": [
         "eslint",
@@ -62,7 +63,8 @@
         "buffer",
         "ws",
         "@electron/fuses",
-        "@reduxjs/toolkit"
+        "@reduxjs/toolkit",
+        "class-variance-authority"
       ]
     },
     "./apps/ledger-live-mobile": {

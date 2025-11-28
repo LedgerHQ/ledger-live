@@ -110,8 +110,12 @@ async function init() {
       });
     }
   }
-  if (window.localStorage.getItem("hard-reset")) {
+  const hardResetFlag = window.localStorage.getItem("hard-reset");
+  const wasHardReset = hardResetFlag === "1";
+
+  if (wasHardReset) {
     await hardReset();
+    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
   }
 
   const store = createStore({
@@ -130,7 +134,7 @@ async function init() {
     if (persistedData?.tokens) {
       if (persistedData.version === PERSISTENCE_VERSION) {
         const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        restoreTokensToCache(store.dispatch, persistedData.tokens, TOKEN_CACHE_TTL);
+        await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
       } else {
         logger.warn(
           `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
@@ -165,14 +169,18 @@ async function init() {
   });
   const initialSettings = (await getKey("app", "settings")) || {};
 
-  fetchSettings(
-    deepLinkUrl
-      ? {
-          ...initialSettings,
-          deepLinkUrl,
-        }
-      : initialSettings,
-  )(store.dispatch);
+  // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
+  const settingsToLoad = { ...initialSettings };
+
+  if (wasHardReset) {
+    settingsToLoad.hasCompletedOnboarding = false;
+  }
+
+  if (deepLinkUrl) {
+    settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  fetchSettings(settingsToLoad)(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
 

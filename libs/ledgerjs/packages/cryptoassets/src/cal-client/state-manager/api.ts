@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from "@reduxjs/toolkit/query/react";
 import type { ApiTokenResponse } from "../entities";
 import { ApiTokenResponseSchema } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
@@ -6,6 +6,7 @@ import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPaginatio
 import { TOKEN_OUTPUT_FIELDS } from "./fields";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { convertApiToken, legacyIdToApiId } from "../../api-token-converter";
+import { log } from "@ledgerhq/logs";
 import { z } from "zod";
 
 /**
@@ -81,9 +82,8 @@ function validateAndTransformSingleTokenResponse(response: unknown): TokenCurren
   return result;
 }
 
-export const cryptoAssetsApi = createApi({
-  reducerPath: "cryptoAssetsApi",
-  baseQuery: fetchBaseQuery({
+const baseQueryWithRetry = retry(
+  fetchBaseQuery({
     baseUrl: "",
     prepareHeaders: headers => {
       headers.set("Content-Type", "application/json");
@@ -91,6 +91,14 @@ export const cryptoAssetsApi = createApi({
       return headers;
     },
   }),
+  {
+    maxRetries: 3,
+  },
+);
+
+export const cryptoAssetsApi = createApi({
+  reducerPath: "cryptoAssetsApi",
+  baseQuery: baseQueryWithRetry,
   tagTypes: [TokensDataTags.Tokens],
   endpoints: build => ({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
@@ -191,6 +199,22 @@ export const cryptoAssetsApi = createApi({
               error: error instanceof Error ? error.message : "Unknown error",
             },
           };
+        }
+      },
+      async onQueryStarted(currencyId, { dispatch, queryFulfilled, getCacheEntry }) {
+        try {
+          const previousHash = getCacheEntry()?.data as string | undefined;
+          const { data: newHash } = await queryFulfilled;
+
+          if (previousHash && newHash && previousHash !== newHash) {
+            log(
+              "cryptoassets",
+              `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
+            );
+            dispatch(cryptoAssetsApi.util.invalidateTags([TokensDataTags.Tokens]));
+          }
+        } catch {
+          // Query failed, skip eviction
         }
       },
     }),

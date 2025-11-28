@@ -75,6 +75,12 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "3.0.7",
     },
   },
+  config_nanoapp_hedera: {
+    type: "object",
+    default: {
+      minVersion: "1.9.0",
+    },
+  },
 };
 
 export { appConfig };

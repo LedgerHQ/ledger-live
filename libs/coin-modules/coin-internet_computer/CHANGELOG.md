@@ -1,5 +1,31 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.11.0
+
+### Minor Changes
+
+- [#12556](https://github.com/LedgerHQ/ledger-live/pull/12556) [`9a346cf`](https://github.com/LedgerHQ/ledger-live/commit/9a346cf434f52dd4d69bbc3c393ae416663493db) Thanks [@lawRathod](https://github.com/lawRathod)! - bump dependency to latest for solving socket warning
+
+### Patch Changes
+
+- Updated dependencies [[`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c), [`a6bc24e`](https://github.com/LedgerHQ/ledger-live/commit/a6bc24ee988b98bf82f807ac5ce731ba79813901), [`b69c97d`](https://github.com/LedgerHQ/ledger-live/commit/b69c97d979ba97154c9abfda6abfc2a36becee4f), [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9), [`1c6f5f5`](https://github.com/LedgerHQ/ledger-live/commit/1c6f5f5843349b1955f7ca466f98cbe4ffcdaddf), [`d5d838a`](https://github.com/LedgerHQ/ledger-live/commit/d5d838a23e00edd53293843781c559c41db4e854), [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515), [`938b970`](https://github.com/LedgerHQ/ledger-live/commit/938b970e15118dc706c759a3bec27dc01c3dd268), [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73), [`c0b5b9f`](https://github.com/LedgerHQ/ledger-live/commit/c0b5b9f4cdcb2ea3e15419cbf3d1a14f725c3e6a), [`70049be`](https://github.com/LedgerHQ/ledger-live/commit/70049bed0cd0a8c7a9e4947a63af82061dad46c0), [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db), [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec), [`c70f6a8`](https://github.com/LedgerHQ/ledger-live/commit/c70f6a8370056b6fd8f236205471359d6f9b846f)]:
+  - @ledgerhq/types-live@6.89.0
+  - @ledgerhq/cryptoassets@13.33.0
+  - @ledgerhq/coin-framework@6.9.0
+
+## 1.11.0-next.0
+
+### Minor Changes
+
+- [#12556](https://github.com/LedgerHQ/ledger-live/pull/12556) [`9a346cf`](https://github.com/LedgerHQ/ledger-live/commit/9a346cf434f52dd4d69bbc3c393ae416663493db) Thanks [@lawRathod](https://github.com/lawRathod)! - bump dependency to latest for solving socket warning
+
+### Patch Changes
+
+- Updated dependencies [[`74a340b`](https://github.com/LedgerHQ/ledger-live/commit/74a340b258589c9c37476103029eb036b930616c), [`a6bc24e`](https://github.com/LedgerHQ/ledger-live/commit/a6bc24ee988b98bf82f807ac5ce731ba79813901), [`b69c97d`](https://github.com/LedgerHQ/ledger-live/commit/b69c97d979ba97154c9abfda6abfc2a36becee4f), [`544721d`](https://github.com/LedgerHQ/ledger-live/commit/544721d198454526ef83516619d59c881ba34eb9), [`1c6f5f5`](https://github.com/LedgerHQ/ledger-live/commit/1c6f5f5843349b1955f7ca466f98cbe4ffcdaddf), [`d5d838a`](https://github.com/LedgerHQ/ledger-live/commit/d5d838a23e00edd53293843781c559c41db4e854), [`9f61dcf`](https://github.com/LedgerHQ/ledger-live/commit/9f61dcf6163fd66657e5be732c28bea623a40515), [`938b970`](https://github.com/LedgerHQ/ledger-live/commit/938b970e15118dc706c759a3bec27dc01c3dd268), [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73), [`c0b5b9f`](https://github.com/LedgerHQ/ledger-live/commit/c0b5b9f4cdcb2ea3e15419cbf3d1a14f725c3e6a), [`70049be`](https://github.com/LedgerHQ/ledger-live/commit/70049bed0cd0a8c7a9e4947a63af82061dad46c0), [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db), [`eb5a17e`](https://github.com/LedgerHQ/ledger-live/commit/eb5a17e4db336eaa871eaeb52ffa5248e0f78bec), [`c70f6a8`](https://github.com/LedgerHQ/ledger-live/commit/c70f6a8370056b6fd8f236205471359d6f9b846f)]:
+  - @ledgerhq/types-live@6.89.0-next.0
+  - @ledgerhq/cryptoassets@13.33.0-next.0
+  - @ledgerhq/coin-framework@6.9.0-next.0
+
 ## 1.10.0
 
 ### Minor Changes

@@ -2,6 +2,7 @@ import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFu
 import {
   getStablecoinYieldSetting,
   getBitcoinYieldSetting,
+  getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
@@ -137,6 +138,7 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+  const ptxSwapLiveAppOnPortfolio = analyticsFeatureFlagMethod("ptxSwapLiveAppOnPortfolio");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -167,6 +169,7 @@ const getPtxAttributes = () => {
       : "flag not loaded";
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+  const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
@@ -174,8 +177,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
+    ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio?.enabled,
     stablecoinYield,
     bitcoinYield,
+    ethDepositScreen,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };

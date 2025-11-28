@@ -37,7 +37,6 @@ import DebugSettings from "~/screens/Settings/Debug";
 import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
 import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
-import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
@@ -451,13 +450,6 @@ export default function SettingsNavigator() {
         component={DebugTransactionsAlerts}
         options={{
           title: "Debug transactions alerts",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugStoryly}
-        component={DebugStoryly}
-        options={{
-          title: "Debug Storyly",
         }}
       />
       <Stack.Screen

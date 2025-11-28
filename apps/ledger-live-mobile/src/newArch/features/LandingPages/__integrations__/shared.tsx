@@ -7,6 +7,12 @@ import {
 } from "~/dynamicContent/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import { ContentCard } from "@braze/react-native-sdk";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LargeMoverLandingPage } from "../screens/LargeMoverLandingPage";
+import React from "react";
+import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
+import { ScreenName } from "~/const";
+import { RouteProp } from "@react-navigation/native";
 
 export const fakeCategoryContentCards: CategoryContentCard[] = [
   {
@@ -117,3 +123,20 @@ export const classicCards: ContentCard[] = [
     url: "https://shop.example.com/offer",
   },
 ];
+
+const Stack = createNativeStackNavigator<LandingPagesNavigatorParamList>();
+
+export const MockedLargeMoverLandingPage = (
+  route: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>,
+) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name={ScreenName.LargeMoverLandingPage}
+      component={LargeMoverLandingPage}
+      options={{
+        headerShown: false,
+      }}
+      initialParams={route.params}
+    />
+  </Stack.Navigator>
+);

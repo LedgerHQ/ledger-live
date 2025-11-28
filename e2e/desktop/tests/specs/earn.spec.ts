@@ -64,6 +64,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
@@ -99,7 +100,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: [
         {
           type: "TMS",
@@ -195,6 +196,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(account === Account.NEAR_1 ? ["@smoke"] : []),
         ],
         annotation: {

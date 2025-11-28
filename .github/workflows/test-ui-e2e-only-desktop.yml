@@ -52,6 +52,7 @@ on:
           - nanoX
           - stax
           - flex
+          - nanoGen5
         default: nanoSP
       firmware_version:
         description: "Firmware version to use for selected device"

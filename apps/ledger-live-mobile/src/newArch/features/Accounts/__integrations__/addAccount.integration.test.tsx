@@ -42,7 +42,6 @@ describe("AddAccount", () => {
     // Wait for the drawer to open
     expect(await screen.findByText(/add another account/i));
     expect(await screen.findByText(/Use your Ledger device/i));
-    // This is a workaround to avoid the press event being ignored using onPressIn
     await act(async () => {
       fireEvent.press(await screen.findByText(/Use Ledger Sync/i));
     });

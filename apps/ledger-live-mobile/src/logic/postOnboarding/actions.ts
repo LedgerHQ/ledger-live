@@ -16,6 +16,9 @@ export const assetsTransferAction: PostOnboardingAction = {
   description: "postOnboarding.actions.assetsTransfer.description",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
   getNavigationParams: () => [undefined],
+  getIsAlreadyCompletedByState: ({ accounts }) => {
+    return !!accounts && accounts.some(account => account?.balance.isGreaterThan(0));
+  },
 };
 
 export const buyCryptoAction: PostOnboardingAction = {

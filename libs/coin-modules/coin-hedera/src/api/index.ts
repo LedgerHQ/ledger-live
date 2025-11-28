@@ -1,7 +1,5 @@
 import type {
   Api,
-  Block,
-  BlockInfo,
   CraftedTransaction,
   Cursor,
   Operation,
@@ -13,12 +11,15 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
   craftTransaction,
-  estimateFees,
+  estimateFees as logicEstimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   listOperations as logicListOperations,
   getAssetFromToken,
   getTokenFromAsset,
@@ -35,6 +36,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
   return {
     broadcast: async tx => {
       const response = await logicBroadcast(tx);
+
       return Buffer.from(response.transactionHash).toString("base64");
     },
     combine,
@@ -55,13 +57,20 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     estimateFees: async transactionIntent => {
       const operationType = mapIntentToSDKOperation(transactionIntent);
-      const estimatedFee = await estimateFees(currency, operationType);
+
+      if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
+        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+      }
+
+      const estimatedFee = await logicEstimateFees({ currency, operationType });
 
       return {
-        value: BigInt(estimatedFee.toString()),
+        value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
     getBalance: address => getBalance(currency, address),
+    getBlock: height => getBlock(height),
+    getBlockInfo: height => getBlockInfo(height),
     lastBlock,
     listOperations: async (address, pagination) => {
       const mirrorTokens = await apiClient.getAccountTokens(address);
@@ -129,12 +138,6 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
-    },
-    getBlock: async (_height): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo: async (_height): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
     },
     getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
       throw new Error("getStakes is not supported");

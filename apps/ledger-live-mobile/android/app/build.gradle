@@ -121,7 +121,7 @@ android {
     namespace "com.ledger.live"
 
     defaultConfig {
-        applicationId "com.ledger.live"
+        applicationId project.hasProperty('APP_IDENTIFIER') ? APP_IDENTIFIER : "com.ledger.live"
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

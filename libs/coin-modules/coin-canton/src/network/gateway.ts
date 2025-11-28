@@ -109,6 +109,7 @@ export type GetBalanceResponse =
 export type InstrumentBalance = {
   instrument_id: string;
   amount: string;
+  admin_id: string;
   locked: boolean;
   utxo_count: number;
 };
@@ -167,6 +168,14 @@ export type TxInfo = {
   trace_context: string;
 };
 
+type OperationType =
+  | "pre-approval"
+  | "tap"
+  | "transfer"
+  | "transfer-proposal"
+  | "transfer-rejected"
+  | "transfer-withdrawn";
+
 export type OperationInfo =
   | {
       uid: string;
@@ -183,7 +192,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "pre-approval";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -210,7 +219,7 @@ export type OperationInfo =
         issuer: string;
       };
       details: {
-        type: "pre-approval";
+        operationType: OperationType;
       };
     }
   | {
@@ -228,7 +237,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "tap";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -255,7 +264,7 @@ export type OperationInfo =
         issuer: null;
       };
       details: {
-        type: "tap";
+        operationType: OperationType;
       };
     }
   | {
@@ -273,7 +282,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "transfer";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -300,7 +309,7 @@ export type OperationInfo =
         issuer: null;
       };
       details: {
-        type: "transfer";
+        operationType: OperationType;
       };
     };
 

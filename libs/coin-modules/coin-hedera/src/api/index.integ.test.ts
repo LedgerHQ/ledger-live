@@ -4,6 +4,7 @@ import {
   AccountId,
   Hbar,
   HbarUnit,
+  Long,
   TokenAssociateTransaction,
   TransferTransaction,
 } from "@hashgraph/sdk";
@@ -14,11 +15,12 @@ import { getSyntheticBlock } from "../logic/utils";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
+  const api = createApi({});
+
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
     setupCalClientStore();
   });
-  const api = createApi({});
 
   describe("craftTransaction", () => {
     it("returns serialized native coin TransferTransaction", async () => {
@@ -81,10 +83,8 @@ describe("createApi", () => {
       const senderTransfer = tokenTransfers?.get(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId);
       const recipientTransfer = tokenTransfers?.get(MAINNET_TEST_ACCOUNTS.withTokens.accountId);
 
-      // .toString() is used because tokenTransfers values are Long objects
-      // this is internal dependency of @hashgraph/sdk, re-exported in newer version
-      expect(senderTransfer?.toString()).toEqual("-1");
-      expect(recipientTransfer?.toString()).toEqual("1");
+      expect(senderTransfer).toEqual(Long.fromNumber(-1));
+      expect(recipientTransfer).toEqual(Long.fromNumber(1));
       expect(tokenTransfers).not.toBeNull();
       expect(rawTx.transactionMemo).toBe("token transfer");
     });
@@ -116,7 +116,7 @@ describe("createApi", () => {
         AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
       );
       // .toString() is used because sdk.TokenId.fromString() sets `_checksum` to undefined,
-      // but tokenIds elements from TokenAssociateTransaction.fromBytes have it set to null
+      // where tokenIds elements from TokenAssociateTransaction.fromBytes have it set to null
       expect(rawTx.tokenIds?.[0]?.toString()).toEqual("0.0.5022567");
       expect(rawTx.transactionMemo).toBe("token association");
     });
@@ -147,11 +147,11 @@ describe("createApi", () => {
       );
 
       const rawTx = TransferTransaction.fromBytes(Buffer.from(hex, "hex"));
+      const expectedMaxFee = Hbar.from(customFees.value.toString(), HbarUnit.Tinybar);
 
       expect(rawTx).toBeInstanceOf(TransferTransaction);
       invariant(rawTx instanceof TransferTransaction, "TransferTransaction type guard");
-
-      expect(rawTx.maxTransactionFee).toEqual(Hbar.from(customFees.value, HbarUnit.Tinybar));
+      expect(rawTx.maxTransactionFee).toEqual(expectedMaxFee);
     });
   });
 
@@ -270,6 +270,123 @@ describe("createApi", () => {
     });
   });
 
+  describe("getBlock", () => {
+    it("returns block with proper multi-transfer data", async () => {
+      const blockHeight = 176051087;
+      const multiTransferTxHash =
+        "OoaJ/10qHN/97Zaxj8vxGIJfL9UhrGKaJBwclsL4wUeqbegBAXhdmw+/6/dB6mow";
+
+      const expectedCoinTransferTx = {
+        hash: multiTransferTxHash,
+        failed: false,
+        fees: 1176695n,
+        feesPayer: "0.0.8835924",
+        operations: [
+          {
+            type: "transfer",
+            address: "0.0.15",
+            asset: {
+              type: "native",
+            },
+            amount: 55631n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.801",
+            asset: {
+              type: "native",
+            },
+            amount: 1121064n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: -2000000n, // 3176695n - 1176695n fee
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "native",
+            },
+            amount: 1000000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9169746",
+            asset: {
+              type: "native",
+            },
+            amount: 1000000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "hts",
+              assetReference: "0.0.456858",
+            },
+            amount: -10000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "hts",
+              assetReference: "0.0.456858",
+            },
+            amount: 10000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "hts",
+              assetReference: "0.0.5022567",
+            },
+            amount: -2n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "hts",
+              assetReference: "0.0.5022567",
+            },
+            amount: 1n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9169746",
+            asset: {
+              type: "hts",
+              assetReference: "0.0.5022567",
+            },
+            amount: 1n,
+          },
+        ],
+      };
+
+      const block = await api.getBlock(blockHeight);
+      const resultCoinTransferTx = block.transactions.find(tx => tx.hash === multiTransferTxHash);
+
+      expect(block.info.height).toBe(blockHeight);
+      expect(block.info.hash?.length).toBe(64);
+      expect(block.info.time).toBeInstanceOf(Date);
+      expect(block.info.time?.getTime()).toBeGreaterThan(0);
+      expect(resultCoinTransferTx).toMatchObject(expectedCoinTransferTx);
+      expect(block.transactions).toBeInstanceOf(Array);
+      expect(block.transactions.length).toEqual(48);
+      block.transactions.forEach(tx => {
+        expect(tx.hash.length).toBe(64);
+        expect(tx.fees).toBeGreaterThanOrEqual(0n);
+      });
+    });
+  });
+
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
       const lastBlock = await api.lastBlock();
@@ -365,6 +482,9 @@ describe("createApi", () => {
           minHeight: 0,
           limit: 10,
           order,
+          ...(order === "desc" && {
+            lastPagingToken: "1762168437.643463899",
+          }),
         } satisfies Pagination;
 
         const [page1, pagingToken1] = await api.listOperations(

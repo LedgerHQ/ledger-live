@@ -3,7 +3,10 @@ import BigNumber from "bignumber.js";
 import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { getMaxSendBalance, getBlankOperation, txsToOps } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+} from "../../bridge/bridge.fixture";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -19,7 +22,6 @@ describe("Aptos logic ", () => {
     it("should return the correct max send balance when amount is greater than total gas", () => {
       const amount = new BigNumber(1000000);
       const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
       const result = getMaxSendBalance(account, undefined, gas, gasPrice);
@@ -28,7 +30,6 @@ describe("Aptos logic ", () => {
 
     it("should return zero when amount is less than total gas", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
       const result = getMaxSendBalance(account, undefined, gas, gasPrice);
@@ -37,7 +38,6 @@ describe("Aptos logic ", () => {
 
     it("should return zero when amount is equal to total gas", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
       const result = getMaxSendBalance(account, undefined, gas, gasPrice);
@@ -46,7 +46,6 @@ describe("Aptos logic ", () => {
 
     it("should handle zero amount", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
       const result = getMaxSendBalance(account, undefined, gas, gasPrice);
@@ -56,11 +55,18 @@ describe("Aptos logic ", () => {
     it("should handle zero gas and gas price", () => {
       const amount = new BigNumber(1000000);
       const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(0);
       const gasPrice = new BigNumber(0);
       const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(amount)).toBe(true);
+    });
+
+    it("should return max spendable amount for the token account", () => {
+      const account = createFixtureAccountWithSubAccount("coin");
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(account.subAccounts![0], account, gas, gasPrice);
+      expect(result.isEqualTo(BigNumber(1000))).toBe(true);
     });
   });
 

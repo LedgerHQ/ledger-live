@@ -123,6 +123,7 @@ for (const account of e2eDelegationAccounts) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(account.delegate.account === Account.ATOM_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: account.xrayTicket },
@@ -198,7 +199,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
     test(
       `[${account.delegate.account.currency.name}] Delegate without broadcasting`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -275,7 +276,7 @@ test.describe("e2e delegation - Tezos", () => {
   test(
     "Tezos Delegation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3041",
@@ -322,7 +323,7 @@ test.describe("e2e delegation - Celo", () => {
   test(
     "Celo Delegation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3042",
@@ -372,7 +373,7 @@ for (const validator of validators) {
     test(
       `[${validator.delegate.account.currency.name}] - Select validator`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: { type: "TMS", description: validator.xrayTicket },
       },
       async ({ app }) => {
@@ -420,7 +421,7 @@ test.describe("Staking flow from different entry point", () => {
   test(
     "Staking flow from portfolio entry point",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2769, B2CQA-3281, B2CQA-3289",
@@ -452,7 +453,7 @@ test.describe("Staking flow from different entry point", () => {
   test(
     "Staking flow from market entry point",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2771, B2CQA-3289",
@@ -498,7 +499,7 @@ for (const currency of liveApps) {
     test(
       `[${currency.delegate.account.currency.name}] - Select validator`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
       async ({ app }) => {

@@ -19,6 +19,9 @@ const assetsTransfer: PostOnboardingAction = {
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
   startAction: ({ openModalCallback }: StartActionArgs) => openModalCallback?.("MODAL_RECEIVE"),
+  getIsAlreadyCompletedByState: ({ accounts }) => {
+    return !!accounts && accounts.some(account => account?.balance.isGreaterThan(0));
+  },
 };
 
 const buyCrypto: PostOnboardingAction = {

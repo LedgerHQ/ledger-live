@@ -21,7 +21,6 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
     });
-
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
@@ -29,7 +28,6 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addConfig({ firmwareDistributionSalt })
       .build();
   }
-
   return instance;
 };
 
@@ -41,12 +39,17 @@ type Props = {
 };
 
 export const DeviceManagementKitProvider: React.FC<Props> = ({ children, dmkEnabled }) => {
+  tracer.trace("DeviceManagementKitProvider render", { dmkEnabled });
+
   const deviceManagementKit = useMemo(() => {
-    if (!dmkEnabled) return null;
+    if (!dmkEnabled) {
+      tracer.trace("DMK is disabled inside useMemo, returning null", { dmkEnabled });
+      return null;
+    }
     return getDeviceManagementKit();
   }, [dmkEnabled]);
 
-  if (!dmkEnabled || deviceManagementKit === null) {
+  if (deviceManagementKit === null) {
     return <>{children}</>;
   }
 

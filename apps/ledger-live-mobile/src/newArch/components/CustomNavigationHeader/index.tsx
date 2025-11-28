@@ -28,7 +28,7 @@ export default function CustomNavigationHeader({ options, route }: NativeStackHe
   const HeaderRight = options.headerRight;
 
   const renderTitle = () => {
-    if (HeaderTitleComponent) {
+    if (HeaderTitleComponent !== undefined) {
       if (typeof HeaderTitleComponent === "function") {
         const title = options.title !== undefined ? options.title : route.name;
         return <HeaderTitleComponent>{title}</HeaderTitleComponent>;

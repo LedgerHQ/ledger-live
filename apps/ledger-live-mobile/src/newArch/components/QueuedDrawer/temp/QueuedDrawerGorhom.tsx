@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useQueuedDrawerGorhom from "./useQueuedDrawerGorhom";
 import BackDrop from "./components/BackDrop";
 import Header from "./components/Header";
+import { Box } from "@ledgerhq/native-ui";
 
 export {
   BottomSheetFlatList,
@@ -59,7 +60,6 @@ const QueuedDrawerGorhom = ({
   ...rest
 }: Props) => {
   const { colors } = useTheme();
-  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const {
     bottomSheetRef,
@@ -147,7 +147,6 @@ const QueuedDrawerGorhom = ({
       index={0}
       snapPoints={finalSnapPoints}
       enableDynamicSizing={enableDynamicSizing}
-      bottomInset={Platform.OS === "android" ? bottomInset : 0}
       enablePanDownToClose={enablePanDownToClose}
       android_keyboardInputMode="adjustResize"
       backdropComponent={renderBackdrop}
@@ -160,8 +159,14 @@ const QueuedDrawerGorhom = ({
     >
       {renderHeader()}
       <IsInDrawerProvider>{children}</IsInDrawerProvider>
+      <OnscreenNavigationSafeArea />
     </BottomSheetModal>
   );
+};
+
+const OnscreenNavigationSafeArea = () => {
+  const insets = useSafeAreaInsets();
+  return <Box height={Platform.OS === "android" ? insets.bottom : 0} />;
 };
 
 export default React.memo(QueuedDrawerGorhom);

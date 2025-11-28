@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -36,7 +36,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
-import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
@@ -182,7 +181,6 @@ const StepReceiveFunds = (props: StepProps) => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
-  const completeAction = useCompleteActionCallback();
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -244,10 +242,6 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [onChangeAddressVerified, onResetSkip, transitionTo]);
 
   const onFinishReceiveFlow = useCallback(() => {
-    if (!isOnboardingReceiveFlow) {
-      completeAction(PostOnboardingActionId.assetsTransfer);
-    }
-
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
@@ -298,7 +292,6 @@ const StepReceiveFunds = (props: StepProps) => {
     mainAccount,
     onClose,
     transitionTo,
-    completeAction,
     isSPLToken,
     isOnboardingReceiveFlow,
     hasStakeProgramsRedirect,

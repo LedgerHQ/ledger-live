@@ -45,6 +45,7 @@ for (const account of accounts) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
         ],
         annotation: {

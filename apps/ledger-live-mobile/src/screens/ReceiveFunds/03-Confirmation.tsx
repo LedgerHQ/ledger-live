@@ -5,7 +5,6 @@ import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
@@ -38,7 +37,6 @@ import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
-import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, {
@@ -172,13 +170,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }
     }
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
-
-  const completeAction = useCompleteActionCallback();
-
-  useEffect(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     navigation.setOptions({

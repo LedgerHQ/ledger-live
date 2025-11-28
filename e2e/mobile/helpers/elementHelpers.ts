@@ -161,12 +161,11 @@ export const NativeElementHelpers = {
     await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
   },
 
-
   async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {
     const attributes = await retryUntilTimeout(async () =>
       NativeElementHelpers.getElementById(id, index).getAttributes(),
     );
-    if("elements" in attributes) {
+    if ("elements" in attributes) {
       return attributes.elements[index];
     }
     return attributes;
@@ -351,6 +350,18 @@ export const WebElementHelpers = {
       url = await getWebElementByTag("html").runScript(() => window.location.href);
     }
     return String(url);
+  },
+
+  async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
+    let currentUrl = "";
+    await retryUntilTimeout(async () => {
+      currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
+      if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
+        return currentUrl;
+      }
+      throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
+    }, timeout);
+    return currentUrl;
   },
 
   async isWebElementEnabled(element: WebElement) {

@@ -33,7 +33,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new UserRefusedOnDevice() });
 
     expect(track).toHaveBeenCalledWith(
@@ -52,7 +51,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: null });
 
     expect(track).toHaveBeenCalledWith(
@@ -85,7 +83,6 @@ describe("useTrackSendFlow", () => {
     rerender({
       ...defaultArgs,
       device: wiredDeviceMock,
-      //@ts-expect-error requestOpenApp is not null
       requestOpenApp: null,
       error: new UserRefusedOnDevice(),
     });
@@ -118,7 +115,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new TransportRaceCondition() });
 
     expect(track).toHaveBeenCalledWith(
@@ -137,7 +133,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new CantOpenDevice() });
 
     expect(track).toHaveBeenCalledWith(
@@ -175,7 +170,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new LockedDeviceError() });
 
     expect(track).toHaveBeenCalledWith(
@@ -194,7 +188,6 @@ describe("useTrackSendFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    //@ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, isLocked: true });
 
     expect(track).toHaveBeenCalledWith(

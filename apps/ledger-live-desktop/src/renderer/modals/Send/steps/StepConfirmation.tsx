@@ -18,6 +18,7 @@ import NodeError from "./Confirmation/NodeError";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { AccountLike } from "@ledgerhq/types-live";
 import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import AbortButton from "~/renderer/components/AbortButton";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -135,14 +136,24 @@ export function StepConfirmationFooter({
           {t("send.steps.confirmation.success.cta")}
         </Button>
       ) : error ? (
-        <RetryButton
-          ml={2}
-          primary
-          onClick={() => {
-            onRetry();
-            transitionTo("summary");
-          }}
-        />
+        ["LedgerAPI5xx", "NetworkDown"].includes(error.name) ? (
+          <RetryButton
+            ml={2}
+            primary
+            onClick={() => {
+              onRetry();
+              transitionTo("summary");
+            }}
+          />
+        ) : (
+          <AbortButton
+            ml={2}
+            primary
+            onClick={() => {
+              closeModal();
+            }}
+          />
+        )
       ) : null}
     </>
   );

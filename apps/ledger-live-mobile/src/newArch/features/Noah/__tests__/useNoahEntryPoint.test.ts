@@ -33,7 +33,9 @@ describe("useReceiveNoahEntry", () => {
           ...state,
           settings: {
             ...state.settings,
-            overriddenFeatureFlags: { noah: { enabled: true } },
+            overriddenFeatureFlags: {
+              noah: { enabled: true, params: { activeCurrencyIds: ["ethereum/erc20/usd__coin"] } },
+            },
           },
         }),
       },
@@ -41,7 +43,7 @@ describe("useReceiveNoahEntry", () => {
 
     expect(result.current.showNoahMenu).toBe(false);
   });
-  it("returns showNoahMenu as true when the feature flag is enabled and the currency is a valid token currency", () => {
+  it("returns showNoahMenu as true when the feature flag is enabled and the currency is part of the active currency IDs", () => {
     const { result } = renderHook(
       () =>
         useReceiveNoahEntry({
@@ -56,7 +58,9 @@ describe("useReceiveNoahEntry", () => {
           ...state,
           settings: {
             ...state.settings,
-            overriddenFeatureFlags: { noah: { enabled: true } },
+            overriddenFeatureFlags: {
+              noah: { enabled: true, params: { activeCurrencyIds: ["ethereum/erc20/usd__coin"] } },
+            },
           },
         }),
       },

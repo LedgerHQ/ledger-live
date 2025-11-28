@@ -1,0 +1,76 @@
+diff --git a/local-cli/testCommand/TestRunnerCommand.js b/local-cli/testCommand/TestRunnerCommand.js
+index 65e6cd70a6257138afd8270671f0ef1c555a9bbc..f321f60e621d5a487a5571e0bb807932fb7d8f78 100644
+--- a/local-cli/testCommand/TestRunnerCommand.js
++++ b/local-cli/testCommand/TestRunnerCommand.js
+@@ -36,6 +36,7 @@ class TestRunnerCommand {
+     this._startCommands = this._prepareStartCommands(commands, cliConfig);
+     this._envFwd = {};
+     this._terminating = false;
++    this._isRetry = false; // Track whether it's a retry
+ 
+     if (runnerConfig.forwardEnv) {
+       this._envFwd = this._buildEnvOverride(cliConfig, deviceConfig);
+@@ -85,6 +86,7 @@ class TestRunnerCommand {
+         }
+ 
+         if (--runsLeft > 0) {
++          this._isRetry = true;
+           // @ts-ignore
+           detox.session.testSessionIndex++; // it is always the primary context, so we can update it
+           this._noRetryArgs.forEach(arg => delete this._argv[arg]);
+@@ -210,11 +212,16 @@ class TestRunnerCommand {
+     /* istanbul ignore next */
+     const { _: specs = [], '--': passthrough = [], $0, ...argv } = this._argv;
+     const { _: $0_, ...$0argv } = parser($0);
+-
++    
++    // Remove shard arguments for retries
++    const filteredArgv = this._isRetry
++      ? _.omit(argv, ['shard'])
++      : argv;
++    
+     return [
+       ...$0_,
+       ...unparse($0argv),
+-      ...unparse(argv),
++      ...unparse(filteredArgv),
+       ...unparse({ _: [...passthrough, ...specs] }),
+     ].map(String);
+   }
+diff --git a/src/client/AsyncWebSocket.js b/src/client/AsyncWebSocket.js
+index 1234567890abcdef1234567890abcdef12345678..abcdef1234567890abcdef1234567890abcdef12 100644
+--- a/src/client/AsyncWebSocket.js
++++ b/src/client/AsyncWebSocket.js
+@@ -250,7 +250,12 @@ class AsyncWebSocket {
+         if (this._abortedMessageIds.has(json.messageId)) {
+           log.debug({ messageId: json.messageId }, `late response`);
+         } else {
+-          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
++          // Handle unexpected invokeResult messages that may come from WebView when Native content is opened
++          if (json.type === 'invokeResult' && json.messageId != null) {
++            log.warn({ messageId: json.messageId, type: json.type }, 'Received unexpected invokeResult, possibly from WebView after context switch. Ignoring.');
++          } else {
++            throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
++          }
+         }
+       }
+     } catch (error) {
+diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
+index ab269f5ba3cb6ec033594a5e05284b95f01a39a6..f38390723a0bb70af36ef4017353c3f9257afe53 100644
+--- a/src/devices/common/drivers/android/exec/ADB.js
++++ b/src/devices/common/drivers/android/exec/ADB.js
+@@ -8,11 +8,13 @@ const { escape } = require('../../../../../utils/pipeCommands');
+ const DeviceHandle = require('../tools/DeviceHandle');
+ const EmulatorHandle = require('../tools/EmulatorHandle');
+ 
++const { DETOX_INSTALL_TIMEOUT = "60000" } = process.env;
++const DETOX_INSTALL_TIMEOUT_NUMBER = parseInt(DETOX_INSTALL_TIMEOUT, 10);
+ const DEFAULT_EXEC_OPTIONS = {
+   retries: 1,
+ };
+ const DEFAULT_INSTALL_OPTIONS = {
+-  timeout: 60000,
++  timeout: Number.isNaN(DETOX_INSTALL_TIMEOUT_NUMBER) ? 60000 : DETOX_INSTALL_TIMEOUT_NUMBER,
+   retries: 3,
+ };
+ 

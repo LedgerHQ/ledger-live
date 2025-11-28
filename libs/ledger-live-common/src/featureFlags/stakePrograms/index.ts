@@ -42,3 +42,21 @@ export const getBitcoinYieldSetting = (stakePrograms: Feature_StakePrograms | nu
       ? "deposit_screen"
       : bitcoinProvider;
 };
+
+export const getEthDepositScreenSetting = (stakePrograms: Feature_StakePrograms | null): string => {
+  /** Check if Ethereum has "earn" provider configured in redirects with cohort. */
+  const ethereumRedirect = stakePrograms?.enabled
+    ? stakePrograms?.params?.redirects?.["ethereum"]
+    : undefined;
+
+  // If no ethereum redirect exists, return "standard"
+  // If platform is not "earn", return "standard"
+  if (ethereumRedirect?.platform !== "earn") {
+    return "standard";
+  }
+
+  // Extract cohort from queryParams
+  const cohort = ethereumRedirect.queryParams?.cohort;
+
+  return cohort ?? "missing_cohort_value";
+};

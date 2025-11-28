@@ -194,124 +194,126 @@ const QueuedDrawerNative = ({
   }
 
   return (
-    <Modal
-      presentationStyle="overFullScreen"
-      animationType="none"
-      transparent
-      visible={isVisible}
-      onShow={onShow}
-      onRequestClose={onRequestClose}
-      statusBarTranslucent={false}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-        }}
+    <Flex>
+      <Modal
+        presentationStyle="overFullScreen"
+        animationType="none"
+        transparent
+        visible={isVisible}
+        onShow={onShow}
+        onRequestClose={onRequestClose}
+        statusBarTranslucent={true}
       >
-        <Pressable
-          testID="drawer-backdrop"
-          onPress={onBackdropPress}
+        <View
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: colors.constant.overlay,
+            flex: 1,
+            justifyContent: "flex-end",
           }}
         >
-          <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
-        </Pressable>
-
-        <Animated.View
-          style={[
-            containerAnimatedStyle,
-            {
-              width: "100%",
-              maxHeight: "95%",
-              backgroundColor: colors.background.drawer,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-            },
-            containerStyle || undefined,
-          ]}
-        >
-          {shouldShowHeader && CustomHeader ? (
-            <CustomHeader>
-              {!noCloseButton && !areDrawersLocked ? (
-                <Pressable
-                  testID="modal-close-button"
-                  onPress={handleCloseUserEvent}
-                  hitSlop={16}
-                  accessible={true}
-                  style={({ pressed }: { pressed: boolean }) => ({
-                    position: "absolute",
-                    zIndex: 10,
-                    top: 16,
-                    right: 16,
-                    borderRadius: 999,
-                    backgroundColor: pressed
-                      ? colors.opacityReverse.c50
-                      : colors.opacityReverse.c70,
-                    padding: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 32,
-                    height: 32,
-                  })}
-                >
-                  <Icons.Close size="XS" />
-                </Pressable>
-              ) : null}
-            </CustomHeader>
-          ) : null}
-
-          <View
+          <Pressable
+            testID="drawer-backdrop"
+            onPress={onBackdropPress}
             style={{
-              width: "100%",
-              paddingHorizontal: 16,
-              paddingTop: 16,
-              paddingBottom: insets.bottom + 16,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: colors.constant.overlay,
             }}
           >
-            {shouldShowHeader && !CustomHeader ? (
-              <Header
-                title={title}
-                hasBackButton={hasBackButton}
-                hookOnBack={hookOnBack}
-                noCloseButton={noCloseButton}
-                areDrawersLocked={areDrawersLocked}
-                handleCloseUserEvent={handleCloseUserEvent}
-              />
+            <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
+          </Pressable>
+
+          <Animated.View
+            style={[
+              containerAnimatedStyle,
+              {
+                width: "100%",
+                maxHeight: "95%",
+                backgroundColor: colors.background.drawer,
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+              },
+              containerStyle || undefined,
+            ]}
+          >
+            {shouldShowHeader && CustomHeader ? (
+              <CustomHeader>
+                {!noCloseButton && !areDrawersLocked ? (
+                  <Pressable
+                    testID="modal-close-button"
+                    onPress={handleCloseUserEvent}
+                    hitSlop={16}
+                    accessible={true}
+                    style={({ pressed }: { pressed: boolean }) => ({
+                      position: "absolute",
+                      zIndex: 10,
+                      top: 16,
+                      right: 16,
+                      borderRadius: 999,
+                      backgroundColor: pressed
+                        ? colors.opacityReverse.c50
+                        : colors.opacityReverse.c70,
+                      padding: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 32,
+                      height: 32,
+                    })}
+                  >
+                    <Icons.Close size="XS" />
+                  </Pressable>
+                ) : null}
+              </CustomHeader>
             ) : null}
 
-            {shouldShowModalHeader ? (
-              <Flex alignItems="center" mb={7}>
-                {renderDrawerIcon()}
-                {subtitle && (
-                  <Text variant="subtitle" color="neutral.c80" textAlign="center" mb={2}>
-                    {subtitle}
-                  </Text>
-                )}
-                {description && (
-                  <Text variant="body" color="neutral.c70" textAlign="center" mt={6}>
-                    {description}
-                  </Text>
-                )}
-              </Flex>
-            ) : null}
+            <View
+              style={{
+                width: "100%",
+                paddingHorizontal: 16,
+                paddingTop: 16,
+                paddingBottom: insets.bottom + 16,
+              }}
+            >
+              {shouldShowHeader && !CustomHeader ? (
+                <Header
+                  title={title}
+                  hasBackButton={hasBackButton}
+                  hookOnBack={hookOnBack}
+                  noCloseButton={noCloseButton}
+                  areDrawersLocked={areDrawersLocked}
+                  handleCloseUserEvent={handleCloseUserEvent}
+                />
+              ) : null}
 
-            {children && (
-              <View style={style || undefined}>
-                <IsInDrawerProvider>{children}</IsInDrawerProvider>
-              </View>
-            )}
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
+              {shouldShowModalHeader ? (
+                <Flex alignItems="center" mb={7}>
+                  {renderDrawerIcon()}
+                  {subtitle && (
+                    <Text variant="subtitle" color="neutral.c80" textAlign="center" mb={2}>
+                      {subtitle}
+                    </Text>
+                  )}
+                  {description && (
+                    <Text variant="body" color="neutral.c70" textAlign="center" mt={6}>
+                      {description}
+                    </Text>
+                  )}
+                </Flex>
+              ) : null}
+
+              {children && (
+                <View style={style || undefined}>
+                  <IsInDrawerProvider>{children}</IsInDrawerProvider>
+                </View>
+              )}
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
+    </Flex>
   );
 };
 

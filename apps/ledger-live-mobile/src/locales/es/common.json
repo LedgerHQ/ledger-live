@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "Permitir una conexión segura con Ledger",
     "loading" : "Cargando...",
     "turnOnAndUnlockDevice" : "Enciende y desbloquea tu dispositivo",
+    "powerOnDevice" : "Enciende y desbloquea tu {{deviceName}}",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "connectAnotherDevice" : "Conectar otro Ledger",
     "unlockDevice" : "Desbloquea tu dispositivo",
@@ -4458,6 +4459,7 @@
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
+      "nearIntentsAcceptTerms" : "Al validar esta transacción,\n acepto los <0>Términos de uso de SwapKit</0>, la tecnología en la que se basa NEAR Intents.",
       "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
@@ -4494,6 +4496,11 @@
     "bluetooth" : {
       "title" : "Conectar por Bluetooth...",
       "label" : "Detectar automáticamente el Nano"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "¿No ves tu dispositivo Ledger?",
+      "scanSignersCta" : "Buscar dispositivos",
+      "helpCenterCta" : "Obtener ayuda"
     },
     "deviceNotFoundPairNewDevice" : "Emparejar con bluetooth",
     "headerDescription" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado",
@@ -4752,7 +4759,7 @@
       "all" : "Todas",
       "installed" : "Aplicaciones",
       "not_installed" : "No instaladas",
-      "supported" : "Compatible con Ledger Wallet",
+      "supported" : "Compatibles con Ledger Wallet",
       "updatable" : "Actualizable",
       "apply" : "Aplicar"
     },
@@ -7090,7 +7097,7 @@
       },
       "order" : {
         "topGainers" : "Máximos Ganadores",
-        "topLosers" : "Máximos perdedores",
+        "topLosers" : "Máximos Perdedores",
         "marketCap" : "Puesto",
         "asc" : "Posición (capitalización) asc.",
         "desc" : "Posición (capitalización) desc."
@@ -7102,7 +7109,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },

@@ -88,12 +88,6 @@ export default function Features() {
         iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}
         onPress={() => setShowBaseModalDemo(true)}
       />
-      <SettingsRow
-        title="Storyly"
-        desc="Remote video slides (stories) used on the new onboarding"
-        iconLeft={<IconsLegacy.InstagramMedium size={24} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
-      />
 
       <SettingsRow
         title="Terms of Use"

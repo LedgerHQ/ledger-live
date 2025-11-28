@@ -22,6 +22,7 @@ const transformIncludePatterns = [
   "ky",
   "@gorhom/bottom-sheet",
   "react-native-safe-area-context",
+  "react-native-gesture-handler",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

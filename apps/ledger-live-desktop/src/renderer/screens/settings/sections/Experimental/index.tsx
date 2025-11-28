@@ -16,7 +16,6 @@ import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
 import LottieTester from "./LottieTester";
-import StorylyTester from "./StorylyTester";
 import PostOnboardingHubTester from "./PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
@@ -169,7 +168,6 @@ const SectionExperimental = () => {
         )}
         {process.env.SHOW_ETHEREUM_BRIDGE ? <EthereumBridgeRow /> : null}
         {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
-        {process.env.DEBUG_STORYLY ? <StorylyTester /> : null}
         {process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
         <VaultSigner />
         <FullNode />

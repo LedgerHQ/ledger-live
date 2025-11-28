@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/crypto-icons-ui",
   "description": "Crypto icons used by Ledger Live.",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "license": "MIT",
   "files": [
     "react",
@@ -30,7 +30,8 @@
     "build": "pnpm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "pnpm run build",
     "clean": "rimraf react native src/react src/native",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "test": "node scripts/verify-svg-file-size.mjs"
   },
   "peerDependencies": {
     "@types/react": "*",

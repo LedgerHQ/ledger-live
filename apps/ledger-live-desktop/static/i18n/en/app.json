@@ -173,6 +173,9 @@
       "UNDELEGATE": "Undelegated",
       "APPROVE": "Approved",
       "PRE_APPROVAL": "Pre-approval",
+      "TRANSFER_PROPOSAL": "Transfer proposal",
+      "TRANSFER_REJECTED": "Transfer rejected",
+      "TRANSFER_WITHDRAWN": "Transfer withdrawn",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
@@ -203,7 +206,8 @@
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "SENDING": "Sending",
       "BURN": "Burned",
-      "ASSOCIATE_TOKEN": "Associate token"
+      "ASSOCIATE_TOKEN": "Associate token",
+      "CONTRACT_CALL": "Contract call"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -618,9 +622,6 @@
     }
   },
   "lottieDebugger": {
-    "buttonTitle": "Test"
-  },
-  "storylyDebugger": {
     "buttonTitle": "Test"
   },
   "postOnboardingDebugger": {
@@ -6918,6 +6919,10 @@
       "title": "Unable to verify token association",
       "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
     },
+    "HederaRecipientEvmAddressVerificationRequired": {
+      "title": "EVM address verification required",
+      "description": "Please verify the EVM address visible on your Ledger device before confirming."
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -7257,6 +7262,9 @@
         },
         "unverifiedAssociation": {
           "learnMore": "Learn more"
+        },
+        "evmVerificationRequired": {
+          "text": "You are sending an ERC-20 token. For this type of transaction, your Ledger device will display the sender's EVM address, not their Account ID.\nPlease follow <0>this guide</0> to verify the address is correct before confirming."
         }
       }
     },
@@ -7706,5 +7714,15 @@
     "restart": "Restart",
     "downloadOnLedger": "Download on Ledger.com",
     "downloadProgress": "Downloading... {{ progress }}%"
+  },
+  "zcash": {
+    "account": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "Balance that can be transfered",
+      "transparentBalance": "Transparent balance",
+      "transparentBalanceTooltip": "Balance that is visible to the public",
+      "privateBalance": "Private balance",
+      "privateBalanceTooltip": "Balance that is hidden from the public"
+    }
   }
 }

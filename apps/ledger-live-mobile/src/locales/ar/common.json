@@ -4430,6 +4430,7 @@
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
     "loading" : "جاري التحميل...",
     "turnOnAndUnlockDevice" : "قم بتشغيل وإلغاء قفل جهازك",
+    "powerOnDevice" : "قم بتشغيل وإلغاء قفل جهازك {{deviceName}}",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "connectAnotherDevice" : "توصيل جهاز Ledger آخر",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
@@ -4458,6 +4459,7 @@
         "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
       "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
+      "nearIntentsAcceptTerms" : "بالتحقق من صحة هذه المعاملة،\n أوافق على <0>شروط استخدام SwapKit</0>، التقنية التي تقوم بتشغيل NEAR Intents",
       "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -4494,6 +4496,11 @@
     "bluetooth" : {
       "title" : "الاتصال عبر البلوتوث...",
       "label" : "اكتشف Nano الخاصة بك تلقائياً"
+    },
+    "bleDeviceNotAvailableDrawer" : {
+      "bannerHintTitle" : "غير قادر على رؤية جهازك Ledger؟",
+      "scanSignersCta" : "البحث عن الأجهزة",
+      "helpCenterCta" : "احصل على دعم"
     },
     "deviceNotFoundPairNewDevice" : "الإقران باستخدام البلوتوث",
     "headerDescription" : "يرجى التأكد من إلغاء قفل {{productName}} الخاصة بك مع تمكين البلوتوث",

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Trans, useTranslation } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
@@ -20,7 +20,7 @@ const SuiStakeBanner: React.FC<Props> = ({ account }) => {
   const { showBoostBanner, showIncentiveBanner } = useSuiStakingBanners(account.freshAddress);
 
   const handleStakeClick = useCallback(() => {
-    (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+    (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
       NavigatorName.SuiDelegateFlow,
       {
         screen: ScreenName.SuiStakingValidator,

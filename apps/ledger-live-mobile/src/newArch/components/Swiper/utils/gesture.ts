@@ -72,6 +72,7 @@ function isHorizontalAngle(angle: number): boolean {
 
 function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComplete: () => void) {
   return Gesture.Pan()
+    .withTestId("pan")
     .onUpdate(event => {
       const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
       if (isHorizontalAngle(angle)) {

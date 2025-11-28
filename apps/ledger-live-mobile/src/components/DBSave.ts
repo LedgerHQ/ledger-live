@@ -29,7 +29,7 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
-import { extractTokensFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 type MaybeState = Maybe<State>;
 
@@ -215,7 +215,7 @@ export const ConfigureDBSaveEffects = () => {
     save: saveCryptoAssetsCacheState,
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
-    lense: extractTokensFromState,
+    lense: extractPersistedCALFromState,
   });
 
   return null;

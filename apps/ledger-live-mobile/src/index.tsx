@@ -70,7 +70,6 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -99,11 +98,11 @@ import {
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
-import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -140,7 +139,6 @@ function App() {
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
-  useNativeStartupInfo();
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -234,7 +232,9 @@ function App() {
     }
   }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
-  useAccountsWithFundsListener(accounts, updateIdentify);
+  const checkAccountsWithFunds = useCheckAccountWithFunds();
+
+  useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
@@ -362,25 +362,23 @@ export default class Root extends Component {
                         <PlatformAppProviderWrapper>
                           <SafeAreaProvider>
                             <ModalSystemPrimer />
-                            <StorylyProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <BridgeSyncProvider>
-                                            <App />
-                                          </BridgeSyncProvider>
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
-                              </StylesProvider>
-                            </StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <BridgeSyncProvider>
+                                          <App />
+                                        </BridgeSyncProvider>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
                           </SafeAreaProvider>
                         </PlatformAppProviderWrapper>
                       </LocaleProvider>

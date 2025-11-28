@@ -5,7 +5,6 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
-
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { fromTransactionRaw } from "../transaction";
 import type { Transaction } from "../types";
@@ -42,10 +41,10 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Recipient and sender must not be the same",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "100000000",
-            mode: HEDERA_TRANSACTION_MODES.Send,
           }),
           expectedStatus: {
             errors: {
@@ -57,10 +56,10 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Amount Required",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "0",
-            mode: HEDERA_TRANSACTION_MODES.Send,
           }),
           expectedStatus: {
             errors: {
@@ -72,10 +71,10 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",
-            mode: HEDERA_TRANSACTION_MODES.Send,
           }),
           expectedStatus: {
             errors: {
@@ -87,10 +86,10 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Send max",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",
-            mode: HEDERA_TRANSACTION_MODES.Send,
             useAllAmount: true,
           }),
           expectedStatus: (account, _, status) => {

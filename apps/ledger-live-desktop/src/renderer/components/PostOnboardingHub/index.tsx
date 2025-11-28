@@ -6,11 +6,13 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+  const accounts = useSelector(accountsSelector);
 
   const postOnboardingRows = useMemo(
     () =>
@@ -20,10 +22,11 @@ const PostOnboardingHub = () => {
             {...action}
             deviceModelId={deviceModelId}
             isLedgerSyncActive={isLedgerSyncActive}
+            accounts={accounts}
           />
         </React.Fragment>
       )),
-    [actionsState, deviceModelId, isLedgerSyncActive],
+    [actionsState, deviceModelId, isLedgerSyncActive, accounts],
   );
 
   useEffect(() => {

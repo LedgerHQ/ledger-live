@@ -5,6 +5,7 @@ import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { readFile } from "fs/promises";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -126,6 +127,14 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export async function takeAppScreenshot(screenshotName: string) {
+  const screenshotPath = await device.takeScreenshot(screenshotName);
+  if (screenshotPath) {
+    const screenshotData = await readFile(screenshotPath);
+    await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+  }
+}
 
 export const normalizeText = (text: string) =>
   text

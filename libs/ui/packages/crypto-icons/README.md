@@ -6,6 +6,25 @@
 
 #### This package contains a collection of React and React Native cryptocurrency icon components.
 
+> ⚠️ **Deprecation Notice**: This package is deprecated and will eventually be replaced by a unified icon approach using `@ledgerhq/icons-ui`. The current implementation is a legacy approach that will be phased out.
+
+## Important Notes
+
+### Icon Size Constraints
+
+These SVG icons are **minimal versions** specifically designed for creating masks. They are transpiled to React components at build time, which is an older approach that will eventually be dropped in favor of the unified `@ledgerhq/icons-ui` system.
+
+**Performance Impact**: These icons are highly sensitive to performance impact. It is **critical** to keep them very small (under 10KB per file). Large icons significantly impact bundle size and application performance, especially on mobile devices.
+
+### Why Size Matters
+
+- These icons are transpiled to React components, meaning each icon adds to the JavaScript bundle size
+- They are used extensively throughout the application for currency representations
+- Large icons can cause noticeable performance degradation, especially on lower-end devices
+- The build process includes all icons in the bundle, so oversized files have a multiplicative effect
+
+**All SVG files in this package must be under 10KB.** This is enforced by automated tests.
+
 ## Reference
 
 [**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/asorted-cryptoicons--list-crypto-icons)

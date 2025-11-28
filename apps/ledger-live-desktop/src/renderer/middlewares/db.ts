@@ -18,11 +18,7 @@ import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import {
-  extractTokensFromState,
-  PERSISTENCE_VERSION,
-  type PersistedTokens,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 import { marketStoreSelector } from "../reducers/market";
 
@@ -48,12 +44,8 @@ function accountsExportSelector(state: State) {
 // Throttled save for crypto assets cache (save at most once per 5 seconds)
 const saveCryptoAssetsCache = throttle((state: State) => {
   try {
-    const tokens = extractTokensFromState(state);
-    if (tokens.length > 0) {
-      const persistedData: PersistedTokens = {
-        version: PERSISTENCE_VERSION,
-        tokens,
-      };
+    const persistedData = extractPersistedCALFromState(state);
+    if (persistedData.tokens.length > 0) {
       setKey("app", "cryptoAssets", persistedData);
     }
   } catch (error) {

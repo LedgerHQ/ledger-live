@@ -43,6 +43,7 @@ export type Data = {
   receiveTokenMode?: boolean;
   eventType?: string;
   isFromPostOnboardingEntryPoint?: boolean;
+  shouldUseReceiveOptions?: boolean;
 };
 
 export type OwnProps = {

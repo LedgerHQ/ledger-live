@@ -23,7 +23,6 @@ import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchan
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_CREATE_LOCAL_APP from "./CreateLocalManifest";
-import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 import MODAL_CONFIRM from "./ConfirmModal";
@@ -55,7 +54,6 @@ const globalModals: GlobalModals = {
   MODAL_BLACKLIST_TOKEN,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
   MODAL_LOTTIE_DEBUGGER,
-  MODAL_STORYLY_DEBUGGER,
   MODAL_START_STAKE,
   MODAL_PROTECT_DISCOVER,
   MODAL_CREATE_LOCAL_APP,
