@@ -92,5 +92,6 @@ declare global {
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
   var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
+  var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }
