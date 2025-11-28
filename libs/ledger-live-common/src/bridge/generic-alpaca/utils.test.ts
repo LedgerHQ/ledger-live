@@ -166,10 +166,12 @@ describe("Alpaca utils", () => {
           },
           ...params,
         } as GenericTransaction,
+        3n,
       );
 
       expect(operation).toMatchObject({
         id: `parent-account-id--${expected.parentType}`,
+        transactionSequenceNumber: new BigNumber(3),
         type: expected.parentType,
         value: expected.parentValue,
         accountId: "parent-account-id",
@@ -194,6 +196,7 @@ describe("Alpaca utils", () => {
               subOperations: [
                 {
                   id: `sub-account-id--${expected.subType}`,
+                  transactionSequenceNumber: new BigNumber(3),
                   accountId: "sub-account-id",
                   type: expected.subType,
                   senders: ["account-address"],
