@@ -26,6 +26,7 @@ const forcedDependencies = [
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 const { withSentryConfig } = require("@sentry/react-native/metro");
+const { createSerializer } = require("react-native-bundle-discovery");
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
 const buildTsAlias = (conf = {}) =>
@@ -63,9 +64,17 @@ const nodeModulesPaths = [
   path.resolve(projectRootDir, "node_modules", ".pnpm"),
 ];
 
+const bundleDiscoverySerializer = createSerializer({
+  includeCode: false,
+  projectRoot: path.resolve(__dirname),
+});
+
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
   watchFolders: [projectRootDir],
+  serializer: {
+    customSerializer: bundleDiscoverySerializer,
+  },
   transformer: {
     getTransformOptions: async () => ({
       transform: {
