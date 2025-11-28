@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Flex, Text, IconsLegacy, SlideIndicator } from "@ledgerhq/native-ui";
+import { Flex, Text, SlideIndicator } from "@ledgerhq/native-ui";
 import NewSeedIllustration from "../SyncOnboarding/TwoStepStepper/NewSeedIllustration";
 import { useTranslation } from "react-i18next";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
