@@ -15,8 +15,15 @@ import { BigNumber } from "bignumber.js";
 import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import {
+  MIN_COUNTER_VALUE_FOR_PROMO,
+  P2P_SUI_VALIDATOR_ADDRESS,
+} from "@ledgerhq/live-common/families/sui/constants";
+import { useSuiStakingBanners } from "@ledgerhq/live-common/families/sui/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import Check from "~/icons/Check";
@@ -42,6 +49,8 @@ function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useSelector(accountScreenSelector(route)).account as SuiAccount;
   const { locale } = useSettings();
+  const { showBoostBanner } = useSuiStakingBanners(account.freshAddress);
+  const fiatCurrency = useSelector(counterValueCurrencySelector);
 
   invariant(
     account?.suiResources && route.params.transaction,
@@ -54,6 +63,12 @@ function StakingAmount({ navigation, route }: Props) {
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);
   const remaining = useMemo(() => max.minus(value), [max, value]);
   const { transaction, updateTransaction, bridgePending, status } = route.params;
+  const counterValueUSD =
+    useCalculate({
+      from: account.currency,
+      to: fiatCurrency,
+      value: value.toNumber(),
+    }) || 0;
   const onNext = useCallback(() => {
     const tx = route.params.transaction;
 
@@ -194,6 +209,15 @@ function StakingAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
+              {showBoostBanner &&
+                route.params.validator?.suiAddress === P2P_SUI_VALIDATOR_ADDRESS &&
+                counterValueUSD < MIN_COUNTER_VALUE_FOR_PROMO && (
+                  <View style={styles.alertContainer}>
+                    <Alert type="primary">
+                      <Trans i18nKey="sui.staking.flow.steps.amount.boostAlert" />
+                    </Alert>
+                  </View>
+                )}
               <Button
                 disabled={!!bridgePending || !!error}
                 pending={bridgePending}
@@ -281,6 +305,9 @@ const styles = StyleSheet.create({
   },
   amountWrapper: {
     flex: 1,
+  },
+  alertContainer: {
+    paddingBottom: 16,
   },
 });
 
