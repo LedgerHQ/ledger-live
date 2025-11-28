@@ -218,6 +218,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     a,
                     [
                       "operations",
+                      "syncHash",
                       "lastSyncDate",
                       "creationDate",
                       "blockHeight",
