@@ -64,20 +64,17 @@ export default function OnboardingSecureYourCrypto() {
     <SafeAreaView style={{ flex: 1 }}>
       <Flex
         flexDirection="row"
-        justifyContent="space-between"
+        justifyContent="center"
         alignItems="center"
         width="100%"
         height={48}
       >
-        <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={handleMaybeLater} />
-
         <SlideIndicator
           slidesLength={FUND_WALLET_STEPS_LENGTH}
           activeIndex={9}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onChange={() => {}}
         />
-        <Flex width={48}>{/* <InfoButton target={stepData.drawer} /> */}</Flex>
       </Flex>
       <Flex flexGrow={1} flex={1} mx={6} justifyContent="center" alignItems="center">
         <Flex justifyContent="center" alignItems="center">
