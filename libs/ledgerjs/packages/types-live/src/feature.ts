@@ -185,6 +185,7 @@ export type Features = CurrencyFeatures & {
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
+  recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
@@ -482,6 +483,10 @@ export type Feature_ProtectServicesDesktop = Feature<{
     homeURI: string;
   };
   protectId: string;
+}>;
+
+export type Feature_RecoverUpsellPostOnboarding = Feature<{
+  deviceIds: DeviceModelId[];
 }>;
 
 export type Feature_DeviceInitialApps = Feature<{

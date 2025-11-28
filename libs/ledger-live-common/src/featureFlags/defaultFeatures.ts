@@ -8,6 +8,7 @@ import {
 import reduce from "lodash/reduce";
 import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
  * Default disabled feature.
@@ -213,6 +214,18 @@ export const DEFAULT_FEATURES: Features = {
       },
       openRecoverFromSidebar: true,
       protectId: "protect-simu",
+    },
+  },
+  recoverUpsellPostOnboarding: {
+    ...DEFAULT_FEATURE,
+    params: {
+      deviceIds: [
+        DeviceModelId.nanoSP,
+        DeviceModelId.nanoX,
+        DeviceModelId.stax,
+        DeviceModelId.europa,
+        DeviceModelId.apex,
+      ],
     },
   },
 
