@@ -412,6 +412,7 @@ export const buildOptimisticOperation = (
         blockHeight: null,
         senders: [account.freshAddress],
         recipients: [transaction.recipient],
+        transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
         accountId: subAccountId,
         date: new Date(),
         transactionRaw: toGenericTransactionRaw({

@@ -14,8 +14,6 @@ import { radii } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import StyleProvider from "~/renderer/styles/StyleProvider";
-import { urls } from "~/config/urls";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 const ClickableText = styled(Text)`
   cursor: pointer;
@@ -29,8 +27,6 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { showBoostBanner, showIncentiveBanner } = useSuiStakingBanners(account.freshAddress);
-  const stakingBoostUrl = useLocalizedUrl(urls.sui.stakingBoost);
-  const incentivesUrl = useLocalizedUrl(urls.sui.incentives);
 
   const handleStakeClick = () => {
     if (!canStake(account)) {
@@ -49,7 +45,7 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
   };
 
   const handleHowItWorksClick = () => {
-    openURL(stakingBoostUrl);
+    openURL("https://www.ledger.com/sui-staking-boost");
   };
 
   if (!showBoostBanner && !showIncentiveBanner) {
@@ -109,7 +105,7 @@ const SuiStakeBanner: React.FC<{ account: SuiAccount }> = ({ account }) => {
           onClick={handleStakeClick}
           display={true}
           linkText={t("sui.staking.banner.incentive.learnMore")}
-          linkUrl={incentivesUrl}
+          linkUrl="https://www.ledger.com/sui-incentives"
         />
       )}
     </Box>
