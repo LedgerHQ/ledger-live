@@ -14,7 +14,7 @@ import {
   makeAccount,
 } from "../fixtures";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import solanaCoinConfig, { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@ledgerhq/live-env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
@@ -29,8 +29,7 @@ import {
   initStakeAccount,
   initVoteAccount,
 } from "../connection";
-import { Config, getChainAPI } from "@ledgerhq/coin-solana/network/index";
-import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
+import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 
 global.console = require("console");
 jest.setTimeout(100_000);
@@ -436,18 +435,7 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
       token2022Enabled: true,
       legacyOCMSMaxVersion: "1.8.0",
     });
-    solanaCoinConfig.setCoinConfig(coinConfig);
-    const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
-    const { accountBridge, currencyBridge } = makeBridges({
-      getAPI: (config: Config) => {
-        const endpoint = config.endpoint;
-        if (!chainAPICache.has(endpoint)) {
-          chainAPICache.set(endpoint, getChainAPI(config));
-        }
-        return chainAPICache.get(endpoint)!;
-      },
-      signerContext,
-    });
+    const { accountBridge, currencyBridge } = createBridges(signerContext, coinConfig);
 
     await airdrop(account.freshAddress, 5);
     await airdrop(PAYER.publicKey.toBase58(), 5);
