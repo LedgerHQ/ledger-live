@@ -1,7 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { shallowEqual, useSelector } from "react-redux";
-
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
@@ -13,10 +12,11 @@ import {
   discreetModeSelector,
   selectedTabPortfolioAssetsSelector,
 } from "~/reducers/settings";
+import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import useListsAnimation from "./useListsAnimation";
+import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
@@ -25,15 +25,40 @@ type Props = {
   openAddModal: () => void;
 };
 
-const maxItemsToDysplay = 5;
+const maxItemsToDisplay = 5;
 
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
+  const [selectedTab, setSelectedTab] = useState<TabListType>(initialSelectedTab);
+  const lastDispatchedTab = useRef<TabListType>(initialSelectedTab);
+
+  // Sync selectedTab with Redux state when navigating back to portfolio. Only sync if initialTab
+  // changed from external source (navigation), not from our own dispatch
+  useEffect(() => {
+    if (initialSelectedTab !== lastDispatchedTab.current) {
+      setSelectedTab(initialSelectedTab);
+      lastDispatchedTab.current = initialSelectedTab;
+    }
+  }, [initialSelectedTab]);
+
+  const handleToggle = useCallback(
+    (value: TabListType) => {
+      lastDispatchedTab.current = value;
+      setSelectedTab(value);
+      dispatch(setSelectedTabPortfolioAssets(value));
+      track("button_clicked", {
+        button: value,
+        page: "Wallet",
+      });
+    },
+    [dispatch],
+  );
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
@@ -53,24 +78,19 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
             !blacklistedTokenIdsSet.has(asset.currency.id)
           );
         })
-        .slice(0, maxItemsToDysplay),
+        .slice(0, maxItemsToDisplay),
     [distribution, blacklistedTokenIdsSet],
   );
 
   const {
-    handleToggle,
-    handleLayout,
     handleButtonLayout,
     handleAccountsContentSizeChange,
     handleAssetsContentSizeChange,
-    selectedTab,
-    assetsAnimatedStyle,
-    containerHeight,
-    accountsAnimatedStyle,
-  } = useListsAnimation(initialSelectedTab);
+    assetsFullHeight,
+    accountsFullHeight,
+  } = useListsAnimation(selectedTab);
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
-  const showAccounts = selectedTab === TAB_OPTIONS.Accounts;
 
   const onPressButton = useCallback(
     (_uiEvent: GestureResponderEvent) => {
@@ -120,27 +140,23 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       </Box>
       {isAccountListUIEnabled ? (
         <TabSection
-          t={t}
           handleToggle={handleToggle}
-          handleLayout={handleLayout}
           handleButtonLayout={handleButtonLayout}
           handleAssetsContentSizeChange={handleAssetsContentSizeChange}
           handleAccountsContentSizeChange={handleAccountsContentSizeChange}
           onPressButton={onPressButton}
           initialTab={initialSelectedTab}
           showAssets={showAssets}
-          showAccounts={showAccounts}
           assetsLength={assetsToDisplay.length}
           accountsLength={allAccounts.length}
-          assetsAnimatedStyle={assetsAnimatedStyle}
-          accountsAnimatedStyle={accountsAnimatedStyle}
-          maxItemsToDysplay={maxItemsToDysplay}
-          containerHeight={containerHeight}
+          assetsFullHeight={assetsFullHeight}
+          accountsFullHeight={accountsFullHeight}
+          maxItemsToDisplay={maxItemsToDisplay}
         />
       ) : (
         <Assets assets={assetsToDisplay} />
       )}
-      {!isAccountListUIEnabled && distribution.list.length < maxItemsToDysplay && (
+      {!isAccountListUIEnabled && distribution.list.length < maxItemsToDisplay && (
         <Button
           type="shade"
           size="large"
@@ -154,7 +170,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           {t("account.emptyState.addAccountCta")}
         </Button>
       )}
-      {!isAccountListUIEnabled && distribution.list.length >= maxItemsToDysplay && (
+      {!isAccountListUIEnabled && distribution.list.length >= maxItemsToDisplay && (
         <Button type="shade" size="large" outline onPress={onPressButton}>
           {t("portfolio.seeAllAssets")}
         </Button>
