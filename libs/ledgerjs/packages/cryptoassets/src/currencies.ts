@@ -834,6 +834,59 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "club",
   },
+  concordium: {
+    type: "CryptoCurrency",
+    id: "concordium",
+    managerAppName: "Concordium",
+    coinType: CoinType.CONCORDIUM,
+    name: "Concordium",
+    ticker: "CCD",
+    scheme: "concordium",
+    color: "#000000",
+    family: "concordium",
+    blockAvgTime: 2,
+    units: [
+      {
+        name: "ccd",
+        code: "CCD",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://ccdscan.io/transactions?dentity=transaction&dhash=$hash",
+        address: "https://ccdscan.io/accounts?dentity=account&daddress=$address",
+      },
+    ],
+    keywords: ["concordium"],
+  },
+  concordium_testnet: {
+    type: "CryptoCurrency",
+    id: "concordium_testnet",
+    managerAppName: "Concordium",
+    coinType: CoinType.CONCORDIUM,
+    name: "Concordium (Testnet)",
+    ticker: "CCD",
+    scheme: "concordium_testnet",
+    color: "#000000",
+    family: "concordium",
+    blockAvgTime: 2,
+    isTestnetFor: "concordium",
+    units: [
+      {
+        name: "ccd",
+        code: "CCD",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://testnet.ccdscan.io/transactions?dentity=transaction&dhash=$hash",
+        address: "https://testnet.ccdscan.io/accounts?dentity=account&daddress=$address",
+      },
+    ],
+    keywords: ["concordium_testnet"],
+  },
   coreum: {
     type: "CryptoCurrency",
     id: "coreum",
