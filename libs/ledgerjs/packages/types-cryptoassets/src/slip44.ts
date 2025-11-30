@@ -19,6 +19,7 @@ export enum CoinType {
   CARDANO = 1815,
   CELO = 52752,
   CLUB = 79,
+  CONCORDIUM = 919,
   CRYPTO_ORG = 394,
   CSPR = 506,
   DASH = 5,
