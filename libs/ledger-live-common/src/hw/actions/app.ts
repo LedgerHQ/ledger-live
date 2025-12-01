@@ -44,6 +44,7 @@ export type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
+  deviceId: string | null | undefined;
   latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
@@ -144,6 +145,7 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   allowManagerGranted: false,
   device: null,
   deviceInfo: null,
+  deviceId: null,
   latestFirmware: null,
   opened: false,
   appAndVersion: null,
@@ -309,6 +311,12 @@ const reducer = (state: State, e: Event): State => {
         skippedAppOps: state.skippedAppOps,
         installQueue: state.installQueue,
         listedApps: state.listedApps,
+      };
+
+    case "device-id":
+      return {
+        ...state,
+        deviceId: e.deviceId,
       };
 
     case "app-not-installed":

@@ -85,6 +85,10 @@ export type ConnectAppEvent =
       type: "device-permission-granted";
     }
   | {
+      type: "device-id";
+      deviceId: string;
+    }
+  | {
       type: "app-not-installed";
       appNames: string[];
       appName: string;
