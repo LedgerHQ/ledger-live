@@ -10,6 +10,9 @@
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
     "back" : "ย้อนกลับ",
+    "fee" : "ค่าธรรมเนียม",
+    "stake" : "สเตค",
+    "validator" : "ผู้ตรวจสอบ",
     "delete" : "ลบ",
     "paste" : "วาง",
     "yes" : "ใช่",
@@ -1089,6 +1092,10 @@
       "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
       "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "จำเป็นต้องมีการตรวจสอบ EVM Address",
+      "description" : "โปรดตรวจสอบ EVM Address ที่ปรากฏบนอุปกรณ์ Ledger ของคุณก่อนยืนยัน"
+    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -1153,6 +1160,11 @@
     "FirmwareNotRecognized" : {
       "title" : "ผู้ให้บริการไม่ถูกต้อง",
       "description" : "คุณต้องเปลี่ยนการตั้งค่า \"ผู้ให้บริการ My Ledger ของฉัน\" หากต้องการเปลี่ยนแปลง ให้เปิดแอป Ledger Wallet “การตั้งค่า” เลือก “Experimental Features” จากนั้นเลือกผู้ให้บริการรายอื่น"
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "ระบบไม่รองรับผู้ให้บริการนี้",
+      "description" : "คุณต้องเปลี่ยน \"ผู้ให้บริการ\" ใน \"Ledger ของฉัน\" หากต้องการเปลี่ยนแปลง ให้เปิดแอป Ledger Wallet ไปที่ “การตั้งค่า” แล้วเลือก “Experimental Features” จากนั้นเลือกผู้ให้บริการรายอื่น",
+      "openSettings" : "ไปที่การตั้งค่า"
     },
     "GasLessThanEstimate" : {
       "title" : "ค่าอาจน้อยเกินไป โปรดเพิ่ม"
@@ -1224,6 +1236,12 @@
     "AddressesSanctionedError" : {
       "title" : "ปกป้องคุณให้ปลอดภัย",
       "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "ปรับลดจำนวนคริปโตตามเงื่อนไข UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
     }
   },
   "crash" : {
@@ -2263,6 +2281,12 @@
     },
     "completionScreen" : {
       "title" : "ทุกการควบคุมอยู่ในมือคุณแล้วตอนนี้"
+    },
+    "secureYourCrypto" : {
+      "title" : "Secure your crypto",
+      "subtitle" : "Move your first crypto from an exchange or wallet to your Ledger for maximum security.",
+      "secureCryptoButton" : "Secure my crypto",
+      "maybeLater" : "Maybe later"
     }
   },
   "blePairingFlow" : {
@@ -2730,6 +2754,9 @@
       "REWARD" : "Reward ที่เคลมแล้ว",
       "FEES" : "ค่าธรรมเนียม",
       "PRE_APPROVAL" : "การอนุมัติเบื้องต้น",
+      "TRANSFER_PROPOSAL" : "Transfer proposal",
+      "TRANSFER_REJECTED" : "Transfer rejected",
+      "TRANSFER_WITHDRAWN" : "Transfer withdrawn",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
@@ -2751,7 +2778,8 @@
       "STAKE" : "Stake แล้ว",
       "UNSTAKE" : "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
-      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
+      "CONTRACT_CALL" : "การเรียกใช้สัญญา"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3808,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้",
-        "description" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้ คุณสามารถใช้ Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ หรือ Ledger Flex™ เพื่อสัมผัสประสบการณ์ Swap แบบ Cross-Chain บน {{provider}} ผ่าน Ledger Live"
+        "description" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้ คุณสามารถใช้ Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ หรือ Ledger Flex™ เพื่อสัมผัสประสบการณ์สวอปแบบข้ามเชนบน {{provider}} ผ่านแอป Ledger Wallet",
+        "explore_compatible_devices" : "ดูอุปกรณ์ที่เข้ากันได้",
+        "swapWithAnotherProvider" : "สวอปกับผู้ให้บริการรายอื่น"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "สำรวจอุปกรณ์ที่เข้ากันได้",
@@ -4430,7 +4460,7 @@
     "allowSecureConnection" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "loading" : "กำลังโหลด...",
     "turnOnAndUnlockDevice" : "เปิดเครื่องและปลดล็อกอุปกรณ์ของคุณ",
-    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
+    "powerOnDevice" : "เปิดและปลดล็อก {{deviceName}} ของคุณ",
     "connectAndUnlockDevice" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ",
     "connectAnotherDevice" : "เชื่อมต่อกับ Ledger เครื่องอื่น",
     "unlockDevice" : "ปลดล็อกอุปกรณ์ของคุณ",
@@ -4498,9 +4528,9 @@
       "label" : "ตรวจสอบ Nano ของคุณโดยอัตโนมัติ"
     },
     "bleDeviceNotAvailableDrawer" : {
-      "bannerHintTitle" : "Can't see your Ledger device?",
-      "scanSignersCta" : "Scan devices",
-      "helpCenterCta" : "Get support"
+      "bannerHintTitle" : "ไม่เห็นอุปกรณ์ Ledger ของคุณ?",
+      "scanSignersCta" : "สแกนอุปกรณ์",
+      "helpCenterCta" : "ติดต่อทีมสนับสนุน"
     },
     "deviceNotFoundPairNewDevice" : "จับคู่กับบลูทูธ",
     "headerDescription" : "โปรดตรวจสอบให้แน่ใจว่ามีการปลดล็อก {{productName}} แล้วโดยมีการเปิดใช้งานบลูทูธ",
@@ -5980,6 +6010,45 @@
       "newAddressTRC20" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งาน"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "คัดลอก Address แล้ว!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "memoPlaceholder" : "Memo (ไม่บังคับ)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    }
+  },
   "stellar" : {
     "token" : "สินทรัพย์",
     "memo" : {
@@ -6383,9 +6452,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo (ไม่บังคับ)"
   },
   "near" : {
     "info" : {
@@ -7223,6 +7289,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "evmVerificationRequired" : {
+          "text" : "คุณกำลังส่งโทเคน ERC-20 สำหรับธุรกรรมประเภทนี้ อุปกรณ์ Ledger ของคุณจะแสดง EVM Address ของผู้ส่ง ไม่ใช่ ID บัญชีของผู้รับ\nโปรดทำตาม<0>คู่มือนี้</0>เพื่อยืนยันว่า Address ถูกต้องก่อนยืนยัน"
         }
       }
     },
@@ -7311,11 +7380,11 @@
         "description" : "เลือกศิลปะดิจิทัลหรือภาพเพื่อตั้งค่าเป็นหน้าจอล็อคของ {{productName}} ของคุณ",
         "popupLabel" : "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
-      "recover" : {
-        "title" : "สมัครใช้งาน Ledger Recover",
-        "titleCompleted" : "สมัครใช้งาน Ledger Recover",
-        "description" : "กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase",
-        "popupLabel" : "สมัครใช้งาน Ledger Recover สำเร็จแล้ว"
+      "syncAccounts" : {
+        "title" : "ซิงค์บัญชีคริปโตของคุณ",
+        "titleCompleted" : "ซิงค์บัญชีของคุณแล้ว",
+        "description" : "เปิดใช้งาน Ledger Sync เพื่อซิงค์บัญชีคริปโตของคุณ",
+        "popupLabel" : "ซิงค์บัญชีแล้ว"
       }
     }
   },
