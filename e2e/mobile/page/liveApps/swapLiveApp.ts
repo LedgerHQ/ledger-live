@@ -2,7 +2,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
-import { floatNumberRegex } from "@ledgerhq/live-common/lib/e2e/data/regexes";
+import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
