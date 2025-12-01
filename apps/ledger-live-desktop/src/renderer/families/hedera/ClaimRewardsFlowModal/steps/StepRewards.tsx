@@ -15,9 +15,9 @@ import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/Validato
 import Text from "~/renderer/components/Text";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { StepProps } from "../types";
-import TranslatedError from "~/renderer/components/TranslatedError";
 
 function StepRewards({ account, parentAccount, transaction, status, error }: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
@@ -42,6 +42,7 @@ function StepRewards({ account, parentAccount, transaction, status, error }: Rea
   }
 
   const formattedClaimableRewards = formatCurrencyUnit(unit, claimableRewards, formatConfig);
+  const feeError = status.errors.fee;
 
   return (
     <Box flow={4}>
@@ -69,6 +70,11 @@ function StepRewards({ account, parentAccount, transaction, status, error }: Rea
           selectedValidatorNodeId={enrichedDelegation.validator.nodeId}
         />
       </Box>
+      {feeError && (
+        <Alert type="error">
+          <TranslatedError error={feeError} />
+        </Alert>
+      )}
     </Box>
   );
 }

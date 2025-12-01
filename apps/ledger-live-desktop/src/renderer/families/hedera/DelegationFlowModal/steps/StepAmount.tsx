@@ -8,6 +8,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { urls } from "~/config/urls";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
@@ -16,6 +17,7 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
   if (!status) return null;
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const feeError = status.errors.fee;
 
   return (
     <Box flow={4}>
@@ -39,6 +41,11 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
             {t("hedera.delegation.flow.steps.amount.alert")}
           </Alert>
         </>
+      )}
+      {feeError && (
+        <Alert type="error">
+          <TranslatedError error={feeError} />
+        </Alert>
       )}
     </Box>
   );

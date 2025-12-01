@@ -16,6 +16,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import Label from "~/renderer/components/Label";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/ValidatorsSelect";
 import AmountField from "../../shared/staking/AmountField";
 import type { StepProps } from "../types";
@@ -37,6 +38,7 @@ function StepValidators({
   const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const enrichedDelegation = useHederaEnrichedDelegation(account, delegation);
+  const feeError = status.errors.fee;
   const isValidatorRemoved =
     !enrichedDelegation.validator.address && typeof delegation.nodeId === "number";
 
@@ -93,6 +95,11 @@ function StepValidators({
       >
         {t("hedera.redelegation.flow.steps.validators.alert")}
       </Alert>
+      {feeError && (
+        <Alert type="error">
+          <TranslatedError error={feeError} />
+        </Alert>
+      )}
     </Box>
   );
 }

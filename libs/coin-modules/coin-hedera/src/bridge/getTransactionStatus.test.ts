@@ -277,19 +277,6 @@ describe("getTransactionStatus", () => {
     expect(result.errors.amount).toBeInstanceOf(AmountRequired);
   });
 
-  it("adds error if amount is zero and useAllAmount is false", async () => {
-    const mockedAccount = getMockedAccount();
-    const mockedTransaction = getMockedTransaction({
-      recipient: validRecipientAddress,
-      amount: new BigNumber(0),
-      useAllAmount: false,
-    });
-
-    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
-
-    expect(result.errors.amount).toBeInstanceOf(AmountRequired);
-  });
-
   it("delegate transaction with valid node completes successfully", async () => {
     const account = getMockedAccount();
     const transaction = getMockedTransaction({
@@ -348,6 +335,38 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(account, transaction);
 
     expect(result.errors.stakingNodeId).toBeInstanceOf(HederaRedundantStakingNodeIdError);
+  });
+
+  it("adds error during staking transfer with insufficient balance", async () => {
+    const mockedAccount = getMockedAccount({ balance: new BigNumber(0) });
+    const mockedDelegateTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      properties: { stakingNodeId: 1 },
+    });
+    const mockedUndelegateTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      properties: { stakingNodeId: null },
+    });
+    const mockedRedelegateTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+      properties: { stakingNodeId: 2 },
+    });
+    const mockedClaimRewardsTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+    });
+
+    const [resultDelegate, resultUndelegate, resultRedelegate, resultClaimRewards] =
+      await Promise.all([
+        getTransactionStatus(mockedAccount, mockedDelegateTransaction),
+        getTransactionStatus(mockedAccount, mockedUndelegateTransaction),
+        getTransactionStatus(mockedAccount, mockedRedelegateTransaction),
+        getTransactionStatus(mockedAccount, mockedClaimRewardsTransaction),
+      ]);
+
+    expect(resultDelegate.errors.fee).toBeInstanceOf(NotEnoughBalance);
+    expect(resultUndelegate.errors.fee).toBeInstanceOf(NotEnoughBalance);
+    expect(resultRedelegate.errors.fee).toBeInstanceOf(NotEnoughBalance);
+    expect(resultClaimRewards.errors.fee).toBeInstanceOf(NotEnoughBalance);
   });
 
   it("adds error when claiming rewards with no rewards available", async () => {

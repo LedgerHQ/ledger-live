@@ -10,17 +10,26 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
 import ValidatorsSelect from "../../shared/staking/ValidatorsSelect";
 
-function StepSummary({ t, account, parentAccount, transaction, error }: Readonly<StepProps>) {
+function StepSummary({
+  t,
+  account,
+  parentAccount,
+  transaction,
+  status,
+  error,
+}: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const currentValidatorNodeId = account.hederaResources?.delegation?.nodeId;
   const validators = useHederaValidators(account.currency);
   const validator = validators.find(v => v.nodeId === currentValidatorNodeId);
   const isValidatorRemoved = !validator && typeof currentValidatorNodeId === "number";
+  const feeError = status.errors.fee;
 
   return (
     <Box flow={4}>
@@ -50,6 +59,11 @@ function StepSummary({ t, account, parentAccount, transaction, error }: Readonly
       >
         {t("hedera.undelegation.flow.steps.summary.alert")}
       </Alert>
+      {feeError && (
+        <Alert type="error">
+          <TranslatedError error={feeError} />
+        </Alert>
+      )}
     </Box>
   );
 }

@@ -72,16 +72,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  header: {
-    padding: 16,
-  },
   list: {
     paddingHorizontal: 16,
-  },
-  center: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

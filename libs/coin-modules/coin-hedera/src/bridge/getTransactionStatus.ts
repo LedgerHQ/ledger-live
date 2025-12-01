@@ -300,6 +300,10 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
     }
   }
 
+  if (account.balance.isLessThan(totalSpent)) {
+    errors.fee = new NotEnoughBalance("");
+  }
+
   return {
     amount: new BigNumber(0),
     estimatedFees: estimatedFees.tinybars,
