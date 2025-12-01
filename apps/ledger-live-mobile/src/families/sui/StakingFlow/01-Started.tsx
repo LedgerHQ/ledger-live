@@ -14,6 +14,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiStakingFlowParamList } from "./types";
+import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidator>
@@ -22,11 +23,13 @@ type Props = BaseComposite<
 export default function StakingStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const validators = useLedgerFirstShuffledValidatorsSui("");
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.SuiStakingValidator, {
       ...route.params,
+      validator: validators[0],
     });
-  }, [navigation, route.params]);
+  }, [navigation, route.params, validators]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -66,7 +69,12 @@ export default function StakingStarted({ navigation, route }: Props) {
         </View>
       </NavigationScrollView>
       <View style={[styles.footer]}>
-        <View>
+        <View style={styles.alertContainer}>
+          <Alert type="info">
+            <Trans i18nKey="sui.staking.flow.steps.validator.boostAlert" />
+          </Alert>
+        </View>
+        <View style={styles.alertContainer}>
           <Alert type="info" title={t("sui.staking.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6} testID="sui-delegation-start-button">
@@ -122,5 +130,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     borderTopWidth: 1,
+  },
+  alertContainer: {
+    marginBottom: 12,
   },
 });

@@ -4349,6 +4349,31 @@
         }
       }
     },
+    "staking": {
+      "banner": {
+        "boost": {
+          "title": "Sui x Ledger Stake boost",
+          "description": "Stake Sui with Ledger validator and get 60% boosted rewards during 60 days",
+          "howItWorks": "How it works",
+          "stakeWithLedger": "Stake with Ledger"
+        },
+        "incentive": {
+          "title": "Sui x Ledger incentives",
+          "description": "Your stake is eligible to the staking incentive programs. Extra rewards will be distributed at the end of the staking period",
+          "learnMore": "Learn more"
+        }
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "boostAlert": "Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th"
+          },
+          "amount": {
+            "boostAlert": "Stake at least 100$ to be eligible for the APY boost"
+          }
+        }
+      }
+    },
     "unstake": {
       "disabledTooltip": "There aren't enough staked assets to unstake",
       "flow": {

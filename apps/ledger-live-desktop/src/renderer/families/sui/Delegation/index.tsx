@@ -10,7 +10,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
+import { P2P_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegateModalName } from "../modals";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
@@ -60,7 +60,7 @@ const Staking = ({ account }: { account: SuiAccount }) => {
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
     (address: string) => {
-      if (address === FIGMENT_SUI_VALIDATOR_ADDRESS) {
+      if (address === P2P_SUI_VALIDATOR_ADDRESS) {
         openURL(urls.ledgerValidator);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
@@ -126,10 +126,10 @@ const Staking = ({ account }: { account: SuiAccount }) => {
               />
             </Text>
             <Box mt={2}>
-              {urls.suiStakingRewards && (
+              {urls.sui.stakingRewards && (
                 <LinkWithExternalIcon
                   label={<Trans i18nKey="sui.stake.emptyState.info" />}
-                  onClick={() => openURL(urls.suiStakingRewards)}
+                  onClick={() => openURL(urls.sui.stakingRewards)}
                 />
               )}
             </Box>
