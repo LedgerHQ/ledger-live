@@ -52,7 +52,6 @@ export default function HorizontalList({
               </Flex>
             ) : null
           }
-          estimatedItemSize={70}
           data={data}
           showsHorizontalScrollIndicator={false}
           extraData={onPressItem}

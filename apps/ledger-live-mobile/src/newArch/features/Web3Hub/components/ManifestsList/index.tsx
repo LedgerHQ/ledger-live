@@ -91,7 +91,6 @@ export default function ManifestsList({
             </Box>
           )
         }
-        estimatedItemSize={128}
         data={data}
         extraData={disclaimer.onPressItem}
         onScroll={onScroll}
