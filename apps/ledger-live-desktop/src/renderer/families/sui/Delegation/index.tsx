@@ -126,10 +126,10 @@ const Staking = ({ account }: { account: SuiAccount }) => {
               />
             </Text>
             <Box mt={2}>
-              {urls.suiStakingRewards && (
+              {urls.sui.stakingRewards && (
                 <LinkWithExternalIcon
                   label={<Trans i18nKey="sui.stake.emptyState.info" />}
-                  onClick={() => openURL(urls.suiStakingRewards)}
+                  onClick={() => openURL(urls.sui.stakingRewards)}
                 />
               )}
             </Box>
