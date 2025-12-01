@@ -152,7 +152,8 @@
     "quote" : "Курс",
     "memoTag" : {
       "learnMore" : "Подробнее о тегах примечания/Memo"
-    }
+    },
+    "stake" : "Стейкать"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -173,6 +174,9 @@
       "UNDELEGATE" : "Отозвано",
       "APPROVE" : "Подтверждено",
       "PRE_APPROVAL" : "Предварительное одобрение",
+      "TRANSFER_PROPOSAL" : "Предложение о переводе",
+      "TRANSFER_REJECTED" : "Перевод отклонён",
+      "TRANSFER_WITHDRAWN" : "Перевод отозван",
       "VOTE" : "Проголосовано",
       "FREEZE" : "Заморожено",
       "UNFREEZE" : "Разморожено",
@@ -203,7 +207,8 @@
       "WITHDRAW_UNSTAKED" : "Вывод",
       "SENDING" : "Отправка",
       "BURN" : "Сожжено",
-      "ASSOCIATE_TOKEN" : "Привязка токена"
+      "ASSOCIATE_TOKEN" : "Привязка токена",
+      "CONTRACT_CALL" : "Вызов контракта"
     },
     "edit" : {
       "title" : "Ускорить или отменить",
@@ -618,9 +623,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "Протестировать"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "Протестировать"
   },
   "postOnboardingDebugger" : {
@@ -1395,7 +1397,7 @@
         "titleCompleted" : "Устройство {{deviceName}} готово"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Нажмите «Разрешить», чтобы начать Проверку подлинности Ledger"
+        "title" : "Одобрите Проверку подлинности на устройстве Ledger"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Разблокируйте устройство"
@@ -5168,7 +5170,8 @@
           "pinCode" : "ПИН-код",
           "recoveryPhrase" : "Фраза восстановления",
           "hideRecoveryPhrase" : "Обезопасьте фразу восстановления",
-          "pairNano" : "Подключите ваш Nano"
+          "pairNano" : "Подключите ваш Nano",
+          "secureYourCrypto" : "Обезопасьте свои криптоактивы"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5463,29 @@
             "help" : {
               "help" : "Требуется помощь?",
               "descr" : "Не знаете, что делать? Обратитесь за помощью для завершения данного этапа."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Обезопасьте свои криптоактивы",
+            "description" : "Переведите первые криптовалюты с биржи или кошелька на Ledger Wallet для максимальной защиты.",
+            "buttons" : {
+              "next" : "Хочу защититься",
+              "nextSecondary" : "Не сейчас",
+              "prev" : "Назад"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Всё в едином месте",
+            "description" : "Ваше устройство подписи Ledger готово. Если вы отправили криптовалюту, она будет получена спустя несколько минут.",
+            "buttons" : {
+              "next" : "Продолжить"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Всё в едином месте",
+            "description" : "Ваше устройство подписи Ledger готово — оно поможет обезопасить криптоактивы.",
+            "buttons" : {
+              "next" : "Продолжить"
             }
           }
         }
@@ -5826,6 +5852,62 @@
         "quickFix" : "Быстрое исправление: отправьте часть монет на свой счёт для их консолидации.",
         "warning" : "На вашем счёте слишком много небольших UTXO. Отправьте часть монет на свой счёт для их консолидации.",
         "consolidate" : "Консолидировать"
+      },
+      "pendingTransactions" : {
+        "title" : "Неподтверждённые транзакции: ({{count}})",
+        "incoming" : {
+          "title" : "Входящие предложения: ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Исходящие предложения: ({{count}})"
+        },
+        "pending" : "В ожидании",
+        "expired" : "Просрочено",
+        "status" : {
+          "label" : "Состояние",
+          "expired" : "Просрочено",
+          "incoming" : "Входящие",
+          "outgoing" : "Исходящие"
+        },
+        "from" : "Откуда",
+        "to" : "Куда",
+        "memo" : "Memo",
+        "noMemo" : "Не использовать Memo",
+        "date" : "Дата",
+        "expiresAt" : "Истекает",
+        "expiresIn" : "Истекает",
+        "amount" : "Количество",
+        "transaction" : "Транзакция",
+        "viewTransaction" : "Просмотреть транзакцию",
+        "action" : "Действие",
+        "accept" : "Принять",
+        "withdraw" : "Вывод средств",
+        "reject" : "Отклонить",
+        "deviceAppModal" : {
+          "title" : "{{action}} предложение",
+          "description" : "Пожалуйста, откройте приложение Canton на устройстве Ledger, чтобы {{action}} это предложение.",
+          "contractId" : "ID контракта",
+          "cancel" : "Отменить",
+          "openApp" : "Запустите приложение Canton",
+          "opening" : "Запуск...",
+          "noDevice" : "Устройство не подключено",
+          "appOpenError" : "Не удалось запустить приложение Canton. Повторите попытку.",
+          "processing" : "{{action}}: обработка...",
+          "success" : {
+            "accept" : {
+              "title" : "Предложение принято",
+              "description" : "Предложение о перемещении успешно принято."
+            },
+            "reject" : {
+              "title" : "Предложение отклонено",
+              "description" : "Предложение о перемещении успешно отклонено."
+            },
+            "withdraw" : {
+              "title" : "Предложение отозвано",
+              "description" : "Предложение о перемещении успешно отозвано."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6867,10 @@
       "title" : "Не удалось подтвердить привязку токена",
       "description" : "Мы не смогли подтвердить возможность отправки этого токена на счёт получателя. Адрес может быть неправильным, либо возникли неполадки с сетью или услугой."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Требуется проверка EVM-адреса",
+      "description" : "Перед подтверждением убедитесь, что EVM-адрес отображается на вашем устройстве Ledger."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Не удалось загрузить изображение из файла.",
       "description" : "Попробуйте ещё раз с помощью изображения."
@@ -7062,12 +7148,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Ошибка связи",
       "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Сумма уменьшена для соответствия ограничениям UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Сумма слишком велика для ограничений UTXO."
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
     "memoPlaceholder" : "Укажите тег примечания/Memo",
     "memoWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Комиссия",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Изм. назначение",
+      "earn" : "Приумножить"
+    },
+    "stakeBanner" : {
+      "title" : "Получайте вознаграждения с MINA",
+      "altTitle" : "Управление делегированием MINA",
+      "description" : "Делегируйте ваши MINA создателю блока, чтобы получать вознаграждения за этот процесс. Вознаграждения распределяются в зависимости от суммы монет в делегировании.",
+      "altDescription" : "Измените настройки делегирования или отзовите токены MINA. ",
+      "changeCTA" : "Сменить"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Делегировано кому:",
+      "stakedBalance" : "Стейкается",
+      "producerAddress" : "Адрес создателя",
+      "delegatedToTooltip" : "Название создателя блока с вашим делегированием",
+      "stakedBalanceTooltip" : "Общая сумма MINA в стейкинге с этим валидатором",
+      "producerAddressTooltip" : "Публичный адрес создателя блока с вашим делегированием"
+    },
+    "delegators" : "Делегаторы",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Выберите валидатора",
+        "connectDevice" : "Подключение устройства",
+        "confirmation" : "Подтверждение"
+      },
+      "title" : "Стейкинг MINA",
+      "help" : "Выберите валидатора из списка ниже, чтобы делегировать ваши токены MINA.",
+      "success" : {
+        "title" : "Транзакция успешно транслирована",
+        "description" : "Ваш запрос на изменение делегирования успешно транслирован."
+      },
+      "error" : {
+        "title" : "При трансляции транзакции произошёл сбой"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7118,6 +7250,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Подробнее..."
+        },
+        "evmVerificationRequired" : {
+          "text" : "Вы отправляете ERC20-токен. Для этого вида транзакции ваше устройство Ledger отобразит EVM-адрес отправителя, а не его ID счёта.\nСледуйте <0>этому руководству</0>, чтобы подтвердить правильность адреса перед продолжением."
         }
       }
     },
@@ -7147,7 +7282,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Выбор изображения",
-        "description" : "Выберите любую картинку или фото.\nУкрасьте {{productName}}.\nСделайте его личным.",
+        "description" : "Выберите картинку или фото.\nУкрасьте {{productName}}.\nСделайте его личным.",
         "upload" : "Выбрать из галереи",
         "remove" : "Удалить изображение"
       },
@@ -7569,5 +7704,15 @@
     "restart" : "Перезагрузить",
     "downloadOnLedger" : "Загрузить с Ledger.com",
     "downloadProgress" : "Скачиваем... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Доступно",
+      "availableBalanceTooltip" : "Баланс, доступный для отправки",
+      "transparentBalance" : "Прозрачный баланс",
+      "transparentBalanceTooltip" : "Баланс, видимый для всех",
+      "privateBalance" : "Конфиденциальный баланс",
+      "privateBalanceTooltip" : "Баланс, скрытый от всех"
+    }
   }
 }
