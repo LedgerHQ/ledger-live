@@ -6,6 +6,7 @@ import { Flex, Button } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
+import { openAssetAndAccountDialog } from "LLD/features/ModularDialog";
 import { FeatureFlags } from "./FeatureFlags";
 import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
@@ -91,6 +92,16 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
           <Flex columnGap={"12px"}>
             <Button variant="color" onClick={() => openDrawerFunctions[location.value]()}>
               Open Drawer
+            </Button>
+            <Button
+              variant="color"
+              onClick={() =>
+                openAssetAndAccountDialog({
+                  drawerConfiguration,
+                })
+              }
+            >
+              Open Modal
             </Button>
             <Button variant="color" onClick={debugDuplicates}>
               Debug Duplicates

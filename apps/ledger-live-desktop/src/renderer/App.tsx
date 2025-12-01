@@ -19,6 +19,7 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
+import DialogProvider from "~/renderer/dialogs/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
@@ -87,12 +88,14 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                             <Router>
                               <PostOnboardingProviderWrapped>
                                 <PlatformAppProviderWrapper>
-                                  <DrawerProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </DrawerProvider>
+                                  <DialogProvider>
+                                    <DrawerProvider>
+                                      <QueryClientProvider client={queryClient}>
+                                        <Default />
+                                        <ReactQueryDevtoolsProvider />
+                                      </QueryClientProvider>
+                                    </DrawerProvider>
+                                  </DialogProvider>
                                 </PlatformAppProviderWrapper>
                               </PostOnboardingProviderWrapped>
                             </Router>

@@ -35,6 +35,7 @@ import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
+import Dialog from "~/renderer/dialogs/Dialog";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
@@ -319,6 +320,7 @@ export default function Default() {
                             <Onboarding />
                           </Suspense>
                           <Drawer />
+                          <Dialog />
                         </>
                       )}
                     />
@@ -331,6 +333,7 @@ export default function Default() {
                             <PostOnboardingScreen />
                           </Suspense>
                           <Drawer />
+                          <Dialog />
                         </>
                       )}
                     />
@@ -421,6 +424,7 @@ export default function Default() {
                                 </Switch>
                               </Page>
                               <Drawer />
+                              <Dialog />
                               <ToastOverlay />
                             </Box>
 
