@@ -152,7 +152,8 @@
     "quote" : "عرض أسعار",
     "memoTag" : {
       "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
-    }
+    },
+    "stake" : "تكديس"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -173,6 +174,9 @@
       "UNDELEGATE" : "غير مفوّض",
       "APPROVE" : "مُعتمد",
       "PRE_APPROVAL" : "موافقة مسبقة",
+      "TRANSFER_PROPOSAL" : "عرض التحويل",
+      "TRANSFER_REJECTED" : "تم رفض التحويل",
+      "TRANSFER_WITHDRAWN" : "تم سحب التحويل",
       "VOTE" : "تم التصويت",
       "FREEZE" : "مُجمد",
       "UNFREEZE" : "تمت إزالة التجميد",
@@ -203,7 +207,8 @@
       "WITHDRAW_UNSTAKED" : "مسحوب",
       "SENDING" : "إرسال",
       "BURN" : "محروق",
-      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن",
+      "CONTRACT_CALL" : "استدعاء عقد"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -618,9 +623,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "اختبر"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "اختبر"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5170,8 @@
           "pinCode" : "كود PIN",
           "recoveryPhrase" : "عبارة الاسترداد",
           "hideRecoveryPhrase" : "إخفاء عبارة الاسترداد",
-          "pairNano" : "توصيل nano"
+          "pairNano" : "توصيل nano",
+          "secureYourCrypto" : "تأمين أصولك المشفرة"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5463,29 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "تأمين أصولك المشفرة",
+            "description" : "قم بنقل أصولك المشفرة الأولى من منصة تداول أو محفظة إلى Ledger Wallet خاصتك لأقصى درجات الأمان.",
+            "buttons" : {
+              "next" : "تأمين أصولي المشفرة",
+              "nextSecondary" : "ربّما لاحقاً",
+              "prev" : "الخطوة السابقة"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "كل شيء في مكانه",
+            "description" : "Your Ledger device is ready. If you have sent crypto to your Ledger Wallet, you'll receive it in a few minutes.",
+            "buttons" : {
+              "next" : "متابعة"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "كل شيء في مكانه",
+            "description" : "جهازك Ledger مُستعد — يمكنك الآن تأمين أصولك به.",
+            "buttons" : {
+              "next" : "متابعة"
             }
           }
         }
@@ -5826,6 +5852,62 @@
         "quickFix" : "حل سريع: أرسل بعض الأموال لنفسك لتجميعها.",
         "warning" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة. أرسل بعض الأموال لنفسك لتجميعها.",
         "consolidate" : "تجميع"
+      },
+      "pendingTransactions" : {
+        "title" : "المعاملات المُعلَّقة ({{count}})",
+        "incoming" : {
+          "title" : "العروض الواردة ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "العروض الصادرة ({{count}})"
+        },
+        "pending" : "مُعلقّ",
+        "expired" : "منتهي الصلاحية",
+        "status" : {
+          "label" : "الحالة",
+          "expired" : "منتهي الصلاحية",
+          "incoming" : "وارد",
+          "outgoing" : "صادر"
+        },
+        "from" : "من",
+        "to" : "إلى",
+        "memo" : "ملاحظة (تسمية الوجهة)",
+        "noMemo" : "لا توجد ملاحظة",
+        "date" : "التاريخ",
+        "expiresAt" : "الصلاحية تنتهي في",
+        "expiresIn" : "الصلاحية تنتهي خلال",
+        "amount" : "المبلغ",
+        "transaction" : "المعاملة",
+        "viewTransaction" : "عرض المعاملة",
+        "action" : "الإجراء",
+        "accept" : "قبول",
+        "withdraw" : "سحب",
+        "reject" : "رفض",
+        "deviceAppModal" : {
+          "title" : "{{action}} العرض",
+          "description" : "يُرجى فتح تطبيق Canton على جهازك Ledger من أجل {{action}} هذا العرض.",
+          "contractId" : "مُعرّف العقد",
+          "cancel" : "إلغاء",
+          "openApp" : "افتح تطبيق Canton",
+          "opening" : "جارٍ الفتح...",
+          "noDevice" : "ليس هناك جهاز متصل",
+          "appOpenError" : "فشل فتح تطبيق Canton. يُرجى إعادة المحاولة.",
+          "processing" : "جارٍ معالجة {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "تم قبول العرض",
+              "description" : "عرض التحويل تم قبوله بنجاح."
+            },
+            "reject" : {
+              "title" : "تم رفض العرض",
+              "description" : "عرض التحويل تم رفضه بنجاح."
+            },
+            "withdraw" : {
+              "title" : "تم سحب العرض",
+              "description" : "عرض التحويل تم سحبه بنجاح."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6867,10 @@
       "title" : "تعذّر التحقق من ربط رمز التوكن",
       "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "التحقق من عنوان EVM مطلوب",
+      "description" : "يُرجى التحقق من عنوان EVM الظاهر على جهازك Ledger قبل التأكيد."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "فشل تحميل الصورة من الملف.",
       "description" : "يُرجى المحاولة مجدداً بصورة."
@@ -7062,12 +7148,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "خطأ في الاتصال",
       "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "cryptoOrg" : {
     "memo" : "ملاحظة (تسمية الوجهة)",
     "memoPlaceholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
     "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "رسوم",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "تغيير التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. ",
+      "changeCTA" : "تغيير"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    }
   },
   "hedera" : {
     "name" : "hedera",
@@ -7118,6 +7250,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "تعرّف على المزيد"
+        },
+        "evmVerificationRequired" : {
+          "text" : "أنت ترسل رمز ERC-20. لهذا النوع من المعاملات، جهازك Ledger سيعرض عنوان EVM الخاص بالمُرسِل، وليس معرّف حسابه.\nيُرجى اتباع <0>هذا الدليل</0> للتحقق من أن العنوان صحيح قبل التأكيد."
         }
       }
     },
@@ -7569,5 +7704,15 @@
     "restart" : "إعادة التشغيل",
     "downloadOnLedger" : "تنزيل من Ledger.com",
     "downloadProgress" : "جارٍ التنزيل... %{{ progress }}"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "الرصيد المتاح",
+      "availableBalanceTooltip" : "الرصيد القابل للتحويل",
+      "transparentBalance" : "الرصيد الشفاف",
+      "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
+      "privateBalance" : "الرصيد الخاص",
+      "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+    }
   }
 }
