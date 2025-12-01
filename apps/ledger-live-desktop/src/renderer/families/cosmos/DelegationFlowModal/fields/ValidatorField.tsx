@@ -5,7 +5,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -34,13 +34,23 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
+  //Check if the account is a Persistence or Quicksilver account
+  const isPerOrQuickAccount =
+    account.type === "Account" &&
+    (account.currency.id === "quicksilver" || account.currency.id === "persistence");
+
+  useEffect(() => {
+    if (isPerOrQuickAccount) {
+      setShowAll(true);
+    }
+  }, [isPerOrQuickAccount]);
 
   const chosenValidator = useMemo(() => {
     if (validators.length === 0) return [];
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
 
-  if (chosenVoteAccAddr === "" && validators.length > 0) {
+  if (chosenVoteAccAddr === "" && validators.length > 0 && !isPerOrQuickAccount) {
     onChangeValidator({ address: validators[0].validatorAddress });
   }
 
