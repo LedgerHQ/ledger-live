@@ -152,7 +152,8 @@
     "quote" : "Cotización",
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
-    }
+    },
+    "stake" : "Participación"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -173,6 +174,9 @@
       "UNDELEGATE" : "Desdelegado",
       "APPROVE" : "Aprobado",
       "PRE_APPROVAL" : "Preaprobación",
+      "TRANSFER_PROPOSAL" : "Propuesta de transferencia",
+      "TRANSFER_REJECTED" : "Transferencia rechazada",
+      "TRANSFER_WITHDRAWN" : "Transferencia retirada",
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
@@ -203,7 +207,8 @@
       "WITHDRAW_UNSTAKED" : "Retirado",
       "SENDING" : "Enviando",
       "BURN" : "Quemado",
-      "ASSOCIATE_TOKEN" : "Asociar token"
+      "ASSOCIATE_TOKEN" : "Asociar token",
+      "CONTRACT_CALL" : "Llamada a contrato"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -618,9 +623,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "Prueba"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "Prueba"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5170,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Frase de Recuperación",
           "hideRecoveryPhrase" : "Oculta tu Frase de Recuperación",
-          "pairNano" : "Conectar Nano"
+          "pairNano" : "Conectar Nano",
+          "secureYourCrypto" : "Protege tus cripto"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5463,29 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Protege tus cripto",
+            "description" : "Transfiere tus primeras cripto desde un exchange o wallet a tu Ledger Wallet para disfrutar de la máxima seguridad.",
+            "buttons" : {
+              "next" : "Proteger mis cripto",
+              "nextSecondary" : "Quizás más tarde",
+              "prev" : "Paso anterior"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Todo listo",
+            "description" : "Your Ledger device is ready. If you have sent crypto to your Ledger Wallet, you'll receive it in a few minutes.",
+            "buttons" : {
+              "next" : "Continuar"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Todo listo",
+            "description" : "Tu dispositivo Ledger está preparado, ya puedes proteger tus activos con él.",
+            "buttons" : {
+              "next" : "Continuar"
             }
           }
         }
@@ -5826,6 +5852,62 @@
         "quickFix" : "Solución rápida: Envíate fondos para consolidarlas.",
         "warning" : "Tu cuenta tiene demasiadas UTXOs pequeñas. Envíate fondos para consolidarlas.",
         "consolidate" : "Consolidar"
+      },
+      "pendingTransactions" : {
+        "title" : "Transacciones pendientes ({{count}})",
+        "incoming" : {
+          "title" : "Ofertas entrantes ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Ofertas salientes ({{count}})"
+        },
+        "pending" : "Pendiente",
+        "expired" : "Caducado",
+        "status" : {
+          "label" : "Estado",
+          "expired" : "Caducado",
+          "incoming" : "Entrantes",
+          "outgoing" : "Salientes"
+        },
+        "from" : "De",
+        "to" : "A",
+        "memo" : "Memo",
+        "noMemo" : "Sin Memo",
+        "date" : "Fecha",
+        "expiresAt" : "Caduca a las",
+        "expiresIn" : "Caduca en",
+        "amount" : "Importe",
+        "transaction" : "Transacción",
+        "viewTransaction" : "Ver transacción",
+        "action" : "Acción",
+        "accept" : "Aceptar",
+        "withdraw" : "Retirar",
+        "reject" : "Rechazar",
+        "deviceAppModal" : {
+          "title" : "{{action}} oferta",
+          "description" : "Abre la app Canton en tu dispositivo Ledger para {{action}} esta oferta.",
+          "contractId" : "ID del contrato",
+          "cancel" : "Cancelar",
+          "openApp" : "Abrir app Canton",
+          "opening" : "Abriendo...",
+          "noDevice" : "No hay ningún dispositivo conectado",
+          "appOpenError" : "No se pudo abrir la app Canton. Inténtalo de nuevo.",
+          "processing" : "Procesando {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Oferta aceptada",
+              "description" : "La oferta de transferencia se ha aceptado correctamente."
+            },
+            "reject" : {
+              "title" : "Oferta rechazada",
+              "description" : "La oferta de transferencia se ha rechazado correctamente."
+            },
+            "withdraw" : {
+              "title" : "Oferta retirada",
+              "description" : "La oferta de transferencia se ha retirado correctamente."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6867,10 @@
       "title" : "No se puede verificar la asociación del token",
       "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Verificación de dirección EVM necesaria",
+      "description" : "Verifica la dirección EVM visible en tu dispositivo Ledger antes de confirmar."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Error al cargar la imagen desde el archivo.",
       "description" : "Vuelve a intentarlo con una imagen."
@@ -7062,12 +7148,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
     "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Tarifa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Cambiar delegación",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. ",
+      "changeCTA" : "Cambiar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7118,6 +7250,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Más información"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vas a enviar un token ERC20. Para este tipo de transacción, en tu dispositivo Ledger se muestra la dirección EVM del remitente, no el ID de su cuenta.\nSigue <0>esta guía</0> para verificar que la dirección es correcta antes de confirmar."
         }
       }
     },
@@ -7569,5 +7704,15 @@
     "restart" : "Reiniciar",
     "downloadOnLedger" : "Descargar desde Ledger.com",
     "downloadProgress" : "Descargando... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Saldo disponible",
+      "availableBalanceTooltip" : "Saldo que puede transferirse",
+      "transparentBalance" : "Saldo transparente",
+      "transparentBalanceTooltip" : "Saldo visible para el público",
+      "privateBalance" : "Saldo privado",
+      "privateBalanceTooltip" : "Saldo que está oculto al público"
+    }
   }
 }
