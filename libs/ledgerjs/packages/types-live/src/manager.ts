@@ -339,6 +339,10 @@ export type SocketEvent =
       status: number;
     }
   | {
+      type: "device-id";
+      deviceId: string;
+    }
+  | {
       type: "opened";
     }
   | {

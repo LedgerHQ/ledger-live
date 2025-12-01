@@ -47,6 +47,10 @@ export type ListAppsEvent =
       type: "device-permission-granted";
     }
   | {
+      type: "device-id";
+      deviceId: string;
+    }
+  | {
       type: "result";
       result: ListAppsResult;
     }

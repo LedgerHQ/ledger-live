@@ -112,6 +112,7 @@ type States = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: string | null | undefined;
   latestFirmware: unknown;
   onRepairModal: (open: boolean) => void;
   requestOpenApp: string;
@@ -214,6 +215,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deviceId,
     latestFirmware,
     repairModalOpened,
     requestOpenApp,
