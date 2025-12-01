@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.99.0-next.1
+
+### Minor Changes
+
+- [#13064](https://github.com/LedgerHQ/ledger-live/pull/13064) [`9ada44e`](https://github.com/LedgerHQ/ledger-live/commit/9ada44e84f9548aeecb05acfca8873a61f18d627) Thanks [@ysitbon](https://github.com/ysitbon)! - Revamp Assets/Accounts tabs animation to fix flaky rendering
+
 ## 3.99.0-next.0
 
 ### Minor Changes
