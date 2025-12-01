@@ -270,9 +270,7 @@
       "detox@20.46.0": "patches/detox@20.46.0.patch",
       "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
-      "@taquito/http-utils": "patches/@taquito__http-utils.patch",
-      "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
-      "react-native@0.77.3": "patches/react-native@0.77.3.patch"
+      "@taquito/http-utils": "patches/@taquito__http-utils.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

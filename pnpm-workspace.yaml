@@ -26,18 +26,18 @@ catalog:
   "@reduxjs/toolkit": 2.8.2
   bs58: ^4.0.1
   "@types/bs58": ^4.0.1
-  react-native: 0.77.3
-  "@react-native/assets-registry": 0.77.3
-  "@react-native/babel-plugin-codegen": 0.77.3
-  "@react-native/babel-preset": 0.77.3
-  "@react-native/codegen": 0.77.3
-  "@react-native/dev-middleware": 0.77.3
-  "@react-native/gradle-plugin": 0.77.3
-  "@react-native/metro-config": 0.77.3
+  react-native: 0.81.5
+  "@react-native/assets-registry": 0.81.5
+  "@react-native/babel-plugin-codegen": 0.81.5
+  "@react-native/babel-preset": 0.81.5
+  "@react-native/codegen": 0.81.5
+  "@react-native/dev-middleware": 0.81.5
+  "@react-native/gradle-plugin": 0.81.5
+  "@react-native/metro-config": 0.81.5
   react-native-config: 1.5.3
-  react-native-reanimated: 3.16.7
-  react-native-safe-area-context: 5.6.1
-  react-native-svg: 15.12.1
+  react-native-reanimated: 4.1.5
+  react-native-safe-area-context: 5.4.0
+  react-native-svg: 15.15.0
   "@ledgerhq/context-module": 1.10.0
   "@ledgerhq/device-management-kit": 0.11.1
   "@ledgerhq/device-signer-kit-ethereum": 1.9.2
