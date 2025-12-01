@@ -152,7 +152,8 @@
     "quote" : "报价",
     "memoTag" : {
       "learnMore" : "详细了解“标签/备忘标签”"
-    }
+    },
+    "stake" : "质押"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -173,6 +174,9 @@
       "UNDELEGATE" : "已解除委托",
       "APPROVE" : "已批准",
       "PRE_APPROVAL" : "预先批准",
+      "TRANSFER_PROPOSAL" : "转账请求",
+      "TRANSFER_REJECTED" : "转账已拒绝",
+      "TRANSFER_WITHDRAWN" : "转账已撤回",
       "VOTE" : "已投票",
       "FREEZE" : "已冻结",
       "UNFREEZE" : "已解冻",
@@ -203,7 +207,8 @@
       "WITHDRAW_UNSTAKED" : "已提取",
       "SENDING" : "发送",
       "BURN" : "已销毁",
-      "ASSOCIATE_TOKEN" : "关联代币"
+      "ASSOCIATE_TOKEN" : "关联代币",
+      "CONTRACT_CALL" : "合约调用"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -618,9 +623,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "测试"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "测试"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5170,8 @@
           "pinCode" : "识别码",
           "recoveryPhrase" : "恢复短语",
           "hideRecoveryPhrase" : "隐藏恢复短语",
-          "pairNano" : "连接 Nano"
+          "pairNano" : "连接 Nano",
+          "secureYourCrypto" : "保护您的加密货币"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5463,29 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "保护您的加密货币",
+            "description" : "开始将您的加密货币从交易所或钱包转到 Ledger Wallet，以确保最大程度的安全性。",
+            "buttons" : {
+              "next" : "保护我的加密货币",
+              "nextSecondary" : "以后再说",
+              "prev" : "上一步"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "一切准备就绪",
+            "description" : "您的 Ledger 设备已经就绪。如果您已发送加密货币，几分钟内就会收到。",
+            "buttons" : {
+              "next" : "继续"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "一切准备就绪",
+            "description" : "您的 Ledger 设备已经就绪，现可使用它来保护您的资产。",
+            "buttons" : {
+              "next" : "继续"
             }
           }
         }
@@ -5826,6 +5852,62 @@
         "quickFix" : "快速解决方案：向自己发送一些资金进行合并。",
         "warning" : "您的账户中有过多小额 UTXO。向自己发送一些资金进行合并。",
         "consolidate" : "合并"
+      },
+      "pendingTransactions" : {
+        "title" : "待处理交易 ({{count}})",
+        "incoming" : {
+          "title" : "收到的报价 ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "发出的报价 ({{count}})"
+        },
+        "pending" : "待处理",
+        "expired" : "已逾期",
+        "status" : {
+          "label" : "状态",
+          "expired" : "已逾期",
+          "incoming" : "收到",
+          "outgoing" : "发出"
+        },
+        "from" : "从",
+        "to" : "到",
+        "memo" : "备注",
+        "noMemo" : "无备注",
+        "date" : "日期",
+        "expiresAt" : "到期时间",
+        "expiresIn" : "剩余时间",
+        "amount" : "数额",
+        "transaction" : "交易",
+        "viewTransaction" : "查看交易",
+        "action" : "操作",
+        "accept" : "接受",
+        "withdraw" : "提取",
+        "reject" : "拒绝",
+        "deviceAppModal" : {
+          "title" : "{{action}}报价",
+          "description" : "请在您的 Ledger 设备上打开 Canton 应用程序以{{action}}此报价。",
+          "contractId" : "合约 ID",
+          "cancel" : "取消",
+          "openApp" : "打开 Canton 应用程序",
+          "opening" : "正在打开……",
+          "noDevice" : "未连接设备",
+          "appOpenError" : "无法打开 Canton 应用程序。请重试。",
+          "processing" : "正在处理 {{action}}……",
+          "success" : {
+            "accept" : {
+              "title" : "报价已接受",
+              "description" : "转账报价已成功接受。"
+            },
+            "reject" : {
+              "title" : "报价已拒绝",
+              "description" : "转账报价已成功拒绝。"
+            },
+            "withdraw" : {
+              "title" : "报价已撤回",
+              "description" : "转账报价已成功撤回。"
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6867,10 @@
       "title" : "无法验证代币关联",
       "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "需要核实以太坊虚拟机 (EVM) 地址",
+      "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "从文件加载图片失败。",
       "description" : "请使用图片再试一次。"
@@ -7062,12 +7148,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "数额已减少至符合 UTXO 限制。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "数额过大，超出 UTXO 限制。"
     }
   },
   "cryptoOrg" : {
     "memo" : "Memo",
     "memoPlaceholder" : "输入标签/备忘标签",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "费用",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "更改委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 ",
+      "changeCTA" : "更改"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    }
   },
   "hedera" : {
     "name" : "hedera",
@@ -7118,6 +7250,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "了解更多"
+        },
+        "evmVerificationRequired" : {
+          "text" : "您正在发送 ERC-20 代币。对于此类交易，您的 Ledger 设备将显示发送者的 EVM 地址，而非其账户 ID。\n请按照<0>此指南</0>，在确认前核实地址是否正确。"
         }
       }
     },
@@ -7569,5 +7704,15 @@
     "restart" : "重新启动",
     "downloadOnLedger" : "前往 Ledger.com 下载",
     "downloadProgress" : "正在下载... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "可用余额",
+      "availableBalanceTooltip" : "可转账余额",
+      "transparentBalance" : "公开余额",
+      "transparentBalanceTooltip" : "公开可见的余额",
+      "privateBalance" : "私密余额",
+      "privateBalanceTooltip" : "对外隐藏的余额"
+    }
   }
 }
