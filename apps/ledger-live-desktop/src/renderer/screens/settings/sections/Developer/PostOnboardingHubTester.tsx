@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { Flex } from "@ledgerhq/react-ui";
 
 const PostOnboardingHubTester = () => {
@@ -50,7 +50,8 @@ const PostOnboardingHubTester = () => {
                     fallbackIfNoAction: () => history.push("/"),
                   })
                 }
-                primary
+                appearance="accent"
+                size="sm"
               >
                 {t("postOnboardingDebugger.buttonTitle")} (mock)
               </Button>
@@ -62,7 +63,8 @@ const PostOnboardingHubTester = () => {
                     fallbackIfNoAction: () => history.push("/"),
                   })
                 }
-                primary
+                appearance="accent"
+                size="sm"
               >
                 {t("postOnboardingDebugger.buttonTitle")}
               </Button>

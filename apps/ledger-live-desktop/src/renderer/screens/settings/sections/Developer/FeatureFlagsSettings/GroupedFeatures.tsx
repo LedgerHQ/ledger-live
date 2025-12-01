@@ -3,7 +3,8 @@ import {
   GroupedFeature,
 } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
-import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";
+import { Switch } from "@ledgerhq/ldls-ui-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";
@@ -83,7 +84,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
             </Flex>
           </Flex>
         </Row>
-        <Switch name="group-feature-flags" checked={allEnabled} onChange={handleSwitchChange} />
+        <Switch name="group-feature-flags" selected={allEnabled} onChange={handleSwitchChange} />
       </Flex>
       {focused ? (
         <Flex pl={6} flexDirection="column">

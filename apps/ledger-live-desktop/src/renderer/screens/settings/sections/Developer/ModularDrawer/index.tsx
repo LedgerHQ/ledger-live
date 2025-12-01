@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import ButtonV2 from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Flex, Button } from "@ledgerhq/react-ui/index";
+import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
@@ -17,6 +16,7 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
+import { Button } from "@ledgerhq/ldls-ui-react";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
@@ -89,10 +89,14 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             setNetworksRightElement={setNetworksRightElement}
           />
           <Flex columnGap={"12px"}>
-            <Button variant="color" onClick={() => openDrawerFunctions[location.value]()}>
+            <Button
+              appearance="base"
+              size="sm"
+              onClick={() => openDrawerFunctions[location.value]()}
+            >
               Open Drawer
             </Button>
-            <Button variant="color" onClick={debugDuplicates}>
+            <Button appearance="accent" size="sm" onClick={debugDuplicates}>
               Debug Duplicates
             </Button>
           </Flex>
@@ -124,9 +128,9 @@ const ModularDrawerDevTool = () => {
       childrenContainerStyle={{ alignSelf: "flex-start" }}
       desc={<ModularDrawerDevToolContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={toggleContentVisibility}>
+      <Button appearance="accent" size="sm" onClick={toggleContentVisibility}>
         {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
-      </ButtonV2>
+      </Button>
     </Row>
   );
 };

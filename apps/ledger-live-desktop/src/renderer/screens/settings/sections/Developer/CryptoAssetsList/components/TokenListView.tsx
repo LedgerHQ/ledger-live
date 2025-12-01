@@ -2,13 +2,13 @@ import React from "react";
 import {
   Flex,
   Text,
-  Button,
   SelectInput,
   InfiniteLoader,
   Checkbox,
   Icons,
   Input,
 } from "@ledgerhq/react-ui/index";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { useTranslation } from "react-i18next";
 import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
 import { FAMILY_OPTIONS, PAGE_SIZE_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
@@ -81,7 +81,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
             {t("settings.developer.cryptoAssetsList.drawer.title")}
           </Text>
           <Flex columnGap={2}>
-            <Button variant="shade" size="small" onClick={handleReset}>
+            <Button size="sm" appearance="transparent" onClick={handleReset}>
               {t("settings.developer.cryptoAssetsList.drawer.reset")}
             </Button>
           </Flex>
@@ -208,10 +208,10 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                     {selectedOutputFields.length}/{TOKEN_OUTPUT_FIELDS.length})
                   </Text>
                   <Flex columnGap={2}>
-                    <Button variant="shade" size="small" onClick={selectAllOutputFields}>
+                    <Button size="sm" appearance="transparent" onClick={selectAllOutputFields}>
                       {t("settings.developer.cryptoAssetsList.drawer.selectAll")}
                     </Button>
-                    <Button variant="shade" size="small" onClick={deselectAllOutputFields}>
+                    <Button size="sm" appearance="transparent" onClick={deselectAllOutputFields}>
                       {t("settings.developer.cryptoAssetsList.drawer.selectNone")}
                     </Button>
                   </Flex>
@@ -239,14 +239,8 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
           </ParameterGroup>
         </CollapsibleContent>
 
-        <Flex columnGap={3} mt={3}>
-          <Button
-            variant="main"
-            size="medium"
-            onClick={handleRefresh}
-            disabled={isLoading}
-            flex={1}
-          >
+        <Flex columnGap={3} mt={3} justifyContent="flex-end">
+          <Button size="sm" appearance="base" onClick={handleRefresh} disabled={isLoading}>
             {isLoading
               ? t("settings.developer.cryptoAssetsList.drawer.loading")
               : t("settings.developer.cryptoAssetsList.drawer.refresh")}
@@ -276,8 +270,8 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                   {selectedFamily.charAt(0).toUpperCase() + selectedFamily.slice(1)}
                 </Text>
                 <Button
-                  variant="shade"
-                  size="small"
+                  appearance="transparent"
+                  size="sm"
                   onClick={collapseAllTokens}
                   disabled={expandedTokenIds.size === 0}
                 >
@@ -357,8 +351,8 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                   </TokenNameContainer>
                   <Flex alignItems="center" columnGap={2} flexShrink={0}>
                     <Button
-                      variant="shade"
-                      size="small"
+                      size="sm"
+                      appearance="transparent"
                       onClick={e => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(token.id);
