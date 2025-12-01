@@ -98,6 +98,8 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
               onClick={() =>
                 openAssetAndAccountDialog({
                   drawerConfiguration,
+                  currencies: undefined, // Loads all available currencies
+                  areCurrenciesFiltered: false,
                 })
               }
             >

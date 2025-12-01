@@ -1,4 +1,7 @@
-import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import {
+  openAssetAndAccountDialog,
+  openAssetAndAccountDialogPromise,
+} from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import {
   useModularDrawerVisibility,
@@ -7,4 +10,9 @@ import {
 
 export type { ModularDrawerVisibleParams };
 
-export { useModularDrawerVisibility, openAssetAndAccountDialog, ModularDrawerLocation };
+export {
+  useModularDrawerVisibility,
+  openAssetAndAccountDialog,
+  openAssetAndAccountDialogPromise,
+  ModularDrawerLocation,
+};

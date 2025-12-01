@@ -50,16 +50,16 @@ function openAssetAndAccountDialog(params: DrawerParams): void {
   return setDialog(
     ModularDialogFlow,
     {
-      currencies: currencies ?? [],
+      currencies: currencies || [],
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },
       drawerConfiguration: modularDrawerConfiguration,
       useCase,
-      areCurrenciesFiltered,
+      areCurrenciesFiltered: areCurrenciesFiltered ?? false,
+      onClose: handleCancel,
     },
     {
-      onClose: handleCancel,
       contentProps: {
         style: {
           padding: 0,
@@ -71,11 +71,11 @@ function openAssetAndAccountDialog(params: DrawerParams): void {
   );
 }
 
-function openAssetAndAccountDrawerPromise(
+function openAssetAndAccountDialogPromise(
   drawerParams: Omit<DrawerParams, "onSuccess" | "onCancel">,
 ) {
   return new Promise<Result>((resolve, reject) =>
-    openAssetAndAccountDrawer({
+    openAssetAndAccountDialog({
       ...drawerParams,
       onSuccess: (account, parentAccount) => resolve({ account, parentAccount }),
       onCancel: () => reject(new Error("Canceled by user")),
@@ -132,13 +132,15 @@ const DialogContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 16px;
+  height: 100%;
 `;
 
 const FlowArea = styled.div`
   position: relative;
   padding: 48px 8px 16px;
-  max-height: calc(90vh - 140px);
+  height: calc(90vh - 140px);
+  min-height: 400px;
   overflow-y: auto;
 `;
 
-export { openAssetAndAccountDialog };
+export { openAssetAndAccountDialog, openAssetAndAccountDialogPromise };
