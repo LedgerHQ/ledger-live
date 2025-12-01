@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSection as Section } from "./SettingsSection";
 import SectionDisplay from "./sections/General";
 import SectionExperimental from "./sections/Experimental";
@@ -68,6 +69,7 @@ const Settings = () => {
     [items, accountsCount],
   );
   const defaultItem = items[0];
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const handleChangeTab = useCallback(
     (index: number) => {
       const item = items[index];
@@ -109,25 +111,52 @@ const Settings = () => {
       >
         {t("settings.title")}
       </Box>
-      <Section>
-        <TabBar
-          onIndexChange={handleChangeTab}
-          defaultIndex={activeTabIndex}
-          index={activeTabIndex}
-          tabs={items.map(i => i.label)}
-          ids={items.map(i => `settings-${i.key}`)}
-          separator
-          withId
-          fontSize={14}
-          height={46}
-        />
-        <Switch>
-          {processedItems.map(i => (
-            <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
-          ))}
-          <Route component={defaultItem.value} />
-        </Switch>
-      </Section>
+      {ledgerSyncOptimisationFlag?.enabled ? (
+        <>
+          <Box mb={5} bg="opacityDefault.c05" px={3} borderRadius={8}>
+            <TabBar
+              onIndexChange={handleChangeTab}
+              defaultIndex={activeTabIndex}
+              index={activeTabIndex}
+              tabs={items.map(i => i.label)}
+              ids={items.map(i => `settings-${i.key}`)}
+              withId
+              fontSize={14}
+              height={46}
+            />
+          </Box>
+          <Section style={{ borderTop: "none", borderRadius: "8px" }}>
+            <Box pt={2} pb={2}>
+              <Switch>
+                {processedItems.map(i => (
+                  <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
+                ))}
+                <Route component={defaultItem.value} />
+              </Switch>
+            </Box>
+          </Section>
+        </>
+      ) : (
+        <Section>
+          <TabBar
+            onIndexChange={handleChangeTab}
+            defaultIndex={activeTabIndex}
+            index={activeTabIndex}
+            tabs={items.map(i => i.label)}
+            ids={items.map(i => `settings-${i.key}`)}
+            separator
+            withId
+            fontSize={14}
+            height={46}
+          />
+          <Switch>
+            {processedItems.map(i => (
+              <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
+            ))}
+            <Route component={defaultItem.value} />
+          </Switch>
+        </Section>
+      )}
     </Box>
   );
 };

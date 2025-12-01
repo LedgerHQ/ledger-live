@@ -18,6 +18,7 @@ export default function useLedgerSyncEntryPointViewModel({
     shouldDisplayEntryPoint,
     onClickEntryPoint: entryPointData.onClick,
     entryPointComponent: entryPointData.component,
+    entryPointVariant: entryPointData.variant,
     page: entryPointData.page,
     openDrawer,
     closeDrawer,

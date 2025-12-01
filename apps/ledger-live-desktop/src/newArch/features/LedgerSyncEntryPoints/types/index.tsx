@@ -14,6 +14,13 @@ export type EntryPointsData = Record<
     enabled: boolean;
     page: AnalyticsPage;
     onClick: () => void;
-    component: ({ onPress }: { onPress: () => void }) => JSX.Element;
+    variant?: "illustration" | "neutralIcon";
+    component: ({
+      onPress,
+      variant,
+    }: {
+      onPress: () => void;
+      variant?: "illustration" | "neutralIcon";
+    }) => JSX.Element;
   }
 >;

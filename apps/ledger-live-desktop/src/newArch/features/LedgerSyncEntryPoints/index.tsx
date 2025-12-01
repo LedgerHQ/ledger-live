@@ -7,6 +7,7 @@ type Props = ReturnType<typeof useLedgerSyncEntryPointViewModel>;
 function View({
   shouldDisplayEntryPoint,
   entryPointComponent,
+  entryPointVariant,
   onClickEntryPoint,
   openDrawer,
   onPress,
@@ -24,7 +25,7 @@ function View({
     }
   };
 
-  return entryPointComponent({ onPress: onClick });
+  return entryPointComponent({ onPress: onClick, variant: entryPointVariant });
 }
 
 const LedgerSyncEntryPoint = ({
