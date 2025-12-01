@@ -5500,7 +5500,7 @@
           },
           "welcomeToWalletWithFunds": {
             "title": "Everything's in place",
-            "description": "Your Ledger device is ready. If you have sent crypto, you’ll receive it in a few minutes.",
+            "description": "Your Ledger device is ready. If you have sent crypto to your Ledger Wallet, you'll receive it in a few minutes.",
             "buttons": {
               "next": "Continue"
             }
