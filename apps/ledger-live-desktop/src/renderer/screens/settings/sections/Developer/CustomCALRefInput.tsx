@@ -3,9 +3,8 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";
-import Switch from "~/renderer/components/Switch";
+import { Switch, Button } from "@ledgerhq/ldls-ui-react";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "~/renderer/bridge/cache";
@@ -63,11 +62,8 @@ const CustomCALRefInput = () => {
             />
             <Button
               disabled={buttonIsDisabled}
-              small
-              primary
-              flex
-              minWidth={64}
-              justifyContent={"center"}
+              size="sm"
+              appearance="accent"
               onClick={handleOnClick}
               data-testid="custom-cal-ref-button"
             >
@@ -76,7 +72,7 @@ const CustomCALRefInput = () => {
           </>
         ) : null}
 
-        <Switch isChecked={enableCustomRef} onChange={handleOnChangeSwitch} />
+        <Switch selected={enableCustomRef} onChange={handleOnChangeSwitch} />
       </Box>
     </>
   );

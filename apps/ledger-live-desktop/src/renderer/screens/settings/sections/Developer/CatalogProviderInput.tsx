@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import Switch from "~/renderer/components/Switch";
+import { Switch, Button } from "@ledgerhq/ldls-ui-react";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import Loader from "~/renderer/icons/Loader";
 import api from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/api/index";
 
 const CatalogProviderInput = () => {
@@ -67,23 +65,18 @@ const CatalogProviderInput = () => {
             ></Input>
             <Button
               disabled={buttonIsDisabled || isLoading}
-              small
-              primary
+              size="sm"
+              appearance="accent"
               onClick={handleOnClickApplyProvider}
               style={{ minWidth: 64, display: "flex", justifyContent: "center" }}
+              loading={isLoading}
             >
-              {isLoading ? (
-                <Box style={{ margin: "auto" }}>
-                  <Loader size={14} />
-                </Box>
-              ) : (
-                t("common.apply")
-              )}
+              {t("common.apply")}
             </Button>
           </>
         ) : null}
 
-        <Switch isChecked={enableCustomProvider} onChange={handleChangeSwitch} />
+        <Switch selected={enableCustomProvider} onChange={handleChangeSwitch} />
       </Box>
     </>
   );

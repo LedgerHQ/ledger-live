@@ -1,7 +1,14 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/react-ui/index";
-import Select from "~/renderer/components/Select";
+import { Text } from "@ledgerhq/react-ui/index";
 import { SelectOption } from "./types";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItemText,
+  SelectItem,
+} from "@ledgerhq/ldls-ui-react";
 
 interface LabeledSelectProps<T extends SelectOption = SelectOption> {
   label: string;
@@ -17,17 +24,27 @@ export const LabeledSelect = <T extends SelectOption = SelectOption>({
   onChange,
 }: LabeledSelectProps<T>) => {
   return (
-    <Flex flexDirection="row" alignItems="center">
+    <div className="w-400 flex flex-row items-center">
       <Text variant="body" fontSize="14px" mr="2">
         {label}
       </Text>
+
       <Select
-        value={value}
-        options={options}
-        onChange={option => option && onChange(option)}
-        isSearchable={false}
-        minWidth={250}
-      />
-    </Flex>
+        value={value.value}
+        onValueChange={option => {
+          const found = option && options.find(o => o.value === option);
+          if (found) onChange(found);
+        }}
+      >
+        <SelectTrigger label={label} />
+        <SelectContent>
+          {options.map(option => (
+            <SelectItem key={option.value} value={option.value}>
+              <SelectItemText>{option.label}</SelectItemText>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };

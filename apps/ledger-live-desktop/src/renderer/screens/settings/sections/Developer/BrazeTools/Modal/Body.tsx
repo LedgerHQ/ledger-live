@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import styled from "styled-components";
-import { Button, Flex, Input, Text } from "@ledgerhq/react-ui";
+import { Flex, Input, Text } from "@ledgerhq/react-ui";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
 import { useTranslation } from "react-i18next";
 
@@ -189,8 +190,7 @@ export const ModalBody: React.FC = () => {
       <Flex flexDirection="row" columnGap={24}>
         {tabs.map(tab => (
           <Button
-            flex={1}
-            variant={selectedTab === tab.key ? "color" : "shade"}
+            appearance={selectedTab === tab.key ? "accent" : "transparent"}
             key={tab.key}
             onClick={() => setSelectedTab(tab.key)}
           >
@@ -236,12 +236,12 @@ export const ModalBody: React.FC = () => {
         ))}
       </Flex>
       <Flex flexDirection="row" columnGap={24}>
-        <Button variant="color" flex={1} onClick={handleAddCard}>
+        <Button size="sm" appearance="accent" onClick={handleAddCard}>
           {t("settings.developer.brazeTools.modal.add") +
             " " +
             tabs.find(tab => tab.key === selectedTab)?.label}
         </Button>
-        <Button variant="error" onClick={dismissLocalCards}>
+        <Button size="sm" appearance="red" onClick={dismissLocalCards}>
           {t("settings.developer.brazeTools.modal.dismiss")}
         </Button>
       </Flex>

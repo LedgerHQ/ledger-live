@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import { generateAccountsForCurrencies, injectMockAccounts, getSupportedCurrencies } from "./utils";
@@ -75,7 +75,12 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
         </Box>
 
         <Box>
-          <Button primary disabled={selectedCount === 0} onClick={handlePressContinue}>
+          <Button
+            appearance="accent"
+            size="sm"
+            disabled={selectedCount === 0}
+            onClick={handlePressContinue}
+          >
             {t("settings.developer.mockAccounts.buttons.generateAccounts", {
               count: selectedCount,
             })}
