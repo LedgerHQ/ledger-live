@@ -1,4 +1,5 @@
 import type {
+  AssetInfo,
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
@@ -13,6 +14,43 @@ import {
 import { safeEncodeEIP55 } from "../utils";
 
 /**
+ * Helper function to add transfer operations for a from/to pair.
+ * Creates two operations: one for the sender (negative amount) and one for the receiver (positive amount).
+ */
+function addTransferOperations(
+  operations: BlockOperation[],
+  from: string | null,
+  to: string | null,
+  asset: AssetInfo,
+  amount: bigint,
+): void {
+  const encodedFrom = from ? safeEncodeEIP55(from) : "";
+  const encodedTo = to ? safeEncodeEIP55(to) : "";
+
+  if (encodedFrom) {
+    const op: TransferBlockOperation = {
+      type: "transfer",
+      address: encodedFrom,
+      ...(encodedTo ? { peer: encodedTo } : {}),
+      asset,
+      amount: -amount,
+    };
+    operations.push(op);
+  }
+
+  if (encodedTo) {
+    const op: TransferBlockOperation = {
+      type: "transfer",
+      address: encodedTo,
+      ...(encodedFrom ? { peer: encodedFrom } : {}),
+      asset,
+      amount,
+    };
+    operations.push(op);
+  }
+}
+
+/**
  * Extract BlockOperations from an RPC transaction (ethers.js TransactionResponse).
  * This extracts native ETH transfers from the transaction value field.
  */
@@ -22,30 +60,7 @@ export function rpcTransactionToBlockOperations(
   const operations: BlockOperation[] = [];
 
   if (tx.value && tx.value > 0n) {
-    const from = safeEncodeEIP55(tx.from || "");
-    const to = safeEncodeEIP55(tx.to || "");
-
-    if (from) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: from,
-        ...(to ? { peer: to } : {}),
-        asset: { type: "native" },
-        amount: -tx.value,
-      };
-      operations.push(op);
-    }
-
-    if (to) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: to,
-        ...(from ? { peer: from } : {}),
-        asset: { type: "native" },
-        amount: tx.value,
-      };
-      operations.push(op);
-    }
+    addTransferOperations(operations, tx.from, tx.to, { type: "native" }, tx.value);
   }
 
   return operations;
@@ -57,122 +72,51 @@ export function ledgerTransactionToBlockOperations(
   const operations: BlockOperation[] = [];
 
   if (ledgerTx.value && BigInt(ledgerTx.value) > 0n) {
-    const from = safeEncodeEIP55(ledgerTx.from);
-    const to = safeEncodeEIP55(ledgerTx.to);
-    const value = BigInt(ledgerTx.value);
-
-    if (from) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: from,
-        ...(to ? { peer: to } : {}),
-        asset: { type: "native" },
-        amount: -value,
-      };
-      operations.push(op);
-    }
-
-    if (to) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: to,
-        ...(from ? { peer: from } : {}),
-        asset: { type: "native" },
-        amount: value,
-      };
-      operations.push(op);
-    }
+    addTransferOperations(
+      operations,
+      ledgerTx.from,
+      ledgerTx.to,
+      { type: "native" },
+      BigInt(ledgerTx.value),
+    );
   }
 
   // Extract ERC20 token transfers
   for (const event of ledgerTx.transfer_events) {
-    const from = safeEncodeEIP55(event.from);
-    const to = safeEncodeEIP55(event.to);
-    const amount = BigInt(event.count);
     const contract = safeEncodeEIP55(event.contract);
-
-    if (from) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: from,
-        ...(to ? { peer: to } : {}),
-        asset: { type: "erc20", assetReference: contract },
-        amount: -amount,
-      };
-      operations.push(op);
-    }
-
-    if (to) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: to,
-        ...(from ? { peer: from } : {}),
-        asset: { type: "erc20", assetReference: contract },
-        amount,
-      };
-      operations.push(op);
-    }
+    addTransferOperations(
+      operations,
+      event.from,
+      event.to,
+      { type: "erc20", assetReference: contract },
+      BigInt(event.count),
+    );
   }
 
   // Extract ERC721 NFT transfers
   for (const event of ledgerTx.erc721_transfer_events) {
-    const from = safeEncodeEIP55(event.sender);
-    const to = safeEncodeEIP55(event.receiver);
     const contract = safeEncodeEIP55(event.contract);
-
-    if (from) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: from,
-        ...(to ? { peer: to } : {}),
-        asset: { type: "erc721", assetReference: contract },
-        amount: -1n,
-      };
-      operations.push(op);
-    }
-
-    if (to) {
-      const op: TransferBlockOperation = {
-        type: "transfer",
-        address: to,
-        ...(from ? { peer: from } : {}),
-        asset: { type: "erc721", assetReference: contract },
-        amount: 1n,
-      };
-      operations.push(op);
-    }
+    addTransferOperations(
+      operations,
+      event.sender,
+      event.receiver,
+      { type: "erc721", assetReference: contract },
+      1n,
+    );
   }
 
   // Extract ERC1155 NFT transfers
   for (const event of ledgerTx.erc1155_transfer_events) {
-    const from = safeEncodeEIP55(event.sender);
-    const to = safeEncodeEIP55(event.receiver);
     const contract = safeEncodeEIP55(event.contract);
 
     for (const transfer of event.transfers) {
-      const amount = BigInt(transfer.value);
-
-      if (from) {
-        const op: TransferBlockOperation = {
-          type: "transfer",
-          address: from,
-          ...(to ? { peer: to } : {}),
-          asset: { type: "erc1155", assetReference: contract },
-          amount: -amount,
-        };
-        operations.push(op);
-      }
-
-      if (to) {
-        const op: TransferBlockOperation = {
-          type: "transfer",
-          address: to,
-          ...(from ? { peer: from } : {}),
-          asset: { type: "erc1155", assetReference: contract },
-          amount,
-        };
-        operations.push(op);
-      }
+      addTransferOperations(
+        operations,
+        event.sender,
+        event.receiver,
+        { type: "erc1155", assetReference: contract },
+        BigInt(transfer.value),
+      );
     }
   }
 
@@ -182,32 +126,9 @@ export function ledgerTransactionToBlockOperations(
       continue;
     }
 
-    const from = safeEncodeEIP55(action.from);
-    const to = safeEncodeEIP55(action.to);
     const value = BigInt(action.value);
-
     if (value > 0n) {
-      if (from) {
-        const op: TransferBlockOperation = {
-          type: "transfer",
-          address: from,
-          ...(to ? { peer: to } : {}),
-          asset: { type: "native" },
-          amount: -value,
-        };
-        operations.push(op);
-      }
-
-      if (to) {
-        const op: TransferBlockOperation = {
-          type: "transfer",
-          address: to,
-          ...(from ? { peer: from } : {}),
-          asset: { type: "native" },
-          amount: value,
-        };
-        operations.push(op);
-      }
+      addTransferOperations(operations, action.from, action.to, { type: "native" }, value);
     }
   }
 

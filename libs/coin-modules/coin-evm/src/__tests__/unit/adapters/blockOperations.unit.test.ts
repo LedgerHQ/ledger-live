@@ -288,14 +288,20 @@ describe("EVM Family", () => {
             type: "transfer",
             address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "erc1155", assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544" },
+            asset: {
+              type: "erc1155",
+              assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+            },
             amount: -5n,
           });
           expect(operations[1]).toEqual({
             type: "transfer",
             address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
             peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "erc1155", assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544" },
+            asset: {
+              type: "erc1155",
+              assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+            },
             amount: 5n,
           });
           expect(operations[2].amount).toBe(-10n);
@@ -486,4 +492,3 @@ describe("EVM Family", () => {
     });
   });
 });
-
