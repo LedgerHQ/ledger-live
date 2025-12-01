@@ -26,11 +26,12 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   const config = getCoinConfig(currency).info;
   const { node } = config || {};
 
-  const transactions = isExternalNodeConfig(node)
-    ? await getTransactionsFromRpcNode(currency, height)
-    : isLedgerNodeConfig(node)
-      ? await getTransactionsFromLedgerNode(currency, node.explorerId, height)
-      : [];
+  let transactions: BlockTransaction[] = [];
+  if (isExternalNodeConfig(node)) {
+    transactions = await getTransactionsFromRpcNode(currency, height);
+  } else if (isLedgerNodeConfig(node)) {
+    transactions = await getTransactionsFromLedgerNode(currency, node.explorerId, height);
+  }
 
   return {
     info,
