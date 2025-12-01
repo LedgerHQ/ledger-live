@@ -15,7 +15,7 @@ import { isAvailableOnBuy, isAvailableOnStake, isAvailableOnSwap } from "../util
 import { useStake } from "LLD/hooks/useStake";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
@@ -58,12 +58,15 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onAccountSelected = useCallback(
-    (account: Account) => {
+    (account: Account | TokenAccount, parentAccount?: Account) => {
       setDrawer();
+      // For token accounts, we use the token account directly
+      // The swap should handle TokenAccount properly
       history.push({
         pathname: "/swap",
         state: {
           defaultAccount: account,
+          defaultParentAccount: parentAccount,
         },
       });
     },
