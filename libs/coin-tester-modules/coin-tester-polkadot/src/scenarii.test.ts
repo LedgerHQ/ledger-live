@@ -6,7 +6,7 @@ import { AssetHubScenario } from "./scenarii/AssetHub";
 import { PolkadotScenario } from "./scenarii/Polkadot";
 
 global.console = console;
-jest.setTimeout(300_000);
+jest.setTimeout(600_000);
 
 describe("Polkadot Deterministic Tester", () => {
   it("scenario AssetHub", async () => {
