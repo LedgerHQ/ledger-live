@@ -14,6 +14,7 @@ import {
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
+import { sha3_256 } from "@noble/hashes/sha3";
 
 const LOG_TYPE = "socket";
 const ALLOW_SECURE_CHANNEL_DELAY = 500;
@@ -51,6 +52,7 @@ export function createDeviceSocket(
     let correctlyFinished = false; // the socket logic reach a normal termination
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
     let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
+    let deviceIdCaptured = false; // track if we've already captured the device id
     const ws = new WS(url);
 
     ws.onopen = () => {
@@ -127,6 +129,10 @@ export function createDeviceSocket(
               }, ALLOW_SECURE_CHANNEL_DELAY);
             }
 
+            // Detect GetCertificate APDU to extract device ID
+            const shouldCaptureDeviceId =
+              !deviceIdCaptured && apdu.slice(0, 2).toString("hex") === "e052";
+
             const r = await transport.exchange(apdu);
 
             if (allowSecureChannelTimeout) {
@@ -168,6 +174,33 @@ export function createDeviceSocket(
               o.next({
                 type: "device-permission-granted",
               });
+            }
+
+            // Extract device ID from GetCertificate response
+            if (shouldCaptureDeviceId && status === StatusCodes.OK) {
+              try {
+                const responseData = r.slice(0, r.length - 2);
+                const headerLength = responseData[0];
+                const publicKeyLengthOffset = 1 + headerLength;
+                const publicKeyLength = responseData[publicKeyLengthOffset];
+                const publicKeyOffset = publicKeyLengthOffset + 1;
+                const publicKey = responseData.slice(
+                  publicKeyOffset,
+                  publicKeyOffset + publicKeyLength,
+                );
+
+                // Compute device ID as SHA3-256 hash of the public key
+                const deviceIdHash = sha3_256(publicKey);
+                const deviceId = Buffer.from(deviceIdHash).toString("hex");
+                deviceIdCaptured = true;
+
+                o.next({
+                  type: "device-id",
+                  deviceId,
+                });
+              } catch (err) {
+                tracer.trace("Failed to extract device ID from GetCertificate response", { err });
+              }
             }
 
             const data = r.slice(0, r.length - 2);

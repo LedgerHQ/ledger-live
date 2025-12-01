@@ -19,6 +19,7 @@ type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
+  deviceId: string | null | undefined;
   result: ListAppsResult | null | undefined;
   error: Error | null | undefined;
   isLocked: boolean;
@@ -62,6 +63,10 @@ type Event =
   | {
       type: "deviceChange";
       device: Device | null | undefined;
+    }
+  | {
+      type: "device-id";
+      deviceId: string;
     };
 
 const mapResult = ({ deviceInfo, device, result }): Result | null | undefined =>
@@ -82,6 +87,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   allowManagerGranted: false,
   device,
   deviceInfo: null,
+  deviceId: null,
   result: null,
   error: null,
 });
@@ -149,6 +155,12 @@ const reducer = (state: State, e: Event): State => {
         isLocked: false,
         allowManagerRequested: false,
         allowManagerGranted: true,
+      };
+
+    case "device-id":
+      return {
+        ...state,
+        deviceId: e.deviceId,
       };
 
     case "result":

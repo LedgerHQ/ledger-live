@@ -89,6 +89,7 @@ type Status = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: string | null | undefined;
   requestOpenApp: string;
   allowOpeningRequestedWording: string;
   requiresAppInstallation: {
@@ -207,6 +208,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deviceId,
     requestOpenApp,
     allowOpeningRequestedWording,
     requiresAppInstallation,
