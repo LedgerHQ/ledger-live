@@ -53,19 +53,21 @@ export const SelectAccountList = ({
   };
 
   const onAccountClick = (accountId: string) => {
-    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
-    if (currencyAccount) {
-      onAccountSelected(currencyAccount.account);
-      trackAccountClick(currencyAccount.account.currency.name);
-      return;
-    }
-
+    // First, check if the accountId matches a subAccount (token account)
     const tupleWithSub = accounts.find(
       ({ subAccount }) => subAccount && subAccount.id === accountId,
     );
     if (tupleWithSub?.subAccount) {
       onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
       trackAccountClick(tupleWithSub.subAccount.token.ticker);
+      return;
+    }
+
+    // If not found as a subAccount, check if it's a parent account
+    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
+    if (currencyAccount) {
+      onAccountSelected(currencyAccount.account);
+      trackAccountClick(currencyAccount.account.currency.name);
     }
   };
 

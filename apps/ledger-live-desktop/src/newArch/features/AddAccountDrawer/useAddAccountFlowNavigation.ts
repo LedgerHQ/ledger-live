@@ -1,4 +1,6 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { makeEmptyTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
@@ -11,12 +13,14 @@ import { useNavigation } from "./useNavigation";
 
 interface UseAddAccountFlowNavigationProps {
   selectedAccounts: Account[];
-  onAccountSelected?: (account: Account) => void;
+  onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void;
+  originalCurrency?: CryptoOrTokenCurrency;
 }
 
 export const useAddAccountFlowNavigation = ({
   selectedAccounts,
   onAccountSelected,
+  originalCurrency,
 }: UseAddAccountFlowNavigationProps) => {
   const { currentStep, navigationDirection, goToStep } = useNavigation();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
@@ -25,6 +29,24 @@ export const useAddAccountFlowNavigation = ({
   const [emptyAccount, setEmptyAccount] = useState<Account>();
   const [accountToFund, setAccountToFund] = useState<Account>();
   const [accountToEdit, setAccountToEdit] = useState<Account>();
+
+  // Helper function to get the correct account to return based on originalCurrency
+  const getAccountToReturn = useCallback(
+    (parentAccount: Account): { account: Account | TokenAccount; parent?: Account } => {
+      if (originalCurrency?.type === "TokenCurrency") {
+        // Find existing token account or create an empty one
+        const existingTokenAccount = parentAccount.subAccounts?.find(
+          (subAcc): subAcc is TokenAccount =>
+            subAcc.type === "TokenAccount" && subAcc.token.id === originalCurrency.id,
+        );
+        const tokenAccount =
+          existingTokenAccount || makeEmptyTokenAccount(parentAccount, originalCurrency);
+        return { account: tokenAccount, parent: parentAccount };
+      }
+      return { account: parentAccount };
+    },
+    [originalCurrency],
+  );
 
   const navigateToWarningScreen = useCallback(
     (reason?: WarningReason, account?: Account) => {
@@ -41,24 +63,26 @@ export const useAddAccountFlowNavigation = ({
     (account: Account) => {
       setAccountToFund(account);
       if (onAccountSelected) {
-        onAccountSelected(account);
+        const { account: accountToReturn, parent } = getAccountToReturn(account);
+        onAccountSelected(accountToReturn, parent);
       } else {
         goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT);
       }
     },
-    [onAccountSelected, goToStep],
+    [onAccountSelected, goToStep, getAccountToReturn],
   );
 
   const navigateToEditAccountName = useCallback(
     (account: Account) => {
       setAccountToEdit(account);
       if (onAccountSelected) {
-        onAccountSelected(account);
+        const { account: accountToReturn, parent } = getAccountToReturn(account);
+        onAccountSelected(accountToReturn, parent);
       } else {
         goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME);
       }
     },
-    [onAccountSelected, goToStep],
+    [onAccountSelected, goToStep, getAccountToReturn],
   );
 
   const navigateToSelectAccount = useCallback(() => {
