@@ -286,6 +286,7 @@ export type Features = CurrencyFeatures & {
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
+  lifiSolana: DefaultFeature;
 };
 
 /**

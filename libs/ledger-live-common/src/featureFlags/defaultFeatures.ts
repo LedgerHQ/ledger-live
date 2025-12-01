@@ -738,6 +738,7 @@ export const DEFAULT_FEATURES: Features = {
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
+  lifiSolana: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
