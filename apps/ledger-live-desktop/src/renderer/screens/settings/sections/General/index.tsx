@@ -41,6 +41,16 @@ const SectionGeneral = () => {
       <TrackPage category="Settings" name="Display" />
       <Body>
         <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        {!shouldDisplayEntryPoint ? (
+          <Row
+            title={t("settings.display.walletSync")}
+            desc={t("settings.display.walletSyncDesc")}
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
+          >
+            <WalletSync />
+          </Row>
+        ) : null}
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
@@ -68,17 +78,6 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
-
-        {!shouldDisplayEntryPoint ? (
-          <Row
-            title={t("settings.display.walletSync")}
-            desc={t("settings.display.walletSyncDesc")}
-            dataTestId="setting-walletSync"
-            id="setting-walletSync"
-          >
-            <WalletSync />
-          </Row>
-        ) : null}
 
         <FeatureToggle featureId="marketperformanceWidgetDesktop">
           <Row

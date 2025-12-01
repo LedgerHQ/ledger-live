@@ -596,6 +596,7 @@ export const DEFAULT_FEATURES: Features = {
       postOnboarding: true,
     },
   },
+  lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
