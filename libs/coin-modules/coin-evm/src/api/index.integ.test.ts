@@ -65,6 +65,83 @@ describe.each([
     });
   });
 
+  describe("getBlockInfo", () => {
+    it("returns block info for a specific height", async () => {
+      const lastBlock = await module.lastBlock();
+      const result = await module.getBlockInfo(lastBlock.height);
+
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBe(lastBlock.height);
+      expect(result.time).toBeInstanceOf(Date);
+    });
+
+    it("returns block info for an older block", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBe(20000000);
+      expect(result.time).toBeInstanceOf(Date);
+      expect(result.time.getTime()).toBeLessThan(Date.now());
+    });
+  });
+
+  describe("getBlock", () => {
+    it("returns block with transactions for a specific height", async () => {
+      const lastBlock = await module.lastBlock();
+      const result = await module.getBlock(lastBlock.height);
+
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.height).toBe(lastBlock.height);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.transactions).toBeInstanceOf(Array);
+      result.transactions.forEach(tx => {
+        expect(tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(typeof tx.failed).toBe("boolean");
+        expect(tx.operations).toBeInstanceOf(Array);
+        expect(tx.fees).toBeGreaterThanOrEqual(0n);
+        expect(tx.feesPayer).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+        tx.operations.forEach(op => {
+          expect(op.type).toBe("transfer");
+          expect(op.address).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+          expect(op.asset).toBeDefined();
+          expect(typeof op.amount).toBe("bigint");
+        });
+      });
+    });
+
+    it("returns block with transactions for an older block", async () => {
+      const result = await module.getBlock(20000000);
+
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.height).toBe(20000000);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.info.time.getTime()).toBeLessThan(Date.now());
+      expect(result.transactions).toBeInstanceOf(Array);
+      expect(result.transactions.length).toBeGreaterThan(0);
+    });
+
+    it("returns block with operations extracted from transactions", async () => {
+      const result = await module.getBlock(20000000);
+
+      // Check that at least some transactions have operations
+      const transactionsWithOps = result.transactions.filter(tx => tx.operations.length > 0);
+      expect(transactionsWithOps.length).toBeGreaterThan(0);
+
+      // Verify operation structure
+      transactionsWithOps.forEach(tx => {
+        tx.operations.forEach(op => {
+          expect(op).toHaveProperty("type", "transfer");
+          expect(op).toHaveProperty("address");
+          expect(op).toHaveProperty("asset");
+          expect(op).toHaveProperty("amount");
+          if (op.peer) {
+            expect(op.peer).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+          }
+        });
+      });
+    });
+  });
+
   describe.each([
     [
       "legacy",
