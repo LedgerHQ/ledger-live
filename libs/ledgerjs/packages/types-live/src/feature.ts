@@ -233,6 +233,7 @@ export type Features = CurrencyFeatures & {
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
+  lwdLedgerSyncOptimisation: Feature_LwdLedgerSyncOptimisation;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -651,6 +652,8 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   onboarding: boolean;
   postOnboarding: boolean;
 }>;
+
+export type Feature_LwdLedgerSyncOptimisation = DefaultFeature;
 
 export type Feature_LlNftEntryPoint = Feature<{
   magiceden: boolean;
