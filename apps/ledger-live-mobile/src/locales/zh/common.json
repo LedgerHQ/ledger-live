@@ -10,6 +10,9 @@
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
+    "fee" : "费用",
+    "stake" : "质押",
+    "validator" : "验证者",
     "delete" : "删除",
     "paste" : "粘贴",
     "yes" : "是",
@@ -1089,6 +1092,10 @@
       "title" : "无法验证代币关联",
       "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "需要核实以太坊虚拟机 (EVM) 地址",
+      "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
+    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -1153,6 +1160,11 @@
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。"
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "提供商无效",
+      "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。",
+      "openSettings" : "前往设置选项"
     },
     "GasLessThanEstimate" : {
       "title" : "这可能太低。请增加"
@@ -1224,6 +1236,12 @@
     "AddressesSanctionedError" : {
       "title" : "保障您的安全",
       "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "数额已减少至符合 UTXO 限制。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "数额过大，超出 UTXO 限制。"
     }
   },
   "crash" : {
@@ -2730,6 +2748,9 @@
       "REWARD" : "已申领的奖励",
       "FEES" : "费用",
       "PRE_APPROVAL" : "预先批准",
+      "TRANSFER_PROPOSAL" : "转账请求",
+      "TRANSFER_REJECTED" : "转账已拒绝",
+      "TRANSFER_WITHDRAWN" : "转账已撤回",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
       "CLOSE_ACCOUNT" : "关闭账户",
@@ -2751,7 +2772,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "ASSOCIATE_TOKEN" : "关联代币"
+      "ASSOCIATE_TOKEN" : "关联代币",
+      "CONTRACT_CALL" : "合约调用"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3802,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
-        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Live 体验 {{provider}} 的跨链互换"
+        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Wallet 体验 {{provider}} 的跨链互换",
+        "explore_compatible_devices" : "浏览兼容设备",
+        "swapWithAnotherProvider" : "使用其他提供商进行互换"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
@@ -5980,6 +6004,45 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "地址已复制！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "memoPlaceholder" : "可选 Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -6383,9 +6446,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -7223,6 +7283,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "了解更多"
+        },
+        "evmVerificationRequired" : {
+          "text" : "您正在发送 ERC-20 代币。对于此类交易，您的 Ledger 设备将显示发送者的 EVM 地址，而非其账户 ID。\n请按照<0>此指南</0>，在确认前核实地址是否正确。"
         }
       }
     },
@@ -7311,11 +7374,11 @@
         "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
-      "recover" : {
-        "title" : "订阅 Ledger Recover",
-        "titleCompleted" : "已订阅 Ledger Recover",
-        "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
-        "popupLabel" : "已成功订阅 Ledger Recover"
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "popupLabel" : "账户已同步"
       }
     }
   },
