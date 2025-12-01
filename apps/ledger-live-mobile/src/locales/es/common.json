@@ -10,6 +10,9 @@
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Atrás",
+    "fee" : "Tarifa",
+    "stake" : "Participación",
+    "validator" : "Validador",
     "delete" : "Borrar",
     "paste" : "Pegar",
     "yes" : "Sí",
@@ -1089,6 +1092,10 @@
       "title" : "No se puede verificar la asociación del token",
       "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Verificación de dirección EVM necesaria",
+      "description" : "Verifica la dirección EVM visible en tu dispositivo Ledger antes de confirmar."
+    },
     "NearNewAccountWarning" : {
       "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
     },
@@ -1153,6 +1160,11 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Wallet, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Proveedor no válido",
+      "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Wallet, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto.",
+      "openSettings" : "Ir a Ajustes"
     },
     "GasLessThanEstimate" : {
       "title" : "Puede que sea demasiado bajo. Auméntalo"
@@ -1224,6 +1236,12 @@
     "AddressesSanctionedError" : {
       "title" : "Queremos garantizar tu seguridad",
       "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Cantidad reducida para ajustarla a las limitaciones de UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
     }
   },
   "crash" : {
@@ -2263,6 +2281,12 @@
     },
     "completionScreen" : {
       "title" : "Ya lo tienes todo bajo control"
+    },
+    "secureYourCrypto" : {
+      "title" : "Protege tus cripto",
+      "subtitle" : "Transfiere tus primeras cripto de un exchange o wallet a tu Ledger para disfrutar de la máxima seguridad.",
+      "secureCryptoButton" : "Proteger mis cripto",
+      "maybeLater" : "Quizás más tarde"
     }
   },
   "blePairingFlow" : {
@@ -2730,6 +2754,9 @@
       "REWARD" : "Recompensa reclamada",
       "FEES" : "Tarifas",
       "PRE_APPROVAL" : "Preaprobación",
+      "TRANSFER_PROPOSAL" : "Propuesta de transferencia",
+      "TRANSFER_REJECTED" : "Transferencia rechazada",
+      "TRANSFER_WITHDRAWN" : "Transferencia retirada",
       "OPT_IN" : "Adherir",
       "OPT_OUT" : "No adherir",
       "CLOSE_ACCOUNT" : "Cerrar cuenta",
@@ -2751,7 +2778,8 @@
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
-      "ASSOCIATE_TOKEN" : "Asociar token"
+      "ASSOCIATE_TOKEN" : "Asociar token",
+      "CONTRACT_CALL" : "Llamada a contrato"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3808,9 @@
       },
       "wrongDevice" : {
         "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
-        "description" : "El Ledger Nano S™ no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Stax™ o el Ledger Flex™ para permutas intercadena en {{provider}} desde Ledger Live."
+        "description" : "El Ledger Nano S™ no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Stax™ o el Ledger Flex™ para permutas intercadena en {{provider}} desde Ledger Wallet.",
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "swapWithAnotherProvider" : "Permutar con otro proveedor"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Explorar dispositivos compatibles",
@@ -5980,6 +6010,45 @@
       "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "¡Dirección copiada!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "memoPlaceholder" : "Memo opcional",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    }
+  },
   "stellar" : {
     "token" : "Activos",
     "memo" : {
@@ -6383,9 +6452,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -7223,6 +7289,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Más información"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vas a enviar un token ERC20. Para este tipo de transacción, en tu dispositivo Ledger se muestra la dirección EVM del remitente, no el ID de su cuenta.\nSigue <0>esta guía</0> para verificar que la dirección es correcta antes de confirmar."
         }
       }
     },
@@ -7311,11 +7380,11 @@
         "description" : "Elige cualquier obra de arte digital o imagen para establecerla como pantalla de bloqueo de tu {{productName}}.",
         "popupLabel" : "Pantalla de bloqueo personalizada correctamente"
       },
-      "recover" : {
-        "title" : "Suscríbete a Ledger Recover",
-        "titleCompleted" : "Te has suscrito a Ledger Recover",
-        "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
-        "popupLabel" : "Te has suscrito correctamente a Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Sincroniza tus cuentas cripto",
+        "titleCompleted" : "Tus cuentas están sincronizadas.",
+        "description" : "Activa Ledger Sync para sincronizar tus cuentas cripto",
+        "popupLabel" : "Cuentas sincronizadas"
       }
     }
   },
