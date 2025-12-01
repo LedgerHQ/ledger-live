@@ -50,6 +50,7 @@ const localStateSelector = (state: State) => ({
     nonImportedAccountInfos: state.nonImportedAccounts,
   },
   accountNames: state.walletState.accountNames,
+  recentAddresses: state.walletState.recentAddresses,
 });
 
 const latestDistantStateSelector = (state: State) => state.walletState.walletSyncState.data;
