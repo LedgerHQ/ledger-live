@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -1089,6 +1092,10 @@
       "title" : "تعذّر التحقق من ربط رمز التوكن",
       "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "التحقق من عنوان EVM مطلوب",
+      "description" : "يُرجى التحقق من عنوان EVM الظاهر على جهازك Ledger قبل التأكيد."
+    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -1153,6 +1160,11 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح ”Settings (الإعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "مزوّد غير صالح",
+      "description" : "يجب عليك تغيير إعداد ”My Ledger Provider (مزوّد جهازي Ledger)“. لتغييره، افتح ”Settings (إعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر.",
+      "openSettings" : "انتقل إلى الإعدادات"
     },
     "GasLessThanEstimate" : {
       "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
@@ -1224,6 +1236,12 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "crash" : {
@@ -2730,6 +2748,9 @@
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "PRE_APPROVAL" : "موافقة مسبقة",
+      "TRANSFER_PROPOSAL" : "عرض التحويل",
+      "TRANSFER_REJECTED" : "تم رفض التحويل",
+      "TRANSFER_WITHDRAWN" : "تم سحب التحويل",
       "OPT_IN" : "الانضمام",
       "OPT_OUT" : "إلغاء الانضمام",
       "CLOSE_ACCOUNT" : "إغلاق الحساب",
@@ -2751,7 +2772,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن",
+      "CONTRACT_CALL" : "استدعاء عقد"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3802,9 @@
       },
       "wrongDevice" : {
         "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
-        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live"
+        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Wallet",
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "swapWithAnotherProvider" : "المبادلة عن طريق مزود آخر"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
@@ -5980,6 +6004,45 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6383,9 +6446,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -7223,6 +7283,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "تعرّف على المزيد"
+        },
+        "evmVerificationRequired" : {
+          "text" : "أنت ترسل رمز ERC-20. لهذا النوع من المعاملات، جهازك Ledger سيعرض عنوان EVM الخاص بالمُرسِل، وليس معرّف حسابه.\nيُرجى اتباع <0>هذا الدليل</0> للتحقق من أن العنوان صحيح قبل التأكيد."
         }
       }
     },
@@ -7311,11 +7374,11 @@
         "description" : "اختر أي فن رقمي أو صورة للتعيين كشاشة قَفل {{productName}} الخاص بك.",
         "popupLabel" : "تم تخصيص شاشة القَفل بنجاح"
       },
-      "recover" : {
-        "title" : "الاشتراك في Ledger Recover",
-        "titleCompleted" : "مشترك في Ledger Recover",
-        "description" : "استعدْ الوصول إلى محفظتك بدون الحاجة إلى عبارة الاسترداد السرية الخاصة بك.",
-        "popupLabel" : "تم الاشتراك بنجاح في Ledger Recover"
+      "syncAccounts" : {
+        "title" : "مزامنة حسابات الأصول المشفرة خاصتك",
+        "titleCompleted" : "تمت مزامنة حساباتك",
+        "description" : "تنشيط مزامنة Ledger Sync لمزامنة حسابات الأصول المشفرة الخاصة بك",
+        "popupLabel" : "تمت مزامنة الحسابات"
       }
     }
   },
