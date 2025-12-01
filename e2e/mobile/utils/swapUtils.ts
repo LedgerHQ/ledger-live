@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { floatNumberRegex } from "@ledgerhq/live-common/lib-es/e2e/data/regexes";
+import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
   if (currentCurrencyText.includes(account.currency.ticker)) {
