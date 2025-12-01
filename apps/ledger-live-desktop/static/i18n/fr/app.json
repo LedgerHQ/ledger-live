@@ -152,7 +152,8 @@
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
-    }
+    },
+    "stake" : "Staké"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -173,6 +174,9 @@
       "UNDELEGATE" : "Délégation arrêtée",
       "APPROVE" : "Approuvé",
       "PRE_APPROVAL" : "Pré-approbation",
+      "TRANSFER_PROPOSAL" : "Proposition de transfert",
+      "TRANSFER_REJECTED" : "Transfert rejeté",
+      "TRANSFER_WITHDRAWN" : "Transfert retiré",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
       "UNFREEZE" : "Dégelé",
@@ -203,7 +207,8 @@
       "WITHDRAW_UNSTAKED" : "Retiré",
       "SENDING" : "Envoi",
       "BURN" : "Brûlé",
-      "ASSOCIATE_TOKEN" : "Association de token"
+      "ASSOCIATE_TOKEN" : "Association de token",
+      "CONTRACT_CALL" : "Appel de contrat"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -620,9 +625,6 @@
   "lottieDebugger" : {
     "buttonTitle" : "Tester"
   },
-  "storylyDebugger" : {
-    "buttonTitle" : "Tester"
-  },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Tester"
   },
@@ -993,7 +995,7 @@
       },
       "status" : {
         "enablingTooltip" : "Diffusion de la transaction en cours",
-        "toSupplyTooltip" : "Vous pouvez maintenant déposer vos actifs."
+        "toSupplyTooltip" : "Vous pouvez maintenant placer vos actifs."
       },
       "types" : {
         "enabling" : "Approbation",
@@ -1032,7 +1034,7 @@
         "info" : "Vous avez approuvé <0>{{amount}}</0> sur ce compte. Vous pouvez réduire le montant moyennant des frais.",
         "infoNoLimit" : "Vous avez fini d’approuver ce compte. Vous pouvez réduire le montant moyennant des frais.",
         "approvedWithLimit" : "Vous avez approuvé <0>{{value}}</0> sur ce compte.",
-        "enabling" : "Vous pouvez déposer des actifs une fois l’approbation du compte confirmée.",
+        "enabling" : "Vous pouvez placer des actifs une fois l’approbation du compte confirmée.",
         "notEnabled" : "Vous devez approuver ce compte avant de pouvoir prêter des actifs.",
         "notEnoughApproved" : "Vous devez augmenter la limite approuvée sur votre compte pour prêter."
       },
@@ -1133,11 +1135,11 @@
       }
     },
     "supply" : {
-      "title" : "Déposer des actifs",
+      "title" : "Placer des actifs",
       "steps" : {
         "amount" : {
           "title" : "Montant",
-          "amountToSupply" : "Montant à déposer",
+          "amountToSupply" : "Montant à placer",
           "maxSupply" : "Montant maximal disponible :"
         },
         "device" : {
@@ -1162,7 +1164,7 @@
     },
     "emptyAccountDeposit" : {
       "title" : "Vous n’avez pas de compte {{ asset }}.",
-      "description" : "Pour déposer des fonds et prêter des cryptos, vous avez besoin d’un compte {{ asset }}. Recevez des fonds sur votre adresse Ethereum.",
+      "description" : "Pour placer des actifs et prêter des cryptos, vous avez besoin d’un compte {{ asset }}. Recevez des actifs sur votre adresse Ethereum.",
       "ctaBuy" : "Acheter des {{ asset }}",
       "ctaReceive" : "Recevoir des {{ asset }}"
     }
@@ -4371,7 +4373,7 @@
     "durationDays" : "{{count}} jour",
     "durationDays_other" : "{{count}} jours",
     "howItWorks" : "Fonctionnement de la délégation",
-    "delegationEarn" : "Gagnez des récompenses de staking de {{name}} en déléguant votre compte.",
+    "delegationEarn" : "Gagnez des récompenses de staking {{name}} en déléguant votre compte.",
     "earnRewards" : "Gagner des récompenses",
     "overdelegated" : "Surdélégué",
     "status" : "Statut",
@@ -5168,7 +5170,8 @@
           "pinCode" : "Code PIN",
           "recoveryPhrase" : "Phrase de récupération",
           "hideRecoveryPhrase" : "Cacher votre phrase de récupération",
-          "pairNano" : "Connecter votre appareil"
+          "pairNano" : "Connecter votre appareil",
+          "secureYourCrypto" : "Sécurisez vos cryptos"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5463,29 @@
             "help" : {
               "help" : "Besoin d’aide",
               "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Sécurisez vos cryptos",
+            "description" : "Pour une sécurité optimale, transférez vos cryptos depuis une plateforme ou un wallet vers Ledger Wallet.",
+            "buttons" : {
+              "next" : "Sécuriser mes cryptos",
+              "nextSecondary" : "Plus tard",
+              "prev" : "Étape précédente"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Tout est prêt",
+            "description" : "Your Ledger device is ready. If you have sent crypto to your Ledger Wallet, you'll receive it in a few minutes.",
+            "buttons" : {
+              "next" : "Continuer"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Tout est prêt",
+            "description" : "Votre appareil Ledger est bien configuré. Vous pouvez désormais l’utiliser pour sécuriser vos actifs.",
+            "buttons" : {
+              "next" : "Continuer"
             }
           }
         }
@@ -5826,6 +5852,62 @@
         "quickFix" : "Solution rapide : envoyez-vous des actifs pour les regrouper.",
         "warning" : "Votre compte contient trop de petits UTXO. Envoyez-vous des actifs pour les regrouper.",
         "consolidate" : "Regrouper"
+      },
+      "pendingTransactions" : {
+        "title" : "Transactions en attente ({{count}})",
+        "incoming" : {
+          "title" : "Offres entrantes ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Offres sortantes ({{count}})"
+        },
+        "pending" : "En attente",
+        "expired" : "Expiré",
+        "status" : {
+          "label" : "Statut",
+          "expired" : "Expiré",
+          "incoming" : "Entrante",
+          "outgoing" : "Sortante"
+        },
+        "from" : "De",
+        "to" : "À",
+        "memo" : "Mémo",
+        "noMemo" : "Aucun mémo",
+        "date" : "Date",
+        "expiresAt" : "Expire à",
+        "expiresIn" : "Expire dans",
+        "amount" : "Montant",
+        "transaction" : "Transaction",
+        "viewTransaction" : "Voir la transaction",
+        "action" : "Action",
+        "accept" : "Accepter",
+        "withdraw" : "Retirer",
+        "reject" : "Refuser",
+        "deviceAppModal" : {
+          "title" : "{{action}} l’offre",
+          "description" : "Ouvrez l’app Canton sur votre appareil Ledger pour {{action}} cette offre.",
+          "contractId" : "ID du contrat",
+          "cancel" : "Annuler",
+          "openApp" : "Ouvrir l’app Canton",
+          "opening" : "Ouverture...",
+          "noDevice" : "Aucun appareil connecté",
+          "appOpenError" : "Impossible d’ouvrir l’app Canton. Veuillez réessayer.",
+          "processing" : "Traitement de l’action {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Offre acceptée",
+              "description" : "L’offre de transfert a bien été acceptée."
+            },
+            "reject" : {
+              "title" : "Offre rejetée",
+              "description" : "L’offre de transfert a bien été rejetée."
+            },
+            "withdraw" : {
+              "title" : "Offre retirée",
+              "description" : "L’offre de transfert a bien été retirée."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6867,10 @@
       "title" : "Impossible de vérifier l’association du token",
       "description" : "Nous n’avons pas pu confirmer que le compte bénéficiaire peut recevoir ce token. L’adresse pourrait être invalide, ou il pourrait y avoir un problème avec le réseau ou le service."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Vérification de l’adresse EVM requise",
+      "description" : "Veuillez vérifier l’adresse EVM affichée sur votre appareil Ledger avant de confirmer."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Échec du chargement de l’image.",
       "description" : "Veuillez réessayer avec un autre format d’image."
@@ -7062,12 +7148,58 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Erreur de communication",
       "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Montant réduit pour respecter les limites UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Montant supérieur aux limites UTXO"
     }
   },
   "cryptoOrg" : {
     "memo" : "Mémo",
     "memoPlaceholder" : "Saisissez le tag/mémo",
     "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Frais",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Changer la délégation",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. ",
+      "changeCTA" : "Modifier"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7118,6 +7250,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "En savoir plus"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vous êtes sur le point d’envoyer un token ERC20. Pour ce type de transaction, votre appareil Ledger affiche l’adresse EVM du donneur d’ordre et non l’identifiant de son compte.\nAvant de confirmer, veuillez suivre <0>ce guide</0> pour vérifier que l’adresse est correcte."
         }
       }
     },
@@ -7569,5 +7704,15 @@
     "restart" : "Redémarrer",
     "downloadOnLedger" : "Télécharger sur Ledger.com",
     "downloadProgress" : "Téléchargement... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Solde disponible",
+      "availableBalanceTooltip" : "Le solde qui peut être transféré.",
+      "transparentBalance" : "Solde transparent",
+      "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
+      "privateBalance" : "Solde privé",
+      "privateBalanceTooltip" : "Le solde qui est demeure masqué."
+    }
   }
 }
