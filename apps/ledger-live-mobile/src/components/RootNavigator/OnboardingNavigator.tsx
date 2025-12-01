@@ -23,7 +23,7 @@ import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase"
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
-import OnboardingPairNew from "~/screens/Onboarding/steps/pairNew";
+import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
@@ -44,6 +44,7 @@ import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
+import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -219,6 +220,10 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
       <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+      <Stack.Screen
+        name={ScreenName.OnboardingSecureYourCrypto}
+        component={OnboardingSecureYourCrypto}
+      />
 
       <Stack.Screen
         name={NavigatorName.AnalyticsOptInPrompt}

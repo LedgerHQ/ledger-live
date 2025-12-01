@@ -347,6 +347,7 @@ export enum ScreenName {
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
+  OnboardingSecureYourCrypto = "OnboardingSecureYourCrypto",
   OnboardingImportAccounts = "OnboardingImportAccounts",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
