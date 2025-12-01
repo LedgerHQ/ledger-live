@@ -14,7 +14,7 @@ describe("buildOptimisticOperation", () => {
     const result = buildOptimisticOperation(account, transaction, fee);
 
     // THEN
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui--OUT",
       hash: "",
       type: "OUT",
@@ -31,6 +31,7 @@ describe("buildOptimisticOperation", () => {
         transferAmount: new BigNumber(3000000000),
       },
     });
+    expect(result.transactionSequenceNumber).toBeInstanceOf(BigNumber);
   });
 
   it("should calculate correct value for OUT type", () => {
