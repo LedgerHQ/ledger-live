@@ -12,3 +12,4 @@ export * from "./getStakes";
 export * from "./computeIntentType";
 export * from "./refreshOperations";
 export * from "./getBlock";
+export * from "./getBlockInfo";

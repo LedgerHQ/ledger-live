@@ -4,13 +4,7 @@ import type {
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
 import { TransactionResponse } from "ethers";
-import {
-  LedgerExplorerOperation,
-  LedgerExplorerERC20TransferEvent,
-  LedgerExplorerER721TransferEvent,
-  LedgerExplorerER1155TransferEvent,
-  LedgerExplorerInternalTransaction,
-} from "../types";
+import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
 /**
@@ -134,4 +128,3 @@ export function ledgerTransactionToBlockOperations(
 
   return operations;
 }
-

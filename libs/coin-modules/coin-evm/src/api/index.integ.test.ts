@@ -81,7 +81,7 @@ describe.each([
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.height).toBe(20000000);
       expect(result.time).toBeInstanceOf(Date);
-      expect(result.time.getTime()).toBeLessThan(Date.now());
+      expect(result.time!.getTime()).toBeLessThan(Date.now());
     });
   });
 
@@ -115,7 +115,7 @@ describe.each([
       expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.height).toBe(20000000);
       expect(result.info.time).toBeInstanceOf(Date);
-      expect(result.info.time.getTime()).toBeLessThan(Date.now());
+      expect(result.info.time!.getTime()).toBeLessThan(Date.now());
       expect(result.transactions).toBeInstanceOf(Array);
       expect(result.transactions.length).toBeGreaterThan(0);
     });

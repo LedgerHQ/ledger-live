@@ -37,6 +37,7 @@ import {
   computeIntentType,
   refreshOperations,
   getBlock,
+  getBlockInfo,
 } from "../logic/index";
 
 export function createApi(
@@ -74,9 +75,7 @@ export function createApi(
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
       listOperations(currency, address, pagination),
     getBlock: (height: number): Promise<Block> => getBlock(currency, height),
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
