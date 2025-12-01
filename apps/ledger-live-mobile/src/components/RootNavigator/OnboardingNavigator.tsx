@@ -23,7 +23,7 @@ import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase"
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
-import OnboardingPairNew from "~/screens/Onboarding/steps/pairNew";
+import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";

@@ -64,14 +64,7 @@ const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) =>
       height={48}
     >
       <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
-      {showSlideIndicator && (
-        <SlideIndicator
-          slidesLength={10}
-          activeIndex={8}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onChange={() => {}}
-        />
-      )}
+      {showSlideIndicator && <SlideIndicator slidesLength={10} activeIndex={8} />}
       <Flex width={48}>
         <Button
           Icon={renderInformation}

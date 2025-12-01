@@ -11,7 +11,7 @@ import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
 import { NavigatorName } from "~/const";
 import { track } from "~/analytics";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 
@@ -61,7 +61,7 @@ export default function OnboardingSecureYourCrypto() {
   }, [isOnboardingFlowReceiveSuccess, handleReceiveFlowSuccess, dispatch, isInitialised]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaViewFixed isFlex>
       <Flex
         flexDirection="row"
         justifyContent="center"
@@ -69,12 +69,7 @@ export default function OnboardingSecureYourCrypto() {
         width="100%"
         height={48}
       >
-        <SlideIndicator
-          slidesLength={FUND_WALLET_STEPS_LENGTH}
-          activeIndex={9}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onChange={() => {}}
-        />
+        <SlideIndicator slidesLength={FUND_WALLET_STEPS_LENGTH} activeIndex={9} />
       </Flex>
       <Flex flexGrow={1} flex={1} mx={6} justifyContent="center" alignItems="center">
         <Flex justifyContent="center" alignItems="center">
@@ -123,6 +118,6 @@ export default function OnboardingSecureYourCrypto() {
       >
         {t("onboarding.secureYourCrypto.maybeLater")}
       </Button>
-    </SafeAreaView>
+    </SafeAreaViewFixed>
   );
 }
