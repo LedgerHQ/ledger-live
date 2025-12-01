@@ -11,12 +11,13 @@ const Tab = styled(Base)<{
   display: flex;
   justify-content: center;
   color: ${p =>
-    p.active ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade50};
+    p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
   &:hover,
   &:active,
   &:focus {
     background: none;
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p =>
+      p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade100};
   }
 
   > * {
