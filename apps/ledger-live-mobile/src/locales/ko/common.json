@@ -10,6 +10,9 @@
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
+    "fee" : "수수료",
+    "stake" : "스테이킹",
+    "validator" : "검증인",
     "delete" : "삭제",
     "paste" : "붙여넣기",
     "yes" : "예",
@@ -1089,6 +1092,10 @@
       "title" : "토큰 연동 확인 불가능",
       "description" : "수령 계정에서 이 토큰을 수령할 수 있는지 확인할 수 없습니다. 주소가 잘못되었거나 네트워크 또는 서비스에 문제가 있을 수 있습니다."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM 주소 인증 필요",
+      "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
+    },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
     },
@@ -1153,6 +1160,11 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "유효하지 않은 제공 업체",
+      "description" : "\"My Ledger 서비스 제공 업체\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "openSettings" : "설정으로 이동"
     },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
@@ -1224,6 +1236,12 @@
     "AddressesSanctionedError" : {
       "title" : "사용자 보호 조치 실행 중",
       "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "crash" : {
@@ -2263,6 +2281,12 @@
     },
     "completionScreen" : {
       "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
+    },
+    "secureYourCrypto" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "subtitle" : "첫 암호화폐를 거래소나 지갑에서 Ledger 장치로 옮기고 최고 수준을 보안을 누려보세요.",
+      "secureCryptoButton" : "자산 보호 시작하기",
+      "maybeLater" : "다음에 결정하기"
     }
   },
   "blePairingFlow" : {
@@ -2608,7 +2632,7 @@
       "title" : "고객 맞춤 정보"
     },
     "recommended" : {
-      "title" : "제품 추천"
+      "title" : "추천"
     },
     "topGainers" : {
       "title" : "최고 상승 목록 (24시간)",
@@ -2730,6 +2754,9 @@
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
       "PRE_APPROVAL" : "사전 승인",
+      "TRANSFER_PROPOSAL" : "이체 요청",
+      "TRANSFER_REJECTED" : "이체 거부됨",
+      "TRANSFER_WITHDRAWN" : "이체 철회됨",
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
       "CLOSE_ACCOUNT" : "계정 닫기",
@@ -2751,7 +2778,8 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "ASSOCIATE_TOKEN" : "토큰 연동"
+      "ASSOCIATE_TOKEN" : "토큰 연동",
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3808,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-        "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다"
+        "description" : "Ledger Nano S™는 {{provider}} 사용을 지원하지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
+        "explore_compatible_devices" : "지원 장치 살펴보기",
+        "swapWithAnotherProvider" : "다른 업체로 스왑"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
@@ -5980,6 +6010,45 @@
       "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "주소 복사 완료!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "스테이킹 잔액",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 스테이킹된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "memoPlaceholder" : "메모(선택)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 스테이킹",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    }
+  },
   "stellar" : {
     "token" : "자산",
     "memo" : {
@@ -6383,9 +6452,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "메모(선택)"
   },
   "near" : {
     "info" : {
@@ -7223,6 +7289,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "자세히 알아보기"
+        },
+        "evmVerificationRequired" : {
+          "text" : "ERC-20 토큰 전송 중. 이러한 유형의 트랜잭션의 경우 Ledger 장치에 보내는 사람의 계정 ID가 아닌 EVM 주소가 표시됩니다.\n승인 전 <0>이 가이드</0>를 따라 정확한 주소가 맞는지 확인하세요."
         }
       }
     },
@@ -7311,11 +7380,11 @@
         "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
-      "recover" : {
-        "title" : "Ledger Recover 구독하기",
-        "titleCompleted" : "Ledger Recover를 구독했습니다",
-        "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
-        "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "popupLabel" : "계정 동기화 완료"
       }
     }
   },
