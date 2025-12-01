@@ -11,6 +11,8 @@ import Foundation
 import BrazeKit
 import braze_react_native_sdk
 import react_native_config
+import UIKit
+import UserNotifications
 
 final class BrazeManager {
   static let shared = BrazeManager()
@@ -33,7 +35,10 @@ final class BrazeManager {
       configuration.push.automation.requestAuthorizationAtLaunch = false
     }
 
-    let instance = Braze(configuration: configuration)
+    let instance = BrazeReactBridge.perform(
+      #selector(BrazeReactBridge.initBraze(_:)),
+      with: configuration
+    ).takeUnretainedValue() as! Braze
     self.braze = instance
   }
 
@@ -57,3 +62,4 @@ final class BrazeManager {
     braze?.notifications.register(deviceToken: deviceToken)
   }
 }
+
