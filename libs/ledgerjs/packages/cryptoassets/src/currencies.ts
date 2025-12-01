@@ -4540,7 +4540,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 81457,
     },
-    explorerViews: [blockscoutExplorerView("https://blast.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   blast_sepolia: {
     type: "CryptoCurrency",
@@ -4558,7 +4564,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 168587773,
     },
-    explorerViews: [blockscoutExplorerView("https://blast-testnet.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://sepolia.blastscan.io/tx/$hash",
+        address: "https://sepolia.blastscan.io/address/$address",
+        token: "https://sepolia.blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   scroll: {
     type: "CryptoCurrency",
