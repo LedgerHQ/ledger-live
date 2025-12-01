@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NetworkList } from "@ledgerhq/react-ui/pre-ldls";
+import { ListItem } from "@ledgerhq/ldls-ui-react";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
@@ -11,6 +11,8 @@ import { accountsCountAndApy } from "../../../components/AccountCountApy";
 import { balanceItem } from "../../../components/Balance";
 import { useAccountData } from "../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import styled from "styled-components";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -19,6 +21,56 @@ type SelectNetworkProps = {
   selectedAssetId?: string;
 };
 
+const TITLE_HEIGHT = 52;
+const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
+
+const ScrollableContainer = styled.div`
+  height: ${LIST_HEIGHT};
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  padding: 0 8px;
+
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--colors-content-subdued-default-default);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--colors-content-default-default);
+  }
+`;
+
+const ListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const IconWrapper = styled.div`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+`;
+
+const TrailingContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 export const SelectNetwork = ({
   networks,
   onNetworkSelected,
@@ -26,10 +78,6 @@ export const SelectNetwork = ({
   selectedAssetId,
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-
-  if (!networks || networks.length === 0 || !selectedAssetId) {
-    return null;
-  }
 
   const networkConfigurationDeps = {
     useAccountData,
@@ -45,9 +93,13 @@ export const SelectNetwork = ({
     networksConfig,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  const formattedNetworks = networks && networks.length > 0 ? transformNetworks(networks) : [];
 
-  const onClick = (networkId: string) => {
+  if (!networks || networks.length === 0 || !selectedAssetId) {
+    return null;
+  }
+
+  const handleClick = (networkId: string) => {
     const network = formattedNetworks.find(network =>
       network.type === "CryptoCurrency"
         ? network.id === networkId
@@ -72,8 +124,41 @@ export const SelectNetwork = ({
   };
 
   return (
-    <ListWrapper>
-      <NetworkList networks={formattedNetworks} onClick={onClick} />
+    <ListWrapper customHeight={LIST_HEIGHT}>
+      <ScrollableContainer>
+        <ListContainer>
+          {formattedNetworks.map(network => {
+            const networkId =
+              network.type === "CryptoCurrency" ? network.id : network.parentCurrency.id;
+            
+            // Build description
+            const descriptionParts: string[] = [];
+            if (network.ticker) {
+              descriptionParts.push(network.ticker);
+            }
+            const description = descriptionParts.join(" · ");
+
+            return (
+              <ListItem
+                key={networkId}
+                title={network.name}
+                description={description || network.ticker}
+                leadingContent={
+                  <IconWrapper>
+                    <CryptoCurrencyIcon currency={network} size={32} />
+                  </IconWrapper>
+                }
+                trailingContent={
+                  <TrailingContent>
+                    {network.rightElement}
+                  </TrailingContent>
+                }
+                onClick={() => handleClick(networkId)}
+              />
+            );
+          })}
+        </ListContainer>
+      </ScrollableContainer>
     </ListWrapper>
   );
 };
