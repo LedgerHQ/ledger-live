@@ -101,7 +101,7 @@ export default function DashboardPage() {
                 </Box>
 
                 <Box ml={2} minWidth={375} maxWidth={700}>
-                  <SwapWebViewEmbedded height="550px" />
+                  <SwapWebViewEmbedded />
                 </Box>
               </SwapPortfolioGrid>
             ) : marketPerformanceEnabled ? (

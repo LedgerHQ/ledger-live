@@ -87,6 +87,9 @@ const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   transition: opacity ease-out 100ms;
   opacity: ${p => (p.hidden ? "0" : "1")};
 
+  color: ${p =>
+    p.disabled ? p.theme.colors?.palette.text.shade30 : p.theme.colors?.palette.text.shade70};
+
   margin-right: 16px;
   &:last-child {
     margin-right: 0;

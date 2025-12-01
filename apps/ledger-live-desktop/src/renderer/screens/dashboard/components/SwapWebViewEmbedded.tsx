@@ -1,48 +1,49 @@
-import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
+import { useSwapWebViewManager } from "~/renderer/components/SwapWebViewManager";
+import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
-const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
-
-const EmbeddedContainer = styled.div`
+const PortalTarget = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
 `;
 
-type SwapWebViewEmbeddedProps = {
-  height?: string;
-};
+/**
+ * Wrapper component for embedded swap webview.
+ * The actual webview is rendered via portal from SwapWebViewManager.
+ *
+ * This component handles the manifest loading state independently,
+ * allowing navigation to potentially fix loading issues.
+ */
+export default function SwapWebViewEmbedded() {
+  const portalTargetRef = useRef<HTMLDivElement>(null);
+  const { updateManifests } = useRemoteLiveAppContext();
+  const { registerTarget, unregisterTarget, isManifestLoaded } = useSwapWebViewManager();
 
-export default function SwapWebViewEmbedded({ height = "550px" }: SwapWebViewEmbeddedProps) {
-  const swapLiveEnabledFlag = useSwapLiveConfig();
-  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
+  useEffect(() => {
+    if (portalTargetRef.current) {
+      registerTarget("embedded", portalTargetRef.current);
+    }
+    return () => {
+      unregisterTarget("embedded");
+    };
+  }, [registerTarget, unregisterTarget]);
 
-  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
-  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
-
-  const manifest = localManifest || remoteManifest;
-
-  if (!manifest) {
+  // Show error screen if manifest fails to load
+  // This is NOT in the portal, so navigating away and back will retry
+  if (!isManifestLoaded) {
     return (
       <Card
         grow
-        style={{ overflow: "hidden", height, display: "flex", flexDirection: "column" }}
+        style={{ overflow: "hidden", height: "550px", display: "flex", flexDirection: "column" }}
         data-testid="embedded-swap-container"
       >
-        <Box flex={1} alignItems="center" justifyContent="center">
-          <Text color="palette.text.shade60">Loading swap...</Text>
-        </Box>
+        <NetworkErrorScreen refresh={updateManifests} type="warning" />
       </Card>
     );
   }
@@ -50,12 +51,10 @@ export default function SwapWebViewEmbedded({ height = "550px" }: SwapWebViewEmb
   return (
     <Card
       grow
-      style={{ overflow: "hidden", height, display: "flex", flexDirection: "column" }}
+      style={{ overflow: "hidden", height: "550px", display: "flex", flexDirection: "column" }}
       data-testid="embedded-swap-container"
     >
-      <EmbeddedContainer>
-        <SwapWebView manifest={manifest} isEmbedded />
-      </EmbeddedContainer>
+      <PortalTarget ref={portalTargetRef} />
     </Card>
   );
 }
