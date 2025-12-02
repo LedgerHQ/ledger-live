@@ -88,16 +88,8 @@ describe("getBlock", () => {
     } as any);
 
     const mockFetchWithRetries = jest.mocked(fetchWithRetries);
-    mockFetchWithRetries
-      .mockResolvedValueOnce([
-        {
-          hash: "0xabc123",
-          height: 12345,
-          time: "2025-01-15T10:30:00Z",
-          txs: ["0xtx1", "0xtx2"],
-        },
-      ])
-      .mockResolvedValueOnce({
+    mockFetchWithRetries.mockResolvedValueOnce([
+      {
         hash: "0xtx1",
         transaction_type: 2,
         nonce: "0x1",
@@ -125,8 +117,8 @@ describe("getBlock", () => {
           height: 12345,
           time: "2025-01-15T10:30:00Z",
         },
-      })
-      .mockResolvedValueOnce({
+      },
+      {
         hash: "0xtx2",
         transaction_type: 2,
         nonce: "0x2",
@@ -154,7 +146,8 @@ describe("getBlock", () => {
           height: 12345,
           time: "2025-01-15T10:30:00Z",
         },
-      });
+      },
+    ]);
 
     const result = await getBlock({} as CryptoCurrency, 12345);
 

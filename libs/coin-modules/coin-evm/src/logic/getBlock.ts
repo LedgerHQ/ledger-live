@@ -7,7 +7,7 @@ import { fetchWithRetries } from "../network/node/ledger";
 import { getNodeApi } from "../network/node";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig, isLedgerNodeConfig } from "../network/node/types";
-import { LedgerExplorerBlock, LedgerExplorerOperation } from "../types";
+import { LedgerExplorerOperation } from "../types";
 import {
   ledgerTransactionToBlockOperations,
   rpcTransactionToBlockOperations,
@@ -30,7 +30,7 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   if (isExternalNodeConfig(node)) {
     transactions = await getTransactionsFromRpcNode(currency, height);
   } else if (isLedgerNodeConfig(node)) {
-    transactions = await getTransactionsFromLedgerNode(currency, node.explorerId, height);
+    transactions = await getTransactionsFromLedgerNode(currency, node.explorerId, info.hash!);
   }
 
   return {
@@ -94,25 +94,18 @@ async function getTransactionFromHash(
 async function getTransactionsFromLedgerNode(
   currency: CryptoCurrency,
   explorerId: string,
-  height: number,
+  blockHash: string,
 ): Promise<BlockTransaction[]> {
-  const blockData = await fetchWithRetries<[LedgerExplorerBlock]>({
+  const ledgerTransactions = await fetchWithRetries<LedgerExplorerOperation[]>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${explorerId}/block/${height}`,
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${explorerId}/block/${blockHash}/txs`,
   });
 
-  const [{ txs }] = blockData;
-
-  if (!txs || txs.length === 0) {
+  if (!ledgerTransactions || ledgerTransactions.length === 0) {
     return [];
   }
 
-  const transactionPromises = txs.map(async txHash => {
-    const ledgerTransaction = await fetchWithRetries<LedgerExplorerOperation>({
-      method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${explorerId}/tx/${txHash}`,
-    });
-
+  return ledgerTransactions.map(ledgerTransaction => {
     const failed = ledgerTransaction.status === 0;
     const fees = BigInt(ledgerTransaction.gas_used) * BigInt(ledgerTransaction.gas_price);
     const feesPayer = ledgerTransaction.from || "";
@@ -120,13 +113,11 @@ async function getTransactionsFromLedgerNode(
     const operations = ledgerTransactionToBlockOperations(ledgerTransaction);
 
     return {
-      hash: txHash,
+      hash: ledgerTransaction.hash,
       failed,
       operations,
       fees,
       feesPayer,
     };
   });
-
-  return await Promise.all(transactionPromises);
 }
