@@ -302,11 +302,6 @@ export const sip010TxnToOperation = (
 
     const memo = bufferMemoToString(memoJson);
 
-    log("debug", "decoded sender", sender);
-    log("debug", "decoded receiver", receiver);
-    log("debug", "decoded value", valueStr);
-    log("debug", "decoded memo", memo);
-
     const value = new BigNumber(valueStr);
 
     const recipients: string[] = [receiver];
@@ -349,8 +344,6 @@ export const sip010TxnToOperation = (
       type,
       id: encodeOperationId(accountId, tx_id, type),
     });
-
-    invariant(ops, "stacks operation is not defined");
 
     return ops;
   } catch (e) {

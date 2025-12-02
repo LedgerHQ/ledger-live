@@ -2,20 +2,13 @@ import { memoToBufferCV, hexMemoToString, bufferMemoToString, processMemoCV } fr
 import { bufferCV, someCV, noneCV, cvToHex } from "@stacks/transactions";
 
 describe("memoToBufferCV", () => {
-  test("should return noneCV for undefined input", () => {
-    const result = memoToBufferCV(undefined);
-    expect(result).toEqual(noneCV());
-  });
-
-  test("should return noneCV for null input", () => {
-    const result = memoToBufferCV(null);
-    expect(result).toEqual(noneCV());
-  });
-
-  test("should return noneCV for empty string", () => {
-    const result = memoToBufferCV("");
-    expect(result).toEqual(noneCV());
-  });
+  test.each([undefined, null, ""])(
+    "should return noneCV for %s input",
+    (memo: string | null | undefined) => {
+      const result = memoToBufferCV(memo);
+      expect(result).toEqual(noneCV());
+    },
+  );
 
   test("should return someCV with bufferCV for string input", () => {
     const memo = "test memo";
@@ -33,15 +26,13 @@ describe("memoToBufferCV", () => {
 });
 
 describe("hexMemoToString", () => {
-  test("should return empty string for undefined input", () => {
-    const result = hexMemoToString(undefined);
-    expect(result).toBe("");
-  });
-
-  test("should return empty string for input without 0x prefix", () => {
-    const result = hexMemoToString("deadbeef");
-    expect(result).toBe("");
-  });
+  test.each([undefined, "deadbeef"])(
+    "should return empty string for %s",
+    (input: string | undefined) => {
+      const result = hexMemoToString(input);
+      expect(result).toBe("");
+    },
+  );
 
   test("should convert valid hex string to readable string", () => {
     const hexString = "0x74657374206d656d6f"; // "test memo" in hex
@@ -71,33 +62,15 @@ describe("hexMemoToString", () => {
 });
 
 describe("bufferMemoToString", () => {
-  test("should return undefined for null input", () => {
-    const result = bufferMemoToString(null);
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined for undefined input", () => {
-    const result = bufferMemoToString(undefined);
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined for input without type", () => {
-    const result = bufferMemoToString({});
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined for non-buffer type", () => {
-    const result = bufferMemoToString({ type: "(int)" });
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined when value is not a string", () => {
-    const result = bufferMemoToString({ type: "(buff 10)", value: 123 });
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined when value doesn't start with 0x", () => {
-    const result = bufferMemoToString({ type: "(buff 10)", value: "deadbeef" });
+  test.each([
+    null,
+    undefined,
+    {},
+    { type: "(int)" },
+    { type: "(buff 10)", value: 123 },
+    { type: "(buff 10)", value: "deadbeef" },
+  ])("should return undefined for %s", (input: unknown) => {
+    const result = bufferMemoToString(input);
     expect(result).toBeUndefined();
   });
 
@@ -139,15 +112,13 @@ describe("bufferMemoToString", () => {
 });
 
 describe("processMemoCV", () => {
-  test("should return undefined for undefined input", () => {
-    const result = processMemoCV(undefined);
-    expect(result).toBeUndefined();
-  });
-
-  test("should return undefined for empty string input", () => {
-    const result = processMemoCV("");
-    expect(result).toBeUndefined();
-  });
+  test.each([undefined, ""])(
+    "should return undefined for %s input",
+    (input: string | undefined) => {
+      const result = processMemoCV(input);
+      expect(result).toBeUndefined();
+    },
+  );
 
   test("should process valid memo CV", () => {
     // Create a valid Clarity Value memo (some buffer)

@@ -188,14 +188,22 @@ describe("Stacks API Transformers", () => {
       expect(Object.keys(result)).toHaveLength(2);
 
       // Check sp456.token-b::token-b
-      expect(result["sp456.token-b::token-b"]).toBeDefined();
-      expect(result["sp456.token-b::token-b"]).toHaveLength(1);
-      expect(result["sp456.token-b::token-b"][0].tx?.tx_id).toEqual("0xghi789");
+      expect(result["sp456.token-b::token-b"]).toEqual([
+        expect.objectContaining({
+          tx: expect.objectContaining({
+            tx_id: "0xghi789",
+          }),
+        }),
+      ]);
 
       // Check sp789.token-c::token-c
-      expect(result["sp789.token-c::token-c"]).toBeDefined();
-      expect(result["sp789.token-c::token-c"]).toHaveLength(1);
-      expect(result["sp789.token-c::token-c"][0].tx?.tx_id).toEqual("0xjkl012");
+      expect(result["sp789.token-c::token-c"]).toEqual([
+        expect.objectContaining({
+          tx: expect.objectContaining({
+            tx_id: "0xjkl012",
+          }),
+        }),
+      ]);
     });
 
     it("should exclude non-contract calls", async () => {
@@ -249,7 +257,7 @@ describe("Stacks API Transformers", () => {
       const noContractTxs = mockTransactions.filter(tx => tx.tx?.tx_type !== "contract_call");
       const result = await extractContractTransactions(noContractTxs);
 
-      expect(Object.keys(result)).toHaveLength(0);
+      expect(result).toEqual({});
     });
   });
 });

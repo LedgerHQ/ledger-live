@@ -1,5 +1,12 @@
 import { log } from "@ledgerhq/logs";
-import { bufferCV, deserializeCV, cvToJSON, someCV, noneCV } from "@stacks/transactions";
+import {
+  ClarityValue,
+  bufferCV,
+  deserializeCV,
+  cvToJSON,
+  someCV,
+  noneCV,
+} from "@stacks/transactions";
 
 /**
  * Converts a memo string to a buffer Clarity Value for sending in transactions
@@ -7,7 +14,7 @@ import { bufferCV, deserializeCV, cvToJSON, someCV, noneCV } from "@stacks/trans
  * @param memo - The memo to convert
  * @returns Clarity Value representing the memo (some(buffer) or none)
  */
-export const memoToBufferCV = (memo?: any) => {
+export const memoToBufferCV = (memo?: any): ClarityValue => {
   if (memo === undefined || memo === null || memo === "") {
     return noneCV();
   }
@@ -40,8 +47,6 @@ export const hexMemoToString = (memoHex?: string): string => {
  * @returns Readable string or undefined if conversion fails
  */
 export const bufferMemoToString = (memoJson: any): string | undefined => {
-  let memo: string | undefined = undefined;
-
   // If memo is a buffer type, try to convert to string if it contains valid printable chars
   if (
     memoJson?.type?.startsWith("(buff ") &&
@@ -54,7 +59,7 @@ export const bufferMemoToString = (memoJson: any): string | undefined => {
 
       // Check if string contains only printable characters
       if (/^[\x20-\x7E]*$/.test(str)) {
-        memo = str;
+        return str;
       }
     } catch (e) {
       // Keep original memo value if conversion fails
@@ -62,7 +67,7 @@ export const bufferMemoToString = (memoJson: any): string | undefined => {
     }
   }
 
-  return memo;
+  return undefined;
 };
 
 /**

@@ -127,8 +127,8 @@ describe("buildTokenAccounts", () => {
   describe("tokens with both transactions and balances", () => {
     it("should build token accounts for tokens with transactions and balances", async () => {
       mockFindTokenByAddressInCurrency.mockImplementation((tokenId: string) => {
-        if (tokenId === mockTokenId1) return mockToken1 as any;
-        if (tokenId === mockTokenId2) return mockToken2 as any;
+        if (tokenId === mockTokenId1) return mockToken1;
+        if (tokenId === mockTokenId2) return mockToken2;
         return undefined;
       });
 
@@ -155,7 +155,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should use balance from tokenBalances for tokens with transactions", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1],
@@ -177,7 +177,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should use '0' balance when token has transactions but no balance entry", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1],
@@ -201,7 +201,7 @@ describe("buildTokenAccounts", () => {
 
   describe("tokens with only balances (no transactions)", () => {
     it("should build token accounts for tokens with balances but no transactions", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {};
 
@@ -222,7 +222,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should skip tokens with zero balances and no transactions", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {};
 
@@ -242,7 +242,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should not process the same token twice (skip duplicates in balance-only processing)", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1],
@@ -267,9 +267,9 @@ describe("buildTokenAccounts", () => {
   describe("mixed scenarios", () => {
     it("should handle mix of tokens with transactions, balances only, and zero balances", async () => {
       mockFindTokenByAddressInCurrency.mockImplementation((tokenId: string) => {
-        if (tokenId === mockTokenId1) return mockToken1 as any;
-        if (tokenId === mockTokenId2) return mockToken2 as any;
-        if (tokenId === mockTokenId3) return mockToken3 as any;
+        if (tokenId === mockTokenId1) return mockToken1;
+        if (tokenId === mockTokenId2) return mockToken2;
+        if (tokenId === mockTokenId3) return mockToken3;
         return null;
       });
 
@@ -290,8 +290,8 @@ describe("buildTokenAccounts", () => {
         tokenBalances,
       );
 
-      expect(result).toHaveLength(2);
       // Should have mockTokenId1 and mockTokenId2, but not mockTokenId3
+      expect(result).toHaveLength(2);
     });
 
     it("should handle empty tokenTxs and tokenBalances", async () => {
@@ -301,7 +301,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should handle multiple transactions for the same token", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1, mockTransaction2],
@@ -318,8 +318,8 @@ describe("buildTokenAccounts", () => {
         tokenBalances,
       );
 
-      expect(result).toHaveLength(1);
       // Operations should be processed from both transactions
+      expect(result).toHaveLength(1);
     });
   });
 
@@ -366,7 +366,6 @@ describe("buildTokenAccounts", () => {
       );
 
       expect(result).toHaveLength(0);
-      // The error is logged in createTokenAccount, not buildTokenAccounts
       expect(mockLog).toHaveBeenCalledWith(
         "error",
         "stacks error creating token account",
@@ -377,9 +376,9 @@ describe("buildTokenAccounts", () => {
     it("should filter out null accounts when createTokenAccount returns null", async () => {
       // First call succeeds, second fails
       mockFindTokenByAddressInCurrency
-        .mockReturnValueOnce(mockToken1 as any)
+        .mockReturnValueOnce(mockToken1)
         .mockReturnValueOnce(undefined)
-        .mockReturnValueOnce(mockToken3 as any);
+        .mockReturnValueOnce(mockToken3);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1],
@@ -406,7 +405,7 @@ describe("buildTokenAccounts", () => {
 
   describe("with initialAccount", () => {
     it("should pass initialAccount to createTokenAccount", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const mockInitialAccount = {
         id: mockParentAccountId,
@@ -429,12 +428,12 @@ describe("buildTokenAccounts", () => {
         mockInitialAccount,
       );
 
-      expect(result).toHaveLength(1);
       // The function should work correctly with initialAccount
+      expect(result).toHaveLength(1);
     });
 
     it("should preserve pending operations from initialAccount subaccounts", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenAccountId = `${mockParentAccountId}+${mockToken1.id}`;
 
@@ -473,14 +472,14 @@ describe("buildTokenAccounts", () => {
         mockInitialAccount,
       );
 
-      expect(result).toHaveLength(1);
       // Should preserve pendingOperations from initial account
+      expect(result).toHaveLength(1);
     });
   });
 
   describe("balance handling", () => {
     it("should handle various balance formats correctly", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {
         [mockTokenId1]: [mockTransaction1],
@@ -503,7 +502,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should handle string number balances", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs = {};
 
@@ -531,7 +530,7 @@ describe("buildTokenAccounts", () => {
         id: TokenPrefix + specialTokenId,
       };
 
-      mockFindTokenByAddressInCurrency.mockReturnValue(specialToken as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(specialToken);
 
       const tokenTxs = {
         [specialTokenId]: [mockTransaction1],
@@ -552,7 +551,7 @@ describe("buildTokenAccounts", () => {
     });
 
     it("should handle very large number of tokens", async () => {
-      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1 as any);
+      mockFindTokenByAddressInCurrency.mockReturnValue(mockToken1);
 
       const tokenTxs: Record<string, TransactionResponse[]> = {};
       const tokenBalances: Record<string, string> = {};
@@ -575,9 +574,9 @@ describe("buildTokenAccounts", () => {
 
     it("should maintain order of token processing", async () => {
       mockFindTokenByAddressInCurrency.mockImplementation((tokenId: string) => {
-        if (tokenId === mockTokenId1) return mockToken1 as any;
-        if (tokenId === mockTokenId2) return mockToken2 as any;
-        if (tokenId === mockTokenId3) return mockToken3 as any;
+        if (tokenId === mockTokenId1) return mockToken1;
+        if (tokenId === mockTokenId2) return mockToken2;
+        if (tokenId === mockTokenId3) return mockToken3;
         return null;
       });
 
@@ -600,8 +599,6 @@ describe("buildTokenAccounts", () => {
       );
 
       expect(result).toHaveLength(3);
-      // First two should be from tokenTxs (mockTokenId1, mockTokenId2)
-      // Last should be from tokenBalances only (mockTokenId3)
     });
   });
 });
@@ -629,7 +626,7 @@ describe("createTokenAccount", () => {
 
   describe("successful token account creation", () => {
     it("should create token account with transactions and balance", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const transactions: TransactionResponse[] = [];
       const balance = "1000000";
@@ -649,7 +646,7 @@ describe("createTokenAccount", () => {
     });
 
     it("should create token account with zero balance but returns null when no operations", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const transactions: TransactionResponse[] = [];
       const balance = "0";
@@ -667,7 +664,7 @@ describe("createTokenAccount", () => {
     });
 
     it("should preserve pending operations from initialAccount", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const tokenAccountId = `${mockParentAccountId}+${mockToken.id}`;
       const mockPendingOp = {
@@ -706,7 +703,7 @@ describe("createTokenAccount", () => {
     });
 
     it("should use empty arrays when no matching initialAccount subaccount", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const initialAccount = {
         id: mockParentAccountId,
@@ -772,7 +769,7 @@ describe("createTokenAccount", () => {
 
   describe("balance handling", () => {
     it("should handle undefined balance as zero", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const result = await createTokenAccount(
         mockAddress,
@@ -787,7 +784,7 @@ describe("createTokenAccount", () => {
     });
 
     it("should handle very large balance values", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const largeBalance = "999999999999999999999999";
       const result = await createTokenAccount(
@@ -799,12 +796,11 @@ describe("createTokenAccount", () => {
       );
 
       expect(result).not.toBeNull();
-      // BigNumber may use scientific notation for very large numbers
       expect(result?.balance.isEqualTo(new BigNumber(largeBalance))).toBe(true);
     });
 
     it("should set spendableBalance equal to balance", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const balance = "5000000";
       const result = await createTokenAccount(
@@ -822,7 +818,7 @@ describe("createTokenAccount", () => {
 
   describe("operations processing", () => {
     it("should set operationsCount correctly", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const result = await createTokenAccount(
         mockAddress,
@@ -837,7 +833,7 @@ describe("createTokenAccount", () => {
     });
 
     it("should set creationDate from current time when no operations exist", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockToken);
 
       const result = await createTokenAccount(
         mockAddress,
@@ -860,7 +856,7 @@ describe("createTokenAccount", () => {
         id: TokenPrefix + tokenIdWithAsset,
       };
 
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockTokenWithAsset as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockTokenWithAsset);
 
       const result = await createTokenAccount(
         mockAddress,
@@ -880,7 +876,7 @@ describe("createTokenAccount", () => {
         id: TokenPrefix + specialTokenId,
       };
 
-      mockFindTokenByAddressInCurrency.mockResolvedValue(mockSpecialToken as any);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(mockSpecialToken);
 
       const result = await createTokenAccount(
         mockAddress,

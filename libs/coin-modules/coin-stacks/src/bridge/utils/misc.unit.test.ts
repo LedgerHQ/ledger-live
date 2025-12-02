@@ -1,7 +1,5 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { fetchFullTxs } from "../../network/index";
-import { Operation } from "@ledgerhq/types-live";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import * as api from "../../network/api";
 
@@ -230,15 +228,6 @@ describe("operation building from raw", () => {
     expect(opBasic.senders).toHaveLength(1);
     expect(opBasic.recipients).toHaveLength(1);
   });
-});
-
-// This is an integration test that makes real API calls - skip in unit tests
-test.skip("convert raw transactions to live operations", async () => {
-  const [rawTxs] = await fetchFullTxs(Address);
-  const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
-
-  expect(operations).toBeDefined();
-  expect(operations.length).toBeGreaterThan(0);
 });
 
 describe("operation building from mempool raw", () => {

@@ -18,11 +18,10 @@ import { getSubAccount } from "./utils/token";
 type ValidationErrors = TransactionStatus["errors"];
 
 /**
- * Validates the recipient address and basic transaction requirements
+ * Validates the recipient address
  */
-function validateRecipientAndFee(
+function validateRecipient(
   recipient: string | undefined,
-  fee: BigNumber | undefined | null,
   accountAddress: string,
   currencyName: string,
   errors: ValidationErrors,
@@ -39,9 +38,13 @@ function validateRecipientAndFee(
 
   if (accountAddress === recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    return;
   }
+}
 
+/**
+ * Validates the transaction fee
+ */
+function validateFee(fee: BigNumber | undefined | null, errors: ValidationErrors): void {
   if (!fee || fee.eq(0)) {
     errors.gas = new FeeNotLoaded();
   }
@@ -135,7 +138,8 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   let { amount } = transaction;
 
   // Validate recipient and fee
-  validateRecipientAndFee(recipient, fee, address, account.currency.name, errors);
+  validateRecipient(recipient, address, account.currency.name, errors);
+  validateFee(fee, errors);
 
   const estimatedFees = fee || new BigNumber(0);
   let totalSpent: BigNumber;

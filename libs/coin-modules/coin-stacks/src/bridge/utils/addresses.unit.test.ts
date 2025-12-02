@@ -27,6 +27,7 @@ describe("validateAddress", () => {
       expect(result.data.data).toBe(mockData);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(validAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 
   test("should return invalid result for invalid address", () => {
@@ -45,6 +46,7 @@ describe("validateAddress", () => {
       expect(result.error).toBe(mockError);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(invalidAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 
   test("should handle empty string", () => {
@@ -63,6 +65,7 @@ describe("validateAddress", () => {
       expect(result.error).toBe(mockError);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(emptyAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 
   test("should handle malformed addresses", () => {
@@ -81,6 +84,7 @@ describe("validateAddress", () => {
       expect(result.error).toBe(mockError);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(malformedAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 
   test("should handle addresses with wrong version", () => {
@@ -101,6 +105,7 @@ describe("validateAddress", () => {
       expect(result.data.data).toBe(mockData);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(wrongVersionAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 
   test("should handle addresses with incorrect format", () => {
@@ -119,5 +124,6 @@ describe("validateAddress", () => {
       expect(result.error).toBe(mockError);
     }
     expect(c32addressDecode).toHaveBeenCalledWith(incorrectFormatAddress);
+    expect(c32addressDecode).toHaveBeenCalledTimes(1);
   });
 });

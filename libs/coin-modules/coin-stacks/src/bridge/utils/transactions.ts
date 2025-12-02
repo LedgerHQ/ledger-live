@@ -188,9 +188,7 @@ export const createTokenTransferTransaction = async (
     contractCallOptions.nonce = nonce.toFixed();
   }
 
-  const tx = await makeUnsignedContractCall(contractCallOptions);
-
-  return tx;
+  return await makeUnsignedContractCall(contractCallOptions);
 };
 
 // Creates unsigned STX transfer transaction

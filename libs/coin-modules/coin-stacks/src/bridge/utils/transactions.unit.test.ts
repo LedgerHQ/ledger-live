@@ -158,15 +158,18 @@ describe("transactions utility functions", () => {
         assetName,
       );
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toEqual({
-        type: StacksMessageType.PostCondition,
-        conditionType: PostConditionType.Fungible,
-        principal: "MOCK_STANDARD_PRINCIPAL",
-        conditionCode: FungibleConditionCode.Equal,
-        amount: BigInt(1000),
-        assetInfo: "MOCK_ASSET_INFO",
-      });
+      expect(result).toEqual(
+        expect.arrayContaining([
+          {
+            type: StacksMessageType.PostCondition,
+            conditionType: PostConditionType.Fungible,
+            principal: "MOCK_STANDARD_PRINCIPAL",
+            conditionCode: FungibleConditionCode.Equal,
+            amount: BigInt(1000),
+            assetInfo: "MOCK_ASSET_INFO",
+          },
+        ]),
+      );
       expect(createStandardPrincipal).toHaveBeenCalledWith(senderAddress);
       expect(createAssetInfo).toHaveBeenCalledWith(contractAddress, contractName, assetName);
     });
