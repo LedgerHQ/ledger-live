@@ -320,6 +320,7 @@ const extraProperties = (store: ReduxStore) => {
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets,
+  };
 };
 
 function getAnalytics() {
