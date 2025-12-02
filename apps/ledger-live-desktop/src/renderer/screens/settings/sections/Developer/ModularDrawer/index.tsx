@@ -16,12 +16,14 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { useDialog } from "LLD/components/Dialog";
+import { DialogHeader, Button } from "@ledgerhq/ldls-ui-react";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
   const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
   const dispatch = useDispatch();
+  const { openDialog, closeDialog } = useDialog();
 
   const {
     assetsLeftElement,
@@ -98,6 +100,25 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             </Button>
             <Button appearance="accent" size="sm" onClick={debugDuplicates}>
               Debug Duplicates
+            </Button>
+            <Button
+              onClick={() =>
+                openDialog(
+                  <>
+                    <DialogHeader
+                      appearance="extended"
+                      title="Title"
+                      onClose={closeDialog}
+                      onBack={() => null}
+                    />
+                    <h1 style={{ color: "white" }}>
+                      Debug Dialog. To be implemented in LIVE-23744
+                    </h1>
+                  </>,
+                )
+              }
+            >
+              Debug Dialog
             </Button>
           </Flex>
         </Flex>
