@@ -28,7 +28,9 @@
     "src/synchronization.ts",
     "src/test/bridge.dataset.ts",
     "src/types/bridge.fixture.ts",
-    "src/validateAddress.ts"
+    "src/validateAddress.ts",
+    "src/uiConfig.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": [

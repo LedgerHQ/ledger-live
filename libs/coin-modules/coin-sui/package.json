@@ -106,6 +106,10 @@
       "require": "./lib/constants.js",
       "default": "./lib-es/constants.js"
     },
+    "./uiConfig": {
+      "require": "./lib/uiConfig.js",
+      "default": "./lib-es/uiConfig.js"
+    },
     ".": {
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
