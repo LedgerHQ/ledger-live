@@ -16,14 +16,14 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
-import { useDialog } from "LLD/components/Dialog";
-import { DialogHeader, Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/ldls-ui-react";
+import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
   const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
   const dispatch = useDispatch();
-  const { openDialog, closeDialog } = useDialog();
 
   const {
     assetsLeftElement,
@@ -45,6 +45,14 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     openModal ? "MODAL_RECEIVE" : undefined,
   );
 
+  const { openAssetFlowDialog } = useOpenAssetFlowDialog(
+    location.value === ModularDrawerLocation.LIVE_APP
+      ? { location: location.value, liveAppId: liveApp.value }
+      : { location: location.value },
+    "receive",
+    openModal ? "MODAL_RECEIVE" : undefined,
+  );
+
   const debugDuplicates = () => {
     dispatch(setIsDebuggingDuplicates(true));
     openAssetFlow({
@@ -59,6 +67,19 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
       openAssetAndAccountDrawer({
+        drawerConfiguration,
+      });
+    },
+    [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
+    [ModularDrawerLocation.SEND_FLOW]: () => {},
+  };
+
+  const openDrawerFunctionsDialog: Record<ModularDrawerLocation, () => void> = {
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration),
+    [ModularDrawerLocation.LIVE_APP]: () => {
+      dispatch(setFlowValue("Dev Tool"));
+      dispatch(setSourceValue("Dev Tool"));
+      openAssetAndAccountDialog({
         drawerConfiguration,
       });
     },
@@ -98,27 +119,11 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             >
               Open Drawer
             </Button>
+            <Button size="sm" onClick={() => openDrawerFunctionsDialog[location.value]()}>
+              Debug Dialog
+            </Button>
             <Button appearance="accent" size="sm" onClick={debugDuplicates}>
               Debug Duplicates
-            </Button>
-            <Button
-              onClick={() =>
-                openDialog(
-                  <>
-                    <DialogHeader
-                      appearance="extended"
-                      title="Title"
-                      onClose={closeDialog}
-                      onBack={() => null}
-                    />
-                    <h1 style={{ color: "white" }}>
-                      Debug Dialog. To be implemented in LIVE-23744
-                    </h1>
-                  </>,
-                )
-              }
-            >
-              Debug Dialog
             </Button>
           </Flex>
         </Flex>

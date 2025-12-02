@@ -3,8 +3,6 @@ import React from "react";
 import type { ModularDrawerAddAccountStep } from "../../AddAccountDrawer/domain";
 import type { ModularDrawerStep, NavigationDirection } from "../types";
 
-const TOP_BAR = 62;
-
 const AnimatedScreenWrapper = ({
   children,
   screenKey,
@@ -37,13 +35,10 @@ const AnimatedScreenWrapper = ({
       exit="exit"
       transition={{ duration: 0.3, ease: [0.3, 0, 0.3, 1] }}
       style={{
-        position: "absolute",
         width: "100%",
         overflow: "hidden",
-        height: `calc(100% - ${TOP_BAR}px)`,
+        height: `480px`,
         scrollbarWidth: "none",
-        paddingLeft: "16px",
-        paddingRight: "16px",
       }}
       data-testid={`modular-drawer-screen-${screenKey}`}
       {...props}

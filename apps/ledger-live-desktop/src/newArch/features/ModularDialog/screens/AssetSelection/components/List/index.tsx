@@ -34,11 +34,6 @@ export type SelectAssetProps = {
 
 const CURRENT_PAGE = "Modular Asset Selection";
 
-const TITLE_HEIGHT = 52;
-const SEARCH_HEIGHT = 64;
-const MARGIN_BOTTOM = TITLE_HEIGHT + SEARCH_HEIGHT;
-const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
-
 export const SelectAssetList = ({
   assetsToDisplay,
   scrollToTop,
@@ -122,7 +117,7 @@ export const SelectAssetList = ({
   }
 
   return (
-    <ListWrapper data-testid="asset-selector-list-container" customHeight={LIST_HEIGHT}>
+    <ListWrapper data-testid="asset-selector-list-container">
       <AssetList
         scrollToTop={scrollToTop}
         assets={formattedAssets}

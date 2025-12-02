@@ -1,3 +1,4 @@
+import React from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -10,13 +11,14 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import ModularDrawerFlowManager from "../ModularDialogFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { CloseButton } from "../components/CloseButton";
+import { CloseButton } from "../components/CloseButton"; // TODO move to AddAccount
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { closeDialog, openDialog } from "LLD/components/Dialog";
 
-function selectCurrency(
+function selectCurrencyDialog(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
@@ -24,24 +26,22 @@ function selectCurrency(
 ): void {
   const filteredCurrencies = currencies?.map(currency => currency.id) ?? [];
 
-  setDrawer(
-    ModularDrawerFlowManager,
-    {
-      currencies: filteredCurrencies,
-      onAssetSelected,
-      drawerConfiguration: drawerConfiguration ?? {
-        assets: { leftElement: "undefined", rightElement: "balance" },
-        networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
-      },
-    },
-    {
-      onRequestClose: onClose,
-      closeButtonComponent: CloseButton,
-    },
+  openDialog(
+    <ModularDrawerFlowManager
+      currencies={filteredCurrencies}
+      onAssetSelected={onAssetSelected}
+      drawerConfiguration={
+        drawerConfiguration ?? {
+          assets: { leftElement: "undefined", rightElement: "balance" },
+          networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
+        }
+      }
+    />,
+    onClose,
   );
 }
 
-export function useOpenAssetFlow(
+export function useOpenAssetFlowDialog(
   modularDrawerVisibleParams: ModularDrawerVisibleParams,
   source: string,
   modalNameToReopen?: keyof GlobalModalData,
@@ -67,6 +67,7 @@ export function useOpenAssetFlow(
       autoCloseDrawer: boolean = true,
       onAccountSelected?: (account: Account) => void,
     ) => {
+      closeDialog();
       dispatch(setFlowValue("add account"));
       dispatch(setSourceValue(source));
 
@@ -116,13 +117,14 @@ export function useOpenAssetFlow(
     ],
   );
 
-  const openAssetFlow = useCallback(
+  const openAssetFlowDialog = useCallback(
     (drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
         dispatch(setSourceValue(source));
-        selectCurrency(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
+        selectCurrencyDialog(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
       } else {
+        closeDialog();
         dispatch(
           openModal("MODAL_ADD_ACCOUNTS", {
             newModalName: modalNameToReopen,
@@ -142,7 +144,7 @@ export function useOpenAssetFlow(
   );
 
   return {
-    openAssetFlow,
+    openAssetFlowDialog,
     openAddAccountFlow,
   };
 }

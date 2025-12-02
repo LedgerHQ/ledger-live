@@ -6,13 +6,8 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
-import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { useSelector } from "react-redux";
-import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { modularDrawerFlowSelector } from "~/renderer/reducers/modularDrawer";
-import { CloseButton } from "../components/CloseButton";
+import ModularDialogFlowManager from "../ModularDialogFlowManager";
+import { closeDialog, openDialog } from "LLD/components/Dialog";
 
 type Result = {
   account: AccountLike;
@@ -28,60 +23,52 @@ type DrawerParams = {
   onCancel?: () => void;
 };
 
-function openAssetAndAccountDrawer(params: DrawerParams): void {
+function openAssetAndAccountDialog(params: DrawerParams): void {
   const { currencies, drawerConfiguration, useCase, areCurrenciesFiltered, onSuccess, onCancel } =
     params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
   const handleSuccess = (result: Result): void => {
-    setDrawer();
+    closeDialog();
     onSuccess?.(result.account, result.parentAccount);
   };
 
-  const handleCancel = (): void => {
-    setDrawer();
-    onCancel?.();
-  };
-
-  return setDrawer(
-    ModularDrawerFlowManager,
-    {
-      currencies: currencies ?? [],
-      onAccountSelected: (account, parentAccount) => {
+  return openDialog(
+    <ModularDialogFlowManager
+      currencies={currencies ?? []}
+      onAccountSelected={(account, parentAccount) => {
         handleSuccess({ account, parentAccount });
-      },
-      drawerConfiguration: modularDrawerConfiguration,
-      useCase,
-      areCurrenciesFiltered,
-    },
-    {
-      closeButtonComponent: CloseButtonWithTracking,
-      onRequestClose: handleCancel,
-    },
+      }}
+      drawerConfiguration={modularDrawerConfiguration}
+      useCase={useCase}
+      areCurrenciesFiltered={areCurrenciesFiltered}
+    ></ModularDialogFlowManager>,
+    onCancel,
   );
 }
 
-const CloseButtonWithTracking = ({ onRequestClose }: React.ComponentProps<typeof CloseButton>) => {
-  const flow = useSelector(modularDrawerFlowSelector);
+// TODO implement the following
+// const CloseButtonWithTracking = ({ onRequestClose }: React.ComponentProps<typeof CloseButton>) => {
+//   const flow = useSelector(modularDrawerFlowSelector);
 
-  const handleClose: React.ComponentProps<typeof CloseButton>["onRequestClose"] = mouseEvent => {
-    track("button_clicked", {
-      button: "Close",
-      flow,
-      page: currentRouteNameRef.current,
-    });
-    onRequestClose(mouseEvent);
-  };
+//   const handleClose: React.ComponentProps<typeof CloseButton>["onRequestClose"] = mouseEvent => {
+//     track("button_clicked", {
+//       button: "Close",
+//       flow,
+//       page: currentRouteNameRef.current,
+//     });
+//     onRequestClose(mouseEvent);
+//   };
 
-  return <CloseButton onRequestClose={handleClose} />;
-};
+//   return <CloseButton onRequestClose={handleClose} />;
+// };
 
-function openAssetAndAccountDrawerPromise(
+function openAssetAndAccountDialogPromise(
   drawerParams: Omit<DrawerParams, "onSuccess" | "onCancel">,
 ) {
   return new Promise<Result>((resolve, reject) =>
-    openAssetAndAccountDrawer({
+    openAssetAndAccountDialog({
       ...drawerParams,
       onSuccess: (account, parentAccount) => resolve({ account, parentAccount }),
       onCancel: () => reject(new Error("Canceled by user")),
@@ -89,4 +76,4 @@ function openAssetAndAccountDrawerPromise(
   );
 }
 
-export { openAssetAndAccountDrawerPromise, openAssetAndAccountDrawer };
+export { openAssetAndAccountDialogPromise, openAssetAndAccountDialog };
