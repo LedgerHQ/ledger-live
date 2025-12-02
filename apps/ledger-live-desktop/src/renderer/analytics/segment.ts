@@ -40,6 +40,7 @@ import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import mixpanel from "mixpanel-browser";
+import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -252,36 +253,21 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
-  const accountsWithFundsCurrencies = accounts
-    ? accounts
-        .filter(account => account?.balance.isGreaterThan(0))
-        .map(account => account?.currency)
-    : [];
-
-  const accountsWithFundsCurrenciesIds = new Set(
-    accountsWithFundsCurrencies.map(currency => currency.id),
+  const combinedIds = getTotalStakeableAssets(
+    accounts,
+    ptxAttributes.stakingCurrenciesEnabled,
+    ptxAttributes.partnerStakingCurrenciesEnabled,
   );
-
-  const tokenWithFundsIds = new Set(getTokensWithFunds(accounts, "currencyId"));
-
-  const allStakingCurrenciesEnabled = new Set([
-    ...(ptxAttributes.stakingCurrenciesEnabled ?? []),
-    ...(ptxAttributes.partnerStakingCurrenciesEnabled ?? []),
-  ]);
-
-  const filteredAccountIds = [...accountsWithFundsCurrenciesIds].filter(tokenId =>
-    allStakingCurrenciesEnabled.has(tokenId),
-  );
-  const filteredTokenIds = [...tokenWithFundsIds].filter(tokenId =>
-    allStakingCurrenciesEnabled.has(tokenId),
-  );
-  const combinedIds = new Set([...filteredAccountIds, ...filteredTokenIds]);
-
-  // Currency or token ids from all stakeable accounts & subAccounts with positive balance
   const totalStakeableAssets = combinedIds.size;
 
   const accountsWithFunds = accounts
-    ? [...new Set(accountsWithFundsCurrencies.map(account => account?.currency?.ticker))]
+    ? [
+        ...new Set(
+          accounts
+            .filter(account => account?.balance.isGreaterThan(0))
+            .map(account => account?.currency?.ticker),
+        ),
+      ]
     : [];
 
   const tokenWithFunds = getTokensWithFunds(accounts);
