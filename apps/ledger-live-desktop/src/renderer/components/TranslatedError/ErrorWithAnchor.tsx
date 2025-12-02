@@ -15,7 +15,11 @@ export function ErrorWithAnchorContent({
   html,
   dataTestId,
 }: ErrorWithAnchorContentProps): JSX.Element {
-  const { segments } = useHtmlLinkSegments(html);
+  const { segments }: { segments: HtmlLinkSegment[] } = useHtmlLinkSegments(html);
+
+  const handleLinkClick = (href: string) => {
+    openURL(href);
+  };
 
   return (
     <span data-testid={dataTestId}>
@@ -26,7 +30,7 @@ export function ErrorWithAnchorContent({
             color="palette.text.warning"
             alwaysUnderline
             key={uuid}
-            onClick={() => openURL(segment.href)}
+            onClick={() => handleLinkClick(segment.href)}
           >
             {segment.label}
           </Link>
