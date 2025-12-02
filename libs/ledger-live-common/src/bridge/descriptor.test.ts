@@ -1,6 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { getDescriptor, getSendDescriptor, sendFeatures } from "./descriptor";
+import {
+  getDescriptor,
+  getSendDescriptor,
+  sendFeatures,
+  applyMemoToTransaction,
+} from "./descriptor";
 import * as configModule from "../config/index";
 
 jest.mock("../config/index");
@@ -207,5 +212,107 @@ describe("sendFeatures", () => {
   ])("should check domain support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
     expect(sendFeatures.supportsDomain(currency)).toBe(expected);
+  });
+});
+
+describe("applyMemoToTransaction", () => {
+  describe("fallback behavior", () => {
+    it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      "should use default memo field for %s",
+      family => {
+        const result = applyMemoToTransaction(family, "test memo");
+        expect(result).toEqual({ memo: "test memo" });
+      },
+    );
+
+    it("should handle undefined memo with fallback", () => {
+      const result = applyMemoToTransaction("unknown_chain", undefined);
+      expect(result).toEqual({ memo: undefined });
+    });
+  });
+
+  describe("nested structures", () => {
+    it("should apply memo for solana with empty transaction", () => {
+      const result = applyMemoToTransaction("solana", "test memo", {});
+      expect(result).toEqual({
+        model: {
+          uiState: {
+            memo: "test memo",
+          },
+        },
+      });
+    });
+
+    it("should apply memo for solana preserving existing data", () => {
+      const transaction = {
+        model: {
+          kind: "transfer",
+          uiState: {
+            amount: "100",
+          },
+        },
+      };
+      const result = applyMemoToTransaction("solana", "test memo", transaction);
+      expect(result).toEqual({
+        model: {
+          kind: "transfer",
+          uiState: {
+            amount: "100",
+            memo: "test memo",
+          },
+        },
+      });
+    });
+
+    it("should apply memo for ton with empty transaction", () => {
+      const result = applyMemoToTransaction("ton", "test comment", {});
+      expect(result).toEqual({
+        comment: {
+          text: "test comment",
+        },
+      });
+    });
+
+    it("should apply memo for ton preserving existing data", () => {
+      const transaction = {
+        comment: {
+          isEncrypted: false,
+        },
+      };
+      const result = applyMemoToTransaction("ton", "test comment", transaction);
+      expect(result).toEqual({
+        comment: {
+          isEncrypted: false,
+          text: "test comment",
+        },
+      });
+    });
+  });
+
+  describe("special field names", () => {
+    it("should apply transferId for casper", () => {
+      const result = applyMemoToTransaction("casper", "12345");
+      expect(result).toEqual({ transferId: "12345" });
+    });
+
+    it("should apply numeric tag for xrp", () => {
+      const result = applyMemoToTransaction("xrp", 12345);
+      expect(result).toEqual({ tag: 12345 });
+    });
+
+    it("should convert string to number for xrp", () => {
+      const result = applyMemoToTransaction("xrp", "67890");
+      expect(result).toEqual({ tag: 67890 });
+    });
+
+    it("should handle undefined tag for xrp", () => {
+      const result = applyMemoToTransaction("xrp", undefined);
+      expect(result).toEqual({ tag: undefined });
+    });
+
+    it("should apply memoValue for stellar", () => {
+      const result = applyMemoToTransaction("stellar", "stellar memo");
+      expect(result).toEqual({ memoValue: "stellar memo" });
+    });
   });
 });

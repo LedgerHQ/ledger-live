@@ -82,38 +82,10 @@ export type CoinDescriptor = {
   // Future: stake, swap, etc.
 };
 
-export const newFlowsConfig: Record<
-  string,
-  { send?: boolean; staking?: boolean; receive?: boolean }
-> = {
-  algorand: { send: false },
-  aptos: { send: false },
-  bitcoin: { send: false },
-  canton: { send: false },
-  cardano: { send: false },
-  casper: { send: false },
-  celo: { send: false },
-  cosmos: { send: false },
-  evm: { send: false },
-  filecoin: { send: false },
-  hedera: { send: false },
-  icon: { send: false },
-  internet_computer: { send: false },
-  kaspa: { send: false },
-  mina: { send: false },
-  multiversx: { send: false },
-  near: { send: false },
-  polkadot: { send: false },
-  solana: { send: false },
-  stacks: { send: false },
-  stellar: { send: false },
-  sui: { send: false },
-  tezos: { send: false },
-  ton: { send: false },
-  tron: { send: false },
-  vechain: { send: false },
-  xrp: { send: false },
-};
+type MemoApplicationFn = (
+  memoValue: string | number | undefined,
+  currentTransaction: Record<string, unknown>,
+) => Record<string, unknown>;
 
 const descriptorRegistry: Record<string, CoinDescriptor> = {
   algorand: algorandDescriptor,
@@ -202,20 +174,53 @@ export function getSendDescriptor(
   return descriptor?.send ?? null;
 }
 
-/*
- * Check if the currency supports the new flows
- */
-export function supportsNewFlows(
-  currency: CryptoOrTokenCurrency,
-  flow: "send" | "staking" | "receive",
-): boolean {
-  const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-  return newFlowsConfig[cryptoCurrency.family]?.[flow] ?? false;
-}
-
 /**
  * Helper functions to check send flow capabilities
  */
+const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
+  solana: (memo, transaction) => {
+    const currentModel = (transaction.model as Record<string, unknown> | undefined) || {};
+    const currentUiState = (currentModel.uiState as Record<string, unknown> | undefined) || {};
+    return {
+      model: {
+        ...currentModel,
+        uiState: {
+          ...currentUiState,
+          memo,
+        },
+      },
+    };
+  },
+  casper: memo => ({ transferId: memo }),
+  xrp: memo => {
+    if (typeof memo === "number") return { tag: memo };
+    if (typeof memo === "string") return { tag: Number(memo) };
+    return { tag: undefined };
+  },
+  stellar: memo => ({ memoValue: memo }),
+  ton: (memo, transaction) => {
+    const currentComment = (transaction.comment as Record<string, unknown> | undefined) || {};
+    return {
+      comment: {
+        ...currentComment,
+        text: memo,
+      },
+    };
+  },
+};
+
+export function applyMemoToTransaction(
+  family: string,
+  memoValue: string | number | undefined,
+  currentTransaction: Record<string, unknown> = {},
+): Record<string, unknown> {
+  const applyFn = memoApplicationRegistry[family];
+  if (!applyFn) {
+    return { memo: memoValue };
+  }
+  return applyFn(memoValue, currentTransaction);
+}
+
 export const sendFeatures = {
   hasMemo: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);

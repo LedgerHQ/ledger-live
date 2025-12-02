@@ -7,6 +7,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { useDeepLinkHandler } from "./useDeepLinkHandler";
+import BigNumber from "bignumber.js";
 
 jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
@@ -238,7 +239,7 @@ describe("useDeepLinkHandler", () => {
             recipient,
             account: mockAccount,
             parentAccount: undefined,
-            amount,
+            amount: new BigNumber(amount),
           });
         });
       });
