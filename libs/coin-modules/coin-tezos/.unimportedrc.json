@@ -18,5 +18,8 @@
     "src/types/bridge.fixture.ts",
     "src/logic/validateAddress.ts"
   ],
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ],
   "ignore": []
 }
