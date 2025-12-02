@@ -251,6 +251,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
       },
       "custom.getFunds": request => {
         const accountId = request.params?.accountId;
+        const currencyId = request.params?.currencyId;
 
         if (!accountId) {
           throw new Error("accountId is required");
@@ -270,6 +271,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               parentAccount: isTokenAccount(account)
                 ? getParentAccount(account, accounts)
                 : undefined,
+              currencyId,
             }),
           );
 

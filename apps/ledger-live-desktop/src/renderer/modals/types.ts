@@ -69,6 +69,7 @@ export type GlobalModalData = {
     account: AccountLike;
     parentAccount?: Account | undefined | null;
     entryPoint?: "get-funds" | undefined;
+    currencyId?: string;
   };
   MODAL_PASSWORD: undefined;
   MODAL_DISABLE_PASSWORD: undefined;

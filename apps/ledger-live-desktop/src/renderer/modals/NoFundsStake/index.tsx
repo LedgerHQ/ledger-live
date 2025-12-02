@@ -41,9 +41,15 @@ interface NoFundsStakeModalProps {
   account: AccountLike;
   parentAccount?: Account | undefined | null;
   entryPoint?: "get-funds" | undefined;
+  currencyId?: string;
 }
 
-const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
+const NoFundsStakeModal = ({
+  account,
+  parentAccount,
+  entryPoint,
+  currencyId,
+}: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -75,11 +81,11 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     history.push({
       pathname: "/exchange",
       state: {
-        currency: currency.id,
+        currency: currencyId,
         mode: "buy",
       },
     });
-  }, [currency, history, dispatch]);
+  }, [history, dispatch, currencyId]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
