@@ -36,7 +36,8 @@
   ],
   "ignoreUnimported": [
     "src/constants/env.ts",
-    "src/constants/index.ts"
+    "src/constants/index.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": []
