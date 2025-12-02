@@ -124,7 +124,7 @@ function Row({
             flexShrink: 1,
           }}
         >
-          <CryptoCurrencyIcon circle currency={accountCurrency} size={32} />
+          <CryptoCurrencyIcon currency={accountCurrency} size={32} />
           <Text
             ff="Inter|SemiBold"
             color="inherit"
