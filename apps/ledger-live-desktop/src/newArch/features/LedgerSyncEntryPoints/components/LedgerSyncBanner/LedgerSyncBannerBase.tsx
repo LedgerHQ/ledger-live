@@ -1,10 +1,7 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import Illustration from "~/renderer/components/Illustration";
-import LogoDark from "LLD/features/LedgerSyncEntryPoints/assets/logo_dark.svg";
-import LogoLight from "LLD/features/LedgerSyncEntryPoints/assets/logo_light.svg";
 
 const BannerContainer = styled(Flex)`
   background-color: ${p => p.theme.colors.background.card};
@@ -15,7 +12,7 @@ const BannerContainer = styled(Flex)`
   margin-bottom: 9px;
 `;
 
-const IllustrationContainer = styled(Flex)`
+const IconContainer = styled(Flex)`
   position: relative;
 `;
 
@@ -35,28 +32,42 @@ const ContentContainer = styled(Flex)`
   flex: 1;
 `;
 
-export function LedgerSyncBanner({ onPress }: Readonly<{ onPress: () => void }>) {
+type LedgerSyncBannerBaseProps = {
+  icon: ReactNode;
+  titleKey: string;
+  descriptionKey: string;
+  ctaKey: string;
+  onPress: () => void;
+  renderButton: (ctaText: string, onPress: () => void) => ReactNode;
+  iconContainerStyle?: React.CSSProperties;
+};
+
+export function LedgerSyncBannerBase({
+  icon,
+  titleKey,
+  descriptionKey,
+  ctaKey,
+  onPress,
+  renderButton,
+  iconContainerStyle,
+}: LedgerSyncBannerBaseProps) {
   const { t } = useTranslation();
 
   return (
     <BannerContainer>
-      <IllustrationContainer>
-        <Illustration lightSource={LogoLight} darkSource={LogoDark} size={48} />
+      <IconContainer style={iconContainerStyle}>
+        {icon}
         <RedDot />
-      </IllustrationContainer>
+      </IconContainer>
       <ContentContainer>
         <Text variant="h4Inter" fontSize={16} fontWeight="600" color="neutral.c100">
-          {t("walletSync.banner.title")}
+          {t(titleKey)}
         </Text>
         <Text variant="small" fontSize={13} fontWeight="500" color="neutral.c70">
-          {t("walletSync.banner.description")}
+          {t(descriptionKey)}
         </Text>
       </ContentContainer>
-      <Button variant="main" outline={false} onClick={onPress}>
-        {t("walletSync.banner.cta")}
-      </Button>
+      {renderButton(t(ctaKey), onPress)}
     </BannerContainer>
   );
 }
-
-export default LedgerSyncBanner;
