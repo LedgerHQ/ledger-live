@@ -8,21 +8,11 @@ import { Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { TrackScreen } from "~/analytics";
-import SelectDeviceComp2 from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice2";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
-import SkipSelectDevice from "./SkipSelectDevice";
-import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
-import { ScreenName } from "~/const";
-
-// TODO: FIX THE StackScreenProps<{ [key: string]: object }>
-type SelectDeviceNav =
-  | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
-  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 
 // Called from a bunch of different navigators with different params…
-export default function SelectDevice({
+export default function SelectDeviceScreen({
   navigation,
   route,
 }: NativeStackScreenProps<{ [key: string]: object }>) {
@@ -53,6 +43,9 @@ export default function SelectDevice({
   // Keeping the header from the original flow.
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
 
+  /** Parameter used to prevent auto selection and force the user to manually select a device */
+  const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
+
   return (
     <SafeAreaView
       style={[
@@ -62,12 +55,12 @@ export default function SelectDevice({
         },
       ]}
     >
-      <SkipSelectDevice route={route as SelectDeviceNav["route"]} onResult={onNavigate} />
       <TrackScreen category={route.name.replace("SelectDevice", "")} name="SelectDevice" />
       <Flex px={16} pb={8} flex={1}>
-        <SelectDeviceComp2
+        <SelectDevice
           onSelect={onSelect}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice={!forceSelectDevice}
         />
       </Flex>
     </SafeAreaView>

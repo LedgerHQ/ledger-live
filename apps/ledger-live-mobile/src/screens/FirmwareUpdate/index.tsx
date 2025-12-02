@@ -44,7 +44,7 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
-  renderConnectYourDevice,
+  ConnectYourDevice,
 } from "~/components/DeviceAction/rendering";
 import {
   RenderImageCommitRequested,
@@ -596,12 +596,7 @@ export const FirmwareUpdate = ({
     ) {
       return (
         <Flex>
-          {renderConnectYourDevice({
-            t,
-            device,
-            theme,
-            fullScreen: false,
-          })}
+          <ConnectYourDevice device={device} fullScreen={false} />
           <Button type="main" outline={false} onPress={retryCurrentStep} mt={6} alignSelf="stretch">
             {t("common.retry")}
           </Button>
