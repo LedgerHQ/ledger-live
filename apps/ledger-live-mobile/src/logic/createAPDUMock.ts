@@ -28,11 +28,11 @@ export default (arg: {
     const cla = input.readUInt8(0);
     const ins = input.readUInt8(1);
     */
-    const clains = input.slice(0, 2).toString("hex");
+    const clains = input.subarray(0, 2).toString("hex");
     // const p1 = input.readUInt8(2);
     // const p2 = input.readUInt8(3);
     const dataLength = input.readUInt8(4);
-    const data = input.slice(5, 5 + dataLength);
+    const data = input.subarray(5, 5 + dataLength);
 
     switch (clains) {
       case "e001": {

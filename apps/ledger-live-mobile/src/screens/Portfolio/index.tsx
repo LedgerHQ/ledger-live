@@ -244,7 +244,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       <Animated.View style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
           data={data}
-          renderItem={renderItem<JSX.Element>}
+          renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}

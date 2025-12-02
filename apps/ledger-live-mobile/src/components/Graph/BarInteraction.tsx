@@ -2,15 +2,7 @@ import React, { Component } from "react";
 import * as array from "d3-array";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
-import {
-  PanGestureHandler,
-  State,
-  LongPressGestureHandler,
-  HandlerStateChangeEvent,
-  PanGestureHandlerEventPayload,
-  LongPressGestureHandlerEventPayload,
-  GestureEvent,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ScaleContinuousNumeric, ScaleTime } from "d3-scale";
 import type { Item, ItemArray } from "./types";
 import Bar from "./Bar";
@@ -62,29 +54,16 @@ export default class BarInteraction extends Component<
     };
     return result;
   };
-  onHandlerStateChange = (
-    e: HandlerStateChangeEvent<PanGestureHandlerEventPayload | LongPressGestureHandlerEventPayload>,
-  ) => {
-    const { nativeEvent } = e;
-
-    if (nativeEvent.state === State.ACTIVE) {
-      const r = this.collectHovered(nativeEvent.x);
-      this.setState({
-        barVisible: true,
-        ...r,
-      });
-    } else if (nativeEvent.state === State.END || nativeEvent.state === State.CANCELLED) {
-      const { onItemHover } = this.props;
-      if (onItemHover) onItemHover(null);
-      this.setState({
-        barVisible: false,
-      });
-    }
+  onGestureBegin = (x: number) => {
+    const r = this.collectHovered(x);
+    this.setState({
+      barVisible: true,
+      ...r,
+    });
   };
-  onPanGestureEvent = (
-    e: GestureEvent<PanGestureHandlerEventPayload | LongPressGestureHandlerEventPayload>,
-  ) => {
-    const r = this.collectHovered(e.nativeEvent.x);
+
+  onGestureUpdate = (x: number) => {
+    const r = this.collectHovered(x);
     if (!r) return;
     this.setState(oldState => {
       if (oldState.barOffsetX === r.barOffsetX && oldState.barOffsetY === r.barOffsetY) {
@@ -95,51 +74,75 @@ export default class BarInteraction extends Component<
     });
   };
 
+  onGestureEnd = () => {
+    const { onItemHover } = this.props;
+    if (onItemHover) onItemHover(null);
+    this.setState({
+      barVisible: false,
+    });
+  };
+
   render() {
     const { width, height, color, children } = this.props;
     const { barVisible, barOffsetX, barOffsetY } = this.state;
-    const panRef = React.createRef();
-    const longPressRef = React.createRef();
+
+    const panGesture = Gesture.Pan()
+      .maxPointers(1)
+      .activeOffsetX([-10, 10]) // nb of pixel to wait before start point
+      .activeOffsetY([-20, 20]) // allow to scroll
+      .onBegin(e => {
+        this.onGestureBegin(e.x);
+      })
+      .onUpdate(e => {
+        this.onGestureUpdate(e.x);
+      })
+      .onEnd(() => {
+        this.onGestureEnd();
+      })
+      .onFinalize(() => {
+        this.onGestureEnd();
+      });
+
+    const longPressGesture = Gesture.LongPress()
+      .onStart(e => {
+        this.onGestureBegin(e.x);
+      })
+      .onEnd(() => {
+        this.onGestureEnd();
+      })
+      .onFinalize(() => {
+        this.onGestureEnd();
+      });
+
+    const composedGesture = Gesture.Simultaneous(panGesture, longPressGesture);
+
     return (
-      <PanGestureHandler
-        onHandlerStateChange={this.onHandlerStateChange}
-        onGestureEvent={this.onPanGestureEvent}
-        maxPointers={1}
-        activeOffsetX={[-10, 10]} // nb of pixel to wait before start point
-        activeOffsetY={[-20, 20]} // allow to scroll
-        simultaneousHandlers={longPressRef}
-      >
-        <LongPressGestureHandler
-          onHandlerStateChange={this.onHandlerStateChange}
-          onGestureEvent={this.onPanGestureEvent}
-          simultaneousHandlers={panRef}
+      <GestureDetector gesture={composedGesture}>
+        <View
+          style={{
+            width,
+            height,
+            position: "relative",
+          }}
+          collapsable={false}
         >
-          <View
+          {children}
+          <Svg
+            height={height}
+            width={width}
             style={{
-              width,
-              height,
-              position: "relative",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              opacity: barVisible ? 1 : 0,
             }}
-            collapsable={false}
           >
-            {children}
-            <Svg
-              height={height}
-              width={width}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                opacity: barVisible ? 1 : 0,
-              }}
-            >
-              <G x={barOffsetX} y={barOffsetY}>
-                <Bar height={height} color={color} />
-              </G>
-            </Svg>
-          </View>
-        </LongPressGestureHandler>
-      </PanGestureHandler>
+            <G transform={[{ translateX: barOffsetX }, { translateY: barOffsetY }]}>
+              <Bar height={height} color={color} />
+            </G>
+          </Svg>
+        </View>
+      </GestureDetector>
     );
   }
 }

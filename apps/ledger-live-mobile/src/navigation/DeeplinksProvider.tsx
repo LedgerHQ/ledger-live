@@ -99,10 +99,8 @@ const linkingOptions = () => ({
     if (url) {
       return url ? getProxyURL(url) : null;
     }
-    const brazeUrl: string = await new Promise(resolve => {
-      Braze.getInitialURL(initialUrl => {
-        resolve(initialUrl);
-      });
+    const brazeUrl: string | null = await new Promise(resolve => {
+      Braze.getInitialPushPayload(payload => resolve(payload?.url ?? null));
     });
     return brazeUrl ? getProxyURL(brazeUrl) : null;
   },

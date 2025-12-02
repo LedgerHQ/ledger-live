@@ -104,7 +104,7 @@ function CountervaluesProviders({
 }: {
   children: React.ReactNode;
   store: ReduxStore;
-}): JSX.Element {
+}): React.JSX.Element {
   // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
   // (a) separate counter-values user settings from the Firebase feature flag, or
   // (b) introduce a proper feature-flag provider that doesn’t break our tests.
@@ -143,7 +143,7 @@ function CountervaluesProviders({
  * @param {boolean} [props.withReactQuery=false] - Whether to include React Query's QueryClientProvider.
  * @param {boolean} [props.withLiveApp=false] - Whether to include the CustomLiveAppProvider.
  * @param {RenderType} [props.renderType=RenderType.DEFAULT] - The type of rendering context; determines which providers are included.
- * @returns {JSX.Element} A JSX element containing the necessary providers.
+ * @returns {React.JSX.Element} A JSX element containing the necessary providers.
  */
 function Providers({
   children,
@@ -157,7 +157,7 @@ function Providers({
   withReactQuery?: boolean;
   withLiveApp?: boolean;
   renderType?: RenderType;
-}): JSX.Element {
+}): React.JSX.Element {
   // Custom live app provider
   const content = withLiveApp ? (
     <CustomLiveAppProvider>

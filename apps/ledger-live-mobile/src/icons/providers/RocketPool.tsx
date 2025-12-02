@@ -14,15 +14,21 @@ import Svg, {
 
 type Props = SvgProps & { size?: number; outline?: ColorValue };
 
-export function RocketPool({ size = 32, outline, ...props }: Props): JSX.Element {
+export function RocketPool({ size = 32, outline, ...props }: Props): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="url(#paint0_linear_2938_2011)" />
-      <Rect x={0.5} y={0.5} width={31} height={31} rx={7.5} stroke={outline} stroke-opacity={0.1} />
+      <Rect
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
+        width={31}
+        height={31}
+        rx={7.5}
+        stroke={outline}
+        stroke-opacity={0.1}
+      />
       <G clipPath="url(#clip0_2938_2011)">
         <Rect
-          x="6.39999"
-          y="6.3999"
+          transform={[{ translateX: 6.39999 }, { translateY: 6.3999 }]}
           width="19.2"
           height="19.2"
           rx="9.6"
@@ -184,8 +190,7 @@ export function RocketPool({ size = 32, outline, ...props }: Props): JSX.Element
         />
       </G>
       <Rect
-        x="6.89999"
-        y="6.8999"
+        transform={[{ translateX: 6.89999 }, { translateY: 6.8999 }]}
         width="18.2"
         height="18.2"
         rx="9.1"
@@ -249,7 +254,13 @@ export function RocketPool({ size = 32, outline, ...props }: Props): JSX.Element
           <Stop offset="1" stopColor="#DF3600" stopOpacity="0" />
         </LinearGradient>
         <ClipPath id="clip0_2938_2011">
-          <Rect x="6.39999" y="6.3999" width="19.2" height="19.2" rx="9.6" fill="white" />
+          <Rect
+            transform={[{ translateX: 6.39999 }, { translateY: 6.3999 }]}
+            width="19.2"
+            height="19.2"
+            rx="9.6"
+            fill="white"
+          />
         </ClipPath>
       </Defs>
     </Svg>

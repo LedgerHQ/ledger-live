@@ -15,7 +15,7 @@ import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarCon
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 const queryClient = new QueryClient();

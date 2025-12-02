@@ -193,7 +193,7 @@ const AccountScreenInner = ({
           paddingTop: 48, //CurrencyHeader height
         }}
         data={data}
-        renderItem={renderItem<JSX.Element>}
+        renderItem={renderItem<React.JSX.Element>}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
