@@ -12,7 +12,7 @@ import { defaultNanoApp } from "../constants";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";
-import { westend } from "../helpers";
+import { assethub } from "../helpers";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
 import {
   PolkadotAccount,
@@ -24,15 +24,15 @@ type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, Polk
 
 const getTransactions = () => {
   const send1DotTransaction: PolkadotScenarioTransaction = {
-    name: "Send 1 WND",
+    name: "Send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "1"),
+    amount: parseCurrencyUnit(assethub.units[0], "1"),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(
-        latestOperation.fee.plus(parseCurrencyUnit(westend.units[0], "1")).toFixed(),
+        latestOperation.fee.plus(parseCurrencyUnit(assethub.units[0], "1")).toFixed(),
       );
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
@@ -41,15 +41,15 @@ const getTransactions = () => {
   };
 
   const send100DotTransaction: PolkadotScenarioTransaction = {
-    name: "Send 100 WND",
+    name: "Send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "100"),
+    amount: parseCurrencyUnit(assethub.units[0], "100"),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(
-        latestOperation.fee.plus(parseCurrencyUnit(westend.units[0], "100")).toFixed(),
+        latestOperation.fee.plus(parseCurrencyUnit(assethub.units[0], "100")).toFixed(),
       );
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
@@ -58,9 +58,9 @@ const getTransactions = () => {
   };
 
   const bond500DotTransaction: PolkadotScenarioTransaction = {
-    name: "Bond 500 WND",
+    name: "Bond 500 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "500"),
+    amount: parseCurrencyUnit(assethub.units[0], "500"),
     mode: "bond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -69,7 +69,7 @@ const getTransactions = () => {
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.bond");
       expect(
         parseCurrencyUnit(
-          westend.units[0],
+          assethub.units[0],
           (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
         ).toFixed(),
       ).toBe("50000000000000000000000");
@@ -80,9 +80,9 @@ const getTransactions = () => {
   };
 
   const unbond100DotTransaction: PolkadotScenarioTransaction = {
-    name: "Unbond 100 WND",
+    name: "Unbond 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "100"),
+    amount: parseCurrencyUnit(assethub.units[0], "100"),
     mode: "unbond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -91,13 +91,13 @@ const getTransactions = () => {
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
       expect(
         parseCurrencyUnit(
-          westend.units[0],
+          assethub.units[0],
           (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
         ).toFixed(),
       ).toBe("10000000000000000000000");
       expect(
         parseCurrencyUnit(
-          westend.units[0],
+          assethub.units[0],
           currentAccount.polkadotResources.unlockingBalance.toFixed(),
         ).toFixed(),
       ).toBe("10000000000000000000000");
@@ -105,9 +105,9 @@ const getTransactions = () => {
   };
 
   const rebond50DotTransaction: PolkadotScenarioTransaction = {
-    name: "Rebond 50 WND",
+    name: "Rebond 50 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "50"),
+    amount: parseCurrencyUnit(assethub.units[0], "50"),
     mode: "rebond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -116,13 +116,13 @@ const getTransactions = () => {
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.rebond");
       expect(
         parseCurrencyUnit(
-          westend.units[0],
+          assethub.units[0],
           (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
         ).toFixed(),
       ).toBe("5000000000000000000000"); // Should be 450 DOT no ?
       expect(
         parseCurrencyUnit(
-          westend.units[0],
+          assethub.units[0],
           currentAccount.polkadotResources.unlockingBalance.toFixed(),
         ).toFixed(),
       ).toBe("5000000000000000000000");
@@ -167,9 +167,9 @@ const getTransactions = () => {
   };
 
   const withdraw250DotTransaction: PolkadotScenarioTransaction = {
-    name: "Withdraw 250 WND",
+    name: "Withdraw 250 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(westend.units[0], "250"),
+    amount: parseCurrencyUnit(assethub.units[0], "250"),
     mode: "withdrawUnbonded",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -228,30 +228,32 @@ const coinConfig: PolkadotCoinConfig = {
     url: LOCAL_TESTNODE_WS_URL,
   },
   indexer: {
-    url: "https://explorers.api.live.ledger.com/blockchain/dot_westend",
+    url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
   },
   sidecar: {
     url: SIDECAR_BASE_URL,
   },
   metadataShortener: {
-    url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
+    url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
     id: "dot-hub",
   },
   metadataHash: {
-    url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+    url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
   },
+  hasBeenMigrated: true,
 };
 
 const subscriptions: any[] = [];
 
-export const WestendScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
-  name: "Westend Ledger Live transactions",
+export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
+  name: "Polkadot AssetHub Ledger Live transactions",
+
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(
         `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
       ),
-      spawnChopsticksAndSidecar("coin-tester-chopsticks/westend.yml"),
+      spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/assethub.yml"),
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
@@ -270,7 +272,7 @@ export const WestendScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/354'/0'/0'/0'",
-      currency: westend,
+      currency: assethub,
       derivationMode: "polkadotbip44",
     });
 
@@ -281,29 +283,18 @@ export const WestendScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    // Wait for the transfer to be finalized
-    await new Promise<void>((resolve, reject) => {
-      api.tx.balances
-        .transferAllowDeath(
-          polkadotScenarioAccountPair.address,
-          parseCurrencyUnit(westend.units[0], "500000").toNumber(),
-        )
-        .signAndSend(alice, result => {
-          if (result.status.isFinalized) {
-            resolve();
-          } else if (
-            result.status.type === "Dropped" ||
-            result.status.type === "Invalid" ||
-            result.status.type === "Usurped" ||
-            result.status.type === "FinalityTimeout"
-          ) {
-            reject(new Error(`Transaction failed: ${result.status.type}`));
-          }
-        })
-        .catch(reject);
-    });
+    const unsub = await api.tx.balances
+      .transferAllowDeath(
+        polkadotScenarioAccountPair.address,
+        parseCurrencyUnit(assethub.units[0], "50000").toNumber(),
+      )
+      .signAndSend(alice, result => {
+        if (result.status.isFinalized) {
+          unsub();
+        }
+      });
 
-    const account = makeAccount(polkadotScenarioAccountPair.address, westend);
+    const account = makeAccount(polkadotScenarioAccountPair.address, assethub);
 
     return {
       accountBridge,
@@ -403,8 +394,8 @@ export const WestendScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     });
   },
   beforeAll: async account => {
-    expect(formatCurrencyUnit(westend.units[0], account.balance, { useGrouping: false })).toBe(
-      "500000",
+    expect(formatCurrencyUnit(assethub.units[0], account.balance, { useGrouping: false })).toBe(
+      "50000",
     );
   },
   beforeSync: async () => {

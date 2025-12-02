@@ -99,7 +99,7 @@ const isControllerAddress = makeLRUCache(
   minutes(5),
 );
 const isElectionClosed = makeLRUCache(
-  (currency: CryptoCurrency | undefined) => sidecarIsElectionClosed(currency),
+  (currency: CryptoCurrency) => sidecarIsElectionClosed(currency),
   () => "",
   minutes(1),
 );
@@ -139,7 +139,7 @@ const shortenMetadata = async (transaction: string, currency?: CryptoCurrency): 
 };
 
 export default {
-  getAccount: async (address: string, currency?: CryptoCurrency): Promise<PolkadotAPIAccount> =>
+  getAccount: async (address: string, currency: CryptoCurrency): Promise<PolkadotAPIAccount> =>
     sidecardGetAccount(address, currency),
   getBalances: async (
     address: string,

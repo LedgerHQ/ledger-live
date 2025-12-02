@@ -6,7 +6,7 @@ import {
   fixtureTxMaterialWithMetadata,
 } from "./sidecar.fixture";
 
-export const SIDECAR_BASE_URL_TEST = "https://polkadot-sidecar.coin.ledger.com";
+export const SIDECAR_BASE_URL_TEST = "https://polkadot-asset-hub-sidecar.coin.ledger.com";
 
 const handlers = [
   http.get(`${SIDECAR_BASE_URL_TEST}/accounts/:addr/balance-info`, () => {

@@ -29,10 +29,15 @@ export const fetchValidators = async (
   const api = await getApiPromise(currency);
 
   const [activeOpt, allStashes, elected] = await Promise.all([
-    api.query.staking.activeEra(),
-    api.derive.staking.stashes(),
-    api.query.session.validators(),
+    // staking can be undefined if the currency is not supported
+    api.query.staking?.activeEra?.(),
+    api.derive.staking?.stashes?.(),
+    api.query.session?.validators?.(),
   ]);
+
+  if (!activeOpt) {
+    return [];
+  }
 
   const { index: activeEra } = activeOpt.unwrapOrDefault();
 
