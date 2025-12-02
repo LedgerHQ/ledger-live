@@ -85,6 +85,7 @@
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:casper": "pnpm --filter coin-casper",
     "coin:celo": "pnpm --filter coin-celo",
+    "coin:concordium": "pnpm --filter coin-concordium",
     "coin:cosmos": "pnpm --filter coin-cosmos",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
