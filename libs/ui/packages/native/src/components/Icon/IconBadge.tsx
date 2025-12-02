@@ -43,11 +43,7 @@ const IconBadge = ({
       justifyContent="center"
       {...rest}
     >
-      {React.isValidElement(Icon) ? (
-        Icon
-      ) : (
-        <Icon size={iconSize} color={iconColor} />
-      )}
+      {React.isValidElement(Icon) ? Icon : <Icon size={iconSize} color={iconColor} />}
     </Flex>
   );
 };

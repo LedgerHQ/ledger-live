@@ -70,11 +70,7 @@ function Element<V extends ReactNode>(props: ElementProps<V>) {
         </Text>
         {RenderRight && (
           <Flex pl={6} flexShrink={0}>
-            {React.isValidElement(RenderRight) ? (
-              RenderRight
-            ) : (
-              <RenderRight {...props} />
-            )}
+            {React.isValidElement(RenderRight) ? RenderRight : <RenderRight {...props} />}
           </Flex>
         )}
       </ElementContainer>
