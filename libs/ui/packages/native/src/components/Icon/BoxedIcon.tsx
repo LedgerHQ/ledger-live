@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { PixelRatio } from "react-native";
 import { Rect, ClipPath, Svg, Defs } from "react-native-svg";

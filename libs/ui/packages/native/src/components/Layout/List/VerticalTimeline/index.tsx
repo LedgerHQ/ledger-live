@@ -43,7 +43,7 @@ export default function VerticalTimeline({
 }: Props) {
   const scrollViewRef = useRef<ScrollView | null>(null);
 
-  const stepsContainerLayout = useRef<LayoutRectangle>();
+  const stepsContainerLayout = useRef<LayoutRectangle>(undefined);
   const onStepsContainerLayout = useCallback((evt: LayoutChangeEvent) => {
     stepsContainerLayout.current = evt.nativeEvent.layout;
   }, []);

@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { TouchableOpacity } from "react-native";
 import Button from "../../cta/Button";
 import type { ButtonProps } from "../../cta/Button";

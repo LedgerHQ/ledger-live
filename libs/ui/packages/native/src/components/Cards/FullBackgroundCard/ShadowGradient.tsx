@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import Svg, { LinearGradient, Defs, Stop, Rect } from "react-native-svg";
 import styled from "styled-components/native";
 

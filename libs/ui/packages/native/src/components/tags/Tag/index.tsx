@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 
 import Flex, { FlexBoxProps } from "../../Layout/Flex";
 import Text from "../../Text";

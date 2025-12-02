@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import {
   ActivityIndicator,

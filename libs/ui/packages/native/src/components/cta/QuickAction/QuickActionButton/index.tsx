@@ -57,8 +57,8 @@ const QuickActionButton = ({
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
   const text = // Extract the text to use it as a testID
-    React.isValidElement(children) && children.props?.i18nKey
-      ? children.props.i18nKey.split(".").pop() // Extract the last part of the key
+    React.isValidElement(children) && (children.props as { i18nKey?: string })?.i18nKey
+      ? (children.props as { i18nKey: string }).i18nKey.split(".").pop() // Extract the last part of the key
       : children?.toString().toLowerCase();
   return (
     <Base

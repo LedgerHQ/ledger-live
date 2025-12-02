@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import type { JSX } from "react";
 import { SafeAreaView } from "react-native";
 import Flex, { FlexBoxProps } from "../../Layout/Flex";
 import ProgressBar from "../../ProgressBar";

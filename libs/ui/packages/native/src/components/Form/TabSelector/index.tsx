@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import { Pressable, LayoutChangeEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";

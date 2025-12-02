@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import type { JSX } from "react";
 import { TextInput } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";

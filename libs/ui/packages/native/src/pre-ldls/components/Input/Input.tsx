@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import type { JSX } from "react";
 import { BlurEvent, FocusEvent, TextInput, View } from "react-native";
 import styled, { DefaultTheme, ThemeContext } from "styled-components/native";
 import { Tokens, useTokens } from "../../libs";

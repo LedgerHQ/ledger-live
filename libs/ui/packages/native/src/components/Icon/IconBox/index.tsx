@@ -44,7 +44,6 @@ export default function IconBox({
       {React.isValidElement(Icon) ? (
         Icon
       ) : (
-        /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
         <Icon size={iconSize} color={color || colors.neutral.c100} />
       )}
     </IconContainer>

@@ -73,7 +73,6 @@ function Element<V extends ReactNode>(props: ElementProps<V>) {
             {React.isValidElement(RenderRight) ? (
               RenderRight
             ) : (
-              /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
               <RenderRight {...props} />
             )}
           </Flex>

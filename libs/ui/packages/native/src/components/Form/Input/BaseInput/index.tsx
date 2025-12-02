@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import type { JSX } from "react";
 import {
   TextInput,
   TextInputProps,
@@ -26,13 +27,13 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
    * A function that will render some content on the left side of the input.
    */
   renderLeft?:
-    | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
+    | ((props: InputProps<T>, ref: React.RefObject<TextInput | null>) => React.ReactNode)
     | React.ReactNode;
   /**
    * A function that will render some content on the right side of the input.
    */
   renderRight?:
-    | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
+    | ((props: InputProps<T>, ref: React.RefObject<TextInput | null>) => React.ReactNode)
     | React.ReactNode;
   /**
    * Triggered when the input value is updated.

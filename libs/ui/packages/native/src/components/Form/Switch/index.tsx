@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import type { JSX } from "react";
 import {
   Pressable as BasePressable,
   Switch as NativeSwitch,

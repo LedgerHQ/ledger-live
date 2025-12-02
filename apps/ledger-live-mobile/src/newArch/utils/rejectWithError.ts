@@ -8,7 +8,7 @@
  * @param extraData - Optional additional data to include in the error message.
  * @returns A promise that is rejected with the provided error or a new `Error` instance.
  */
-export function rejectWithError({ e, extraData }: ErrorData): Promise<never> {
+export function rejectWithError({ e, extraData: _extraData }: ErrorData): Promise<never> {
   const errorToReject = constructErrorMessage(e);
   return Promise.reject(errorToReject);
 }

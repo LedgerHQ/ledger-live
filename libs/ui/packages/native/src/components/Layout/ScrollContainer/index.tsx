@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { space, SpaceProps } from "styled-system";
 import baseStyled, { BaseStyledProps } from "../../styled";
 import Animated from "react-native-reanimated";

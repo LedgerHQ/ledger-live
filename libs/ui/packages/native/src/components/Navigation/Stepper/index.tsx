@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { space, SpaceProps, color, ColorProps } from "styled-system";
 import Text from "../../Text";

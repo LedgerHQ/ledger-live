@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import type { JSX } from "react";
 import styled from "styled-components/native";
 import Animated, {
   useAnimatedStyle,

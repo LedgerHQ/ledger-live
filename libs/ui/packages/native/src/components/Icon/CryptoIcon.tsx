@@ -1,5 +1,6 @@
 import * as icons from "@ledgerhq/crypto-icons-ui/native";
 import React from "react";
+import type { JSX } from "react";
 import { ensureContrast } from "../../styles";
 import styled, { useTheme } from "styled-components/native";
 

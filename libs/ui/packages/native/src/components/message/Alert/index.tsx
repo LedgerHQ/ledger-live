@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import InfoAltFillMedium from "@ledgerhq/icons-ui/nativeLegacy/InfoAltFillMedium";
 import CircledCheckSolidMedium from "@ledgerhq/icons-ui/nativeLegacy/CircledCheckSolidMedium";
