@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "declarationMap": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "lib": ["es2019", "dom"],
     "types": ["jest"],
     "baseUrl": ".",

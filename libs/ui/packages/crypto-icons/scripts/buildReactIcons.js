@@ -54,6 +54,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg"
 
     type Props = { size?: number | string; color?: string; };
@@ -83,6 +84,7 @@ function reactNativeTemplate(
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg";
 
     type Props = { size?: number | string; color?: string; };

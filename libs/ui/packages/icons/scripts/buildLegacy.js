@@ -56,6 +56,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg"
     type Props = { size?: number | string; color?: string; style?: object };
     ${interfaces}
@@ -77,6 +78,7 @@ function reactNativeTemplate(
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg";
 
     import { StyleProp, ViewStyle } from "react-native"
@@ -102,6 +104,7 @@ function reactNativeRTLTemplate(
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg";
     import styled from "styled-components";
     import { I18nManager, StyleProp, ViewStyle } from "react-native";

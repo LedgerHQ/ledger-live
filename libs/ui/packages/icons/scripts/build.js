@@ -96,6 +96,7 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
   const tpl = template.smart({ plugins });
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg"
     type Props = { size?: ${Object.keys(availableSizes)
       .map(key => `"${key}"`)
@@ -127,6 +128,7 @@ function reactNativeTemplate(
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg";
 
     import { StyleProp, ViewStyle } from "react-native"
@@ -161,6 +163,7 @@ function reactNativeRTLTemplate(
 
   return tpl.ast`
     ${imports}
+    import type { JSX } from "react";
     import Svg from "./StyledSvg";
     import styled from "styled-components";
     import { I18nManager, StyleProp, ViewStyle } from "react-native";
