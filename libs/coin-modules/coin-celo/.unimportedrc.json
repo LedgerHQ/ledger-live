@@ -31,7 +31,8 @@
     "src/test/specs/createVoteMutation.ts",
     "src/test/specs/createWithdrawMutation.ts",
     "src/test/specs/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@celo/utils",
