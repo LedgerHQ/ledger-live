@@ -28,6 +28,7 @@ export default function SendWorkflow({ onClose, params }: SendWorkflowProps) {
         openModal("MODAL_SEND", {
           account,
           parentAccount,
+          fromMAD: true, // Flag to indicate we came from MAD
         }),
       );
     },

@@ -1,12 +1,16 @@
 import React, { useCallback, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-import { useDispatch } from "react-redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
+import { closeModal } from "~/renderer/actions/modals";
+import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
+import { State } from "~/renderer/reducers";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import SendWorkflow from "LLD/features/Send";
+import { SendRecipientFlow } from "LLD/features/Send/screens/Recipient/SendRecipientFlow";
 
 type Props = {
   stepId?: StepId;
@@ -29,6 +33,10 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const isModalLocked = MODAL_LOCKED[stepId as StepId];
   const dispatch = useDispatch();
 
+  const newSendFlow = useFeature("newSendFlow");
+  const isOpen = useSelector((state: State) => isModalOpened(state, "MODAL_SEND"));
+  const modalData = useSelector((state: State) => getModalData(state, "MODAL_SEND"));
+
   const handleModalClose = useCallback(() => {
     dispatch(
       setMemoTagInfoBoxDisplay({
@@ -36,10 +44,27 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         forceAutoFocusOnMemoField: false,
       }),
     );
+    dispatch(closeModal("MODAL_SEND"));
     onClose?.();
   }, [dispatch, onClose]);
 
-  const newSendFlow = useFeature("newSendFlow");
+  // New send flow with account selected: render Dialog directly without Modal wrapper
+  if (newSendFlow?.enabled && modalData?.account && isOpen) {
+    return (
+      <DomainServiceProvider>
+        <SendRecipientFlow
+          account={modalData.account}
+          parentAccount={modalData.parentAccount ?? undefined}
+          onClose={handleModalClose}
+          fromMAD={(modalData as { fromMAD?: boolean })?.fromMAD ?? false}
+          onRecipientSelected={(recipient, ensName) => {
+            // TODO: Navigate to amount step with recipient
+            console.log("Recipient selected:", recipient, ensName);
+          }}
+        />
+      </DomainServiceProvider>
+    );
+  }
 
   return (
     <DomainServiceProvider>
@@ -50,7 +75,6 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => {
-          const sendData = data || {};
           if (!newSendFlow?.enabled) {
             return (
               <Body
@@ -59,17 +83,6 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
                 onChangeStepId={handleStepChange}
                 params={data || {}}
               />
-            );
-          }
-
-          // New send flow enabled
-          if (sendData.account) {
-            // Temporary placeholder while the new modal-based steps are being implemented.
-            return (
-              <div style={{ padding: 24 }}>
-                <p>New send flow (work in progress)</p>
-                <p>Selected account: {sendData.account?.id}</p>
-              </div>
             );
           }
 

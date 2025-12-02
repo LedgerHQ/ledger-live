@@ -2459,6 +2459,33 @@
       }
     }
   },
+  "newSendFlow": {
+    "title": "Send {{currency}}",
+    "available": "Available {{amount}}",
+    "placeholder": "Enter address or ENS",
+    "placeholderNoENS": "Enter address",
+    "recent": "Recent",
+    "myAccounts": "My accounts",
+    "addressMatched": "Address matched",
+    "addressNotFound": "Address not found",
+    "recentSendWillAppear": "Your recent send will appear here",
+    "remove": "Remove",
+    "scanQR": "Scan QR code",
+    "firstInteraction": {
+      "title": "You're sending to a new address",
+      "description": "Verify that the address is correct. In case of doubt send a small amount first"
+    },
+    "sanctioned": {
+      "title": "Flagged address",
+      "description": "This address has been flagged and Ledger doesn't allow sending to it",
+      "helpCenter": "Help center"
+    },
+    "errors": {
+      "incorrectFormat": "Incorrect address format",
+      "incompatibleAsset": "Address isn't compatible with the asset selected",
+      "walletNotExist": "Wallet doesn't exist"
+    }
+  },
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Wallet {{versionNb}}"

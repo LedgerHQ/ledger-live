@@ -42,6 +42,7 @@ export type Data = {
   onConfirmationHandler?: Function;
   onFailHandler?: Function;
   stepId?: StepId;
+  fromMAD?: boolean;
 };
 
 type OwnProps = {
