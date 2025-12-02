@@ -83,6 +83,38 @@ describe.each([
       expect(result.time).toBeInstanceOf(Date);
       expect(result.time!.getTime()).toBeLessThan(Date.now());
     });
+
+    it("returns block info with parent for a block with height > 0", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      expect(result.parent).toBeDefined();
+      expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.parent?.height).toBe(19999999);
+      expect(result.parent?.height).toBe(result.height - 1);
+      expect(result.parent?.time).toBeInstanceOf(Date);
+      expect(result.parent?.time!.getTime()).toBeLessThan(result.time!.getTime());
+    });
+
+    it("returns block info without parent for genesis block", async () => {
+      const result = await module.getBlockInfo(0);
+
+      expect(result.height).toBe(0);
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.time).toBeInstanceOf(Date);
+      expect(result.parent).toBeUndefined();
+    });
+
+    it("ensures parent block structure is correct", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      expect(result.parent).toBeDefined();
+      if (result.parent) {
+        expect(result.parent.height).toBeGreaterThanOrEqual(0);
+        expect(result.parent.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(result.parent.time).toBeInstanceOf(Date);
+        expect(result.parent.height).toBe(result.height - 1);
+      }
+    });
   });
 
   describe("getBlock", () => {

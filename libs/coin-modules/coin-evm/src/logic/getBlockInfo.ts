@@ -6,9 +6,20 @@ export async function getBlockInfo(currency: CryptoCurrency, height: number): Pr
   const api = getNodeApi(currency);
   const result = await api.getBlockByHeight(currency, height);
 
-  return {
+  const blockInfo: BlockInfo = {
     height: result.height,
     hash: result.hash,
     time: new Date(result.timestamp),
   };
+
+  if (height > 0) {
+    const parentResult = await api.getBlockByHeight(currency, height - 1);
+    blockInfo.parent = {
+      height: parentResult.height,
+      hash: parentResult.hash,
+      time: new Date(parentResult.timestamp),
+    };
+  }
+
+  return blockInfo;
 }
