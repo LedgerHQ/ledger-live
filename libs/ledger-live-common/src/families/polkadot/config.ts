@@ -7,6 +7,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       sidecar: {
         url: getEnv("API_POLKADOT_SIDECAR"),
@@ -36,6 +40,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       sidecar: {
         url: "https://polkadot-asset-hub-sidecar.coin.ledger.com",
@@ -65,6 +73,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       sidecar: {
         url: "https://polkadot-westend-sidecar.coin.ledger.com/rc",
@@ -90,6 +102,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       sidecar: {
         url: "https://polkadot-westend-sidecar.coin.ledger.com",
