@@ -13,7 +13,7 @@ const ReceiveButton = ({ account }: { account: AlgorandAccount }) => {
     dispatch(openModal("MODAL_ALGORAND_OPT_IN", { account }));
   };
   return (
-    <Button small color="palette.primary.main" onClick={onReceiveClick}>
+    <Button small color="primary.c80" onClick={onReceiveClick}>
       <Box horizontal flow={1} alignItems="center">
         <IconPlus size={12} />
         <Box>

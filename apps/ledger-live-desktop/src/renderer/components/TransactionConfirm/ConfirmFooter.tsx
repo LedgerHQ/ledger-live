@@ -12,7 +12,7 @@ import {
 
 const HorizontalSeparator = styled.div`
   height: 1px;
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
 `;
 

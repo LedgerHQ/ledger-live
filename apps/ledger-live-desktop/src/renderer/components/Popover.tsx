@@ -86,13 +86,13 @@ const ContentWrapper = styled.div.attrs<{
   position: sticky;
   max-width: 400px;
   max-height: 500px;
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
   border-radius: 4px;
   padding: ${p => p.theme.space[2]}px;
   transform-origin: center;
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
   z-index: 999;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); */
   &:before {
     content: "";
@@ -103,7 +103,7 @@ const ContentWrapper = styled.div.attrs<{
     top: ${p => topPosArrow[p.position]};
     left: ${p => leftPosArrow[p.position]};
     transform: translate(-50%, -50%) rotate(45deg);
-    border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+    border: 1px solid ${p => p.theme.colors.neutral.c40};
     border-top: 0;
     border-right: 0;
   }

@@ -11,9 +11,10 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
-import { B, OpDetailsData, OpDetailsSection, OpDetailsTitle } from "./styledComponents";
+import { OpDetailsData, OpDetailsSection, OpDetailsTitle } from "./styledComponents";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import { Divider } from "@ledgerhq/react-ui/index";
 const Column = styled(Box).attrs(() => ({
   justifyContent: "flex-start",
   alignItems: "flex-start",
@@ -23,13 +24,13 @@ const Column = styled(Box).attrs(() => ({
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   fontWeight: 600,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   line-height: 18px;
 `;
 const Subtitle = styled(Text).attrs(() => ({
   fontSize: 2,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))`
   line-height: 12px;
 `;
@@ -69,7 +70,7 @@ export default function AmountDetails({ operation, account }: Props) {
       <Text fontSize={7} ff="Inter|SemiBold">
         <Trans i18nKey="operationDetails.amount" />
       </Text>
-      <B />
+      <Divider />
       <OpDetailsSection>
         <OpDetailsTitle>
           <Column mr={2}>
@@ -89,7 +90,7 @@ export default function AmountDetails({ operation, account }: Props) {
                 unit={unit}
                 showCode
                 alwaysShowSign
-                color="palette.text.shade60"
+                color="neutral.c70"
               />
             ) : (
               <NoCountervaluePlaceholder />
@@ -117,7 +118,7 @@ export default function AmountDetails({ operation, account }: Props) {
                 unit={unit}
                 showCode
                 alwaysShowSign
-                color="palette.text.shade60"
+                color="neutral.c70"
               />
             ) : (
               <NoCountervaluePlaceholder />

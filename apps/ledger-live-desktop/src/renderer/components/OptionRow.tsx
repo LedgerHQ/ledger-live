@@ -26,7 +26,7 @@ export const OptionRowDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   textAlign: "left",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   grow: true,
   pl: 2,
 }))``;

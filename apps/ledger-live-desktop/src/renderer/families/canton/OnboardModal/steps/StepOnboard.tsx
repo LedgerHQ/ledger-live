@@ -43,7 +43,7 @@ const SectionAccounts = memo(
             <Box
               horizontal
               ff="Inter|Bold"
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={2}
               textTransform="uppercase"
               mb={3}
@@ -75,7 +75,7 @@ const SectionAccounts = memo(
           <Box
             horizontal
             ff="Inter|Bold"
-            color="palette.text.shade100"
+            color="neutral.c100"
             fontSize={2}
             textTransform="uppercase"
             mb={3}
@@ -240,8 +240,8 @@ export default function StepOnboard({
             />
 
             <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
+              <Spinner color="neutral.c70" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
                 <Trans i18nKey={getStatusMessage(onboardingStatus)} />
               </Box>
             </LoadingRow>
@@ -318,7 +318,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+  border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
 
 const SectionAccountsStyled = styled(Box)`

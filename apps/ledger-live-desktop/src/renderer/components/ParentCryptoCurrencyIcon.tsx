@@ -46,9 +46,7 @@ const CryptoCurrencyIconTooltip = withTheme(
     const { t } = useTranslation();
     return (
       <TooltipWrapper>
-        <Text color={rgba(theme.colors.palette.background.paper, 0.5)}>
-          {t("tokensList.tooltip")}
-        </Text>
+        <Text color={rgba(theme.colors.background.card, 0.5)}>{t("tokensList.tooltip")}</Text>
         <Text>{name}</Text>
       </TooltipWrapper>
     );

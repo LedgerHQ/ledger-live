@@ -13,7 +13,7 @@ const MemoTagSendInfo = () => {
   return (
     <Flex justifyContent="center" alignItems="center" width="100%">
       <Flex justifyContent="center" flexDirection="column" alignItems="center" width={343}>
-        <CircleWrapper color={theme.colors.palette.opacityDefault.c05} size={72}>
+        <CircleWrapper color={theme.colors.opacityDefault.c05} size={72}>
           <Icons.InformationFill size="L" color="primary.c80" />
         </CircleWrapper>
         <Text fontSize={20} fontWeight={600} color="neutral.c100" mt={3}>

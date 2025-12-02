@@ -76,7 +76,7 @@ const NoSuchAppOnProviderErrorComponent: React.FC<{
       <TrackPage category={PAGE_NAME} />
       <ErrorBody
         top={
-          <CircleWrapper color={theme.colors.palette.opacityDefault.c05} size={72}>
+          <CircleWrapper color={theme.colors.opacityDefault.c05} size={72}>
             <Icons.DeleteCircleFill size="L" color="error.c50" />
           </CircleWrapper>
         }

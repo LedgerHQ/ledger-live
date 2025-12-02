@@ -34,7 +34,7 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
     all ${DURATION}ms ease-in-out,
     padding none;
   will-change: transform;
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  background-color: ${p => p.theme.colors.background.card};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
   padding: ${p => (p.withPaddingTop ? "62px 0px 15px 0px" : "10px 0px 15px 0px")};
   overflow-x: hidden;

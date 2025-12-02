@@ -2,7 +2,6 @@ import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
 import { DefaultTheme, ThemeProvider, useTheme } from "styled-components";
 import defaultTheme from "./theme";
-import v2Palettes from "./palettes";
 import {
   GlobalStyle,
   defaultTheme as v3DefaultTheme,
@@ -23,8 +22,6 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
       colors: {
         ...defaultTheme.colors,
         ...v3Palettes[selectedPalette],
-        palette: { ...v2Palettes[selectedPalette], ...v3Palettes[selectedPalette] },
-        v2Palette: v2Palettes[selectedPalette],
       },
       theme: selectedPalette,
     }),

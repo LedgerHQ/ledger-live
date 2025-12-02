@@ -61,7 +61,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     inlineRetry = true,
     restore = false,
   } = props;
-  const type: Theme["theme"] = useTheme().colors.palette.type;
+  const type: Theme["theme"] = useTheme().theme;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = useMemo(
     () => ({ hexImage, padImage, deviceModelId }),
@@ -100,12 +100,12 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   useEffect(() => {
     if (!error) return;
-    onError && onError(error);
+    onError?.(error);
   }, [error, onError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
-    blockNavigation && blockNavigation(shouldNavBeBlocked);
+    blockNavigation?.(shouldNavBeBlocked);
   }, [shouldNavBeBlocked, blockNavigation]);
 
   const handleRetry = useCallback(() => {

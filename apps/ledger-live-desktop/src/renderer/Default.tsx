@@ -361,8 +361,8 @@ export default function Default() {
                             <Box
                               grow
                               horizontal
-                              bg="palette.background.default"
-                              color="palette.text.shade60"
+                              bg="background.default"
+                              color="neutral.c70"
                               style={{
                                 width: "100%",
                                 height: "100%",

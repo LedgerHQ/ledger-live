@@ -19457,7 +19457,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -20212,7 +20212,6 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
-
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -22222,7 +22221,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -25803,7 +25802,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -32784,7 +32783,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33043,7 +33041,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:

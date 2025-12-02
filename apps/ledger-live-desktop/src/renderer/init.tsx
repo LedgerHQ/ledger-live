@@ -58,7 +58,6 @@ import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 
 const rootNode = document.getElementById("react-root");
-const TAB_KEY = 9;
 
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
@@ -233,12 +232,12 @@ async function init() {
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
-  matcher.addListener(updateOSTheme);
+  matcher.addEventListener("change", updateOSTheme);
   events({
     store,
   });
   window.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.which === TAB_KEY) {
+    if (e.key === "Tab") {
       if (!isGlobalTabEnabled()) enableGlobalTab();
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       logger.onTabKey(document.activeElement as HTMLElement);
@@ -300,7 +299,7 @@ async function init() {
     },
   };
 }
-function r(Comp: JSX.Element) {
+function r(Comp: React.JSX.Element) {
   if (rootNode) {
     render(Comp, rootNode);
   }

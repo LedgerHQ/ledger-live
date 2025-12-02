@@ -96,7 +96,7 @@ const ScanAccounts = ({
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
       <Flex marginBottom={24}>
         <Text
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="scan-accounts-title"
           flex={1}
           fontSize={24}

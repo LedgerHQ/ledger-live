@@ -36,8 +36,8 @@ const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
-  background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => rgba(p.theme.colors.primary.c80, 0.1)};
+  color: ${p => p.theme.colors.primary.c80};
   align-items: center;
   display: flex;
   justify-content: center;
@@ -45,13 +45,13 @@ const Circle = styled.div`
 `;
 const VerticalSeparator = styled.div`
   height: 18px;
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 1px;
   margin: 1px 0px 0px 15px;
 `;
 const Separator = styled.div`
   height: 1px;
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
   margin: 15px 0;
 `;
@@ -125,7 +125,7 @@ const StepSummary = (props: StepProps) => {
               <IconWallet size={14} />
             </Circle>
             <Box flex="1">
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                 <Trans i18nKey="send.steps.details.from" />
               </Text>
               <Box horizontal alignItems="center">
@@ -138,7 +138,7 @@ const StepSummary = (props: StepProps) => {
                 </div>
                 <Text
                   ff="Inter"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={4}
                   style={{
                     flex: 1,
@@ -156,14 +156,14 @@ const StepSummary = (props: StepProps) => {
               <IconQrCode size={14} />
             </Circle>
             <Box flex={1}>
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                 <Trans i18nKey="send.steps.details.to" />
               </Text>
               {transaction.recipientDomain && (
                 <Text
                   data-testid="transaction-recipient-ens"
                   ff="Inter|Bold"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={4}
                 >
                   {transaction.recipientDomain.domain}
@@ -172,9 +172,7 @@ const StepSummary = (props: StepProps) => {
               <Ellipsis>
                 <Text
                   ff="Inter"
-                  color={
-                    transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
-                  }
+                  color={transaction.recipientDomain ? "neutral.c80" : "neutral.c100"}
                   fontSize={4}
                   data-testid="recipient-address"
                 >
@@ -193,17 +191,13 @@ const StepSummary = (props: StepProps) => {
                         <MemoIcon size={14} />
                       </Circle>
                       <Box flex={1}>
-                        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                        <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                           <Trans i18nKey="operationDetails.extra.memo" />
                         </Text>
                         <Ellipsis>
                           <Text
                             ff="Inter"
-                            color={
-                              transaction.recipientDomain
-                                ? "palette.text.shade70"
-                                : "palette.text.shade100"
-                            }
+                            color={transaction.recipientDomain ? "neutral.c80" : "neutral.c100"}
                             fontSize={4}
                             data-testid="recipient-address"
                           >
@@ -226,7 +220,7 @@ const StepSummary = (props: StepProps) => {
               )
             : memo && (
                 <Box horizontal justifyContent="space-between" alignItems="center" mb={2}>
-                  <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                  <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                     <Trans i18nKey="operationDetails.extra.memo" />
                   </Text>
                   <Ellipsis ml={2}>
@@ -239,12 +233,12 @@ const StepSummary = (props: StepProps) => {
         </Box>
         <Separator />
         <Box horizontal justifyContent="space-between" mb={2}>
-          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="send.steps.details.amount" />
           </Text>
           <Box>
             <FormattedVal
-              color={"palette.text.shade80"}
+              color={"neutral.c80"}
               disableRounding
               unit={unit}
               val={amount}
@@ -256,7 +250,7 @@ const StepSummary = (props: StepProps) => {
             />
             <Box textAlign="right">
               <CounterValue
-                color="palette.text.shade60"
+                color="neutral.c70"
                 fontSize={3}
                 currency={currency}
                 value={amount}
@@ -277,12 +271,12 @@ const StepSummary = (props: StepProps) => {
         ) : (
           <>
             <Box horizontal justifyContent="space-between">
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                 <Trans i18nKey="send.steps.details.fees" />
               </Text>
               <Box>
                 <FormattedVal
-                  color={feeTooHigh ? "warning" : "palette.text.shade80"}
+                  color={feeTooHigh ? "legacyWarning" : "neutral.c80"}
                   disableRounding
                   unit={feesUnit}
                   alwaysShowValue
@@ -293,7 +287,7 @@ const StepSummary = (props: StepProps) => {
                 />
                 <Box textAlign="right">
                   <CounterValue
-                    color={feeTooHigh ? "warning" : "palette.text.shade60"}
+                    color={feeTooHigh ? "legacyWarning" : "neutral.c70"}
                     fontSize={3}
                     currency={feesCurrency}
                     value={estimatedFees}
@@ -304,7 +298,7 @@ const StepSummary = (props: StepProps) => {
               </Box>
             </Box>
             {feeTooHigh ? (
-              <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+              <Box horizontal justifyContent="flex-end" alignItems="center" color="legacyWarning">
                 <IconExclamationCircle size={10} />
                 <Text
                   ff="Inter|Medium"
@@ -333,13 +327,13 @@ const StepSummary = (props: StepProps) => {
           <>
             <Separator />
             <Box horizontal justifyContent="space-between">
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                 <Trans i18nKey="send.totalSpent" />
               </Text>
 
               <Box>
                 <FormattedVal
-                  color={"palette.text.shade80"}
+                  color={"neutral.c80"}
                   disableRounding
                   unit={estimatedFees.eq(totalSpent) ? feesUnit : unit}
                   val={totalSpent}
@@ -350,7 +344,7 @@ const StepSummary = (props: StepProps) => {
                 />
                 <Box textAlign="right">
                   <CounterValue
-                    color="palette.text.shade60"
+                    color="neutral.c70"
                     fontSize={3}
                     currency={currency}
                     value={totalSpent}

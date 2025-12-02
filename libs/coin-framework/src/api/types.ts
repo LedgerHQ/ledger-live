@@ -313,13 +313,12 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
-// FIXME: find better maybeMemo type without disabling the rule
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
+type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported
+  ? object
+  : { memo: MemoType };
 
 type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSupported
-  ? // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    {}
+  ? object
   : { data: TxDataType };
 
 export type FeesStrategy = "slow" | "medium" | "fast" | "custom";

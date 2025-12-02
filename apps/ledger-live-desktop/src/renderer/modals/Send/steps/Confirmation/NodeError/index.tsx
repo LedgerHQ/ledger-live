@@ -34,7 +34,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
 
   const [isShowMore, setIsShowMore] = useState(true);
 
-  const color = theme.colors.palette.opacityDefault.c05;
+  const color = theme.colors.opacityDefault.c05;
 
   const onSaveLogs = () => handleExportLogs();
 

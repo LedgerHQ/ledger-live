@@ -12,13 +12,13 @@ import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
 
 const SelectContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
   cursor: pointer;
   transition: border-color 0.2s ease;
 
   &:hover {
-    border-color: ${p => p.theme.colors.palette.primary.main};
+    border-color: ${p => p.theme.colors.primary.c80};
   }
 `;
 
@@ -28,8 +28,8 @@ const DropdownContainer = styled(Box)`
   left: 0;
   right: 0;
   z-index: 1000;
-  background: ${p => p.theme.colors.palette.background.paper};
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.background.card};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-height: 300px;
@@ -42,13 +42,13 @@ const CurrencyItem = styled(Box)`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: ${p => p.theme.colors.palette.background.default};
+    background-color: ${p => p.theme.colors.background.default};
   }
 `;
 
 const SearchContainer = styled(Box)`
   padding: 12px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 type Props = {
@@ -81,11 +81,11 @@ const SelectionDisplay = ({
 
   return (
     <Box flex={1}>
-      <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade100">
+      <Text ff="Inter|Medium" fontSize={3} color="neutral.c100">
         {getDisplayText()}
       </Text>
       {selectedCount > 0 && (
-        <Text ff="Inter|Regular" fontSize={2} color="palette.text.shade60" mt={1}>
+        <Text ff="Inter|Regular" fontSize={2} color="neutral.c70" mt={1}>
           {t("settings.developer.mockAccounts.currencySelector.selectedCount", {
             count: selectedCount,
           })}
@@ -109,10 +109,10 @@ const CurrencyItemComponent = ({
     <Box ml={2} horizontal alignItems="center" flex={1}>
       <CryptoCurrencyIcon currency={currency} size={28} />
       <Box ml={2} flex={1}>
-        <Text ff="Inter|SemiBold" fontSize={3} color="palette.text.shade100">
+        <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c100">
           {currency.name}
         </Text>
-        <Text ff="Inter|Regular" fontSize={2} color="palette.text.shade60">
+        <Text ff="Inter|Regular" fontSize={2} color="neutral.c70">
           {currency.ticker}
         </Text>
       </Box>
@@ -205,7 +205,7 @@ export default function CurrencySelector({
           selectedCurrenciesList={selectedCurrenciesList}
           placeholder={placeholder}
         />
-        <AngleDown size={16} color={isOpen ? "palette.text.shade100" : "palette.text.shade60"} />
+        <AngleDown size={16} color={isOpen ? "neutral.c100" : "neutral.c70"} />
       </SelectContainer>
 
       {isOpen && (
@@ -222,7 +222,7 @@ export default function CurrencySelector({
 
           {filteredCurrencies.length === 0 ? (
             <Box p={3} horizontal alignItems="center" justifyContent="center">
-              <Text ff="Inter|Regular" fontSize={3} color="palette.text.shade60">
+              <Text ff="Inter|Regular" fontSize={3} color="neutral.c70">
                 {searchValue
                   ? t("settings.developer.mockAccounts.currencySelector.noCurrenciesFound")
                   : t("settings.developer.mockAccounts.currencySelector.noCurrenciesAvailable")}

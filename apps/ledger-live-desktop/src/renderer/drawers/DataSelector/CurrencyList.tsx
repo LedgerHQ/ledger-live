@@ -56,7 +56,7 @@ export function CurrencyList({
             </Text>
             <Text
               ff="Inter|Medium"
-              color="palette.text.shade50"
+              color="neutral.c70"
               fontSize="13px"
               style={{
                 marginLeft: 4,

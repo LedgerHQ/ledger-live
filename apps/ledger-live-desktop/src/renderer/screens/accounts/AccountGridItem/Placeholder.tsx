@@ -15,7 +15,7 @@ const Wrapper = styled(Box).attrs(() => ({
   flex: 1,
   alignItems: "center",
 }))`
-  border: 1px dashed ${p => p.theme.colors.palette.divider};
+  border: 1px dashed ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
   height: 215px;
 `;
@@ -41,7 +41,7 @@ const Placeholder = () => {
         <Box
           ff="Inter"
           fontSize={3}
-          color="palette.text.shade60"
+          color="neutral.c70"
           pb={2}
           mt={3}
           textAlign="center"

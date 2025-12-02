@@ -16,7 +16,7 @@ type Props = {
 };
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 4,
   justifyContent: "center",
   pr: 3,

@@ -39,8 +39,8 @@ export type Data = {
   disableBacks?: string[];
   walletConnectProxy?: boolean;
   transaction?: Transaction;
-  onConfirmationHandler?: Function;
-  onFailHandler?: Function;
+  onConfirmationHandler?: () => void;
+  onFailHandler?: () => void;
   stepId?: StepId;
 };
 

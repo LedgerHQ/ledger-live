@@ -17,7 +17,7 @@ export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
   const { item, options } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   return (
     <Box flow={2} horizontal alignItems="center" justifyContent="space-between">
-      <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
+      <Text color="neutral.c70" ff="Inter|Regular" fontSize={13}>
         <Trans i18nKey="bitcoin.strategy" />
       </Text>
       <Select

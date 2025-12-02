@@ -31,7 +31,7 @@ const LiveAppCard = ({ appId }: { appId: string }) => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session

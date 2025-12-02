@@ -54,12 +54,12 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     }
   }, [hardReset]);
   return (
-    <Box alignItems="center" grow bg="palette.background.default" data-testid="render-error">
+    <Box alignItems="center" grow bg="background.default" data-testid="render-error">
       <TriggerAppReady />
       <Space of={100} />
       <Image alt="" resource={CrashScreen} width="200" />
       <Space of={40} />
-      <Box ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100">
+      <Box ff="Inter|SemiBold" fontSize={6} color="neutral.c100">
         <TranslatedError error={error} field="title" noLink />
       </Box>
       <Space of={15} />
@@ -70,7 +70,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
         textAlign="center"
         alignItems="center"
         ff="Inter|Regular"
-        color="palette.text.shade80"
+        color="neutral.c80"
         fontSize={4}
       >
         <TranslatedError error={error} field="description" fallback={t("crash.description")} />
@@ -104,7 +104,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
           />
         </Unsafe>
       </Box>
-      <Box my={6} color="palette.text.shade80">
+      <Box my={6} color="neutral.c80">
         <ErrContainer>{printError(error)}</ErrContainer>
       </Box>
       <VersionContainer data-testid="app-version">{`Ledger Wallet ${__APP_VERSION__}`}</VersionContainer>
@@ -162,7 +162,7 @@ const VersionContainer = styled.pre`
   top: 8px;
   right: 8px;
   font-size: 8px;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 const ErrContainer = styled.pre`
   margin: auto;
@@ -170,8 +170,8 @@ const ErrContainer = styled.pre`
   ${p => p.theme.overflow.xy};
   padding: 10px;
   border-radius: 2px;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  color: ${p => p.theme.colors.palette.text.shade80};
+  background-color: ${p => p.theme.colors.background.card};
+  color: ${p => p.theme.colors.neutral.c80};
   font-size: 10px;
   font-family: monospace;
   cursor: text;

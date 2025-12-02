@@ -23,7 +23,7 @@ const AmountField = ({ account }: Props) => {
         containerProps={{
           grow: true,
           style: {
-            backgroundColor: theme.colors.palette.background.paper,
+            backgroundColor: theme.colors.background.card,
           },
         }}
         defaultUnit={unit}
@@ -48,7 +48,7 @@ const Container = styled(Box)`
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
   horizontal: true,
@@ -57,7 +57,7 @@ const InputLeft = styled(Box).attrs(() => ({
 
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
   horizontal: true,
@@ -71,10 +71,8 @@ const AmountButton = styled.button.attrs(() => ({
 }))<{
   error: boolean;
 }>`
-  background-color: ${p =>
-    p.error ? p.theme.colors.lightRed : p.theme.colors.palette.primary.main};
-  color: ${p =>
-    p.error ? p.theme.colors.alertRed : p.theme.colors.palette.primary.contrastText}!important;
+  background-color: ${p => (p.error ? p.theme.colors.lightRed : p.theme.colors.primary.c80)};
+  color: ${p => (p.error ? p.theme.colors.alertRed : p.theme.colors.primary.c80)}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

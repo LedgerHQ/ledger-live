@@ -61,7 +61,7 @@ function useSteps(canEditFees = false): St[] {
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
         backButtonComponent: canEditFees ? (
-          <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
+          <Text ff="Inter|Bold" fontSize={4} color="primary.c80">
             {t("common.adjustFees")}
           </Text>
         ) : undefined,

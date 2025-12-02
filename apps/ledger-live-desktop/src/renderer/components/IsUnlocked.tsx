@@ -19,7 +19,7 @@ import IconArrowRight from "~/renderer/icons/ArrowRight";
 import Logo from "~/renderer/icons/Logo";
 import { fetchWallet } from "../actions/wallet";
 
-export default function IsUnlocked({ children }: { children: React.ReactNode }): JSX.Element {
+export default function IsUnlocked({ children }: { children: React.ReactNode }): React.JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const hardReset = useHardReset();
@@ -191,13 +191,13 @@ type MaybeError = Error | undefined | null;
 export const PageTitle = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 7,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 export const LockScreenDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   textAlign: "center",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
 }))`
   margin: 10px auto 25px;
 `;

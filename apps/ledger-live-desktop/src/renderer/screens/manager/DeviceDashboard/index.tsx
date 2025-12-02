@@ -48,8 +48,8 @@ const QuitIconWrapper = styled.div`
   justify-content: center;
   width: ${p => p.theme.space[8]}px;
   height: ${p => p.theme.space[8]}px;
-  color: ${p => p.theme.colors.palette.primary.main};
-  background-color: ${p => p.theme.colors.palette.action.hover};
+  color: ${p => p.theme.colors.primary.c80};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
   border-radius: 100%;
   margin: ${p => -p.theme.space[5]}px auto ${p => p.theme.space[6]}px auto;
 `;

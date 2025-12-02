@@ -23,8 +23,7 @@ const Header = ({ account, nested }: Props) => {
   const theme = useTheme();
   const currency = getAccountCurrency(account);
   const name = useAccountName(account);
-  const color =
-    currency.type === "CryptoCurrency" ? currency.color : theme.colors.palette.text.shade60;
+  const color = currency.type === "CryptoCurrency" ? currency.color : theme.colors.neutral.c70;
   const title = currency.type === "CryptoCurrency" ? currency.name : "token";
   return (
     <Box
@@ -57,7 +56,7 @@ const Header = ({ account, nested }: Props) => {
             }}
             horizontal
             fontSize={9}
-            color="palette.text.shade60"
+            color="neutral.c70"
             alignItems="center"
             className="accounts-account-row-crypto-name"
           >
@@ -65,7 +64,7 @@ const Header = ({ account, nested }: Props) => {
           </Box>
         )}
         <Tooltip delay={1200} content={name}>
-          <Ellipsis fontSize={12} color="palette.text.shade100">
+          <Ellipsis fontSize={12} color="neutral.c100">
             {name}
           </Ellipsis>
         </Tooltip>

@@ -53,7 +53,7 @@ const saveCryptoAssetsCache = throttle((state: State) => {
   }
 }, 5000);
 
-const DBMiddleware: Middleware<{}, State> = store => next => action => {
+const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (!isActionWithType(action)) {
     return next(action);
   }

@@ -22,7 +22,7 @@ const Swap = () => {
   const localManifest = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const manifest = localManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const params = location.state || {};
 
   const handleCrash = useDebounce(() => {

@@ -29,7 +29,7 @@ class AccountCell extends PureComponent<Props> {
           <CryptoCurrencyIcon size={22} currency={currency} />
         </Box>
         <Tooltip delay={1200} content={accountName}>
-          <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+          <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
             {accountName}
           </Ellipsis>
         </Tooltip>

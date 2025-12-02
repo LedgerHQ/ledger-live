@@ -33,26 +33,26 @@ const List = styled.div`
 const Landing = () => (
   <Box>
     <Illustration />
-    <Text ff="Inter|SemiBold" textAlign={"center"} fontSize={6} color="palette.text.shade100">
+    <Text ff="Inter|SemiBold" textAlign={"center"} fontSize={6} color="neutral.c100">
       <Trans i18nKey="fullNode.modal.steps.landing.header" />
     </Text>
-    <Text ff="Inter|Medium" textAlign={"center"} fontSize={4} color="palette.text.shade50" my={24}>
+    <Text ff="Inter|Medium" textAlign={"center"} fontSize={4} color="neutral.c70" my={24}>
       <Trans i18nKey="fullNode.modal.steps.landing.description" />
     </Text>
     <List>
       <Item>
         <IconCheckFull size={16} />
-        <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
+        <Text ml={2} ff="Inter|Medium" fontSize={4} color="neutral.c100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item1" />
         </Text>
       </Item>
       <Item>
-        <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
+        <Text ml={2} ff="Inter|Medium" fontSize={4} color="neutral.c100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item2" />
         </Text>
       </Item>
       <Item>
-        <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
+        <Text ml={2} ff="Inter|Medium" fontSize={4} color="neutral.c100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item3" />
         </Text>
       </Item>

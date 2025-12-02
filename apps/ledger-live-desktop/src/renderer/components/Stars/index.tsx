@@ -55,7 +55,7 @@ const Stars = ({ pathname, collapsed }: Props) => {
           />
           <Text
             ff="Inter|SemiBold"
-            color="palette.text.shade60"
+            color="neutral.c70"
             fontSize={3}
             style={{
               minWidth: 180,
@@ -63,7 +63,7 @@ const Stars = ({ pathname, collapsed }: Props) => {
           >
             <Trans i18nKey={"stars.placeholder"}>
               {"Accounts that you star on the"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {"Accounts"}
               </Text>
               {" page will now appear here!."}

@@ -116,7 +116,7 @@ const StepAmount = ({
                   }}
                   showCode
                   fontSize={4}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                 />
                 <CheckBox
                   isRadio

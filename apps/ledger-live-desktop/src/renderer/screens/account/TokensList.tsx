@@ -102,7 +102,7 @@ function TokensList({ account }: Props) {
         <EmptyState>
           <Placeholder>
             {url ? (
-              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              <Text color="neutral.c80" ff="Inter|SemiBold" fontSize={4}>
                 {placeholderLabel}
                 &nbsp;
                 <LabelWithExternalIcon
@@ -186,8 +186,8 @@ export const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
-  background: ${p => p.theme.colors.palette.background.paper};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 0px 0px 4px 4px;
   height: 44px;
   text-align: center;

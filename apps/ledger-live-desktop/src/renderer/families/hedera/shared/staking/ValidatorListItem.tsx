@@ -50,13 +50,13 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
       sideInfo={
         <Flex flexDirection="row">
           <Flex flexDirection="column">
-            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+            <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
               {formatCurrencyUnit(unit, new BigNumber(validator.activeStake.toString()), {
                 showCode: true,
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="hedera.delegation.totalStake" />
+              <Trans color="neutral.c70" i18nKey="hedera.delegation.totalStake" />
             </Text>
           </Flex>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -66,9 +66,9 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
       }
       subtitle={
         <Box>
-          <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
+          <Text ff="Inter|Medium" fontSize={2} color="neutral.c70">
             {validator.overstaked ? (
-              <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
+              <Flex alignItems="center" columnGap={1} color="warning.c70">
                 <Icons.Warning size="XS" style={{ width: "10px" }} />
                 <Text fontSize={2}>
                   {t("hedera.delegation.flow.steps.validator.rowSubtitleOverstaked")}
@@ -99,7 +99,7 @@ const StyledValidatorRow = styled(ValidatorRow)`
 const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active?: boolean;

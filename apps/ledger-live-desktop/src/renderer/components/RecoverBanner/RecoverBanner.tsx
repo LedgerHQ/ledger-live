@@ -111,10 +111,10 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
               radius={20}
               stroke={4}
               showPercentage={false}
-              frontStrokeColor={isWarning ? colors.palette.warning.c70 : undefined}
+              frontStrokeColor={isWarning ? colors.warning.c70 : undefined}
             />
             {isWarning ? (
-              <Icons.WarningFill color="palette.warning.c70" size="XS" />
+              <Icons.WarningFill color="warning.c70" size="XS" />
             ) : (
               <Text
                 display="block"

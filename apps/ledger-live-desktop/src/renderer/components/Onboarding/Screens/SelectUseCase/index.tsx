@@ -59,7 +59,7 @@ const LeftColumn = styled(Flex).attrs({
 const LeftText = styled(Text).attrs(() => ({
   uppercase: true,
 }))`
-  color: ${p => p.theme.colors.palette.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
   max-width: 382px;
 `;
 

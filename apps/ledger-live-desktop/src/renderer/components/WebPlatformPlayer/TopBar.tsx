@@ -35,8 +35,8 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   padding: 10px 16px;
-  background-color: ${p => p.theme.colors?.palette.background.paper};
-  border-bottom: 1px solid ${p => p.theme.colors?.palette.text.shade10};
+  background-color: ${p => p.theme.colors?.background.card};
+  border-bottom: 1px solid ${p => p.theme.colors?.neutral.c30};
 `;
 
 const TitleContainer = styled(Box).attrs(() => ({
@@ -46,8 +46,7 @@ const TitleContainer = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
 }))`
   margin-right: 16px;
-  color: ${p =>
-    p.theme.colors?.palette.type === "dark" ? p.theme.colors.white : p.theme.colors?.black};
+  color: ${p => (p.theme.theme === "dark" ? p.theme.colors.white : p.theme.colors?.black)};
 
   > * + * {
     margin-left: 8px;
@@ -97,12 +96,12 @@ const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   }
 
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors?.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors?.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.opacityDefault.c10, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.opacityDefault.c10, 0.1))};
   }
 `;
 
@@ -117,7 +116,7 @@ export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors?.palette.divider};
+  background: ${p => p.theme.colors?.divider};
 `;
 
 export type TopBarConfig = {

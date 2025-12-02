@@ -14,7 +14,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 13,
 })``;
 
@@ -107,7 +107,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
             <LinkWithExternalIcon
               key={`external-link-${idx}`}
               fontSize={13}
-              color="palette.text.shade60"
+              color="neutral.c70"
               onClick={() => openURL(usefulUrl!)}
               style={{ textDecoration: "underline" }}
             />
