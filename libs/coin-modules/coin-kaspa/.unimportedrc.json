@@ -63,10 +63,12 @@
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [
-    "follow-redirects"
+    "follow-redirects",
+    "src/logic/constants.ts"
   ],
   "ignoreUnused": [
     "@bitcoinerlab/secp256k1",
