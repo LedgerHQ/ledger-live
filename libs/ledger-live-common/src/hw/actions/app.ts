@@ -454,7 +454,7 @@ export const createAction = (
   const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
     const firmwareResolvedRef = useRef(false);
-    const outdatedAppRef = useRef<AppAndVersion>();
+    const outdatedAppRef = useRef<AppAndVersion | undefined>(undefined);
 
     const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better

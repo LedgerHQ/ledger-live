@@ -228,7 +228,7 @@ export function useDappLogic({
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
-  const ws = useRef<SmartWebsocket>();
+  const ws = useRef<SmartWebsocket | undefined>(undefined);
   const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
     useDappAccountLogic({
       manifest,

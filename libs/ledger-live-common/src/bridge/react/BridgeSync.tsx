@@ -4,6 +4,7 @@ import priorityQueue from "async/priorityQueue";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
+import type { JSX } from "react";
 import { getVotesCount, isUpToDateAccount } from "../../account";
 import { getAccountBridge } from "..";
 import { getAccountCurrency } from "../../account";

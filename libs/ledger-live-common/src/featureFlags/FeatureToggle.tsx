@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import type { JSX } from "react";
 
 import useFeature from "./useFeature";
 import type { FeatureId } from "@ledgerhq/types-live";

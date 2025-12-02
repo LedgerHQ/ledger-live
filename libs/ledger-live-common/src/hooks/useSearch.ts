@@ -79,7 +79,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
 }
 
 export interface SearchRaw<Item, T extends TextInput | undefined = undefined> {
-  inputRef: React.RefObject<T>;
+  inputRef: React.RefObject<T | null>;
   input: string;
   result: Item[];
   isActive: boolean;

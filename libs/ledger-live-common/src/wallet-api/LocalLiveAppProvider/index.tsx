@@ -1,4 +1,5 @@
 import React, { useContext, createContext, useMemo } from "react";
+import type { JSX } from "react";
 import { LiveAppProviderProps, LiveAppContextType } from "./types";
 import { LiveAppManifest } from "../../platform/types";
 import { useLocalLiveApp } from "../react";

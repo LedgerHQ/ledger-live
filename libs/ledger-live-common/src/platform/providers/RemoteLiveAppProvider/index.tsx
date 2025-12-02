@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, createContext, useMemo, useState, useCallback } from "react";
+import type { JSX } from "react";
 import { LiveAppRegistry } from "./types";
 import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
