@@ -7,7 +7,7 @@ import {
 import { SpeculosDevice } from "./speculos";
 import https from "https";
 
-const { SEED, GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
+const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
@@ -152,7 +152,6 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
       coin_app_version: appVersion,
       device: reverseModelMap[model],
       device_os_version: firmware,
-      seed: SEED,
       run_id: runId,
       additional_args,
     },
