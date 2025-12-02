@@ -596,6 +596,7 @@ export const DEFAULT_FEATURES: Features = {
       postOnboarding: true,
     },
   },
+  lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
@@ -680,8 +681,8 @@ export const DEFAULT_FEATURES: Features = {
       chains: ["ethereum", "polygon", "base", "arbitrum"],
     },
   },
-  ldmkConnectApp: DEFAULT_FEATURE,
   ldmkSolanaSigner: DEFAULT_FEATURE,
+  ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
