@@ -270,7 +270,8 @@
       "detox@20.46.0": "patches/detox@20.46.0.patch",
       "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
-      "@taquito/http-utils": "patches/@taquito__http-utils.patch"
+      "@taquito/http-utils": "patches/@taquito__http-utils.patch",
+      "styled-components@5.3.11": "patches/styled-components@5.3.11.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
