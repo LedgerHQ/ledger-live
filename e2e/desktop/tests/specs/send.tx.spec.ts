@@ -5,6 +5,7 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -234,6 +235,8 @@ test.describe("Send flows", () => {
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
@@ -244,6 +247,10 @@ test.describe("Send flows", () => {
             "@Stax",
             "@Flex",
             "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family && family !== transaction.transaction.accountToDebit.currency.id
+              ? [`@${family}`]
+              : []),
             ...(transaction.transaction.accountToDebit === Account.BTC_NATIVE_SEGWIT_1
               ? ["@smoke"]
               : []),
@@ -294,10 +301,23 @@ test.describe("Send flows", () => {
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family && family !== transaction.transaction.accountToDebit.currency.id
+              ? [`@${family}`]
+              : []),
+          ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -340,10 +360,23 @@ test.describe("Send flows", () => {
       ],
     });
 
+    const family = getFamilyByCurrencyId(transactionInputValid.accountToDebit.currency.id);
+
     test(
       `Check Valid amount input (${transactionInputValid.amount})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${transactionInputValid.accountToDebit.currency.id}`,
+          ...(family && family !== transactionInputValid.accountToDebit.currency.id
+            ? [`@${family}`]
+            : []),
+        ],
         annotation: {
           type: "TMS",
           description: "B2CQA-473",
@@ -385,10 +418,23 @@ test.describe("Send flows", () => {
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
         `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family && family !== transaction.transaction.accountToDebit.currency.id
+              ? [`@${family}`]
+              : []),
+          ],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -428,10 +474,23 @@ test.describe("Send flows", () => {
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
         `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family && family !== transaction.transaction.accountToDebit.currency.id
+              ? [`@${family}`]
+              : []),
+          ],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -482,10 +541,24 @@ test.describe("Send flows", () => {
         },
       ],
     });
+
+    const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
+
     test(
       `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${transactionEnsAddress.accountToDebit.currency.id}`,
+          ...(family && family !== transactionEnsAddress.accountToDebit.currency.id
+            ? [`@${family}`]
+            : []),
+        ],
         annotation: {
           type: "TMS",
           description: "B2CQA-2202",

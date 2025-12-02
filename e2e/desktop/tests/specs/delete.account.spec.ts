@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -36,6 +37,8 @@ for (const account of accounts) {
       speculosApp: account.account.currency.speculosApp,
     });
 
+    const family = getFamilyByCurrencyId(account.account.currency.id);
+
     test(
       `[${account.account.currency.name}] Delete Account`,
       {
@@ -46,6 +49,8 @@ for (const account of accounts) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${account.account.currency.id}`,
+          ...(family && family !== account.account.currency.id ? [`@${family}`] : []),
           ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
         ],
         annotation: {

@@ -64,6 +64,10 @@ on:
         required: false
         type: boolean
         default: false
+      currency_family_filter:
+        description: "Filter currencies/families by tag (e.g. '@bitcoin,@evm')"
+        required: false
+        type: string
 
   workflow_call:
     inputs:
@@ -107,6 +111,10 @@ on:
         required: false
         type: boolean
         default: false
+      currency_family_filter:
+        description: "Filter currencies/families by tag (e.g. '@bitcoin,@evm')"
+        required: false
+        type: string
 
 permissions:
   id-token: write
@@ -181,14 +189,25 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+          TAG_FILTER="${{ inputs.currency_family_filter }}"
+
+          if [ -n "$TAG_FILTER" ]; then
+            TAG_FILTER="${TAG_FILTER//,/|}"
+          fi
+
+          if [ -z "$BASE_FILTER" ] && [ -n "$TAG_FILTER" ]; then
+            BASE_FILTER="$TAG_FILTER"
+          fi
+
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "${{ inputs.test_filter }}" ]; then
-              echo "filter=@smoke ${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
             else
               echo "filter=@smoke" >> $GITHUB_OUTPUT
             fi
           else
-            echo "filter=${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
           fi
         shell: bash
 

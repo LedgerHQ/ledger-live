@@ -3,6 +3,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import invariant from "invariant";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const currencies = [
   {
@@ -32,6 +33,8 @@ for (const currency of currencies) {
       speculosApp: currency.currency.speculosApp,
     });
 
+    const family = getFamilyByCurrencyId(currency.currency.id);
+
     test(
       `[${currency.currency.name}] Add account`,
       {
@@ -42,6 +45,8 @@ for (const currency of currencies) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${currency.currency.id}`,
+          ...(family && family !== currency.currency.id ? [`@${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
         ],
         annotation: {

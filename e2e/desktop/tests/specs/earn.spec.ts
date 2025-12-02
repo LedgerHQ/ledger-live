@@ -4,6 +4,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -55,6 +56,8 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.currency.id);
+
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
@@ -65,6 +68,8 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family && family !== account.currency.id ? [`@${family}`] : []),
           ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
