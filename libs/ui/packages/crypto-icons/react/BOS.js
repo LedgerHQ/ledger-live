@@ -1,0 +1,10 @@
+import * as React from "react";
+import Svg from "./StyledSvg";
+const DefaultColor = "#00a8d6";
+function BOS({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement("path", { fillRule: "evenodd", d: "M10.449 14.213v-1.438h2.216q2.216 0 2.216-1.107V7.795q0-1.106-2.216-1.106H9.12v2.323H7.125V5.25h5.318q4.432 0 4.432 2.435v4.094q0 2.434-4.432 2.434zm4.432.885h1.994v1.217q0 2.435-4.432 2.435H7.125v-8.631h5.318q.467 0 .887.027v1.44a7 7 0 00-.665-.03H9.12v5.756h3.545q2.217 0 2.217-1.107z", clipRule: "evenodd" }));
+}
+BOS.DefaultColor = DefaultColor;
+export default BOS;
+//# sourceMappingURL=BOS.js.map

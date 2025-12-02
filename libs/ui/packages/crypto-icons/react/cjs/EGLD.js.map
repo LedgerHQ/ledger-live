@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/EGLD.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction EGLD({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path d=\"M12.9 12L20 8.2l-1.2-2.3-6.5 2.6c-.2.1-.4.1-.5 0L5.2 5.9 4.1 8.2l7.1 3.8-7.1 3.8 1.2 2.3 6.5-2.6c.2-.1.4-.1.5 0l6.5 2.6 1.2-2.3z\" /></Svg>;\n}\nEGLD.DefaultColor = DefaultColor;\nexport default EGLD;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAK,GAAE,oIAAmI,CAAE;AACvN;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

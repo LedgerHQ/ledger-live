@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/XVC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#b50126\";\nfunction XVC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M6.839 8.057H5.25L6.498 6h3.1v8.038L15.537 6h3.214l-8.357 12H6.838z\" clipRule=\"evenodd\" /></Svg>;\n}\nXVC.DefaultColor = DefaultColor;\nexport default XVC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,uEAAsE,UAAS,WAAU,CAAE;AACjM;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

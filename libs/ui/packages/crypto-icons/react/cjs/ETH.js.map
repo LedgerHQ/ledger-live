@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/ETH.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#0ebdcd\";\nfunction ETH({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M11.999 3.002v6.652l5.622 2.513z\" opacity={0.6} /><path  d=\"M11.999 3.002l-5.624 9.165 5.624-2.513z\" /><path  d=\"M11.999 16.478v4.52l5.626-7.784z\" opacity={0.6} /><path  d=\"M11.999 20.998v-4.52l-5.624-3.264z\" /><path  d=\"M11.999 15.432l5.622-3.265L12 9.656z\" opacity={0.2} /><path  d=\"M6.375 12.167l5.624 3.265V9.656z\" opacity={0.6} /></Svg>;\n}\nETH.DefaultColor = DefaultColor;\nexport default ETH;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,oCAAmC,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,2CAA0C,GAAE,oCAAC,UAAM,GAAE,oCAAmC,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,sCAAqC,GAAE,oCAAC,UAAM,GAAE,wCAAuC,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,oCAAmC,SAAS,KAAK,CAAE;AACna;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

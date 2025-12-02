@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var BLK_exports = {};
+__export(BLK_exports, {
+  default: () => BLK_default
+});
+module.exports = __toCommonJS(BLK_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#181818";
+function BLK({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M16.95 8.348a2.85 2.85 0 01-1.827 2.799s.76-.75.724-2.673C15.811 6.552 14.4 5.602 14.4 5.602s2.515.56 2.55 2.745M8.577 18.614L6 18.741v-.24s1.577-.163 1.577-2.993v-7.23C7.577 5.882 6 5.468 6 5.468V5.25l2.577.126zm4.12.135c-1.122.01-3.202-.147-3.202-.147V5.395c1.371-.019 1.85-.208 2.98-.045s2.1 1.29 2.366 2.42c.264 1.128-.018 2.203-.38 2.79-.362.586-1.156.993-1.156.993s1.2.416 1.624.776c.424.362 1.245 1.346.927 3.486s-2.04 2.925-3.16 2.934m2.978-.487s1.222-1.065 1.168-3.226-1.168-3.176-1.168-3.176 2.299.577 2.325 3.151-2.325 3.252-2.325 3.252zm-2.325-7.75c.823-1.096.564-3.158-.433-3.863-.998-.705-2.048-.353-2.25-.154-.204.199-.195 4.823-.195 4.823s2.053.29 2.877-.807m.152 1.968c-.771-.343-3.03-.253-3.03-.253s-.035 1.167.047 3.353.812 2.173 1.571 2.203c.76.03 2.207-.024 2.683-1.908.477-1.884-.5-3.052-1.271-3.395" }));
+}
+BLK.DefaultColor = DefaultColor;
+var BLK_default = BLK;
+//# sourceMappingURL=BLK.js.map

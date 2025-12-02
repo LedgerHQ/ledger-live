@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CURRENCY_BASE.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction CURRENCY_BASE({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" strokeMiterlimit={10} fill={color}><path d=\"M21.467 12c0 5.227-4.246 9.464-9.483 9.464-4.97 0-9.046-3.814-9.451-8.668h12.535v-1.591H2.533c.405-4.855 4.481-8.67 9.45-8.67 5.238 0 9.484 4.238 9.484 9.465\" /></Svg>;\n}\nCURRENCY_BASE.DefaultColor = DefaultColor;\nexport default CURRENCY_BASE;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,cAAc;AAAA,EACrB,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,kBAAkB,IAAI,MAAM,SAAO,oCAAC,UAAK,GAAE,iKAAgK,CAAE;AAC1Q;AACA,cAAc,eAAe;AAC7B,IAAO,wBAAQ;",
+  "names": ["Svg"]
+}

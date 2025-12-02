@@ -1,0 +1,11 @@
+import * as React from "react";
+import { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+const DefaultColor = "#f1b32b";
+function GOLD({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement(Path, { d: "M12 3.188A8.81 8.81 0 003.188 12 8.81 8.81 0 0012 20.813a8.812 8.812 0 100-17.625m0 15.427a6.615 6.615 0 110-13.23 6.615 6.615 0 010 13.23m-2.197-6.607l2.204 3.3 2.19-3.3-2.19-3.308z" }));
+}
+GOLD.DefaultColor = DefaultColor;
+export default GOLD;
+//# sourceMappingURL=GOLD.js.map

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/AUTO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fab431\";\nfunction AUTO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M18.375 14.45l-3.139-1.883.36-1.492 1.34.792V9.142l-4.304-2.566v5.925l-1.024.566 5.653 3.353L12 19.5l-6.375-3.733V8.3L12 4.5l6.375 3.8zM7.064 9.143V14l4.138-2.4V6.675L7.064 9.142m3.072 4.757l-2.353 1.44L12 17.809l2.381-1.395z\" clipRule=\"evenodd\" /></Svg>;\n}\nAUTO.DefaultColor = DefaultColor;\nexport default AUTO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,qOAAoO,UAAS,WAAU,CAAE;AAC/V;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

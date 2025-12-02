@@ -1,0 +1,15 @@
+import * as React from "react";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#fff";
+function HTON1({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}><path  fillRule="evenodd" d="M4.384 8.72c-.954-1.733.3-3.855 2.279-3.855h10.93c1.978 0 3.232 2.122 2.278 3.856l-6.247 11.355c-.649 1.18-2.344 1.18-2.993 0zm2.279-2.895a1.64 1.64 0 00-1.438 2.433l6.247 11.355a.8.8 0 00.175.215V5.825zm5.944 0v5.399c.56-.584 1.39-1.082 2.599-1.097.508-.007.935.101 1.283.306.348.204.59.49.75.796q.039.075.073.153l1.718-3.124a1.64 1.64 0 00-1.438-2.433zm3.96 6.91c.028-.316-.006-.732-.178-1.06a1 1 0 00-.387-.415c-.172-.101-.42-.178-.784-.173-1.613.02-2.325 1.187-2.61 1.886v6.855a.8.8 0 00.175-.215z" clipRule="evenodd" /></Svg>;
+}
+HTON1.DefaultColor = DefaultColor;
+export default HTON1;

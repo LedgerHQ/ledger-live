@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CURRENCY_STACKS.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#5546ff\";\nfunction CURRENCY_STACKS({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M14.309 14.11l2.511 3.8h-1.879l-2.945-4.465-2.95 4.465H7.18l2.511-3.789H6.09V12.68h11.82v1.43zm3.601-4.27v1.45H6.09V9.84h3.53L7.14 6.09h1.875l2.98 4.527 2.988-4.527h1.875l-2.48 3.75zm0 0\" /></Svg>;\n}\nCURRENCY_STACKS.DefaultColor = DefaultColor;\nexport default CURRENCY_STACKS;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,gBAAgB;AAAA,EACvB,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,8LAA6L,CAAE;AAClR;AACA,gBAAgB,eAAe;AAC/B,IAAO,0BAAQ;",
+  "names": ["Svg"]
+}

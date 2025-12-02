@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/UP.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction UP({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M16.512 5.77h-8.75l-4.558 4.558 8.932 8.933 8.933-8.933zm-4.375 2.856l-3.15 3.15 1.243 1.243 1.907-1.907 1.907 1.907 1.242-1.243z\" clipRule=\"evenodd\" /></Svg>;\n}\nUP.DefaultColor = DefaultColor;\nexport default UP;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,GAAG;AAAA,EACV,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,qIAAoI,UAAS,WAAU,CAAE;AAC/P;AACA,GAAG,eAAe;AAClB,IAAO,aAAQ;",
+  "names": ["Svg"]
+}

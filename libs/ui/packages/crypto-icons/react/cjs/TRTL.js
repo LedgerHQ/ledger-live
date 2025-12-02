@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var TRTL_exports = {};
+__export(TRTL_exports, {
+  default: () => TRTL_default
+});
+module.exports = __toCommonJS(TRTL_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#00843d";
+function TRTL({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M12.002 4.054c.295 0 .586.077.841.225l5.37 3.1a1.68 1.68 0 01.842 1.46v6.325c0 .601-.32 1.157-.842 1.458l-5.37 3.101a1.68 1.68 0 01-1.684 0l-5.372-3.101a1.68 1.68 0 01-.842-1.458V8.838c0-.601.321-1.157.842-1.458l5.37-3.1A1.7 1.7 0 0112 4.052zM12 2.884c-.5 0-.992.132-1.426.382l-5.372 3.1a2.86 2.86 0 00-1.427 2.472v6.325a2.86 2.86 0 001.427 2.472l5.37 3.1c.884.51 1.972.51 2.855 0l5.37-3.1a2.86 2.86 0 001.428-2.472V8.838a2.86 2.86 0 00-1.427-2.472l-5.37-3.102A2.86 2.86 0 0012 2.882z" }), /* @__PURE__ */ React.createElement("path", { d: "M11.343 12.994a.35.35 0 01-.305-.175l-.646-1.12a.35.35 0 010-.351l.646-1.12a.35.35 0 01.305-.175h1.318a.35.35 0 01.304.175l.646 1.12a.35.35 0 010 .35l-.646 1.12a.35.35 0 01-.304.176zM9.58 11.231a.35.35 0 00.304-.176l.646-1.12a.35.35 0 000-.35l-.805-1.396-1.573.858a.35.35 0 00-.182.316c.012.628.086 1.254.218 1.868zm4.841 0a.35.35 0 01-.304-.176l-.646-1.12a.35.35 0 010-.35l.805-1.396 1.572.858a.35.35 0 01.183.315 10 10 0 01-.217 1.869zM12.17 7.038a.35.35 0 00-.336 0l-1.595.87.8 1.384a.35.35 0 00.304.176h1.318a.35.35 0 00.304-.176l.8-1.384zm-3.836 4.778a9.8 9.8 0 001.422 2.99l.776-1.344a.35.35 0 000-.35l-.647-1.12a.35.35 0 00-.303-.176zm7.334 0a9.8 9.8 0 01-1.42 2.99l-.777-1.344a.35.35 0 010-.35l.647-1.12a.35.35 0 01.304-.176zm-4.325 1.763a.35.35 0 00-.305.176l-.9 1.56a10 10 0 001.65 1.619.35.35 0 00.43 0 10 10 0 001.648-1.62l-.9-1.56a.35.35 0 00-.304-.175h-1.32" }));
+}
+TRTL.DefaultColor = DefaultColor;
+var TRTL_default = TRTL;
+//# sourceMappingURL=TRTL.js.map

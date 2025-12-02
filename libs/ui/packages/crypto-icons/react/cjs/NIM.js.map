@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/NIM.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction NIM({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path stroke=\"#f8b425\" strokeWidth={2} d=\"M18.96 11.852a.29.29 0 010 .295l-3.335 5.692a.3.3 0 01-.12.116.35.35 0 01-.17.045h-6.67a.35.35 0 01-.17-.045.3.3 0 01-.12-.116l-3.334-5.691a.29.29 0 010-.295L8.375 6.16a.3.3 0 01.12-.116.35.35 0 01.17-.045h6.67a.35.35 0 01.17.045q.077.046.12.116z\" /></Svg>;\n}\nNIM.DefaultColor = DefaultColor;\nexport default NIM;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAK,QAAO,WAAU,aAAa,GAAG,GAAE,0PAAyP,CAAE;AAC9W;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

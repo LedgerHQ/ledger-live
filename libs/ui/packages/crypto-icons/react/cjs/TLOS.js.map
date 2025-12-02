@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/TLOS.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#ac72f9\";\nfunction TLOS({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 .219C5.5.219.219 5.5.219 12S5.5 23.781 12 23.781 23.781 18.5 23.781 12 18.5.219 12 .219M12 3.5c4.697 0 8.5 3.803 8.5 8.5s-3.803 8.5-8.5 8.5A8.497 8.497 0 013.5 12c0-4.697 3.803-8.5 8.5-8.5\" /></Svg>;\n}\nTLOS.DefaultColor = DefaultColor;\nexport default TLOS;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,oMAAmM,CAAE;AACxR;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

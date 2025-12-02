@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/GLINT.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction GLINT({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12.127 3.067l.146.94a9.4 9.4 0 007.847 7.847l.94.146-.94.146a9.4 9.4 0 00-7.847 7.847l-.146.94-.146-.94a9.4 9.4 0 00-7.847-7.847L3.194 12l.94-.146a9.4 9.4 0 007.847-7.847z\" /></Svg>;\n}\nGLINT.DefaultColor = DefaultColor;\nexport default GLINT;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,MAAM;AAAA,EACb,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,gLAA+K,CAAE;AACpQ;AACA,MAAM,eAAe;AACrB,IAAO,gBAAQ;",
+  "names": ["Svg"]
+}

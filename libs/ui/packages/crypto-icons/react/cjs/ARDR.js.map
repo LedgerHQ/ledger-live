@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/ARDR.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#3c87c7\";\nfunction ARDR({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M11.912 14.018l1.327 1.733-3.864 2.624zM12 5.624l2.045 3.355-5.454 9.395H4.5zm0 7.382l2.727-2.014 4.773 7.382h-3.409z\" clipRule=\"evenodd\" /></Svg>;\n}\nARDR.DefaultColor = DefaultColor;\nexport default ARDR;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,yHAAwH,UAAS,WAAU,CAAE;AACnP;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

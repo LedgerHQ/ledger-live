@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CELO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#42d689\";\nfunction CELO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M10.105 19.105a5.21 5.21 0 100-10.42 5.21 5.21 0 100 10.42m0 1.895a7.105 7.105 0 110-14.21 7.105 7.105 0 010 14.21\" /><path  d=\"M13.895 15.316a5.21 5.21 0 100-10.421 5.21 5.21 0 100 10.42m0 1.894a7.105 7.105 0 110-14.21 7.105 7.105 0 010 14.21\" /><path  d=\"M14.13 17.21a5.2 5.2 0 001.032-2.048c.75-.187 1.45-.54 2.048-1.032a7 7 0 01-.553 2.53 7.1 7.1 0 01-2.527.55M8.838 8.839a5.2 5.2 0 00-2.049 1.032c.027-.87.215-1.726.554-2.527A7.1 7.1 0 019.87 6.79a5.2 5.2 0 00-1.032 2.049\" /></Svg>;\n}\nCELO.DefaultColor = DefaultColor;\nexport default CELO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,sHAAqH,GAAE,oCAAC,UAAM,GAAE,uHAAsH,GAAE,oCAAC,UAAM,GAAE,gOAA+N,CAAE;AACrjB;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

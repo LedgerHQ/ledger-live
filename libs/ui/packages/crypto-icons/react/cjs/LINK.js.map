@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/LINK.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#2a5ada\";\nfunction LINK({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 4.5l-1.35.791L6.976 7.46l-1.35.791v7.5l1.35.791 3.71 2.168 1.349.791 1.349-.791 3.643-2.168 1.349-.791v-7.5l-1.35-.791-3.676-2.17zm-3.677 9.668V9.833L12 7.664l3.677 2.167v4.336L12 16.334z\" /></Svg>;\n}\nLINK.DefaultColor = DefaultColor;\nexport default LINK;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,mMAAkM,CAAE;AACvR;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

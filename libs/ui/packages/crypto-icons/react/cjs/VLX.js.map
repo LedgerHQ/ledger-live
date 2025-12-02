@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/VLX.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction VLX({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" strokeMiterlimit={10} fill={color}><path d=\"M15.384 10.05l-3.38 5.851-3.387-5.852zm3.383-1.956H5.233l6.772 11.708L18.767 8.1zM2.977 4.198l1.128 1.955h15.79l1.128-1.955z\" /></Svg>;\n}\nVLX.DefaultColor = DefaultColor;\nexport default VLX;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,kBAAkB,IAAI,MAAM,SAAO,oCAAC,UAAK,GAAE,gIAA+H,CAAE;AACzO;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

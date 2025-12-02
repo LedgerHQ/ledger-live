@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/FLR.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction FLR({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M20.9 4.3c0 2-1.6 3-3.7 3h-12c0-2 1.6-3 3.7-3zm-5.5 6.3c0 2-1.6 3-3.7 3H5.1c0-2 1.6-3 3.7-3zm-7.3 8.6c-.7.7-1.8.7-2.5 0s-.7-1.8 0-2.5 1.8-.7 2.5 0 .7 1.8 0 2.5\" /></Svg>;\n}\nFLR.DefaultColor = DefaultColor;\nexport default FLR;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,mKAAkK,CAAE;AACvP;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

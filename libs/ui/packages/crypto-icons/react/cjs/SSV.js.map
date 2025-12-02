@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/SSV.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#1ba5f8\";\nfunction SSV({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M8.804 18.126l2.656-3.275a.693.693 0 011.077 0l2.657 3.275a.69.69 0 010 .873l-2.657 3.275a.693.693 0 01-1.077 0l-2.656-3.275a.69.69 0 010-.873m2.656-16.4L8.804 5.001a.694.694 0 000 .873L11.46 9.15c.278.342.8.342 1.077 0l2.657-3.275a.69.69 0 000-.873l-2.657-3.275a.693.693 0 00-1.077 0m-6.806 8.392l2.657-3.274a.693.693 0 011.077 0l2.656 3.274a.69.69 0 010 .874l-2.656 3.275a.693.693 0 01-1.077 0l-2.657-3.275a.69.69 0 010-.874m8.302 0l2.656-3.274a.693.693 0 011.077 0l2.657 3.274a.69.69 0 010 .874l-2.657 3.275a.693.693 0 01-1.077 0l-2.656-3.275a.69.69 0 010-.874\" /></Svg>;\n}\nSSV.DefaultColor = DefaultColor;\nexport default SSV;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,ujBAAsjB,CAAE;AAC3oB;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

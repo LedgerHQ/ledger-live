@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/EOP.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fefffe\";\nfunction EOP({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M11.036 21L7.025 10.303l-1.62 7.38zM12.09 3.128l-4.397 5.35 4.397 11.237 4.423-11.238zM13.17 21l4.012-10.697 1.594 7.38z\" /><path  d=\"M10.946 20.936L6.934 10.239l-1.62 7.38zM12 3.064l-4.397 5.35L12 19.65l4.423-11.237zm1.08 17.872l4.012-10.697 1.594 7.38z\" /></Svg>;\n}\nEOP.DefaultColor = DefaultColor;\nexport default EOP;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,4HAA2H,GAAE,oCAAC,UAAM,GAAE,4HAA2H,CAAE;AACtV;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,15 @@
+import * as React from "react";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#fff";
+function PLANE({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}><path  fillRule="evenodd" d="M20.966 5.847L3.091 9.518a.5.5 0 00-.147.924l4.934 2.813.894 4.906a.5.5 0 00.78.32l3.287-2.317 3.48 2.46a.5.5 0 00.757-.232l4.463-11.878.001-.002m-5.172 10.922l3.664-9.75-8.727 6.165 1.824 1.295zm-1.526-7.309L8.886 13.21l.48 2.632.592-2.126a.5.5 0 01.193-.276zm-4.72 6.73l1.852-1.305-1.243-.882zm-1.783-4.488l9.298-4.815L4.592 10.23z" clipRule="evenodd" /></Svg>;
+}
+PLANE.DefaultColor = DefaultColor;
+export default PLANE;

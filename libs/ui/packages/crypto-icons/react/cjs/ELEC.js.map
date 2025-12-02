@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/ELEC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f90\";\nfunction ELEC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M8.285 20.845l9.5-9.977h-5.75z\" /><path  d=\"M6.215 13.857h5.75l5.82-2.99h-5.75z\" /><path  d=\"M14.848 3.155L6.215 13.857h5.75z\" /></Svg>;\n}\nELEC.DefaultColor = DefaultColor;\nexport default ELEC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,kCAAiC,GAAE,oCAAC,UAAM,GAAE,uCAAsC,GAAE,oCAAC,UAAM,GAAE,oCAAmC,CAAE;AACrN;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

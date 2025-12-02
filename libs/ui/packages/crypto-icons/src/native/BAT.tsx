@@ -1,0 +1,16 @@
+import * as React from "react";
+import  { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#ff5000";
+function BAT({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}><Path  d="M4.5 18.375l7.538-12.75L19.5 18.358zm7.52-7.59l-3.08 5.09h6.176z" /></Svg>;
+}
+BAT.DefaultColor = DefaultColor;
+export default BAT;

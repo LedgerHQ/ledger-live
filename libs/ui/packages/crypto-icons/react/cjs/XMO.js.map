@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/XMO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f60\";\nfunction XMO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M21 12a9 9 0 01-9 9A9 9 0 014.772 6.635l1.47 1.47A6.9 6.9 0 005.046 12a6.95 6.95 0 006.947 6.947A6.953 6.953 0 0018.94 12a6.95 6.95 0 00-1.196-3.895l1.47-1.47A8.9 8.9 0 0121 12\" /><path  d=\"M16.978 12A4.983 4.983 0 0112 16.978 4.983 4.983 0 017.021 12c0-.865.225-1.715.654-2.467L12 13.856l4.325-4.325c.428.752.654 1.603.654 2.469\" /><path  d=\"M17.885 5.194L12 11.072 7.514 6.593l-1.4-1.4A8.93 8.93 0 0112 3c2.25 0 4.304.823 5.885 2.194\" /></Svg>;\n}\nXMO.DefaultColor = DefaultColor;\nexport default XMO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,oLAAmL,GAAE,oCAAC,UAAM,GAAE,+IAA8I,GAAE,oCAAC,UAAM,GAAE,gGAA+F,CAAE;AAC3gB;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

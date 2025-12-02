@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/RAFF.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction RAFF({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M20.879 9.834l-2.5-4.332H3.375l2.5 4.332h10.001l-2.5 4.332 2.5 4.332h5.001l-2.5-4.332z\" /><path  d=\"M8.377 14.166l2.5 4.332 2.5-4.332z\" /><path  d=\"M10.877 9.834h5l-2.5 4.332z\" opacity={0.4} /></Svg>;\n}\nRAFF.DefaultColor = DefaultColor;\nexport default RAFF;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,0FAAyF,GAAE,oCAAC,UAAM,GAAE,sCAAqC,GAAE,oCAAC,UAAM,GAAE,+BAA8B,SAAS,KAAK,CAAE;AACrR;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,16 @@
+import * as React from "react";
+import  { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#B75FFF";
+function CURRENCY_ZERO_GRAVITY({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 378 183" fill={color}><Path d="M20.68 149.413C-8.813 113.47-6.759 60.351 26.832 26.797c35.786-35.73 93.795-35.73 129.581 0 35.778 35.737 35.778 93.667 0 129.404-34.697 34.65-90.297 35.696-126.256 3.156l80.901-80.8 9.718 9.704L71.38 137.6c18.454 8.081 40.768 4.572 55.873-10.512 19.683-19.656 19.683-51.522 0-71.17-19.675-19.656-51.584-19.656-71.267 0-17.463 17.44-19.427 44.503-5.89 64.11L20.68 149.413zM263.92 109.704V96.021H378c-2.318 46.965-40.191 84.589-87.303 86.583-53.926 2.29-98.258-42.69-95.14-96.502C198.329 38.214 239.378.228 286.754.228c47.376 0 86.321 36.008 90.908 82.11h-41.494c-4.29-23.356-24.782-41.051-49.414-41.051-31.026 0-55.485 28.083-49.273 60.196 3.844 19.845 19.493 35.424 39.382 39.213 25.416 4.836 48.292-9.465 56.714-30.992H263.92z"  /></Svg>;
+}
+CURRENCY_ZERO_GRAVITY.DefaultColor = DefaultColor;
+export default CURRENCY_ZERO_GRAVITY;

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/NIO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#70c9c9\";\nfunction NIO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 11.448H8.383L12 5.25l3.617 6.198zm.491 7.302l1.886-3.232 1.809-3.098 3.689 6.33zm-2.868-3.232l1.886 3.232H4.125l3.69-6.33z\" /></Svg>;\n}\nNIO.DefaultColor = DefaultColor;\nexport default NIO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,kIAAiI,CAAE;AACtN;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

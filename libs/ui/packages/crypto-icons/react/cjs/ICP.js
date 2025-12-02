@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var ICP_exports = {};
+__export(ICP_exports, {
+  default: () => ICP_default
+});
+module.exports = __toCommonJS(ICP_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#000";
+function ICP({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 124 124", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M93.889 29.89c-6.913 0-14.483 3.77-22.47 11.2a98.5 98.5 0 00-9.507 10.303s3.875 4.459 8.127 9.264c2.315-2.904 5.601-6.846 9.435-10.406 7.088-6.644 11.718-7.988 14.384-7.988 9.956 0 18.042 8.37 18.042 18.704 0 10.23-8.086 18.6-18.042 18.703-.486 0-1.039-.072-1.731-.207 2.904 1.344 6.05 2.315 8.99 2.315 18.248 0 21.844-12.617 22.051-13.516.517-2.315.832-4.738.832-7.228-.036-17.18-13.516-31.145-30.111-31.145M30.11 94.11c6.913 0 14.482-3.77 22.47-11.2a98.5 98.5 0 009.507-10.303s-3.875-4.459-8.127-9.264c-2.315 2.904-5.601 6.846-9.435 10.406-7.088 6.567-11.754 7.988-14.384 7.988-9.956 0-18.042-8.37-18.042-18.704 0-10.23 8.086-18.6 18.042-18.703.486 0 1.039.072 1.731.207-2.904-1.344-6.05-2.315-8.99-2.315C4.635 42.186 1.04 54.802.832 55.738.315 58.053 0 60.476 0 62.966c0 17.18 13.485 31.145 30.111 31.145m13.894-42.547C42 49.626 32.255 41.711 22.919 41.431 6.257 41.019 1.385 53.12.935 54.675 4.15 41.12 16.043 30.99 30.142 30.923c11.512 0 23.162 11.304 31.775 21.503l.031-.036s3.875 4.459 8.122 9.264c0 0 4.842 5.704 9.957 10.715 2.004 1.938 11.718 9.75 21.054 10.024 17.112.486 21.849-12.302 22.087-13.273-3.141 13.655-15.071 23.818-29.243 23.89-11.511 0-23.162-11.304-31.806-21.503 0 .036-.031.036-.031.067 0 0-3.875-4.459-8.127-9.264.036 0-4.805-5.735-9.956-10.747M.934 54.808c0-.031 0-.067.031-.103-.03.036-.03.072-.03.103" }));
+}
+ICP.DefaultColor = DefaultColor;
+var ICP_default = ICP;
+//# sourceMappingURL=ICP.js.map

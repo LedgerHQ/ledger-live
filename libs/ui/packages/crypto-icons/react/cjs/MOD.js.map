@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/MOD.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#09547d\";\nfunction MOD({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M17.244 15.76V6.067l-4.734 4.836z\" opacity={0.5} /><path  d=\"M6.756 5.256l.228.234 6.35 6.506-6.578 6.748z\" /></Svg>;\n}\nMOD.DefaultColor = DefaultColor;\nexport default MOD;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,qCAAoC,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,iDAAgD,CAAE;AAClM;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

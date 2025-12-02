@@ -1,0 +1,49 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var CURRENCY_CANTON_NETWORK_DEVNET_exports = {};
+__export(CURRENCY_CANTON_NETWORK_DEVNET_exports, {
+  default: () => CURRENCY_CANTON_NETWORK_DEVNET_default
+});
+module.exports = __toCommonJS(CURRENCY_CANTON_NETWORK_DEVNET_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#fff";
+function CURRENCY_CANTON_NETWORK_DEVNET({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 385 386", fill: color }, /* @__PURE__ */ React.createElement("mask", { id: "prefix__a", width: 209, height: 107, x: 104, y: 231, maskUnits: "userSpaceOnUse", style: {
+    maskType: "alpha"
+  } }, /* @__PURE__ */ React.createElement("path", { d: "M300.613 258.076l11.485 11.167c-16.4 16.693-31.088 30.649-37.262 36.364-19.603 19.807-46.805 32.081-76.875 32.081-39.936-.001-74.816-21.645-93.55-53.843 16.628 10.184 36.185 16.055 57.113 16.055 11.789-.001 23.143-1.863 33.784-5.311 12.132 4.675 25.312 7.238 39.092 7.238 15.537 0 30.311-3.262 43.68-9.133l.001-.002c-13.37 5.871-28.145 9.134-43.683 9.134-13.779 0-26.961-2.564-39.092-7.239 25.159-8.152 46.33-25.163 59.833-47.353a109 109 0 0019.278-15.353z" })), /* @__PURE__ */ React.createElement("g", { mask: "url(#prefix__a)" }, /* @__PURE__ */ React.createElement("path", { d: "M-90.586 93.58l5.792-5.792 320.06 320.06-5.792 5.792zm7.418-16.17l2.181-2.18 328.813 328.812-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M-78.27 78.97l8.689-8.69 322.358 322.36-8.689 8.689zm12.498-16.877l2.182-2.181 326.735 326.735-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M136.809 262.688l9.368-9.368 120.77 120.771-9.367 9.368zM-38.03 57.112l2.182-2.182 303.979 303.98-2.182 2.18z" }), /* @__PURE__ */ React.createElement("path", { d: "M-47.084 44.288l8.477-8.477 325.86 325.86-8.477 8.476zM-33.925 28.5l2.182-2.181 328.485 328.485-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M-21.304 38.633l10.866-10.866 309.23 309.23-10.866 10.866zM.635 13.977l2.181-2.182 308.451 308.452-2.181 2.181zm-4.4-20.753l2.182-2.182 333.602 333.603-2.181 2.181zm7.692-8.664l2.181-2.181 334.57 334.57-2.182 2.18z" })), /* @__PURE__ */ React.createElement("mask", { id: "prefix__b", width: 203, height: 201, x: 89, y: 46, maskUnits: "userSpaceOnUse", style: {
+    maskType: "alpha"
+  } }, /* @__PURE__ */ React.createElement("path", { d: "M140.826 137.683c-9.629 16.227-15.158 35.174-15.158 55.412 0 19.585 5.179 37.961 14.24 53.833-19.921-12.608-35.448-31.535-43.762-53.963 8.286-23.07 24.191-42.509 44.68-55.282m56.949-90.727c39.771 0 74.539 21.429 93.385 53.371-16.521-10.13-35.956-15.968-56.755-15.968a108.7 108.7 0 00-31.476 4.625h-.004c-26.282 7.935-48.365 25.55-62.102 48.699-20.489 12.773-36.393 32.212-44.68 55.282-4.347-11.729-6.723-24.417-6.723-37.659 0-22.333 6.757-43.088 18.338-60.332l.006-.004c19.45-28.958 52.505-48.013 90.011-48.014M164.166 80.92" })), /* @__PURE__ */ React.createElement("g", { mask: "url(#prefix__b)" }, /* @__PURE__ */ React.createElement("path", { d: "M-86.964 89.969l2.181-2.181 320.06 320.06-2.181 2.18zm3.801-12.555l2.182-2.182L247.83 404.045l-2.181 2.181zm11.411-4.953l2.181-2.181 322.359 322.359-2.182 2.181zm5.985-10.367l2.182-2.181L263.15 386.648l-2.182 2.181zm12.56-3.802l2.181-2.182 317.983 317.983-2.182 2.181zm15.181-1.18l2.181-2.181 303.98 303.979-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M-48.106 45.316l9.504-9.504 325.86 325.86-9.505 9.503zM-33.92 28.5l2.181-2.18 328.485 328.484-2.181 2.182z" }), /* @__PURE__ */ React.createElement("path", { d: "M-23.271 35.603l8.387-8.387 309.23 309.23-8.388 8.387zm10.09-19.086L-11 14.336l319.733 319.733-2.181 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M-5.896 20.505l8.709-8.708 308.45 308.451-8.707 8.708zm2.136-27.28l2.18-2.182 333.603 333.603-2.181 2.18z" }), /* @__PURE__ */ React.createElement("path", { d: "M-2.704-8.793l8.826-8.826 334.57 334.57-8.826 8.825zm23.046-6.603l2.181-2.182 245.15 245.15-2.182 2.18z" }), /* @__PURE__ */ React.createElement("path", { d: "M22.05-16.143l9.13-9.13 224.196 224.196-9.13 9.13zM37.667-30.79l2.182-2.181 316.19 316.19-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M29.67-41.175l9.163-9.163 334.57 334.569-9.164 9.163zm15.649-14.682L47.5-58.04l333.602 333.603-2.181 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M37.911-65.857l9.063-9.063 351.014 351.014-9.063 9.063zm27.63-2.489l2.181-2.182 325.864 325.864-2.181 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M63.122-71.725l9.882-9.882L404.672 250.06l-9.882 9.882zM79.97-86.637l2.181-2.182 329.733 329.733-2.182 2.181z" }), /* @__PURE__ */ React.createElement("path", { d: "M83.019-84.843l13.933-13.933 324.896 324.897-13.932 13.932zm13.134 277.811c8.314 22.428 23.84 41.355 43.762 53.964l.003.004c16.74 10.593 36.583 16.726 57.858 16.726 20.591 0 39.84-5.746 56.234-15.719a131 131 0 004.024-2.747c5.18-3.896 12.922-10.133 16.856-13.351-18.509 18.816-32.775 33.032-37.595 37.788l.306-.467c-11.84 11.438-26.25 20.233-42.283 25.429l.001.001c-10.64 3.447-21.995 5.31-33.784 5.31-20.928 0-40.485-5.871-57.113-16.055-9.287-15.961-14.607-34.517-14.607-54.315 0-12.834 2.236-25.147 6.338-36.568m11.61-97.992c-11.581 17.244-18.338 38-18.338 60.333 0 13.242 2.376 25.929 6.723 37.659-4.102 11.421-6.337 23.733-6.338 36.567 0 19.798 5.32 38.355 14.608 54.316-31.426-19.247-52.396-53.902-52.396-93.454 0-40.938 22.466-76.631 55.741-95.42" })), /* @__PURE__ */ React.createElement("path", { d: "M234.399 84.354c20.799 0 40.234 5.84 56.755 15.968l.247.428-.128-.392 20.63 15.809-11.761 11.182-.003-.01-25.705 25.705a108.6 108.6 0 00-15.602-12.931l-.004-.006c-17.338-11.823-38.293-18.737-60.862-18.737-20.977 0-40.561 5.972-57.141 16.309 13.737-23.148 35.818-40.764 62.099-48.7h-.001a108.7 108.7 0 0131.476-4.625m-41.801 209.147q1.353.566 2.724 1.095c-10.641 3.448-21.995 5.311-33.784 5.311-20.928 0-40.485-5.871-57.114-16.055-9.287-15.962-14.606-34.518-14.606-54.315 0-12.834 2.235-25.147 6.338-36.569 8.313 22.427 23.838 41.353 43.758 53.961l.787.493c16.575 10.292 36.132 16.237 57.078 16.237 20.646 0 39.943-5.777 56.365-15.799 1.223-.8 2.503-1.68 3.801-2.597 5.179-3.891 12.989-10.182 16.945-13.419-18.508 18.817-32.776 33.033-37.595 37.788l.311-.473c-11.842 11.44-26.253 20.239-42.288 25.434q-1.369-.527-2.72-1.092m-2.522-1.091q.466.21.933.415-.467-.205-.933-.415m-1.47-.669q.496.23.994.457-.498-.227-.994-.457m-1.351-.641q.483.233.968.462-.486-.229-.968-.462m-1.339-.657q.439.22.881.435-.442-.215-.881-.435m-6.788-3.694q.425.25.853.499-.428-.249-.853-.499m-1.276-.766q.37.224.741.446-.371-.221-.741-.446m-1.337-.829q.323.202.648.402-.325-.2-.648-.402m-3.895-2.572a110 110 0 001.318.897zM107.765 94.976c-11.58 17.244-18.338 38-18.338 60.333 0 13.242 2.376 25.929 6.724 37.658-4.102 11.422-6.338 23.734-6.338 36.568 0 19.797 5.32 38.354 14.608 54.316-31.427-19.247-52.396-53.902-52.396-93.453 0-40.939 22.465-76.632 55.74-95.422" }), /* @__PURE__ */ React.createElement("path", { d: "M274.726 231.803l-34.278 34.278 37.426 37.427 34.278-34.278zM81.62 264.067l44.41 44.41-29.606-50.989zM283.922 89.718l27.962 26.317-13.159-4.935-9.868-8.224z" }));
+}
+CURRENCY_CANTON_NETWORK_DEVNET.DefaultColor = DefaultColor;
+var CURRENCY_CANTON_NETWORK_DEVNET_default = CURRENCY_CANTON_NETWORK_DEVNET;
+//# sourceMappingURL=CURRENCY_CANTON_NETWORK_DEVNET.js.map

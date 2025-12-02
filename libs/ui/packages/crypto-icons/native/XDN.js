@@ -1,0 +1,11 @@
+import * as React from "react";
+import { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+const DefaultColor = "#4f7aa2";
+function XDN({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement(Path, { d: "M9.982 9h2.053c.992 0 2.762.602 2.762 3s-1.77 3-2.762 3H9.983zm1.132 4.785h.85c.709 0 1.559-.434 1.559-1.785s-.85-1.785-1.558-1.785h-.85zM15.578 9h.424l3.824 5.27V9h.424v6h-.425L16 9.846V15h-.425zM3.75 9h1.416v1.5H3.75zm2.125 0H7.29v1.5H5.875zm2.124 0h1.417v1.5H7.999zm0 2.25h1.417v1.5H7.999zm0 2.25h1.417V15H7.999zm-2.124-2.25H7.29v1.5H5.875z" }));
+}
+XDN.DefaultColor = DefaultColor;
+export default XDN;
+//# sourceMappingURL=XDN.js.map

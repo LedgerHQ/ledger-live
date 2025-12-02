@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var VIBE_exports = {};
+__export(VIBE_exports, {
+  default: () => VIBE_default
+});
+module.exports = __toCommonJS(VIBE_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#338be5";
+function VIBE({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M16.972 11.939c.548.146 1.088.317 1.574.616q.325.2.6.464c.27.3.252.617.006.934-.216.276-.51.452-.823.6-.792.381-1.632.598-2.49.727-.697.106-1.405.165-2.107.253a.26.26 0 00-.162.112c-.492.733-.978 1.468-1.47 2.202q-.06.073-.108.153-.78-1.17-1.543-2.35a.25.25 0 00-.21-.123c-1.405-.1-2.79-.282-4.118-.757-.42-.147-.822-.33-1.17-.605-.018-.018-.042-.03-.06-.048-.51-.428-.522-.886-.03-1.327.39-.353.87-.552 1.368-.705s1.002-.264 1.507-.393c.024-.006.048-.006.09-.018-1.087-1.662-2.16-3.307-3.26-4.975.067-.006.115-.012.157-.012.678-.006 1.356 0 2.034-.006a.25.25 0 01.234.135q2.464 3.757 4.923 7.519a1 1 0 00.084.117c.378-.57.744-1.116 1.104-1.662q1.98-2.992 3.961-5.98c.048-.07.084-.123.192-.123q1.071.007 2.143.006.05 0 .102.006-1.672 2.521-3.35 5.04c.283.07.553.129.823.2m-10.299 1.41q.212.234.486.393c.75.4 1.58.545 2.438.674-.012-.04-.012-.058-.018-.07-.487-.734-.967-1.474-1.453-2.208a.17.17 0 00-.15-.047 7 7 0 00-.835.335 1.7 1.7 0 00-.462.376.39.39 0 00-.006.546m9.453.633a2 2 0 00.87-.493c.241-.24.241-.511 0-.758a1 1 0 00-.203-.165c-.258-.129-.528-.252-.793-.38-.09-.048-.144-.013-.198.07-.282.435-.57.862-.858 1.292l-.546.828a.6.6 0 00.144 0c.528-.129 1.062-.247 1.584-.394M16.132 6l-4.11 6.549L7.856 6z" }));
+}
+VIBE.DefaultColor = DefaultColor;
+var VIBE_default = VIBE;
+//# sourceMappingURL=VIBE.js.map

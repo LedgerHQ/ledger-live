@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/BEAM.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#0b76ff\";\nfunction BEAM({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M20.67 10.238v-1.65l-5.37 3.127L11.985 6v3.75l1.688 2.925-.683.405-1.005-1.77-1.08 1.92-.75-.308 1.83-3.172V6l-3.63 6.18L3.3 10.088V12l4.5 1.11L4.95 18h7.035v-2.017H8.392l1.343-2.356.81.203-.81 1.425h4.5l-.675-1.193.893-.067 1.147 1.988h-3.615V18h7.065l-2.43-4.148 4.08-.3v-1.657l-4.59 1.133 4.583-1.178v-1.5l-4.973 2.018zM14.145 13.5l-.81.203.795-.203zm-.255-.45l-.75.3.75-.307z\" /></Svg>;\n}\nBEAM.DefaultColor = DefaultColor;\nexport default BEAM;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,+XAA8X,CAAE;AACnd;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var WFIL_exports = {};
+__export(WFIL_exports, {
+  default: () => WFIL_default
+});
+module.exports = __toCommonJS(WFIL_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#000";
+function WFIL({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { xmlnsXlink: "http://www.w3.org/1999/xlink", width: size, height: size, fill: color, className: "prefix__sc-kgOKUu prefix__fXXHPD", viewBox: "0 0 1024 1024" }, /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("path", { id: "prefix__a", d: "M500.463 859.034c198.27 0 359-160.73 359-359 0-51.698-10.928-100.843-30.6-145.253-55.771-125.908-181.828-213.747-328.4-213.747-198.27 0-359 160.73-359 359s160.73 359 359 359" }), /* @__PURE__ */ React.createElement("mask", { id: "prefix__b", width: 774, height: 774, x: -28, y: -28, maskContentUnits: "userSpaceOnUse", maskUnits: "objectBoundingBox" }, /* @__PURE__ */ React.createElement("path", { d: "M113.463 113.034h774v774h-774z" }), /* @__PURE__ */ React.createElement("use", { href: "#prefix__a" }))), /* @__PURE__ */ React.createElement("g", { fill: "none", fillRule: "evenodd", stroke: "#0090ff", transform: "translate(13 14)" }, /* @__PURE__ */ React.createElement("path", { strokeWidth: 12, d: "M522.847 458.936l-9.306 48.87 88.41 12.218-6.205 22.908-86.858-12.218c-6.204 19.854-9.307 41.235-17.062 59.562-7.755 21.38-15.51 42.761-24.816 62.615-12.409 25.963-34.123 44.29-63.593 48.87-17.062 3.055-35.674 1.528-49.634-9.162-4.653-3.055-9.306-9.164-9.306-13.745 0-6.11 3.102-13.745 7.755-16.8 3.102-1.527 10.858 0 15.51 1.528 4.654 4.581 9.307 10.69 12.41 16.799 9.305 12.218 21.714 13.745 34.122 4.582 13.96-12.218 21.715-29.017 26.368-45.817 9.306-36.653 18.612-71.779 26.368-108.432v-6.108l-82.206-12.218 3.102-22.908 85.308 12.217 10.857-47.343-88.41-13.745 3.103-24.435 91.511 12.217c3.102-9.163 4.653-16.799 7.755-24.435 7.756-27.49 15.51-54.98 34.123-79.415s40.328-39.707 72.9-38.18c13.959 0 27.918 4.582 37.225 15.272 1.55 1.527 4.653 4.582 4.653 7.636 0 6.109 0 13.745-4.653 18.327-6.205 4.581-13.96 3.054-20.164-3.055-4.653-4.581-7.755-9.163-12.408-13.745-9.307-12.217-23.266-13.745-34.123-3.054-7.756 7.636-15.51 18.326-20.164 29.017-10.857 32.071-18.612 65.67-29.47 99.269l85.308 12.217-6.205 22.908-82.205-12.217" }), /* @__PURE__ */ React.createElement("use", { href: "#prefix__a", strokeDasharray: "420,149", strokeWidth: 56, mask: "url(#prefix__b)", transform: "rotate(35 500.463 500.034)" }), /* @__PURE__ */ React.createElement("circle", { cx: 500.099, cy: 499.099, r: 430.412, strokeWidth: 28 })));
+}
+WFIL.DefaultColor = DefaultColor;
+var WFIL_default = WFIL;
+//# sourceMappingURL=WFIL.js.map

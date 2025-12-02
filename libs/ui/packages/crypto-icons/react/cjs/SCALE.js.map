@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/SCALE.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction SCALE({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12.043 12.001l-1.927 3.338H6.268l-1.926-3.336 1.926-3.336h3.85zM10.95 15.82l1.924 3.333h3.852l1.926-3.336-1.926-3.336h-3.848zm5.777-4.3h-3.851l-1.927-3.336 1.926-3.335h3.852l1.926 3.336z\" /></Svg>;\n}\nSCALE.DefaultColor = DefaultColor;\nexport default SCALE;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,MAAM;AAAA,EACb,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,+LAA8L,CAAE;AACnR;AACA,MAAM,eAAe;AACrB,IAAO,gBAAQ;",
+  "names": ["Svg"]
+}

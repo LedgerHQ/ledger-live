@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/ARK.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f70000\";\nfunction ARK({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M11.96 10.01l-8.21 8.658L11.997 5.25l8.253 13.5zm1.191 3.439h-2.566l1.32-1.452 1.246 1.465zm-4.95 2.383v-.018l1.456-1.49v-.007l4.44-.019 1.499 1.534z\" /></Svg>;\n}\nARK.DefaultColor = DefaultColor;\nexport default ARK;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,yJAAwJ,CAAE;AAC7O;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

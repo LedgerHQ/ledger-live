@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var POWR_exports = {};
+__export(POWR_exports, {
+  default: () => POWR_default
+});
+module.exports = __toCommonJS(POWR_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#05bca9";
+function POWR({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { fillRule: "evenodd", d: "M20.996 11.965a.155.155 0 01-.086.174l-.057.027-1.73 1.734.671 2.508a.155.155 0 01-.108.19l-2.407.645-.664 2.483a.153.153 0 01-.187.11l-2.543-.683-1.798 1.802a.154.154 0 01-.218 0l-1.777-1.781-2.461.661a.15.15 0 01-.161-.055.2.2 0 01-.027-.054l-.664-2.482-2.406-.647a.154.154 0 01-.109-.189l.649-2.427-1.868-1.873a.154.154 0 010-.218l1.816-1.821-.649-2.427a.155.155 0 01.11-.19l2.516-.676.656-2.452a.155.155 0 01.189-.11l2.38.64 1.806-1.81a.157.157 0 01.218 0l1.827 1.831 2.462-.662a.154.154 0 01.188.11l.017.064.009.03.63 2.358 2.517.677c.082.022.13.106.108.189l-.67 2.508 1.693 1.697a.15.15 0 01.128.119m-1.964 1.59l1.01-1.01-1.139.53.129.481m.368 2.57l-.527-1.973-1.048 1.05zm-1.658-.614l-.37 1.389 1.878-.505zm-1.348 3.852l.542-2.028-1.48.398zm-1.878-.844l-.38.382 1.491.4zm-2.384 1.954l1.41-1.413-1.41-.38zm-.308-1.764l-1.388.372 1.387 1.392zm-3.892.726l1.91-.513-1.023-1.026zm-.81-2.1l.424 1.586.128-1.437zm-2.317-.94l1.882.505-.375-1.4zm1.355-1.163l-.996-1-.505 1.89zM3.55 12.18l1.455 1.458.39-1.458zm1.56-1.181l-.157-.585-1.225 1.228zM4.606 7.92l.506 1.896 1.013-1.015zm1.754.645l.387-1.446-1.988.534 1.59.922zm1.329-3.78l-.507 1.898 1.385-.372zm1.756.687l.367-.367-1.437-.386zm2.38-1.948l-1.418 1.421 1.417.381zm.307 1.83l1.44-.387-1.44-1.443zm4.047-.768l-2.013.54 1.078 1.082zm.227 1.971l.47.126-.361-1.355zm2.887 1.095l-1.981-.533.382 1.434zM17.85 8.82l1.074 1.076.53-1.982zm2.581 3.023l-1.348-1.35-.361 1.35zm-1.774.308l.165.619 1.328-.619zm-.233.804l.115-.052-.05-.188zm-.103.389l-.338 1.26.797-.798-.16-.602zm-.931 2.292l-1.712 1.716 1.35-.362zm-2.15 1.72l2.309-2.315.408-1.528-3.887 1.811zm-.066.503l-.437.437 1.158.815zm-.819.168l.126.089.168-.168zm-.387.104l-1.344.361 1.169.315.468-.47zm-2.533.361L9.27 17.91l.915.918zm-3.418-1.4l-.015.16.238.063zm-.284-.286L6.706 15.78l.324 1.213.671.18.032-.364zm-1.62-2.06l-.544-2.03-.313 1.171zm-.77-2.876l-.153-.57-1.224.57zm.348-.805l-.217.102.095.357zm.105-.388L6.2 9.162l-.996.999.188.705zm.999-2.548l1.394-1.397-1.1.295zm2.013-2.018l.417-.417-1.107-.78zm.87-.099l-.198-.138-.262.262zm.387-.104l1.37-.367-1.28-.344-.454.455zm2.558-.367L14.7 6.1l-.877-.88zm3.433 1.48l.02-.234-.347-.093zm.283.285l.962.964-.333-1.243-.59-.159zm1.556 1.995l.594 2.223.343-1.283zm-4.33 5.146l.35.61 4.146-1.932.26-.973h-2.41l-.123 1.375a.154.154 0 01-.285.066l-.749-1.268zm-.589 1.048l.66-.308-.247-.427zm-2.614-.278l3.665 2.58.962-.259-1.2-2.082-1.116.52a.154.154 0 01-.199-.216l.7-1.247-2.422.027zm-.155.268L9.03 17.529l3 .805 1.61-.432zm.187-.941l-.973.01.688.485zM8.45 12.179l-.399 4.514.7.7 1.202-2.086-1.1-.774a.154.154 0 01.086-.28l1.488-.017-1.215-2.057zm-.307 0h-2.4l.802 3.004 1.223 1.225zm.886-.308l-.479-.812-.072.812zm1.088-2.867l-4.062 1.893-.26.974H8.17l.116-1.316a.154.154 0 01.285-.065l.752 1.273L10.5 9.668zm-.155-.267L8.741 6.615 6.636 8.726l-.477 1.783zm3.756.121l-3.713-2.614-.972.262 1.21 2.1 1.2-.56a.154.154 0 01.198.217l-.702 1.25 2.416-.026zm.154-.268l1.193-2.073-3.037-.816-1.635.44zm-.159.892l.878-.009-.62-.437zm1.887 2.67h-.592l.515.872zm-4.926-2.797l.465-.827-.742.346zm2.672 4.85l1.226-2.185-1.309-2.215-.004-.009-2.495.028-1.26 2.246 1.279 2.162 2.548-.029q.008 0 .015.003m2.957-6.497l-.367 4.137h2.32l-.797-2.978zm-.675 4.137l.391-4.422-.71-.712-1.185 2.056 1.035.728a.155.155 0 01-.087.281l-1.459.016 1.213 2.053zm.475-5.368l.12-1.352-.69 1.198zM7.975 17.565l-.124 1.393.713-1.236z", clipRule: "evenodd" }));
+}
+POWR.DefaultColor = DefaultColor;
+var POWR_default = POWR;
+//# sourceMappingURL=POWR.js.map

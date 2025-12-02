@@ -1,0 +1,16 @@
+import * as React from "react";
+import  { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#3058a6";
+function TPAY({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}><Path  d="M12 20.417a8.418 8.418 0 110-16.835 8.418 8.418 0 010 16.835m0-17.37c-4.937 0-8.953 4.016-8.953 8.953S7.063 20.953 12 20.953s8.953-4.016 8.953-8.953S16.938 3.047 12 3.047" /><Path  fillRule="evenodd" d="M15.153 15.203l-.467 2.024-.113.49h-.502l-2.584-.002h-.01c-1.036-.017-1.85-.293-2.383-.779.461.813 1.439 1.283 2.804 1.305h.01l2.584.002h.502l.113-.49.468-2.024-.365-.773zm-.812-8.679l-.37-.767-.052.24-.35 1.595h.537zm1.865 1.846l-.465 1.969-.115.486h-2.8l-.711 3.246a2 2 0 00-.024.24.3.3 0 00.01.089q.08.03.167.028h.306l.673-3.076h2.8l.115-.487.465-1.969-.362-.777zm-6.947 2.455H7.31l.672.527h1.164z" clipRule="evenodd" /><Path  fillRule="evenodd" d="M12.33 15.06h-.072c-.543-.013-.8-.296-.8-.75 0-.107.018-.25.037-.358l.823-3.759h2.808l.465-1.968h-2.808l.519-2.363h-2.29l-.52 2.363H8.006l-.447 1.968h2.486l-.968 4.422a3 3 0 00-.071.59c0 1.261.995 1.854 2.481 1.879h2.583l.467-2.023z" clipRule="evenodd" /></Svg>;
+}
+TPAY.DefaultColor = DefaultColor;
+export default TPAY;

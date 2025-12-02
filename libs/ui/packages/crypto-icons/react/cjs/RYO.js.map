@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/RYO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#3d58b0\";\nfunction RYO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 3.011c-4.957 0-8.989 4.032-8.989 8.99 0 4.957 4.032 8.988 8.99 8.988 4.957 0 8.988-4.032 8.988-8.988 0-4.958-4.032-8.99-8.988-8.99m0 1.224a7.756 7.756 0 017.765 7.766 7.754 7.754 0 01-7.764 7.765A7.755 7.755 0 014.235 12a7.756 7.756 0 017.766-7.766\" /><path  d=\"M8.66 8.681v6.638h6.68V8.68zM9.749 9.77h4.503v4.462H9.75z\" /></Svg>;\n}\nRYO.DefaultColor = DefaultColor;\nexport default RYO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,gQAA+P,GAAE,oCAAC,UAAM,GAAE,6DAA4D,CAAE;AAC3Z;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/WEB3.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction WEB3({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M5.655 4.21a.5.5 0 01.61-.357l13.417 3.51a.5.5 0 01.021.962L7.96 11.959l11.722 3.067a.5.5 0 01.021.961L6.287 20.14a.5.5 0 11-.296-.955l11.743-3.635-11.722-3.067a.5.5 0 01-.021-.96l11.743-3.636L6.012 4.821a.5.5 0 01-.357-.61\" clipRule=\"evenodd\" /></Svg>;\n}\nWEB3.DefaultColor = DefaultColor;\nexport default WEB3;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,mOAAkO,UAAS,WAAU,CAAE;AAC7V;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var BTT_exports = {};
+__export(BTT_exports, {
+  default: () => BTT_default
+});
+module.exports = __toCommonJS(BTT_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#000";
+function BTT({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M20.77 10.2a8.9 8.9 0 00-1.35-3.206 9 9 0 00-1.092-1.322 8.9 8.9 0 00-2.847-1.919 8.9 8.9 0 00-6.962 0 8.9 8.9 0 00-2.847 1.92 8.9 8.9 0 00-1.919 2.846 8.9 8.9 0 000 6.962 8.9 8.9 0 001.92 2.847 8.9 8.9 0 002.846 1.919 8.9 8.9 0 006.962 0 8.9 8.9 0 002.847-1.92 8.9 8.9 0 001.92-2.846 8.9 8.9 0 00.523-5.281m-8.762 9.634a7.825 7.825 0 01-7.824-7.825c0-4.316 3.509-7.825 7.824-7.825 4.317 0 7.825 3.509 7.825 7.825s-3.508 7.825-7.825 7.825" }), /* @__PURE__ */ React.createElement("path", { d: "M12.147 19.154h.212c.036 0 .072 0 .11-.01h.009c.037 0 .064 0 .1-.008h.028c.028 0 .056 0 .083-.01h.027c.028 0 .056-.009.093-.009h.018c.036 0 .073-.01.11-.01s.064-.008.101-.017h.018c.028 0 .056-.01.083-.01h.018c.037-.009.065-.009.102-.018a2 2 0 00.21-.046h.02c.026-.009.063-.009.09-.018h.01l.211-.055a8.2 8.2 0 01-2.047-.193c-1.011-.22-1.975-.615-2.793-1.295a5.66 5.66 0 01-2.038-4.399A5.35 5.35 0 018.18 9.64a5.46 5.46 0 014.059-1.93h.211V6.49h-.238a6.6 6.6 0 00-2.7.615c-.432.202-.837.45-1.213.735q-.586.444-1.056 1.01a6.3 6.3 0 00-.762 1.13q-.316.584-.506 1.22a6.7 6.7 0 00-.247 1.278l-.028.403v.239q.015.703.165 1.378c.101.46.257.9.45 1.322.23.505.644 1.25 1.259 1.81a7.1 7.1 0 004.407 1.524z" }), /* @__PURE__ */ React.createElement("path", { d: "M14.149 17.978a9 9 0 01-1.35-.147c-1.891-.34-3.518-1.497-4.114-3.241-.726-2.122.386-4.418 2.498-5.115a3.9 3.9 0 011.249-.203c.542 0 1.083.11 1.58.312l.513-1.093a10 10 0 00-.468-.174 5.4 5.4 0 00-1.626-.248 5.2 5.2 0 00-1.625.266 5.1 5.1 0 00-1.809 1.047 5.3 5.3 0 00-.688.745 5.2 5.2 0 00-1.038 2.792 5.2 5.2 0 00.275 2.056c.234.68.61 1.304 1.102 1.828.45.487.974.854 1.607 1.194.661.349 1.479.532 2.332.652a15 15 0 001.718.092c.377-.138.533-.203.735-.285.175-.082.349-.165.524-.266.174-.102.202-.12.495-.312a.5.5 0 00.074-.056c-1.01.175-1.268.165-1.984.156" }), /* @__PURE__ */ React.createElement("path", { d: "M16.409 16.61c-.285.018-.69.045-1.149.045-.817 0-1.818-.073-2.672-.358-1.323-.44-2.572-1.57-2.572-2.966a2.514 2.514 0 012.517-2.516c.945 0 1.763.524 2.195 1.286l1.093-.542a3.6 3.6 0 00-.653-.872 3.727 3.727 0 00-6.364 2.635 3.7 3.7 0 00.322 1.488q.29.634.799 1.185c.597.642 1.414 1.157 2.287 1.45.835.276 2.066.377 3.26.295.33-.028.578-.056 1-.147a7 7 0 001.103-1.093c-.285.028-.809.082-1.166.11" }));
+}
+BTT.DefaultColor = DefaultColor;
+var BTT_default = BTT;
+//# sourceMappingURL=BTT.js.map

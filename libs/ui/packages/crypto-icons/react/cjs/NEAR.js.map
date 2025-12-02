@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/NEAR.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction NEAR({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M17.448 3.914L13.685 9.5a.4.4 0 00.594.525l3.704-3.213a.15.15 0 01.25.114v10.058a.15.15 0 01-.265.096L6.773 3.679A1.92 1.92 0 005.309 3h-.391A1.92 1.92 0 003 4.917v14.165A1.92 1.92 0 004.918 21a1.92 1.92 0 001.635-.914l3.762-5.586a.4.4 0 00-.594-.525l-3.703 3.212a.15.15 0 01-.25-.113V7.014a.15.15 0 01.265-.097l11.193 13.404A1.92 1.92 0 0018.69 21h.391A1.92 1.92 0 0021 19.082V4.917A1.92 1.92 0 0019.083 3a1.92 1.92 0 00-1.635.914\" /></Svg>;\n}\nNEAR.DefaultColor = DefaultColor;\nexport default NEAR;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,mbAAkb,CAAE;AACvgB;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

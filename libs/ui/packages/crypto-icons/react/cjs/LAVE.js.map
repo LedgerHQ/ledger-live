@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/LAVE.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction LAVE({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M9.74 20.933V3.067h1v16.654l6.145-6.175.708.705-6.998 7.035a.5.5 0 01-.854-.353\" clipRule=\"evenodd\" /><path  fillRule=\"evenodd\" d=\"M6.662 12.897l6.834-6.83.707.707-6.834 6.83zm0 3.563l6.834-6.83.707.708-6.834 6.83z\" clipRule=\"evenodd\" /></Svg>;\n}\nLAVE.DefaultColor = DefaultColor;\nexport default LAVE;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,mFAAkF,UAAS,WAAU,GAAE,oCAAC,UAAM,UAAS,WAAU,GAAE,uFAAsF,UAAS,WAAU,CAAE;AACpV;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

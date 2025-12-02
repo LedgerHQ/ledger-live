@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/LPT.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction LPT({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M10.669 16.49h2.63v2.632h-2.63zm0-11.612h2.63V7.51h-2.63zm6.2 0H19.5V7.51h-2.631zm-12.369 0h2.631V7.51H4.5zm9.269 5.807h2.63v2.63h-2.63zm-6.207 0h2.631v2.63h-2.63z\" clipRule=\"evenodd\" /></Svg>;\n}\nLPT.DefaultColor = DefaultColor;\nexport default LPT;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,uKAAsK,UAAS,WAAU,CAAE;AACjS;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

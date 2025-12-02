@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/XPRT.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#e50913\";\nfunction XPRT({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 512 512\" fill={color}><path  d=\"M345.171 132.464h-171V170h171z\" /><path  d=\"M348.443 265.394q0 19.844-9.109 36.435-9.108 16.266-27.977 26.351-18.868 10.085-46.846 10.085h-34.483v81.98h-55.63V191.872h90.113q27.327 0 46.195 9.434 18.868 9.435 28.303 26.026 9.434 16.59 9.434 38.062m-88.161 28.628q15.94 0 23.748-7.483t7.808-21.145q0-13.664-7.808-21.146t-23.748-7.482h-30.254v57.256z\" /></Svg>;\n}\nXPRT.DefaultColor = DefaultColor;\nexport default XPRT;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,eAAc,MAAM,SAAO,oCAAC,UAAM,GAAE,kCAAiC,GAAE,oCAAC,UAAM,GAAE,oTAAmT,CAAE;AACtb;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

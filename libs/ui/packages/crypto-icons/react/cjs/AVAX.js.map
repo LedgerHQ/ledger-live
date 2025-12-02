@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/AVAX.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction AVAX({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M8.618 19.91H4.163a.944.944 0 01-.823-1.408L11.195 4.57a.944.944 0 011.644 0l2.354 4.155a.94.94 0 010 .946l-5.757 9.774a.94.94 0 01-.818.465m5.075-1.411l2.646-4.72a.946.946 0 011.646 0l2.673 4.718a.946.946 0 01-.821 1.413h-5.32a.946.946 0 01-.824-1.411\" /></Svg>;\n}\nAVAX.DefaultColor = DefaultColor;\nexport default AVAX;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,gQAA+P,CAAE;AACpV;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

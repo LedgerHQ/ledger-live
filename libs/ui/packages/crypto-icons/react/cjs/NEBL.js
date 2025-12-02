@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var NEBL_exports = {};
+__export(NEBL_exports, {
+  default: () => NEBL_default
+});
+module.exports = __toCommonJS(NEBL_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#50479e";
+function NEBL({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M15.27 10.245v3.588l-3.23 1.775v-3.586zm3.855-.92v5.349c0 .38-.105.752-.302 1.075a2.2 2.2 0 01-.828.79l-2.41 1.323v-3.53l.305-.167v-4.26l2.95-1.621c.184.315.285.67.285 1.042m-13.12 7.213a2.2 2.2 0 01-.806-.755 2.07 2.07 0 01-.324-1.109V11.25l3.318 2.591v.144l.005.149.258.152 3.312 1.82.273.15V19.5a2.35 2.35 0 01-1.171-.287zm-.138-8.993l3.508-1.92 2.385 2.31-3.567 1.967v.3l-3.31 1.818-.008-2.695c0-.38.105-.754.304-1.077.174-.285.41-.525.688-.704m12.128-.083c.351.192.643.475.846.82l-2.95 1.623v-.027l-.305-.167-3.25-1.787 3.25-1.787zm-13.112 4.56l3.31-1.82v3.64l-3.31-1.821m7.158-4.237V4.5a2.35 2.35 0 011.09.287l2.455 1.35-3.25 1.787zm-.273.15L8.462 6.118l2.552-1.403A2.36 2.36 0 0112.04 4.5v3.285zm.294 8.333l.273-.15 3.212 1.766-2.417 1.329c-.334.182-.708.28-1.089.286v-3.242zm3.524-1.936v3.53l-.04.022-3.21-1.766z" }));
+}
+NEBL.DefaultColor = DefaultColor;
+var NEBL_default = NEBL;
+//# sourceMappingURL=NEBL.js.map

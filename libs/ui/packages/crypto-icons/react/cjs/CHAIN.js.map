@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CHAIN.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#00aced\";\nfunction CHAIN({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M4.5 7.286v3.057l7.421 4.286 4.815-2.786v2.486l2.592 1.528V7.286l-7.413 4.286z\" clipRule=\"evenodd\" /><path  fillRule=\"evenodd\" d=\"M11.915 3L4.5 7.286v8.571l7.415 4.286 7.392-4.286-2.621-1.528-4.771 2.757-4.793-2.757V8.814l4.793-2.757 4.771 2.757 2.621-1.529z\" clipRule=\"evenodd\" opacity={0.7} /></Svg>;\n}\nCHAIN.DefaultColor = DefaultColor;\nexport default CHAIN;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,MAAM;AAAA,EACb,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,kFAAiF,UAAS,WAAU,GAAE,oCAAC,UAAM,UAAS,WAAU,GAAE,oIAAmI,UAAS,WAAU,SAAS,KAAK,CAAE;AAC9Y;AACA,MAAM,eAAe;AACrB,IAAO,gBAAQ;",
+  "names": ["Svg"]
+}

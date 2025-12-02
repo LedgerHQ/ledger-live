@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var LSK_exports = {};
+__export(LSK_exports, {
+  default: () => LSK_default
+});
+module.exports = __toCommonJS(LSK_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#0d4ea0";
+function LSK({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M10.687 19.094c-.01.01-.032.02-.042.031H9.48c-.021 0-.032-.01-.042-.021l-3.431-3.876a.07.07 0 010-.062L10.28 7.79c.021-.031.073-.031.094 0l1.195 2.068c.01.01.01.031 0 .053l-2.89 4.983c-.01.02 0 .041.01.063l1.726 1.943a.1.1 0 00.042.02h2.038c.052 0 .073.053.041.084zm1.267-14.187c.022-.043.074-.043.084 0l5.958 10.237c.01.022 0 .043-.01.063l-3.431 3.876a.1.1 0 01-.042.021h-2.787c-.052 0-.072-.052-.04-.083l1.86-2.11 1.747-1.965c.02-.021.02-.042.01-.062l-3.307-5.705-1.247-2.152c-.01-.01-.01-.031 0-.053z" }));
+}
+LSK.DefaultColor = DefaultColor;
+var LSK_default = LSK;
+//# sourceMappingURL=LSK.js.map

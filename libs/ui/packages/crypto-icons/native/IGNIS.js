@@ -1,0 +1,12 @@
+import * as React from "react";
+import { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+const DefaultColor = "#f9c011";
+function IGNIS({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement(Path, { d: "M11.109 4.5c1.139.665 2.21 1.436 3.338 2.119l-4.158 7.253c-.553-.968-1.07-1.956-1.615-2.93.785-2.156 1.682-4.274 2.435-6.442M7.5 19.5c2.354-4.282 4.8-8.516 7.128-12.81q.934 1.64 1.872 3.278c-1.805 3.174-3.623 6.34-5.413 9.522-1.196 0-2.39-.015-3.587.01m3.812-.017c.997-1.707 1.937-3.443 2.947-5.142.602.77 1.213 1.537 1.811 2.31a460 460 0 01-4.758 2.832" }),
+        React.createElement(Path, { d: "M11.109 4.5c1.139.665 2.21 1.436 3.338 2.119l-4.158 7.253c-.553-.968-1.07-1.956-1.615-2.93.785-2.156 1.682-4.274 2.435-6.442M7.5 19.5c2.354-4.282 4.8-8.516 7.128-12.81q.934 1.64 1.872 3.278c-1.805 3.174-3.623 6.34-5.413 9.522-1.196 0-2.39-.015-3.587.01m3.812-.017c.997-1.707 1.937-3.443 2.947-5.142.602.77 1.213 1.537 1.811 2.31a460 460 0 01-4.758 2.832" }));
+}
+IGNIS.DefaultColor = DefaultColor;
+export default IGNIS;
+//# sourceMappingURL=IGNIS.js.map

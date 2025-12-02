@@ -1,0 +1,11 @@
+import * as React from "react";
+import Svg from "./StyledSvg";
+const DefaultColor = "#c91111";
+function DRGN({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement("path", { d: "M7.05 15.585h2.113L9.11 10.09l7.871 9.992-.025-11.799h-2.08l.054 5.55L7.053 3.816z", opacity: 0.6 }),
+        React.createElement("path", { d: "M7.05 7.464l.012-3.638 9.887 12.564.041 3.706z" }));
+}
+DRGN.DefaultColor = DefaultColor;
+export default DRGN;
+//# sourceMappingURL=DRGN.js.map

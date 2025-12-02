@@ -1,0 +1,11 @@
+import * as React from "react";
+import { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+const DefaultColor = "#1693d4";
+function EBST({ size = 16, color = DefaultColor }) {
+    return React.createElement(Svg, { width: size, height: size, viewBox: "0 0 24 24", fill: color },
+        React.createElement(Path, { fillRule: "evenodd", d: "M8.196 12.43q-.029-.405-.004-.81h-2.1L3.75 9.748h4.87A6.04 6.04 0 0114.217 6c3.333 0 6.034 2.687 6.034 6s-2.701 6-6.034 6a6.04 6.04 0 01-5.574-3.696H3.75l2.342-1.873zm9.457-.318q0-.934-.253-1.63a3.3 3.3 0 00-.701-1.162 2.9 2.9 0 00-1.064-.703 3.7 3.7 0 00-1.337-.237q-.78 0-1.453.265a3.5 3.5 0 00-1.165.747 3.5 3.5 0 00-.773 1.162q-.282.682-.282 1.515 0 .846.282 1.513.282.668.78 1.127.5.46 1.18.711a4.2 4.2 0 001.489.251q1.952 0 2.979-1.378l-1.158-.918a2.05 2.05 0 01-.737.652q-.448.237-1.098.237-.376 0-.724-.129a2.2 2.2 0 01-.622-.351 1.7 1.7 0 01-.636-1.213h5.279q.014-.115.014-.23zm-1.736-.776H12.36q.058-.731.6-1.198t1.324-.467q.418 0 .73.137.31.136.513.366t.297.53q.095.31.093.632", clipRule: "evenodd" }));
+}
+EBST.DefaultColor = DefaultColor;
+export default EBST;
+//# sourceMappingURL=EBST.js.map

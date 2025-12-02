@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/VTHO.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#82be00\";\nfunction VTHO({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M14.71 3.794h2.267l-4.261 5.688h3.824L7.405 20.206l2.955-7.577H7.023l3.365-8.835z\" opacity={0.5} /><path  d=\"M14.71 3.794h.137l-3.83 6.534h3.502l-7.114 9.878 2.955-7.577H7.023l3.365-8.835z\" /></Svg>;\n}\nVTHO.DefaultColor = DefaultColor;\nexport default VTHO;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,qFAAoF,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,mFAAkF,CAAE;AACpR;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

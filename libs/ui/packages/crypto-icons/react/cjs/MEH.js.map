@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/MEH.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction MEH({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M8.253 14.553a.5.5 0 01.5-.5h6.751a.5.5 0 110 1H8.753a.5.5 0 01-.5-.5m0-5.115a.5.5 0 01.5-.5h1.688a.5.5 0 010 1H8.753a.5.5 0 01-.5-.5m5.063 0a.5.5 0 01.5-.5h1.688a.5.5 0 110 1h-1.688a.5.5 0 01-.5-.5\" clipRule=\"evenodd\" /><path  fillRule=\"evenodd\" d=\"M3.139 12a8.99 8.99 0 1117.98 0 8.99 8.99 0 01-17.98 0m8.99-7.99a7.99 7.99 0 100 15.98 7.99 7.99 0 000-15.98\" clipRule=\"evenodd\" /></Svg>;\n}\nMEH.DefaultColor = DefaultColor;\nexport default MEH;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,0MAAyM,UAAS,WAAU,GAAE,oCAAC,UAAM,UAAS,WAAU,GAAE,gHAA+G,UAAS,WAAU,CAAE;AACpe;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

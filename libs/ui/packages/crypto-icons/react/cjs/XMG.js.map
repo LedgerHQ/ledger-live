@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/XMG.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction XMG({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M17.25 14.655l-1.112 4.095H6.75v-.685l5.092-5.789-4.99-6.282V5.25h9.249l.323 3.189h-.593q-.585-1.09-.996-1.631-.41-.54-.731-.675a2 2 0 00-.626-.157 8 8 0 00-.954-.049H9.896l3.937 4.905v.236l-4.866 5.524h5.554q.41 0 .75-.195.34-.196.588-.49.263-.306.462-.655.213-.37.373-.767z\" clipRule=\"evenodd\" /><path  fillRule=\"evenodd\" d=\"M17.25 14.655l-1.112 4.095H6.75v-.685l5.092-5.789-4.99-6.282V5.25h9.249l.323 3.189h-.593q-.585-1.09-.996-1.631-.41-.54-.731-.675a2 2 0 00-.626-.157 8 8 0 00-.954-.049H9.896l3.937 4.905v.236l-4.866 5.524h5.554q.41 0 .75-.195.34-.196.588-.49.263-.306.462-.655.213-.37.373-.767z\" clipRule=\"evenodd\" /></Svg>;\n}\nXMG.DefaultColor = DefaultColor;\nexport default XMG;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,uRAAsR,UAAS,WAAU,GAAE,oCAAC,UAAM,UAAS,WAAU,GAAE,uRAAsR,UAAS,WAAU,CAAE;AACxtB;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

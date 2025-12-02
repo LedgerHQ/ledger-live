@@ -1,0 +1,16 @@
+import * as React from "react";
+import  { Path } from "react-native-svg";
+import Svg from "./StyledSvg";
+type Props = {
+  size?: number | string;
+  color?: string;
+};
+const DefaultColor = "#e38cd4";
+function STARS({
+  size = 16,
+  color = DefaultColor
+}: Props): JSX.Element {
+  return <Svg width={size} height={size} viewBox="0 0 400 400" fill={color}><Path  d="M200 400c-53.434 0-103.636-20.808-141.414-58.586S0 253.434 0 200 20.808 96.364 58.586 58.586 146.566 0 200 0s103.636 20.808 141.414 58.586S400 146.566 400 200s-20.808 103.636-58.586 141.414S253.434 400 200 400m0-383.737C98.687 16.263 16.263 98.687 16.263 200S98.687 383.737 200 383.737 383.737 301.313 383.737 200 301.313 16.263 200 16.263m-23.838 125.151L59.394 112.525l77.576 92.02-63.637 102.223 111.515-45.354 77.576 92.02-8.687-120 111.516-45.353-116.768-28.889-8.687-120z" /></Svg>;
+}
+STARS.DefaultColor = DefaultColor;
+export default STARS;

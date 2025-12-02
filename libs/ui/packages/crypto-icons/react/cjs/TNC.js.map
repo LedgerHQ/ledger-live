@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/TNC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#ff439b\";\nfunction TNC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M13.67 11.103l4.224 7.272H6.184l1.403-2.327 6.309.001-1.599-2.61zm-4.313 1.692l4.295-7.14L19.5 15.5h-2.808l-3.09-5.37-1.5 2.666zm3.664 2.714L4.5 15.47l5.855-9.844 1.395 2.36-3.227 5.188h3.125z\" clipRule=\"evenodd\" /></Svg>;\n}\nTNC.DefaultColor = DefaultColor;\nexport default TNC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,oMAAmM,UAAS,WAAU,CAAE;AAC9T;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

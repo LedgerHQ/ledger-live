@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/GOLD.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f1b32b\";\nfunction GOLD({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 3.188A8.81 8.81 0 003.188 12 8.81 8.81 0 0012 20.813a8.812 8.812 0 100-17.625m0 15.427a6.615 6.615 0 110-13.23 6.615 6.615 0 010 13.23m-2.197-6.607l2.204 3.3 2.19-3.3-2.19-3.308z\" /></Svg>;\n}\nGOLD.DefaultColor = DefaultColor;\nexport default GOLD;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,0LAAyL,CAAE;AAC9Q;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

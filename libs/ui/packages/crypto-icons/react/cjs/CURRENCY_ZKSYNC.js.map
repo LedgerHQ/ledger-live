@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CURRENCY_ZKSYNC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#000\";\nfunction CURRENCY_ZKSYNC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" strokeMiterlimit={10} fill={color}><path d=\"M2.678 12l5.327-5.327v2.664h5.327l-5.327 3.995v3.995zm18.644 0l-5.327 5.327v-2.664h-5.327l5.327-3.995V6.673z\" /></Svg>;\n}\nCURRENCY_ZKSYNC.DefaultColor = DefaultColor;\nexport default CURRENCY_ZKSYNC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,gBAAgB;AAAA,EACvB,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,kBAAkB,IAAI,MAAM,SAAO,oCAAC,UAAK,GAAE,gHAA+G,CAAE;AACzN;AACA,gBAAgB,eAAe;AAC/B,IAAO,0BAAQ;",
+  "names": ["Svg"]
+}

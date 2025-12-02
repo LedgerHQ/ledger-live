@@ -1,0 +1,1 @@
+{"version":3,"file":"StyledSvg.js","sourceRoot":"","sources":["../src/react/StyledSvg.ts"],"names":[],"mappings":"AACA,OAAO,MAAM,MAAM,mBAAmB,CAAC;AACvC,OAAO,EAAE,MAAM,EAAE,MAAM,eAAe,CAAC;AAEvC,eAAe,MAAM,CAAC,GAAG,CAAA;IACrB,MAAM,CAAC;IACP,IAAI,EAAE;QACJ,QAAQ,EAAE,MAAM;QAChB,KAAK,EAAE,QAAQ;KAChB;CACF,CAAC;CACH,CAAC"}

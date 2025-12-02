@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var WGR_exports = {};
+__export(WGR_exports, {
+  default: () => WGR_default
+});
+module.exports = __toCommonJS(WGR_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#b80000";
+function WGR({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M19.42 7.79c.117.199.1.407-.015.611-.174.278-.335.56-.5.84l-1.366 2.331q-1.364 2.32-2.733 4.637a.55.55 0 01-.533.29.57.57 0 01-.502-.323q-.169-.298-.345-.594l-1.15-1.958a27 27 0 00-.272-.456c-.096.163-.186.308-.272.456l-1.15 1.957q-.175.295-.345.595a.57.57 0 01-.502.323.56.56 0 01-.533-.29c-.433-.729-.86-1.457-1.29-2.188q-.724-1.224-1.443-2.449L5.104 9.241q-.245-.421-.5-.84c-.124-.204-.142-.412-.026-.611.114-.196.298-.29.534-.29 1.476.005 2.953.015 4.429.002.372-.002.595.14.77.45.372.666.769 1.315 1.152 1.972q.239.418.481.835c.013.02.034.036.053.053a.2.2 0 00.05-.052c.162-.278.32-.558.483-.836.386-.657.78-1.31 1.153-1.971.173-.311.396-.453.769-.45 1.476.012 2.952.002 4.43-.003.24 0 .424.094.538.29m-8.133 4.316a.23.23 0 00.003-.196c-.075-.153-.174-.297-.262-.448-.528-.902-1.057-1.8-1.583-2.704-.054-.092-.116-.125-.225-.125q-1.476.006-2.952.007c-.047 0-.093.008-.16.013l3.597 6.14c.103-.173.191-.311.274-.453q.66-1.115 1.308-2.234m3.008 2.687c1.204-2.055 2.395-4.09 3.6-6.14-.07-.005-.114-.013-.16-.013q-1.478-.001-2.953-.007c-.11 0-.171.033-.225.124l-1.583 2.705c-.088.148-.184.292-.262.448a.23.23 0 000 .196q.652 1.118 1.308 2.233c.083.143.171.283.275.454" }));
+}
+WGR.DefaultColor = DefaultColor;
+var WGR_default = WGR;
+//# sourceMappingURL=WGR.js.map

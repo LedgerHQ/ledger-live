@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/STARS.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#e38cd4\";\nfunction STARS({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 400 400\" fill={color}><path  d=\"M200 400c-53.434 0-103.636-20.808-141.414-58.586S0 253.434 0 200 20.808 96.364 58.586 58.586 146.566 0 200 0s103.636 20.808 141.414 58.586S400 146.566 400 200s-20.808 103.636-58.586 141.414S253.434 400 200 400m0-383.737C98.687 16.263 16.263 98.687 16.263 200S98.687 383.737 200 383.737 383.737 301.313 383.737 200 301.313 16.263 200 16.263m-23.838 125.151L59.394 112.525l77.576 92.02-63.637 102.223 111.515-45.354 77.576 92.02-8.687-120 111.516-45.353-116.768-28.889-8.687-120z\" /></Svg>;\n}\nSTARS.DefaultColor = DefaultColor;\nexport default STARS;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,MAAM;AAAA,EACb,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,eAAc,MAAM,SAAO,oCAAC,UAAM,GAAE,ieAAge,CAAE;AACvjB;AACA,MAAM,eAAe;AACrB,IAAO,gBAAQ;",
+  "names": ["Svg"]
+}

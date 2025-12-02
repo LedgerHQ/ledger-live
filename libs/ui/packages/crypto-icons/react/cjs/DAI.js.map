@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/DAI.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f4b731\";\nfunction DAI({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M6.583 6h4.914c2.989 0 5.254 1.587 6.097 3.896h1.531v1.395h-1.208q.035.331.035.674v.034q0 .386-.045.758h1.218v1.395h-1.56C16.7 16.429 14.452 18 11.497 18H6.584v-3.848H4.875v-1.395h1.708V11.29H4.875V9.896h1.708zm1.373 8.152v2.596h3.54c2.185 0 3.809-1.04 4.564-2.596zm8.525-1.395H7.955V11.29h8.528q.046.346.047.708v.034a5 5 0 01-.05.723m-4.984-5.508c2.195 0 3.823 1.068 4.574 2.646H7.956V7.25z\" clipRule=\"evenodd\" /></Svg>;\n}\nDAI.DefaultColor = DefaultColor;\nexport default DAI;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,2YAA0Y,UAAS,WAAU,CAAE;AACrgB;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/CVC.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#3ab03e\";\nfunction CVC({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12.872 12.584a1.76 1.76 0 00.997-1.58c0-.97-.796-1.757-1.777-1.757-.983 0-1.78.787-1.78 1.757a1.76 1.76 0 001 1.58v2.17h1.56zm-.78 5.041c-3.14 0-5.693-2.523-5.693-5.625s2.553-5.625 5.693-5.625a5.69 5.69 0 015.445 3.984h1.962C18.74 7.007 15.713 4.5 12.09 4.5 7.898 4.5 4.5 7.858 4.5 12s3.398 7.5 7.59 7.5c3.622 0 6.65-2.506 7.408-5.859h-1.963a5.69 5.69 0 01-5.445 3.984\" /></Svg>;\n}\nCVC.DefaultColor = DefaultColor;\nexport default CVC;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,qXAAoX,CAAE;AACzc;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

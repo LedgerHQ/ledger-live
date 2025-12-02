@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/OKB.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#2d60e0\";\nfunction OKB({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M12 11.245A3.623 3.623 0 1012 4a3.623 3.623 0 000 7.245\" opacity={0.15} /><path  d=\"M16.378 15.623a3.623 3.623 0 100-7.246 3.623 3.623 0 000 7.246\" opacity={0.4} /><path  d=\"M12 20a3.623 3.623 0 100-7.245A3.623 3.623 0 0012 20\" opacity={0.6} /><path  d=\"M7.623 15.623a3.623 3.623 0 100-7.246 3.623 3.623 0 000 7.246\" opacity={0.85} /></Svg>;\n}\nOKB.DefaultColor = DefaultColor;\nexport default OKB;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,2DAA0D,SAAS,MAAM,GAAE,oCAAC,UAAM,GAAE,kEAAiE,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,wDAAuD,SAAS,KAAK,GAAE,oCAAC,UAAM,GAAE,iEAAgE,SAAS,MAAM,CAAE;AACla;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}

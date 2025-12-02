@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/NLC2.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#f28f01\";\nfunction NLC2({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  fillRule=\"evenodd\" d=\"M13.613 10.29l-1.455-2.863q.454-.991.454-1.121 0-.464-.611-.681h4.46q-.824.37-1.465 1.857zm-2.187 4.445l-.678 1.38h4.002q2.72 0 3.636-1.02l-2.139 3.28H5.31q1.77-.34 3.574-4.27.607-1.21 1.115-2.231zm-7.676.453c.886-.526 4.125-6.13 4.125-7.706q0-.557-.672-1.052h3.483l3.025 5.941 2.934-5.941h3.605c-1.528.402-4.552 7.61-4.552 8.448q0 .247.091.31h-3.178L9.891 9.74l-2.688 5.447z\" clipRule=\"evenodd\" /></Svg>;\n}\nNLC2.DefaultColor = DefaultColor;\nexport default NLC2;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,KAAK;AAAA,EACZ,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,UAAS,WAAU,GAAE,2XAA0X,UAAS,WAAU,CAAE;AACrf;AACA,KAAK,eAAe;AACpB,IAAO,eAAQ;",
+  "names": ["Svg"]
+}

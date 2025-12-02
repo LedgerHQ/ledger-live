@@ -1,0 +1,45 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var HODL_exports = {};
+__export(HODL_exports, {
+  default: () => HODL_default
+});
+module.exports = __toCommonJS(HODL_exports);
+var React = __toESM(require("react"));
+var import_StyledSvg = __toESM(require("./StyledSvg"));
+const DefaultColor = "#d59143";
+function HODL({
+  size = 16,
+  color = DefaultColor
+}) {
+  return /* @__PURE__ */ React.createElement(import_StyledSvg.default, { width: size, height: size, viewBox: "0 0 24 24", fill: color }, /* @__PURE__ */ React.createElement("path", { d: "M5.98 12.24c-.389.31-.735.859-.718 1.698.013.58.325.978.718 1.248v1.036c0 .648.315 1.255.846 1.626l3.64 2.49V7.618L5.98 8.931zm.977-.305c.755.552.755 3.837.755 3.837s-.854-.083-1.56-.477c.582.195 1.05.152 1.253.174l.013.001h.003l.01.002.03.002.009.001h.01s.12-2.866-.748-3.369c-.141-.048-.39-.02-.665.068.35-.236.715-.315.89-.24m3.823 5.178h2.447v3.23H10.78zm-.555-9.735L5.98 8.594V4.041a.383.383 0 01.652-.272l3.81 3.825zm.555 4.553h2.447v4.87H10.78zm2.995-4.553l-.158.158 3.75-3.765a.382.382 0 01.653.27v4.552zm-2.995.241h2.447v3.998H10.78zm7.24 4.622V8.93l-4.478-1.31v12.721l3.632-2.494a1.98 1.98 0 00.846-1.625v-1.037c.393-.27.705-.668.718-1.248.018-.84-.33-1.388-.718-1.697m-1.47 3.28h.019l.013-.002h.003l.026-.002h.002l.012-.002.111-.013h.005c.245-.031.545-.028 1.006-.172l.102-.034c-.707.395-1.56.477-1.56.477s0-3.283.755-3.836c.174-.077.54.003.889.24-.275-.088-.523-.116-.665-.068-.868.502-.719 3.413-.719 3.413z" }));
+}
+HODL.DefaultColor = DefaultColor;
+var HODL_default = HODL;
+//# sourceMappingURL=HODL.js.map

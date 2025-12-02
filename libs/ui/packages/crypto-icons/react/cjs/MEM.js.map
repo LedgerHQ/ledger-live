@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/react/MEM.tsx"],
+  "sourcesContent": ["import * as React from \"react\";\nimport Svg from \"./StyledSvg\";\ntype Props = {\n  size?: number | string;\n  color?: string;\n};\nconst DefaultColor = \"#fff\";\nfunction MEM({\n  size = 16,\n  color = DefaultColor\n}: Props): JSX.Element {\n  return <Svg width={size} height={size} viewBox=\"0 0 24 24\" fill={color}><path  d=\"M6.7 19.14h10.854c1.996 0 3.261-2.153 2.257-3.893L13.112 3.636a1.137 1.137 0 00-1.97 0l-6.7 11.61c-1.002 1.74.262 3.894 2.258 3.894m6.418-12.022l1.458 2.823 3.52 6.296a.615.615 0 01-.54.92h-4.437zm-6.957 9.12L9.679 9.94l1.46-2.822v10.04H6.701a.615.615 0 01-.541-.92\" /></Svg>;\n}\nMEM.DefaultColor = DefaultColor;\nexport default MEM;"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AACvB,uBAAgB;AAKhB,MAAM,eAAe;AACrB,SAAS,IAAI;AAAA,EACX,OAAO;AAAA,EACP,QAAQ;AACV,GAAuB;AACrB,SAAO,oCAAC,iBAAAA,SAAA,EAAI,OAAO,MAAM,QAAQ,MAAM,SAAQ,aAAY,MAAM,SAAO,oCAAC,UAAM,GAAE,6QAA4Q,CAAE;AACjW;AACA,IAAI,eAAe;AACnB,IAAO,cAAQ;",
+  "names": ["Svg"]
+}
