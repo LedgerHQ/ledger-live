@@ -448,6 +448,7 @@ function isDateBefore(a: string | Date, b: string | Date) {
 
 export class Reporter {
   statements: string[] = [];
+  private errorCount: number = 0;
 
   improvement(message: string) {
     this.statements.push(`🚀 ${message}`);
@@ -457,10 +458,15 @@ export class Reporter {
   }
   error(message: string) {
     this.statements.push(`❌ ${message}`);
+    this.errorCount++;
   }
 
   isEmpty() {
     return this.statements.length === 0;
+  }
+
+  hasErrors() {
+    return this.errorCount > 0;
   }
 
   toMarkdown() {

@@ -12,8 +12,10 @@ async function main() {
   const baseBranch = core.getInput("baseBranch");
   const octokit = github.getOctokit(githubToken);
 
+  let reporter;
+
   if (mode === "desktop") {
-    desktopChecks({
+    reporter = await desktopChecks({
       githubToken,
       prNumber,
       baseBranch,
@@ -22,12 +24,17 @@ async function main() {
   }
 
   if (mode === "mobile") {
-    mobileChecks({
+    reporter = await mobileChecks({
       githubToken,
       prNumber,
       baseBranch,
       octokit,
     });
+  }
+
+  // Fail the CI job if there are any errors
+  if (reporter && reporter.hasErrors()) {
+    core.setFailed("Bundle size checks failed. See the PR comment for details.");
   }
 }
 

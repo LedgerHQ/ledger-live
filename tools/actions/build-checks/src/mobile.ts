@@ -18,16 +18,23 @@ type Inputs = {
   prNumber: string;
 };
 
-export async function mobileChecks({ octokit, baseBranch, githubToken, prNumber }: Inputs) {
+export async function mobileChecks({
+  octokit,
+  baseBranch,
+  githubToken,
+  prNumber,
+}: Inputs): Promise<Reporter> {
   const mobileMetaFile = await getRecentArtifactFromBranch(
     octokit,
     "mobile.metafile.json",
     baseBranch,
   );
 
+  const reporter = new Reporter();
+
   if (!mobileMetaFile) {
     core.warning(`Could not find previous metafile from ${baseBranch}`);
-    return;
+    return reporter;
   }
 
   core.info(`Downloading most recent artifacts from ${baseBranch}`);
@@ -41,7 +48,6 @@ export async function mobileChecks({ octokit, baseBranch, githubToken, prNumber 
   const file = fs.readFileSync("mobile.metafile.json", "utf-8");
   const currentBundles: MobileMetaFile = JSON.parse(file);
 
-  const reporter = new Reporter();
   core.info(`Checking agains builds metadata files from ${baseBranch}`);
   checksAgainstReference(reporter, currentBundles, reference);
 
@@ -54,9 +60,12 @@ export async function mobileChecks({ octokit, baseBranch, githubToken, prNumber 
     currentSha: github.context.sha,
     title: "### Mobile Bundle Checks",
   });
+
+  return reporter;
 }
 
 const bundleSizeThreshold = 100 * 1024; // 100kb
+const bundleSizeMaxIncrease = 2 * 1024 * 1024; // 2MB - fail CI if exceeded
 
 function checksAgainstReference(
   reporter: Reporter,
@@ -72,11 +81,17 @@ function checksAgainstReference(
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
     } else if (!ref) {
       reporter.error(`${slug} bundle size could not be inferred on develop.`);
+    } else if (size > ref + bundleSizeMaxIncrease) {
+      reporter.error(
+        `${slug} bundle size increased by more than ${formatSize(bundleSizeMaxIncrease)}: ${formatSize(ref)} -> ${formatSize(
+          size,
+        )} (+${formatSize(size - ref)}). This PR cannot be merged.`,
+      );
     } else if (size > ref + bundleSizeThreshold) {
       reporter.warning(
         `${slug} bundle size significantly increased: ${formatSize(ref)} -> ${formatSize(
           size,
-        )}. Please check if this is expected.`,
+        )} (+${formatSize(size - ref)}). Please check if this is expected.`,
       );
     } else if (size < ref - bundleSizeThreshold) {
       reporter.improvement(

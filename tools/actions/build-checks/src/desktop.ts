@@ -21,15 +21,22 @@ type Inputs = {
   prNumber: string;
 };
 
-export async function desktopChecks({ baseBranch, octokit, githubToken, prNumber }: Inputs) {
+export async function desktopChecks({
+  baseBranch,
+  octokit,
+  githubToken,
+  prNumber,
+}: Inputs): Promise<Reporter> {
   const latestLinux = await getRecentArtifactFromBranch(
     octokit,
     "linux-js-bundle-metafiles",
     baseBranch,
   );
+  const reporter = new Reporter();
+
   if (!latestLinux) {
     core.warning(`Could not find previous metadata files from ${baseBranch}`);
-    return; // TODO handle failure when there is nothing to compare with
+    return reporter; // TODO handle failure when there is nothing to compare with
   }
 
   core.info(`Downloading most recent artifacts from ${baseBranch}`);
@@ -46,8 +53,6 @@ export async function desktopChecks({ baseBranch, octokit, githubToken, prNumber
     retrieveLocalMetafiles("win-js-bundle-metafiles"),
   ]);
 
-  const reporter = new Reporter();
-
   core.info("Doing cross platform checks...");
   crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);
 
@@ -63,11 +68,14 @@ export async function desktopChecks({ baseBranch, octokit, githubToken, prNumber
     currentSha: github.context.sha,
     title: "### Desktop Bundle Checks",
   });
+
+  return reporter;
 }
 
 // here is now the logic where we implement the checks
 
 const bundleSizeThreshold = 100 * 1024; // 100kb
+const bundleSizeMaxIncrease = 2 * 1024 * 1024; // 2MB - fail CI if exceeded
 
 const slugsOfInterest: DesktopMetafileSlug[] = ["main", "renderer"];
 
@@ -113,11 +121,17 @@ function checksAgainstReference(
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
     } else if (!ref) {
       reporter.error(`${slug} bundle size could not be inferred on develop.`);
+    } else if (size > ref + bundleSizeMaxIncrease) {
+      reporter.error(
+        `${slug} bundle size increased by more than ${formatSize(bundleSizeMaxIncrease)}: ${formatSize(ref)} -> ${formatSize(
+          size,
+        )} (+${formatSize(size - ref)}). This PR cannot be merged.`,
+      );
     } else if (size > ref + bundleSizeThreshold) {
       reporter.warning(
         `${slug} bundle size significantly increased: ${formatSize(ref)} -> ${formatSize(
           size,
-        )}. Please check if this is expected.`,
+        )} (+${formatSize(size - ref)}). Please check if this is expected.`,
       );
     } else if (size < ref - bundleSizeThreshold) {
       reporter.improvement(
