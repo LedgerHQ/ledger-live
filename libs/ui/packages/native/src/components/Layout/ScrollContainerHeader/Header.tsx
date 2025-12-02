@@ -1,6 +1,11 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
-import Animated, { useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolation,
+  SharedValue,
+} from "react-native-reanimated";
 
 import Flex from "../Flex";
 import { LayoutChangeEvent } from "react-native";
@@ -11,7 +16,7 @@ export type HeaderProps = {
   TopRightSection?: JSX.Element;
   MiddleSection?: JSX.Element;
   BottomSection?: JSX.Element;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
 };
 
 const PADDING_HORIZONTAL = 16;
@@ -64,7 +69,7 @@ const Header = ({
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [1, scaleRatio],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     /** offset horizontaly given the scale transformation and potential top left header section */
@@ -72,14 +77,14 @@ const Header = ({
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -(topMiddleWidth - topMiddleWidth * scaleRatio) / 2],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     const opacity = interpolate(
       currentPositionY.value,
       [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -98,35 +103,35 @@ const Header = ({
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [1, scaleRatio],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
     /** translate verticaly to the middle of the top header section */
     const translateY = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -topSectionHeight + topSectionHeight / 2],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
     /** offset horizontaly given the scale transformation and potential top left header section */
     const translateX = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -(topSectionWidth - topSectionWidth * scaleRatio) / 2 + topLeftWidth],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
     /** allow for content to move upward as animation is taking place */
     const maxHeight = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [70, 0],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     const opacity = interpolate(
       currentPositionY.value,
       [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
       [1, 0],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
