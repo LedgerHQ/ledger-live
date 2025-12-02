@@ -4923,13 +4923,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://explorer.aleo.org/transaction/$hash",
-      },
-      {
         address: "https://explorer.aleo.org/address/$address",
       },
     ],
-    keywords: ["aleo", "privacy", "zk"],
-    tokenTypes: ["aleo"],
   },
 };
 
