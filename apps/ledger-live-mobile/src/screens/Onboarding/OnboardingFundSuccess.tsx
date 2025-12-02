@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect } from "react";
+import { BackHandler } from "react-native";
 import { Flex, Text, SlideIndicator, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-
 import { useNavigation, useRoute } from "@react-navigation/core";
-import { RootNavigation } from "~/components/RootNavigator/types/helpers";
-import { NavigatorName } from "~/const";
-import { track } from "~/analytics";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigatorName, ScreenName } from "~/const";
+import { TrackScreen, track } from "~/analytics";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
-import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  RootNavigation,
+  RootComposite,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { ScreenName } from "~/const";
-import { BackHandler } from "react-native";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
+
+const seedConfiguration = "new_seed";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingFundSuccess>
@@ -23,14 +26,14 @@ export default function OnboardingFundSuccess() {
   const route = useRoute<NavigationProps["route"]>();
   const baseNavigation = useNavigation<RootNavigation>();
 
-  const { receiveFlowSuccess } = route.params;
+  const { receiveFlowSuccess, deviceModelId } = route.params;
 
   const handleExploreWallet = useCallback(() => {
-    track("button_clicked", { button: "Explore Ledger Wallet", flow: "onboarding" });
+    track("Onboarding - End", { seedConfiguration, deviceModelId, flow: "onboarding" });
     baseNavigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [baseNavigation]);
+  }, [baseNavigation, deviceModelId]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
@@ -38,7 +41,12 @@ export default function OnboardingFundSuccess() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaViewFixed isFlex>
+      <TrackScreen
+        category="End of onboarding"
+        seedConfiguration={seedConfiguration}
+        deviceModelId={deviceModelId}
+      />
       <Flex
         flexDirection="row"
         justifyContent="center"
@@ -94,6 +102,6 @@ export default function OnboardingFundSuccess() {
       >
         {t("onboarding.fundSuccess.exploreLedger")}
       </Button>
-    </SafeAreaView>
+    </SafeAreaViewFixed>
   );
 }

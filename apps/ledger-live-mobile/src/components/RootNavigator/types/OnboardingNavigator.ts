@@ -47,9 +47,15 @@ export type OnboardingNavigatorParamList = {
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
+    isRestoreSeed?: boolean;
   };
-  [ScreenName.OnboardingSecureYourCrypto]: undefined;
-  [ScreenName.OnboardingFundSuccess]: { receiveFlowSuccess: boolean };
+  [ScreenName.OnboardingSecureYourCrypto]: {
+    deviceModelId?: DeviceModelId;
+  };
+  [ScreenName.OnboardingFundSuccess]: {
+    receiveFlowSuccess: boolean;
+    deviceModelId?: DeviceModelId;
+  };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
   };
