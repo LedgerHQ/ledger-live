@@ -278,6 +278,7 @@ export const transactionStrategy: {
   cardano: cardanoTransaction,
   casper: defaultTransaction,
   celo: defaultTransaction,
+  concordium: defaultTransaction,
   cosmos: cosmosTransaction,
   evm: evmTransaction,
   filecoin: defaultTransaction,
