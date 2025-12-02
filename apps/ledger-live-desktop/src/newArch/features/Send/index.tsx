@@ -1,66 +1,127 @@
-import { useCallback, useRef } from "react";
+import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDrawerFlowManager from "LLD/features/ModularDrawer/ModularDrawerFlowManager";
-import { CloseButton } from "LLD/features/ModularDrawer/components/CloseButton";
-import { useDispatch } from "react-redux";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { DialogHeader } from "@ledgerhq/ldls-ui-react";
+import { SendFlowOrchestrator, createStepRegistry } from "./SendFlowOrchestrator";
+import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
+import { useSendFlowContext } from "./context/SendFlowContext";
+import { FLOW_STATUS } from "../FlowWizard/types";
+import { useDialog } from "LLD/components/Dialog";
+import { AccountSelectionScreen } from "./screens/AccountSelection/AccountSelectionScreen";
+
+import type { AnimationConfig } from "../FlowWizard/types";
+import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
+import { AmountScreen } from "./screens/Amount/AmountScreen";
+import { SignatureScreen } from "./screens/Signature/SignatureScreen";
+import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
+
+const SEND_ANIMATION_CONFIG: AnimationConfig = {
+  forward: "animate-fade-in",
+  backward: "animate-fade-in",
+};
+
+const stepRegistry = createStepRegistry({
+  [SEND_FLOW_STEP.ACCOUNT_SELECTION]: AccountSelectionScreen,
+  [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
+  [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
+  [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
+  [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+});
+
+type SendWorkflowParams = Readonly<{
+  account?: AccountLike;
+  parentAccount?: Account;
+  recipient?: string;
+  amount?: string;
+  memo?: string;
+  fromMAD?: boolean;
+  startWithWarning?: boolean;
+}>;
 
 type SendWorkflowProps = Readonly<{
   onClose?: () => void;
-  params?: {
-    account?: AccountLike;
-    parentAccount?: Account;
-  };
+  params?: SendWorkflowParams;
 }>;
 
-// Minimal orchestrator for the new Send flow.
-// For now it only handles asset/network/account selection via the existing MAD.
-export default function SendWorkflow({ onClose, params }: SendWorkflowProps) {
-  const dispatch = useDispatch();
-  const initializedRef = useRef(false);
+function SendFlowDialogContent() {
+  const { navigation, state, close, currentStepConfig, currentStep } = useSendFlowContext();
+  const { t } = useTranslation();
 
-  const handleAccountSelected = useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
-      setDrawer();
-      dispatch(closeModal("MODAL_SEND"));
-      dispatch(
-        openModal("MODAL_SEND", {
-          account,
-          parentAccount,
-        }),
-      );
-    },
-    [dispatch],
+  const handleBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goToPreviousStep();
+    } else {
+      close();
+    }
+  }, [navigation, close]);
+
+  const { account, currency } = state.account;
+  const availableBalance = account?.balance.toString() ?? "0";
+  const currencyName = currency?.ticker ?? "";
+
+  const showHeader =
+    currentStep !== SEND_FLOW_STEP.ACCOUNT_SELECTION && currentStepConfig?.showHeader !== false;
+  const showBackButton = currentStep !== SEND_FLOW_STEP.ACCOUNT_SELECTION && navigation.canGoBack();
+
+  const statusGradientClass =
+    state.flowStatus === FLOW_STATUS.ERROR
+      ? "bg-gradient-error"
+      : state.flowStatus === FLOW_STATUS.SUCCESS
+        ? "bg-gradient-success"
+        : null;
+
+  return (
+    <>
+      {showHeader && (
+        <div className="px-6 pt-6">
+          <DialogHeader
+            appearance="compact"
+            title={t("newSendFlow.title", { currency: currencyName })}
+            description={t("newSendFlow.available", { amount: availableBalance })}
+            onBack={showBackButton ? handleBack : undefined}
+            onClose={close}
+          />
+        </div>
+      )}
+      {statusGradientClass && (
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 h-full ${statusGradientClass}`}
+        />
+      )}
+    </>
   );
+}
 
-  const handleDrawerClose = useCallback(() => {
-    setDrawer();
-    dispatch(closeModal("MODAL_SEND"));
+export default function SendWorkflow({ onClose, params }: SendWorkflowProps) {
+  const { closeDialog } = useDialog();
+
+  const handleClose = useCallback(() => {
+    closeDialog();
     onClose?.();
-  }, [dispatch, onClose]);
+  }, [closeDialog, onClose]);
 
-  if (!initializedRef.current && !params?.account) {
-    initializedRef.current = true;
+  const initParams: SendFlowInitParams = {
+    account: params?.account,
+    parentAccount: params?.parentAccount,
+    recipient: params?.recipient,
+    amount: params?.amount,
+    memo: params?.memo,
+    fromMAD: params?.fromMAD ?? false,
+  };
 
-    setDrawer(
-      ModularDrawerFlowManager,
-      {
-        currencies: [], // Show all currencies
-        onAccountSelected: handleAccountSelected,
-        drawerConfiguration: {
-          assets: { leftElement: "undefined", rightElement: "balance", filter: "undefined" },
-          networks: { leftElement: "undefined", rightElement: "undefined" },
-        },
-      },
-      {
-        onRequestClose: handleDrawerClose,
-        closeButtonComponent: CloseButton,
-      },
-    );
-
-    dispatch(closeModal("MODAL_SEND"));
-  }
-
-  return null;
+  return (
+    <div
+      className="flex h-[612px] flex-col text-base"
+      data-testid="recipient-address-modal-content"
+    >
+      <SendFlowOrchestrator
+        initParams={initParams}
+        onClose={handleClose}
+        stepRegistry={stepRegistry}
+        animationConfig={SEND_ANIMATION_CONFIG}
+      >
+        <SendFlowDialogContent />
+      </SendFlowOrchestrator>
+    </div>
+  );
 }

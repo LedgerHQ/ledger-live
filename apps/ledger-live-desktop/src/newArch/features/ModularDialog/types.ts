@@ -25,4 +25,9 @@ export type ModularDrawerFlowManagerProps = {
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   onClose?: () => void;
+  renderHeader?: (args: {
+    title: string;
+    onClose: () => void;
+    onBack?: () => void;
+  }) => React.ReactNode;
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
@@ -19,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
-const TranslationKeyMap: Record<ModularDrawerStep, string> = {
+export const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
   [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
   [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
@@ -33,6 +34,7 @@ const ModularDialogFlowManager = ({
   onAssetSelected,
   onAccountSelected,
   onClose,
+  renderHeader,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
@@ -120,16 +122,26 @@ const ModularDialogFlowManager = ({
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
-        <DialogHeader
-          appearance="extended"
-          title={t(TranslationKeyMap[currentStep])}
-          onClose={handleClose}
-          onBack={handleBack}
-        />
-        <div className="h-[480px] overflow-hidden">
+  const header = renderHeader ? (
+    renderHeader({
+      title: t(TranslationKeyMap[currentStep]),
+      onClose: handleClose,
+      ...(handleBack && { onBack: handleBack }),
+    })
+  ) : (
+    <DialogHeader
+      appearance="extended"
+      title={t(TranslationKeyMap[currentStep])}
+      onClose={handleClose}
+      {...(handleBack && { onBack: handleBack })}
+    />
+  );
+
+  const content = (
+    <>
+      {header}
+      <div className="h-[480px] overflow-hidden">
+        <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
           <AnimatedScreenWrapper
             key={`${currentStep}-${navigationDirection}`}
             screenKey={currentStep}
@@ -137,8 +149,20 @@ const ModularDialogFlowManager = ({
           >
             {renderStepContent(currentStep)}
           </AnimatedScreenWrapper>
-        </div>
-      </DialogContent>
+        </AnimatePresence>
+      </div>
+    </>
+  );
+
+  // If renderHeader is provided, assume we're already in a DialogProvider (ex: Send flow)
+  // Otherwise, wrap in Dialog/DialogContent (ex: ModularDialogRoot)
+  if (renderHeader) {
+    return content;
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent>{content}</DialogContent>
     </Dialog>
   );
 };
