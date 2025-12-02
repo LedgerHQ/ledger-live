@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
+import type { JSX } from "react";
 import { StyleSheet, View, AppState } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { privacySelector } from "~/reducers/settings";

@@ -14,6 +14,7 @@ import {
 } from "@testing-library/react-native";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import React, { useMemo } from "react";
+import type { JSX } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";

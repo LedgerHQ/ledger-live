@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import type { JSX } from "react";
 import SelectableAccountsList from "~/components/SelectableAccountsList";
 
 const ScannedAccountsSection = ({

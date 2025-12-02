@@ -51,7 +51,7 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
-  const serverRef = useRef<WalletAPIServer>();
+  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
 
   const tracking = useMemo(
     () =>

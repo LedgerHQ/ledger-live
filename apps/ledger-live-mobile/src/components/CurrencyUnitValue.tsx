@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import type { JSX } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
 import { Unit } from "@ledgerhq/types-cryptoassets";

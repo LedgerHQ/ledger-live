@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import {

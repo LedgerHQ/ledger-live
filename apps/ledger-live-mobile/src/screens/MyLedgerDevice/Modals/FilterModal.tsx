@@ -151,10 +151,7 @@ const FilterModalComponent = ({
   isOpened,
   onClose,
 }: Props) => {
-  const [state, dispatch] = useReducer<React.Reducer<State, Action>>(
-    filterReducer,
-    initialFilterState,
-  );
+  const [state, dispatch] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
     dispatch({

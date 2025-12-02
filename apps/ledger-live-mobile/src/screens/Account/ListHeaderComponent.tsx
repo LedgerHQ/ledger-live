@@ -197,7 +197,7 @@ export function useListHeaderComponents({
               <Box>
                 {AccountHeaderRendered && (
                   <Box mx={6} mb={6}>
-                    {AccountHeaderRendered}
+                    {AccountHeaderRendered as React.ReactNode}
                   </Box>
                 )}
                 {AccountBalanceSummaryFooterRendered && (
@@ -209,7 +209,7 @@ export function useListHeaderComponents({
           ]
         : []),
       ...(!empty && AccountBodyHeaderRendered
-        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered}</SectionContainer>]
+        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered as React.ReactNode}</SectionContainer>]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [

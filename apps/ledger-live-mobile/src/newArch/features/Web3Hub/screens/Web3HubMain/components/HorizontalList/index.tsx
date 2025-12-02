@@ -39,7 +39,7 @@ export default function HorizontalList({
         {title}
       </Text>
       <Box mb={2}>
-        <FlashList
+        <FlashList<AppManifest>
           testID={testID}
           horizontal
           contentContainerStyle={styles.container}
@@ -52,6 +52,7 @@ export default function HorizontalList({
               </Flex>
             ) : null
           }
+          // @ts-ignore FlashList estimatedItemSize type issue
           estimatedItemSize={70}
           data={data}
           showsHorizontalScrollIndicator={false}

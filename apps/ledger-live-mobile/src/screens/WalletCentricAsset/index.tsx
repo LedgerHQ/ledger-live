@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
+import type { JSX } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";

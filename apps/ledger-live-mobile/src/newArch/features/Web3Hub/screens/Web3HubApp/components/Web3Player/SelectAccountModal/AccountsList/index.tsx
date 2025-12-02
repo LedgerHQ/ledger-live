@@ -55,12 +55,13 @@ export default function AccountsList({
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency));
 
   return (
-    <FlashList
+    <FlashList<AccountTuple>
       contentContainerStyle={styles.list}
       testID="web3hub-select-account"
       ListHeaderComponent={<AddAccountItem onPress={onAddAccount} />}
       keyExtractor={accountKeyExtractor}
       renderItem={renderAccountItem}
+      // @ts-ignore FlashList estimatedItemSize type issue
       estimatedItemSize={60}
       data={accounts}
       extraData={onPressItem}

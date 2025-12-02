@@ -93,7 +93,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
     (nb: string) => {

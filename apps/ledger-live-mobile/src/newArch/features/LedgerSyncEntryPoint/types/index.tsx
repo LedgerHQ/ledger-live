@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 export enum EntryPoint {
   manager = "manager",
   accounts = "accounts",

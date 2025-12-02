@@ -26,7 +26,7 @@ const View: React.FC<ViewProps> = ({
     return isSyncEnabled
       ? globalSyncRefreshControl<FlashListProps<AccountLike>>(FlashList)
       : FlashList;
-  }, [isSyncEnabled]);
+  }, [isSyncEnabled]) as typeof FlashList<AccountLike>;
 
   const renderItem = useCallback(
     ({ item }: { item: AccountLike }) => (
@@ -52,6 +52,7 @@ const View: React.FC<ViewProps> = ({
   return (
     <List
       testID="AccountsList"
+      // @ts-ignore FlashList type inference lost through globalSyncRefreshControl wrapper
       estimatedItemSize={ESTIMED_ITEM_SIZE}
       estimatedListSize={estimatedListSize}
       renderItem={renderItem}

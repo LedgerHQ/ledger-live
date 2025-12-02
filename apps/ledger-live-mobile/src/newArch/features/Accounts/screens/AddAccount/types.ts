@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";

@@ -25,7 +25,7 @@ const useQueuedDrawerGorhom = ({
   preventBackdropClick,
 }: UseQueuedDrawerGorhomProps) => {
   const { addDrawerToQueue } = useQueuedDrawerContext();
-  const drawerInQueueRef = useRef<DrawerInQueue>();
+  const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const isFocused = useIsFocused();
   const areDrawersLocked = useSelector(isModalLockedSelector);

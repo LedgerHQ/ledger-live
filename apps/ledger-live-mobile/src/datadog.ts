@@ -1,13 +1,23 @@
 import Config from "react-native-config";
-import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import { TrackingConsent, DatadogProvider, DdSdkReactNativeConfiguration } from "@datadog/mobile-react-native";
 import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
-import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
-import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
-import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
+
+type PartialInitializationConfiguration = Partial<DdSdkReactNativeConfiguration>;
+
+// Datadog event mapper types - these internal types are not exported from the package
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ErrorEvent = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ActionEvent = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LogEvent = any;
+
+type ErrorEventMapper = (event: ErrorEvent) => ErrorEvent | null;
+type ActionEventMapper = (event: ActionEvent) => ActionEvent | null;
+type LogEventMapper = (event: LogEvent) => LogEvent | null;
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -47,7 +57,7 @@ export const initializeDatadogProvider = async (
     ...baseConfig,
     ...remoteConfig,
     trackingConsent,
-  });
+  } as DdSdkReactNativeConfiguration);
 };
 
 /**

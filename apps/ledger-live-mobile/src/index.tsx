@@ -87,7 +87,9 @@ import {
   DdSdkReactNative,
   PropagatorType,
 } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import type { DdSdkReactNativeConfiguration } from "@datadog/mobile-react-native";
+
+type PartialInitializationConfiguration = Partial<DdSdkReactNativeConfiguration>;
 import {
   customActionEventMapper,
   customErrorEventMapper,

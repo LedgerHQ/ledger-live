@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import type { JSX } from "react";
 import { ScrollView, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";

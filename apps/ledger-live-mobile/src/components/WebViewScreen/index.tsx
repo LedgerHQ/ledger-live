@@ -1,4 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import type { JSX } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";

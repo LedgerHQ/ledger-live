@@ -147,9 +147,9 @@ const AssetSelection = ({
         ref={listRef}
         scrollToOverflowEnabled
         data={formattedAssets}
-        keyExtractor={item => item.id}
-        getItemCount={items => items.length}
-        getItem={(items, index) => items[index]}
+        keyExtractor={(item: AssetType) => item.id}
+        getItemCount={(items: AssetType[]) => items.length}
+        getItem={(items: AssetType[], index: number) => items[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"

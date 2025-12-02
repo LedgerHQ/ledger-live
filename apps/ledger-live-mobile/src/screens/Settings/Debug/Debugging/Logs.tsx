@@ -38,7 +38,7 @@ export default function Logs() {
       </Flex>
       <FlatList
         data={filteredLogs}
-        keyExtractor={(row: { id: string }) => row.id}
+        keyExtractor={(row: Log) => row.id}
         ListEmptyComponent={() => (
           <View style={styles.logs}>
             <Text color="text">{"No logs matching filter"}</Text>

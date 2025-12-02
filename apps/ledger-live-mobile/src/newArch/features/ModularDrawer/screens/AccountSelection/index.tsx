@@ -81,9 +81,9 @@ const AccountSelectionContent = ({
         ref={listRef}
         scrollToOverflowEnabled={true}
         data={detailedAccounts}
-        keyExtractor={item => item.id}
-        getItemCount={data => data.length}
-        getItem={(data, index) => data[index]}
+        keyExtractor={(item: RawDetailedAccount) => item.id}
+        getItemCount={(data: RawDetailedAccount[]) => data.length}
+        getItem={(data: RawDetailedAccount[], index: number) => data[index]}
         renderItem={renderItem}
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}

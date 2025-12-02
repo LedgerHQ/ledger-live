@@ -21,7 +21,7 @@ export default function TrackScreen({
   ...props
 }: Props) {
   const isFocused = useIsFocused();
-  const isFocusedRef = useRef<boolean>();
+  const isFocusedRef = useRef<boolean | undefined>(undefined);
 
   // Analytics tracking
   useEffect(() => {

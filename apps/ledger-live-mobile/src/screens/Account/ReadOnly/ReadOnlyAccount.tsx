@@ -1,4 +1,5 @@
 import React, { useCallback, useContext } from "react";
+import type { JSX } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";

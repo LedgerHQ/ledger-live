@@ -137,11 +137,11 @@ class CurrencyInput extends PureComponent<Props, State> {
     });
     this.props.onFocus(false);
   };
-  handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+  handleFocus = () => {
     this.syncInput({
       isFocused: true,
     });
-    this.props.onFocus(true, event);
+    this.props.onFocus(true);
   };
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
     if (isFocused !== this.state.isFocused) {

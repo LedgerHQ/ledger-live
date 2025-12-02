@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";

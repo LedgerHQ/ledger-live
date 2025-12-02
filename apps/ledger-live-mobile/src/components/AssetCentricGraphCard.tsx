@@ -2,7 +2,7 @@ import React, { useState, useCallback, memo, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { Extrapolation, interpolate, useAnimatedStyle, SharedValue } from "react-native-reanimated";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import { useTimeRange } from "~/actions/settings";
@@ -40,7 +40,7 @@ const SmallPlaceholder = styled(Placeholder).attrs({
 type Props = {
   assetPortfolio: Portfolio;
   counterValueCurrency: Currency;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   accountsEmpty?: boolean;

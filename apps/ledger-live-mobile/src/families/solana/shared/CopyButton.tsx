@@ -9,7 +9,7 @@ type Props = {
 
 export default function CopyButton({ copyString }: Props) {
   const [copied, setCopied] = React.useState(false);
-  const timerRef = React.useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const onPress = () => {
     if (copied) return;

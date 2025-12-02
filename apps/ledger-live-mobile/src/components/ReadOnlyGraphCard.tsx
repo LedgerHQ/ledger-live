@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import type { JSX } from "react";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text } from "@ledgerhq/native-ui";
 

@@ -32,13 +32,14 @@ export default function CategoriesList({ selectedCategory, selectCategory }: Pro
   const { data, extraData } = useCategoriesListViewModel({ selectedCategory, selectCategory });
 
   return (
-    <FlashList
+    <FlashList<Category>
       testID="web3hub-categories-scroll"
       horizontal
       contentContainerStyle={styles.container}
       keyExtractor={identityFn}
       renderItem={renderItem}
       ListEmptyComponent={<Box height={32} />} // Empty box for first height calculation, could be improved
+      // @ts-ignore FlashList estimatedItemSize type issue
       estimatedItemSize={50}
       data={data}
       showsHorizontalScrollIndicator={false}

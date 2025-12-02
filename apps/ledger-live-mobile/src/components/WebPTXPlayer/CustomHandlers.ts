@@ -54,7 +54,7 @@ export function useCustomExchangeHandlers({
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const route = useRoute();
   const [device, setDevice] = useState<Device>();
-  const deviceRef = useRef<Device>();
+  const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();

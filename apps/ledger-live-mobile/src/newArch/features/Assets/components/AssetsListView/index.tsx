@@ -24,7 +24,7 @@ const View: React.FC<ViewProps> = ({
 }) => {
   const List = useMemo(() => {
     return isSyncEnabled ? globalSyncRefreshControl<FlashListProps<Asset>>(FlashList) : FlashList;
-  }, [isSyncEnabled]);
+  }, [isSyncEnabled]) as typeof FlashList<Asset>;
 
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => {
@@ -52,6 +52,7 @@ const View: React.FC<ViewProps> = ({
   return (
     <List
       testID="AssetsList"
+      // @ts-ignore FlashList type inference lost through globalSyncRefreshControl wrapper
       estimatedItemSize={ESTIMED_ITEM_SIZE}
       estimatedListSize={estimatedListSize}
       renderItem={renderItem}

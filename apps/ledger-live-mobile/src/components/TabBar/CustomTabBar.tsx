@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { ColorPalette, Flex } from "@ledgerhq/native-ui";
 import { Dimensions, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import styled from "styled-components/native";

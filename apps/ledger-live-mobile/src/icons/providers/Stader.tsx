@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { JSX } from "react";
 import type { ColorValue } from "react-native";
 import Svg, { type SvgProps, Path, Rect, G, Defs, ClipPath } from "react-native-svg";
 

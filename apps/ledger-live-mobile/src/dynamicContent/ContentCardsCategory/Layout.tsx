@@ -147,7 +147,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
       const item = items[0];
       return (
         <LogContentCardWrapper id={item.props.metadata.id}>
-          <Flex mx={6}>{item.component(item.props)}</Flex>
+          <Flex mx={6}>{item.component(item.props) as React.ReactNode}</Flex>
         </LogContentCardWrapper>
       );
     }

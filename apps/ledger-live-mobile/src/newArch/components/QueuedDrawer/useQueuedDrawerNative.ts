@@ -24,7 +24,7 @@ const useQueuedDrawerNative = ({
   preventBackdropClick,
 }: UseQueuedDrawerNativeProps) => {
   const { addDrawerToQueue } = useQueuedDrawerContext();
-  const drawerInQueueRef = useRef<DrawerInQueue>();
+  const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
   const isFocused = useIsFocused();
   const areDrawersLocked = useSelector(isModalLockedSelector);
 

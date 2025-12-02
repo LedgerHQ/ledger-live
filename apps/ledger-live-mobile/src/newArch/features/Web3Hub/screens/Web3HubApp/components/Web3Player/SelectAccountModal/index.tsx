@@ -56,11 +56,12 @@ export default function SelectAccountModal({ isOpened, ...params }: Props) {
             onAddAccount={onAddAccount}
           />
         ) : (
-          <FlashList
+          <FlashList<CryptoCurrency>
             contentContainerStyle={styles.list}
             testID="web3hub-select-network"
             keyExtractor={currencyKeyExtractor}
             renderItem={renderCurrencyItem}
+            // @ts-ignore FlashList estimatedItemSize type issue
             estimatedItemSize={60}
             data={sortedCurrencies}
             extraData={onPressCurrencyItem}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { JSX } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";

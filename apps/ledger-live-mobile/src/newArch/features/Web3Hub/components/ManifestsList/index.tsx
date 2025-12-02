@@ -23,7 +23,9 @@ type Props = {
   headerComponent?: React.ReactNode;
 };
 
-const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
+const AnimatedFlashList = Animated.createAnimatedComponent(
+  FlashList<AppManifest>,
+) as unknown as typeof FlashList<AppManifest>;
 
 const keyExtractor = (item: AppManifest) => item.id;
 
@@ -91,6 +93,7 @@ export default function ManifestsList({
             </Box>
           )
         }
+        // @ts-ignore FlashList type lost through Animated wrapper
         estimatedItemSize={128}
         data={data}
         extraData={disclaimer.onPressItem}

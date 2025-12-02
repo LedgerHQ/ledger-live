@@ -70,5 +70,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     );
   }
 
-  return React.forwardRef((prop: P & Props, ref) => <Inner {...prop} forwardedRef={ref} />);
+  return React.forwardRef<unknown, P & Props>((prop, ref) => (
+    <Inner {...(prop as P & Props)} forwardedRef={ref} />
+  ));
 };

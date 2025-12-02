@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";

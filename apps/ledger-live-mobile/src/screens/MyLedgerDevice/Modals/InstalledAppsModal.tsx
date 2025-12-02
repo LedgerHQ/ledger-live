@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useMemo, useEffect } from "react";
+import type { JSX } from "react";
 
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";

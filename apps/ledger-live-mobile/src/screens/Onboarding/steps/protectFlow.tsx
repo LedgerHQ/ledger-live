@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

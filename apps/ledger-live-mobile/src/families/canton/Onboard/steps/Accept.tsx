@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect, useLayoutEffect } from "react";
+import type { JSX } from "react";
 import { Flex, Text, Button, Checkbox, IconBox, Alert } from "@ledgerhq/native-ui";
 import LedgerIcon from "~/icons/Ledger";
 import { Trans, useTranslation } from "react-i18next";

@@ -136,7 +136,7 @@ const History = () => {
     }
   }, 10000);
 
-  const renderItem = ({ item }: ListRenderItemInfo<MappedSwapOperation>) => (
+  const renderItem = ({ item }: { item: MappedSwapOperation }) => (
     <OperationRow item={item} />
   );
 
@@ -207,6 +207,7 @@ const History = () => {
         keyExtractor={({ swapId, operation }: { swapId: string; operation?: { id: string } }) =>
           swapId + operation?.id
         }
+        // @ts-ignore AnimatedSectionList type inference issue
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">

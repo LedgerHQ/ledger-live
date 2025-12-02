@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components/native";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Link } from "@ledgerhq/native-ui";

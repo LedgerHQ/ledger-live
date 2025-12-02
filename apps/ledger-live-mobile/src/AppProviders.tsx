@@ -7,6 +7,7 @@ import { InViewProvider } from "LLM/contexts/InViewContext";
 import GlobalDrawers from "./GlobalDrawers";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import React from "react";
+import type { JSX } from "react";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";

@@ -71,5 +71,7 @@ export default <P,>(
     );
   }
 
-  return React.forwardRef((props: P & Props, ref) => <Inner {...props} forwardedRef={ref} />);
+  return React.forwardRef<unknown, P & Props>((props, ref) => (
+    <Inner {...(props as P & Props)} forwardedRef={ref} />
+  ));
 };

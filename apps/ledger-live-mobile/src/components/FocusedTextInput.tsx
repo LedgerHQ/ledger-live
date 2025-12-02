@@ -7,7 +7,7 @@ function FocusedTextInput(
 ) {
   const inputRef = useRef<TextInput | null>(null);
   // allows to still forward ref to parent to call
-  useImperativeHandle(ref, () => inputRef.current);
+  useImperativeHandle(ref, () => inputRef.current!, []);
   // FIXME: do we really want this useEffect to trigger every type the props object change????
   useEffect(() => {
     props.autoFocus && inputRef.current?.focus();

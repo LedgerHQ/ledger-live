@@ -14,7 +14,7 @@ export type InViewContext = {
 
 export type WatchedItem = {
   onInViewUpdate: (entry: InViewEntry) => void;
-  target: RefObject<View>;
+  target: RefObject<View | null>;
 };
 
 export type InViewEntry = {
