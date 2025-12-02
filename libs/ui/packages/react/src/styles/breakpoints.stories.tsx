@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 
 import Flex from "../components/layout/Flex";
 import Text from "../components/asorted/Text";

@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import ProgressSteps, { Props, StepText, StepState } from "./index";
 
 export default {

@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { Step, StepProps } from "./index";
 
 export default {

@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import ProgressLoader, { Props } from "./index";
 
 export default {

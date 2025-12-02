@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { action } from "@storybook/addon-actions";
 import { Flex, Carousel, Text, Button } from "../../../src/components";

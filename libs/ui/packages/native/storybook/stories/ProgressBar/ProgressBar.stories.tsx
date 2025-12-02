@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { Flex, ProgressBar, Button, Text } from "../../../src/components";
 import { ProgressPoint } from "../../../src/components";
 import { IconsLegacy } from "../../../src/assets";

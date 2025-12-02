@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/icons-ui/nativeLegacy";
 import { action } from "@storybook/addon-actions";
 import React from "react";
+import type { JSX } from "react";
 import Box from "../../../../src/components/Layout/Box";
 import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
 import QuickActionList from "../../../../src/components/cta/QuickAction/QuickActionList";

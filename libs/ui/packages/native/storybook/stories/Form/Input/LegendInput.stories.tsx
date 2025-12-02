@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import LegendInput from "../../../../src/components/Form/Input/LegendInput";
 
 export default {

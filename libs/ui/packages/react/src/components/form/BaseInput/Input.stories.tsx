@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { JSX } from "react";
 import Button from "../../cta/Button";
 import Input, { InputProps, InputRenderLeftContainer, InputRenderRightContainer } from "./index";
 import { Flex, Text } from "../..";

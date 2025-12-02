@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import ContinueOnDeviceComponent from ".";
 import Flex from "../../layout/Flex";
 

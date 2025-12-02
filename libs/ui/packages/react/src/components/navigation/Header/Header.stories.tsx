@@ -4,6 +4,7 @@ import Icon from "../../asorted/Icon";
 import Text from "../../asorted/Text";
 import FlexBox from "../../layout/Flex";
 import React from "react";
+import type { JSX } from "react";
 
 export default {
   title: "Navigation/Header",

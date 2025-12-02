@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components";
 
 import Button from "../cta/Button";

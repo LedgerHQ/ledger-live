@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import SearchInput from "../../../../src/components/Form/Input/SearchInput";
 
 export default {

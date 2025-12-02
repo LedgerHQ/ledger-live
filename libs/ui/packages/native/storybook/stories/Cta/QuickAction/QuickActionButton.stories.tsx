@@ -1,5 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import React from "react";
+import type { JSX } from "react";
 import {
   PlusMedium,
   LendMedium,

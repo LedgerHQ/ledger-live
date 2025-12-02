@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import Alert, { AlertProps } from "./index";
 import Link from "../../cta/Link";
 import Button from "../../cta/Button";

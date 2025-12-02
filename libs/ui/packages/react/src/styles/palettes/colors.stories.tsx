@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import Text from "../../components/asorted/Text";
 import Flex from "../../components/layout/Flex";

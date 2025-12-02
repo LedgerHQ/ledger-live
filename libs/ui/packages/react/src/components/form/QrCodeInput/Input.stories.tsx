@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import QrCodeInput from "./index";
 import { InputProps } from "../BaseInput";
 

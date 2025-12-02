@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components";
 import { OptionProps, ValueContainerProps } from "react-select";
 
@@ -356,11 +357,11 @@ export const Default: StoryTemplate<Props<SelectItem>> = args => {
       onChange={setValue}
       placeholder="Pick a color"
       isClearable
-      isOptionDisabled={option => option.value.startsWith("b")}
+      isOptionDisabled={(option: SelectItem) => option.value.startsWith("b")}
       components={{ Option: ColorOption, ValueContainer: ColorValueContainer }}
-      renderLeft={_ => value && <Flex mr={4} p={4} style={{ background: value.value }} />}
+      renderLeft={(_: unknown) => value && <Flex mr={4} p={4} style={{ background: value.value }} />}
       menuPortalTarget={document.body}
-      styles={{ menuPortal: provided => ({ ...provided, zIndex: 2 }) }}
+      styles={{ menuPortal: (provided: React.CSSProperties) => ({ ...provided, zIndex: 2 }) }}
       {...args}
     />
   );
@@ -397,7 +398,7 @@ export const SideRenders: StoryTemplate<Props<SelectItem>> = args => {
       options={options}
       value={value}
       onChange={setValue}
-      renderLeft={props => (
+      renderLeft={(props: { isDisabled?: boolean }) => (
         <Flex mr={3}>
           <SearchMedium color={props.isDisabled ? "currentColor" : theme.colors.neutral.c70} />
         </Flex>
@@ -473,7 +474,7 @@ export const DisabledOption: StoryTemplate<Props<SelectItem>> = args => {
       options={options}
       value={value}
       onChange={setValue}
-      isOptionDisabled={option => option.value === "lemon"}
+      isOptionDisabled={(option: SelectItem) => option.value === "lemon"}
       menuPortalTarget={document.body}
       {...args}
     />

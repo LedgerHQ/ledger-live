@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 
 import { StoryTemplate } from "../helpers";
 import Tag, { Type, Size, TagProps } from "./index";

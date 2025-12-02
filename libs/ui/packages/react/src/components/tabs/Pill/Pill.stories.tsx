@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { JSX } from "react";
 
 import PillTabs, { Props } from "./index";
 import Text from "../../asorted/Text";

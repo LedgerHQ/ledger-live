@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { JSX } from "react";
 import { useFonts } from "expo-font";
 import styled from "styled-components/native";
 import PropTypes from "prop-types";

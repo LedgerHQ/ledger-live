@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import LegendInput, { Props as LegendInputProps } from "./index";
 
 export default {
