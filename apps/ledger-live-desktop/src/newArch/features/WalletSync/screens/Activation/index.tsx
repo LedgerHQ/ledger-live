@@ -1,11 +1,13 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 import { FlowOptions, useFlows } from "../../hooks/useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
+import SynchronizeStep from "./01-SynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
 import LoadingStep from "./04-LoadingStep";
@@ -18,6 +20,7 @@ import {
   AnalyticsFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { BackRef } from "../router";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   sourcePage: AnalyticsPage;
@@ -30,6 +33,9 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
   const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
 
   const { onClickTrack } = useLedgerSyncAnalytics();
+  const lwdledgerSyncOptimisation = useFeature("lwdLedgerSyncOptimisation");
+  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActivated = Boolean(trustchain?.rootId);
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -70,7 +76,13 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
     switch (currentStep) {
       default:
       case Step.CreateOrSynchronize:
-        return (
+        return lwdledgerSyncOptimisation?.enabled ? (
+          <SynchronizeStep
+            sourcePage={sourcePage}
+            goToCreateBackup={isLedgerSyncActivated ? goToCreateBackup : goToSync}
+            goToSync={goToSync}
+          />
+        ) : (
           <CreateOrSynchronizeStep
             sourcePage={sourcePage}
             goToCreateBackup={goToCreateBackup}
@@ -93,13 +105,16 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
     }
   };
 
+  const isSynchronizeStep =
+    currentStep === Step.CreateOrSynchronize && lwdledgerSyncOptimisation?.enabled;
+
   return (
     <Flex
       flexDirection="column"
       height="100%"
       paddingX="64px"
-      alignItems="center"
-      justifyContent="center"
+      alignItems={isSynchronizeStep ? "stretch" : "center"}
+      justifyContent={isSynchronizeStep ? "flex-start" : "center"}
     >
       {getStep()}
     </Flex>

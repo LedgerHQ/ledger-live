@@ -46,6 +46,7 @@ const ChooseSyncMethod = ({ onScanMethodPress }: Props) => {
         />
         <ActionRow
           title={t("walletSync.synchronize.chooseMethod.scan.title")}
+          description={t("walletSync.synchronize.chooseMethod.description")}
           onPress={onScanMethodPress}
           icon={<Icons.QrCode color={"primary.c80"} />}
           testID={"walletsync-choose-sync-method-scan"}

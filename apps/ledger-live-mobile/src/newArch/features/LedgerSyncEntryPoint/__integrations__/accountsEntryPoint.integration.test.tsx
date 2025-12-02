@@ -138,7 +138,7 @@ describe("Ledger Sync Entry Point with lwmLedgerSyncOptimisation enabled", () =>
 
     await user.press(getAllByText(/your wallet isn't synced/i)[0]);
 
-    expect(await findByRole("button", { name: "Turn on Ledger Sync" })).toBeVisible();
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
   });
 
   it("settings entry point should display optimised banner and open activation flow", async () => {
@@ -151,7 +151,7 @@ describe("Ledger Sync Entry Point with lwmLedgerSyncOptimisation enabled", () =>
 
     await user.press(getAllByText(/your wallet isn't synced/i)[0]);
 
-    expect(await findByRole("button", { name: "Turn on Ledger Sync" })).toBeVisible();
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
   });
 
   it("manager entry point should display optimised banner and open activation flow", async () => {
@@ -164,6 +164,6 @@ describe("Ledger Sync Entry Point with lwmLedgerSyncOptimisation enabled", () =>
 
     await user.press(getAllByText(/your wallet isn't synced/i)[0]);
 
-    expect(await findByRole("button", { name: "Turn on Ledger Sync" })).toBeVisible();
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
   });
 });

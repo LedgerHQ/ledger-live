@@ -15,6 +15,8 @@ import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { developerModeSelector } from "~/renderer/reducers/settings";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 
 const getItems = (t: (a: string) => string, devMode?: boolean) => {
   const items = [
@@ -111,52 +113,28 @@ const Settings = () => {
       >
         {t("settings.title")}
       </Box>
-      {ledgerSyncOptimisationFlag?.enabled ? (
-        <>
-          <Box mb={5} bg="opacityDefault.c05" px={3} borderRadius={8}>
-            <TabBar
-              onIndexChange={handleChangeTab}
-              defaultIndex={activeTabIndex}
-              index={activeTabIndex}
-              tabs={items.map(i => i.label)}
-              ids={items.map(i => `settings-${i.key}`)}
-              withId
-              fontSize={14}
-              height={46}
-            />
-          </Box>
-          <Section style={{ borderTop: "none", borderRadius: "8px" }}>
-            <Box pt={2} pb={2}>
-              <Switch>
-                {processedItems.map(i => (
-                  <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
-                ))}
-                <Route component={defaultItem.value} />
-              </Switch>
-            </Box>
-          </Section>
-        </>
-      ) : (
-        <Section>
-          <TabBar
-            onIndexChange={handleChangeTab}
-            defaultIndex={activeTabIndex}
-            index={activeTabIndex}
-            tabs={items.map(i => i.label)}
-            ids={items.map(i => `settings-${i.key}`)}
-            separator
-            withId
-            fontSize={14}
-            height={46}
-          />
-          <Switch>
-            {processedItems.map(i => (
-              <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
-            ))}
-            <Route component={defaultItem.value} />
-          </Switch>
-        </Section>
+      {ledgerSyncOptimisationFlag?.enabled && (
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
       )}
+      <Section>
+        <TabBar
+          onIndexChange={handleChangeTab}
+          defaultIndex={activeTabIndex}
+          index={activeTabIndex}
+          tabs={items.map(i => i.label)}
+          ids={items.map(i => `settings-${i.key}`)}
+          separator
+          withId
+          fontSize={14}
+          height={46}
+        />
+        <Switch>
+          {processedItems.map(i => (
+            <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
+          ))}
+          <Route component={defaultItem.value} />
+        </Switch>
+      </Section>
     </Box>
   );
 };
