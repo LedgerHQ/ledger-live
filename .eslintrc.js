@@ -43,5 +43,18 @@ module.exports = {
         ignoreRestSiblings: true,
       },
     ],
+    "@typescript-eslint/no-require-imports": "warn",
   },
+  overrides: [
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
+  ],
 };

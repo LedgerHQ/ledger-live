@@ -49,6 +49,7 @@ module.exports = {
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   plugins: ["react", "react-hooks"],
   extends: [
     "plugin:react/recommended",
