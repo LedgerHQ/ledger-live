@@ -44,13 +44,13 @@ runs:
       if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        tar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+        tar -xf /tmp/cache.tzst -C ${{ github.workspace }} --use-compress-program unzstd
 
     - name: Un-Compress files (macOS)
       if: runner.os == 'macOS' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        gtar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+        gtar -xf /tmp/cache.tzst -C ${{ github.workspace }} --use-compress-program unzstd
 
     - name: Cleanup
       shell: bash
