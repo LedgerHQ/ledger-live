@@ -66,6 +66,7 @@ import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
+import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -312,6 +313,7 @@ export default function Default() {
                     />
                   ) : null}
                   <ModularDialogRoot />
+                  <SendFlowRoot />
                   <Switch>
                     <Route
                       path="/onboarding"

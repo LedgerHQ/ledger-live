@@ -17,6 +17,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
+import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
@@ -32,6 +33,7 @@ export type State = LLDRTKApiState & {
   market: MarketState;
   modals: ModalsState;
   modularDrawer: ModularDrawerState;
+  sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
@@ -50,6 +52,7 @@ const appReducer = combineReducers({
   identities: identitiesSlice.reducer,
   modals,
   modularDrawer,
+  sendFlow,
   settings,
   UI,
   onboarding,

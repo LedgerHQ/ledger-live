@@ -35,6 +35,7 @@ import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -303,6 +304,7 @@ const MainSideBar = () => {
     push("/exchange");
     trackEntry("exchange");
   }, [push, trackEntry]);
+  const openSendFlow = useOpenSendFlow();
   const handleClickEarn = useCallback(() => {
     push("/earn");
     trackEntry("earn");
@@ -322,8 +324,8 @@ const MainSideBar = () => {
   }, [location.pathname, push]);
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_SEND", undefined));
-  }, [dispatch, maybeRedirectToAccounts]);
+    openSendFlow();
+  }, [maybeRedirectToAccounts, openSendFlow]);
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE", undefined));
