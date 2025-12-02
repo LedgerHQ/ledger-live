@@ -217,7 +217,8 @@ export default function SelectDevice({
 
   const checkDeviceStatus = useCallback(
     (device: Device) => {
-      if (performDeviceLockedCheck && !getEnv("MOCK")) {
+      const isMockEnv = getEnv("MOCK");
+      if (performDeviceLockedCheck && !isMockEnv) {
         setDeviceToCheckLockedStatus(device);
       } else {
         notifyDeviceSelected(device);

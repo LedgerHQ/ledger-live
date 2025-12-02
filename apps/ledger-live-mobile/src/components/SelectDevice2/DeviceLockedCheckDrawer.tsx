@@ -23,15 +23,15 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isLocked = isLockedResult.type === IsDeviceLockedResultType.locked;
   const isUnlocked = isLockedResult.type === IsDeviceLockedResultType.unlocked;
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
-  const lockedStateCannotBeDetermined =
+  const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;
 
   useEffect(() => {
-    if (isUnlocked || lockedStateCannotBeDetermined) {
+    if (isUnlocked || isLockedStateCannotBeDetermined) {
       onDeviceUnlocked();
       onClose();
     }
-  }, [isUnlocked, lockedStateCannotBeDetermined, onDeviceUnlocked, onClose]);
+  }, [isUnlocked, isLockedStateCannotBeDetermined, onDeviceUnlocked, onClose]);
 
   useTrackDmkErrorsEvents({
     error: isError ? isLockedResult.error : null,
@@ -44,9 +44,7 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
       }
     : {};
 
-  if (isUnlocked) return null;
-
-  if (!device) return null;
+  if (isUnlocked || !device) return null;
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
