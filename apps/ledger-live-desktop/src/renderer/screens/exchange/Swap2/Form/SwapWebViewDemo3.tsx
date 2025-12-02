@@ -29,7 +29,12 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
-import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
+import {
+  WebviewAPI,
+  WebviewProps,
+  WebviewState,
+  WebviewLoader,
+} from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
@@ -59,7 +64,6 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
-import { WebviewLoader } from "~/renderer/components/Web3AppWebview/types";
 import { SwapLoader } from "./SwapLoader";
 
 export class UnableToLoadSwapLiveError extends Error {

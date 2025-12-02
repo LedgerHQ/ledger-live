@@ -13,9 +13,9 @@ const LoaderContainer = styled.div`
   bottom: 0;
 `;
 
-type SwapLoaderProps = {
+interface SwapLoaderProps {
   isLoading: boolean;
-};
+}
 
 export function SwapLoader({ isLoading }: SwapLoaderProps) {
   if (!isLoading) return null;
