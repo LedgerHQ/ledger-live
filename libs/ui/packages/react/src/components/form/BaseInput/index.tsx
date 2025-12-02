@@ -1,6 +1,7 @@
 import styled, { css, useTheme } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
+import type { JSX } from "react";
 import CircledCrossSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCrossSolidMedium";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
@@ -44,55 +45,55 @@ export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> 
   deserialize?: (value: ValueType) => T;
 };
 
+export type InputContainerStyleProps = Partial<CommonProps> & { focus?: boolean };
 export type InputContainerProps = React.ComponentProps<typeof InputContainer>;
-export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
-  display: flex;
-  height: 48px;
-  border: ${p => `1px solid ${p.theme.colors.neutral.c40}`};
-  border-radius: 24px;
-  transition: all 0.2s ease;
-  color: ${p => p.theme.colors.neutral.c100};
 
-  ${p =>
-    p.focus &&
-    !p.error &&
-    !p.warning &&
-    css`
+type ThemedProps = InputContainerStyleProps & { theme: any };
+
+const getInputContainerStyles = (p: ThemedProps) => {
+  const styles: string[] = [];
+
+  if (p.focus && !p.error && !p.warning) {
+    styles.push(`
       border: 1px solid ${p.theme.colors.primary.c80};
       box-shadow: 0 0 0 4px ${rgba(p.theme.colors.primary.c60, 0.4)};
-    `};
+    `);
+  }
 
-  ${p =>
-    p.error &&
-    !p.disabled &&
-    css`
-      border: 1px solid ${p.theme.colors.error.c50};
-    `};
+  if (p.error && !p.disabled) {
+    styles.push(`border: 1px solid ${p.theme.colors.error.c50};`);
+  }
 
-  ${p =>
-    !p.error &&
-    p.warning &&
-    !p.disabled &&
-    css`
-      border: 1px solid ${p.theme.colors.warning.c40};
-    `};
+  if (!p.error && p.warning && !p.disabled) {
+    styles.push(`border: 1px solid ${p.theme.colors.warning.c40};`);
+  }
 
-  ${p =>
-    !p.error &&
-    !p.warning &&
-    !p.disabled &&
-    css`
-      &:hover {
-        border: ${!p.disabled && `1px solid ${p.theme.colors.primary.c80}`};
-      }
-    `};
-
-  ${p =>
-    p.disabled &&
-    css`
+  if (p.disabled) {
+    styles.push(`
       color: ${p.theme.colors.neutral.c60};
-      background: ${p => p.theme.colors.neutral.c20};
-    `};
+      background: ${p.theme.colors.neutral.c20};
+    `);
+  }
+
+  return styles.join("\n");
+};
+
+export const InputContainer = styled.div<InputContainerStyleProps>`
+  display: flex;
+  height: 48px;
+  border: ${(p: ThemedProps) => `1px solid ${p.theme.colors.neutral.c40}`};
+  border-radius: 24px;
+  transition: all 0.2s ease;
+  color: ${(p: ThemedProps) => p.theme.colors.neutral.c100};
+
+  ${(p: ThemedProps) => getInputContainerStyles(p)}
+
+  &:hover {
+    ${(p: ThemedProps) =>
+      !p.error && !p.warning && !p.disabled
+        ? `border: 1px solid ${p.theme.colors.primary.c80};`
+        : ""}
+  }
 `;
 
 export const BaseInput = styled.input.attrs<

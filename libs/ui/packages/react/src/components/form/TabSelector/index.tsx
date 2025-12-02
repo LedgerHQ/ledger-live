@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components";
 import Flex from "../../layout/Flex";
 import Text from "../../asorted/Text";

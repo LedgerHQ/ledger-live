@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { isElement } from "react-is";
 import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
@@ -127,11 +128,12 @@ function FlowStepper<ExtraProps>({
     stepFooter: React.ReactNode | null;
   }>(
     (acc, child, idx) => {
-      const index = (isElement(child) && child.props.index) ?? idx;
-      const label = isElement(child) && child.props.label;
-      const hidden = isElement(child) && child.props.hidden;
-      const stepHeader = isElement(child) && child.props.header;
-      const stepFooter = isElement(child) && child.props.footer;
+      const childProps = isElement(child) ? (child.props as StepProps) : null;
+      const index = childProps?.index ?? idx;
+      const label = childProps?.label;
+      const hidden = childProps?.hidden;
+      const stepHeader = childProps?.header;
+      const stepFooter = childProps?.footer;
 
       if (label && !hidden) {
         acc.steps[index] = label;
@@ -224,7 +226,7 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
 function FlowStepperIndexed<ExtraProps>(props: IndexedProps<ExtraProps>) {
   const { activeKey, children, ...otherProps } = props;
   const activeIndex = React.Children.toArray(children).findIndex(child => {
-    const res = isElement(child) && child.props.itemKey === activeKey;
+    const res = isElement(child) && (child.props as IndexedStepProps).itemKey === activeKey;
     return res;
   });
   return (

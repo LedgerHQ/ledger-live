@@ -1,8 +1,12 @@
 import React from "react";
+import type { JSX } from "react";
 import { components, GroupBase, StylesConfig, ControlProps } from "react-select";
 import { DefaultTheme } from "styled-components";
-import { InputContainer } from "../BaseInput";
+import { InputContainer as BaseInputContainer, InputContainerStyleProps } from "../BaseInput";
 import { Props as SelectProps } from "./index";
+
+// Cast to avoid styled-components type inference issues with React 19
+const InputContainer = BaseInputContainer as React.ComponentType<InputContainerStyleProps & { children?: React.ReactNode }>;
 
 export function getStyles<
   O = unknown,

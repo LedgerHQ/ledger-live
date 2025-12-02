@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import { border, BorderProps } from "styled-system";
 import Flex from "../../layout/Flex";

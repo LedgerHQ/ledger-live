@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect, useCallback, useContext } from "react";
+import type { JSX } from "react";
 import type { SideProps } from ".";
 
 interface State<P extends SideProps = SideProps> {

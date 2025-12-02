@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled, { useTheme, DefaultTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";

@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { JSX } from "react";
 
 type Props = { width?: number | string; height?: number | string; color?: string };
 

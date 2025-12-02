@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
 import CheckAloneMedium from "@ledgerhq/icons-ui/reactLegacy/CheckAloneMedium";

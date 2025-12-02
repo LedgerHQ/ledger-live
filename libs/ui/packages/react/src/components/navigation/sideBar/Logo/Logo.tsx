@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 
 import LedgerLiveIconLarge from "../../../../assets/logos/LedgerLiveRegular";

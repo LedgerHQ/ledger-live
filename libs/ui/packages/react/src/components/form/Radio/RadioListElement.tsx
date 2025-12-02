@@ -1,4 +1,5 @@
 import React, { InputHTMLAttributes, useContext } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
 import Flex, { FlexBoxProps } from "../../layout/Flex";

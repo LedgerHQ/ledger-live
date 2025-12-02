@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components";
 import Text from "../asorted/Text";
 import Table, { Column } from "./index";

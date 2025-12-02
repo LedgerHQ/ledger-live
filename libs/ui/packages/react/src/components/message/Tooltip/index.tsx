@@ -1,4 +1,5 @@
 import React, { forwardRef } from "react";
+import type { JSX } from "react";
 import { isForwardRef } from "react-is";
 import Tippy, { TippyProps } from "@tippyjs/react";
 import Text from "../../asorted/Text";
@@ -41,7 +42,7 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
       const isDomElement = isValidElement && typeof child.type === "string";
 
       if (isForwardingRef || isDomElement) {
-        return React.cloneElement(child, { ref });
+        return React.cloneElement(child as React.ReactElement<{ ref?: React.LegacyRef<HTMLElement> }>, { ref });
       } else {
         return <span ref={ref}>{props.children}</span>;
       }

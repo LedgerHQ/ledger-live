@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { useTheme } from "styled-components";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
 import SearchMedium from "@ledgerhq/icons-ui/reactLegacy/SearchMedium";

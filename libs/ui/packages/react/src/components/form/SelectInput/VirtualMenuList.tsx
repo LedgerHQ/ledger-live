@@ -1,4 +1,5 @@
 import React, { memo, useMemo, useRef, useEffect } from "react";
+import type { JSX } from "react";
 import { components, GroupBase, MenuListProps } from "react-select";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 import { Props as SelectProps } from "./index";
@@ -16,7 +17,7 @@ export function VirtualMenuList<
   const { children, options, maxHeight, getValue, getStyles, selectProps } = props;
   const { noOptionsMessage, rowHeight = 0 } = selectProps as SelectProps<O, M, G>;
 
-  const listRef = useRef<FixedSizeList>();
+  const listRef = useRef<FixedSizeList | null>(null);
   const [value] = getValue();
   const initialOffset = options.indexOf(value) * rowHeight;
   const childrenLength = Array.isArray(children) ? children.length : 0;
@@ -29,7 +30,8 @@ export function VirtualMenuList<
       Array.isArray(children)
         ? Math.max(
             children.findIndex(
-              (child: React.ReactNode) => React.isValidElement(child) && child.props.isFocused,
+              (child: React.ReactNode) =>
+                React.isValidElement(child) && (child.props as { isFocused?: boolean }).isFocused,
             ),
             0,
           )
@@ -50,8 +52,11 @@ export function VirtualMenuList<
   children.length &&
     children.forEach((node: React.ReactNode) => {
       if (!node || !React.isValidElement(node)) return;
-      delete node.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
-      delete node.props.innerProps.onMouseOver;
+      const nodeProps = node.props as { innerProps?: { onMouseMove?: unknown; onMouseOver?: unknown } };
+      if (nodeProps.innerProps) {
+        delete nodeProps.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
+        delete nodeProps.innerProps.onMouseOver;
+      }
     });
 
   return (

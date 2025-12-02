@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { components, GroupBase, StylesConfig, ValueContainerProps } from "react-select";
 import Text from "../../asorted/Text";
 

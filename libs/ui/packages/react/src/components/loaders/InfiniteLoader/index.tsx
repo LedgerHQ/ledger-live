@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled, { keyframes } from "styled-components";
 import { system, size, SizeProps } from "styled-system";
 

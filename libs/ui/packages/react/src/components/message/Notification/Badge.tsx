@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import { color, position, shadow, border, background, layout } from "styled-system";
 

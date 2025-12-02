@@ -1,7 +1,13 @@
 import React, { useCallback } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import { DefaultTheme } from "styled-components";
-import { InputContainer, InputErrorContainer } from "../BaseInput";
+import { InputContainer as BaseInputContainer, InputErrorContainer, InputContainerStyleProps } from "../BaseInput";
+
+// Cast to avoid styled-components type inference issues with React 19
+const InputContainer = BaseInputContainer as React.ComponentType<InputContainerStyleProps & { children?: React.ReactNode }>;
+// Keep original for CSS selectors
+const InputContainerSelector = BaseInputContainer;
 
 type Callbacks = {
   onFocus: <F>(event: React.FocusEvent<F>) => void;
@@ -41,20 +47,25 @@ function getHoverBolderColor(props: DividerProps) {
   return props.disabled || props.error ? "inherit" : props.theme?.colors.primary.c80;
 }
 
-const Divider = styled.div<{
+type DividerStyleProps = {
   disabled: boolean | undefined;
   focus: boolean | undefined;
   error: string | undefined;
-}>`
+};
+
+const StyledDivider = styled.div<DividerStyleProps>`
   border-right: 1px solid;
   height: 100%;
   transition: border-color 0.2s ease;
 
   border-color: ${getDividerColor};
-  ${InputContainer}:hover & {
+  ${InputContainerSelector}:hover & {
     border-color: ${getHoverBolderColor};
   }
 `;
+
+// Cast to avoid styled-components type inference issues with React 19
+const Divider = StyledDivider as React.ComponentType<DividerStyleProps>;
 
 export default function SplitInput(props: Props): JSX.Element {
   const { disabled, isDisabled, renderLeft, renderRight, error } = props;

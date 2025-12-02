@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import type { JSX } from "react";
 import styled, { useTheme } from "styled-components";
 import Flex from "../../layout/Flex";
 import Text from "../../asorted/Text";
@@ -53,13 +54,14 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
               label=""
               options={segment.options}
               value={segment.value}
-              onChange={elt => elt && onChange([...values, elt.value])}
+              onChange={(elt: Element | null) => elt && onChange([...values, elt.value])}
               styles={{
-                control: (provided, state) => ({
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                control: (provided: any, state: any) => ({
                   ...ControlModule.getStyles<Element>(theme)(provided, state),
                   cursor: "pointer",
                 }),
-                singleValue: provided => ({
+                singleValue: (provided: React.CSSProperties) => ({
                   ...provided,
                   margin: 0,
                   top: undefined,

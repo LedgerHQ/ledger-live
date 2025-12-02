@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { withTokens } from "../../libs";
 import styled from "styled-components";
 

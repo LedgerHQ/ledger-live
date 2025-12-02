@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import Input, { InputProps } from "../BaseInput";
 import FlexBox from "../../layout/Flex";
 import QrCodeMedium from "@ledgerhq/icons-ui/reactLegacy/QrCodeMedium";

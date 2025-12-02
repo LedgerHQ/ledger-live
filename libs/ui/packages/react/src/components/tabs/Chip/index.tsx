@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import Flex from "../../layout/Flex";
 

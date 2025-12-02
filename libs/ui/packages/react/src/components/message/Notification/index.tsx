@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import FlexBox, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";

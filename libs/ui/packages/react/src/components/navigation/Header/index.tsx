@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import FlexBox from "../../layout/Flex";
 
 export type Props = {

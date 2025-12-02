@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { animated, useSpring } from "react-spring";
 import { useTheme } from "styled-components";
 import { ItemStatus } from "./types";
@@ -51,7 +52,10 @@ const useBulletStyles = () => {
 };
 
 const Bullet = ({ type }: { type: ItemStatus }) => {
-  return <animated.div style={useSpring(useBulletStyles()[type])} />;
+  const springStyle = useSpring(useBulletStyles()[type]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const AnimatedDiv = animated.div as any;
+  return <AnimatedDiv style={springStyle} />;
 };
 
 export default Bullet;

@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import SideBarContext from "../index";
 import Text from "../../../asorted/Text";

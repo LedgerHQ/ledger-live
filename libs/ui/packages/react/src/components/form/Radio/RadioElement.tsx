@@ -1,4 +1,5 @@
 import React, { InputHTMLAttributes, useContext, useMemo } from "react";
+import type { JSX } from "react";
 import styled, { css } from "styled-components";
 
 import { rgba } from "../../../styles/helpers";

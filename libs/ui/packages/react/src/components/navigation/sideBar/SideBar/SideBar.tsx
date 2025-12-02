@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import type { JSX } from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import SideBarContext from "../../../navigation/sideBar";

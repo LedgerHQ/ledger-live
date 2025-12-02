@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { border, BorderProps } from "styled-system";
 import Text, { TextProps } from "../asorted/Text";
 import baseStyled, { BaseStyledProps } from "../styled";

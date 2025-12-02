@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { components, GroupBase, StylesConfig, MenuListProps } from "react-select";
 import { DefaultTheme } from "styled-components";
 

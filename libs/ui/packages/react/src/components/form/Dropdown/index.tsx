@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { components, GroupBase, ControlProps, ValueContainerProps } from "react-select";
 import { useTheme } from "styled-components";
 import SelectInput, { Props as SelectInputProps } from "../../form/SelectInput";
@@ -60,7 +61,7 @@ export default function Dropdown<O>(props: Props<O>): JSX.Element {
       placeholder=""
       isSearchable={false}
       styles={{
-        singleValue: provided => ({
+        singleValue: (provided: React.CSSProperties) => ({
           ...provided,
           color: theme.colors.neutral.c100,
           margin: 0,
@@ -71,7 +72,7 @@ export default function Dropdown<O>(props: Props<O>): JSX.Element {
           transform: undefined,
         }),
         input: () => ({ display: "none" }),
-        menu: provided => ({
+        menu: (provided: React.CSSProperties) => ({
           ...provided,
           border: 0,
           boxShadow: "none",

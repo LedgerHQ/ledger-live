@@ -1,4 +1,5 @@
 import React, { InputHTMLAttributes } from "react";
+import type { JSX } from "react";
 
 import RadioElement from "./RadioElement";
 import RadioListElement from "./RadioListElement";

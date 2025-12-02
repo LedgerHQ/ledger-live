@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import Input, { InputProps, InputRenderRightContainer } from "../BaseInput";
 import Text from "../../asorted/Text";
 import styled from "styled-components";

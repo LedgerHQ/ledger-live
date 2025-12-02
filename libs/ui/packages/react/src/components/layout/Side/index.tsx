@@ -1,4 +1,5 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
+import type { JSX } from "react";
 import { TransitionGroup } from "react-transition-group";
 import Drawer from "../Drawer";
 import TransitionSlide from "../../transitions/TransitionSlide";

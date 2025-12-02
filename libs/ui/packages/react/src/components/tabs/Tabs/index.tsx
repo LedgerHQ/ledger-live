@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createRef, forwardRef } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import Flex from "../../layout/Flex";
 import Tag from "../../Tag";

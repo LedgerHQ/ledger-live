@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { components, GroupBase, IndicatorsContainerProps } from "react-select";
 import FlexBox from "../../layout/Flex";
 import { Props as SelectProps } from "./index";

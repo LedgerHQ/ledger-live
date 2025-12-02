@@ -1,5 +1,6 @@
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
 import React from "react";
+import type { JSX } from "react";
 import { ensureContrast } from "../../../styles";
 import styled, { useTheme } from "styled-components";
 import Text from "../Text/index";

@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import { border, BorderProps, gridColumn, GridColumnProps } from "styled-system";
 import Grid, { Props as GridProps } from "../layout/Grid";

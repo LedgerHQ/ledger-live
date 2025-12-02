@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 
 import Text, { TextProps } from "../../asorted/Text";

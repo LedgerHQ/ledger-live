@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from "react";
+import type { JSX } from "react";
 import Select, {
   Props as SelectProps,
   ControlProps,
@@ -112,7 +113,6 @@ function SelectInput<O, M extends boolean, G extends GroupBase<O>>({
         IndicatorSeparator: null,
         ...components,
       }}
-      // @ts-expect-error We want to be able to pass extra props here…
       rowHeight={rowHeight}
     />
   );

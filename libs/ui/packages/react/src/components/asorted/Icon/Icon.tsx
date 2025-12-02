@@ -1,5 +1,6 @@
 import * as icons from "@ledgerhq/icons-ui/reactLegacy";
 import React from "react";
+import type { JSX } from "react";
 
 export type Props = {
   name: string;

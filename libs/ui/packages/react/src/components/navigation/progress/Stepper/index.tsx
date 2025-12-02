@@ -1,4 +1,5 @@
 import React, { memo, Fragment } from "react";
+import type { JSX } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
 import { IconsLegacy } from "../../../../index";

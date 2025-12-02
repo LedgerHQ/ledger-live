@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { CSSTransition } from "react-transition-group";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import styled from "styled-components";
