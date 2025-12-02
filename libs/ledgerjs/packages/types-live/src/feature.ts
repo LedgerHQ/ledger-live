@@ -282,7 +282,7 @@ export type Features = CurrencyFeatures & {
   lldSyncOnboardingIncr1: DefaultFeature;
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
-  newSendFlow: DefaultFeature;
+  newSendFlow: Feature_NewSendFlow;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
@@ -697,6 +697,10 @@ export type Feature_ModularDrawer = Feature<{
 
 export type Feature_Noah = Feature<{
   activeCurrencyIds: string[];
+}>;
+
+export type Feature_NewSendFlow = Feature<{
+  families?: string[];
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

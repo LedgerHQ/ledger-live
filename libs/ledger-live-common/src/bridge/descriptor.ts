@@ -82,39 +82,6 @@ export type CoinDescriptor = {
   // Future: stake, swap, etc.
 };
 
-export const newFlowsConfig: Record<
-  string,
-  { send?: boolean; staking?: boolean; receive?: boolean }
-> = {
-  algorand: { send: false },
-  aptos: { send: false },
-  bitcoin: { send: false },
-  canton: { send: false },
-  cardano: { send: false },
-  casper: { send: false },
-  celo: { send: false },
-  cosmos: { send: false },
-  evm: { send: false },
-  filecoin: { send: false },
-  hedera: { send: false },
-  icon: { send: false },
-  internet_computer: { send: false },
-  kaspa: { send: false },
-  mina: { send: false },
-  multiversx: { send: false },
-  near: { send: false },
-  polkadot: { send: false },
-  solana: { send: false },
-  stacks: { send: false },
-  stellar: { send: false },
-  sui: { send: false },
-  tezos: { send: false },
-  ton: { send: false },
-  tron: { send: false },
-  vechain: { send: false },
-  xrp: { send: false },
-};
-
 const descriptorRegistry: Record<string, CoinDescriptor> = {
   algorand: algorandDescriptor,
   aptos: aptosDescriptor,
@@ -200,17 +167,6 @@ export function getSendDescriptor(
 ): SendDescriptor | null {
   const descriptor = getDescriptor(currency);
   return descriptor?.send ?? null;
-}
-
-/*
- * Check if the currency supports the new flows
- */
-export function supportsNewFlows(
-  currency: CryptoOrTokenCurrency,
-  flow: "send" | "staking" | "receive",
-): boolean {
-  const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-  return newFlowsConfig[cryptoCurrency.family]?.[flow] ?? false;
 }
 
 /**

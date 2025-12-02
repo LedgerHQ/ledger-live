@@ -1,12 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-import { useDispatch } from "react-redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import SendWorkflow from "LLD/features/Send";
+import { closeModal } from "~/renderer/actions/modals";
+import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
+import { openSendFlowDialog } from "~/renderer/reducers/sendFlow";
+import type { State } from "~/renderer/reducers";
+import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 
 type Props = {
   stepId?: StepId;
@@ -23,11 +26,21 @@ const MODAL_LOCKED: {
   warning: false,
 };
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
-  const [stepId, setStep] = useState(() => initialStepId || "recipient");
-  const handleReset = useCallback(() => setStep("recipient"), []);
-  const handleStepChange = useCallback((stepId: StepId) => setStep(stepId), []);
-  const isModalLocked = MODAL_LOCKED[stepId as StepId];
+  const [stepId, setStepId] = useState<StepId>(() => initialStepId || "recipient");
+  const handleReset = useCallback(() => setStepId("recipient"), []);
+  const handleStepChange = useCallback((stepId: StepId) => setStepId(stepId), []);
+  const isModalLocked = MODAL_LOCKED[stepId];
   const dispatch = useDispatch();
+
+  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
+  const isOpened = useSelector((state: State) => isModalOpened(state, "MODAL_SEND"));
+  const modalData = useSelector((state: State) => getModalData(state, "MODAL_SEND"));
+
+  const family = getFamilyFromAccount(
+    modalData?.account ?? undefined,
+    modalData?.parentAccount ?? null,
+  );
+  const shouldRedirectToNewFlow = isEnabledForFamily(family);
 
   const handleModalClose = useCallback(() => {
     dispatch(
@@ -36,11 +49,37 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         forceAutoFocusOnMemoField: false,
       }),
     );
+    dispatch(closeModal("MODAL_SEND"));
     onClose?.();
   }, [dispatch, onClose]);
 
-  const newSendFlow = useFeature("newSendFlow");
+  useEffect(() => {
+    if (!shouldRedirectToNewFlow || !isOpened) return;
 
+    const sendData = modalData || {};
+    const amount = sendData.amount ? sendData.amount.toString() : undefined;
+
+    dispatch(
+      openSendFlowDialog({
+        params: {
+          account: sendData.account ?? undefined,
+          parentAccount: sendData.parentAccount ?? undefined,
+          recipient: sendData.recipient,
+          amount,
+          fromMAD: false,
+          startWithWarning: sendData.startWithWarning,
+        },
+        onClose,
+      }),
+    );
+    dispatch(closeModal("MODAL_SEND"));
+  }, [dispatch, isOpened, modalData, shouldRedirectToNewFlow, onClose]);
+
+  if (shouldRedirectToNewFlow) {
+    return null;
+  }
+
+  // Old flow: keep Modal wrapper
   return (
     <DomainServiceProvider>
       <Modal
@@ -49,33 +88,14 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onHide={handleReset}
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
-        render={({ onClose, data }) => {
-          const sendData = data || {};
-          if (!newSendFlow?.enabled) {
-            return (
-              <Body
-                stepId={stepId}
-                onClose={onClose}
-                onChangeStepId={handleStepChange}
-                params={data || {}}
-              />
-            );
-          }
-
-          // New send flow enabled
-          if (sendData.account) {
-            // Temporary placeholder while the new modal-based steps are being implemented.
-            return (
-              <div style={{ padding: 24 }}>
-                <p>New send flow (work in progress)</p>
-                <p>Selected account: {sendData.account?.id}</p>
-              </div>
-            );
-          }
-
-          // No preselected account: start the MAD-based account selection flow.
-          return <SendWorkflow onClose={onClose} params={{}} />;
-        }}
+        render={({ onClose, data }) => (
+          <Body
+            stepId={stepId}
+            onClose={onClose}
+            onChangeStepId={handleStepChange}
+            params={data || {}}
+          />
+        )}
       />
     </DomainServiceProvider>
   );
