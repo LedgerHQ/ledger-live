@@ -280,9 +280,9 @@ const extraProperties = (store: ReduxStore) => {
   // Currency or token ids from all stakeable accounts & subAccounts with positive balance
   const totalStakeableAssets = combinedIds.size;
 
-  const accountsWithFunds = Array.from(
-    new Set(accountsWithFundsCurrencies.map(account => account?.currency?.ticker)),
-  );
+  const accountsWithFunds = accounts
+    ? [...new Set(accountsWithFundsCurrencies.map(account => account?.currency?.ticker))]
+    : [];
 
   const tokenWithFunds = getTokensWithFunds(accounts);
 
@@ -302,7 +302,6 @@ const extraProperties = (store: ReduxStore) => {
     sidebarCollapsed,
     accountsWithFunds,
     tokenWithFunds,
-    totalStakeableAssets,
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
@@ -320,7 +319,7 @@ const extraProperties = (store: ReduxStore) => {
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
-  };
+    totalStakeableAssets,
 };
 
 function getAnalytics() {

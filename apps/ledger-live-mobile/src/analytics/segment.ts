@@ -268,14 +268,37 @@ const extraProperties = async (store: AppStore) => {
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
+
+  const accountsWithFundsCurrencies = accounts
+    ? accounts
+        .filter(account => account?.balance.isGreaterThan(0))
+        .map(account => account?.currency)
+    : [];
+
+  const accountsWithFundsCurrenciesIds = new Set(
+    accountsWithFundsCurrencies.map(currency => currency.id),
+  );
+
+  const tokenWithFundsIds = new Set(getTokensWithFunds(accounts, "currencyId"));
+
+  const allStakingCurrenciesEnabled = new Set([
+    ...(ptxAttributes.stakingCurrenciesEnabled ?? []),
+    ...(ptxAttributes.partnerStakingCurrenciesEnabled ?? []),
+  ]);
+
+  const filteredAccountIds = [...accountsWithFundsCurrenciesIds].filter(tokenId =>
+    allStakingCurrenciesEnabled.has(tokenId),
+  );
+  const filteredTokenIds = [...tokenWithFundsIds].filter(tokenId =>
+    allStakingCurrenciesEnabled.has(tokenId),
+  );
+  const combinedIds = new Set([...filteredAccountIds, ...filteredTokenIds]);
+
+  // Currency or token ids from all stakeable accounts & subAccounts with positive balance
+  const totalStakeableAssets = combinedIds.size;
+
   const accountsWithFunds = accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
+    ? [...new Set(accountsWithFundsCurrencies.map(account => account?.currency?.ticker))]
     : [];
 
   const nps = userNpsSelector(state);
@@ -354,6 +377,7 @@ const extraProperties = async (store: AppStore) => {
     ...mevProtectionAttributes,
     migrationToMMKV,
     tokenWithFunds,
+    totalStakeableAssets,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
@@ -361,6 +385,7 @@ const extraProperties = async (store: AppStore) => {
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
+    totalStakeableAssets,
   };
 };
 
