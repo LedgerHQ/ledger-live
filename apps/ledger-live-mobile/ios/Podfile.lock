@@ -2387,7 +2387,7 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-video (6.15.0):
+  - react-native-video (6.18.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2405,7 +2405,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-video/Video (= 6.15.0)
+    - react-native-video/Video (= 6.18.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2416,7 +2416,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Fabric (6.15.0):
+  - react-native-video/Fabric (6.18.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2444,7 +2444,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Video (6.15.0):
+  - react-native-video/Video (6.18.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3586,7 +3586,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - segment-analytics-react-native (2.20.5):
+  - segment-analytics-react-native (2.21.3):
     - React-Core
     - sovran-react-native
   - Sentry/HybridSDK (8.56.1)
@@ -3681,7 +3681,7 @@ DEPENDENCIES:
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.0.6_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+_uhzpwedpk4etoxcpeo7hjqpw5u/node_modules/react-native-tcp-socket`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.7/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
-  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.15.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@_bircq4lkwu3kn45ykjrvjf2si4/node_modules/react-native-video`)"
+  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.18.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@_eych7rqdtg4reh26kq2rfodtpq/node_modules/react-native-video`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.15.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+c_yzgmwmr3z3dvrhcfj5bzy2ibji/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@16.0.0_typescript@5.4.3__@_coomy3r5zsqrhwbs4wxvdvsvne/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-oscompat (from `../../../node_modules/.pnpm/react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@16.0.0_typescript@5.4.3__@_coomy3r5zsqrhwbs4wxvdvsvne/node_modules/react-native/ReactCommon/oscompat`)"
@@ -3733,7 +3733,7 @@ DEPENDENCIES:
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.12.1_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@1_5r4wye2njrg7z4nm2lwef3lqti/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@10.2.0/node_modules/react-native-vector-icons`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.5.0_@babel+core@7.27.1_react-native@0.81.5_@babel+core@7.27.1_@react-_2mhy7xwxlzjzoooq437rkp4yoi/node_modules/react-native-worklets`)"
-  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.20.5_fz65ym2rzxpxreeredde65m7ye/node_modules/@segment/analytics-react-native`)"
+  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.21.3_fz65ym2rzxpxreeredde65m7ye/node_modules/@segment/analytics-react-native`)"
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-native-async-storage+async-storage@2.2.0_react-nati_rkim7trjfjskurxizcxxipgxwi/node_modules/@segment/sovran-react-native`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@16.0.0_typescript@5.4.3__@_coomy3r5zsqrhwbs4wxvdvsvne/node_modules/react-native/ReactCommon/yoga`)"
@@ -3936,7 +3936,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@6.15.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@_bircq4lkwu3kn45ykjrvjf2si4/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@6.18.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+cli@_eych7rqdtg4reh26kq2rfodtpq/node_modules/react-native-video"
   react-native-webview:
     :path: "../../../node_modules/.pnpm/react-native-webview@13.15.0_react-native@0.81.5_@babel+core@7.27.1_@react-native-community+c_yzgmwmr3z3dvrhcfj5bzy2ibji/node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -4040,7 +4040,7 @@ EXTERNAL SOURCES:
   RNWorklets:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.5.0_@babel+core@7.27.1_react-native@0.81.5_@babel+core@7.27.1_@react-_2mhy7xwxlzjzoooq437rkp4yoi/node_modules/react-native-worklets"
   segment-analytics-react-native:
-    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.20.5_fz65ym2rzxpxreeredde65m7ye/node_modules/@segment/analytics-react-native"
+    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.21.3_fz65ym2rzxpxreeredde65m7ye/node_modules/@segment/analytics-react-native"
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-native-async-storage+async-storage@2.2.0_react-nati_rkim7trjfjskurxizcxxipgxwi/node_modules/@segment/sovran-react-native"
   Yoga:
@@ -4155,7 +4155,7 @@ SPEC CHECKSUMS:
   react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
   react-native-udp: 7e484efc89db2214f7501ac946781d3205b2c6a0
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
-  react-native-video: 7f576ed712c196b7ad15b20bd0a6dd92488c50f0
+  react-native-video: 624deff94be379ffaba289bed13fc0917f01abcb
   react-native-webview: d73728424a0e24989d71ffdc6fcf15d5f74ff4a2
   React-NativeModulesApple: cbceb3c4cb726838c461b13802a76cefa6f3476f
   React-oscompat: eb0626e8ba1a2c61673c991bf9dc21834898475d
@@ -4209,7 +4209,7 @@ SPEC CHECKSUMS:
   RNWorklets: fea70e481b4f43883fc0bc60c1d63a4f05c6ec98
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  segment-analytics-react-native: be835fc068af1177254e7b421858d7a4bc3de7d0
+  segment-analytics-react-native: a0c29c75ede1989118b50cac96b9495ea5c91a1d
   Sentry: b3ec44d01708fce73f99b544beb57e890eca4406
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
