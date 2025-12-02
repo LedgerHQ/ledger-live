@@ -14,14 +14,17 @@ import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
 import AccountsWarning from "./screens/AccountsWarning";
+import CantonOnboard from "./screens/AccountsOnboard";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -62,6 +65,7 @@ const ModularDrawerAddAccountFlowManager = ({
     emptyAccount,
     accountToEdit,
     accountToFund,
+    accountsOnboardState,
     navigateBack,
     navigateToWarningScreen,
     navigateToEditAccountName,
@@ -70,10 +74,14 @@ const ModularDrawerAddAccountFlowManager = ({
     navigateToScanAccounts,
     navigateToAccountsAdded,
     navigateToConnectDevice,
+    navigateToAccountsOnboard,
   } = useAddAccountFlowNavigation({
     selectedAccounts,
     onAccountSelected,
   });
+
+  const device = useSelector(getCurrentDevice);
+  const existingAccounts = useSelector(accountsSelector);
 
   const isAccountSelectionFlow = !!onAccountSelected;
   const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
@@ -116,6 +124,28 @@ const ModularDrawerAddAccountFlowManager = ({
               }}
               analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
               navigateToWarningScreen={navigateToWarningScreen}
+              navigateToAccountsOnboard={navigateToAccountsOnboard}
+            />
+          </StepContainer>
+        );
+      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD:
+        if (!accountsOnboardState || !device) {
+          throw new Error("Missing 'accountsOnboardState' or 'device'");
+        }
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <CantonOnboard
+              currency={cryptoCurrency}
+              device={device}
+              selectedAccounts={accountsOnboardState.selectedAccounts}
+              existingAccounts={existingAccounts}
+              editedNames={accountsOnboardState.editedNames}
+              isReonboarding={accountsOnboardState.isReonboarding}
+              accountToReonboard={accountsOnboardState.accountToReonboard}
+              onComplete={(accounts: Account[]) => {
+                setSelectedAccounts(accounts);
+                navigateToAccountsAdded();
+              }}
             />
           </StepContainer>
         );

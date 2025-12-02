@@ -330,6 +330,7 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  AccountsOnboard = "AccountsOnboard",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
