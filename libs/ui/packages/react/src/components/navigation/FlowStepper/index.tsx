@@ -1,5 +1,4 @@
 import React from "react";
-import type { JSX } from "react";
 import { isElement } from "react-is";
 import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";

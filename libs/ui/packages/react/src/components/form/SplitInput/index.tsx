@@ -2,10 +2,16 @@ import React, { useCallback } from "react";
 import type { JSX } from "react";
 import styled from "styled-components";
 import { DefaultTheme } from "styled-components";
-import { InputContainer as BaseInputContainer, InputErrorContainer, InputContainerStyleProps } from "../BaseInput";
+import {
+  InputContainer as BaseInputContainer,
+  InputErrorContainer,
+  InputContainerStyleProps,
+} from "../BaseInput";
 
 // Cast to avoid styled-components type inference issues with React 19
-const InputContainer = BaseInputContainer as React.ComponentType<InputContainerStyleProps & { children?: React.ReactNode }>;
+const InputContainer = BaseInputContainer as React.ComponentType<
+  InputContainerStyleProps & { children?: React.ReactNode }
+>;
 // Keep original for CSS selectors
 const InputContainerSelector = BaseInputContainer;
 

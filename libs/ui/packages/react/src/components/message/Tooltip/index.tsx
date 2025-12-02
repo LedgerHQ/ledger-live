@@ -42,7 +42,10 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
       const isDomElement = isValidElement && typeof child.type === "string";
 
       if (isForwardingRef || isDomElement) {
-        return React.cloneElement(child as React.ReactElement<{ ref?: React.LegacyRef<HTMLElement> }>, { ref });
+        return React.cloneElement(
+          child as React.ReactElement<{ ref?: React.LegacyRef<HTMLElement> }>,
+          { ref },
+        );
       } else {
         return <span ref={ref}>{props.children}</span>;
       }

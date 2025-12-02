@@ -1,5 +1,4 @@
 import React from "react";
-import type { JSX } from "react";
 import { animated, useSpring } from "react-spring";
 import { useTheme } from "styled-components";
 import { ItemStatus } from "./types";

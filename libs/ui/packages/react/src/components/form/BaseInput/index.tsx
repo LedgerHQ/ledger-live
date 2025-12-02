@@ -1,4 +1,4 @@
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
 import type { JSX } from "react";

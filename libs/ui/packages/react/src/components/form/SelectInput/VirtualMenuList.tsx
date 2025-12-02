@@ -1,5 +1,4 @@
 import React, { memo, useMemo, useRef, useEffect } from "react";
-import type { JSX } from "react";
 import { components, GroupBase, MenuListProps } from "react-select";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 import { Props as SelectProps } from "./index";
@@ -52,7 +51,9 @@ export function VirtualMenuList<
   children.length &&
     children.forEach((node: React.ReactNode) => {
       if (!node || !React.isValidElement(node)) return;
-      const nodeProps = node.props as { innerProps?: { onMouseMove?: unknown; onMouseOver?: unknown } };
+      const nodeProps = node.props as {
+        innerProps?: { onMouseMove?: unknown; onMouseOver?: unknown };
+      };
       if (nodeProps.innerProps) {
         delete nodeProps.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
         delete nodeProps.innerProps.onMouseOver;

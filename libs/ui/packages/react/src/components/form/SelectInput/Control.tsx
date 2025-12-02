@@ -6,7 +6,9 @@ import { InputContainer as BaseInputContainer, InputContainerStyleProps } from "
 import { Props as SelectProps } from "./index";
 
 // Cast to avoid styled-components type inference issues with React 19
-const InputContainer = BaseInputContainer as React.ComponentType<InputContainerStyleProps & { children?: React.ReactNode }>;
+const InputContainer = BaseInputContainer as React.ComponentType<
+  InputContainerStyleProps & { children?: React.ReactNode }
+>;
 
 export function getStyles<
   O = unknown,
