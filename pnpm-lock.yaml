@@ -31,8 +31,8 @@ catalogs:
       specifier: 1.2.1
       version: 1.2.1
     '@ledgerhq/ldls-design-core':
-      specifier: 0.0.26
-      version: 0.0.26
+      specifier: 0.0.30
+      version: 0.0.30
     '@ledgerhq/speculos-device-controller':
       specifier: 0.1.0
       version: 0.1.0
@@ -521,10 +521,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
       '@ledgerhq/ldls-design-core':
         specifier: 'catalog:'
-        version: 0.0.26(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+        version: 0.0.30(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       '@ledgerhq/ldls-ui-react':
-        specifier: 0.0.42
-        version: 0.0.42(@radix-ui/react-checkbox@1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-dialog@1.1.15(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-select@2.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-slot@1.2.4(@types/react@18.2.73)(react@18.3.1))(@radix-ui/react-switch@1.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
+        specifier: 0.0.47
+        version: 0.0.47(@radix-ui/react-checkbox@1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-dialog@1.1.15(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-select@2.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-slot@1.2.4(@types/react@18.2.73)(react@18.3.1))(@radix-ui/react-switch@1.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -15061,11 +15061,11 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/ldls-design-core@0.0.26':
-    resolution: {integrity: sha512-+eCFehIFx1Fa/B4GCG4QrGGT/RbbnytqK5y1enmT31SFX0uiZi1LuAVkU74tZGtMeeDPpo8FjUJ5D3mGJY72sw==}
+  '@ledgerhq/ldls-design-core@0.0.30':
+    resolution: {integrity: sha512-2eaYNcx6cZsnABApJNgB+qn9iOyccX1f2/4F+z8aKRX3UCHyRJ0Oux3JWKOgTxMWaircl3M3quJ6fAFPJygDNQ==}
 
-  '@ledgerhq/ldls-ui-react@0.0.42':
-    resolution: {integrity: sha512-KqXyyniRD6eVVbcRAGhYXUfqGEOwLitAG5iMq4IZ94xVXu0uP7csV02Zo8OwPIFYLPp2+eSacjrPWmWzFVOvpA==}
+  '@ledgerhq/ldls-ui-react@0.0.47':
+    resolution: {integrity: sha512-jayspUYBYPaVEpwCl3sCuOtQyQk8GByZnvoarzQbYYeadEhYyzBVWl1KSp5QwEJ5N2DRTRHZ6pwLN9W12/zZ2g==}
     peerDependencies:
       '@radix-ui/react-checkbox': ^1.3.2
       '@radix-ui/react-dialog': ^1.1.15
@@ -15079,8 +15079,8 @@ packages:
       react-dom: ^18.0.0 || ^19.0.0
       tailwind-merge: ^2.6.0
 
-  '@ledgerhq/ldls-utils-shared@0.0.9':
-    resolution: {integrity: sha512-VEQ4i7IRec5mHoz4SmsNK1BuMzo2yqqnkh2FYWxC8PP6MNvemnwjnC8TvImNfR0emVOdrYnr9cIDiWoxgxRfgw==}
+  '@ledgerhq/ldls-utils-shared@0.0.10':
+    resolution: {integrity: sha512-5VI1SRQUMr2VmLTbq25Kp0Hqz8kCc/67Bf22kNYcmDNH3q3fGgaQfDco5n+bgVA+LI/hyeCti5VMENf+94Iakg==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
 
@@ -32813,6 +32813,19 @@ packages:
       react-native:
         optional: true
 
+  react-i18next@14.1.3:
+    resolution: {integrity: sha512-wZnpfunU6UIAiJ+bxwOiTmBOAaB14ha97MjOEnLGac2RJ+h/maIYXZuTHlmyqQVX1UVHmU1YDTQ5vxLmwfXTjw==}
+    peerDependencies:
+      i18next: '>= 23.2.3'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+
   react-icons@5.5.0:
     resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
     peerDependencies:
@@ -39748,8 +39761,8 @@ snapshots:
 
   '@babel/generator@7.28.3':
     dependencies:
-      '@babel/parser': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
@@ -39764,11 +39777,11 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.25.9':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-compilation-targets@7.23.6':
     dependencies:
@@ -39865,18 +39878,18 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-member-expression-to-functions@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39894,7 +39907,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39905,7 +39918,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-simple-access': 7.25.9
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39930,14 +39943,14 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-plugin-utils@7.25.9': {}
 
@@ -39980,7 +39993,7 @@ snapshots:
   '@babel/helper-simple-access@7.25.9':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39993,7 +40006,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/helper-string-parser@7.25.9': {}
 
@@ -40015,7 +40028,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.27.2
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -40023,7 +40036,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.27.2
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -40039,7 +40052,7 @@ snapshots:
 
   '@babel/highlight@7.24.6':
     dependencies:
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       chalk: 2.4.2
       js-tokens: 4.0.0
       picocolors: 1.1.1
@@ -41406,8 +41419,8 @@ snapshots:
   '@babel/template@7.24.0':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
 
   '@babel/template@7.27.0':
     dependencies:
@@ -41478,11 +41491,11 @@ snapshots:
   '@babel/traverse@7.28.4':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/generator': 7.28.3
+      '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
@@ -41502,7 +41515,7 @@ snapshots:
   '@babel/types@7.24.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       to-fast-properties: 2.0.0
 
   '@babel/types@7.27.0':
@@ -41518,12 +41531,12 @@ snapshots:
   '@babel/types@7.28.2':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
 
   '@babel/types@7.28.4':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
 
   '@babel/types@7.28.5':
     dependencies:
@@ -46914,16 +46927,16 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/ldls-design-core@0.0.26(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))':
+  '@ledgerhq/ldls-design-core@0.0.30(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))':
     dependencies:
       tailwindcss: 3.4.3(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       tslib: 2.6.2
     transitivePeerDependencies:
       - ts-node
 
-  '@ledgerhq/ldls-ui-react@0.0.42(@radix-ui/react-checkbox@1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-dialog@1.1.15(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-select@2.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-slot@1.2.4(@types/react@18.2.73)(react@18.3.1))(@radix-ui/react-switch@1.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)':
+  '@ledgerhq/ldls-ui-react@0.0.47(@radix-ui/react-checkbox@1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-dialog@1.1.15(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-select@2.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-slot@1.2.4(@types/react@18.2.73)(react@18.3.1))(@radix-ui/react-switch@1.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-merge@3.4.0)':
     dependencies:
-      '@ledgerhq/ldls-utils-shared': 0.0.9(react@18.3.1)
+      '@ledgerhq/ldls-utils-shared': 0.0.10(react@18.3.1)
       '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-select': 2.2.6(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -46932,11 +46945,15 @@ snapshots:
       '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       class-variance-authority: 0.7.1
       clsx: 2.1.1
+      i18next: 23.10.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge: 3.4.0
+    transitivePeerDependencies:
+      - react-native
 
-  '@ledgerhq/ldls-utils-shared@0.0.9(react@18.3.1)':
+  '@ledgerhq/ldls-utils-shared@0.0.10(react@18.3.1)':
     dependencies:
       clsx: 2.1.1
       react: 18.3.1
@@ -49539,7 +49556,7 @@ snapshots:
 
   '@react-native/codegen@0.76.9(@babel/preset-env@7.27.1(@babel/core@7.27.1))':
     dependencies:
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
       glob: 7.2.3
       hermes-parser: 0.23.1
@@ -53494,7 +53511,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -53677,9 +53694,9 @@ snapshots:
   '@storybook/csf-tools@7.6.20':
     dependencies:
       '@babel/generator': 7.27.1
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@storybook/csf': 0.1.3
       '@storybook/types': 7.6.20
       fs-extra: 11.2.0
@@ -54859,16 +54876,16 @@ snapshots:
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
 
   '@types/babel__traverse@7.20.5':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -56646,7 +56663,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -56661,7 +56678,7 @@ snapshots:
 
   '@vue/compiler-sfc@2.7.16':
     dependencies:
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       postcss: 8.5.1
       source-map: 0.6.1
     optionalDependencies:
@@ -57964,21 +57981,21 @@ snapshots:
   babel-plugin-jest-hoist@27.5.1:
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@28.1.3:
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@29.6.3:
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
@@ -65660,7 +65677,7 @@ snapshots:
   istanbul-lib-instrument@5.2.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 6.3.1
@@ -68020,7 +68037,7 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
       '@types/babel__traverse': 7.20.5
@@ -68048,7 +68065,7 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@jest/expect-utils': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
@@ -68100,10 +68117,10 @@ snapshots:
   jest-snapshot@30.2.0:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/generator': 7.28.3
+      '@babel/generator': 7.28.5
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@jest/expect-utils': 30.2.0
       '@jest/get-type': 30.1.0
       '@jest/snapshot-utils': 30.2.0
@@ -68625,7 +68642,7 @@ snapshots:
   jscodeshift@0.14.0(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.27.1)
@@ -68650,7 +68667,7 @@ snapshots:
   jscodeshift@0.15.2(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.5
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.27.1)
@@ -70363,7 +70380,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.28.4'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.28.5'
       '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -73831,6 +73848,15 @@ snapshots:
       react: 18.3.1
     optionalDependencies:
       react-native: 0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+
+  react-i18next@14.1.3(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.27.1
+      html-parse-stringify: 3.0.1
+      i18next: 23.10.1
+      react: 18.3.1
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
 
   react-icons@5.5.0(react@19.2.0):
     dependencies:

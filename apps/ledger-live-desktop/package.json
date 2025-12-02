@@ -73,7 +73,7 @@
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ldls-design-core": "catalog:",
-    "@ledgerhq/ldls-ui-react": "0.0.42",
+    "@ledgerhq/ldls-ui-react": "0.0.47",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
