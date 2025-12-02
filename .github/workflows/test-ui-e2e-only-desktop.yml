@@ -244,7 +244,7 @@ jobs:
       - name: Publish report on Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_896
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           platform: ${{ inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos' }}
           login: ${{ vars.ALLURE_USERNAME }}
