@@ -64,6 +64,11 @@ export type FeeDescriptor = {
 };
 
 /**
+ * Self-transfer policy for a coin
+ */
+export type SelfTransferPolicy = "free" | "warning" | "impossible";
+
+/**
  * Send flow descriptor defining inputs for the send transaction
  */
 export type SendDescriptor = {
@@ -72,6 +77,7 @@ export type SendDescriptor = {
     memo?: InputDescriptor;
   };
   fees: FeeDescriptor;
+  selfTransfer: SelfTransferPolicy; // Policy for sending to self (same address)
 };
 
 /**
@@ -208,5 +214,14 @@ export const sendFeatures = {
   supportsDomain: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.recipientSupportsDomain ?? false;
+  },
+  getSelfTransferPolicy: (currency: CryptoOrTokenCurrency | undefined): SelfTransferPolicy => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.selfTransfer ?? "impossible";
+  },
+  allowsSelfTransfer: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const descriptor = getSendDescriptor(currency);
+    const policy = descriptor?.selfTransfer ?? "impossible";
+    return policy === "free" || policy === "warning";
   },
 };

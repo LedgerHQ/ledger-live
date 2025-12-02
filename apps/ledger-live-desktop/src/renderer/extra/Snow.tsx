@@ -109,8 +109,8 @@ const Snow = ({ numFlakes }: Props) => {
         width: "100%",
         height: "100%",
         position: "absolute",
-        marginTop: -60,
-        marginBottom: -60,
+        /* marginTop: -60,
+        marginBottom: -60, */
       }}
     >
       <canvas ref={canvasRef} />

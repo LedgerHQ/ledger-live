@@ -44,6 +44,7 @@ export type SendFlowUiConfig = Readonly<{
 
 export type RecipientData = Readonly<{
   address: string;
+  ensName?: string;
   memo?: string;
   destinationTag?: string;
 }>;

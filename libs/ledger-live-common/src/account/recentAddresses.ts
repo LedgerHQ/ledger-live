@@ -6,8 +6,10 @@ export type RecentAddressesCache = RecentAddressesState;
 
 export interface RecentAddressesStore {
   addAddress(currency: string, address: string): void;
+  removeAddress(currency: string, address: string): void;
   syncAddresses(cache: RecentAddressesCache): void;
   getAddresses(currency: string): string[];
+  getAddressesWithMetadata(currency: string): RecentAddress[];
 }
 
 let recentAddressesStore: RecentAddressesStore | null = null;
@@ -58,6 +60,17 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     this.addAddressToCache(currency, address, Date.now(), true);
   }
 
+  removeAddress(currency: string, address: string): void {
+    if (!this.addressesByCurrency[currency]) return;
+    const addresses = this.addressesByCurrency[currency];
+    const index = addresses.findIndex(entry => entry.address === address);
+    if (index !== -1) {
+      addresses.splice(index, 1);
+      this.addressesByCurrency[currency] = [...addresses];
+      this.onAddAddressComplete(this.addressesByCurrency);
+    }
+  }
+
   syncAddresses(cache: RecentAddressesCache): void {
     const previousAddresses = { ...this.addressesByCurrency };
     this.addressesByCurrency = { ...cache };
@@ -76,7 +89,18 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
   getAddresses(currency: string): string[] {
     const addresses = this.addressesByCurrency[currency];
     if (!addresses) return [];
-    return addresses.map(entry => entry.address);
+    return addresses
+      .map(entry => entry?.address)
+      .filter((addr): addr is string => typeof addr === "string" && addr.length > 0);
+  }
+
+  getAddressesWithMetadata(currency: string): RecentAddress[] {
+    const addresses = this.addressesByCurrency[currency];
+    if (!addresses) return [];
+    return addresses.filter(
+      (entry): entry is RecentAddress =>
+        !!entry && typeof entry.address === "string" && entry.address.length > 0,
+    );
   }
 
   private addAddressToCache(

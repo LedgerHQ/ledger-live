@@ -12,5 +12,6 @@ export const descriptor: CoinDescriptor = {
       hasPresets: true,
       hasCustom: false,
     },
+    selfTransfer: "impossible",
   },
 };

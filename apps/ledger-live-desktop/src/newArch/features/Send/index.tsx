@@ -11,6 +11,7 @@ import { useSendFlowContext } from "./context/SendFlowContext";
 import { FLOW_STATUS } from "../FlowWizard/types";
 import type { AnimationConfig } from "../FlowWizard/types";
 import { AccountSelectionScreen } from "./screens/AccountSelection/AccountSelectionScreen";
+import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -24,7 +25,7 @@ const SEND_ANIMATION_CONFIG: AnimationConfig = {
 
 const stepRegistry = createStepRegistry({
   [SEND_FLOW_STEP.ACCOUNT_SELECTION]: AccountSelectionScreen,
-  [SEND_FLOW_STEP.RECIPIENT]: () => <></>,
+  [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: () => <></>,
   [SEND_FLOW_STEP.SIGNATURE]: () => <></>,
   [SEND_FLOW_STEP.CONFIRMATION]: () => <></>,
