@@ -32,7 +32,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
-import invariant from "invariant";
 import { bufferMemoToString, hexMemoToString } from "./memoUtils";
 
 type ContractCallArg = {
