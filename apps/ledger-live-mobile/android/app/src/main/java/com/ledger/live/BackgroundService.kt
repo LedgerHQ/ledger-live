@@ -6,8 +6,8 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.jstasks.HeadlessJsTaskConfig
 
 class BackgroundService : HeadlessJsTaskService() {
-    override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
-        val extras = intent.extras
+    override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
+        val extras = intent?.extras
         return if (extras != null) {
             HeadlessJsTaskConfig(
                     "BackgroundRunnerService",
