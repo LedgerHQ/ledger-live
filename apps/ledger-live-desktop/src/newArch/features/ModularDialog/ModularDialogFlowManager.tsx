@@ -21,6 +21,7 @@ const ModularDialogFlowManager = ({
   onAssetSelected,
   onAccountSelected,
   onClose,
+  skipDialogWrapper = false,
 }: ModularDrawerFlowManagerProps) => {
   const dispatch = useDispatch();
   const flow = useSelector(modularDrawerFlowSelector);
