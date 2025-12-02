@@ -1,5 +1,5 @@
 import { listOperations } from "./listOperations";
-import { getListOperations, withApi } from "../network/sdk";
+import { getTransactions, withApi } from "../network/sdk";
 import { type Operation as Op, type Page, Pagination } from "@ledgerhq/coin-framework/api/types";
 
 jest.mock("../network/sdk");
@@ -48,7 +48,7 @@ const mockOperations: Page<Op> = {
   next: "0x1234567890abcdef",
 };
 
-const mockGetListOperations = jest.mocked(getListOperations);
+const mockGetListOperations = jest.mocked(getTransactions);
 mockGetListOperations.mockResolvedValue(mockOperations);
 
 describe("List Operations", () => {

@@ -26,9 +26,9 @@ import {
   lastBlock,
   Options,
 } from "../logic";
-import type { TronMemo } from "../types";
+import type { TronAlpacaApi, TronMemo } from "../types";
 
-export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
+export function createApi(config: TronConfig): TronAlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

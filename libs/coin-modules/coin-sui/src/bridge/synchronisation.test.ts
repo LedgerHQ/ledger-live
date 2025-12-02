@@ -35,7 +35,7 @@ setCryptoAssetsStore({
 
 describe("getAccountShape", () => {
   const mockGetAccountBalances = networkModule.getAccountBalances as jest.Mock;
-  const mockGetOperations = networkModule.getOperations as jest.Mock;
+  const mockGetOperations = networkModule.getLiveOperations as jest.Mock;
   const mockGetStakesRaw = networkModule.getStakesRaw as jest.Mock;
 
   beforeEach(() => {

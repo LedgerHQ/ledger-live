@@ -1,7 +1,7 @@
 import {
   getAccountBalances,
   getAllBalancesCached,
-  getOperations,
+  getLiveOperations,
   getBlock,
   getBlockInfo,
   getStakesRaw,
@@ -15,7 +15,7 @@ import {
 export {
   getAccountBalances,
   getAllBalancesCached,
-  getOperations,
+  getLiveOperations,
   getBlock,
   getBlockInfo,
   getStakesRaw,
@@ -29,7 +29,7 @@ export {
 export default {
   getAccountBalances,
   getAllBalancesCached,
-  getOperations,
+  getOperations: getLiveOperations,
   getBlock,
   getBlockInfo,
   getStakesRaw,

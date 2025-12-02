@@ -42,7 +42,7 @@ export function toListOperations<MemoType extends Memo>(
  * In our APIs, we keep fees separate from other balance changes occurring in the same transaction. This function
  * subtracts the fees from the balance changes.
  *
- * Note that behaviour is undefined if provided deltas do not cover provided fees (eg: no delta for a given fee).
+ * Note that behavior is undefined if provided deltas do not cover provided fees (eg: no delta for a given fee).
  *
  * @param deltas transaction balance deltas, including fees
  * @param fees fees balance deltas

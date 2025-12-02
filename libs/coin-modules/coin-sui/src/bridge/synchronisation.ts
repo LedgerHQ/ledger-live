@@ -10,7 +10,7 @@ import {
   type GetAccountShape,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { type Operation } from "@ledgerhq/types-live";
-import { getAccountBalances, getOperations, getStakesRaw } from "../network";
+import { getAccountBalances, getLiveOperations, getStakesRaw } from "../network";
 import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
@@ -44,7 +44,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   const stakes = await getStakesRaw(address);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
-  const newOperations = await getOperations(accountId, address, syncHash);
+  const newOperations = await getLiveOperations(accountId, address, syncHash);
   operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 

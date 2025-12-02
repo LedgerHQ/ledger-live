@@ -2,19 +2,9 @@ import {
   AccountTransaction,
   Cursor,
   Direction,
-  Operation,
   Page,
-  Pagination,
 } from "@ledgerhq/coin-framework/lib/api/types";
-import { getListOperations, withApi } from "../network/sdk";
-
-export const listOperations = async (
-  address: string,
-  { lastPagingToken, order }: Pagination,
-): Promise<[Operation[], string]> => {
-  const ops = await getListOperations(address, order ?? "asc", withApi, lastPagingToken);
-  return [ops.items, ops.next || ""];
-};
+import { getTransactions as sdkGetTransactions } from "../network/sdk";
 
 export const getTransactions = async (
   address: string,
@@ -23,6 +13,5 @@ export const getTransactions = async (
   maxHeight?: number,
   cursor?: Cursor,
 ): Promise<Page<AccountTransaction>> => {
-  // TODO
-  throw new Error("Not implemented");
+  return await sdkGetTransactions(address, direction, minHeight, maxHeight, cursor);
 };

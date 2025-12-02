@@ -1,5 +1,5 @@
 import { ExecuteTransactionBlockParams } from "@mysten/sui/client";
-import suiAPI from "../network";
+import { executeTransactionBlock } from "../network";
 
 /**
  * Broadcasts a transaction to the Sui network.
@@ -25,7 +25,7 @@ export async function broadcast(
   } else {
     params = transaction;
   }
-  const result = await suiAPI.executeTransactionBlock(params);
+  const result = await executeTransactionBlock(params);
   return result?.digest ?? "";
 }
 

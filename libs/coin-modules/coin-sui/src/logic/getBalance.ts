@@ -4,13 +4,13 @@ import { toSuiAsset } from "../network/sdk";
 
 export async function getBalance(address: string): Promise<Balance[]> {
   const [native, staking] = await Promise.all([
-    getNativeBalance(address),
+    getNativeAndTokensBalance(address),
     getStakingBalances(address),
   ]);
   return [...native, ...staking];
 }
 
-const getNativeBalance = async (address: string): Promise<Balance[]> => {
+const getNativeAndTokensBalance = async (address: string): Promise<Balance[]> => {
   const balances = await getAllBalancesCached(address);
   return balances.map(({ coinType, totalBalance }) => ({
     value: BigInt(totalBalance),

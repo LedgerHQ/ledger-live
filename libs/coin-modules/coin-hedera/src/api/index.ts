@@ -1,12 +1,8 @@
 import type {
-  AccountTransaction,
   Api,
-  Block,
-  BlockInfo,
   CraftedTransaction,
   Cursor,
   Direction,
-  MemoNotSupported,
   Operation,
   Page,
   Reward,
@@ -32,7 +28,7 @@ import {
 } from "../logic/index";
 import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import type { HederaAccountTransaction, HederaMemo } from "../types";
 
 export function createApi(config: Record<string, never>): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -144,19 +140,13 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
     },
-    getBlock: async (_height): Promise<Block<HederaMemo>> => {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo: async (_height): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
-    },
     getTransactions(
       _address: string,
       _direction?: Direction,
       _minHeight?: number,
       _maxHeight?: number,
       _cursor?: Cursor,
-    ): Promise<Page<AccountTransaction<HederaMemo>>> {
+    ): Promise<Page<HederaAccountTransaction>> {
       throw new Error("getTransactions is not supported");
     },
     getStakes: async (_address, _cursor): Promise<Page<Stake>> => {

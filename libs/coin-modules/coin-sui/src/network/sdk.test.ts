@@ -443,7 +443,7 @@ describe("SDK Functions", () => {
     };
 
     // Instead of mocking, just directly verify the amount
-    const operation = sdk.transactionToOperation(
+    const operation = sdk.toLiveOperation(
       accountId,
       address,
       suiTx as SuiTransactionBlockResponse,
@@ -494,7 +494,7 @@ describe("SDK Functions", () => {
       ],
     };
 
-    const operation = sdk.transactionToOperation(
+    const operation = sdk.toLiveOperation(
       accountId,
       address,
       tokenTx as SuiTransactionBlockResponse,
@@ -562,7 +562,7 @@ describe("SDK Functions", () => {
   test("getOperations should fetch operations", async () => {
     const accountId = "mockAccountId";
     const addr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const operations = await sdk.getOperations(accountId, addr);
+    const operations = await sdk.getLiveOperations(accountId, addr);
     expect(Array.isArray(operations)).toBe(true);
   });
 
@@ -822,7 +822,7 @@ describe("Staking Operations", () => {
       const accountId = "mockAccountId";
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.transactionToOperation(
+      const operation = sdk.toLiveOperation(
         accountId,
         address,
         mockStakingTx(address, "-1000000000"),
@@ -842,7 +842,7 @@ describe("Staking Operations", () => {
     test("transactionToOperation should map unstaking transaction correctly", () => {
       const accountId = "mockAccountId";
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
-      const operation = sdk.transactionToOperation(
+      const operation = sdk.toLiveOperation(
         accountId,
         address,
         mockUnstakingTx(address, "1000000000"),
@@ -907,7 +907,7 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await sdk.queryTransactions({
+    const result = await sdk.queryTransactionBlocksPageByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -928,7 +928,7 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await sdk.queryTransactions({
+    const result = await sdk.queryTransactionBlocksPageByAddress({
       api: mockApi,
       addr: "0xdef",
       type: "OUT",
@@ -960,7 +960,7 @@ describe("loadOperations", () => {
         hasNextPage: false,
       });
 
-    const result = await sdk.loadOperations({
+    const result = await sdk.queryTransactionBlocksByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -987,7 +987,7 @@ describe("loadOperations", () => {
       hasNextPage: false, // Only one call should be made
     });
 
-    const result = await sdk.loadOperations({
+    const result = await sdk.queryTransactionBlocksByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "OUT",
@@ -1014,7 +1014,7 @@ describe("loadOperations", () => {
       });
     });
 
-    const result = await sdk.loadOperations({
+    const result = await sdk.queryTransactionBlocksByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -1032,7 +1032,7 @@ describe("loadOperations", () => {
     // Call fails with InvalidParams
     mockApi.queryTransactionBlocks.mockRejectedValueOnce({ type: "InvalidParams" });
 
-    const result = await sdk.loadOperations({
+    const result = await sdk.queryTransactionBlocksByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -1059,7 +1059,7 @@ describe("loadOperations", () => {
   it("should should not retry after unexpected errors and return empty data", async () => {
     mockApi.queryTransactionBlocks.mockRejectedValueOnce(new Error("unexpected"));
 
-    const result = await sdk.loadOperations({
+    const result = await sdk.queryTransactionBlocksByAddress({
       api: mockApi,
       addr: "0xerr",
       type: "IN",
@@ -1177,7 +1177,7 @@ describe("getOperations filtering logic", () => {
   test("should not apply timestamp filter when cursor is provided", async () => {
     const cursor = "test-cursor";
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr, cursor);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr, cursor);
 
     // Should not filter by timestamp when cursor is provided
     expect(operations).toHaveLength(4);
@@ -1185,7 +1185,7 @@ describe("getOperations filtering logic", () => {
   });
 
   test("should not apply timestamp filter when operations don't reach limits", async () => {
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Should not filter by timestamp when limits aren't reached
     expect(operations).toHaveLength(4);
@@ -1214,7 +1214,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1000 + 299*100 = 30900
@@ -1249,7 +1249,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1500
@@ -1283,7 +1283,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1000 + 299*100 = 30900
@@ -1322,7 +1322,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Filter timestamp should be the timestamp of the last sent operation (4000 + 296*100 = 33600)
     // Only operations with timestamp >= 33600 should remain
@@ -1351,7 +1351,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Should be sorted by timestamp in descending order
     const timestamps = operations.map(op => Number(op.date.getTime()));
@@ -1364,7 +1364,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     expect(operations).toHaveLength(0);
   });
@@ -1386,7 +1386,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     expect(operations).toHaveLength(2);
     expect(operations.map(op => op.hash)).toEqual(["sent2", "sent1"]);
@@ -1415,7 +1415,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getLiveOperations(mockAccountId, mockAddr);
 
     // Filter timestamp should be 1000 (the common timestamp)
     // All operations have timestamp 1000, so all should pass the filter
@@ -2133,12 +2133,12 @@ describe("getCoinsForAmount", () => {
     };
 
     test("handles no data in asc mode", async () => {
-      const r = sdk.dedupOperations(outs, ins, "asc");
+      const r = sdk.mergeTransactions(outs, ins, "asc");
       expect(r.operations.length).toBe(0);
     });
 
     test("handles no data in desc mode", async () => {
-      const r = sdk.dedupOperations(outs, ins, "desc");
+      const r = sdk.mergeTransactions(outs, ins, "desc");
       expect(r.operations.length).toBe(0);
     });
   });

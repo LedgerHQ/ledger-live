@@ -5,7 +5,7 @@ import {
   createTransaction,
   DEFAULT_COIN_TYPE,
   getAccountBalances,
-  getOperations,
+  getLiveOperations,
   getCheckpoint,
   paymentInfo,
   getBlock,
@@ -40,7 +40,7 @@ describe("SUI SDK Integration tests", () => {
       const testingAccount = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
       beforeAll(async () => {
-        operations = await getOperations("mockAccoundId", testingAccount);
+        operations = await getLiveOperations("mockAccoundId", testingAccount);
       });
 
       describe("List", () => {

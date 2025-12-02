@@ -12,6 +12,8 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  Direction,
+  AccountTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
@@ -53,6 +55,15 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getTransactions(
+      _address: string,
+      _direction?: Direction,
+      _minHeight?: number,
+      _maxHeight?: number,
+      _cursor?: Cursor,
+    ): Promise<Page<AccountTransaction>> {
+      throw new Error("getTransactions is not supported");
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");

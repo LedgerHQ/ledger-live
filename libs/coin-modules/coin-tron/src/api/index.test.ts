@@ -9,8 +9,9 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
+import { TronAlpacaApi } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -48,7 +49,7 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: AlpacaApi = createApi(mockTronConfig);
+    const api: TronAlpacaApi = createApi(mockTronConfig);
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",

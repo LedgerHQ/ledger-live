@@ -78,7 +78,7 @@ export type Transaction = {
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 /**
- * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
+ * A block along with its {@link BlockTransaction}.
  */
 export type Block<MemoType extends Memo = MemoNotSupported> = {
   /** The block metadata. */
@@ -90,7 +90,7 @@ export type Block<MemoType extends Memo = MemoNotSupported> = {
    * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
    * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
    */
-  transactions: BlockTransaction<MemoType>[];
+  transactions: ReadonlyArray<BlockTransaction<MemoType>>;
 };
 
 /** A transaction returned by {@link AlpacaApi#getBlock}. */
@@ -110,7 +110,7 @@ export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
   failed: boolean;
 
   /**
-   * Optional memo associated with the operation.
+   * Optional memo associated with the transactions.
    * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
    * Defaults to `MemoNotSupported`.
    */
@@ -122,7 +122,7 @@ export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
    * It must include at least all events that caused a balance change. Ignoring other events or not is implementation
    * specific.
    */
-  events: TransactionEvent[];
+  events: ReadonlyArray<TransactionEvent>;
 
   /** Network specific details for this transaction. */
   details?: Record<string, unknown>;
@@ -155,7 +155,7 @@ export type AccountTransaction<MemoType extends Memo = MemoNotSupported> =
  * The implementation guideline is to:
  *  - use the most concise representation of the transaction: for instance, in a batch transfer, if it makes no sense to
  *    attach metadata to each balance delta, then using a single event with N balance deltas is preferable.
- *  - do not loose information: in the batch transfer example, if each balance delta has a specific operation identifier,
+ *  - do not lose information: in the batch transfer example, if each balance delta has a specific operation identifier,
  *    then it makes more sense using N events.
  */
 export type TransactionEvent = {
@@ -163,66 +163,107 @@ export type TransactionEvent = {
   type: TransactionEventType;
 
   /** Balance deltas caused by this event, if any. */
-  balanceDeltas: BalanceDelta[];
+  balanceDeltas: ReadonlyArray<BalanceDelta>;
 
   /** Network specific details for this event. */
   details?: Record<string, unknown>;
 };
 
+/**
+ * TODO
+ */
 export type TransactionEventType =
-  // COMMON
-  | "UNKNOWN" // default/fallback
-  | "TRANSFER" // default type for send/receive
-  | "FEE" // fee payment
-  | "CREATE"
-  | "REVEAL"
-  // COSMOS
+  // shared types
+
+  /** Default/fallback when event type is not known (should ony be used as an exception). */
+  | "UNKNOWN"
+  /** Simple transfer (send or receive). */
+  | "TRANSFER"
+  /** Fee payment. */
+  | "FEE"
+  /** Delegate assets to a staking validator, in a proof of stake blockchain. */
   | "DELEGATE"
+  /** Un-delegate assets from a staking validator, in a proof of stake blockchain. */
   | "UNDELEGATE"
-  | "REDELEGATE"
-  | "REWARD"
-  // TRON
-  | "FEES"
-  | "FREEZE"
-  | "UNFREEZE"
-  | "WITHDRAW_EXPIRE_UNFREEZE"
-  | "UNDELEGATE_RESOURCE"
-  | "LEGACY_UNFREEZE"
-  // POLKADOT
-  | "VOTE"
-  | "REWARD_PAYOUT"
-  | "BOND"
-  | "UNBOND"
-  | "WITHDRAW_UNBONDED"
-  | "SET_CONTROLLER"
-  | "SLASH"
-  | "NOMINATE"
-  | "CHILL"
-  // ETHEREUM
-  | "APPROVE"
-  // ALGORAND
-  | "OPT_IN"
-  | "OPT_OUT"
-  // CELO
-  | "LOCK"
-  | "UNLOCK"
-  | "WITHDRAW"
-  | "REVOKE"
-  | "ACTIVATE"
-  | "REGISTER"
-  // NFT
-  | "NFT_IN"
-  | "NFT_OUT"
-  // NEAR
-  | "STAKE"
-  | "UNSTAKE"
-  | "WITHDRAW_UNSTAKED"
-  // SOLANA
+  /** Permanently destroy some assets. */
   | "BURN"
-  // HEDERA
-  | "ASSOCIATE_TOKEN"
-  // CANTON
-  | "PRE_APPROVAL";
+
+  // blockchain specific types
+
+  /** Tezos specific: account create operation. */
+  | "TEZOS_CREATE"
+  /** Tezos specific: account reveal operation. */
+  | "TEZOS_REVEAL"
+  /** Cosmos specific: TODO. */
+  | "COSMOS_REDELEGATE"
+  /** Cosmos specific: TODO. */
+  | "COSMOS_REWARD"
+  /** Tron specific: TODO. */
+  | "TRON_FEES"
+  /** Tron specific: TODO. */
+  | "TRON_FREEZE"
+  /** Tron specific: TODO. */
+  | "TRON_UNFREEZE"
+  /** Tron specific: TODO. */
+  | "TRON_WITHDRAW_EXPIRE_UNFREEZE"
+  /** Tron specific: TODO. */
+  | "TRON_UNDELEGATE_RESOURCE"
+  /** Tron specific: TODO. */
+  | "TRON_LEGACY_UNFREEZE"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_VOTE"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_REWARD_PAYOUT"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_BOND"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_UNBOND"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_WITHDRAW_UNBONDED"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_SET_CONTROLLER"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_SLASH"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_NOMINATE"
+  /** Polkadot specific: TODO. */
+  | "POLKADOT_CHILL"
+  /** EVM specific: TODO. */
+  | "EVM_APPROVE"
+  /** Algorand specific: TODO. */
+  | "ALGORAND_OPT_IN"
+  /** Algorand specific: TODO. */
+  | "ALGORAND_OPT_OUT"
+  /** Celo specific: TODO. */
+  | "CELO_LOCK"
+  /** Celo specific: TODO. */
+  | "CELO_UNLOCK"
+  /** Celo specific: TODO. */
+  | "CELO_WITHDRAW"
+  /** Celo specific: TODO. */
+  | "CELO_REVOKE"
+  /** Celo specific: TODO. */
+  | "CELO_ACTIVATE"
+  /** Celo specific: TODO. */
+  | "CELO_REGISTER"
+  /** NEAR specific: TODO. */
+  | "NEAR_STAKE"
+  /** NEAR specific: TODO. */
+  | "NEAR_UNSTAKE"
+  /** NEAR specific: TODO. */
+  | "NEAR_WITHDRAW_UNSTAKED"
+  /** Hedera specific: associate a token with an account. */
+  | "HEDERA_ASSOCIATE_TOKEN"
+  /** Canton specific: setup automatic approval for incoming Canton Coin transfers. */
+  | "CANTON_PRE_APPROVE"
+  /** Canton specific: emit an outgoing transfer offer. */
+  | "CANTON_OFFER"
+  /** Canton specific: accept an incoming transfer offer. */
+  | "CANTON_ACCEPT"
+  /** Canton specific: reject an incoming transfer offer. */
+  | "CANTON_REJECT"
+  /** Canton specific: cancel an outgoing transfer offer. */
+  | "CANTON_WITHDRAW";
 
 /**
  * A change on an address balance that occurred as part of a {@link TransactionEvent}.
@@ -496,7 +537,7 @@ export type Direction = "asc" | "desc";
 
 /** A paginated response. */
 export type Page<T> = {
-  items: T[];
+  items: ReadonlyArray<T>;
   next?: Cursor | undefined;
 };
 
