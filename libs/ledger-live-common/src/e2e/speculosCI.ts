@@ -11,7 +11,7 @@ const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
-const GITHUB_REF = "TSDINT-990";
+const GITHUB_REF = "main";
 const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
