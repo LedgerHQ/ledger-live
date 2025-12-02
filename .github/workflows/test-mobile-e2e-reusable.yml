@@ -794,6 +794,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
+          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -851,6 +852,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
+          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
