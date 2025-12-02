@@ -12,8 +12,8 @@ import AccountsEntryPoint from "../components/AccountsEntryPoint";
 import SettingsEntryPoint from "../components/SettingsEntryPoint";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
-import { LedgerSyncBanner } from "../components/ledgerSyncBanner";
-import LedgerSyncBannerSetting from "../components/SettingsEntryPoint/ledgerSyncBannerSetting";
+import { LedgerSyncBanner } from "../components/LedgerSyncBanner";
+import LedgerSyncBannerSetting from "../components/SettingsEntryPoint/LedgerSyncBannerSetting";
 
 export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
   const { push } = useHistory();
