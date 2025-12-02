@@ -1,30 +1,31 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NetworkList } from "@ledgerhq/react-ui/pre-ldls";
-import { ListWrapper } from "../../../components/ListWrapper";
-import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
+import { ListWrapper } from "../../../../components/ListWrapper";
+import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
-import { accountsCount } from "../../../components/AccountCount";
-import { accountsCountAndApy } from "../../../components/AccountCountApy";
-import { balanceItem } from "../../../components/Balance";
-import { useAccountData } from "../../../hooks/useAccountData";
-import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
+import { accountsCount } from "../../../../components/AccountCount";
+import { accountsCountAndApy } from "../../../../components/AccountCountApy";
+import { balanceItem } from "../../../../components/Balance";
+import { useAccountData } from "../../../../hooks/useAccountData";
+import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
+import { NetworkVirtualList } from "../NetworkVirtualList";
+import { accountsApy } from "../../../../components/AccountApy";
 
-type SelectNetworkProps = {
+type NetworkSelectorContentProps = {
   networks?: CryptoOrTokenCurrency[];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
   selectedAssetId?: string;
 };
 
-export const SelectNetwork = ({
+export const NetworkSelectorContent = ({
   networks,
   onNetworkSelected,
   networksConfig,
   selectedAssetId,
-}: SelectNetworkProps) => {
+}: NetworkSelectorContentProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   if (!networks || networks.length === 0 || !selectedAssetId) {
@@ -35,6 +36,7 @@ export const SelectNetwork = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
+    accountsApy,
     useBalanceDeps,
     balanceItem,
   };
@@ -73,7 +75,7 @@ export const SelectNetwork = ({
 
   return (
     <ListWrapper>
-      <NetworkList networks={formattedNetworks} onClick={onClick} />
+      <NetworkVirtualList networks={formattedNetworks} onClick={onClick} />
     </ListWrapper>
   );
 };

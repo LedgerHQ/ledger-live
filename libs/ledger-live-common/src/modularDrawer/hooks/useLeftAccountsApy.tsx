@@ -11,6 +11,7 @@ export function useLeftAccountsApyModule(
   params: AccountModuleParams,
   useAccountData: (params: AccountModuleParams) => AccountDataItem[],
   accountsCountAndApy: CreateAccountsCountAndApy,
+  accountsApy: CreateAccountsCountAndApy,
 ): Array<NetworkWithCount> {
   const { networks } = params;
   const accountData = useAccountData(params);
@@ -32,6 +33,11 @@ export function useLeftAccountsApyModule(
     return {
       leftElement: accountsCountAndApy({
         label: count > 0 ? label : undefined,
+        value: interestRatePercentageRounded,
+        type: interestRate?.type,
+      }),
+      description: count > 0 ? label : undefined,
+      apy: accountsApy({
         value: interestRatePercentageRounded,
         type: interestRate?.type,
       }),
