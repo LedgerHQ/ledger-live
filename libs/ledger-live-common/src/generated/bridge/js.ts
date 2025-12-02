@@ -4,6 +4,7 @@ import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
 import { bridge as casper } from "../../families/casper/setup";
 import { bridge as canton } from "../../families/canton/setup";
+import { bridge as concordium } from "../../families/concordium/setup";
 import { bridge as celo } from "../../families/celo/setup";
 import { bridge as cosmos } from "../../families/cosmos/setup";
 import { bridge as evm } from "../../families/evm/setup";
@@ -30,6 +31,7 @@ export default {
   cardano,
   casper,
   canton,
+  concordium,
   celo,
   cosmos,
   evm,

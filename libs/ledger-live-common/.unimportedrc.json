@@ -102,6 +102,8 @@
     "src/families/celo/logic.ts",
     "src/families/celo/react.ts",
     "src/families/celo/types.ts",
+    "src/families/concordium/logic.ts",
+    "src/families/concordium/types.ts",
     "src/families/cosmos/banner.ts",
     "src/families/cosmos/chain/chain.ts",
     "src/families/cosmos/chain/cosmosBase.ts",
