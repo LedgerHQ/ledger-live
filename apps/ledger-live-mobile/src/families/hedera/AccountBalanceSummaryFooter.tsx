@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
@@ -85,13 +85,11 @@ export default function AccountBalanceFooter({ account }: Readonly<Props>) {
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("hedera");
-  const HederaIcon = getCryptoCurrencyIcon(currency);
-  invariant(HederaIcon, "Icon is expected");
 
   return {
     available: [
       {
-        Icon: () => <HederaIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={20} />,
         title: t("hedera.info.available.title"),
         description: t("hedera.info.available.description"),
       },

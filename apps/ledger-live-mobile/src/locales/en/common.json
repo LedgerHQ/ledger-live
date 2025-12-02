@@ -2860,7 +2860,12 @@
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
       "stakedAmount": "Staked amount",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "associatedTokenId": "Associated token ID",
+      "targetStakingNodeId": "Target node ID",
+      "previousStakingNodeId": "Previous node ID",
+      "gasConsumed": "Gas consumed",
+      "gasUsed": "Gas used"
     },
     "multipleAddresses": "Why multiple addresses?"
   },

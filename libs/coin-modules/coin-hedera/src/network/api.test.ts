@@ -72,7 +72,6 @@ describe("getAccountTransactions", () => {
       fetchAllPages: true,
     });
 
-    expect(result.transactions).toHaveLength(3);
     expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3", "4"]);
     expect(result.nextCursor).toBeNull();
     expect(mockedNetwork).toHaveBeenCalledTimes(5);
@@ -118,7 +117,6 @@ describe("getAccountTransactions", () => {
       fetchAllPages: false,
     });
 
-    expect(result.transactions).toHaveLength(2);
     expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
     expect(result.nextCursor).toBe("3");
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
@@ -453,7 +451,6 @@ describe("getTransactionsByTimestampRange", () => {
       "2000.000000000",
     );
 
-    expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1500.123456789", "1750.987654321"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
@@ -484,7 +481,6 @@ describe("getTransactionsByTimestampRange", () => {
       "2000.000000000",
     );
 
-    expect(result).toHaveLength(3);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual([
       "1100.000000000",
       "1200.000000000",
@@ -519,7 +515,6 @@ describe("getTransactionsByTimestampRange", () => {
       "2000.000000000",
     );
 
-    expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
   });

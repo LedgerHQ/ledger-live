@@ -59,6 +59,7 @@ import {
   hasSpecificIntentData,
   getChecksum,
   mapIntentToSDKOperation,
+  getOperationDetailsExtraFields,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -906,6 +907,48 @@ describe("logic utils", () => {
 
       expect(hasSpecificIntentData(txIntentUnknown, "erc20")).toBe(false);
       expect(hasSpecificIntentData(txIntentNoData, "erc20")).toBe(false);
+    });
+  });
+
+  describe("getOperationDetailsExtraFields", () => {
+    it("should return empty array when no fields are present", () => {
+      const result = getOperationDetailsExtraFields({});
+
+      expect(result).toEqual([]);
+    });
+
+    it("should handle zero values correctly", () => {
+      const result = getOperationDetailsExtraFields({
+        gasConsumed: 0,
+        targetStakingNodeId: 0,
+      });
+
+      expect(result).toEqual([
+        { key: "targetStakingNodeId", value: "0" },
+        { key: "gasConsumed", value: "0" },
+      ]);
+    });
+
+    it("should return all fields when all are present", () => {
+      const result = getOperationDetailsExtraFields({
+        memo: "complete",
+        associatedTokenId: "123",
+        targetStakingNodeId: 5,
+        previousStakingNodeId: 3,
+        gasConsumed: 1000,
+        gasUsed: 950,
+        gasLimit: 2000,
+      });
+
+      expect(result).toEqual([
+        { key: "memo", value: "complete" },
+        { key: "associatedTokenId", value: "123" },
+        { key: "targetStakingNodeId", value: "5" },
+        { key: "previousStakingNodeId", value: "3" },
+        { key: "gasConsumed", value: "1000" },
+        { key: "gasUsed", value: "950" },
+        { key: "gasLimit", value: "2000" },
+      ]);
     });
   });
 });

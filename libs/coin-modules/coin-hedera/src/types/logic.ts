@@ -42,3 +42,8 @@ export interface ERC20OperationFields {
   standard: "erc20";
   hasFailed: false;
 }
+
+export interface OperationDetailsExtraField {
+  key: string;
+  value: string | number;
+}

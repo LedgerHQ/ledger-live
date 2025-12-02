@@ -109,9 +109,8 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
     expect(result.tokenOperations).toEqual([]);
-
+    expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations).toMatchObject([
       {
         type: "OUT",
@@ -185,16 +184,12 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.tokenOperations).toHaveLength(1);
-
     expect(result.coinOperations).toMatchObject([
       {
         type: "FEES",
         fee: expect.any(Object),
       },
     ]);
-
     expect(result.tokenOperations).toMatchObject([
       {
         type: "OUT",
@@ -250,9 +245,7 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.tokenOperations).toHaveLength(0);
-
+    expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toMatchObject([
       {
         type: "ASSOCIATE_TOKEN",
@@ -316,8 +309,8 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(0);
-    expect(result.tokenOperations).toHaveLength(0);
+    expect(result.coinOperations).toEqual([]);
+    expect(result.tokenOperations).toEqual([]);
   });
 
   it("should use pagination parameters correctly", async () => {
@@ -398,8 +391,7 @@ describe("listOperations", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.coinOperations[0].hasFailed).toBe(true);
+    expect(result.coinOperations).toMatchObject([{ hasFailed: true }]);
   });
 
   it("should create REWARD operation when staking rewards are present", async () => {
@@ -441,8 +433,7 @@ describe("listOperations", () => {
     const rewardTimestamp = result.coinOperations[0].date.getTime();
     const mainTimestamp = result.coinOperations[1].date.getTime();
 
-    expect(result.coinOperations).toHaveLength(2);
-    expect(result.tokenOperations).toHaveLength(0);
+    expect(result.tokenOperations).toEqual([]);
     expect(rewardTimestamp).toBe(mainTimestamp + 1);
     expect(result.coinOperations).toMatchObject([
       {

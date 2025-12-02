@@ -25,6 +25,13 @@ async function getDeviceTransactionConfig({
           : "Update Account",
     });
 
+    if (!estimatedFees.isZero()) {
+      fields.push({
+        type: "fees",
+        label: "Fees",
+      });
+    }
+
     if (typeof transaction.properties?.stakingNodeId === "number") {
       fields.push({
         type: "text",

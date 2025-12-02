@@ -29,6 +29,7 @@ import type {
   HederaOperationExtra,
   HederaTxData,
   HederaValidator,
+  OperationDetailsExtraField,
   Transaction,
   TransactionStaking,
   TransactionStatus,
@@ -165,6 +166,42 @@ export const isTokenAssociationRequired = (
 
 export const isValidExtra = (extra: unknown): extra is HederaOperationExtra => {
   return !!extra && typeof extra === "object" && !Array.isArray(extra);
+};
+
+export const getOperationDetailsExtraFields = (
+  extra: HederaOperationExtra,
+): OperationDetailsExtraField[] => {
+  const fields: OperationDetailsExtraField[] = [];
+
+  if (typeof extra.memo === "string") {
+    fields.push({ key: "memo", value: extra.memo });
+  }
+
+  if (typeof extra.associatedTokenId === "string") {
+    fields.push({ key: "associatedTokenId", value: extra.associatedTokenId });
+  }
+
+  if (typeof extra.targetStakingNodeId === "number") {
+    fields.push({ key: "targetStakingNodeId", value: extra.targetStakingNodeId.toString() });
+  }
+
+  if (typeof extra.previousStakingNodeId === "number") {
+    fields.push({ key: "previousStakingNodeId", value: extra.previousStakingNodeId.toString() });
+  }
+
+  if (typeof extra.gasConsumed === "number") {
+    fields.push({ key: "gasConsumed", value: extra.gasConsumed.toString() });
+  }
+
+  if (typeof extra.gasUsed === "number") {
+    fields.push({ key: "gasUsed", value: extra.gasUsed.toString() });
+  }
+
+  if (typeof extra.gasLimit === "number") {
+    fields.push({ key: "gasLimit", value: extra.gasLimit.toString() });
+  }
+
+  return fields;
 };
 
 // disables the "Continue" button in the Send modal's Recipient step during token transfers if:

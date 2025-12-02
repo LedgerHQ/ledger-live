@@ -20,7 +20,7 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("staking transactions", () => {
     it("should return correct fields for ClaimRewards transaction", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
         amount: new BigNumber(0),
@@ -36,12 +36,15 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(2);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
           value: "Claim Rewards",
+        },
+        {
+          label: "Fees",
+          type: "fees",
         },
         {
           type: "text",
@@ -52,7 +55,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should return correct fields for Delegate transaction", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         amount: new BigNumber(0),
@@ -70,12 +73,15 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(2);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
           value: "Update Account",
+        },
+        {
+          label: "Fees",
+          type: "fees",
         },
         {
           type: "text",
@@ -86,7 +92,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include staking node ID if not provided", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Undelegate,
         amount: new BigNumber(0),
@@ -102,12 +108,15 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(1);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
           value: "Update Account",
+        },
+        {
+          label: "Fees",
+          type: "fees",
         },
       ]);
     });
@@ -115,7 +124,7 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("token associate transactions", () => {
     it("should return correct fields for TokenAssociate transaction", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
         amount: new BigNumber(0),
@@ -132,8 +141,7 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(3);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
@@ -152,7 +160,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include fees if they are zero", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
         amount: new BigNumber(0),
@@ -168,8 +176,7 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(1);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
@@ -181,7 +188,7 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("regular transfer transactions", () => {
     it("should return correct fields for regular Send transaction", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),
@@ -198,8 +205,7 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(4);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
@@ -222,7 +228,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should show 'Transfer All' method when useAllAmount is true", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(0),
@@ -246,7 +252,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should include gas limit for Send transactions with gasLimit", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),
@@ -263,8 +269,7 @@ describe("getDeviceTransactionConfig", () => {
         status,
       });
 
-      expect(fields).toHaveLength(4);
-      expect(fields).toMatchObject([
+      expect(fields).toEqual([
         {
           type: "text",
           label: "Method",
@@ -287,7 +292,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include memo if not provided", async () => {
-      const transaction: Transaction = {
+      const transaction = {
         family: "hedera",
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),

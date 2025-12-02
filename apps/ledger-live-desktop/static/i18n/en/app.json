@@ -1865,7 +1865,13 @@
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
       "version": "Version",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "associatedTokenId": "Associated token ID",
+      "targetStakingNodeId": "Target node ID",
+      "previousStakingNodeId": "Previous node ID",
+      "gasConsumed": "Gas consumed",
+      "gasUsed": "Gas used",
+      "gasLimit": "Gas limit"
     }
   },
   "operationList": {
@@ -7364,7 +7370,6 @@
         "steps": {
           "rewards": {
             "title": "Rewards",
-            "feesAlert": "The rewards are smaller than the estimated fees to claim them",
             "description": "You earned <0>{{formattedClaimableRewards}}</0> from the validator below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
             "currentValidatorLabel": "Delegation"
           },
