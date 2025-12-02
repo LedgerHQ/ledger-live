@@ -45,6 +45,12 @@ export default async () => {
         log.warn("Error during cleanup:", cleanupErr);
       }
     }
+  } else if (process.env.CI) {
+    try {
+      await fs.unlink(ARTIFACT_ENV_PATH);
+    } catch (err) {
+      log.warn(`Failed to delete environment.properties:`, err);
+    }
   }
 
   // default Detox teardown
