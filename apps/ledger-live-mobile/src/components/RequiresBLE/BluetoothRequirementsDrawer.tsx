@@ -41,7 +41,7 @@ export type RequiresBluetoothBottomModalProps = {
  * @param onDrawerHide A callback when the drawer is completely hidden. Don't use this to know if all requirements are respected,
  *   you should use bluetoothRequirementsState from useRequireBluetooth for that.
  */
-const RequiresBluetoothDrawer = ({
+const BluetoothRequirementsDrawer = ({
   isOpenedOnIssue,
   bluetoothRequirementsState,
   retryRequestOnIssue,
@@ -119,4 +119,4 @@ const RequiresBluetoothDrawer = ({
   );
 };
 
-export default RequiresBluetoothDrawer;
+export default BluetoothRequirementsDrawer;

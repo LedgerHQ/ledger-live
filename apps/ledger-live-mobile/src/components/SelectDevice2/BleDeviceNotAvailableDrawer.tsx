@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { renderConnectYourDevice } from "../DeviceAction/rendering";
-import { useTheme } from "styled-components/native";
+import { ConnectYourDevice } from "../DeviceAction/rendering";
 import { Flex, Alert, IconsLegacy } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
 
 interface Props {
   readonly isOpen: boolean;
@@ -33,8 +33,6 @@ export default function BleDeviceNotAvailableDrawer({
     redirectToScan();
   }, [onClose, redirectToScan]);
 
-  const theme = useTheme();
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowHelp(true);
@@ -43,15 +41,16 @@ export default function BleDeviceNotAvailableDrawer({
     return () => clearTimeout(timeout);
   }, [setShowHelp]);
 
+  const trackingProps = {
+    modelId: device.modelId,
+    wired: device.wired,
+  };
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen && Boolean(device)} onClose={onClose}>
+      <TrackScreen name="Drawer: Power on and unlock" {...trackingProps} />
       <Flex paddingBottom={8}>
-        {renderConnectYourDevice({
-          t,
-          device,
-          theme: theme.colors.type as "light" | "dark",
-          fullScreen: false,
-        })}
+        <ConnectYourDevice device={device} fullScreen={false} />
       </Flex>
       {showHelp && (
         <Flex
