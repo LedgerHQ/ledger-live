@@ -17,9 +17,9 @@ export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId;
     productName: string;
-    isLedgerSyncActive: boolean;
-    openActivationDrawer: () => void;
-    accounts: Account[];
+    isLedgerSyncActive?: boolean;
+    openActivationDrawer?: () => void;
+    accounts?: Account[];
   };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
@@ -104,7 +104,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       <Flex
         flexDirection="row"
         alignItems="center"
-        py={6}
+        py={1}
         justifyContent="space-between"
         opacity={disabled ? 0.5 : 1}
       >

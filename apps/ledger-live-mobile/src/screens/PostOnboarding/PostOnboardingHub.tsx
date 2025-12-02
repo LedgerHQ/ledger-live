@@ -13,7 +13,7 @@ import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingA
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
-import { ScrollContainer } from "@ledgerhq/native-ui";
+import { ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { setHasBeenRedirectedToPostOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
@@ -21,6 +21,7 @@ import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { accountsSelector } from "~/reducers/accounts";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 const PostOnboardingHub = () => {
   const dispatch = useDispatch();
@@ -99,6 +100,18 @@ const PostOnboardingHub = () => {
           }}
         >
           <Flex>
+            <PostOnboardingActionRow
+              id={PostOnboardingActionId.deviceOnboarded}
+              title="postOnboarding.actions.deviceOnboarded.titleCompleted"
+              titleCompleted="postOnboarding.actions.deviceOnboarded.titleCompleted"
+              description=""
+              completed
+              Icon={Icons.LedgerDevices}
+              startAction={() => {}}
+              deviceModelId={deviceModelId}
+              productName={productName}
+            />
+            <Divider />
             {actionsState.map((action, index, arr) => (
               <React.Fragment key={index}>
                 <PostOnboardingActionRow

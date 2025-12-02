@@ -5,6 +5,7 @@ import { Account, FeatureId } from ".";
  * Unique identifier of a post onboarding action.
  */
 export enum PostOnboardingActionId {
+  deviceOnboarded = "deviceOnboarded",
   assetsTransfer = "assetsTransfer",
   buyCrypto = "buyCrypto",
   syncAccounts = "syncAccounts",

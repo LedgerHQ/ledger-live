@@ -7499,6 +7499,9 @@
       "buttonLabel": "See what's next"
     },
     "actions": {
+      "deviceOnboarded": {
+        "titleCompleted": "Setup your Ledger device"
+      },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",

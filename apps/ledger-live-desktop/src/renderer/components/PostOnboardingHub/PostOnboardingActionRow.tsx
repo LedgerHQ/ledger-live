@@ -19,8 +19,8 @@ import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId | null;
-    isLedgerSyncActive: boolean;
-    accounts: Account[];
+    isLedgerSyncActive?: boolean;
+    accounts?: Account[];
   };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
@@ -112,7 +112,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       borderRadius={3}
       marginBottom={4}
       completed={isActionCompleted}
-      padding="32px 24px"
+      padding="16px 24px"
       {...(isActionCompleted
         ? undefined
         : {
