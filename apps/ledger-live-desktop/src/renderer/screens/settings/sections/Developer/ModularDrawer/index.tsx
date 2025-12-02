@@ -19,6 +19,7 @@ import {
 } from "~/renderer/reducers/modularDrawer";
 import { useDialog } from "LLD/components/Dialog";
 import { DialogHeader } from "@ledgerhq/ldls-ui-react";
+import { AssetSelection } from "~/newArch/features/AssetSelector";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
@@ -117,6 +118,22 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
               }
             >
               Debug Dialog
+            </Button>
+            <Button
+              variant="color"
+              onClick={() => {
+                openDialog(
+                  <AssetSelection
+                    onClose={closeDialog}
+                    onAssetSelect={(assetId: string) => {
+                      console.log("Selected asset:", assetId);
+                      closeDialog();
+                    }}
+                  />,
+                );
+              }}
+            >
+              Test Asset Selection
             </Button>
           </Flex>
         </Flex>

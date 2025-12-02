@@ -26,7 +26,7 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
     <DialogContext.Provider value={{ openDialog, closeDialog }}>
       {children}
       <Dialog open={open} onOpenChange={open => !open && closeDialog()}>
-        <DialogContent>{DialogContentPassed}</DialogContent>
+        <DialogContent className="w-[448px]">{DialogContentPassed}</DialogContent>
       </Dialog>
     </DialogContext.Provider>
   );
