@@ -98,7 +98,6 @@
         </intent-filter>
         <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
       </activity>
-      <meta-data android:name="io.sentry.anr.timeout-interval-millis" android:value="10000" />
     </application>
 
 </manifest>

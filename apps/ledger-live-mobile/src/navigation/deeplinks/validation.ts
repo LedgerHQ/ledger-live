@@ -5,7 +5,6 @@
  * injection attacks, phishing attempts, and other security vulnerabilities.
  */
 
-import * as Sentry from "@sentry/react-native";
 import type { OptionMetadata } from "../../reducers/types";
 
 // Maximum allowed lengths for string parameters
@@ -360,24 +359,11 @@ export function logSecurityEvent(
   eventType: "validation_failed" | "malicious_url" | "invalid_json" | "blocked_action",
   details: Record<string, unknown>,
 ): void {
-  // Send security events to Sentry for monitoring
-  Sentry.withScope(scope => {
-    scope.setContext("deeplink_security", {
-      event_type: eventType,
-      timestamp: new Date().toISOString(),
-      ...details,
-    });
-
-    scope.setTag("security_event", eventType);
-    scope.setLevel("warning");
-
-    Sentry.addBreadcrumb({
-      category: "security",
-      message: `Deeplink validation: ${eventType}`,
-      level: "warning",
-      data: details,
-    });
-
-    Sentry.captureMessage(`Deeplink security event: ${eventType}`);
+  // Log security events to console for debugging
+  // eslint-disable-next-line no-console
+  console.warn(`[Security Event] ${eventType}:`, {
+    event_type: eventType,
+    timestamp: new Date().toISOString(),
+    ...details,
   });
 }

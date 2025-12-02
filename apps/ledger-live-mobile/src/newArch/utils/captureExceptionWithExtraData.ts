@@ -1,22 +1,13 @@
-import * as Sentry from "@sentry/react-native";
-
 /**
- * Adds extra data to a Sentry error and captures the exception.
+ * Placeholder function - Sentry has been removed.
+ * This function is kept for API compatibility but does nothing.
  *
- * @param e - The error to be captured.
- * @param extraData - An object containing additional data to be added to the error.
+ * @param _e - The error (unused).
+ * @param _extraData - Additional data (unused).
  */
 export function captureExceptionWithExtraData(
-  e: unknown,
-  extraData: Record<string, unknown> | undefined,
+  _e: unknown,
+  _extraData: Record<string, unknown> | undefined,
 ): void {
-  Sentry.withScope(scope => {
-    if (extraData) {
-      Object.entries(extraData).forEach(([key, value]) => {
-        scope.setExtra(key, value);
-      });
-    }
-
-    Sentry.captureException(e);
-  });
+  // No-op: Sentry has been removed
 }
