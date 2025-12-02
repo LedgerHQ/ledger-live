@@ -3,7 +3,7 @@ import { fn } from "@storybook/test";
 import React from "react";
 import { Provider } from "react-redux";
 import { legacy_createStore as createStore } from "redux";
-import { NetworkSelection } from ".";
+import { NetworkSelector } from ".";
 import { ARB_ACCOUNT, ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
@@ -35,9 +35,9 @@ const store = createStore(() => ({
   application: { debug: {} },
 }));
 
-const meta: Meta<typeof NetworkSelection> = {
+const meta: Meta<typeof NetworkSelector> = {
   title: "ModularDrawer/NetworkSelection",
-  component: NetworkSelection,
+  component: NetworkSelector,
   args: {
     networks,
     networksConfiguration: mockNetworksConfiguration,
@@ -57,7 +57,7 @@ const meta: Meta<typeof NetworkSelection> = {
 
 export default meta;
 
-type Story = StoryObj<typeof NetworkSelection>;
+type Story = StoryObj<typeof NetworkSelector>;
 
 export const Default: Story = {
   args: {

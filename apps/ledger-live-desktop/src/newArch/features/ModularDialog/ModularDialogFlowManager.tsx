@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
-import AssetSelection from "./screens/AssetSelection";
-import { NetworkSelection } from "./screens/NetworkSelection";
+import AssetSelector from "./screens/AssetSelector";
+import { NetworkSelector } from "./screens/NetworkSelector";
 import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
@@ -90,7 +90,7 @@ const ModularDialogFlowManager = ({
     switch (step) {
       case MODULAR_DRAWER_STEP.ASSET_SELECTION:
         return (
-          <AssetSelection
+          <AssetSelector
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
             assetsConfiguration={assetsConfiguration}
@@ -103,7 +103,7 @@ const ModularDialogFlowManager = ({
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
         return (
-          <NetworkSelection
+          <NetworkSelector
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
             onNetworkSelected={handleNetworkSelected}

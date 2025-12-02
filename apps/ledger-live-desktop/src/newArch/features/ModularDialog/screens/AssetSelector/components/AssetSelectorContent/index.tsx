@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
   ApyIndicator,
-  AssetList,
   AssetType,
   MarketPercentIndicator,
   MarketPriceIndicator,
@@ -9,7 +8,7 @@ import {
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
-import SkeletonList from "LLD/features/ModularDialog/components/SkeletonList";
+import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
@@ -20,8 +19,9 @@ import { useSelector } from "react-redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
+import { AssetVirtualList } from "../AssetVirtualList";
 
-export type SelectAssetProps = {
+export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -34,7 +34,7 @@ export type SelectAssetProps = {
 
 const CURRENT_PAGE = "Modular Asset Selection";
 
-export const SelectAssetList = ({
+export const AssetSelectorContent = ({
   assetsToDisplay,
   scrollToTop,
   assetsConfiguration,
@@ -43,7 +43,7 @@ export const SelectAssetList = ({
   onScrolledToTop,
   loadNext,
   assetsSorted,
-}: SelectAssetProps) => {
+}: AssetSelectorContentProps) => {
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
   const assetConfigurationDeps = {
@@ -118,7 +118,7 @@ export const SelectAssetList = ({
 
   return (
     <ListWrapper data-testid="asset-selector-list-container">
-      <AssetList
+      <AssetVirtualList
         scrollToTop={scrollToTop}
         assets={formattedAssets}
         onClick={onClick}

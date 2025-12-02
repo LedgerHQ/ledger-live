@@ -1,23 +1,23 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SelectNetwork as NetworksList } from "./components";
+import { NetworkSelectorContent } from "./components/NetworkSelectorContent";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 
-export type NetworkSelectionStepProps = {
+export type NetworkSelectorProps = {
   networks?: CryptoOrTokenCurrency[];
   networksConfiguration: EnhancedModularDrawerConfiguration["networks"];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   selectedAssetId?: string;
 };
 
-export function NetworkSelection({
+export function NetworkSelector({
   networks,
   onNetworkSelected,
   networksConfiguration,
   selectedAssetId,
-}: Readonly<NetworkSelectionStepProps>) {
+}: Readonly<NetworkSelectorProps>) {
   return (
     <>
       <TrackDrawerScreen
@@ -25,7 +25,7 @@ export function NetworkSelection({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
-      <NetworksList
+      <NetworkSelectorContent
         networks={networks}
         onNetworkSelected={onNetworkSelected}
         networksConfig={networksConfiguration}

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { BigNumber } from "bignumber.js";
-import { SelectNetwork } from "../index";
+import { NetworkSelectorContent } from "../NetworkSelectorContent/index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -111,7 +111,7 @@ describe("SelectNetwork Integration Test", () => {
 
   describe("Rendering", () => {
     it("should render the network list with correct networks", () => {
-      render(<SelectNetwork {...defaultProps} />);
+      render(<NetworkSelectorContent {...defaultProps} />);
 
       expect(screen.getByTestId("network-item-name-BNB Chain")).toBeInTheDocument();
       expect(screen.getByTestId("network-item-name-Base")).toBeInTheDocument();
@@ -120,19 +120,19 @@ describe("SelectNetwork Integration Test", () => {
     });
 
     it("should not render when networks array is empty", () => {
-      render(<SelectNetwork {...defaultProps} networks={[]} />);
+      render(<NetworkSelectorContent {...defaultProps} networks={[]} />);
 
       expect(screen.queryByTestId(/network-item-name/)).not.toBeInTheDocument();
     });
 
     it("should not render when networks is undefined", () => {
-      render(<SelectNetwork {...defaultProps} networks={undefined} />);
+      render(<NetworkSelectorContent {...defaultProps} networks={undefined} />);
 
       expect(screen.queryByTestId(/network-item-name/)).not.toBeInTheDocument();
     });
 
     it("should not render when selectedAssetId is not provided", () => {
-      render(<SelectNetwork {...defaultProps} selectedAssetId={undefined} />);
+      render(<NetworkSelectorContent {...defaultProps} selectedAssetId={undefined} />);
 
       expect(screen.queryByTestId(/network-item-name/)).not.toBeInTheDocument();
     });
@@ -140,7 +140,7 @@ describe("SelectNetwork Integration Test", () => {
     it("should handle token currencies by using their parent currency", async () => {
       const tokenNetworks: CryptoOrTokenCurrency[] = [bscUsdcToken, baseUsdcToken];
 
-      render(<SelectNetwork {...defaultProps} networks={tokenNetworks} />, {
+      render(<NetworkSelectorContent {...defaultProps} networks={tokenNetworks} />, {
         initialState: {
           accounts: [
             bscAccount,
@@ -160,7 +160,7 @@ describe("SelectNetwork Integration Test", () => {
       const tokenNetworks: CryptoOrTokenCurrency[] = [bscUsdcToken, baseUsdcToken];
 
       render(
-        <SelectNetwork
+        <NetworkSelectorContent
           {...defaultProps}
           networks={tokenNetworks}
           networksConfig={{ leftElement: "undefined" }}
@@ -176,7 +176,7 @@ describe("SelectNetwork Integration Test", () => {
 
   describe("Network Selection", () => {
     it("should call onNetworkSelected when a network is clicked", async () => {
-      const { user } = render(<SelectNetwork {...defaultProps} />);
+      const { user } = render(<NetworkSelectorContent {...defaultProps} />);
 
       const bscNetworkButton = screen.getByTestId("network-item-name-BNB Chain");
       await user.click(bscNetworkButton);
@@ -192,7 +192,7 @@ describe("SelectNetwork Integration Test", () => {
         networksConfig: { rightElement: "balance" as const },
       };
 
-      render(<SelectNetwork {...balanceOnlyConfig} />, {
+      render(<NetworkSelectorContent {...balanceOnlyConfig} />, {
         initialState: { accounts: mockAccounts },
       });
 
@@ -211,7 +211,7 @@ describe("SelectNetwork Integration Test", () => {
         networksConfig: { leftElement: "numberOfAccounts" as const },
       };
 
-      render(<SelectNetwork {...accountCountOnlyConfig} />, {
+      render(<NetworkSelectorContent {...accountCountOnlyConfig} />, {
         initialState: { accounts: mockAccounts },
       });
 
