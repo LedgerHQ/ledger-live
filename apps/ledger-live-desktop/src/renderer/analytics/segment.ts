@@ -252,15 +252,38 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
-  const accountsWithFunds = accounts
-    ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
+  const accountsWithFundsCurrencies = accounts
+    ? accounts
+        .filter(account => account?.balance.isGreaterThan(0))
+        .map(account => account?.currency)
     : [];
+
+  const accountsWithFundsCurrenciesIds = new Set(
+    accountsWithFundsCurrencies.map(currency => currency.id),
+  );
+
+  const tokenWithFundsIds = new Set(getTokensWithFunds(accounts, "currencyId"));
+
+  const allStakingCurrenciesEnabled = new Set([
+    ...(ptxAttributes.stakingCurrenciesEnabled ?? []),
+    ...(ptxAttributes.partnerStakingCurrenciesEnabled ?? []),
+  ]);
+
+  const filteredAccountIds = [...accountsWithFundsCurrenciesIds].filter(tokenId =>
+    allStakingCurrenciesEnabled.has(tokenId),
+  );
+  const filteredTokenIds = [...tokenWithFundsIds].filter(tokenId =>
+    allStakingCurrenciesEnabled.has(tokenId),
+  );
+  const combinedIds = new Set([...filteredAccountIds, ...filteredTokenIds]);
+
+  // Currency or token ids from all stakeable accounts & subAccounts with positive balance
+  const totalStakeableAssets = combinedIds.size;
+
+  const accountsWithFunds = Array.from(
+    new Set(accountsWithFundsCurrencies.map(account => account?.currency?.ticker)),
+  );
+
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
@@ -279,6 +302,7 @@ const extraProperties = (store: ReduxStore) => {
     sidebarCollapsed,
     accountsWithFunds,
     tokenWithFunds,
+    totalStakeableAssets,
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
