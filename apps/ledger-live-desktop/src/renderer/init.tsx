@@ -57,6 +57,18 @@ import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
 
+import "moment/locale/fr"; // Ajoute beaucoup de locales
+import "moment/locale/en-gb";
+import "moment/locale/es";
+import "moment/locale/de";
+import "moment/locale/it";
+import "moment/locale/ja";
+import "moment/locale/ko";
+import "moment/locale/pt";
+import "moment/locale/ru";
+import "moment/locale/zh-cn";
+import "moment/locale/zh-tw";
+
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
 

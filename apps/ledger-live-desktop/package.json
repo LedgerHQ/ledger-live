@@ -126,6 +126,7 @@
     "jsqr": "1.4.0",
     "lodash": "4.17.21",
     "mixpanel-browser": "2.71.1",
+    "moment": "2.30.1",
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",
