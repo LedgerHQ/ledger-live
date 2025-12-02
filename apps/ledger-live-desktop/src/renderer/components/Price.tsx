@@ -83,6 +83,8 @@ export default function Price({
           style={{
             color: activityColor,
             marginRight: 4,
+            display: "inline-block",
+            verticalAlign: "initial",
           }}
         />
       ) : null}
@@ -111,4 +113,6 @@ const PriceWrapper = styled(Box).attrs(() => ({
   line-height: 1.2;
   white-space: pre;
   align-items: baseline;
+  display: inline-flex;
+  flex-shrink: 0;
 `;

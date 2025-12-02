@@ -349,7 +349,7 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <Box horizontal alignItems={"center"}>
             <Box mr={1} alignItems={"center"}>
-              <CryptoCurrencyIcon size={16} currency={fromCurrency} />
+              <CryptoCurrencyIcon size={22} currency={fromCurrency} />
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-from">
               <Ellipsis>
@@ -391,7 +391,7 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <Box horizontal alignItems={"center"}>
             <Box mr={1} alignItems={"center"}>
-              <CryptoCurrencyIcon size={16} currency={toCurrency} />
+              <CryptoCurrencyIcon size={22} currency={toCurrency} />
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-to">
               <Ellipsis>

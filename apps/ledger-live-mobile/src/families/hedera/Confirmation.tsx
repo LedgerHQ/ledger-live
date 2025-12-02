@@ -111,7 +111,6 @@ export default function ReceiveConfirmation({ route }: Props) {
                   >
                     <CurrencyIcon
                       currency={currency}
-                      color={colors.constant.white}
                       bg={getCurrencyColor(currency) || colors.constant.black}
                       size={48}
                       circle

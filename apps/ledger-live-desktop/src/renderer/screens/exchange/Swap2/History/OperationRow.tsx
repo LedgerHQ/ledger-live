@@ -148,7 +148,7 @@ const OperationRow = ({
       </Box>
       <Box horizontal mx={20}>
         <Box alignItems="center" justifyContent="center">
-          <CryptoCurrencyIcon size={16} currency={fromCurrency} />
+          <CryptoCurrencyIcon size={22} currency={fromCurrency} />
         </Box>
         <Tooltip delay={1200} content={fromAccountName}>
           <Ellipsis
@@ -167,7 +167,7 @@ const OperationRow = ({
       </Box>
       <Box horizontal mx={20}>
         <Box alignItems="center" justifyContent="center">
-          <CryptoCurrencyIcon size={16} currency={toCurrency} />
+          <CryptoCurrencyIcon size={22} currency={toCurrency} />
         </Box>
         <Tooltip delay={1200} content={toAccountName}>
           <Ellipsis

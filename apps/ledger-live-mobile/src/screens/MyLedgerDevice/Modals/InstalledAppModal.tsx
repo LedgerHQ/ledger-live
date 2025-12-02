@@ -91,7 +91,7 @@ const InstallSuccessBar = ({ state, disable }: Props) => {
   return (
     <QueuedDrawer isRequestingToBeOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
-        {app && <AppIcon app={app} size={48} radius={14} />}
+        {app && <AppIcon app={app} size={48} />}
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey="AppAction.install.done.title" />

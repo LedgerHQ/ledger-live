@@ -96,7 +96,7 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
       return (
         <AppLine>
           <Flex flexDirection="row" alignItems="center" style={{ width: "60%" }}>
-            <AppIcon size={32} radius={10} app={item} />
+            <AppIcon size={32} app={item} />
             <AppName color="neutral.c100" fontWeight="semiBold" variant="body" numberOfLines={1}>
               {name}
             </AppName>

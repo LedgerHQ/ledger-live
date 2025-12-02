@@ -26,7 +26,7 @@ class AccountCell extends PureComponent<Props> {
     return (
       <Cell horizontal flow={2}>
         <Box alignItems="center" justifyContent="center">
-          <CryptoCurrencyIcon size={16} currency={currency} />
+          <CryptoCurrencyIcon size={22} currency={currency} />
         </Box>
         <Tooltip delay={1200} content={accountName}>
           <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>

@@ -107,7 +107,7 @@ const CurrencyItemComponent = ({
   <CurrencyItem horizontal alignItems="center" py={2} px={3} onClick={onToggle}>
     <CheckBox isChecked={isSelected} onChange={onToggle} />
     <Box ml={2} horizontal alignItems="center" flex={1}>
-      <CryptoCurrencyIcon currency={currency} size={20} />
+      <CryptoCurrencyIcon currency={currency} size={28} />
       <Box ml={2} flex={1}>
         <Text ff="Inter|SemiBold" fontSize={3} color="palette.text.shade100">
           {currency.name}

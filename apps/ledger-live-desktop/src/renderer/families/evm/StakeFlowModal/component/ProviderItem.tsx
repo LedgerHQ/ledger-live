@@ -1,6 +1,8 @@
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { CryptoIcon, Flex, Icon, Text } from "@ledgerhq/react-ui";
+import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { Flex, Icon, Text } from "@ledgerhq/react-ui";
+import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
 import { EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,7 +39,14 @@ function StakingIcon({ icon }: { icon?: string }) {
     );
   }
   if (iconType === "crypto") {
-    return <CryptoIcon name={iconName} size={40} />;
+    const currency = findCryptoCurrencyByTicker(iconName);
+    if (currency) {
+      const ledgerId = currency.id;
+      const ticker = currency.ticker;
+      return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size="56px" />;
+    }
+    // Fallback: if currency not found, just use the ticker (library will handle fallback)
+    return <CryptoIcon ledgerId={iconName.toLowerCase()} ticker={iconName} size="56px" />;
   }
   if (iconType === "provider") {
     return (
