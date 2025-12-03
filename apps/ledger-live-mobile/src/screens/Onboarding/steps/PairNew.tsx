@@ -1,10 +1,10 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback, memo, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import SeedWarning from "../shared/SeedWarning";
 import {
   completeOnboarding,
@@ -82,12 +82,23 @@ export default memo(function () {
   const dispatch = useDispatch();
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
 
-  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet } = route.params;
+  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
+    route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
   const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
   const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
+
+  const seedConfiguration = useMemo(() => {
+    let config = fromAccessExistingWallet ? "" : "new_seed";
+    if (isProtectFlow) {
+      config = "recover_seed";
+    } else if (isRestoreSeed) {
+      config = "restore_seed";
+    }
+    return config;
+  }, [isProtectFlow, fromAccessExistingWallet, isRestoreSeed]);
 
   const onFinish = useCallback(() => {
     if (isProtectFlow && deviceModelId) {
@@ -112,8 +123,13 @@ export default memo(function () {
     }
 
     if (isFundWalletNewSetup) {
-      navigation.navigate(ScreenName.OnboardingSecureYourCrypto);
+      navigation.navigate(ScreenName.OnboardingSecureYourCrypto, {
+        deviceModelId,
+      });
     } else {
+      if (!fromAccessExistingWallet) {
+        track("Onboarding - End", { seedConfiguration, deviceModelId, flow: "onboarding" });
+      }
       navigation.replace(NavigatorName.Base, {
         screen: NavigatorName.Main,
       });
@@ -134,11 +150,17 @@ export default memo(function () {
     fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
     isFundWalletNewSetup,
+    seedConfiguration,
   ]);
 
   return (
     <StyledSafeAreaView>
-      <TrackScreen category="Onboarding" name="PairNew" />
+      <TrackScreen
+        category="Onboarding"
+        name="PairNew"
+        seedConfiguration={seedConfiguration}
+        deviceModelId={deviceModelId}
+      />
       <ImageHeader showSlideIndicator={isFundWalletNewSetup} />
       <StyledContainerView>
         <ConnectDevice onSuccess={onFinish} />

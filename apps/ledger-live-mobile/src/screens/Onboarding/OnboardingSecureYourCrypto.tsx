@@ -1,21 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex, Text, SlideIndicator } from "@ledgerhq/native-ui";
-import NewSeedIllustration from "../SyncOnboarding/TwoStepStepper/NewSeedIllustration";
+import { useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/core";
 import { useTranslation } from "react-i18next";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-
+import NewSeedIllustration from "../SyncOnboarding/TwoStepStepper/NewSeedIllustration";
 import { setIsOnboardingFlow, setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
-import { useNavigation } from "@react-navigation/core";
-import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
+import { screen, track } from "~/analytics";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import Button from "~/components/PreventDoubleClickButton";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  RootNavigation,
+  RootComposite,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+
+const seedConfiguration = "new_seed";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingSecureYourCrypto>
@@ -25,6 +30,10 @@ export default function OnboardingSecureYourCrypto() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  const route = useRoute<NavigationProps["route"]>();
+  const { deviceModelId } = route.params;
+
   const baseNavigation = useNavigation<RootNavigation>();
 
   const [isInitialised, setIsInitialised] = useState<boolean>(false);
@@ -34,9 +43,9 @@ export default function OnboardingSecureYourCrypto() {
     (receiveFlowSuccess: boolean) => {
       dispatch(setIsOnboardingFlowReceiveSuccess(false));
 
-      navigation.navigate(ScreenName.OnboardingFundSuccess, { receiveFlowSuccess });
+      navigation.navigate(ScreenName.OnboardingFundSuccess, { receiveFlowSuccess, deviceModelId });
     },
-    [dispatch, navigation],
+    [dispatch, deviceModelId, navigation],
   );
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
@@ -49,25 +58,52 @@ export default function OnboardingSecureYourCrypto() {
     track("button_clicked", {
       button: "Secure my crypto",
       flow: "onboarding",
+      deviceModelId,
+      seedConfiguration,
     });
     dispatch(setIsOnboardingFlow(true));
 
     handleOpenReceiveDrawer();
-  }, [dispatch, handleOpenReceiveDrawer]);
+  }, [dispatch, handleOpenReceiveDrawer, deviceModelId]);
 
   const handleMaybeLater = useCallback(() => {
-    track("button_clicked", { button: "Maybe later", flow: "onboarding" });
+    track("button_clicked", {
+      button: "Maybe later",
+      flow: "onboarding",
+      deviceModelId,
+      seedConfiguration,
+    });
     handleReceiveFlowSuccess(false);
-  }, [handleReceiveFlowSuccess]);
+  }, [handleReceiveFlowSuccess, deviceModelId]);
 
   useEffect(() => {
     if (!isInitialised) {
       if (isOnboardingFlowReceiveSuccess) dispatch(setIsOnboardingFlowReceiveSuccess(false));
+      screen("Set up device: Final Step Your device is ready", undefined, {
+        deviceModelId,
+        seedConfiguration: "new_seed",
+      });
       setIsInitialised(true);
     } else if (isOnboardingFlowReceiveSuccess) {
       handleReceiveFlowSuccess(true);
     }
-  }, [isOnboardingFlowReceiveSuccess, handleReceiveFlowSuccess, dispatch, isInitialised]);
+  }, [
+    isOnboardingFlowReceiveSuccess,
+    handleReceiveFlowSuccess,
+    dispatch,
+    isInitialised,
+    deviceModelId,
+  ]);
+
+  // Need to trigger this second screen tracking call after the first one
+  useEffect(() => {
+    if (isInitialised) {
+      screen("Set up device: Secure your crypto", undefined, {
+        deviceModelId,
+        seedConfiguration: "new_seed",
+      });
+    }
+  }, [isInitialised, deviceModelId]);
 
   return (
     <SafeAreaViewFixed isFlex>

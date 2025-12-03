@@ -199,7 +199,12 @@ function OnboardingStepNewDevice() {
 
   return (
     <>
-      <TrackScreen category="Onboarding" name="SetupNewDevice" />
+      <TrackScreen
+        category="Onboarding"
+        name="SetupNewDevice"
+        deviceModelId={deviceModelId}
+        seedConfiguration="new_seed"
+      />
       <BaseStepperView
         onNext={nextPage}
         steps={scenes}

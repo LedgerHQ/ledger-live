@@ -62,7 +62,12 @@ function OnboardingStepQuizFinal() {
 
   return (
     <>
-      <TrackScreen category="Onboarding" name="PairNew" />
+      <TrackScreen
+        category="Onboarding"
+        name="PairNew"
+        seedConfiguration="new_seed"
+        deviceModelId={deviceModelId}
+      />
       <BaseStepperView
         onNext={nextPage}
         steps={scenes}
