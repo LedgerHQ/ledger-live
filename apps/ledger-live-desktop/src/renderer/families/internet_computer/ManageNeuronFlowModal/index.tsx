@@ -7,6 +7,8 @@ import {
   ICPTransactionType,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 
+const MODAL_NAME = "MODAL_ICP_LIST_NEURONS";
+
 export type Props = {
   account: ICPAccount;
   refresh?: boolean;
@@ -33,7 +35,6 @@ export default function ListNeuronsModal({
     setStepId(id);
   }, []);
   const isModalLocked = ["device", "confirmation"].includes(stepId);
-  const modalName = "MODAL_ICP_LIST_NEURONS";
   let width: number | undefined;
   if (stepId === "manage") {
     width = 800;
@@ -43,7 +44,7 @@ export default function ListNeuronsModal({
 
   return (
     <Modal
-      name={modalName}
+      name={MODAL_NAME}
       centered
       onHide={onHide}
       preventBackdropClick={isModalLocked}

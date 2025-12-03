@@ -17,7 +17,7 @@ export function ConfirmationFooter({
   const { t } = useTranslation();
   const currencyName = account.currency.name;
   const onClickSync = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     setLastManageAction("list_neurons");
     onChangeTransaction(
@@ -35,7 +35,7 @@ export function ConfirmationFooter({
   return (
     <Box width="100%" horizontal alignItems="center" justifyContent="space-between">
       <Box ff="Inter|SemiBold" fontSize={4} color="palette.text.shade60">
-        {`Last Synced: ${neurons.lastUpdatedMSecs ? new Date(neurons.lastUpdatedMSecs).toLocaleString() : "Never"}`}
+        {`${t("internetComputer.lastSynced")}: ${neurons.lastUpdatedMSecs ? new Date(neurons.lastUpdatedMSecs).toLocaleString() : t("common.never")}`}
       </Box>
       <Box horizontal>
         <Button ml={2} onClick={onClose}>

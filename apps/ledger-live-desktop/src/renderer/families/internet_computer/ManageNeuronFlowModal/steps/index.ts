@@ -18,20 +18,20 @@ export function useSteps(): St[] {
     () => [
       {
         id: "device",
-        label: t("cosmos.undelegation.flow.steps.device.title"),
+        label: t("internetComputer.common.connectDevice.title"),
         component: GenericStepConnectDevice as React.ComponentType<StepProps>,
         noScroll: true,
       },
       {
         id: "listNeuron",
-        label: "Select neuron",
+        label: t("internetComputer.manageNeuronFlow.listNeuron.title"),
         component: StepListNeuron,
         footer: StepListNeuronFooter,
         noScroll: false,
       },
       {
         id: "followTopic",
-        label: "Follow topics",
+        label: t("internetComputer.manageNeuronFlow.selectTopics.title"),
         component: StepFollowSelectTopics,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("manage");
@@ -41,7 +41,7 @@ export function useSteps(): St[] {
       },
       {
         id: "setDissolveDelay",
-        label: "Set dissolve delay",
+        label: t("internetComputer.manageNeuronFlow.setDissolveDelay.title"),
         component: SetDissolveDelay,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("manage");
@@ -51,7 +51,7 @@ export function useSteps(): St[] {
       },
       {
         id: "stakeMaturity",
-        label: "Stake Maturity",
+        label: t("internetComputer.manageNeuronFlow.stakeMaturity.title"),
         component: StakeMaturity,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("manage");
@@ -61,7 +61,7 @@ export function useSteps(): St[] {
       },
       {
         id: "selectFollowees",
-        label: "Select followees",
+        label: t("internetComputer.manageNeuronFlow.selectFollowees.altTitle"),
         component: StepSelectFollowees,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("followTopic");
@@ -71,7 +71,7 @@ export function useSteps(): St[] {
       },
       {
         id: "splitNeuron",
-        label: "Split neuron",
+        label: t("internetComputer.manageNeuronFlow.splitNeuron.title"),
         component: SplitNeuron,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("manage");
@@ -81,7 +81,7 @@ export function useSteps(): St[] {
       },
       {
         id: "addHotKey",
-        label: "Add hot key",
+        label: t("internetComputer.manageNeuronFlow.addHotKey.title"),
         component: AddHotKey,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("manage");
@@ -91,14 +91,14 @@ export function useSteps(): St[] {
       },
       {
         id: "manageAction",
-        label: "Manage neuron action",
+        label: t("internetComputer.manageNeuronFlow.manageAction.title"),
         component: GenericStepConnectDevice as React.ComponentType<StepProps>,
         excludeFromBreadcrumb: true,
         noScroll: true,
       },
       {
         id: "manage",
-        label: "Manage neuron",
+        label: t("internetComputer.manageNeuronFlow.manage.title"),
         component: StepManage,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("listNeuron");
@@ -106,7 +106,7 @@ export function useSteps(): St[] {
       },
       {
         id: "confirmation",
-        label: "Confirmation",
+        label: t("internetComputer.common.confirmation"),
         component: StepConfirmation as React.ComponentType<StepProps>,
         footer: StepListNeuronFooter,
         onBack: ({ transitionTo }: StepProps) => {

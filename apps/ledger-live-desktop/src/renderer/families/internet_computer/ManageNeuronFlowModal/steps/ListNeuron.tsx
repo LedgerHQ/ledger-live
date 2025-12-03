@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -11,7 +11,6 @@ import WarnBox from "~/renderer/components/WarnBox";
 import List from "../../components/List";
 import { StepProps } from "../types";
 import Button from "~/renderer/components/Button";
-import { Trans } from "react-i18next";
 
 interface ContainerProps {
   shouldSpace?: boolean;
@@ -42,7 +41,7 @@ export default function StepListNeuron({
 
   useEffect(() => {
     if (needsRefresh) {
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -78,11 +77,11 @@ export default function StepListNeuron({
           priority={10}
           accountId={account.id}
         />
-        {neurons.fullNeurons.length > 0 ? (
+        {neurons.fullNeurons.length > 0 && (
           <WarnBox>
             <Trans i18nKey="internetComputer.manageNeuronFlow.listNeuron.warnbox" />
           </WarnBox>
-        ) : null}
+        )}
         <List
           neurons={{
             fullNeurons: neurons.fullNeurons.sort(
@@ -108,9 +107,9 @@ export default function StepListNeuron({
           action="listNeurons"
           currency={currencyId}
         />
-        {signed ? (
+        {signed && (
           <BroadcastErrorDisclaimer title={t("internetComputer.confirmation.broadcastError")} />
-        ) : null}
+        )}
         <ErrorDisplay error={error} withExportLogs />
       </Container>
     );
@@ -130,7 +129,7 @@ export function StepListNeuronFooter({
 }: StepProps) {
   const currencyName = account.currency.name;
   const onClickSync = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     setLastManageAction("list_neurons");
     onChangeTransaction(
@@ -145,10 +144,17 @@ export function StepListNeuronFooter({
     transitionTo("manage");
   }, [transitionTo]);
 
+  const { t } = useTranslation();
   return (
     <Box width="100%" horizontal alignItems="center" justifyContent="space-between">
       <Box ff="Inter|SemiBold" fontSize={4} color="palette.text.shade60">
-        {`Last Synced: ${neurons.lastUpdatedMSecs ? new Date(neurons.lastUpdatedMSecs).toLocaleString() : "Never"}`}
+        {t("internetComputer.lastSynced")
+          .concat(": ")
+          .concat(
+            neurons.lastUpdatedMSecs
+              ? new Date(neurons.lastUpdatedMSecs).toLocaleString()
+              : t("common.never"),
+          )}
       </Box>
       <Box horizontal>
         <Button ml={2} onClick={onClose}>
