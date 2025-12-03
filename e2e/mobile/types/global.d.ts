@@ -35,6 +35,8 @@ declare global {
     e2eBridgeServer: Subject<ServerData>;
   };
 
+  var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
+
   var app: Application;
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;
@@ -53,6 +55,7 @@ declare global {
   var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
   var countElementsById: typeof NativeElementHelpers.countElementsById;
   var detoxExpect: typeof NativeElementHelpers.expect;
+  var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
@@ -68,6 +71,7 @@ declare global {
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;
+  var waitForElement: typeof NativeElementHelpers.waitForElement;
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
@@ -86,6 +90,8 @@ declare global {
   var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
+  var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
+  var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }

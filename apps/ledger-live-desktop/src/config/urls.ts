@@ -171,6 +171,7 @@ export const urls = {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
+    evmAddressVerification: "https://ledger.com/e14",
   },
   celo: {
     ledgerByFigmentTC:
@@ -213,6 +214,9 @@ export const urls = {
   },
   sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
+  canton: {
+    learnMore: "https://support.ledger.com/article/Canton-Network",
   },
 };
 

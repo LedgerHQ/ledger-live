@@ -103,6 +103,9 @@ const iconsComponent = {
   CLOSE_ACCOUNT: IconTrash,
   APPROVE: IconPlus,
   PRE_APPROVAL: IconPlus,
+  TRANSFER_PROPOSAL: IconSend,
+  TRANSFER_REJECTED: VoteNay,
+  TRANSFER_WITHDRAWN: IconCoins,
   BOND: IconLink,
   UNBOND: IconUndelegate,
   WITHDRAW_UNBONDED: IconCoins,
@@ -125,6 +128,7 @@ const iconsComponent = {
   ASSOCIATE_TOKEN: IconPlus,
   TOP_UP_NEURON: IconPlus,
   STAKE_NEURON: IconDelegate,
+  CONTRACT_CALL: IconSend,
 };
 class ConfirmationCheck extends PureComponent<{
   marketColor: string;

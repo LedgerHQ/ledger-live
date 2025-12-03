@@ -3,12 +3,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, BackHandler, Platform } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScopeProvider } from "jotai-scope";
-
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
-
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
@@ -67,7 +65,6 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
         ? {
             headerTitleAlign: "left",
             headerLeft: () => null,
-            headerTitleContainerStyle: { marginHorizontal: 0 },
             headerTitle: () => (
               <Flex justifyContent={"center"} flex={1}>
                 <HeaderTitle color="neutral.c70">{manifest.homepageUrl}</HeaderTitle>

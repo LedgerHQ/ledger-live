@@ -21,7 +21,7 @@ describe("processRecipients", () => {
       accountId: "",
       date: new Date(),
       extra: {},
-      transactionSequenceNumber: 0,
+      transactionSequenceNumber: new BigNumber(0),
       hasFailed: false,
     };
   });

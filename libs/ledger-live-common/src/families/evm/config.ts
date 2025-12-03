@@ -704,7 +704,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://developer-access-mainnet.base.org",
+        uri: "https://base-rpc.publicnode.com",
       },
       explorer: {
         type: "etherscan",
@@ -922,6 +922,72 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: { type: "active" },
       node: { type: "external", uri: "https://sepolia.era.zksync.dev" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
+      showNfts: false,
+    },
+  },
+  config_currency_monad: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.monad.xyz",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/143",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_monad_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://testnet-rpc.monad.xyz",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10143",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_somnia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://somnia-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_zero_gravity: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://evmrpc.0g.ai",
+      },
+      explorer: {
+        type: "none",
+      },
       showNfts: false,
     },
   },

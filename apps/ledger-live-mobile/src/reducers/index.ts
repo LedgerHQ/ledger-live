@@ -1,6 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { combineReducers, Store } from "redux";
+import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
 import appstate from "./appstate";
@@ -13,7 +13,7 @@ import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
-import tools from "./tools";
+import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -31,7 +31,6 @@ export type AppStore = Store<State>;
 const appReducer = combineReducers({
   accounts,
   appstate,
-  assetsDataApi: assetsDataApi.reducer,
   auth,
   ble,
   countervalues,
@@ -41,7 +40,7 @@ const appReducer = combineReducers({
   largeMover,
   market,
   modularDrawer,
-  tools,
+  receiveOptionsDrawer,
   notifications,
   postOnboarding,
   protect,
@@ -53,6 +52,7 @@ const appReducer = combineReducers({
   wallet,
   walletconnect,
   walletSync,
+  ...llmRTKApiReducers,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

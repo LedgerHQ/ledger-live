@@ -1,6 +1,5 @@
 import React from "react";
-import { screen, waitFor } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -62,11 +61,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Wallet apps synched/i)).toBeVisible();
 
     await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Wallet is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();
@@ -99,11 +98,11 @@ describe("ManageInstances", () => {
     await user.press(await screen.findByText(/ledger sync/i));
 
     //Manage Instances Flow
-    expect(await screen.findByText(/2 Ledger Live apps synched/i)).toBeVisible();
+    expect(await screen.findByText(/2 Ledger Wallet apps synched/i)).toBeVisible();
 
     await user.press(await screen.findByText(/Manage/i));
 
-    expect(await screen.findByText(/Ledger Live is synched across/i)).toBeVisible();
+    expect(await screen.findByText(/Ledger Wallet is synched across/i)).toBeVisible();
 
     expect(await screen.findByText(INSTANCES[0].name)).toBeVisible();
     expect(await screen.findByText(INSTANCES[1].name)).toBeVisible();

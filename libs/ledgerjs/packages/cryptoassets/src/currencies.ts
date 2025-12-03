@@ -631,8 +631,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.cantonloop.com/party/$address",
+        tx: "https://ccview.io/updates/$hash",
+        address: "https://ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network"],
@@ -663,8 +663,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.testnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.testnet.cantonloop.com/party/$address",
+        tx: "https://testnet.ccview.io/updates/$hash",
+        address: "https://testnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_testnet"],
@@ -695,8 +695,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lighthouse.devnet.cantonloop.com/transactions/$hash",
-        address: "https://lighthouse.devnet.cantonloop.com/party/$address",
+        tx: "https://devnet.ccview.io/updates/$hash",
+        address: "https://devnet.ccview.io/party/$address",
       },
     ],
     keywords: ["canton_network_devnet"],
@@ -1516,7 +1516,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://hashscan.io/mainnet/account/$address",
       },
     ],
-    tokenTypes: ["hts"],
+    tokenTypes: ["hts", "erc20"],
   },
   helium: {
     type: "CryptoCurrency",
@@ -2526,8 +2526,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
-        address: "https://www.mintscan.io/quicksilver/validators/$address",
+        tx: "https://explorer.quicksilver.zone/transactions/$hash",
+        address: "https://explorer.quicksilver.zone/validators/$address",
       },
     ],
   },
@@ -3464,6 +3464,37 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Bitcoin Test",
     ticker: "BTC",
     scheme: "testnet",
+    color: "#00ff00",
+    symbol: "Ƀ",
+    units: bitcoinUnits.map(makeTestnetUnit),
+    deviceTicker: "TEST",
+    supportsSegwit: true,
+    supportsNativeSegwit: true,
+    isTestnetFor: "bitcoin",
+    disableCountervalue: true,
+    family: "bitcoin",
+    blockAvgTime: 15 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 111,
+      P2SH: 196,
+      XPUBVersion: 0x043587cf,
+    },
+    explorerViews: [
+      {
+        tx: "https://live.blockcypher.com/btc-testnet/tx/$hash",
+        address: "https://live.blockcypher.com/btc-testnet/address/$address",
+      },
+    ],
+    explorerId: "btc_testnet",
+  },
+  bitcoin_regtest: {
+    type: "CryptoCurrency",
+    id: "bitcoin_regtest",
+    coinType: CoinType.BTC_TESTNET,
+    name: "Bitcoin Regtest",
+    managerAppName: "Bitcoin Test",
+    ticker: "BTC",
+    scheme: "regtest",
     color: "#00ff00",
     symbol: "Ƀ",
     units: bitcoinUnits.map(makeTestnetUnit),
@@ -4509,7 +4540,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 81457,
     },
-    explorerViews: [blockscoutExplorerView("https://blast.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   blast_sepolia: {
     type: "CryptoCurrency",
@@ -4527,7 +4564,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 168587773,
     },
-    explorerViews: [blockscoutExplorerView("https://blast-testnet.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://sepolia.blastscan.io/tx/$hash",
+        address: "https://sepolia.blastscan.io/address/$address",
+        token: "https://sepolia.blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   scroll: {
     type: "CryptoCurrency",
@@ -4785,6 +4828,90 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/babylon/txs/$hash",
         address: "https://www.mintscan.io/babylon/validators/$address",
+      },
+    ],
+  },
+  monad: {
+    type: "CryptoCurrency",
+    id: "monad",
+    coinType: CoinType.ETH,
+    name: "Monad",
+    managerAppName: "Ethereum",
+    ticker: "MON",
+    scheme: "monad",
+    color: "#836EF9",
+    family: "evm",
+    units: ethereumUnits("MON", "MON"),
+    ethereumLikeInfo: {
+      chainId: 143,
+    },
+    explorerViews: [
+      {
+        tx: "https://monadexplorer.com/tx/$hash",
+        address: "https://monadexplorer.com/address/$address",
+      },
+    ],
+  },
+  monad_testnet: {
+    type: "CryptoCurrency",
+    id: "monad_testnet",
+    coinType: CoinType.ETH,
+    name: "Monad Testnet",
+    managerAppName: "Ethereum",
+    ticker: "MON",
+    scheme: "monad_testnet",
+    color: "#836EF9",
+    family: "evm",
+    units: ethereumUnits("MON", "MON"),
+    ethereumLikeInfo: {
+      chainId: 10143,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.monadexplorer.com/tx/$hash",
+        address: "https://testnet.monadexplorer.com/address/$address",
+      },
+    ],
+  },
+  somnia: {
+    type: "CryptoCurrency",
+    id: "somnia",
+    coinType: CoinType.ETH,
+    name: "Somnia",
+    managerAppName: "Ethereum",
+    ticker: "SOMI",
+    scheme: "somnia",
+    color: "#6F0191",
+    family: "evm",
+    units: ethereumUnits("SOMI", "SOMI"),
+    ethereumLikeInfo: {
+      chainId: 5031,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.somnia.network/tx/$hash",
+        address: "https://explorer.somnia.network/address/$address",
+      },
+    ],
+  },
+  zero_gravity: {
+    type: "CryptoCurrency",
+    id: "zero_gravity",
+    coinType: CoinType.ETH,
+    name: "0G",
+    managerAppName: "Ethereum",
+    ticker: "0G",
+    scheme: "zero_gravity",
+    color: "#9200E1",
+    family: "evm",
+    units: ethereumUnits("0G", "0G"),
+    ethereumLikeInfo: {
+      chainId: 16661,
+    },
+    explorerViews: [
+      {
+        tx: "https://chainscan.0g.ai/tx/$hash",
+        address: "https://chainscan.0g.ai/address/$address",
       },
     ],
   },

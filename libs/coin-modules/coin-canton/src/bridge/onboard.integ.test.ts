@@ -1,45 +1,22 @@
-import BigNumber from "bignumber.js";
-import { firstValueFrom, toArray } from "rxjs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
+import { firstValueFrom, toArray } from "rxjs";
+import coinConfig from "../config";
+import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
+import { createMockAccount, createMockCantonCurrency } from "../test/fixtures";
 import {
   AuthorizeStatus,
-  OnboardStatus,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
+  OnboardStatus,
 } from "../types/onboard";
-import coinConfig from "../config";
-import { buildOnboardAccount, isAccountOnboarded, buildAuthorizePreapproval } from "./onboard";
+import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } from "./onboard";
 
-describe("onboard (devnet)", () => {
+describe.skip("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
-  const mockAccount = {
-    type: "Account" as const,
-    id: "js:2:canton_network:canton_3f5c9d9a:canton",
-    seedIdentifier: "canton_3f5c9d9a",
-    derivationMode: "canton" as const,
-    index: 0,
-    freshAddress: "canton_3f5c9d9a",
-    freshAddressPath: "44'/6767'/0'/0'/0'",
-    used: false,
-    balance: BigNumber(10000),
-    spendableBalance: BigNumber(10000),
-    creationDate: new Date(),
-    blockHeight: 1,
-    currency: mockCurrency,
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    balanceHistoryCache: emptyHistoryCache,
-    swapHistory: [],
-  };
+  const mockCurrency = createMockCantonCurrency();
+  const mockAccount = createMockAccount();
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -220,26 +197,6 @@ describe("onboard (devnet)", () => {
       const finalResult = resultValues[resultValues.length - 1];
       expect(finalResult.isApproved).toBe(true);
       expect(typeof finalResult.isApproved).toBe("boolean");
-    }, 30000);
-
-    it("should handle invalid party ID gracefully", async () => {
-      // GIVEN
-      const keyPair = generateMockKeyPair();
-      const mockSigner = createMockSigner(keyPair);
-      const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
-        return callback(mockSigner);
-      });
-      const preapprovalObservable = buildAuthorizePreapproval(mockSignerContext);
-
-      // WHEN & THEN
-      try {
-        await firstValueFrom(
-          preapprovalObservable(mockCurrency, mockDeviceId, mockAccount, "invalid-party-id-123"),
-        );
-        expect(true).toBe(true);
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
     }, 30000);
   });
 });

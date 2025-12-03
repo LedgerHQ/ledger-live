@@ -6,6 +6,8 @@ import {
   mockBaseCryptoCurrency,
   usdcToken,
   mockScrollCryptoCurrency,
+  maticEth,
+  maticBsc,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -60,6 +62,18 @@ describe("helpers", () => {
         asset: { id: base.id, name: base.name, ticker: base.ticker, assetsIds: {} },
         networks: [base, usdc],
       },
+      {
+        asset: {
+          id: "ethereum/erc20/matic",
+          ticker: "MATIC",
+          name: "Matic",
+          assetsIds: {
+            ethereum: maticEth.id,
+            bsc: maticBsc.id,
+          },
+        },
+        networks: [maticEth, maticBsc],
+      },
     ];
 
     it("should return undefined if no asset is selected", () => {
@@ -80,6 +94,16 @@ describe("helpers", () => {
 
       // Token selected with a different network
       expect(resolveCurrency(assets, acceptAll, usdc, base)).toBe(usdc);
+
+      expect(resolveCurrency(assets, acceptAll, usdc, base)).toBe(usdc);
+    });
+
+    it("should return the MATIC token on BNB network correctly", () => {
+      // MATIC on ETH selected with Ethereum as parent network
+      expect(resolveCurrency(assets, acceptAll, maticEth, eth)).toBe(maticEth);
+
+      // MATIC on BSC selected with BSC parent network
+      expect(resolveCurrency(assets, acceptAll, maticBsc, maticBsc)).toBe(maticBsc);
     });
   });
 });

@@ -129,7 +129,7 @@ export const loadInfosForUniswap = async (
   const tokenDescriptorsPromises = Promise.all(
     uniqueTokens.map(async token => {
       const erc20SignaturesBlob = await findERC20SignaturesInfo(userConfig || {}, chainId);
-      return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob)?.data;
+      return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob, userConfig)?.data;
     }),
   );
 

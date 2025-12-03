@@ -1,8 +1,8 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -39,7 +39,15 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Delete Account`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,

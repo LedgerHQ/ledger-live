@@ -1,14 +1,14 @@
 import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import fs from "fs/promises";
+import { mkdir, readFile, rename } from "fs/promises";
 import * as path from "path";
-import { FileUtils } from "../utils/fileUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
@@ -24,6 +24,10 @@ export class SwapPage extends AppPage {
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
   private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
+  private quotesCountdown = "quotes-countdown";
+  private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
+  private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private continueBtn = this.page.locator("#sign-summary-continue-button");
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -61,12 +65,26 @@ export class SwapPage extends AppPage {
   @step("Get provider list")
   async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
-    await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
+    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
     return await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
+  }
+
+  @step("Check elements presence on swap approval step")
+  async checkElementsPresenceOnSwapApprovalStep(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
+    await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
+    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
+    await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
+  }
+
+  @step("Click Continue button")
+  async clickContinueButton() {
+    await this.continueBtn.click();
   }
 
   @step("Check quotes container infos")
@@ -109,7 +127,7 @@ export class SwapPage extends AppPage {
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
-  @step("Select specific provider $0")
+  @step("Select specific provider")
   async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
@@ -240,11 +258,7 @@ export class SwapPage extends AppPage {
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [
-      Provider.ONE_INCH.uiName,
-      Provider.VELORA.uiName,
-      Provider.MOONPAY.uiName,
-    ].includes(provider)
+    const buttonText = [Provider.VELORA.uiName, Provider.MOONPAY.uiName].includes(provider)
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
@@ -296,8 +310,8 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
-  @step("Check if asset is already selected")
-  async checkIfAssetIsAlreadySelected(
+  @step("Check if $0 asset is already selected")
+  async checkIfFromAssetIsAlreadySelected(
     asset: string,
     electronApp: ElectronApplication,
   ): Promise<boolean> {
@@ -308,6 +322,18 @@ export class SwapPage extends AppPage {
       const el = document.querySelector(`[data-testid='${selectorTestId}']`);
       return el && el.textContent && el.textContent !== "Choose asset";
     }, this.fromAccountCoinSelector);
+
+    const text = await selector.textContent();
+    return text?.includes(asset) ?? false;
+  }
+
+  @step("Check if $0 asset is already selected")
+  async checkIfToAssetIsAlreadySelected(
+    asset: string,
+    electronApp: ElectronApplication,
+  ): Promise<boolean> {
+    const [, webview] = electronApp.windows();
+    const selector = webview.getByTestId(this.toAccountCoinSelector);
 
     const text = await selector.textContent();
     return text?.includes(asset) ?? false;
@@ -328,8 +354,15 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
+  @step("Select currency to swap from: $1")
+  async selectAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
   @step("Choose from asset $0")
-  async chooseFromAsset(currency: string, networkName?: string) {
+  async selectAsset(currency: string, networkName?: string) {
     await this.chooseAssetDrawer.chooseFromAsset(currency, networkName);
   }
 
@@ -474,20 +507,20 @@ export class SwapPage extends AppPage {
   async clickExportOperations() {
     await this.exportOperationsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+    const originalFilePath = path.resolve("./ledgerwallet-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
 
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
     const targetDir = path.dirname(targetFilePath);
-    await fs.mkdir(targetDir, { recursive: true });
-    await fs.rename(originalFilePath, targetFilePath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(originalFilePath, targetFilePath);
   }
 
   @step("Check contents of exported operations file")
   async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
-    const fileContents = await fs.readFile(targetFilePath, "utf-8");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
+    const fileContents = await readFile(targetFilePath, "utf-8");
 
     expect(fileContents).toContain(provider.name);
     expect(fileContents).toContain(id);

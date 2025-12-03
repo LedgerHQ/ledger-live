@@ -14,7 +14,7 @@ export type ExtraDeviceTransactionField =
     };
 type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   parentAccount,
   transaction: { mode, recipient },
@@ -24,7 +24,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const mainAccount = getMainAccount(account, parentAccount);
   const source = mainAccount.freshAddress;
   const isDelegateOperation = mode === "delegate";

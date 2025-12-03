@@ -1,9 +1,4 @@
-import {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/native";
@@ -14,40 +9,6 @@ export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveProvider]: {
     manifestId: string;
     fromMenu?: boolean;
-  };
-  [ScreenName.ReceiveSelectCrypto]:
-    | {
-        filterCurrencyIds?: string[];
-        currency?: string;
-        fromMenu?: boolean;
-      }
-    | undefined;
-  [ScreenName.DepositSelectNetwork]:
-    | {
-        filterCurrencyIds?: string[];
-        provider: {
-          currenciesByNetwork: CryptoOrTokenCurrency[];
-          providerId: string;
-        };
-      }
-    | undefined;
-  [ScreenName.ReceiveSelectAccount]: {
-    currency: CryptoCurrency | TokenCurrency;
-    createTokenAccount?: boolean;
-    fromMenu?: boolean;
-  };
-  [ScreenName.ReceiveAddAccountSelectDevice]: {
-    accountId?: string;
-    parentId?: string;
-    currency: CryptoCurrency;
-    inline?: boolean;
-    analyticsPropertyFlow?: string;
-    createTokenAccount?: boolean;
-  };
-  [ScreenName.ReceiveAddAccount]: {
-    currency: CryptoCurrency | TokenCurrency;
-    device: Device;
-    onSuccess?: (_?: unknown) => void;
   };
   [ScreenName.ReceiveConnectDevice]: {
     account?: AccountLike;
@@ -84,6 +45,7 @@ export type ReceiveFundsStackParamList = {
     onSuccess?: (_?: string) => void;
     onError?: () => void;
     fromMenu?: boolean;
+    hideBackButton?: boolean;
   };
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>

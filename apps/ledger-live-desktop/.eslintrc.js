@@ -28,6 +28,11 @@ const livecommonRules = {
             group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
             message: "Please remove the /lib import from live-common import.",
           },
+          {
+            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+            message:
+              "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
+          },
         ],
 
         paths: [

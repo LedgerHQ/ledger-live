@@ -12,7 +12,7 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useErrorLinks } from "./hooks/useErrorLinks";
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
-import { renderWithLinks } from "./ErrorWithAnchor";
+import { ErrorWithAnchorContent } from "./ErrorWithAnchor";
 type Props = {
   error: Error | undefined | null;
   field?: "title" | "description" | "list";
@@ -110,7 +110,7 @@ export function TranslatedError({
   return (
     <>
       {hasAnchorsInTranslation ? (
-        <span data-testid={dataTestId}>{renderWithLinks(translation)}</span>
+        <ErrorWithAnchorContent html={translation} dataTestId={dataTestId} />
       ) : (
         <span data-testid={dataTestId}>
           <Trans i18nKey={translationKey} components={{ ...links }} values={args} />

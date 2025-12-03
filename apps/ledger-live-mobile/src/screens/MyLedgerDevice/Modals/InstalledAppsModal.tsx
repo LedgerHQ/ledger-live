@@ -55,7 +55,7 @@ type RowProps = {
 const Row = ({ app, state, dispatch, deviceInfo }: RowProps) => (
   <Flex flexDirection="row" py={4} alignItems="center" justifyContent="space-between">
     <Flex flexDirection="row" alignItems="center">
-      <AppIcon app={app} size={24} radius={8} />
+      <AppIcon app={app} size={24} />
       <Text variant="large" fontWeight="semiBold" color="neutral.c100" ml={4}>
         {app.name}
       </Text>
@@ -106,7 +106,7 @@ const InstalledAppsModal = ({
   }, [appList, onClose]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} propagateSwipe={true}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Header illustration={illustration} />
       <FlatList
         data={appList}
@@ -114,6 +114,7 @@ const InstalledAppsModal = ({
         keyExtractor={item => "" + item.id}
         overScrollMode="never"
         showsVerticalScrollIndicator={false}
+        style={{ maxHeight: 325 }}
       />
       <Button mt={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />

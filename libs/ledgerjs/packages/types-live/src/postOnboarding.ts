@@ -1,21 +1,24 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FeatureId } from ".";
+import { Account, FeatureId } from ".";
 
 /**
  * Unique identifier of a post onboarding action.
  */
 export enum PostOnboardingActionId {
-  claimMock = "claimMock",
-  migrateAssetsMock = "migrateAssetsMock",
-  personalizeMock = "personalizeMock",
+  assetsTransfer = "assetsTransfer",
+  buyCrypto = "buyCrypto",
+  syncAccounts = "syncAccounts",
+  customImage = "customImage",
+  recover = "recover",
+  // Mocks for desktop development and tests
   assetsTransferMock = "assetsTransferMock",
   buyCryptoMock = "buyCryptoMock",
   customImageMock = "customImageMock",
+  claimMock = "claimMock",
+  migrateAssetsMock = "migrateAssetsMock",
+  personalizeMock = "personalizeMock",
   recoverMock = "recoverMock",
-  customImage = "customImage",
-  assetsTransfer = "assetsTransfer",
-  buyCrypto = "buyCrypto",
-  recover = "recover",
+  syncAccountsMock = "syncAccountsMock",
 }
 
 export type WithNavigationParams = {
@@ -31,16 +34,19 @@ export type WithNavigationParams = {
   }) => [screen: any] | [screen: any, navigationParams: any];
 };
 
+export interface StartActionArgs {
+  openModalCallback?: (modalName: any) => void;
+  navigationCallback?: (location: Record<string, unknown> | string) => void;
+  deviceModelId?: DeviceModelId;
+  protectId?: string;
+  openActivationDrawer?: () => void;
+}
+
 type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: (args: {
-    openModalCallback: (modalName: any) => void;
-    navigationCallback: (location: Record<string, unknown> | string) => void;
-    deviceModelId: DeviceModelId;
-    protectId: string;
-  }) => void;
+  startAction: (args: StartActionArgs) => void;
   /**
    * Optional Redux dispatch function
    */
@@ -64,10 +70,19 @@ export type PostOnboardingAction = {
   featureFlagId?: FeatureId;
 
   /**
+   * If this action is linked to a feature that is enabled by a feature flag's param,
+   * use this property to identify the feature flag param.
+   */
+  featureFlagParamId?: string;
+
+  /**
    * Icon displayed for this action in the post onboarding hub.
    */
-
-  Icon: (props: { size?: "XS" | "S" | "M" | "L" | "XL"; color?: string; style?: object }) => any;
+  Icon: (props: {
+    size?: "XS" | "S" | "M" | "L" | "XL";
+    color?: string;
+    style?: object;
+  }) => React.ReactElement | null;
 
   /**
    * Title displayed for this action in the post onboarding hub.
@@ -101,6 +116,14 @@ export type PostOnboardingAction = {
    * the post-onboarding and false otherwise
    */
   getIsAlreadyCompleted?: (args: { protectId: string }) => Promise<boolean>;
+
+  /**
+   * Check if passed state shows the action has already been completed
+   */
+  getIsAlreadyCompletedByState?: (args: {
+    isLedgerSyncActive?: boolean;
+    accounts?: Account[];
+  }) => boolean;
 
   /**
    * Used to set the action as complete when clicking on it.

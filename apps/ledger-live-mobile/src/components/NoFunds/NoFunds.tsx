@@ -3,7 +3,7 @@ import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
@@ -55,7 +55,7 @@ type ButtonItem = {
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route.params ?? {};
+  const { account, parentAccount, entryPoint } = route.params;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
@@ -74,7 +74,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
   const { page, track } = useAnalytics();
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
         name,
         options,
       );
@@ -87,15 +87,22 @@ export default function NoFunds({ route }: Readonly<Props>) {
       button: "receive",
       page,
     });
+
+    const shouldCreateTokenAccount =
+      account.type === "TokenAccount" &&
+      !parentAccount?.subAccounts?.some(subAccount => subAccount.id === account.id);
+
     onNavigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: {
+        account,
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
+        createTokenAccount: shouldCreateTokenAccount,
       },
     });
-  }, [account.id, currency, onNavigate, page, parentAccount?.id, track]);
+  }, [account, currency, onNavigate, page, parentAccount, track]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
@@ -143,7 +150,6 @@ export default function NoFunds({ route }: Readonly<Props>) {
   ];
 
   const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency.ticker);
-
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">
       <TrackScreen category="NoFundsFlow" name="ServiceModal" />

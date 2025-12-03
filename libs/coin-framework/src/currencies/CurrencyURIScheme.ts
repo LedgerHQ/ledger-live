@@ -36,7 +36,15 @@ const convertedValue = (value: any, currency: CryptoCurrency) => {
 };
 
 export function decodeURIScheme(str: string): Data {
-  const m = str.match(/(([a-zA-Z]+):)?([^?]+)(\?(.+))?/);
+  // Regex pattern breakdown:
+  // - (([a-zA-Z0-9_-]+):(?!:))?  - Optional URI scheme (e.g., "bitcoin:", "ethereum:")
+  //   - [a-zA-Z0-9_-]+            - Scheme name
+  //   - :                         - Required colon after scheme
+  //   - (?!:)                     - Negative lookahead: colon must NOT be followed by another colon
+  //                                 This prevents matching "ldg:" in addresses like "ldg::1220..." (canton) as a scheme
+  // - ([^?]+)                    - Address part (everything until '?' if present)
+  // - (\?([^?]+))?               - Optional query string (e.g., "?amount=0.5")
+  const m = /^(([a-zA-Z0-9_-]+):(?!:))?([^?]+)(\?([^?]+))?$/.exec(str);
 
   if (!m) {
     // as a fallback we'll fallback str to be an address

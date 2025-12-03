@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Select from "~/renderer/components/Select";
@@ -12,6 +11,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`
@@ -106,16 +106,38 @@ export default function DelegationSelectorField({
   onChange: (_: TokenCurrency | undefined | null) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [lastItemIndex, setLastItemIndex] = useState<number | undefined>(undefined);
+  const [keepLastScrollPosition, setLastKeepScrollPosition] = useState(false);
+
   const subAccounts = account.subAccounts;
-  const options = listTokensForCryptoCurrency(account.currency);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: account.currency.id,
+  });
+
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
+
   const value = useMemo(
     () =>
       options.find(({ id }) => {
         const { assetCode, assetIssuer } = getAssetObject(id);
         return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
       }),
-    [options, transaction],
+    [options, transaction.assetOwner, transaction.assetReference],
   );
+
+  const onScrollEnd = useCallback(() => {
+    if (loadNext) {
+      setLastItemIndex(data ? data.tokens.length - 1 : 0);
+      setLastKeepScrollPosition(true);
+      loadNext();
+    }
+  }, [data, loadNext]);
+
+  const onMenuClose = useCallback(() => {
+    setLastKeepScrollPosition(false);
+  }, []);
+
   return (
     <Box flow={1} mb={4}>
       <Select
@@ -136,6 +158,10 @@ export default function DelegationSelectorField({
           })
         }
         onChange={onChange}
+        lastItemIndex={lastItemIndex}
+        keepLastScrollPosition={keepLastScrollPosition}
+        onScrollEnd={onScrollEnd}
+        onMenuClose={onMenuClose}
       />
     </Box>
   );

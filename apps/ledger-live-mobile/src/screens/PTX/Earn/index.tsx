@@ -1,4 +1,7 @@
-import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  stakeProgramsToEarnParam,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -49,7 +52,6 @@ function Earn({ route }: Props) {
   );
 
   const earnFlag = useFeature("ptxEarnLiveApp");
-  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
@@ -64,6 +66,10 @@ function Earn({ route }: Props) {
     [stakePrograms],
   );
   const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
+  const ethDepositCohort = useMemo(
+    () => getEthDepositScreenSetting(stakePrograms),
+    [stakePrograms],
+  );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
@@ -89,7 +95,7 @@ function Earn({ route }: Props) {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           OS: Platform.OS,
-          earnDrawerApyFlag: earnDrawerApyFlag ? JSON.stringify(earnDrawerApyFlag) : undefined,
+          ethDepositCohort,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}

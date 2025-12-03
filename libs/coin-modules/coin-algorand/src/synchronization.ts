@@ -2,7 +2,7 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -21,6 +21,8 @@ import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq
 import { AlgorandAccount, AlgorandOperation } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
+
+const SECONDS_TO_MILLISECONDS = 1000;
 
 const getASAOperationAmount = (transaction: AlgoTransaction, accountAddress: string): BigNumber => {
   let assetAmount = new BigNumber(0);
@@ -156,7 +158,7 @@ const mapTransactionToOperation = (
 ): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
-  const date = new Date(parseInt(tx.timestamp) * 1000);
+  const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const fee = tx.fee;
   const memo = tx.note;
   const senders: string[] = getOperationSenders(tx);
@@ -195,7 +197,7 @@ const mapTransactionToASAOperation = (
 ): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
-  const date = new Date(parseInt(tx.timestamp) * 1000);
+  const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const fee = tx.fee;
   const senders: string[] = getOperationSenders(tx);
   const recipients: string[] = getOperationRecipients(tx);
@@ -327,7 +329,6 @@ async function buildSubAccount({
 }
 
 async function buildSubAccounts({
-  currency,
   accountId,
   initialAccount,
   initialAccountAddress,
@@ -344,10 +345,10 @@ async function buildSubAccounts({
   syncConfig: SyncConfig;
 }): Promise<TokenAccount[] | undefined> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts: TokenAccount[] = [];
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
+  const assetsIds = assets.map(asset => asset.assetId);
 
   if (initialAccount && initialAccount.subAccounts) {
     for (const existingSubAccount of initialAccount.subAccounts) {
@@ -364,7 +365,7 @@ async function buildSubAccounts({
 
   // filter by token existence
   await promiseAllBatched(3, assets, async asset => {
-    const token = findTokenById(addPrefixToken(asset.assetId));
+    const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(asset.assetId));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];
@@ -379,10 +380,15 @@ async function buildSubAccounts({
       if (tokenAccount) tokenAccounts.push(tokenAccount);
     }
   });
-  // Preserve order of tokenAccounts from the existing token accounts
+  // Preserve order of tokenAccounts from the existing token accounts, or use the
+  // order of input assets if no token accounts exist yet
   tokenAccounts.sort((a, b) => {
-    const i = existingAccountTickers.indexOf(a.token.ticker);
-    const j = existingAccountTickers.indexOf(b.token.ticker);
+    const i = existingAccountTickers.length
+      ? existingAccountTickers.indexOf(a.token.ticker)
+      : assetsIds.indexOf(extractTokenId(a.token.id));
+    const j = existingAccountTickers.length
+      ? existingAccountTickers.indexOf(b.token.ticker)
+      : assetsIds.indexOf(extractTokenId(b.token.id));
     if (i === j) return 0;
     if (i < 0) return 1;
     if (j < 0) return -1;

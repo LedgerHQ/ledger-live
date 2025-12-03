@@ -36,6 +36,10 @@ type Props = {
   stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
+  onMenuScrollToBottom?: () => void;
+  lastItemIndex?: number;
+  keepLastScrollPosition?: boolean;
+  isLoading?: boolean;
 };
 const getOptionValue = (data: CurrencyOption) => (data.currency as CryptoOrTokenCurrency).id;
 
@@ -56,6 +60,10 @@ const SelectCurrency = ({
   stylesMap,
   onMenuOpen,
   small,
+  onMenuScrollToBottom,
+  lastItemIndex,
+  keepLastScrollPosition,
+  isLoading,
 }: Props) => {
   const { t } = useTranslation();
   const devMode = useEnv("MANAGER_DEV_MODE");
@@ -124,7 +132,7 @@ const SelectCurrency = ({
     <Select
       id={id}
       autoFocus={autoFocus}
-      value={selectedOption as CurrencyOption}
+      value={selectedOption}
       options={filteredOptions}
       filterOption={null}
       getOptionValue={getOptionValue}
@@ -143,6 +151,10 @@ const SelectCurrency = ({
       rowHeight={rowHeight}
       stylesMap={stylesMap}
       small={small}
+      onScrollEnd={onMenuScrollToBottom}
+      lastItemIndex={lastItemIndex}
+      keepLastScrollPosition={keepLastScrollPosition}
+      isLoading={isLoading}
     />
   );
 };
@@ -228,7 +240,7 @@ export function CurrencyOption({
   );
   return (
     <OptionBox role="option">
-      <CryptoCurrencyIcon circle currency={currency} size={26} />
+      <CryptoCurrencyIcon currency={currency} size={30} />
       {textContents}
     </OptionBox>
   );

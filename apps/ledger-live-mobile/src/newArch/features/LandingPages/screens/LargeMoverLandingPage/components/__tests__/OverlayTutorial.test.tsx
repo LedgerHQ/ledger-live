@@ -9,11 +9,11 @@ import {
   LandingPagesNavigatorParamList,
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
-import { mockCurrencyData } from "../../fixtures/currency";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { mockChartData, mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
-import { mockNavigation } from "../../fixtures/navigation";
 
-jest.mock("~/newArch/components/Swiper/components/Swiper", () => ({
+jest.mock("LLM/components/Swiper/components/Swiper", () => ({
   SwiperComponent: function MockSwiperComponent(props: React.PropsWithChildren<object>) {
     return (
       <View testID="mock-swiper">
@@ -46,7 +46,7 @@ jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverChartData", () => ({
     chartDataArray: [
       {
         idChartData: "ethereum",
-        chartData: mockCurrencyData.chartData,
+        chartData: mockChartData,
         isLoading: false,
         isError: false,
       },
@@ -64,6 +64,30 @@ const mockRoute = {
     initialRange: InitialRange.Day,
   },
 } as RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>;
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockNavigation = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+  dispatch: jest.fn(),
+  reset: jest.fn(),
+  isFocused: jest.fn().mockReturnValue(true),
+  canGoBack: jest.fn().mockReturnValue(true),
+  getParent: jest.fn(),
+  setOptions: jest.fn(),
+  addListener: jest.fn(),
+  removeListener: jest.fn(),
+  getId: jest.fn(),
+  getState: jest.fn(),
+  setParams: jest.fn(),
+  replace: jest.fn(),
+  push: jest.fn(),
+  pop: jest.fn(),
+  popToTop: jest.fn(),
+} as unknown as NativeStackNavigationProp<
+  LandingPagesNavigatorParamList,
+  ScreenName.LargeMoverLandingPage
+>;
 
 describe("OverlayTutorial", () => {
   beforeEach(() => {

@@ -13,7 +13,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { renderWithLinks } from "~/renderer/components/TranslatedError/ErrorWithAnchor";
+import { ErrorWithAnchorContent } from "~/renderer/components/TranslatedError/ErrorWithAnchor";
 
 const IncidentContainer = styled(Box)`
   width: 100%;
@@ -66,7 +66,7 @@ function IncidentArticle({ incidentData }: IncidentProps) {
                 lineHeight="18px"
                 color="palette.text.shade50"
               >
-                {renderWithLinks(body)}
+                <ErrorWithAnchorContent html={body} />
               </Text>
             ))
           : null}

@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { Icons } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../Body";
 import { useHistory } from "react-router";
@@ -45,33 +46,32 @@ const Content = styled(Box)`
 `;
 
 export default function StepOptions(props: Readonly<StepProps>) {
-  const { eventType, transitionTo, closeModal } = props;
+  const { transitionTo, closeModal } = props;
   const history = useHistory();
 
-  function handleGoToReceiveProvider() {
+  function handleGoToBankProvider() {
+    track("button_clicked", {
+      button: "fiat",
+      page: "receive_drawer",
+    });
     closeModal();
     history.push({
-      pathname: "/receive",
+      pathname: "/bank",
     });
+  }
+
+  function handleGoToReceiveAccount() {
+    track("button_clicked", {
+      button: "crypto",
+      page: "receive_drawer",
+    });
+    transitionTo("account");
   }
 
   return (
     <Box>
-      <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
-      <Option onClick={() => transitionTo("account")}>
-        <IconWrapper>
-          <Icons.CoinsCrypto size={"M"} />
-        </IconWrapper>
-        <Content>
-          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
-            <Trans i18nKey="receive.steps.options.fromCrypto.title" />
-          </Text>
-          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
-            <Trans i18nKey="receive.steps.options.fromCrypto.description" />
-          </Text>
-        </Content>
-      </Option>
-      <Option onClick={handleGoToReceiveProvider}>
+      <TrackPage category="receive_drawer" type="drawer" />
+      <Option onClick={handleGoToBankProvider}>
         <IconWrapper>
           <Icons.Bank size={"M"} />
         </IconWrapper>
@@ -81,6 +81,19 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
           <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
             <Trans i18nKey="receive.steps.options.fromBank.description" />
+          </Text>
+        </Content>
+      </Option>
+      <Option onClick={handleGoToReceiveAccount}>
+        <IconWrapper>
+          <Icons.CoinsCrypto size={"M"} />
+        </IconWrapper>
+        <Content>
+          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey="receive.steps.options.fromCrypto.title" />
+          </Text>
+          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
+            <Trans i18nKey="receive.steps.options.fromCrypto.description" />
           </Text>
         </Content>
       </Option>

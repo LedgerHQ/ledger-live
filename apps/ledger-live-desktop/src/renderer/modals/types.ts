@@ -53,7 +53,6 @@ export type GlobalModalData = {
   MODAL_BLACKLIST_TOKEN: {
     token: TokenCurrency;
   };
-  MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
   MODAL_WALLET_SYNC_DEBUGGER: undefined;
   MODAL_BRAZE_TOOLS: undefined;

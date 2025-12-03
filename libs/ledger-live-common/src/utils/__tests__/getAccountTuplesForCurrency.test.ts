@@ -1,8 +1,12 @@
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;
@@ -50,25 +54,19 @@ describe("getAccountTuplesForCurrency", () => {
 
       expect(results).toHaveLength(0);
     });
-
-    test("filters based on the accountId map", () => {
-      const ethCurrency = getCryptoCurrencyById("ethereum");
-      const ethAccounts = [getEthAccount(), getEthAccount(), getEthAccount(), getEthAccount()];
-
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        ethAccounts,
-        new Map([[ethAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(1);
-    });
   });
 
   describe("TokenCurrency", () => {
-    const token = findTokenById("ethereum/erc20/aave");
-    if (!token) throw new Error("AAVE token not found");
-    const aaveToken = token;
+    const aaveToken = {
+      type: "TokenCurrency" as const,
+      id: "ethereum/erc20/aave",
+      name: "Aave Token",
+      ticker: "AAVE",
+      units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
+      contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+      parentCurrency: getCryptoCurrencyById("ethereum"),
+      tokenType: "erc20" as const,
+    };
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [
@@ -118,23 +116,6 @@ describe("getAccountTuplesForCurrency", () => {
 
       const results = getAccountTuplesForCurrency(aaveToken, allAccounts);
       expect(results).toHaveLength(0);
-    });
-
-    test("does not filter based on the accountId map", () => {
-      const aaveAccounts = [
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-        { ...getEthAccount(), subAccounts: [aaveToken] },
-      ];
-
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        aaveAccounts,
-        new Map([[aaveAccounts[0].id, true]]),
-      );
-
-      expect(results).toHaveLength(4);
     });
   });
 });

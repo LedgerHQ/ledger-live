@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useCardRotation } from "./useCardRotation";
 import { createGesture } from "../utils/gesture";
@@ -19,10 +19,16 @@ export function useSwiper<T>(
     const nextIndex = (cardIndex + 1) % initialCards.length;
     setCardIndex(nextIndex);
     activeIndex.value = nextIndex;
+    onIndexChange(nextIndex);
+  }, [cardIndex, initialCards.length, onIndexChange, activeIndex]);
+
+  // RN New Arch requires animation values to be reset after React commits the cardIndex change and re-renders
+  // This ensures the cards array (from useCardRotation) reflects the new order
+  // before resetting animations, preventing the swiped card from briefly reappearing on top
+  useEffect(() => {
     swipeX.value = 0;
     swipeY.value = 0;
-    onIndexChange(nextIndex);
-  }, [cardIndex, initialCards.length, onIndexChange, activeIndex, swipeX, swipeY]);
+  }, [cardIndex, swipeX, swipeY]);
 
   const gesture = createGesture(swipeX, swipeY, handleSwipeComplete);
 

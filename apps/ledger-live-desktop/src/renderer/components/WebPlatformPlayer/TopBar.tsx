@@ -324,11 +324,7 @@ export const TopBar = ({
                 </>
               ) : (
                 <>
-                  <CryptoCurrencyIcon
-                    circle
-                    currency={getAccountCurrency(currentAccount)}
-                    size={16}
-                  />
+                  <CryptoCurrencyIcon currency={getAccountCurrency(currentAccount)} size={16} />
                   <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}

@@ -8,7 +8,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
 
 import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
@@ -77,12 +77,15 @@ function SendSummary({ navigation, route }: Props) {
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(nextNavigation, {
-        ...route.params,
-        transaction,
-        status,
-        selectDeviceLink: true,
-      })
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+        nextNavigation,
+        {
+          ...route.params,
+          transaction,
+          status,
+          selectDeviceLink: true,
+        },
+      )
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
   useEffect(() => {
@@ -129,9 +132,10 @@ function SendSummary({ navigation, route }: Props) {
     setHighFeesOpen(false);
     setContinuing(false);
   }, [setHighFeesOpen]);
-  const { amount, totalSpent, errors } = status;
+  const { amount, totalSpent, errors, warnings } = status;
   const { transaction: transactionError } = errors;
   const error = errors[Object.keys(errors)[0]];
+  const { tooManyUtxos } = warnings || {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
   const hasNonEmptySubAccounts =
@@ -292,10 +296,25 @@ function SendSummary({ navigation, route }: Props) {
             </Flex>
           </NativeUiAlert>
         ) : null}
+
+        {tooManyUtxos ? (
+          <NativeUiAlert type="warning">
+            <Flex>
+              <Text
+                color="neutral.c100"
+                flexShrink={1}
+                variant="bodyLineHeight"
+                fontWeight="semiBold"
+              >
+                <Trans i18nKey={tooManyUtxos.message} />
+              </Text>
+            </Flex>
+          </NativeUiAlert>
+        ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error} color="alert">
-          <TranslatedError error={transactionError} />
+          <TranslatedError error={transactionError ?? error} />
         </LText>
         <Button
           event="SummaryContinue"

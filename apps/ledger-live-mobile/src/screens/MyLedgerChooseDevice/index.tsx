@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -41,6 +41,7 @@ type ChooseDeviceProps = Props & {
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
+  const { t } = useTranslation();
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
@@ -129,7 +130,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       {!isHeaderOverridden ? (
         <Flex px={16} pb={8}>
           <Text pt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
-            <Trans i18nKey="manager.title" />
+            {t("manager.title")}
           </Text>
         </Flex>
       ) : null}
@@ -137,7 +138,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
-          displayServicesWidget
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
           hasPostOnboardingEntryPointCard

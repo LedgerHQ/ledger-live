@@ -118,7 +118,7 @@ const Accounts = ({
           <>
             {bitcoinAccounts.map(account => (
               <Row key={account.id}>
-                <CryptoCurrencyIcon size={16} currency={account.currency} />
+                <CryptoCurrencyIcon size={22} currency={account.currency} />
                 <Box
                   ml={2}
                   shrink

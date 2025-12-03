@@ -87,7 +87,7 @@ export const counterValueFormatter = ({
   if (shorten && t && formatter) {
     const sign = value > 0 ? "" : "-";
     const v = Math.abs(value);
-    const index = Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0;
+    const index = Math.min(Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0, indexes.length - 1);
 
     const [i, n] = indexes[index];
 

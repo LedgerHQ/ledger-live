@@ -7,14 +7,11 @@ import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+// Import tokenFixtures to setup mock store
+import "./tokenFixtures";
 
 global.console = require("console");
 jest.setTimeout(100_000);
-
-//TODO mock call to CAL when available
-setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml

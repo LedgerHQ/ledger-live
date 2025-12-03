@@ -1,21 +1,29 @@
-import React from "react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as dmkUtils from "./useDeviceManagementKit";
 import { mapDiscoveredDeviceToScannedDevice, useBleDevicesScanning } from "./useBleDevicesScanning";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { Observable } from "rxjs";
-import { act, render } from "@testing-library/react";
-
-const TestComponent = () => {
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning(true);
-  return (
-    <div>
-      <span data-testid="devices">{JSON.stringify(scannedDevices)}</span>
-      <span data-testid="scan-error">{String(scanningBleError)}</span>
-    </div>
-  );
-};
+import { Observable, Subject } from "rxjs";
+import { renderHook, act } from "@testing-library/react";
+import { BleState, useBleState } from "./useBleState";
 
 const dmk = dmkUtils.getDeviceManagementKit();
+
+// Mock device data for tests
+const mockDevice1 = {
+  id: "device1",
+  name: "Test Device 1",
+  deviceModel: { model: "nanoX" },
+  transport: "ble",
+} as DiscoveredDevice;
+
+const mockDevice2 = {
+  id: "device2",
+  name: "Test Device 2",
+  deviceModel: { model: "nanoS" },
+  transport: "ble",
+} as DiscoveredDevice;
+
+const mockDevices = [mockDevice1, mockDevice2];
 
 describe("defaultMapper", () => {
   it("should return correct devices", () => {
@@ -27,6 +35,7 @@ describe("defaultMapper", () => {
         deviceModel: {
           model: "flex",
         },
+        transport: "ble",
       },
       {
         id: "id1",
@@ -34,6 +43,7 @@ describe("defaultMapper", () => {
         deviceModel: {
           model: "stax",
         },
+        transport: "ble",
       },
       {
         id: "id2",
@@ -41,6 +51,7 @@ describe("defaultMapper", () => {
         deviceModel: {
           model: "nanoX",
         },
+        transport: "ble",
       },
       {
         id: "id3",
@@ -48,6 +59,7 @@ describe("defaultMapper", () => {
         deviceModel: {
           model: "nanoS",
         },
+        transport: "ble",
       },
       {
         id: "id4",
@@ -55,6 +67,7 @@ describe("defaultMapper", () => {
         deviceModel: {
           model: "nanoSP",
         },
+        transport: "ble",
       },
     ] as DiscoveredDevice[];
     // when
@@ -66,49 +79,65 @@ describe("defaultMapper", () => {
         deviceName: "name0",
         modelId: "europa",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id1",
         deviceName: "name1",
         modelId: "stax",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id2",
         deviceName: "name2",
         modelId: "nanoX",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id3",
         deviceName: "name3",
         modelId: "nanoS",
         wired: false,
-        isAlreadyKnown: false,
       },
       {
         deviceId: "id4",
         deviceName: "name4",
         modelId: "nanoSP",
         wired: false,
-        isAlreadyKnown: false,
       },
     ]);
   });
 });
 
+// Mock useBleState
+vi.mock("./useBleState", () => ({
+  useBleState: vi.fn(),
+  BleState: {
+    Unknown: "Unknown",
+    Resetting: "Resetting",
+    Unsupported: "Unsupported",
+    Unauthorized: "Unauthorized",
+    PoweredOff: "PoweredOff",
+    PoweredOn: "PoweredOn",
+  },
+  UndeterminedBleStates: ["Unknown", "Resetting"],
+}));
+
 describe("useBleDevicesScanning", () => {
+  const mockUseBleState = vi.mocked(useBleState);
+  const mockListenToAvailableDevices = vi.fn();
+  const mockStopDiscovering = vi.fn();
+
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.spyOn(dmkUtils, "useDeviceManagementKit").mockReturnValue(dmk);
     vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
+    vi.spyOn(dmk, "listenToAvailableDevices").mockImplementation(mockListenToAvailableDevices);
+    vi.spyOn(dmk, "stopDiscovering").mockImplementation(mockStopDiscovering);
   });
 
   it("should scan and map devices", async () => {
     // given
-    let result: ReturnType<typeof render> | undefined;
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
     const scannedDevices = [
       {
         id: "id0",
@@ -117,6 +146,7 @@ describe("useBleDevicesScanning", () => {
           model: "flex",
         },
         rssi: 42,
+        transport: "ble",
       },
       {
         id: "id1",
@@ -125,6 +155,7 @@ describe("useBleDevicesScanning", () => {
           model: "stax",
         },
         rssi: 32,
+        transport: "ble",
       },
       {
         id: "id2",
@@ -133,54 +164,287 @@ describe("useBleDevicesScanning", () => {
           model: "nanoX",
         },
         rssi: 63,
+        transport: "ble",
       },
     ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
+
+    mockListenToAvailableDevices.mockReturnValue(
       new Observable(subscriber => {
         subscriber.next(scannedDevices);
       }),
     );
 
     // when
-    await act(async () => {
-      result = render(<TestComponent />);
-    });
-    if (!result) {
-      throw new Error("Result is undefined");
-    }
-    const { getByTestId } = result!;
-    const devices = getByTestId("devices");
-    const scanError = getByTestId("scan-error");
+    const { result } = renderHook(() => useBleDevicesScanning(true));
 
     // then
-    expect(devices).toHaveTextContent(
-      JSON.stringify(scannedDevices.map(mapDiscoveredDeviceToScannedDevice)),
+    expect(result.current.scannedDevices).toEqual(
+      scannedDevices.map(mapDiscoveredDeviceToScannedDevice),
     );
-    expect(scanError).toHaveTextContent("null");
+    expect(result.current.scanningBleError).toBeNull();
+    expect(result.current.isScanning).toBe(true);
   });
 
-  it("should set an error", async () => {
+  it("should start scanning when BLE state changes from non-scanning to scanning state", async () => {
     // given
-    let result: ReturnType<typeof render> | undefined;
-    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
-      new Observable(subscriber => {
-        subscriber.error(new Error("scan error"));
-      }),
-    );
+    mockUseBleState.mockReturnValue(BleState.PoweredOff);
+    mockListenToAvailableDevices.mockReturnValue(new Observable());
 
-    // when
-    await act(async () => {
-      result = render(<TestComponent />);
-    });
-    if (!result) {
-      throw new Error("Result is undefined");
-    }
-    const { getByTestId } = result!;
-    const devices = getByTestId("devices");
-    const scanError = getByTestId("scan-error");
+    const { result, rerender } = renderHook(() => useBleDevicesScanning(true));
+
+    // Initially should not be scanning
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).not.toHaveBeenCalled();
+
+    // when BLE state changes to PoweredOn
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    rerender();
 
     // then
-    expect(devices).toHaveTextContent(JSON.stringify([]));
-    expect(scanError).toHaveTextContent("Error: scan error");
+    expect(result.current.isScanning).toBe(true);
+    expect(mockListenToAvailableDevices).toHaveBeenCalled();
+  });
+
+  it("should stop scanning when BLE state changes from scanning to non-scanning state", async () => {
+    // given
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, rerender } = renderHook(() => useBleDevicesScanning(true));
+
+    // First emit some devices to populate the array
+    act(() => {
+      subject.next([mockDevice1]);
+    });
+
+    // Verify devices are populated
+    expect(result.current.scannedDevices).toHaveLength(1);
+    expect(result.current.isScanning).toBe(true);
+
+    // when BLE state changes to PoweredOff
+    mockUseBleState.mockReturnValue(BleState.PoweredOff);
+    rerender();
+
+    // then
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(mockStopDiscovering).toHaveBeenCalled();
+  });
+
+  it("should start scanning when enabled changes from false to true with BLE powered on", async () => {
+    // given
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    mockListenToAvailableDevices.mockReturnValue(new Observable());
+
+    const { result, rerender } = renderHook(({ enabled }) => useBleDevicesScanning(enabled), {
+      initialProps: { enabled: false },
+    });
+
+    // Initially should not be scanning
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).not.toHaveBeenCalled();
+
+    // when enabled changes to true
+    rerender({ enabled: true });
+
+    // then
+    expect(result.current.isScanning).toBe(true);
+    expect(mockListenToAvailableDevices).toHaveBeenCalled();
+  });
+
+  it("should stop scanning when enabled changes from true to false with BLE powered on", async () => {
+    // given
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, rerender } = renderHook(({ enabled }) => useBleDevicesScanning(enabled), {
+      initialProps: { enabled: true },
+    });
+
+    // First emit some devices to populate the array
+    act(() => {
+      subject.next(mockDevices);
+    });
+
+    // Verify devices are populated
+    expect(result.current.scannedDevices).toHaveLength(2);
+    expect(result.current.isScanning).toBe(true);
+
+    // when enabled changes to false
+    rerender({ enabled: false });
+
+    // then
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(mockStopDiscovering).toHaveBeenCalled();
+  });
+
+  it("should unsubscribe and cleanup on error", async () => {
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result } = renderHook(() => useBleDevicesScanning(true));
+
+    // First emit some devices to populate the array
+    act(() => {
+      subject.next([mockDevice1]);
+    });
+
+    // Verify devices are populated
+    expect(result.current.scannedDevices).toHaveLength(1);
+    expect(result.current.isScanning).toBe(true);
+
+    // Trigger error
+    const error = new Error("boom");
+    act(() => {
+      subject.error(error);
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(result.current.scanningBleError).toBe(error);
+    expect(mockStopDiscovering).toHaveBeenCalled();
+  });
+
+  it("should unsubscribe and cleanup on complete", async () => {
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result } = renderHook(() => useBleDevicesScanning(true));
+
+    // First emit some devices to populate the array
+    act(() => {
+      subject.next([mockDevice1]);
+    });
+
+    // Verify devices are populated
+    expect(result.current.scannedDevices).toHaveLength(1);
+    expect(result.current.isScanning).toBe(true);
+
+    // Trigger complete
+    act(() => {
+      subject.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(result.current.scanningBleError).toBeNull();
+    expect(mockStopDiscovering).toHaveBeenCalled();
+  });
+
+  it("should retry scanning after unexpected completion", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    // First attempt - completes unexpectedly
+    const subject1 = new Subject<DiscoveredDevice[]>();
+    // Second attempt - after retry
+    const subject2 = new Subject<DiscoveredDevice[]>();
+
+    mockListenToAvailableDevices
+      .mockReturnValueOnce(subject1.asObservable())
+      .mockReturnValueOnce(subject2.asObservable());
+
+    const { result } = renderHook(() => useBleDevicesScanning(true));
+
+    // First attempt: emit devices then complete unexpectedly
+    act(() => {
+      subject1.next([mockDevice1]);
+      subject1.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(result.current.scannedDevices).toEqual([]);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Fast-forward time by 5 seconds to trigger retry
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should have retried
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(2);
+    expect(result.current.isScanning).toBe(true);
+
+    // Second attempt succeeds
+    act(() => {
+      subject2.next([mockDevice1, mockDevice2]);
+    });
+
+    expect(result.current.scannedDevices).toHaveLength(2);
+    expect(result.current.isScanning).toBe(true);
+
+    vi.useRealTimers();
+  });
+
+  it("should not retry if scanning is disabled before retry timeout", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, rerender } = renderHook(({ enabled }) => useBleDevicesScanning(enabled), {
+      initialProps: { enabled: true },
+    });
+
+    // First attempt: complete unexpectedly
+    act(() => {
+      subject.next([mockDevice1]);
+      subject.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Disable scanning before retry timeout
+    rerender({ enabled: false });
+
+    // Fast-forward time by 5 seconds
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should NOT have retried because scanning was disabled
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+    expect(result.current.isScanning).toBe(false);
+
+    vi.useRealTimers();
+  });
+
+  it("should cleanup retry timeout on unmount", async () => {
+    vi.useFakeTimers();
+    mockUseBleState.mockReturnValue(BleState.PoweredOn);
+
+    const subject = new Subject<DiscoveredDevice[]>();
+    mockListenToAvailableDevices.mockReturnValue(subject.asObservable());
+
+    const { result, unmount } = renderHook(() => useBleDevicesScanning(true));
+
+    // First attempt: complete unexpectedly
+    act(() => {
+      subject.next([mockDevice1]);
+      subject.complete();
+    });
+
+    expect(result.current.isScanning).toBe(false);
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    // Unmount before retry timeout
+    unmount();
+
+    // Fast-forward time by 5 seconds
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    // Should NOT have retried because component was unmounted
+    expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 });

@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 
 type Props = {
   onClose: () => void;
@@ -33,7 +33,7 @@ const DrawerHeader: React.FC<Props> = ({ onClose }) => {
         {t("walletSync.synchronize.qrCode.title")}
       </Text>
       <Flex flex={1} alignItems="flex-end">
-        <TouchableOpacity onPress={onClose}>
+        <Pressable onPressIn={onClose} hitSlop={16}>
           <Flex
             justifyContent="center"
             alignItems="center"
@@ -43,7 +43,7 @@ const DrawerHeader: React.FC<Props> = ({ onClose }) => {
           >
             <Icons.Close size={"XS"} color={colors.neutral.c100} />
           </Flex>
-        </TouchableOpacity>
+        </Pressable>
       </Flex>
     </Flex>
   );

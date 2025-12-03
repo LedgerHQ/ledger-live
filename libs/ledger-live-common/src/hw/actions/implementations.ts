@@ -10,10 +10,14 @@ import {
   of,
   timer,
 } from "rxjs";
-import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  LockedDeviceError,
+} from "@ledgerhq/errors";
 import { catchError, debounce, delayWhen, filter, switchMap, tap, timeout } from "rxjs/operators";
 import { Device } from "./types";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { ConnectManagerTimeout } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import { LOG_TYPE } from "..";
@@ -46,7 +50,11 @@ type PollingImplementationConfig = {
 
 type PollingImplementationParams<Request, EmittedEvents> = {
   deviceSubject: ReplaySubject<Device | null | undefined>;
-  task: (params: { deviceId: string; request: Request }) => Observable<EmittedEvents>;
+  task: (params: {
+    deviceId: string;
+    deviceName: string | null;
+    request: Request;
+  }) => Observable<EmittedEvents>;
   request: Request;
   config?: PollingImplementationConfig;
   // retryableWithDelayDisconnectedErrors has default value of [DisconnectedDevice, DisconnectedDeviceDuringOperation]
@@ -72,6 +80,21 @@ type Implementation = <EmittedEvent, GenericRequestType>(
 export type EmittedEvent<T> = {
   type: string;
 } & T;
+
+const remapError = (error: Error, deviceModelID: DeviceModelId): Error => {
+  if (!(error instanceof TimeoutError)) {
+    return error;
+  }
+
+  if (deviceModelID === DeviceModelId.nanoS) {
+    return new LockedDeviceError();
+  }
+
+  return new ConnectManagerTimeout(undefined, {
+    // TODO make this configurable
+    productName: getDeviceModel(deviceModelID).productName,
+  });
+};
 
 /**
  * Returns a polling implementation function that repeatedly performs a given task
@@ -112,15 +135,17 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
     // Runs every time we get a new device.
     function actionLoop() {
       if (currentDevice) {
-        const productName = getDeviceModel(currentDevice.modelId).productName;
-
         connectSub = concat(
           of({
             type: "deviceChange",
             device: currentDevice,
             replaceable: !firstRound,
           }),
-          task({ deviceId: currentDevice.deviceId, request }),
+          task({
+            deviceId: currentDevice.deviceId,
+            deviceName: currentDevice.deviceName ?? null,
+            request,
+          }),
         )
           .pipe(
             // Any event should clear the initialTimeout.
@@ -144,13 +169,7 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
             }),
 
             catchError((error: Error) => {
-              const maybeRemappedError =
-                error instanceof TimeoutError
-                  ? (new ConnectManagerTimeout(undefined, {
-                      // TODO make this configurable
-                      productName,
-                    }) as Error)
-                  : error;
+              const maybeRemappedError = remapError(error, currentDevice.modelId);
 
               tracer.trace(`Error when running task in polling implementation: ${error}`, {
                 error,
@@ -230,7 +249,13 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
 
             return concat(
               initialEvent,
-              !device ? EMPTY : task({ deviceId: device.deviceId, request }),
+              device
+                ? task({
+                    deviceId: device.deviceId,
+                    deviceName: device.deviceName ?? null,
+                    request,
+                  })
+                : EMPTY,
             );
           }),
           catchError((error: Error) =>

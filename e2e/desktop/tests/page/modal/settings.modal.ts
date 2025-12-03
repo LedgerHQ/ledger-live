@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Modal } from "../../component/modal.component";
-import { step } from "../../misc/reporters/step";
+import { Modal } from "tests/component/modal.component";
+import { step } from "tests/misc/reporters/step";
 
 export class SettingsModal extends Modal {
   readonly warningMessage = this.page.getByTestId("warning-message");
@@ -8,9 +8,9 @@ export class SettingsModal extends Modal {
 
   @step("Check Reset Modal")
   async checkResetModal() {
-    await expect(this.title).toHaveText("Reset Ledger Live");
+    await expect(this.title).toHaveText("Reset Ledger Wallet");
     await expect(this.warningMessage).toHaveText(
-      "Resetting Ledger Live will erase your swap transaction history for all your accounts.",
+      "Resetting Ledger Wallet will erase your swap transaction history for all your accounts.",
     );
   }
 

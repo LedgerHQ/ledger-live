@@ -8,15 +8,15 @@ import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { findTokenByAddressInCurrency, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
+import { CurrentAccountHistDB, UiHook } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 type MessageId = number | string | null;
 
@@ -87,6 +87,8 @@ export function useDappCurrentAccount(currentAccountHistDb?: CurrentAccountHistD
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
+const globCurrencies = ["**"];
+
 function useDappAccountLogic({
   manifest,
   accounts,
@@ -99,7 +101,7 @@ function useDappAccountLogic({
   initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
-  const { currencyIds } = usePermission(manifest);
+  const currencyIds = manifest.currencies === "*" ? globCurrencies : manifest.currencies;
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } =
     useDappCurrentAccount(currentAccountHistDb);
   const currentParentAccount = useMemo(() => {
@@ -433,7 +435,8 @@ export function useDappLogic({
           try {
             await new Promise<void>((resolve, reject) =>
               uiHook["account.request"]({
-                currencies: [getCryptoCurrencyById(requestedCurrency.currency)],
+                currencyIds: [requestedCurrency.currency],
+                areCurrenciesFiltered: true,
                 onSuccess: account => {
                   setCurrentAccountHist(manifest.id, account);
                   setCurrentAccount(account);
@@ -492,7 +495,10 @@ export function useDappLogic({
                   ? currentAccount.token.parentCurrency.id
                   : currentAccount.currency.id;
 
-              const token = findTokenByAddressInCurrency(tx.recipient, accountNetwork);
+              const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+                tx.recipient,
+                accountNetwork,
+              );
 
               trackingData = {
                 type: transactionType,

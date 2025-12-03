@@ -1,15 +1,27 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { pressBoth, pressUntilTextFound, containsSubstringInEvent } from "../speculos";
+import { containsSubstringInEvent, getSendEvents } from "../speculos";
+import { isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
+import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
+import { withDeviceController } from "../deviceInteraction/DeviceController";
 
-export async function sendStellar(tx: Transaction) {
-  const events = await pressUntilTextFound(DeviceLabels.SIGN);
-  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-  expect(isAmountCorrect).toBeTruthy();
+export const sendStellar = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
 
-  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-  expect(isAddressCorrect).toBeTruthy();
+      const events = await getSendEvents(tx);
+      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+      expect(isAmountCorrect).toBeTruthy();
 
-  await pressBoth();
-}
+      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+      expect(isAddressCorrect).toBeTruthy();
+
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);

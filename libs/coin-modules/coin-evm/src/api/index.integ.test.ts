@@ -3,12 +3,12 @@ import {
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
+  Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
-import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
 
 describe.each([
@@ -20,6 +20,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
+      showNfts: true,
     },
   ],
   [
@@ -30,25 +31,27 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
+      showNfts: true,
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
     module = createApi(config as EvmConfig, "ethereum");
   });
 
   describe("getSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
         await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
-      ).toBeGreaterThanOrEqual(17);
+      ).toBeGreaterThanOrEqual(17n);
     });
   });
 
@@ -165,25 +168,52 @@ describe.each([
       ).toEqual([[], ""]);
     });
 
-    it("lists operations for an address", async () => {
-      const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
-        minHeight: 200,
-        order: "asc",
-      });
-      expect(result.length).toBeGreaterThanOrEqual(52);
-      result.forEach(op => {
-        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
-        expect(op.senders.concat(op.recipients)).toContain(
-          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
-        );
-        expect(op.value).toBeGreaterThanOrEqual(0n);
-        expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
-        expect(op.tx.fees).toBeGreaterThan(0);
-        expect(op.tx.date).toBeInstanceOf(Date);
-      });
-    });
+    it.each([
+      [
+        "an ascending",
+        "asc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date >= operations[i - 1].tx.date),
+      ],
+      [
+        "a descending",
+        "desc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date <= operations[i - 1].tx.date),
+      ],
+    ] as const)(
+      "lists operations for an address with %s order",
+      async (_s, order, isCorrectlyOrdered) => {
+        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
+          minHeight: 200,
+          order,
+        });
+        expect(result.length).toBeGreaterThanOrEqual(52);
+        result.forEach(op => {
+          expect([
+            "NONE",
+            "FEES",
+            "IN",
+            "OUT",
+            "DELEGATE",
+            "UNDELEGATE",
+            "REDELEGATE",
+            "NFT_IN",
+            "NFT_OUT",
+          ]).toContainEqual(op.type);
+          expect(op.senders.concat(op.recipients)).toContain(
+            "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          );
+          expect(op.value).toBeGreaterThanOrEqual(0n);
+          expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
+          expect(op.tx.fees).toBeGreaterThan(0);
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+        expect(isCorrectlyOrdered(result));
+      },
+    );
   });
 
   describe.each([
@@ -198,6 +228,7 @@ describe.each([
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -215,6 +246,7 @@ describe.each([
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -263,7 +295,8 @@ describe("EVM Api (SEI Network)", () => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
     const config = {
       node: {
         type: "external",
@@ -334,6 +367,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -351,6 +385,7 @@ describe("EVM Api (SEI Network)", () => {
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);

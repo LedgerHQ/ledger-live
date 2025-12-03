@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -63,7 +63,7 @@ export default function MyLedgerNavigator() {
   );
 }
 
-const Stack = createStackNavigator<MyLedgerNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<MyLedgerNavigatorStackParamList>();
 
 const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
@@ -78,7 +78,7 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
       icon = <Icons.Flex size="M" color={color} />;
       break;
     case DeviceModelId.apex:
-      icon = <Icons.Flex size="M" color={color} />;
+      icon = <Icons.Apex size="M" color={color} />;
       break;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:

@@ -43,6 +43,78 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:750497694072:android:b7a01d13d8a275ddbac88d",
+        "android_client_info": {
+          "package_name": "com.ledger.live.nightly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750497694072-o12089ablhn4onf4p23fgik63esg40fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWIt0vi7fpMsjA0McSvRqSCL5VUctY4p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750497694072-o12089ablhn4onf4p23fgik63esg40fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750497694072-e41g4om5ndmooikbooo0c2r5llh02jaj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ledgerlivemobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750497694072:android:05bc870d4bf28b4cbac88d",
+        "android_client_info": {
+          "package_name": "com.ledger.live.prerelease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750497694072-o12089ablhn4onf4p23fgik63esg40fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWIt0vi7fpMsjA0McSvRqSCL5VUctY4p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750497694072-o12089ablhn4onf4p23fgik63esg40fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750497694072-e41g4om5ndmooikbooo0c2r5llh02jaj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ledgerlivemobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:750497694072:android:14f460b362b84225bac88d",
         "android_client_info": {
           "package_name": "com.ledger.live.debug"

@@ -6,8 +6,6 @@ import { ScreenName } from "~/const";
 
 const routesWithConfirmation: string[] = [
   ScreenName.SelectDevice,
-  ScreenName.SelectNetwork,
-  ScreenName.AddAccountsSelectCrypto,
   ScreenName.ScanDeviceAccounts,
   ScreenName.NoAssociatedAccounts,
 ];
@@ -23,6 +21,7 @@ export default function CloseWithConfirmation({
   const route = useRoute();
   return (
     <NavigationHeaderCloseButtonAdvanced
+      popToTop
       withConfirmation={routesWithConfirmation.includes(route.name)}
       confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
       {...(onClose && { onClose })}

@@ -54,9 +54,18 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
     useStake();
 
-  const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
-  const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
-  const canOnlyStakeUsingLedgerLive = canStakeUsingLedgerLive && !canStakeUsingPlatformApp;
+  const canStakeUsingLedgerLive = useMemo(
+    () => getCanStakeUsingLedgerLive(currency.id),
+    [getCanStakeUsingLedgerLive, currency.id],
+  );
+  const canStakeUsingPlatformApp = useMemo(
+    () => getCanStakeUsingPlatformApp(currency.id),
+    [getCanStakeUsingPlatformApp, currency.id],
+  );
+  const canOnlyStakeUsingLedgerLive = useMemo(
+    () => canStakeUsingLedgerLive && !canStakeUsingPlatformApp,
+    [canStakeUsingLedgerLive, canStakeUsingPlatformApp],
+  );
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -88,169 +97,217 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     [account, parentAccount, decorators],
   );
 
-  const actionButtonSwap: ActionButtonEvent = {
-    id: "swap",
-    navigationParams: [
-      NavigatorName.Swap,
-      {
-        screen: ScreenName.Swap,
-        params: {
-          defaultAccount: account,
-          defaultCurrency: currency,
-          defaultParentAccount: parentAccount,
-        },
-      },
-    ],
-    label: t("account.swap", { currency: currency.name }),
-    Icon: iconSwap,
-    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
-    modalOnDisabledClick: {
-      component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
-    },
-    event: "Swap Crypto Account Button",
-    eventProperties: { currencyName: currency.name },
-  };
-
-  const actionButtonBuy: ActionButtonEvent = {
-    id: "buy",
-    disabled: isPtxServiceCtaScreensDisabled,
-    modalOnDisabledClick: {
-      component: PtxToast,
-    },
-    navigationParams: [
-      NavigatorName.Exchange,
-      {
-        screen: ScreenName.ExchangeBuy,
-        params: {
-          defaultCurrencyId: currency && currency.id,
-          defaultAccountId: account && account.id,
-        },
-      },
-    ],
-    label: t("account.buy"),
-    Icon: iconBuy,
-    event: "Buy Crypto Account Button",
-    eventProperties: {
-      currencyName: currency.name,
-    },
-  };
-
-  const actionButtonSell: ActionButtonEvent = {
-    id: "sell",
-    navigationParams: [
-      NavigatorName.Exchange,
-      {
-        screen: ScreenName.ExchangeSell,
-        params: {
-          defaultCurrencyId: currency && currency.id,
-          defaultAccountId: account && account.id,
-        },
-      },
-    ],
-    label: t("account.sell"),
-    Icon: iconSell,
-    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
-    modalOnDisabledClick: {
-      component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
-    },
-    event: "Sell Crypto Account Button",
-    eventProperties: {
-      currencyName: currency.name,
-    },
-  };
-
-  const SendAction = {
-    id: "send",
-    navigationParams: [
-      NavigatorName.SendFunds,
-      {
-        screen: ScreenName.SendSelectRecipient,
-      },
-    ],
-    label: t("account.send"),
-    event: "AccountSend",
-    Icon: IconsLegacy.ArrowTopMedium,
-    disabled: isZeroBalance,
-    modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
-    },
-    ...extraSendActionParams,
-  };
-
-  const ReceiveAction = {
-    id: "receive",
-    navigationParams: [
-      NavigatorName.ReceiveFunds,
-      {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
-          accountId: account.id,
-          currency,
-        },
-      },
-    ],
-    label: t("account.receive"),
-    event: "AccountReceive",
-    Icon: IconsLegacy.ArrowBottomMedium,
-    ...extraReceiveActionParams,
-  };
-
-  const platformStakeRoute = getRouteParamsForPlatformApp(account, walletState, parentAccount);
-
-  const StakeAction =
-    canStakeUsingPlatformApp && platformStakeRoute
-      ? {
-          id: "stake",
-          disabled: isZeroBalance,
-          navigationParams: [NavigatorName.Base, platformStakeRoute],
-          label: t("account.stake"),
-          Icon: IconsLegacy.CoinsMedium,
-          event: "button_clicked",
-          eventProperties: {
-            button: "stake",
-            currency: currency.ticker,
-            page: "Account Page",
-            isRedirectConfig: true,
-            partner: platformStakeRoute?.params?.platform,
+  const actionButtonSwap: ActionButtonEvent = useMemo(
+    () => ({
+      id: "swap",
+      navigationParams: [
+        NavigatorName.Swap,
+        {
+          screen: ScreenName.Swap,
+          params: {
+            defaultAccount: account,
+            defaultCurrency: currency,
+            defaultParentAccount: parentAccount,
           },
-        }
-      : null;
+        },
+      ],
+      label: t("account.swap", { currency: currency.name }),
+      Icon: iconSwap,
+      disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
+      modalOnDisabledClick: {
+        component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
+      },
+      event: "Swap Crypto Account Button",
+      eventProperties: { currencyName: currency.name },
+    }),
+    [isPtxServiceCtaScreensDisabled, isZeroBalance, currency, account, parentAccount, t],
+  );
 
-  const familySpecificMainActions: Array<ActionButtonEvent> =
-    decorators?.getMainActions?.({
-      walletState,
-      account,
-      parentAccount,
-      colors,
-      parentRoute: route,
-    }) ?? [];
+  const actionButtonBuy: ActionButtonEvent = useMemo(
+    () => ({
+      id: "buy",
+      disabled: isPtxServiceCtaScreensDisabled,
+      modalOnDisabledClick: {
+        component: PtxToast,
+      },
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeBuy,
+          params: {
+            defaultCurrencyId: currency?.id,
+            defaultAccountId: account?.id,
+          },
+        },
+      ],
+      label: t("account.buy"),
+      Icon: iconBuy,
+      event: "Buy Crypto Account Button",
+      eventProperties: {
+        currencyName: currency.name,
+      },
+    }),
+    [isPtxServiceCtaScreensDisabled, currency, account, t],
+  );
 
-  const mainActions = [
-    ...(availableOnSwap ? [actionButtonSwap] : []),
-    ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
-    ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && !!StakeAction ? [StakeAction] : []),
-    ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(
-          action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
-        ) // filter out family stake action if we cannot stake using ledger live or if account can be staked with a third-party platform app
-      : []),
-    ...(!readOnlyModeEnabled ? [SendAction] : []),
-    ReceiveAction,
-  ];
+  const actionButtonSell: ActionButtonEvent = useMemo(
+    () => ({
+      id: "sell",
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeSell,
+          params: {
+            defaultCurrencyId: currency?.id,
+            defaultAccountId: account?.id,
+          },
+        },
+      ],
+      label: t("account.sell"),
+      Icon: iconSell,
+      disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
+      modalOnDisabledClick: {
+        component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
+      },
+      event: "Sell Crypto Account Button",
+      eventProperties: {
+        currencyName: currency.name,
+      },
+    }),
+    [isPtxServiceCtaScreensDisabled, currency, account, t, isZeroBalance],
+  );
 
-  const familySpecificSecondaryActions =
-    (decorators &&
-      decorators.getSecondaryActions &&
-      decorators.getSecondaryActions({
+  const newSendFlow = useFeature("newSendFlow");
+  const SendAction = useMemo(
+    () => ({
+      id: "send",
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: !newSendFlow?.enabled ? ScreenName.SendSelectRecipient : ScreenName.NewSendFlow,
+        },
+      ],
+      label: t("account.send"),
+      event: "AccountSend",
+      Icon: IconsLegacy.ArrowTopMedium,
+      disabled: isZeroBalance,
+      modalOnDisabledClick: {
+        component: ZeroBalanceDisabledModalContent,
+      },
+      ...extraSendActionParams,
+    }),
+    [newSendFlow, extraSendActionParams, t, isZeroBalance],
+  );
+
+  const ReceiveAction = useMemo(
+    () => ({
+      id: "receive",
+      navigationParams: [
+        NavigatorName.ReceiveFunds,
+        {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            accountId: account.id,
+            currency,
+          },
+        },
+      ],
+      label: t("account.receive"),
+      event: "AccountReceive",
+      Icon: IconsLegacy.ArrowBottomMedium,
+      ...extraReceiveActionParams,
+    }),
+    [extraReceiveActionParams, t, account.id, currency],
+  );
+
+  const platformStakeRoute = useMemo(
+    () => getRouteParamsForPlatformApp(account, walletState, parentAccount),
+    [getRouteParamsForPlatformApp, account, walletState, parentAccount],
+  );
+
+  const StakeAction = useMemo(
+    () =>
+      canStakeUsingPlatformApp && platformStakeRoute
+        ? {
+            id: "stake",
+            disabled: isZeroBalance,
+            navigationParams: [NavigatorName.Base, platformStakeRoute],
+            label: t("account.stake"),
+            Icon: IconsLegacy.CoinsMedium,
+            event: "button_clicked",
+            eventProperties: {
+              button: "stake",
+              currency: currency.ticker,
+              page: "Account Page",
+              isRedirectConfig: true,
+              partner: platformStakeRoute?.params?.platform,
+            },
+          }
+        : null,
+    [canStakeUsingPlatformApp, platformStakeRoute, isZeroBalance, t, currency.ticker],
+  );
+
+  const familySpecificMainActions: Array<ActionButtonEvent> = useMemo(
+    () =>
+      decorators?.getMainActions?.({
+        walletState,
         account,
         parentAccount,
         colors,
         parentRoute: route,
-      })) ||
-    [];
+      }) ?? [],
+    [walletState, account, parentAccount, colors, route, decorators],
+  );
 
-  const secondaryActions = [...familySpecificSecondaryActions];
+  const mainActions = useMemo(
+    () => [
+      ...(availableOnSwap ? [actionButtonSwap] : []),
+      ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
+      ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+      ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && !!StakeAction ? [StakeAction] : []),
+      ...(!readOnlyModeEnabled
+        ? familySpecificMainActions.filter(
+            action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
+          ) // filter out family stake action if we cannot stake using ledger Wallet or if account can be staked with a third-party platform app
+        : []),
+      ...(!readOnlyModeEnabled ? [SendAction] : []),
+      ReceiveAction,
+    ],
+    [
+      availableOnSwap,
+      readOnlyModeEnabled,
+      canBeBought,
+      canBeSold,
+      canStakeUsingPlatformApp,
+      StakeAction,
+      familySpecificMainActions,
+      canOnlyStakeUsingLedgerLive,
+      actionButtonSwap,
+      actionButtonBuy,
+      actionButtonSell,
+      SendAction,
+      ReceiveAction,
+    ],
+  );
+
+  const familySpecificSecondaryActions = useMemo(
+    () =>
+      (decorators &&
+        decorators.getSecondaryActions &&
+        decorators.getSecondaryActions({
+          account,
+          parentAccount,
+          colors,
+          parentRoute: route,
+        })) ||
+      [],
+    [decorators, account, parentAccount, colors, route],
+  );
+
+  const secondaryActions = useMemo(
+    () => [...familySpecificSecondaryActions],
+    [familySpecificSecondaryActions],
+  );
 
   return {
     mainActions,

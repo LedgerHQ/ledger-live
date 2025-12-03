@@ -49,6 +49,7 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
           onSelect={setDevice}
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice
         />
       </Flex>
       <DeviceActionModal

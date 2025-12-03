@@ -1,64 +1,126 @@
+import React from "react";
+import { describe, it, expect } from "vitest";
+import { render } from "@testing-library/react";
+import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   getDeviceManagementKit,
   useDeviceManagementKit,
   DeviceManagementKitProvider,
+  useDeviceManagementKitEnabled,
 } from "./useDeviceManagementKit";
-import React from "react";
-import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { render } from "@testing-library/react";
-import { expect } from "vitest";
 
 const TestComponent: React.FC = () => {
   const dmk = useDeviceManagementKit();
-
-  return (
-    <DeviceManagementKitProvider dmkEnabled={true}>
-      <span data-testid="dmk">{JSON.stringify(dmk)}</span>
-    </DeviceManagementKitProvider>
-  );
+  return <span data-testid="dmk-test-component">{JSON.stringify(dmk)}</span>;
 };
 
-describe("useDeviceManagementKit", () => {
-  describe("getDeviceManagementKit", () => {
-    it("returns same instance", () => {
-      // given
-      const baseInstance = getDeviceManagementKit();
-      // when
-      const newInstance = getDeviceManagementKit();
-      // then
-      expect(newInstance).toStrictEqual(baseInstance);
-    });
-    it("returns an instance of DeviceManagementKit", () => {
-      // given
-      const dmk = getDeviceManagementKit();
-      // then
-      expect(dmk).toBeInstanceOf(DeviceManagementKit);
-    });
+describe("getDeviceManagementKit method", () => {
+  it("returns singleton instance", () => {
+    // given
+    const baseInstance = getDeviceManagementKit();
+    // when
+    const newInstance = getDeviceManagementKit();
+    // then
+    expect(newInstance).toBe(baseInstance);
   });
-  describe("<DeviceManagementKitProvider />", () => {
-    it("provides a dmk instance to child element if feature flag enabled", async () => {
-      // given
-      const { getByTestId } = render(
-        <DeviceManagementKitProvider dmkEnabled={true}>
-          <TestComponent />
-        </DeviceManagementKitProvider>,
-      );
-      // when
-      const dmkStr = getByTestId("dmk");
-      // then
-      expect(dmkStr).toHaveTextContent(JSON.stringify(getDeviceManagementKit()));
-    });
-    it("provides children if feature flag disabled", () => {
-      // given
-      const { getByTestId } = render(
-        <DeviceManagementKitProvider dmkEnabled={false}>
-          <TestComponent />
-        </DeviceManagementKitProvider>,
-      );
-      // when
-      const dmkStr = getByTestId("dmk");
-      // then
-      expect(dmkStr).toHaveTextContent(JSON.stringify(null));
-    });
+  it("instance is of type DeviceManagementKit", () => {
+    // when
+    const dmkInstance = getDeviceManagementKit();
+    // then
+    expect(dmkInstance).toBeInstanceOf(DeviceManagementKit);
+  });
+});
+
+describe("useDeviceManagementKit hook", () => {
+  it("returns dmk instance when used inside provider with feature enabled", () => {
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={true}>
+        <TestComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("dmk-test-component").textContent).toBe(
+      JSON.stringify(getDeviceManagementKit()),
+    );
+  });
+
+  it("returns null when used inside provider with feature disabled", () => {
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={false}>
+        <TestComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("dmk-test-component").textContent).toBe(JSON.stringify(null));
+  });
+});
+
+describe("<DeviceManagementKitProvider /> provider", () => {
+  it("provides a dmk instance to child element if feature flag enabled", () => {
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={true}>
+        <TestComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("dmk-test-component").textContent).toBe(
+      JSON.stringify(getDeviceManagementKit()),
+    );
+  });
+
+  it("renders children without provider context if feature flag disabled", () => {
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={false}>
+        <TestComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("dmk-test-component").textContent).toBe(JSON.stringify(null));
+  });
+});
+
+describe("useDeviceManagementKitEnabled hook", () => {
+  it("returns true when DMK is enabled in provider", () => {
+    // given
+    const TestHookComponent: React.FC = () => {
+      const isEnabled = useDeviceManagementKitEnabled();
+      return <span data-testid="is-enabled">{isEnabled ? "true" : "false"}</span>;
+    };
+
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={true}>
+        <TestHookComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("is-enabled").textContent).toBe("true");
+  });
+
+  it("returns false when DMK is disabled in provider", () => {
+    // given
+    const TestHookComponent: React.FC = () => {
+      const isEnabled = useDeviceManagementKitEnabled();
+      return <span data-testid="is-enabled">{isEnabled ? "true" : "false"}</span>;
+    };
+
+    // when
+    const { getByTestId } = render(
+      <DeviceManagementKitProvider dmkEnabled={false}>
+        <TestHookComponent />
+      </DeviceManagementKitProvider>,
+    );
+
+    // then
+    expect(getByTestId("is-enabled").textContent).toBe("false");
   });
 });

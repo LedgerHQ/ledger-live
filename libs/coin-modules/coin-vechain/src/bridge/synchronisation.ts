@@ -8,11 +8,11 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "../network";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -39,7 +39,9 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
   const newOperations = await getOperations(accountId, address, startAt);
 
   //Get last token operations
-  const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vip180/vtho")!);
+  const vthoToken = await getCryptoAssetsStore().findTokenById("vechain/vip180/vtho");
+  if (!vthoToken) throw new Error("VTHO token not found");
+  const vthoAccountId = encodeTokenAccountId(accountId, vthoToken);
   const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 1); // from parameter must be 1 otherwise the response is empty
 
   const operations = mergeOps(oldOperations, newOperations);
@@ -52,7 +54,6 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
     minDate = Math.min(...operationsDates);
   }
 
-  const vthoToken = findTokenById("vechain/vip180/vtho");
   if (!vthoToken) {
     throw new Error('token with id "vechain/vip180/vtho" not found');
   }

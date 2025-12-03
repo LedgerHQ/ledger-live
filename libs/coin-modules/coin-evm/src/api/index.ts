@@ -10,6 +10,7 @@ import {
   TransactionIntent,
   Cursor,
   Page,
+  Validator,
   Stake,
   Reward,
   TransactionValidation,
@@ -19,7 +20,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
@@ -34,6 +35,7 @@ import {
   getTokenFromAsset,
   getAssetFromToken,
   computeIntentType,
+  refreshOperations,
 } from "../logic/index";
 
 export function createApi(
@@ -55,7 +57,7 @@ export function createApi(
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
@@ -69,7 +71,7 @@ export function createApi(
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination.minHeight),
+      listOperations(currency, address, pagination),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
@@ -82,7 +84,10 @@ export function createApi(
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getSequence: (address: string): Promise<number> => getSequence(currency, address),
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
+    getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
@@ -92,5 +97,7 @@ export function createApi(
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
     computeIntentType,
+    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+      refreshOperations(currency, operations),
   };
 }

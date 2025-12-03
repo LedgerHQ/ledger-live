@@ -1,13 +1,13 @@
 import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   return "assetReference" in asset
-    ? getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id)
+    ? await getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id)
     : undefined;
 }
 

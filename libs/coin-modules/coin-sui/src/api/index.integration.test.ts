@@ -218,7 +218,7 @@ describe("Sui Api", () => {
       expect(senderOp.peer).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
-      expect(senderOp.amount).toEqual(BigInt(-1492885));
+      expect(senderOp.amount).toEqual(BigInt(-5));
       expect(receipientOp.address).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
@@ -229,10 +229,46 @@ describe("Sui Api", () => {
     });
   });
 
+  describe("getValidators", () => {
+    it("returns at least a hundred validators with expected fields", async () => {
+      const page = await module.getValidators();
+
+      expect(Array.isArray(page.items)).toBeTruthy();
+      expect(page.items.length).toBeGreaterThanOrEqual(100);
+
+      const v = page.items[0];
+      expect(v).toHaveProperty("address");
+      expect(v).toHaveProperty("name");
+      expect(v).toHaveProperty("description");
+      expect(v).toHaveProperty("url");
+      expect(v).toHaveProperty("logo");
+      expect(v).toHaveProperty("balance");
+      expect(v).toHaveProperty("commissionRate");
+      expect(v).toHaveProperty("apy");
+
+      // values should not be empty
+      expect(typeof v.address).toBe("string");
+      expect(v.address.length).toBeGreaterThan(0);
+      expect(typeof v.name).toBe("string");
+      expect(v.name.length).toBeGreaterThan(0);
+      expect(typeof v.description).toBe("string");
+      expect((v.description as string).length).toBeGreaterThan(0);
+      expect(typeof v.url).toBe("string");
+      expect((v.url as string).length).toBeGreaterThan(0);
+      expect(typeof v.logo).toBe("string");
+      expect((v.logo as string).length).toBeGreaterThan(0);
+      expect(typeof v.balance === "bigint").toBeTruthy();
+      expect(v.balance as bigint).toBeGreaterThanOrEqual(0n);
+      expect(typeof v.commissionRate).toBe("string");
+      expect((v.commissionRate as string).length).toBeGreaterThan(0);
+      expect(typeof v.apy).toBe("number");
+    });
+  });
+
   describe("getStakes", () => {
-    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+    test("Account 0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d", async () => {
       const stakes = await module.getStakes(
-        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
       );
       expect(stakes.items.length).toBeGreaterThan(0);
       stakes.items.forEach(stake => {

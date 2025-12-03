@@ -5,21 +5,18 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
-import {
-  getCryptoAssetsStore,
-  setCryptoAssetsStore,
-} from "@ledgerhq/coin-framework/crypto-assets/index";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "./mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import api from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { pairId } from "./helpers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+setupCalClientStore();
 
 const value = "ll-ci/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);

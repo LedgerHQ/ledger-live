@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { useCallback, useMemo } from "react";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistory } from "react-router-dom";
@@ -17,6 +16,7 @@ import {
   useModularDrawerVisibility,
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const DRAWER_FLOW = "stake";
 
@@ -35,8 +35,10 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
-  enabledCurrencies.push("internet_computer");
-  const list = enabledCurrencies.concat(partnerSupportedAssets);
+  const list = useMemo(() => {
+    return enabledCurrencies.concat(partnerSupportedAssets);
+  }, [enabledCurrencies, partnerSupportedAssets]);
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -129,9 +131,7 @@ const useStakeFlow = () => {
       dispatch(setFlowValue(DRAWER_FLOW));
       dispatch(setSourceValue(source || ""));
 
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || list,
-      });
+      const cryptoCurrencies = currencies || list;
 
       trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
@@ -152,17 +152,23 @@ const useStakeFlow = () => {
       };
 
       if (modularDrawerVisible) {
+        // Add APY configuration for earn/stake functionality
+        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
+          ? earnDrawerConfigurationFlag.params
+          : {};
         openAssetAndAccountDrawer({
-          currencies: cryptoCurrencies.map(c => c.id),
+          currencies: cryptoCurrencies,
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
+          areCurrenciesFiltered: cryptoCurrencies.length > 0,
+          drawerConfiguration: earnDrawerConfiguration,
         });
       } else {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
-            currencies: cryptoCurrencies,
+            currencyIds: cryptoCurrencies,
             flow: DRAWER_FLOW,
             source: source ?? "",
             onAccountSelected: (account, parentAccount) =>
@@ -184,6 +190,7 @@ const useStakeFlow = () => {
     },
     [
       dispatch,
+      earnDrawerConfigurationFlag,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,

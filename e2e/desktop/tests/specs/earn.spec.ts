@@ -1,6 +1,6 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "../utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -46,7 +46,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -58,7 +58,15 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          ...(provider === Provider.LIDO ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -70,8 +78,12 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          provider.uiName,
+          account,
+        );
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
+        await verifyProviderUrlPromise;
       },
     );
   });
@@ -88,7 +100,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: [
         {
           type: "TMS",
@@ -103,18 +115,15 @@ test.describe("Inline Add Account", () => {
       const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
       if (modularDrawerVisible) {
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
       } else {
         await app.delegateDrawer.clickOnAddAccountButton();
-      }
-
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(account);
-      } else {
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
         await app.delegateDrawer.selectAccountByName(account);
       }
+
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
@@ -169,7 +178,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -181,7 +190,15 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          ...(account === Account.NEAR_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,

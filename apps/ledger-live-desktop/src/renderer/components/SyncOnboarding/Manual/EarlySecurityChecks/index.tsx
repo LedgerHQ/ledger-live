@@ -98,6 +98,7 @@ const EarlySecurityChecks = ({
   } = useGenuineCheck({
     isHookEnabled: genuineCheckActive,
     deviceId,
+    deviceName: device.deviceName ?? null,
   });
 
   const { networkStatus } = useNetworkStatus();
@@ -113,6 +114,7 @@ const EarlySecurityChecks = ({
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
+    deviceName: device.deviceName ?? null,
   });
 
   const [completionLoading, setCompletionLoading] = useState(false);

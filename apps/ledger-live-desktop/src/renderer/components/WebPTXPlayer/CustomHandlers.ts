@@ -3,7 +3,10 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPICustomHandlers,
+  AccountIdFormatsResponse,
+} from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,11 +20,14 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { openModal } from "~/renderer/actions/modals";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
 import { useHistory } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -29,6 +35,24 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const { getRouteToPlatformApp } = useStake();
   const history = useHistory();
   const walletState = useSelector(walletSelector);
+  const { state: liveAppRegistryState } = useRemoteLiveAppContext();
+  const { state: localLiveAppState } = useLocalLiveAppContext();
+
+  // Helper to get manifest by ID - checks local first, then remote
+  const getManifestById = useCallback(
+    (liveAppId: string) => {
+      // Check local manifests first (takes precedence)
+      const localManifest = localLiveAppState?.find(app => app.id === liveAppId);
+      if (localManifest) return localManifest;
+
+      // Fall back to remote manifests
+      return (
+        liveAppRegistryState.value?.liveAppFilteredById?.[liveAppId] ||
+        liveAppRegistryState.value?.liveAppById?.[liveAppId]
+      );
+    },
+    [liveAppRegistryState, localLiveAppState],
+  );
 
   const tracking = useMemo(
     () =>
@@ -255,6 +279,45 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw error;
         }
       },
+      "custom.getAccountIdFormats": async request => {
+        const { liveAppIds } = request.params || {};
+
+        if (!liveAppIds) {
+          throw new Error("Missing liveAppIds parameter");
+        }
+
+        if (!Array.isArray(liveAppIds)) {
+          throw new Error("liveAppIds must be an array");
+        }
+
+        try {
+          const results: AccountIdFormatsResponse = {};
+
+          // For each liveAppId, fetch the manifest and check if it uses uuid format
+          for (const liveAppId of liveAppIds) {
+            try {
+              const fetchedManifest = getManifestById(liveAppId);
+
+              if (fetchedManifest) {
+                results[liveAppId] = usesEncodedAccountIdFormat(fetchedManifest)
+                  ? "encoded"
+                  : "uuid";
+              } else {
+                // If manifest not found, default to "encoded" (safer fallback)
+                results[liveAppId] = "encoded";
+              }
+            } catch (error) {
+              // On error, default to "encoded" format
+              results[liveAppId] = "encoded";
+            }
+          }
+
+          return results;
+        } catch (error) {
+          logger.error("Error in custom.getAccountIdFormats handler", error);
+          throw error;
+        }
+      },
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer, history, startStakeFlow]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer, history, startStakeFlow, getManifestById]);
 }

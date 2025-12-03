@@ -4,7 +4,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
-import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 
@@ -16,7 +16,6 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
   [ScreenName.OnboardingWelcomeBack]: undefined;
-  [ScreenName.GetDevice]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
@@ -49,6 +48,8 @@ export type OnboardingNavigatorParamList = {
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
   };
+  [ScreenName.OnboardingSecureYourCrypto]: undefined;
+  [ScreenName.OnboardingFundSuccess]: { receiveFlowSuccess: boolean };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
   };

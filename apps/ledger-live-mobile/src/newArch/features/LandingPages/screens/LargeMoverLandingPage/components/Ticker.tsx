@@ -1,20 +1,20 @@
 import React from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { BlurView } from "@react-native-community/blur";
 import { useTheme } from "styled-components/native";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
 type TickerProps = {
-  currencyId: string;
+  currency: CryptoOrTokenCurrency;
   width: number;
 };
 
-export const Ticker: React.FC<TickerProps> = ({ currencyId, width }) => {
+export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
   const theme = useTheme();
-  const currency = getCryptoCurrencyById(currencyId);
   const midColor = getCurrencyColor(currency);
   return (
     <View style={styles.container}>
@@ -31,25 +31,19 @@ export const Ticker: React.FC<TickerProps> = ({ currencyId, width }) => {
       <Flex
         flexDirection="row"
         alignItems="center"
-        backgroundColor={Platform.OS === "ios" ? "opacityDefault.c10" : "neutral.c30"}
         padding={4}
         borderRadius={40}
+        style={{ overflow: "hidden" }}
       >
-        {Platform.OS === "ios" && (
-          <BlurView
-            style={{
-              borderRadius: 25,
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: theme.colors.opacityDefault.c40,
-            }}
-            blurType={theme.theme}
-            blurAmount={7}
-          />
-        )}
+        <BlurView
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: theme.colors.opacityDefault.c10,
+          }}
+          blurType={theme.theme}
+          blurAmount={7}
+        />
         <Flex>
           <CircleCurrencyIcon currency={currency} size={24} sizeRatio={0.9} />
         </Flex>

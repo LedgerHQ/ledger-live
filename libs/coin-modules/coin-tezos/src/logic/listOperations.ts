@@ -105,7 +105,8 @@ function convertOperation(
 
   const senders = sender?.address ? [sender.address] : [];
 
-  const amount = isAPIRevealType(operation) ? 0n : BigInt(operation.amount);
+  const amount =
+    isAPIRevealType(operation) || isAPIDelegationType(operation) ? 0n : BigInt(operation.amount);
 
   const fee =
     BigInt(operation.storageFee ?? 0) +
@@ -137,7 +138,7 @@ function convertOperation(
     normalizedType = "OUT";
   }
 
-  // Tezos uses "applied" for every sucess operation (something else=failed )
+  // Tezos uses "applied" for every success operation (something else=failed )
   const hasFailed = operation.status && operation.status !== "applied";
 
   return {
@@ -154,6 +155,7 @@ function convertOperation(
         time: new Date(operation.timestamp),
       },
       date: new Date(operation.timestamp),
+      failed: hasFailed ?? false,
     },
     type: normalizedType,
     value: amount,
@@ -163,7 +165,6 @@ function convertOperation(
       counter: operation.counter,
       gasLimit: operation.gasLimit,
       storageLimit: operation.storageLimit,
-      status: hasFailed ? "failed" : operation.status,
       ledgerOpType: getLedgerOpType(operation, normalizedType),
     },
   };

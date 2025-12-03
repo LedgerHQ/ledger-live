@@ -1,6 +1,6 @@
 const testConfig = {
   tmsLinks: ["B2CQA-2874"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 describe("Wallet Page", () => {
@@ -15,10 +15,17 @@ describe("Wallet Page", () => {
   testConfig.tags.forEach(tag => $Tag(tag));
   it("Portfolio Add Account - LLM", async () => {
     await app.portfolio.tapTabSelector("Accounts");
-    await app.addAccount.tapAddNewOrExistingAccountButton();
+    await app.portfolio.tapAddNewOrExistingAccountButton();
     await app.addAccount.importWithYourLedger();
-    await app.portfolio.checkSelectAssetPage();
-    await app.common.goToPreviousPage();
+    const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
+    if (isModularDrawer) {
+      await app.modularDrawer.checkSelectAssetPage();
+      await app.modularDrawer.tapDrawerCloseButton();
+    } else {
+      await app.portfolio.checkSelectAssetPage();
+      await app.common.goToPreviousPage();
+    }
+
     await app.portfolio.expectPortfolioWithAccounts();
   });
 });

@@ -1,4 +1,4 @@
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -6,6 +6,7 @@ import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framewor
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getESDTOperations, getAccountESDTTokens } from "./api";
 import { addPrefixToken, extractTokenId } from "./logic";
+import { ESDTToken } from "./types";
 
 async function buildMultiversXESDTTokenAccount({
   parentAccountId,
@@ -41,31 +42,117 @@ async function buildMultiversXESDTTokenAccount({
   return tokenAccount;
 }
 
+function buildExistingAccountMaps(
+  existingAccount: Account | null | undefined,
+  blacklistedTokenIds: string[],
+): { existingAccountByTicker: Record<string, TokenAccount>; existingAccountTickers: string[] } {
+  const existingAccountByTicker: Record<string, TokenAccount> = {};
+  const existingAccountTickers: string[] = [];
+
+  if (!existingAccount?.subAccounts) {
+    return { existingAccountByTicker, existingAccountTickers };
+  }
+
+  for (const existingSubAccount of existingAccount.subAccounts) {
+    if (existingSubAccount.type !== "TokenAccount") continue;
+
+    const { ticker, id } = existingSubAccount.token;
+
+    if (!blacklistedTokenIds.includes(id)) {
+      existingAccountTickers.push(ticker);
+      existingAccountByTicker[ticker] = existingSubAccount;
+    }
+  }
+
+  return { existingAccountByTicker, existingAccountTickers };
+}
+
 async function syncESDTTokenAccountOperations(
   tokenAccount: TokenAccount,
   address: string,
 ): Promise<TokenAccount> {
   const oldOperations = tokenAccount?.operations || [];
-  // Needed for incremental synchronisation
   const startAt = oldOperations.length ? Math.floor(oldOperations[0].date.valueOf() / 1000) : 0;
 
   const tokenIdentifierHex = extractTokenId(tokenAccount.token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
-  // Merge new operations with the previously synced ones
   const newOperations = await getESDTOperations(tokenAccount.id, address, tokenIdentifier, startAt);
   const operations = mergeOps(oldOperations, newOperations);
 
   if (operations === oldOperations) return tokenAccount;
 
-  const copy = { ...tokenAccount };
-  copy.operations = operations;
-  copy.operationsCount = operations.length;
-  return copy;
+  return {
+    ...tokenAccount,
+    operations,
+    operationsCount: operations.length,
+  };
+}
+
+async function updateTokenAccountBalance(
+  tokenAccount: TokenAccount,
+  newBalance: BigNumber,
+): Promise<TokenAccount> {
+  if (newBalance.eq(tokenAccount.balance)) {
+    return tokenAccount;
+  }
+
+  return {
+    ...tokenAccount,
+    balance: newBalance,
+    spendableBalance: newBalance,
+  };
+}
+
+async function processESDT({
+  esdt,
+  accountId,
+  accountAddress,
+  existingAccountByTicker,
+  existingAccountTickers,
+  blacklistedTokenIds,
+}: {
+  esdt: ESDTToken;
+  accountId: string;
+  accountAddress: string;
+  existingAccountByTicker: Record<string, TokenAccount>;
+  existingAccountTickers: string[];
+  blacklistedTokenIds: string[];
+}): Promise<TokenAccount | null> {
+  const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
+  const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(esdtIdentifierHex));
+
+  if (!token || blacklistedTokenIds.includes(token.id)) {
+    return null;
+  }
+
+  const existingTokenAccount = existingAccountByTicker[token.ticker];
+  const balance = new BigNumber(esdt.balance);
+
+  let tokenAccount: TokenAccount;
+
+  if (existingTokenAccount) {
+    const syncedTokenAccount = await syncESDTTokenAccountOperations(
+      existingTokenAccount,
+      accountAddress,
+    );
+    tokenAccount = await updateTokenAccountBalance(syncedTokenAccount, balance);
+  } else {
+    tokenAccount = await buildMultiversXESDTTokenAccount({
+      parentAccountId: accountId,
+      accountAddress,
+      token,
+      balance,
+    });
+  }
+
+  existingAccountTickers.push(token.ticker);
+  existingAccountByTicker[token.ticker] = tokenAccount;
+
+  return tokenAccount;
 }
 
 async function MultiversXBuildESDTTokenAccounts({
-  currency,
   accountId,
   accountAddress,
   existingAccount,
@@ -78,62 +165,26 @@ async function MultiversXBuildESDTTokenAccounts({
   syncConfig: SyncConfig;
 }): Promise<TokenAccount[] | undefined> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  if (listTokensForCryptoCurrency(currency).length === 0) {
-    return undefined;
-  }
-
   const tokenAccounts: TokenAccount[] = [];
 
-  const existingAccountByTicker: { [key: string]: TokenAccount } = {}; // used for fast lookup
-
-  const existingAccountTickers: string[] = []; // used to keep track of ordering
-
-  if (existingAccount && existingAccount.subAccounts) {
-    for (const existingSubAccount of existingAccount.subAccounts) {
-      if (existingSubAccount.type === "TokenAccount") {
-        const { ticker, id } = existingSubAccount.token;
-
-        if (!blacklistedTokenIds.includes(id)) {
-          existingAccountTickers.push(ticker);
-          existingAccountByTicker[ticker] = existingSubAccount;
-        }
-      }
-    }
-  }
+  const { existingAccountByTicker, existingAccountTickers } = buildExistingAccountMaps(
+    existingAccount,
+    blacklistedTokenIds,
+  );
 
   const accountESDTs = await getAccountESDTTokens(accountAddress);
   for (const esdt of accountESDTs) {
-    const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
-    const token = findTokenById(addPrefixToken(esdtIdentifierHex));
+    const tokenAccount = await processESDT({
+      esdt,
+      accountId,
+      accountAddress,
+      existingAccountByTicker,
+      existingAccountTickers,
+      blacklistedTokenIds,
+    });
 
-    if (token && !blacklistedTokenIds.includes(token.id)) {
-      let tokenAccount = existingAccountByTicker[token.ticker];
-      if (!tokenAccount) {
-        tokenAccount = await buildMultiversXESDTTokenAccount({
-          parentAccountId: accountId,
-          accountAddress,
-          token,
-          balance: new BigNumber(esdt.balance),
-        });
-      } else {
-        const inputTokenAccount = tokenAccount;
-        tokenAccount = await syncESDTTokenAccountOperations(inputTokenAccount, accountAddress);
-        const balance = new BigNumber(esdt.balance);
-        if (!balance.eq(tokenAccount.balance)) {
-          // only recreate the object if balance changed
-          if (inputTokenAccount === tokenAccount) {
-            tokenAccount = { ...tokenAccount };
-          }
-          tokenAccount.balance = balance;
-          tokenAccount.spendableBalance = balance;
-        }
-      }
-
-      if (tokenAccount) {
-        tokenAccounts.push(tokenAccount);
-        existingAccountTickers.push(token.ticker);
-        existingAccountByTicker[token.ticker] = tokenAccount;
-      }
+    if (tokenAccount) {
+      tokenAccounts.push(tokenAccount);
     }
   }
 

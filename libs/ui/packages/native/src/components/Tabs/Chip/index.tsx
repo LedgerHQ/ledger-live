@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components/native";
 import Text from "../../Text";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
-const TabBox = styled(TouchableOpacity)<
+const TabBox = styled(Pressable)<
   Pick<TabItemProps, "isActive" | "size" | "activeBg" | "inactiveBg" | "stretchItems">
 >`
   text-align: center;
@@ -34,7 +34,7 @@ export const ChipTab = ({
     inactiveBg={inactiveBg}
     isActive={isActive}
     stretchItems={stretchItems}
-    onPress={onPress}
+    onPressIn={onPress}
     size={size}
   >
     <Text

@@ -82,6 +82,7 @@ export function StepDelegationFooter({
     !errors.validators &&
     transaction &&
     transaction.validators.length > 0 &&
+    transaction.validators.some(v => v.address) &&
     !errors.sender;
   return (
     <>

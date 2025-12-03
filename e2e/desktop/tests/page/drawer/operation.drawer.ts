@@ -7,7 +7,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 export class OperationDrawer extends Drawer {
   readonly transactionIdLabel = this.page.getByText("Transaction ID");
   readonly transactionIdValue = this.page.getByTestId("operation-id");
-  readonly dateLabel = this.page.getByText("Date");
+  readonly dateLabel = this.page.getByTestId("operation-date-label");
   readonly dateValue = this.page.getByTestId("operation-date");
   readonly amountLabel = this.page.getByText("Amount", { exact: true });
   readonly amountValue = this.page.getByTestId("operation-amount");

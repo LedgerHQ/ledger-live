@@ -17,6 +17,8 @@ describe("getTransactionStatus on Bitcoin", () => {
     validateRecipientSpy.mockResolvedValue({
       recipientError: undefined,
       recipientWarning: undefined,
+      changeAddressError: undefined,
+      changeAddressWarning: undefined,
     });
 
     const sanctionedAddresses = [
@@ -74,6 +76,8 @@ describe("getTransactionStatus on Bitcoin", () => {
     validateRecipientSpy.mockResolvedValue({
       recipientError: undefined,
       recipientWarning: undefined,
+      changeAddressError: undefined,
+      changeAddressWarning: undefined,
     });
 
     const utxoAddresses = [

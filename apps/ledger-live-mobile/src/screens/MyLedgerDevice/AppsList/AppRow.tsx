@@ -1,7 +1,5 @@
 import React, { memo, useMemo, useCallback } from "react";
-
 import { App } from "@ledgerhq/types-live";
-
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
@@ -10,7 +8,6 @@ import styled from "styled-components/native";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
-
 import AppStateButton from "./AppStateButton";
 import ByteSize from "~/components/ByteSize";
 

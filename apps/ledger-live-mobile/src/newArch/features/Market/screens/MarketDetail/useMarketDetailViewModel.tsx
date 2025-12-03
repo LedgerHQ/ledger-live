@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import useNotifications from "~/logic/notifications";
@@ -9,8 +9,11 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 
 import { useMarket } from "LLM/features/Market/hooks/useMarket";
-import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
+import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
+import VersionNumber from "react-native-version-number";
+import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -20,21 +23,37 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
 
-  const { marketParams, dataChart, loadingChart, loading, currency } = useMarketCoinData({
-    currencyId,
-  });
+  const { marketParams, dataChart, loadingChart, loading, currency, refetch } =
+    useMarketCoinDataWithChart({
+      currencyId,
+    });
+
+  const { data, isLoading: isLoadingAsset } = assetsDataApi.useGetAssetDataQuery(
+    {
+      currencyIds: currency?.ledgerIds,
+      product: "llm",
+      version: VersionNumber.appVersion,
+      isStaging: false,
+      includeTestNetworks: false,
+    },
+    {
+      skip: !currency?.ledgerIds?.length,
+    },
+  );
 
   const dispatch = useDispatch();
   const { triggerMarketPushNotificationModal } = useNotifications();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const { starredMarketCoins, refresh } = useMarket();
+  const { starredMarketCoins, updateMarketParams } = useMarket();
 
   const isStarred = starredMarketCoins.includes(currencyId);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
-  const { name, internalCurrency } = currency || {};
+  const { name } = currency || {};
+
+  const ledgerCurrency = data && selectCurrency(data);
 
   useEffect(() => {
     if (name) {
@@ -62,7 +81,9 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     };
   }, [resetSearchOnUmount, navigation]);
 
-  const allAccounts = useSelector(flattenAccountsByCryptoCurrencyScreenSelector(internalCurrency));
+  const allAccounts = useSelector(accountsSelector).filter(
+    account => account.currency.id === currencyId,
+  );
 
   const filteredAccounts = useMemo(
     () => allAccounts.sort((a, b) => b.balance.minus(a.balance).toNumber()).slice(0, 3),
@@ -91,9 +112,11 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     currency,
     dataChart,
     loadingChart,
-    loading,
-    refresh,
+    updateMarketParams,
+    refetch,
+    loading: loading || isLoadingAsset,
     toggleStar,
+    ledgerCurrency,
   };
 }
 

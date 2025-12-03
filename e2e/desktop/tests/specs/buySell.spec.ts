@@ -1,13 +1,13 @@
-import { test } from "../fixtures/common";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
+import { test } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "../utils/cliUtils";
-import { setupEnv } from "../utils/swapUtils";
+import { CLI } from "tests/utils/cliUtils";
+import { setupEnv } from "tests/utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
@@ -43,7 +43,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       operation: OperationType.Buy,
     },
     xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523, B2CQA-3449",
-    provider: Provider.TRANSAK,
+    provider: Provider.MOONPAY,
   },
 ];
 
@@ -71,7 +71,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -92,7 +92,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Market page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -113,7 +113,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Account page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -145,7 +145,15 @@ for (const asset of assets) {
     test(
       `Buy [${crypto.currency.name}] asset from portfolio page`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -210,7 +218,7 @@ test.describe("Sell flow - ", () => {
   test(
     `Sell [${crypto.currency.name}] asset`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: sellAsset.xrayTicket,

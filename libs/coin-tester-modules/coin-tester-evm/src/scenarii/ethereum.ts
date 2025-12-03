@@ -1,7 +1,6 @@
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
@@ -17,12 +16,9 @@ import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer
 import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
+import { USDC_ON_ETHEREUM } from "../tokenFixtures";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
-
-const usdcOnEthereum = findTokenById("ethereum/erc20/usd__coin");
-if (!usdcOnEthereum) throw new Error("USDC on Ethereum token not found");
-const USDC_ON_ETHEREUM = usdcOnEthereum;
 const boredApeContract = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D";
 const boredApeTokenId = "3368";
 const cloneXContract = "0x348FC118bcC65a92dC033A951aF153d14D945312";

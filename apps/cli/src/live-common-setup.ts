@@ -14,11 +14,11 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+} from "@ledgerhq/live-dmk-speculos";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -135,7 +135,8 @@ export function registerSpeculosTransport(apiPort: number) {
 
   registerTransportModule({
     id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    open: () =>
+      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
     disconnect: () => Promise.resolve(),
   });
 }
@@ -151,5 +152,5 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
-//TODO update when CAL is avalaible
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+// Setup CAL client store for CLI (automatically set as global store)
+setupCalClientStore();

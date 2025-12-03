@@ -1,0 +1,3298 @@
+{
+  "transaction": {
+    "version": "2.1",
+    "roots": ["0"],
+    "nodes": [
+      {
+        "nodeId": "12",
+        "v1": {
+          "create": {
+            "lfVersion": "2.1",
+            "contractId": "00d5d2a21736fd4d94702208c67199f2d8219a8ad53737c508c030193d2b09f371",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "Amulet"
+            },
+            "argument": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.Amulet",
+                  "entityName": "Amulet"
+                },
+                "fields": [
+                  {
+                    "label": "dso",
+                    "value": {
+                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                    }
+                  },
+                  {
+                    "label": "owner",
+                    "value": {
+                      "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                    }
+                  },
+                  {
+                    "label": "amount",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.Fees",
+                          "entityName": "ExpiringAmount"
+                        },
+                        "fields": [
+                          {
+                            "label": "initialAmount",
+                            "value": {
+                              "numeric": "36.6445118261"
+                            }
+                          },
+                          {
+                            "label": "createdAt",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.Types",
+                                  "entityName": "Round"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "number",
+                                    "value": {
+                                      "int64": "66387"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "ratePerRound",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.Fees",
+                                  "entityName": "RatePerRound"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "rate",
+                                    "value": {
+                                      "numeric": "0.0001522072"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "3",
+        "v1": {
+          "fetch": {
+            "lfVersion": "2.1",
+            "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "Amulet"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "interfaceId": {
+              "packageId": "718a0f77e505a8de22f188bd4c87fe74101274e9d4cb1bfac7d09aec7158d35b",
+              "moduleName": "Splice.Api.Token.HoldingV1",
+              "entityName": "Holding"
+            }
+          }
+        }
+      },
+      {
+        "nodeId": "11",
+        "v1": {
+          "create": {
+            "lfVersion": "2.1",
+            "contractId": "008c44809eab12686431680695d16d08741adc30be8720e1ec39cc9ad195ed9c14",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "Amulet"
+            },
+            "argument": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.Amulet",
+                  "entityName": "Amulet"
+                },
+                "fields": [
+                  {
+                    "label": "dso",
+                    "value": {
+                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                    }
+                  },
+                  {
+                    "label": "owner",
+                    "value": {
+                      "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                    }
+                  },
+                  {
+                    "label": "amount",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.Fees",
+                          "entityName": "ExpiringAmount"
+                        },
+                        "fields": [
+                          {
+                            "label": "initialAmount",
+                            "value": {
+                              "numeric": "1.0000000000"
+                            }
+                          },
+                          {
+                            "label": "createdAt",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.Types",
+                                  "entityName": "Round"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "number",
+                                    "value": {
+                                      "int64": "66387"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "ratePerRound",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.Fees",
+                                  "entityName": "RatePerRound"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "rate",
+                                    "value": {
+                                      "numeric": "0.0001522072"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "1",
+        "v1": {
+          "fetch": {
+            "lfVersion": "2.1",
+            "contractId": "001d7e394b9b8ab445eaaf2f998ebddd52a3ff8af576b41984aff1537ec234c8c6ca111220606ff14abca83a1db04d1b4942447c57e38b812ad552b4f910e83ef0cfc632af",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.AmuletRules",
+              "entityName": "TransferPreapproval"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "4",
+        "v1": {
+          "exercise": {
+            "lfVersion": "2.1",
+            "contractId": "001d7e394b9b8ab445eaaf2f998ebddd52a3ff8af576b41984aff1537ec234c8c6ca111220606ff14abca83a1db04d1b4942447c57e38b812ad552b4f910e83ef0cfc632af",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.AmuletRules",
+              "entityName": "TransferPreapproval"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ],
+            "actingParties": [
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "choiceId": "TransferPreapproval_Send",
+            "chosenValue": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.AmuletRules",
+                  "entityName": "TransferPreapproval_Send"
+                },
+                "fields": [
+                  {
+                    "label": "context",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.AmuletRules",
+                          "entityName": "PaymentTransferContext"
+                        },
+                        "fields": [
+                          {
+                            "label": "amuletRules",
+                            "value": {
+                              "contractId": "0057db615019390ba6add145c2d486b2983f3b394feca49ba283c593291bc5fdd2ca11122049bb9bda2753cac24428871607e97950c0820be3aa8f3c10783a6b1153e7d6c6"
+                            }
+                          },
+                          {
+                            "label": "context",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.AmuletRules",
+                                  "entityName": "TransferContext"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "openMiningRound",
+                                    "value": {
+                                      "contractId": "00d9987b905916133ebe611e5177f14138ae10662fa7516f543e2b6d0fc37bca97ca111220311bcdd34ea7408bf2bf268a3e5240575cd745614d80e7c30b06f222fee663c4"
+                                    }
+                                  },
+                                  {
+                                    "label": "issuingMiningRounds",
+                                    "value": {
+                                      "genMap": {}
+                                    }
+                                  },
+                                  {
+                                    "label": "validatorRights",
+                                    "value": {
+                                      "genMap": {}
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "inputs",
+                    "value": {
+                      "list": {
+                        "elements": [
+                          {
+                            "variant": {
+                              "variantId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.AmuletRules",
+                                "entityName": "TransferInput"
+                              },
+                              "constructor": "InputAmulet",
+                              "value": {
+                                "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "amount",
+                    "value": {
+                      "numeric": "1.0000000000"
+                    }
+                  },
+                  {
+                    "label": "sender",
+                    "value": {
+                      "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                    }
+                  }
+                ]
+              }
+            },
+            "children": ["5"],
+            "exerciseResult": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.AmuletRules",
+                  "entityName": "TransferPreapproval_SendResult"
+                },
+                "fields": [
+                  {
+                    "label": "result",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.AmuletRules",
+                          "entityName": "TransferResult"
+                        },
+                        "fields": [
+                          {
+                            "label": "round",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.Types",
+                                  "entityName": "Round"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "number",
+                                    "value": {
+                                      "int64": "66387"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "summary",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                  "moduleName": "Splice.AmuletRules",
+                                  "entityName": "TransferSummary"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "inputAppRewardAmount",
+                                    "value": {
+                                      "numeric": "0.0000000000"
+                                    }
+                                  },
+                                  {
+                                    "label": "inputValidatorRewardAmount",
+                                    "value": {
+                                      "numeric": "0.0000000000"
+                                    }
+                                  },
+                                  {
+                                    "label": "inputSvRewardAmount",
+                                    "value": {
+                                      "numeric": "0.0000000000"
+                                    }
+                                  },
+                                  {
+                                    "label": "inputAmuletAmount",
+                                    "value": {
+                                      "numeric": "38.1742379053"
+                                    }
+                                  },
+                                  {
+                                    "label": "balanceChanges",
+                                    "value": {
+                                      "genMap": {
+                                        "entries": [
+                                          {
+                                            "key": {
+                                              "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                                            },
+                                            "value": {
+                                              "record": {
+                                                "recordId": {
+                                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                  "moduleName": "Splice.AmuletRules",
+                                                  "entityName": "BalanceChange"
+                                                },
+                                                "fields": [
+                                                  {
+                                                    "label": "changeToInitialAmountAsOfRoundZero",
+                                                    "value": {
+                                                      "numeric": "11.1045793864"
+                                                    }
+                                                  },
+                                                  {
+                                                    "label": "changeToHoldingFeesRate",
+                                                    "value": {
+                                                      "numeric": "0.0001522072"
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "key": {
+                                              "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                                            },
+                                            "value": {
+                                              "record": {
+                                                "recordId": {
+                                                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                  "moduleName": "Splice.AmuletRules",
+                                                  "entityName": "BalanceChange"
+                                                },
+                                                "fields": [
+                                                  {
+                                                    "label": "changeToInitialAmountAsOfRoundZero",
+                                                    "value": {
+                                                      "numeric": "-1.4900000000"
+                                                    }
+                                                  },
+                                                  {
+                                                    "label": "changeToHoldingFeesRate",
+                                                    "value": {
+                                                      "numeric": "0.0000000000"
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "label": "holdingFees",
+                                    "value": {
+                                      "numeric": "0.0397260792"
+                                    }
+                                  },
+                                  {
+                                    "label": "outputFees",
+                                    "value": {
+                                      "list": {
+                                        "elements": [
+                                          {
+                                            "numeric": "0.2500000000"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "label": "senderChangeFee",
+                                    "value": {
+                                      "numeric": "0.2400000000"
+                                    }
+                                  },
+                                  {
+                                    "label": "senderChangeAmount",
+                                    "value": {
+                                      "numeric": "36.6445118261"
+                                    }
+                                  },
+                                  {
+                                    "label": "amuletPrice",
+                                    "value": {
+                                      "numeric": "0.1250000000"
+                                    }
+                                  },
+                                  {
+                                    "label": "inputValidatorFaucetAmount",
+                                    "value": {
+                                      "optional": {
+                                        "value": {
+                                          "numeric": "0.0000000000"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "label": "inputUnclaimedActivityRecordAmount",
+                                    "value": {
+                                      "optional": {
+                                        "value": {
+                                          "numeric": "0.0000000000"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "createdAmulets",
+                            "value": {
+                              "list": {
+                                "elements": [
+                                  {
+                                    "variant": {
+                                      "variantId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.AmuletRules",
+                                        "entityName": "CreatedAmulet"
+                                      },
+                                      "constructor": "TransferResultAmulet",
+                                      "value": {
+                                        "contractId": "008c44809eab12686431680695d16d08741adc30be8720e1ec39cc9ad195ed9c14"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "senderChangeAmulet",
+                            "value": {
+                              "optional": {
+                                "value": {
+                                  "contractId": "00d5d2a21736fd4d94702208c67199f2d8219a8ad53737c508c030193d2b09f371"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "meta",
+                    "value": {
+                      "optional": {
+                        "value": {
+                          "record": {
+                            "recordId": {
+                              "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                              "moduleName": "Splice.Api.Token.MetadataV1",
+                              "entityName": "Metadata"
+                            },
+                            "fields": [
+                              {
+                                "label": "values",
+                                "value": {
+                                  "textMap": {
+                                    "entries": [
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/burned",
+                                        "value": {
+                                          "text": "0.5297260792"
+                                        }
+                                      },
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/sender",
+                                        "value": {
+                                          "text": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                                        }
+                                      },
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/tx-kind",
+                                        "value": {
+                                          "text": "transfer"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "nodeId": "8",
+        "v1": {
+          "exercise": {
+            "lfVersion": "2.1",
+            "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "Amulet"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "choiceId": "Archive",
+            "chosenValue": {
+              "record": {
+                "recordId": {
+                  "packageId": "9e70a8b3510d617f8a136213f33d6a903a10ca0eeec76bb06ba55d1ed9680f69",
+                  "moduleName": "DA.Internal.Template",
+                  "entityName": "Archive"
+                }
+              }
+            },
+            "consuming": true,
+            "exerciseResult": {
+              "unit": {}
+            }
+          }
+        }
+      },
+      {
+        "nodeId": "10",
+        "v1": {
+          "create": {
+            "lfVersion": "2.1",
+            "contractId": "00898231dcca8cace910d4aa48c7ac6fcf5cea93fa533d1916c40b7692f780d56c",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "AppRewardCoupon"
+            },
+            "argument": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.Amulet",
+                  "entityName": "AppRewardCoupon"
+                },
+                "fields": [
+                  {
+                    "label": "dso",
+                    "value": {
+                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                    }
+                  },
+                  {
+                    "label": "provider",
+                    "value": {
+                      "party": "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+                    }
+                  },
+                  {
+                    "label": "featured",
+                    "value": {
+                      "bool": false
+                    }
+                  },
+                  {
+                    "label": "amount",
+                    "value": {
+                      "numeric": "0.2500000000"
+                    }
+                  },
+                  {
+                    "label": "round",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.Types",
+                          "entityName": "Round"
+                        },
+                        "fields": [
+                          {
+                            "label": "number",
+                            "value": {
+                              "int64": "66387"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "beneficiary",
+                    "value": {
+                      "optional": {
+                        "value": {
+                          "party": "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "6",
+        "v1": {
+          "fetch": {
+            "lfVersion": "2.1",
+            "contractId": "00d9987b905916133ebe611e5177f14138ae10662fa7516f543e2b6d0fc37bca97ca111220311bcdd34ea7408bf2bf268a3e5240575cd745614d80e7c30b06f222fee663c4",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Round",
+              "entityName": "OpenMiningRound"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "2",
+        "v1": {
+          "fetch": {
+            "lfVersion": "2.1",
+            "contractId": "0057db615019390ba6add145c2d486b2983f3b394feca49ba283c593291bc5fdd2ca11122049bb9bda2753cac24428871607e97950c0820be3aa8f3c10783a6b1153e7d6c6",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.AmuletRules",
+              "entityName": "AmuletRules"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "7",
+        "v1": {
+          "fetch": {
+            "lfVersion": "2.1",
+            "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "Amulet"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "actingParties": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "0",
+        "v1": {
+          "exercise": {
+            "lfVersion": "2.1",
+            "contractId": "004b73bef9a25d916efe93af46ed3808e2e486428e017b5718ba1c094d5f2424c6ca10122062968f770bf867cc90d77187118df923844f95b4e98fc1197acfdc09d956d8ce",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.ExternalPartyAmuletRules",
+              "entityName": "ExternalPartyAmuletRules"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "actingParties": [
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ],
+            "interfaceId": {
+              "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+              "moduleName": "Splice.Api.Token.TransferInstructionV1",
+              "entityName": "TransferFactory"
+            },
+            "choiceId": "TransferFactory_Transfer",
+            "chosenValue": {
+              "record": {
+                "recordId": {
+                  "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+                  "moduleName": "Splice.Api.Token.TransferInstructionV1",
+                  "entityName": "TransferFactory_Transfer"
+                },
+                "fields": [
+                  {
+                    "label": "expectedAdmin",
+                    "value": {
+                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                    }
+                  },
+                  {
+                    "label": "transfer",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+                          "moduleName": "Splice.Api.Token.TransferInstructionV1",
+                          "entityName": "Transfer"
+                        },
+                        "fields": [
+                          {
+                            "label": "sender",
+                            "value": {
+                              "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                            }
+                          },
+                          {
+                            "label": "receiver",
+                            "value": {
+                              "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                            }
+                          },
+                          {
+                            "label": "amount",
+                            "value": {
+                              "numeric": "1.0000000000"
+                            }
+                          },
+                          {
+                            "label": "instrumentId",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "718a0f77e505a8de22f188bd4c87fe74101274e9d4cb1bfac7d09aec7158d35b",
+                                  "moduleName": "Splice.Api.Token.HoldingV1",
+                                  "entityName": "InstrumentId"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "admin",
+                                    "value": {
+                                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                                    }
+                                  },
+                                  {
+                                    "label": "id",
+                                    "value": {
+                                      "text": "Amulet"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "requestedAt",
+                            "value": {
+                              "timestamp": "1760545933819669"
+                            }
+                          },
+                          {
+                            "label": "executeBefore",
+                            "value": {
+                              "timestamp": "1760549533819669"
+                            }
+                          },
+                          {
+                            "label": "inputHoldingCids",
+                            "value": {
+                              "list": {
+                                "elements": [
+                                  {
+                                    "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453"
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "meta",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                  "entityName": "Metadata"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "values",
+                                    "value": {
+                                      "textMap": {}
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "extraArgs",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                          "moduleName": "Splice.Api.Token.MetadataV1",
+                          "entityName": "ExtraArgs"
+                        },
+                        "fields": [
+                          {
+                            "label": "context",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                  "entityName": "ChoiceContext"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "values",
+                                    "value": {
+                                      "textMap": {
+                                        "entries": [
+                                          {
+                                            "key": "amulet-rules",
+                                            "value": {
+                                              "variant": {
+                                                "variantId": {
+                                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                                  "entityName": "AnyValue"
+                                                },
+                                                "constructor": "AV_ContractId",
+                                                "value": {
+                                                  "contractId": "0057db615019390ba6add145c2d486b2983f3b394feca49ba283c593291bc5fdd2ca11122049bb9bda2753cac24428871607e97950c0820be3aa8f3c10783a6b1153e7d6c6"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "key": "open-round",
+                                            "value": {
+                                              "variant": {
+                                                "variantId": {
+                                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                                  "entityName": "AnyValue"
+                                                },
+                                                "constructor": "AV_ContractId",
+                                                "value": {
+                                                  "contractId": "00d9987b905916133ebe611e5177f14138ae10662fa7516f543e2b6d0fc37bca97ca111220311bcdd34ea7408bf2bf268a3e5240575cd745614d80e7c30b06f222fee663c4"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "key": "transfer-preapproval",
+                                            "value": {
+                                              "variant": {
+                                                "variantId": {
+                                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                                  "entityName": "AnyValue"
+                                                },
+                                                "constructor": "AV_ContractId",
+                                                "value": {
+                                                  "contractId": "001d7e394b9b8ab445eaaf2f998ebddd52a3ff8af576b41984aff1537ec234c8c6ca111220606ff14abca83a1db04d1b4942447c57e38b812ad552b4f910e83ef0cfc632af"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "meta",
+                            "value": {
+                              "record": {
+                                "recordId": {
+                                  "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                                  "moduleName": "Splice.Api.Token.MetadataV1",
+                                  "entityName": "Metadata"
+                                },
+                                "fields": [
+                                  {
+                                    "label": "values",
+                                    "value": {
+                                      "textMap": {}
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "children": ["1", "2", "3", "4"],
+            "exerciseResult": {
+              "record": {
+                "recordId": {
+                  "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+                  "moduleName": "Splice.Api.Token.TransferInstructionV1",
+                  "entityName": "TransferInstructionResult"
+                },
+                "fields": [
+                  {
+                    "label": "output",
+                    "value": {
+                      "variant": {
+                        "variantId": {
+                          "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+                          "moduleName": "Splice.Api.Token.TransferInstructionV1",
+                          "entityName": "TransferInstructionResult_Output"
+                        },
+                        "constructor": "TransferInstructionResult_Completed",
+                        "value": {
+                          "record": {
+                            "recordId": {
+                              "packageId": "55ba4deb0ad4662c4168b39859738a0e91388d252286480c7331b3f71a517281",
+                              "moduleName": "Splice.Api.Token.TransferInstructionV1",
+                              "entityName": "TransferInstructionResult_Output.TransferInstructionResult_Completed"
+                            },
+                            "fields": [
+                              {
+                                "label": "receiverHoldingCids",
+                                "value": {
+                                  "list": {
+                                    "elements": [
+                                      {
+                                        "contractId": "008c44809eab12686431680695d16d08741adc30be8720e1ec39cc9ad195ed9c14"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "label": "senderChangeCids",
+                    "value": {
+                      "list": {
+                        "elements": [
+                          {
+                            "contractId": "00d5d2a21736fd4d94702208c67199f2d8219a8ad53737c508c030193d2b09f371"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "meta",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                          "moduleName": "Splice.Api.Token.MetadataV1",
+                          "entityName": "Metadata"
+                        },
+                        "fields": [
+                          {
+                            "label": "values",
+                            "value": {
+                              "textMap": {
+                                "entries": [
+                                  {
+                                    "key": "splice.lfdecentralizedtrust.org/burned",
+                                    "value": {
+                                      "text": "0.5297260792"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "nodeId": "9",
+        "v1": {
+          "create": {
+            "lfVersion": "2.1",
+            "contractId": "007c60316175bdfbc7e075df737255928c5186cbcf657f1c4687fb6d2b9c5697fa",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.Amulet",
+              "entityName": "ValidatorRewardCoupon"
+            },
+            "argument": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.Amulet",
+                  "entityName": "ValidatorRewardCoupon"
+                },
+                "fields": [
+                  {
+                    "label": "dso",
+                    "value": {
+                      "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                    }
+                  },
+                  {
+                    "label": "user",
+                    "value": {
+                      "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                    }
+                  },
+                  {
+                    "label": "amount",
+                    "value": {
+                      "numeric": "0.2500000000"
+                    }
+                  },
+                  {
+                    "label": "round",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.Types",
+                          "entityName": "Round"
+                        },
+                        "fields": [
+                          {
+                            "label": "number",
+                            "value": {
+                              "int64": "66387"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+            ]
+          }
+        }
+      },
+      {
+        "nodeId": "5",
+        "v1": {
+          "exercise": {
+            "lfVersion": "2.1",
+            "contractId": "0057db615019390ba6add145c2d486b2983f3b394feca49ba283c593291bc5fdd2ca11122049bb9bda2753cac24428871607e97950c0820be3aa8f3c10783a6b1153e7d6c6",
+            "packageName": "splice-amulet",
+            "templateId": {
+              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+              "moduleName": "Splice.AmuletRules",
+              "entityName": "AmuletRules"
+            },
+            "signatories": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "stakeholders": [
+              "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+            ],
+            "actingParties": [
+              "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+              "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec",
+              "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+            ],
+            "choiceId": "AmuletRules_Transfer",
+            "chosenValue": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.AmuletRules",
+                  "entityName": "AmuletRules_Transfer"
+                },
+                "fields": [
+                  {
+                    "label": "transfer",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.AmuletRules",
+                          "entityName": "Transfer"
+                        },
+                        "fields": [
+                          {
+                            "label": "sender",
+                            "value": {
+                              "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                            }
+                          },
+                          {
+                            "label": "provider",
+                            "value": {
+                              "party": "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+                            }
+                          },
+                          {
+                            "label": "inputs",
+                            "value": {
+                              "list": {
+                                "elements": [
+                                  {
+                                    "variant": {
+                                      "variantId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.AmuletRules",
+                                        "entityName": "TransferInput"
+                                      },
+                                      "constructor": "InputAmulet",
+                                      "value": {
+                                        "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "outputs",
+                            "value": {
+                              "list": {
+                                "elements": [
+                                  {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.AmuletRules",
+                                        "entityName": "TransferOutput"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "receiver",
+                                          "value": {
+                                            "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                                          }
+                                        },
+                                        {
+                                          "label": "receiverFeeRatio",
+                                          "value": {
+                                            "numeric": "0.0000000000"
+                                          }
+                                        },
+                                        {
+                                          "label": "amount",
+                                          "value": {
+                                            "numeric": "1.0000000000"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "context",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.AmuletRules",
+                          "entityName": "TransferContext"
+                        },
+                        "fields": [
+                          {
+                            "label": "openMiningRound",
+                            "value": {
+                              "contractId": "00d9987b905916133ebe611e5177f14138ae10662fa7516f543e2b6d0fc37bca97ca111220311bcdd34ea7408bf2bf268a3e5240575cd745614d80e7c30b06f222fee663c4"
+                            }
+                          },
+                          {
+                            "label": "issuingMiningRounds",
+                            "value": {
+                              "genMap": {}
+                            }
+                          },
+                          {
+                            "label": "validatorRights",
+                            "value": {
+                              "genMap": {}
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "expectedDso",
+                    "value": {
+                      "optional": {
+                        "value": {
+                          "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "children": ["6", "7", "8", "9", "10", "11", "12"],
+            "exerciseResult": {
+              "record": {
+                "recordId": {
+                  "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                  "moduleName": "Splice.AmuletRules",
+                  "entityName": "TransferResult"
+                },
+                "fields": [
+                  {
+                    "label": "round",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.Types",
+                          "entityName": "Round"
+                        },
+                        "fields": [
+                          {
+                            "label": "number",
+                            "value": {
+                              "int64": "66387"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "summary",
+                    "value": {
+                      "record": {
+                        "recordId": {
+                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                          "moduleName": "Splice.AmuletRules",
+                          "entityName": "TransferSummary"
+                        },
+                        "fields": [
+                          {
+                            "label": "inputAppRewardAmount",
+                            "value": {
+                              "numeric": "0.0000000000"
+                            }
+                          },
+                          {
+                            "label": "inputValidatorRewardAmount",
+                            "value": {
+                              "numeric": "0.0000000000"
+                            }
+                          },
+                          {
+                            "label": "inputSvRewardAmount",
+                            "value": {
+                              "numeric": "0.0000000000"
+                            }
+                          },
+                          {
+                            "label": "inputAmuletAmount",
+                            "value": {
+                              "numeric": "38.1742379053"
+                            }
+                          },
+                          {
+                            "label": "balanceChanges",
+                            "value": {
+                              "genMap": {
+                                "entries": [
+                                  {
+                                    "key": {
+                                      "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                                    },
+                                    "value": {
+                                      "record": {
+                                        "recordId": {
+                                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                          "moduleName": "Splice.AmuletRules",
+                                          "entityName": "BalanceChange"
+                                        },
+                                        "fields": [
+                                          {
+                                            "label": "changeToInitialAmountAsOfRoundZero",
+                                            "value": {
+                                              "numeric": "11.1045793864"
+                                            }
+                                          },
+                                          {
+                                            "label": "changeToHoldingFeesRate",
+                                            "value": {
+                                              "numeric": "0.0001522072"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "key": {
+                                      "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                                    },
+                                    "value": {
+                                      "record": {
+                                        "recordId": {
+                                          "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                          "moduleName": "Splice.AmuletRules",
+                                          "entityName": "BalanceChange"
+                                        },
+                                        "fields": [
+                                          {
+                                            "label": "changeToInitialAmountAsOfRoundZero",
+                                            "value": {
+                                              "numeric": "-1.4900000000"
+                                            }
+                                          },
+                                          {
+                                            "label": "changeToHoldingFeesRate",
+                                            "value": {
+                                              "numeric": "0.0000000000"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "holdingFees",
+                            "value": {
+                              "numeric": "0.0397260792"
+                            }
+                          },
+                          {
+                            "label": "outputFees",
+                            "value": {
+                              "list": {
+                                "elements": [
+                                  {
+                                    "numeric": "0.2500000000"
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "label": "senderChangeFee",
+                            "value": {
+                              "numeric": "0.2400000000"
+                            }
+                          },
+                          {
+                            "label": "senderChangeAmount",
+                            "value": {
+                              "numeric": "36.6445118261"
+                            }
+                          },
+                          {
+                            "label": "amuletPrice",
+                            "value": {
+                              "numeric": "0.1250000000"
+                            }
+                          },
+                          {
+                            "label": "inputValidatorFaucetAmount",
+                            "value": {
+                              "optional": {
+                                "value": {
+                                  "numeric": "0.0000000000"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "label": "inputUnclaimedActivityRecordAmount",
+                            "value": {
+                              "optional": {
+                                "value": {
+                                  "numeric": "0.0000000000"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "createdAmulets",
+                    "value": {
+                      "list": {
+                        "elements": [
+                          {
+                            "variant": {
+                              "variantId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.AmuletRules",
+                                "entityName": "CreatedAmulet"
+                              },
+                              "constructor": "TransferResultAmulet",
+                              "value": {
+                                "contractId": "008c44809eab12686431680695d16d08741adc30be8720e1ec39cc9ad195ed9c14"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "label": "senderChangeAmulet",
+                    "value": {
+                      "optional": {
+                        "value": {
+                          "contractId": "00d5d2a21736fd4d94702208c67199f2d8219a8ad53737c508c030193d2b09f371"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "label": "meta",
+                    "value": {
+                      "optional": {
+                        "value": {
+                          "record": {
+                            "recordId": {
+                              "packageId": "4ded6b668cb3b64f7a88a30874cd41c75829f5e064b3fbbadf41ec7e8363354f",
+                              "moduleName": "Splice.Api.Token.MetadataV1",
+                              "entityName": "Metadata"
+                            },
+                            "fields": [
+                              {
+                                "label": "values",
+                                "value": {
+                                  "textMap": {
+                                    "entries": [
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/burned",
+                                        "value": {
+                                          "text": "0.5297260792"
+                                        }
+                                      },
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/sender",
+                                        "value": {
+                                          "text": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                                        }
+                                      },
+                                      {
+                                        "key": "splice.lfdecentralizedtrust.org/tx-kind",
+                                        "value": {
+                                          "text": "transfer"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ],
+    "nodeSeeds": [
+      {
+        "seed": "aHMogZ/2NpAw5fX22/f9XIAmC6KXP1YVLC4xZEF77lk="
+      },
+      {
+        "nodeId": 4,
+        "seed": "ANWeU9iNdPaQMYV74fXTX1XZBZDWsJTAJATd5quJtZk="
+      },
+      {
+        "nodeId": 5,
+        "seed": "SvKgwsXqZ4yXty3swiuvjK0+dNOl5FQriUL/o8UMwHk="
+      },
+      {
+        "nodeId": 8,
+        "seed": "gGCp6jLEJKRPAMvpFCOFoyzx8nFEu7VIB1LxmQ2PdRY="
+      },
+      {
+        "nodeId": 9,
+        "seed": "of758bYkgBP2YFuf5v4LsqoqEn3wzSlT/W9Qlhh4F1k="
+      },
+      {
+        "nodeId": 10,
+        "seed": "d4Gt/aWnAXoZ87q7WeCTGFbykh6RtFfevLdiUR63X2g="
+      },
+      {
+        "nodeId": 11,
+        "seed": "CLVt7VfhWxNmHspXVfVTY/33cBmUE2THXxiE7lbj8Gc="
+      },
+      {
+        "nodeId": 12,
+        "seed": "FnVsw81meQvUGNB12eCKfO3M5kcUvWHjY05RkeaONyw="
+      }
+    ]
+  },
+  "metadata": {
+    "submitterInfo": {
+      "actAs": ["ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"],
+      "commandId": "df58b095-065c-448c-a9c3-9334c49c9dcc"
+    },
+    "synchronizerId": "global-domain::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+    "transactionUuid": "1fe67216-e871-4369-8843-aa44989020e4",
+    "preparationTime": "1760545934849413",
+    "inputContracts": [
+      {
+        "v1": {
+          "lfVersion": "2.1",
+          "contractId": "001d7e394b9b8ab445eaaf2f998ebddd52a3ff8af576b41984aff1537ec234c8c6ca111220606ff14abca83a1db04d1b4942447c57e38b812ad552b4f910e83ef0cfc632af",
+          "packageName": "splice-amulet",
+          "templateId": {
+            "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+            "moduleName": "Splice.AmuletRules",
+            "entityName": "TransferPreapproval"
+          },
+          "argument": {
+            "record": {
+              "recordId": {
+                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                "moduleName": "Splice.AmuletRules",
+                "entityName": "TransferPreapproval"
+              },
+              "fields": [
+                {
+                  "label": "dso",
+                  "value": {
+                    "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                  }
+                },
+                {
+                  "label": "receiver",
+                  "value": {
+                    "party": "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4"
+                  }
+                },
+                {
+                  "label": "provider",
+                  "value": {
+                    "party": "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+                  }
+                },
+                {
+                  "label": "validFrom",
+                  "value": {
+                    "timestamp": "1760385090694215"
+                  }
+                },
+                {
+                  "label": "lastRenewedAt",
+                  "value": {
+                    "timestamp": "1760385090694215"
+                  }
+                },
+                {
+                  "label": "expiresAt",
+                  "value": {
+                    "timestamp": "1768161090665033"
+                  }
+                }
+              ]
+            }
+          },
+          "signatories": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+            "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+            "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+          ],
+          "stakeholders": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+            "ldg::12204ce023d29c08bed0bc783eb9ff378711629d84442a6dbc639fceec57e19c52c4",
+            "ledger-mainnetValidator-0::12200711b2015480dc603652d02e5552be4c14ae9a51da7a063bf6687953c2d544a9"
+          ]
+        },
+        "createdAt": "1760385090694215",
+        "eventBlob": "CgMyLjESoAYKRQAdfjlLm4q0ReqvL5mOvd1So/+K9Xa0GYSv8VN+wjTIxsoREiBgb/FKvKg6HbBNG0lCRHxX44uBKtVStPkQ6D7wz8YyrxINc3BsaWNlLWFtdWxldBpsCkA2ZTlmYzUwZmI5NGU1Njc1MWI0OWYwOWJhMmRjODRkYTUzYTlkN2NmZjA4MTE1ZWJiNGY2YjdhMTJkMGM5OTBjEgZTcGxpY2USC0FtdWxldFJ1bGVzGhNUcmFuc2ZlclByZWFwcHJvdmFsIq0CaqoCCk0KSzpJRFNPOjoxMjIwYjE0MzFlZjIxNzM0MmRiNDRkNTE2YmI5YmVmZGU4MDJiZTdkODg5OTYzN2QyOTA4OTVmYTU4ODgwZjE5YWNjYwpNCks6SWxkZzo6MTIyMDRjZTAyM2QyOWMwOGJlZDBiYzc4M2ViOWZmMzc4NzExNjI5ZDg0NDQyYTZkYmM2MzlmY2VlYzU3ZTE5YzUyYzQKYwphOl9sZWRnZXItbWFpbm5ldFZhbGlkYXRvci0wOjoxMjIwMDcxMWIyMDE1NDgwZGM2MDM2NTJkMDJlNTU1MmJlNGMxNGFlOWE1MWRhN2EwNjNiZjY2ODc5NTNjMmQ1NDRhOQoLCgkpR6z/lw9BBgAKCwoJKUes/5cPQQYACgsKCSlJ+rYVIkgGACpJRFNPOjoxMjIwYjE0MzFlZjIxNzM0MmRiNDRkNTE2YmI5YmVmZGU4MDJiZTdkODg5OTYzN2QyOTA4OTVmYTU4ODgwZjE5YWNjYypJbGRnOjoxMjIwNGNlMDIzZDI5YzA4YmVkMGJjNzgzZWI5ZmYzNzg3MTE2MjlkODQ0NDJhNmRiYzYzOWZjZWVjNTdlMTljNTJjNCpfbGVkZ2VyLW1haW5uZXRWYWxpZGF0b3ItMDo6MTIyMDA3MTFiMjAxNTQ4MGRjNjAzNjUyZDAyZTU1NTJiZTRjMTRhZTlhNTFkYTdhMDYzYmY2Njg3OTUzYzJkNTQ0YTk5R6z/lw9BBgBCKgomCiQIARIgtfnDjnWvC5o/WAyqCNPF6W50XNabi2saJS5B74pFFgAQHg=="
+      },
+      {
+        "v1": {
+          "lfVersion": "2.1",
+          "contractId": "004b73bef9a25d916efe93af46ed3808e2e486428e017b5718ba1c094d5f2424c6ca10122062968f770bf867cc90d77187118df923844f95b4e98fc1197acfdc09d956d8ce",
+          "packageName": "splice-amulet",
+          "templateId": {
+            "packageId": "979ec710c3ae3a05cb44edf8461a9b4d7dd2053add95664f94fc89e5f18df80f",
+            "moduleName": "Splice.ExternalPartyAmuletRules",
+            "entityName": "ExternalPartyAmuletRules"
+          },
+          "argument": {
+            "record": {
+              "recordId": {
+                "packageId": "979ec710c3ae3a05cb44edf8461a9b4d7dd2053add95664f94fc89e5f18df80f",
+                "moduleName": "Splice.ExternalPartyAmuletRules",
+                "entityName": "ExternalPartyAmuletRules"
+              },
+              "fields": [
+                {
+                  "label": "dso",
+                  "value": {
+                    "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                  }
+                }
+              ]
+            }
+          },
+          "signatories": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ],
+          "stakeholders": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ]
+        },
+        "createdAt": "1734105614079111",
+        "eventBlob": "CgMyLjESqQMKRQBLc775ol2Rbv6Tr0btOAji5IZCjgF7Vxi6HAlNXyQkxsoQEiBilo93C/hnzJDXcYcRjfkjhE+VtOmPwRl6z9wJ2VbYzhINc3BsaWNlLWFtdWxldBp+CkA5NzllYzcxMGMzYWUzYTA1Y2I0NGVkZjg0NjFhOWI0ZDdkZDIwNTNhZGQ5NTY2NGY5NGZjODllNWYxOGRmODBmEgZTcGxpY2USGEV4dGVybmFsUGFydHlBbXVsZXRSdWxlcxoYRXh0ZXJuYWxQYXJ0eUFtdWxldFJ1bGVzIlFqTwpNCks6SURTTzo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2MqSURTTzo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2M5h1Qh7SgpBgBCKgomCiQIARIgn+gQ489W+T7tfuY8HyW/4TRdHaFrmsKq+1I+CbvCU5UQHg=="
+      },
+      {
+        "v1": {
+          "lfVersion": "2.1",
+          "contractId": "0057db615019390ba6add145c2d486b2983f3b394feca49ba283c593291bc5fdd2ca11122049bb9bda2753cac24428871607e97950c0820be3aa8f3c10783a6b1153e7d6c6",
+          "packageName": "splice-amulet",
+          "templateId": {
+            "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+            "moduleName": "Splice.AmuletRules",
+            "entityName": "AmuletRules"
+          },
+          "argument": {
+            "record": {
+              "recordId": {
+                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                "moduleName": "Splice.AmuletRules",
+                "entityName": "AmuletRules"
+              },
+              "fields": [
+                {
+                  "label": "dso",
+                  "value": {
+                    "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                  }
+                },
+                {
+                  "label": "configSchedule",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                        "moduleName": "Splice.Schedule",
+                        "entityName": "Schedule"
+                      },
+                      "fields": [
+                        {
+                          "label": "initialValue",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.AmuletConfig",
+                                "entityName": "AmuletConfig"
+                              },
+                              "fields": [
+                                {
+                                  "label": "transferConfig",
+                                  "value": {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.AmuletConfig",
+                                        "entityName": "TransferConfig"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "createFee",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.Fees",
+                                                "entityName": "FixedFee"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "fee",
+                                                  "value": {
+                                                    "numeric": "0.0300000000"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "holdingFee",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.Fees",
+                                                "entityName": "RatePerRound"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "rate",
+                                                  "value": {
+                                                    "numeric": "0.0000190259"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "transferFee",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.Fees",
+                                                "entityName": "SteppedRate"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "initialRate",
+                                                  "value": {
+                                                    "numeric": "0.0100000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "steps",
+                                                  "value": {
+                                                    "list": {
+                                                      "elements": [
+                                                        {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                              "moduleName": "DA.Types",
+                                                              "entityName": "Tuple2"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "_1",
+                                                                "value": {
+                                                                  "numeric": "100.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "_2",
+                                                                "value": {
+                                                                  "numeric": "0.0010000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        },
+                                                        {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                              "moduleName": "DA.Types",
+                                                              "entityName": "Tuple2"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "_1",
+                                                                "value": {
+                                                                  "numeric": "1000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "_2",
+                                                                "value": {
+                                                                  "numeric": "0.0001000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        },
+                                                        {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                              "moduleName": "DA.Types",
+                                                              "entityName": "Tuple2"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "_1",
+                                                                "value": {
+                                                                  "numeric": "1000000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "_2",
+                                                                "value": {
+                                                                  "numeric": "0.0000100000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "lockHolderFee",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.Fees",
+                                                "entityName": "FixedFee"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "fee",
+                                                  "value": {
+                                                    "numeric": "0.0050000000"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "extraFeaturedAppRewardAmount",
+                                          "value": {
+                                            "numeric": "1.0000000000"
+                                          }
+                                        },
+                                        {
+                                          "label": "maxNumInputs",
+                                          "value": {
+                                            "int64": "100"
+                                          }
+                                        },
+                                        {
+                                          "label": "maxNumOutputs",
+                                          "value": {
+                                            "int64": "100"
+                                          }
+                                        },
+                                        {
+                                          "label": "maxNumLockHolders",
+                                          "value": {
+                                            "int64": "50"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "label": "issuanceCurve",
+                                  "value": {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.Schedule",
+                                        "entityName": "Schedule"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "initialValue",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.Issuance",
+                                                "entityName": "IssuanceConfig"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "amuletToIssuePerYear",
+                                                  "value": {
+                                                    "numeric": "40000000000.0000000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "validatorRewardPercentage",
+                                                  "value": {
+                                                    "numeric": "0.0500000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "appRewardPercentage",
+                                                  "value": {
+                                                    "numeric": "0.1500000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "validatorRewardCap",
+                                                  "value": {
+                                                    "numeric": "0.2000000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "featuredAppRewardCap",
+                                                  "value": {
+                                                    "numeric": "20000.0000000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "unfeaturedAppRewardCap",
+                                                  "value": {
+                                                    "numeric": "0.6000000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "optValidatorFaucetCap",
+                                                  "value": {
+                                                    "optional": {
+                                                      "value": {
+                                                        "numeric": "570.0000000000"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "futureValues",
+                                          "value": {
+                                            "list": {
+                                              "elements": [
+                                                {
+                                                  "record": {
+                                                    "recordId": {
+                                                      "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                      "moduleName": "DA.Types",
+                                                      "entityName": "Tuple2"
+                                                    },
+                                                    "fields": [
+                                                      {
+                                                        "label": "_1",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                                              "moduleName": "DA.Time.Types",
+                                                              "entityName": "RelTime"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "microseconds",
+                                                                "value": {
+                                                                  "int64": "15768000000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "label": "_2",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                              "moduleName": "Splice.Issuance",
+                                                              "entityName": "IssuanceConfig"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "amuletToIssuePerYear",
+                                                                "value": {
+                                                                  "numeric": "20000000000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.1200000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "appRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.4000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.2000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "featuredAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "20000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "unfeaturedAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.6000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "optValidatorFaucetCap",
+                                                                "value": {
+                                                                  "optional": {
+                                                                    "value": {
+                                                                      "numeric": "570.0000000000"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "record": {
+                                                    "recordId": {
+                                                      "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                      "moduleName": "DA.Types",
+                                                      "entityName": "Tuple2"
+                                                    },
+                                                    "fields": [
+                                                      {
+                                                        "label": "_1",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                                              "moduleName": "DA.Time.Types",
+                                                              "entityName": "RelTime"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "microseconds",
+                                                                "value": {
+                                                                  "int64": "47304000000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "label": "_2",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                              "moduleName": "Splice.Issuance",
+                                                              "entityName": "IssuanceConfig"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "amuletToIssuePerYear",
+                                                                "value": {
+                                                                  "numeric": "10000000000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.1800000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "appRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.6200000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.2000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "featuredAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "20000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "unfeaturedAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.6000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "optValidatorFaucetCap",
+                                                                "value": {
+                                                                  "optional": {
+                                                                    "value": {
+                                                                      "numeric": "570.0000000000"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "record": {
+                                                    "recordId": {
+                                                      "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                      "moduleName": "DA.Types",
+                                                      "entityName": "Tuple2"
+                                                    },
+                                                    "fields": [
+                                                      {
+                                                        "label": "_1",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                                              "moduleName": "DA.Time.Types",
+                                                              "entityName": "RelTime"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "microseconds",
+                                                                "value": {
+                                                                  "int64": "157680000000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "label": "_2",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                              "moduleName": "Splice.Issuance",
+                                                              "entityName": "IssuanceConfig"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "amuletToIssuePerYear",
+                                                                "value": {
+                                                                  "numeric": "5000000000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.2100000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "appRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.6900000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.2000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "featuredAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "20000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "unfeaturedAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.6000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "optValidatorFaucetCap",
+                                                                "value": {
+                                                                  "optional": {
+                                                                    "value": {
+                                                                      "numeric": "570.0000000000"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "record": {
+                                                    "recordId": {
+                                                      "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                                      "moduleName": "DA.Types",
+                                                      "entityName": "Tuple2"
+                                                    },
+                                                    "fields": [
+                                                      {
+                                                        "label": "_1",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                                              "moduleName": "DA.Time.Types",
+                                                              "entityName": "RelTime"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "microseconds",
+                                                                "value": {
+                                                                  "int64": "315360000000000"
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "label": "_2",
+                                                        "value": {
+                                                          "record": {
+                                                            "recordId": {
+                                                              "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                              "moduleName": "Splice.Issuance",
+                                                              "entityName": "IssuanceConfig"
+                                                            },
+                                                            "fields": [
+                                                              {
+                                                                "label": "amuletToIssuePerYear",
+                                                                "value": {
+                                                                  "numeric": "2500000000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.2000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "appRewardPercentage",
+                                                                "value": {
+                                                                  "numeric": "0.7500000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "validatorRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.2000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "featuredAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "20000.0000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "unfeaturedAppRewardCap",
+                                                                "value": {
+                                                                  "numeric": "0.6000000000"
+                                                                }
+                                                              },
+                                                              {
+                                                                "label": "optValidatorFaucetCap",
+                                                                "value": {
+                                                                  "optional": {
+                                                                    "value": {
+                                                                      "numeric": "570.0000000000"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "label": "decentralizedSynchronizer",
+                                  "value": {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.DecentralizedSynchronizer",
+                                        "entityName": "AmuletDecentralizedSynchronizerConfig"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "requiredSynchronizers",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "c3bb0c5d04799b3f11bad7c3c102963e115cf53da3e4afcbcfd9f06ebd82b4ff",
+                                                "moduleName": "DA.Set.Types",
+                                                "entityName": "Set"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "map",
+                                                  "value": {
+                                                    "genMap": {
+                                                      "entries": [
+                                                        {
+                                                          "key": {
+                                                            "text": "global-domain::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                                                          },
+                                                          "value": {
+                                                            "unit": {}
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "label": "activeSynchronizer",
+                                          "value": {
+                                            "text": "global-domain::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                                          }
+                                        },
+                                        {
+                                          "label": "fees",
+                                          "value": {
+                                            "record": {
+                                              "recordId": {
+                                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                "moduleName": "Splice.DecentralizedSynchronizer",
+                                                "entityName": "SynchronizerFeesConfig"
+                                              },
+                                              "fields": [
+                                                {
+                                                  "label": "baseRateTrafficLimits",
+                                                  "value": {
+                                                    "record": {
+                                                      "recordId": {
+                                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                                        "moduleName": "Splice.DecentralizedSynchronizer",
+                                                        "entityName": "BaseRateTrafficLimits"
+                                                      },
+                                                      "fields": [
+                                                        {
+                                                          "label": "burstAmount",
+                                                          "value": {
+                                                            "int64": "200000"
+                                                          }
+                                                        },
+                                                        {
+                                                          "label": "burstWindow",
+                                                          "value": {
+                                                            "record": {
+                                                              "recordId": {
+                                                                "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                                                "moduleName": "DA.Time.Types",
+                                                                "entityName": "RelTime"
+                                                              },
+                                                              "fields": [
+                                                                {
+                                                                  "label": "microseconds",
+                                                                  "value": {
+                                                                    "int64": "1200000000"
+                                                                  }
+                                                                }
+                                                              ]
+                                                            }
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "label": "extraTrafficPrice",
+                                                  "value": {
+                                                    "numeric": "60.0000000000"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "readVsWriteScalingFactor",
+                                                  "value": {
+                                                    "int64": "4"
+                                                  }
+                                                },
+                                                {
+                                                  "label": "minTopupAmount",
+                                                  "value": {
+                                                    "int64": "200000"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "label": "tickDuration",
+                                  "value": {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                                        "moduleName": "DA.Time.Types",
+                                        "entityName": "RelTime"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "microseconds",
+                                          "value": {
+                                            "int64": "600000000"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "label": "packageConfig",
+                                  "value": {
+                                    "record": {
+                                      "recordId": {
+                                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                        "moduleName": "Splice.AmuletConfig",
+                                        "entityName": "PackageConfig"
+                                      },
+                                      "fields": [
+                                        {
+                                          "label": "amulet",
+                                          "value": {
+                                            "text": "0.1.13"
+                                          }
+                                        },
+                                        {
+                                          "label": "amuletNameService",
+                                          "value": {
+                                            "text": "0.1.13"
+                                          }
+                                        },
+                                        {
+                                          "label": "dsoGovernance",
+                                          "value": {
+                                            "text": "0.1.18"
+                                          }
+                                        },
+                                        {
+                                          "label": "validatorLifecycle",
+                                          "value": {
+                                            "text": "0.1.5"
+                                          }
+                                        },
+                                        {
+                                          "label": "wallet",
+                                          "value": {
+                                            "text": "0.1.13"
+                                          }
+                                        },
+                                        {
+                                          "label": "walletPayments",
+                                          "value": {
+                                            "text": "0.1.13"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "label": "transferPreapprovalFee",
+                                  "value": {
+                                    "optional": {}
+                                  }
+                                },
+                                {
+                                  "label": "featuredAppActivityMarkerAmount",
+                                  "value": {
+                                    "optional": {
+                                      "value": {
+                                        "numeric": "1.0000000000"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "futureValues",
+                          "value": {
+                            "list": {}
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "label": "isDevNet",
+                  "value": {
+                    "bool": false
+                  }
+                }
+              ]
+            }
+          },
+          "signatories": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ],
+          "stakeholders": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ]
+        },
+        "createdAt": "1758618033300945",
+        "eventBlob": "CgMyLjESzg8KRQBX22FQGTkLpq3RRcLUhrKYPzs5T+ykm6KDxZMpG8X90soREiBJu5vaJ1PKwkQohxYH6XlQwIIL46qPPBB4OmsRU+fWxhINc3BsaWNlLWFtdWxldBpkCkA2ZTlmYzUwZmI5NGU1Njc1MWI0OWYwOWJhMmRjODRkYTUzYTlkN2NmZjA4MTE1ZWJiNGY2YjdhMTJkMGM5OTBjEgZTcGxpY2USC0FtdWxldFJ1bGVzGgtBbXVsZXRSdWxlcyKPDWqMDQpNCks6SURTTzo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2MKtAwKsQxqrgwKpQwKogxqnwwKmwIKmAJqlQIKFgoUahIKEAoOMgwwLjAzMDAwMDAwMDAKFgoUahIKEAoOMgwwLjAwMDAxOTAyNTkKpAEKoQFqngEKEAoOMgwwLjAxMDAwMDAwMDAKiQEKhgFagwEKKGomChIKEDIOMTAwLjAwMDAwMDAwMDAKEAoOMgwwLjAwMTAwMDAwMDAKKWonChMKETIPMTAwMC4wMDAwMDAwMDAwChAKDjIMMC4wMDAxMDAwMDAwCixqKgoWChQyEjEwMDAwMDAuMDAwMDAwMDAwMAoQCg4yDDAuMDAwMDEwMDAwMAoWChRqEgoQCg4yDDAuMDA1MDAwMDAwMAoQCg4yDDEuMDAwMDAwMDAwMAoFCgMYyAEKBQoDGMgBCgQKAhhkCvUGCvIGau8GCpgBCpUBapIBChoKGDIWNDAwMDAwMDAwMDAuMDAwMDAwMDAwMAoQCg4yDDAuMDUwMDAwMDAwMAoQCg4yDDAuMTUwMDAwMDAwMAoQCg4yDDAuMjAwMDAwMDAwMAoUChIyEDIwMDAwLjAwMDAwMDAwMDAKEAoOMgwwLjYwMDAwMDAwMDAKFgoUUhIKEDIONTcwLjAwMDAwMDAwMDAK0QUKzgVaywUKsAFqrQEKEAoOagwKCgoIGIDAz+DolQcKmAEKlQFqkgEKGgoYMhYyMDAwMDAwMDAwMC4wMDAwMDAwMDAwChAKDjIMMC4xMjAwMDAwMDAwChAKDjIMMC40MDAwMDAwMDAwChAKDjIMMC4yMDAwMDAwMDAwChQKEjIQMjAwMDAuMDAwMDAwMDAwMAoQCg4yDDAuNjAwMDAwMDAwMAoWChRSEgoQMg41NzAuMDAwMDAwMDAwMAqwAWqtAQoQCg5qDAoKCggYgMDuobrBFQqYAQqVAWqSAQoaChgyFjEwMDAwMDAwMDAwLjAwMDAwMDAwMDAKEAoOMgwwLjE4MDAwMDAwMDAKEAoOMgwwLjYyMDAwMDAwMDAKEAoOMgwwLjIwMDAwMDAwMDAKFAoSMhAyMDAwMC4wMDAwMDAwMDAwChAKDjIMMC42MDAwMDAwMDAwChYKFFISChAyDjU3MC4wMDAwMDAwMDAwCq8BaqwBChAKDmoMCgoKCBiAgJvGl9pHCpcBCpQBapEBChkKFzIVNTAwMDAwMDAwMC4wMDAwMDAwMDAwChAKDjIMMC4yMTAwMDAwMDAwChAKDjIMMC42OTAwMDAwMDAwChAKDjIMMC4yMDAwMDAwMDAwChQKEjIQMjAwMDAuMDAwMDAwMDAwMAoQCg4yDDAuNjAwMDAwMDAwMAoWChRSEgoQMg41NzAuMDAwMDAwMDAwMAqwAWqtAQoRCg9qDQoLCgkYgIC2jK+0jwEKlwEKlAFqkQEKGQoXMhUyNTAwMDAwMDAwLjAwMDAwMDAwMDAKEAoOMgwwLjIwMDAwMDAwMDAKEAoOMgwwLjc1MDAwMDAwMDAKEAoOMgwwLjIwMDAwMDAwMDAKFAoSMhAyMDAwMC4wMDAwMDAwMDAwChAKDjIMMC42MDAwMDAwMDAwChYKFFISChAyDjU3MC4wMDAwMDAwMDAwCo0CCooCaocCCmcKZWpjCmEKX2JdClsKVUJTZ2xvYmFsLWRvbWFpbjo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2MSAgoAClcKVUJTZ2xvYmFsLWRvbWFpbjo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2MKQwpBaj8KHAoaahgKBgoEGIC1GAoOCgxqCgoICgYYgLC0+AgKEQoPMg02MC4wMDAwMDAwMDAwCgQKAhgICgYKBBiAtRgKDgoMagoKCAoGGICYmrwECksKSWpHCgoKCEIGMC4xLjEzCgoKCEIGMC4xLjEzCgoKCEIGMC4xLjE4CgkKB0IFMC4xLjUKCgoIQgYwLjEuMTMKCgoIQgYwLjEuMTMKBAoCUgAKFAoSUhAKDjIMMS4wMDAwMDAwMDAwCgQKAloACgQKAhAAKklEU086OjEyMjBiMTQzMWVmMjE3MzQyZGI0NGQ1MTZiYjliZWZkZTgwMmJlN2Q4ODk5NjM3ZDI5MDg5NWZhNTg4ODBmMTlhY2NjOdGlKyt0PwYAQioKJgokCAESIAbH+m1WiGZQKQYiSY9tYvjqaW1uVgeffg+QrWoNKPZdEB4="
+      },
+      {
+        "v1": {
+          "lfVersion": "2.1",
+          "contractId": "00d9987b905916133ebe611e5177f14138ae10662fa7516f543e2b6d0fc37bca97ca111220311bcdd34ea7408bf2bf268a3e5240575cd745614d80e7c30b06f222fee663c4",
+          "packageName": "splice-amulet",
+          "templateId": {
+            "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+            "moduleName": "Splice.Round",
+            "entityName": "OpenMiningRound"
+          },
+          "argument": {
+            "record": {
+              "recordId": {
+                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                "moduleName": "Splice.Round",
+                "entityName": "OpenMiningRound"
+              },
+              "fields": [
+                {
+                  "label": "dso",
+                  "value": {
+                    "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                  }
+                },
+                {
+                  "label": "round",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                        "moduleName": "Splice.Types",
+                        "entityName": "Round"
+                      },
+                      "fields": [
+                        {
+                          "label": "number",
+                          "value": {
+                            "int64": "66387"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "label": "amuletPrice",
+                  "value": {
+                    "numeric": "0.1250000000"
+                  }
+                },
+                {
+                  "label": "opensAt",
+                  "value": {
+                    "timestamp": "1760545762620225"
+                  }
+                },
+                {
+                  "label": "targetClosesAt",
+                  "value": {
+                    "timestamp": "1760546962620225"
+                  }
+                },
+                {
+                  "label": "issuingFor",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                        "moduleName": "DA.Time.Types",
+                        "entityName": "RelTime"
+                      },
+                      "fields": [
+                        {
+                          "label": "microseconds",
+                          "value": {
+                            "int64": "39832200000000"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "label": "transferConfigUsd",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                        "moduleName": "Splice.AmuletConfig",
+                        "entityName": "TransferConfig"
+                      },
+                      "fields": [
+                        {
+                          "label": "createFee",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Fees",
+                                "entityName": "FixedFee"
+                              },
+                              "fields": [
+                                {
+                                  "label": "fee",
+                                  "value": {
+                                    "numeric": "0.0300000000"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "holdingFee",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Fees",
+                                "entityName": "RatePerRound"
+                              },
+                              "fields": [
+                                {
+                                  "label": "rate",
+                                  "value": {
+                                    "numeric": "0.0000190259"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "transferFee",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Fees",
+                                "entityName": "SteppedRate"
+                              },
+                              "fields": [
+                                {
+                                  "label": "initialRate",
+                                  "value": {
+                                    "numeric": "0.0100000000"
+                                  }
+                                },
+                                {
+                                  "label": "steps",
+                                  "value": {
+                                    "list": {
+                                      "elements": [
+                                        {
+                                          "record": {
+                                            "recordId": {
+                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                              "moduleName": "DA.Types",
+                                              "entityName": "Tuple2"
+                                            },
+                                            "fields": [
+                                              {
+                                                "label": "_1",
+                                                "value": {
+                                                  "numeric": "100.0000000000"
+                                                }
+                                              },
+                                              {
+                                                "label": "_2",
+                                                "value": {
+                                                  "numeric": "0.0010000000"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          "record": {
+                                            "recordId": {
+                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                              "moduleName": "DA.Types",
+                                              "entityName": "Tuple2"
+                                            },
+                                            "fields": [
+                                              {
+                                                "label": "_1",
+                                                "value": {
+                                                  "numeric": "1000.0000000000"
+                                                }
+                                              },
+                                              {
+                                                "label": "_2",
+                                                "value": {
+                                                  "numeric": "0.0001000000"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          "record": {
+                                            "recordId": {
+                                              "packageId": "5aee9b21b8e9a4c4975b5f4c4198e6e6e8469df49e2010820e792f393db870f4",
+                                              "moduleName": "DA.Types",
+                                              "entityName": "Tuple2"
+                                            },
+                                            "fields": [
+                                              {
+                                                "label": "_1",
+                                                "value": {
+                                                  "numeric": "1000000.0000000000"
+                                                }
+                                              },
+                                              {
+                                                "label": "_2",
+                                                "value": {
+                                                  "numeric": "0.0000100000"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "lockHolderFee",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Fees",
+                                "entityName": "FixedFee"
+                              },
+                              "fields": [
+                                {
+                                  "label": "fee",
+                                  "value": {
+                                    "numeric": "0.0050000000"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "extraFeaturedAppRewardAmount",
+                          "value": {
+                            "numeric": "1.0000000000"
+                          }
+                        },
+                        {
+                          "label": "maxNumInputs",
+                          "value": {
+                            "int64": "100"
+                          }
+                        },
+                        {
+                          "label": "maxNumOutputs",
+                          "value": {
+                            "int64": "100"
+                          }
+                        },
+                        {
+                          "label": "maxNumLockHolders",
+                          "value": {
+                            "int64": "50"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "label": "issuanceConfig",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                        "moduleName": "Splice.Issuance",
+                        "entityName": "IssuanceConfig"
+                      },
+                      "fields": [
+                        {
+                          "label": "amuletToIssuePerYear",
+                          "value": {
+                            "numeric": "20000000000.0000000000"
+                          }
+                        },
+                        {
+                          "label": "validatorRewardPercentage",
+                          "value": {
+                            "numeric": "0.1200000000"
+                          }
+                        },
+                        {
+                          "label": "appRewardPercentage",
+                          "value": {
+                            "numeric": "0.4000000000"
+                          }
+                        },
+                        {
+                          "label": "validatorRewardCap",
+                          "value": {
+                            "numeric": "0.2000000000"
+                          }
+                        },
+                        {
+                          "label": "featuredAppRewardCap",
+                          "value": {
+                            "numeric": "20000.0000000000"
+                          }
+                        },
+                        {
+                          "label": "unfeaturedAppRewardCap",
+                          "value": {
+                            "numeric": "0.6000000000"
+                          }
+                        },
+                        {
+                          "label": "optValidatorFaucetCap",
+                          "value": {
+                            "optional": {
+                              "value": {
+                                "numeric": "570.0000000000"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "label": "tickDuration",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "b70db8369e1c461d5c70f1c86f526a29e9776c655e6ffc2560f95b05ccb8b946",
+                        "moduleName": "DA.Time.Types",
+                        "entityName": "RelTime"
+                      },
+                      "fields": [
+                        {
+                          "label": "microseconds",
+                          "value": {
+                            "int64": "600000000"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "signatories": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ],
+          "stakeholders": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+          ]
+        },
+        "createdAt": "1760545162620225",
+        "eventBlob": "CgMyLjESpAcKRQDZmHuQWRYTPr5hHlF38UE4rhBmL6dRb1Q+K20Pw3vKl8oREiAxG83TTqdAi/K/Joo+UkBXXNdFYU2A58MLBvIi/uZjxBINc3BsaWNlLWFtdWxldBpiCkA2ZTlmYzUwZmI5NGU1Njc1MWI0OWYwOWJhMmRjODRkYTUzYTlkN2NmZjA4MTE1ZWJiNGY2YjdhMTJkMGM5OTBjEgZTcGxpY2USBVJvdW5kGg9PcGVuTWluaW5nUm91bmQi5wRq5AQKTQpLOklEU086OjEyMjBiMTQzMWVmMjE3MzQyZGI0NGQ1MTZiYjliZWZkZTgwMmJlN2Q4ODk5NjM3ZDI5MDg5NWZhNTg4ODBmMTlhY2NjCgwKCmoICgYKBBimjQgKEAoOMgwwLjEyNTAwMDAwMDAKCwoJKUGzygA1QQYACgsKCSlBP1FINUEGAAoQCg5qDAoKCggYgMiNgsWOEgqbAgqYAmqVAgoWChRqEgoQCg4yDDAuMDMwMDAwMDAwMAoWChRqEgoQCg4yDDAuMDAwMDE5MDI1OQqkAQqhAWqeAQoQCg4yDDAuMDEwMDAwMDAwMAqJAQqGAVqDAQooaiYKEgoQMg4xMDAuMDAwMDAwMDAwMAoQCg4yDDAuMDAxMDAwMDAwMAopaicKEwoRMg8xMDAwLjAwMDAwMDAwMDAKEAoOMgwwLjAwMDEwMDAwMDAKLGoqChYKFDISMTAwMDAwMC4wMDAwMDAwMDAwChAKDjIMMC4wMDAwMTAwMDAwChYKFGoSChAKDjIMMC4wMDUwMDAwMDAwChAKDjIMMS4wMDAwMDAwMDAwCgUKAxjIAQoFCgMYyAEKBAoCGGQKmAEKlQFqkgEKGgoYMhYyMDAwMDAwMDAwMC4wMDAwMDAwMDAwChAKDjIMMC4xMjAwMDAwMDAwChAKDjIMMC40MDAwMDAwMDAwChAKDjIMMC4yMDAwMDAwMDAwChQKEjIQMjAwMDAuMDAwMDAwMDAwMAoQCg4yDDAuNjAwMDAwMDAwMAoWChRSEgoQMg41NzAuMDAwMDAwMDAwMAoOCgxqCgoICgYYgJiavAQqSURTTzo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2M5QW0H3TRBBgBCKgomCiQIARIgw0OnHXHav4J5ps2ugewxkJfbnCtJ4ftJW75jG6VVNUAQHg=="
+      },
+      {
+        "v1": {
+          "lfVersion": "2.1",
+          "contractId": "00df3bd6d5286e4e5b33c7dbe00ad450b0bdc30ff7ca7a153ceb9c857fbe19d721ca111220f4335cea9a6c8781922b783a204342c287e9e6f82a46a8d807ef358227cb5453",
+          "packageName": "splice-amulet",
+          "templateId": {
+            "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+            "moduleName": "Splice.Amulet",
+            "entityName": "Amulet"
+          },
+          "argument": {
+            "record": {
+              "recordId": {
+                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                "moduleName": "Splice.Amulet",
+                "entityName": "Amulet"
+              },
+              "fields": [
+                {
+                  "label": "dso",
+                  "value": {
+                    "party": "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc"
+                  }
+                },
+                {
+                  "label": "owner",
+                  "value": {
+                    "party": "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+                  }
+                },
+                {
+                  "label": "amount",
+                  "value": {
+                    "record": {
+                      "recordId": {
+                        "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                        "moduleName": "Splice.Fees",
+                        "entityName": "ExpiringAmount"
+                      },
+                      "fields": [
+                        {
+                          "label": "initialAmount",
+                          "value": {
+                            "numeric": "38.1742379053"
+                          }
+                        },
+                        {
+                          "label": "createdAt",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Types",
+                                "entityName": "Round"
+                              },
+                              "fields": [
+                                {
+                                  "label": "number",
+                                  "value": {
+                                    "int64": "66126"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "ratePerRound",
+                          "value": {
+                            "record": {
+                              "recordId": {
+                                "packageId": "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c",
+                                "moduleName": "Splice.Fees",
+                                "entityName": "RatePerRound"
+                              },
+                              "fields": [
+                                {
+                                  "label": "rate",
+                                  "value": {
+                                    "numeric": "0.0001522072"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "signatories": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+            "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+          ],
+          "stakeholders": [
+            "DSO::1220b1431ef217342db44d516bb9befde802be7d8899637d290895fa58880f19accc",
+            "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec"
+          ]
+        },
+        "createdAt": "1760385233109009",
+        "eventBlob": "CgMyLjES4AQKRQDfO9bVKG5OWzPH2+AK1FCwvcMP98p6FTzrnIV/vhnXIcoREiD0M1zqmmyHgZIreDogQ0LCh+nm+CpGqNgH7zWCJ8tUUxINc3BsaWNlLWFtdWxldBpaCkA2ZTlmYzUwZmI5NGU1Njc1MWI0OWYwOWJhMmRjODRkYTUzYTlkN2NmZjA4MTE1ZWJiNGY2YjdhMTJkMGM5OTBjEgZTcGxpY2USBkFtdWxldBoGQW11bGV0IuABat0BCk0KSzpJRFNPOjoxMjIwYjE0MzFlZjIxNzM0MmRiNDRkNTE2YmI5YmVmZGU4MDJiZTdkODg5OTYzN2QyOTA4OTVmYTU4ODgwZjE5YWNjYwpNCks6SWxkZzo6MTIyMGM4MTMxNWUyYmYyNTI0YTkxNDFiY2M2Y2JmMTliNjFjMTUxZTBkY2FhOTUzNDNjMGNjZjUzYWVkNzQxNWM0ZWMKPQo7ajkKEQoPMg0zOC4xNzQyMzc5MDUzCgwKCmoICgYKBBiciQgKFgoUahIKEAoOMgwwLjAwMDE1MjIwNzIqSURTTzo6MTIyMGIxNDMxZWYyMTczNDJkYjQ0ZDUxNmJiOWJlZmRlODAyYmU3ZDg4OTk2MzdkMjkwODk1ZmE1ODg4MGYxOWFjY2MqSWxkZzo6MTIyMGM4MTMxNWUyYmYyNTI0YTkxNDFiY2M2Y2JmMTliNjFjMTUxZTBkY2FhOTUzNDNjMGNjZjUzYWVkNzQxNWM0ZWM5EcB8oA9BBgBCKgomCiQIARIgBwDUOlqi7/8EDWgOtApvJadg1QSjMkywSjvF7sXrRb0QHg=="
+      }
+    ],
+    "minLedgerEffectiveTime": "1760545933819669",
+    "maxLedgerEffectiveTime": "1760549533819668"
+  }
+}

@@ -35,8 +35,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
-      isModularDrawerVisible,
-      openModularDrawer,
     } = useWebView(
       {
         manifest,
@@ -60,20 +58,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
     if (!!manifest.dapp && noAccounts) {
-      return (
-        <NoAccountScreen
-          manifest={manifest}
-          currentAccountHistDb={currentAccountHistDb}
-          openModularDrawer={isModularDrawerVisible ? openModularDrawer : undefined}
-        />
-      );
+      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
 
     return (
       <RNWebView
         ref={webviewRef}
         onScroll={onScroll}
-        decelerationRate="normal"
+        decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}

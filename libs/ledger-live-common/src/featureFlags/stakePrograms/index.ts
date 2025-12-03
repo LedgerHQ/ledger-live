@@ -28,3 +28,35 @@ export const getStablecoinYieldSetting = (
 
   return !usdtProvider ? "inactive" : usdtProvider === "earn" ? "api" : "dapp";
 };
+
+export const getBitcoinYieldSetting = (stakePrograms: Feature_StakePrograms | null): string => {
+  /** Check if Bitcoin has "earn" provider configured in redirects. */
+  const bitcoinProvider =
+    !stakePrograms?.enabled || !stakePrograms?.params?.redirects
+      ? undefined
+      : stakePrograms?.params?.redirects["bitcoin"]?.platform;
+
+  return !bitcoinProvider
+    ? "inactive"
+    : bitcoinProvider === "earn"
+      ? "deposit_screen"
+      : bitcoinProvider;
+};
+
+export const getEthDepositScreenSetting = (stakePrograms: Feature_StakePrograms | null): string => {
+  /** Check if Ethereum has "earn" provider configured in redirects with ethDepositCohort. */
+  const ethereumRedirect = stakePrograms?.enabled
+    ? stakePrograms?.params?.redirects?.["ethereum"]
+    : undefined;
+
+  // If no ethereum redirect exists, return "standard"
+  // If platform is not "earn", return "standard"
+  if (ethereumRedirect?.platform !== "earn") {
+    return "standard";
+  }
+
+  // Extract ethDepositCohort from queryParams
+  const ethDepositCohort = ethereumRedirect.queryParams?.ethDepositCohort;
+
+  return ethDepositCohort ?? "missing_cohort_value";
+};

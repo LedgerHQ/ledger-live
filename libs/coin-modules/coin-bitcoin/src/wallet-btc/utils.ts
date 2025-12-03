@@ -172,8 +172,8 @@ export function isValidAddress(address: string, currency?: Currency): boolean {
 export function isTaprootAddress(address: string, currency?: Currency): boolean {
   if (currency === "bitcoin") {
     return cryptoFactory("bitcoin").isTaprootAddress(address);
-  } else if (currency === "bitcoin_testnet") {
-    return cryptoFactory("bitcoin_testnet").isTaprootAddress(address);
+  } else if (currency === "bitcoin_testnet" || currency === "bitcoin_regtest") {
+    return cryptoFactory(currency).isTaprootAddress(address);
   } else {
     return false;
   }

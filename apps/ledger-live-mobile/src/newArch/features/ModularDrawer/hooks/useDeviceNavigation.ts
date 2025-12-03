@@ -3,16 +3,15 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
-import { useDispatch } from "react-redux";
-import { setStep } from "~/reducers/modularDrawer";
-import { ModularDrawerStep } from "../types";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { useSelector } from "react-redux";
+import { Account } from "@ledgerhq/types-live";
+import type { ModularDrawerProps } from "../ModularDrawer";
+import { modularDrawerStateSelector } from "~/reducers/modularDrawer";
 
 type UseDeviceNavigationParams = {
   onClose?: () => void;
   resetSelection: () => void;
-  onAccountSelected?: (account: AccountLike) => void;
+  onAccountSelected: ModularDrawerProps["onAccountSelected"];
 };
 
 export function useDeviceNavigation({
@@ -20,8 +19,10 @@ export function useDeviceNavigation({
   resetSelection,
   onAccountSelected,
 }: UseDeviceNavigationParams) {
-  const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const { flow } = useSelector(modularDrawerStateSelector);
+
+  const isInline = flow !== "add_account";
 
   const onSuccess = useCallback(
     (res?: { scannedAccounts: Account[]; selected: Account[] }) => {
@@ -43,14 +44,13 @@ export function useDeviceNavigation({
           currency: selectedAsset,
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
-          inline: Boolean(onAccountSelected),
+          inline: isInline,
           onCloseNavigation: onClose,
           onSuccess,
         },
       });
-      dispatch(setStep(ModularDrawerStep.Asset));
     },
-    [onClose, resetSelection, dispatch, navigation, onAccountSelected, onSuccess],
+    [onClose, resetSelection, navigation, isInline, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

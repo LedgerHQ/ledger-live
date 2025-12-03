@@ -2,18 +2,14 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { scenarioSolana } from "./scenarii/solana";
 import { killAgave } from "./agave";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
-import { setCryptoAssetsStoreGetter } from "@ledgerhq/coin-solana/cryptoAssetsStore";
+// Import fixtures to setup mock store
+import "./fixtures";
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
     await Promise.all([killSpeculos(), killAgave()]);
   }),
 );
-
-//TODO coin tester should not call external endpoints (avoid the error Failed to fetch Figment APY LedgerAPI5xx: Unhandled request)
-//TODO mock call to CAL when available
-setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
 
 describe("Solana Deterministic Tester", () => {
   it("scenario Solana", async () => {

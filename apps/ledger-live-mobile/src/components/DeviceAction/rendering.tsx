@@ -4,6 +4,7 @@ import {
   LockedDeviceError,
   PeerRemovedPairing,
   WrongDeviceForAccount,
+  FirmwareNotRecognized,
 } from "@ledgerhq/errors";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -27,13 +28,13 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
@@ -52,6 +53,9 @@ import GenericErrorView from "../GenericErrorView";
 import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
+import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -146,7 +150,7 @@ export function renderRequiresAppInstallation({
   navigation,
   appNames,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   appNames: string[];
 }) {
   const appNamesCSV = appNames.join(", ");
@@ -366,7 +370,7 @@ const AllowOpeningApp = ({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
@@ -415,7 +419,7 @@ export function renderAllowOpeningApp({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
@@ -518,7 +522,7 @@ export function renderError({
   device,
   hasExportLogButton,
 }: RawProps & {
-  navigation?: StackNavigationProp<RootStackParamList>;
+  navigation?: NativeStackNavigationProp<RootStackParamList>;
   error: Error;
   onRetry?: (() => void) | null;
   managerAppName?: string;
@@ -527,64 +531,111 @@ export function renderError({
   device?: Device;
   hasExportLogButton?: boolean;
 }) {
-  const onPress = () => {
-    if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-        params: {
-          screen: NavigatorName.MyLedger,
-          params: {
-            screen: ScreenName.MyLedgerChooseDevice,
-            params: {
-              tab: MANAGER_TABS.INSTALLED_APPS,
-              updateModalOpened: true,
-              device,
-            },
-          },
-        },
-      });
-    } else if (onRetry) {
-      onRetry();
-    }
-  };
-
-  // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
-  // can be used directly by other component
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
-  }
+  } else if (error instanceof PeerRemovedPairing) {
+    // User needs to forget the device on their phone settings
+    const productName = device ? getDeviceModel(device?.modelId).productName : "Ledger Device";
+    return (
+      <Flex flex={1}>
+        <BleForgetDeviceIllustration productName={productName} onRetry={() => onRetry?.()} />
+      </Flex>
+    );
+  } else {
+    const renderErrorButtons = (error: Error, managerAppName?: string) => {
+      type CTA = "OpenExperimentalSettings" | "Retry" | "None";
+      const getCTA = (error: Error, hasRetry: boolean): CTA => {
+        if (
+          isInvalidGetFirmwareMetadataResponseError(error) ||
+          error instanceof FirmwareNotRecognized
+        ) {
+          return "OpenExperimentalSettings";
+        } else if (!(error instanceof PeerRemovedPairing) && hasRetry) {
+          return "Retry";
+        }
+        return "None";
+      };
 
-  // TODO Once we have the aligned Error renderings, the CTA list should be determined
-  // by the error class, not patched like here.
-  let showRetryIfAvailable = true;
-  if (error instanceof PeerRemovedPairing) {
-    showRetryIfAvailable = false;
-  }
+      const hasRetry = Boolean(onRetry || managerAppName);
+      const cta = getCTA(error, hasRetry);
 
-  return (
-    <Wrapper>
-      <GenericErrorView
-        error={error}
-        withDescription
-        Icon={Icon}
-        iconColor={iconColor}
-        hasExportLogButton={hasExportLogButton}
-      >
-        {showRetryIfAvailable && (onRetry || managerAppName) ? (
-          <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
-            <StyledButton
-              event="DeviceActionErrorRetry"
-              type="main"
-              size="large"
-              outline={false}
-              title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
-              onPress={onPress}
-            />
-          </Flex>
-        ) : null}
-      </GenericErrorView>
-    </Wrapper>
-  );
+      switch (cta) {
+        case "OpenExperimentalSettings": {
+          const onPressGoToExperimentalSettings = () => {
+            if (navigation) {
+              navigation.navigate(NavigatorName.Base, {
+                screen: NavigatorName.Settings,
+                params: {
+                  screen: ScreenName.ExperimentalSettings,
+                },
+              });
+            }
+          };
+          return (
+            <Flex alignSelf="stretch" mb={0} mt={0}>
+              <StyledButton
+                event="DeviceActionErrorRetry"
+                type="main"
+                size="large"
+                outline={false}
+                title={t("errors.InvalidGetFirmwareMetadataResponseError.openSettings")}
+                onPress={onPressGoToExperimentalSettings}
+              />
+            </Flex>
+          );
+        }
+        case "Retry": {
+          const onPressRetry = () => {
+            if (managerAppName && navigation) {
+              navigation.navigate(NavigatorName.Base, {
+                screen: NavigatorName.Main,
+                params: {
+                  screen: NavigatorName.MyLedger,
+                  params: {
+                    screen: ScreenName.MyLedgerChooseDevice,
+                    params: {
+                      tab: MANAGER_TABS.INSTALLED_APPS,
+                      updateModalOpened: true,
+                      device,
+                    },
+                  },
+                },
+              });
+            } else {
+              onRetry?.();
+            }
+          };
+          return (
+            <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
+              <StyledButton
+                event="DeviceActionErrorRetry"
+                type="main"
+                size="large"
+                outline={false}
+                title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
+                onPress={onPressRetry}
+              />
+            </Flex>
+          );
+        }
+        default:
+          return null;
+      }
+    };
+    return (
+      <Wrapper>
+        <GenericErrorView
+          error={error}
+          withDescription
+          Icon={Icon}
+          iconColor={iconColor}
+          hasExportLogButton={hasExportLogButton}
+        >
+          {renderErrorButtons(error, managerAppName)}
+        </GenericErrorView>
+      </Wrapper>
+    );
+  }
 }
 
 export function RequiredFirmwareUpdate({
@@ -592,7 +643,7 @@ export function RequiredFirmwareUpdate({
   device,
   navigation,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
 }) {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
@@ -691,7 +742,7 @@ export function renderDeviceNotOnboarded({
 }: {
   t: TFunction;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
     if (isSyncOnboardingSupported(device.modelId)) {
@@ -740,21 +791,28 @@ export function renderDeviceNotOnboarded({
   );
 }
 
-export function renderConnectYourDevice({
-  t,
-  unresponsive,
-  isLocked = false,
-  device,
-  theme,
-  onSelectDeviceLink,
-  fullScreen = true,
-}: RawProps & {
-  unresponsive?: boolean | null;
-  isLocked?: boolean;
-  device: Device;
-  fullScreen?: boolean;
-  onSelectDeviceLink?: () => void;
-}) {
+function useGetRawProps(): Omit<RawProps, "colors"> {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "light" | "dark";
+
+  return {
+    t,
+    theme,
+  };
+}
+
+export const ConnectYourDevice: React.FC<
+  Readonly<{
+    unresponsive?: boolean | null;
+    isLocked?: boolean;
+    device: Device;
+    fullScreen?: boolean;
+    onSelectDeviceLink?: () => void;
+  }>
+> = ({ unresponsive, isLocked = false, device, onSelectDeviceLink, fullScreen = true }) => {
+  const { t, theme } = useGetRawProps();
+
   return (
     <Flex
       flexDirection="column"
@@ -780,7 +838,8 @@ export function renderConnectYourDevice({
             ? "DeviceAction.unlockDevice"
             : device.wired
               ? "DeviceAction.connectAndUnlockDevice"
-              : "DeviceAction.turnOnAndUnlockDevice",
+              : "DeviceAction.powerOnDevice",
+          { deviceName: getDeviceModel(device.modelId).productName },
         )}
       </TitleText>
       {onSelectDeviceLink ? (
@@ -794,7 +853,7 @@ export function renderConnectYourDevice({
       ) : null}
     </Flex>
   );
-}
+};
 
 export function renderLoading({
   t,
@@ -917,7 +976,7 @@ export function LoadingAppInstall({
 
 type WarningOutdatedProps = RawProps & {
   colors: Theme["colors"];
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   appName: string;
   passWarning: () => void;
 };
@@ -992,7 +1051,7 @@ export const AutoRepair = ({
 }: RawProps & {
   onDone: () => void;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<number>(0);

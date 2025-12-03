@@ -45,6 +45,9 @@ export const assetsDataApi = createApi({
           ...(queryArg?.search && { search: queryArg.search }),
           product: queryArg.product,
           minVersion: queryArg.version,
+          ...(queryArg?.includeTestNetworks && {
+            includeTestNetworks: queryArg.includeTestNetworks,
+          }),
           additionalData: queryArg.additionalData || [
             AssetsAdditionalData.Apy,
             AssetsAdditionalData.MarketTrend,
@@ -92,7 +95,7 @@ export const assetsDataApi = createApi({
         const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
 
         return {
-          url: `${baseUrl}assets`,
+          url: `${baseUrl}/assets`,
           params,
         };
       },

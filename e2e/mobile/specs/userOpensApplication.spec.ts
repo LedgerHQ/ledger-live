@@ -1,6 +1,6 @@
 const testConfig = {
   tmsLinks: ["B2CQA-734"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 describe("User opens application", () => {

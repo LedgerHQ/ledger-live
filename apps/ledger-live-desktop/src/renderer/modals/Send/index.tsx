@@ -5,6 +5,8 @@ import Body from "./Body";
 import { StepId } from "./types";
 import { useDispatch } from "react-redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import SendWorkflow from "LLD/features/Send";
 
 type Props = {
   stepId?: StepId;
@@ -36,6 +38,9 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
     );
     onClose?.();
   }, [dispatch, onClose]);
+
+  const newSendFlow = useFeature("newSendFlow");
+
   return (
     <DomainServiceProvider>
       <Modal
@@ -44,14 +49,33 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onHide={handleReset}
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
-        render={({ onClose, data }) => (
-          <Body
-            stepId={stepId}
-            onClose={onClose}
-            onChangeStepId={handleStepChange}
-            params={data || {}}
-          />
-        )}
+        render={({ onClose, data }) => {
+          const sendData = data || {};
+          if (!newSendFlow?.enabled) {
+            return (
+              <Body
+                stepId={stepId}
+                onClose={onClose}
+                onChangeStepId={handleStepChange}
+                params={data || {}}
+              />
+            );
+          }
+
+          // New send flow enabled
+          if (sendData.account) {
+            // Temporary placeholder while the new modal-based steps are being implemented.
+            return (
+              <div style={{ padding: 24 }}>
+                <p>New send flow (work in progress)</p>
+                <p>Selected account: {sendData.account?.id}</p>
+              </div>
+            );
+          }
+
+          // No preselected account: start the MAD-based account selection flow.
+          return <SendWorkflow onClose={onClose} params={{}} />;
+        }}
       />
     </DomainServiceProvider>
   );

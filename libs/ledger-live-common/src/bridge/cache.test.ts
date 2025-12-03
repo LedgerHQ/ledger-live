@@ -10,10 +10,12 @@ describe("Bridge Cache", () => {
 
   beforeAll(() => {
     setEnv("MOCK", "1");
+    setEnv("PLAYWRIGHT_RUN", true);
   });
 
   afterAll(() => {
     setEnv("MOCK", "");
+    setEnv("PLAYWRIGHT_RUN", false);
   });
 
   it("does not re-generate the LRU cache by default", async () => {

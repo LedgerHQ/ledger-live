@@ -1,30 +1,42 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { track } from "~/analytics";
 
 interface UsePullToRefreshProps {
   loading: boolean;
-  refresh: () => void;
+  refetch: () => void;
 }
 
-function usePullToRefresh({ loading, refresh }: UsePullToRefreshProps) {
-  const trackPullToRefresh = useCallback(() => {
-    track("button_clicked", {
-      button: "pull to refresh",
-    });
-  }, []);
+function usePullToRefresh({ loading, refetch }: UsePullToRefreshProps) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const hasStartedLoading = useRef(false);
 
-  const [refreshControlVisible, setRefreshControlVisible] = useState(false);
   const handlePullToRefresh = useCallback(() => {
-    refresh();
-    setRefreshControlVisible(true);
-    trackPullToRefresh();
-  }, [refresh, trackPullToRefresh]);
+    track("button_clicked", { button: "pull to refresh" });
+    setIsRefreshing(true);
+    hasStartedLoading.current = false;
+    refetch();
+  }, [refetch]);
 
   useEffect(() => {
-    if (refreshControlVisible && !loading) setRefreshControlVisible(false);
-  }, [refreshControlVisible, loading]);
+    if (!isRefreshing) return;
 
-  return { handlePullToRefresh, refreshControlVisible };
+    if (loading) {
+      hasStartedLoading.current = true;
+    }
+
+    if (hasStartedLoading.current && !loading) {
+      setIsRefreshing(false);
+      return;
+    }
+
+    const timeout = setTimeout(() => setIsRefreshing(false), 500); // If loading never starts
+    return () => clearTimeout(timeout);
+  }, [loading, isRefreshing]);
+
+  return {
+    handlePullToRefresh,
+    refreshControlVisible: isRefreshing,
+  };
 }
 
 export default usePullToRefresh;

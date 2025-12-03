@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import {
   getDefaultExplorerView,
@@ -19,6 +19,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
+import Config from "react-native-config";
 
 type NavigatorProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OperationDetails>
@@ -62,9 +63,13 @@ function OperationDetails({ route }: NavigatorProps) {
     ).getURLWhatIsThis(operation, mainAccount.currency.id);
 
   return (
-    <SafeAreaView edges={["bottom"]} style={[styles.container]}>
+    <SafeAreaViewFixed
+      isFlex
+      edges={["left", "right", "bottom"]}
+      useDetoxInsets={Config.DETOX === "1"}
+    >
       <TrackScreen category="OperationDetails" />
-      <NavigationScrollView>
+      <NavigationScrollView testID="operation-details-scroll-view">
         <View style={styles.root}>
           <Content
             account={account}
@@ -77,16 +82,13 @@ function OperationDetails({ route }: NavigatorProps) {
         </View>
       </NavigationScrollView>
       <Footer url={url} urlWhatIsThis={urlWhatIsThis} currency={mainAccountCurrency} />
-    </SafeAreaView>
+    </SafeAreaViewFixed>
   );
 }
 
 export default withDiscreetMode(OperationDetails);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   root: {
     paddingTop: 24,
     paddingBottom: 64,

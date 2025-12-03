@@ -12,6 +12,7 @@ import com.facebook.react.modules.i18nmanager.I18nUtil
 import expo.modules.ReactActivityDelegateWrapper
 import java.util.Locale
 import org.devio.rn.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ReactActivity() {
 
@@ -30,6 +31,9 @@ class MainActivity : ReactActivity() {
             )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            installSplashScreen()
+        }
         if (!BuildConfig.DEBUG) {
             SplashScreen.show(this, true)
         }

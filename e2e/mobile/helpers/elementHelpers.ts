@@ -1,12 +1,29 @@
 /* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web } from "detox";
-import { delay, isAndroid } from "./commonHelpers";
+import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
+}
+interface WebElementWithMatcher extends WebElement {
+  matcher?: {
+    predicate?: unknown;
+    type?: string;
+    value?: string;
+  };
+  _call?: {
+    value?: unknown;
+  };
+}
+
+function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
+  return (
+    (isIos() && typeof obj === "object" && obj !== null && "matcher" in obj) ||
+    (isAndroid() && typeof obj === "object" && obj !== null && "_call" in obj)
+  );
 }
 
 const scroller = new PageScroller();
@@ -19,16 +36,16 @@ export const NativeElementHelpers = {
     return detoxExpect(element);
   },
 
+  waitForElement(nativeElement: NativeElement, timeout: number = DEFAULT_TIMEOUT) {
+    return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+  },
+
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return waitFor(element(by.id(id)))
-      .toBeVisible()
-      .withTimeout(timeout);
+    return NativeElementHelpers.waitForElement(element(by.id(id)), timeout);
   },
 
   waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return waitFor(element(by.text(text)))
-      .toBeVisible()
-      .withTimeout(timeout);
+    return NativeElementHelpers.waitForElement(element(by.text(text)), timeout);
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
@@ -144,6 +161,16 @@ export const NativeElementHelpers = {
     await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
   },
 
+  async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
+    );
+    if ("elements" in attributes) {
+      return attributes.elements[index];
+    }
+    return attributes;
+  },
+
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () =>
       NativeElementHelpers.getElementById(id, index).getAttributes(),
@@ -175,9 +202,7 @@ export const WebElementHelpers = {
   },
 
   getWebElementByCssSelector(selector: string, index = 0): WebElement {
-    const base = web.element(
-      by.web.cssSelector(selector),
-    )
+    const base = web.element(by.web.cssSelector(selector));
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -300,9 +325,23 @@ export const WebElementHelpers = {
   },
 
   async scrollToWebElement(element: WebElement) {
-    await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+    try {
+      await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+    } catch (error) {
+      throw new Error(
+        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${error}`,
+      );
+    }
   },
 
+  getWebElementMatcher(webElement: WebElement): string {
+    if (hasMatcherProperty(webElement)) {
+      return isIos()
+        ? JSON.stringify(webElement.matcher?.predicate || webElement.matcher, null, 2)
+        : JSON.stringify(webElement._call?.value || webElement._call, null, 2);
+    }
+    return "{}";
+  },
   async getCurrentWebviewUrl(): Promise<string> {
     let url = "";
     try {
@@ -311,6 +350,30 @@ export const WebElementHelpers = {
       url = await getWebElementByTag("html").runScript(() => window.location.href);
     }
     return String(url);
+  },
+
+  async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
+    let currentUrl = "";
+    await retryUntilTimeout(async () => {
+      currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
+      if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
+        return currentUrl;
+      }
+      throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
+    }, timeout);
+    return currentUrl;
+  },
+
+    async waitForWebElementToMatchRegex(webElementId: string, regexPattern: RegExp, timeout = 10000): Promise<string> {
+    let webElementText = "";
+    await retryUntilTimeout(async () => {
+      webElementText = await WebElementHelpers.getWebElementText(webElementId)
+      if (new RegExp(regexPattern).test(webElementText)) {
+        return webElementText;
+      }
+      throw new Error(`Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`);
+    }, timeout);
+    return webElementText;
   },
 
   async isWebElementEnabled(element: WebElement) {

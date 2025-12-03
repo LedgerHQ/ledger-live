@@ -13,7 +13,7 @@ import {
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -54,6 +54,17 @@ import { OnboardingUseCase } from "../../OnboardingUseCase";
 import { urls } from "~/config/urls";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { SecureYourCrypto } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/SecureYourCrypto";
+import { WelcomeToWalletWithFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithFunds";
+import { WelcomeToWalletWithoutFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithoutFunds";
+import {
+  onboardingReceiveFlowSelector,
+  onboardingReceiveSuccessSelector,
+  setIsOnboardingReceiveFlow,
+} from "~/renderer/reducers/onboarding";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -86,13 +97,15 @@ type FlowStepperProps = {
   AsideFooter?: React.ElementType;
   ProgressBar?: React.ReactNode;
   continueLabel?: string;
+  continueLabelSecondary?: string;
   continueLoading?: boolean;
   continueDisabled?: boolean;
   backLabel?: string;
   disableBack?: boolean;
   children: React.ReactNode;
-  handleBack: () => void;
+  handleBack?: () => void;
   handleContinue: () => void;
+  handleContinueSecondary?: () => void;
 };
 
 const FooterContainer = styled(Flex).attrs({ rowGap: 3, height: 120 })`
@@ -106,6 +119,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   illustration,
   AsideFooter,
   continueLabel,
+  continueLabelSecondary,
   backLabel,
   continueLoading,
   continueDisabled,
@@ -114,8 +128,10 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   children,
   handleBack,
   handleContinue,
+  handleContinueSecondary,
 }) => {
   const urlFaq = useLocalizedUrl(urls.faq);
+  const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
 
   const handleHelp = () => openURL(urlFaq);
 
@@ -127,45 +143,60 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
 
   return (
     <FlowStepperContainer>
-      <Aside
-        backgroundColor="palette.constant.purple"
-        header={
-          <Flex justifyContent="center">
-            <Logos.LedgerLiveRegular />
-          </Flex>
-        }
-        footer={Footer}
-        width="324px"
-        p={10}
-        position="relative"
-      >
-        {illustration}
-      </Aside>
+      {!nanoOnboardingFundWalletFeature && (
+        <Aside
+          backgroundColor="palette.constant.purple"
+          header={
+            <Flex justifyContent="center">
+              <Logos.LedgerLiveRegular width={155} height={32} />
+            </Flex>
+          }
+          footer={Footer}
+          width="324px"
+          p={10}
+          position="relative"
+        >
+          {illustration}
+        </Aside>
+      )}
       <FlowStepperContentContainer flexGrow={1} justifyContent="center">
         <FlowStepperContent flexDirection="column" /* Agrandir ici */>
           {ProgressBar}
           <StepContent>{children}</StepContent>
-          <Flex justifyContent="space-between">
-            <Button
-              iconPosition="left"
-              onClick={handleBack}
-              disabled={disableBack}
-              variant="main"
-              outline
-              Icon={() => <IconsLegacy.ArrowLeftMedium size={18} />}
-            >
-              {backLabel || t("common.back")}
-            </Button>
-            <Button
-              data-testid="v3-tutorial-continue"
-              onClick={handleContinue}
-              disabled={continueLoading || continueDisabled}
-              variant="main"
-              iconSize={18}
-              Icon={continueLoading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
-            >
-              {continueLabel || t("common.continue")}
-            </Button>
+          <Flex justifyContent={handleBack ? "space-between" : "flex-end"}>
+            {handleBack && (
+              <Button
+                iconPosition="left"
+                onClick={handleBack}
+                disabled={disableBack}
+                variant="main"
+                outline
+                Icon={() => <IconsLegacy.ArrowLeftMedium size={18} />}
+              >
+                {backLabel || t("common.back")}
+              </Button>
+            )}
+            <Flex columnGap="16px">
+              {handleContinueSecondary && (
+                <Button
+                  data-testid="v3-tutorial-continue-secondary"
+                  onClick={handleContinueSecondary}
+                  disabled={continueLoading || continueDisabled}
+                >
+                  {continueLabelSecondary || t("common.continue")}
+                </Button>
+              )}
+              <Button
+                data-testid="v3-tutorial-continue"
+                onClick={handleContinue}
+                disabled={continueLoading || continueDisabled}
+                variant="main"
+                iconSize={18}
+                Icon={continueLoading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
+              >
+                {continueLabel || t("common.continue")}
+              </Button>
+            </Flex>
           </Flex>
         </FlowStepperContent>
       </FlowStepperContentContainer>
@@ -192,6 +223,9 @@ export enum ScreenId {
   pairMyNano = "pair-my-nano",
   genuineCheck = "genuine-check",
   recoverHowTo = "recover-how-to",
+  secureYourCrypto = "secure-your-crypto",
+  welcomeToWalletWithFunds = "welcome-to-wallet-with-funds",
+  welcomeToWalletWithoutFunds = "welcome-to-wallet-without-funds",
 }
 
 type ScreenComponent =
@@ -212,20 +246,25 @@ type ScreenComponent =
   | typeof QuizFailure
   | typeof PairMyNano
   | typeof GenuineCheck
-  | typeof RecoverHowTo;
+  | typeof RecoverHowTo
+  | typeof SecureYourCrypto
+  | typeof WelcomeToWalletWithFunds
+  | typeof WelcomeToWalletWithoutFunds;
 
 interface IScreen {
   id: ScreenId;
   component: ScreenComponent;
   useCases?: OnboardingUseCase[];
   next: () => void;
-  previous: () => void;
+  nextSecondary?: () => void;
+  previous?: () => void;
   canContinue?: boolean;
   props?: { [key: string]: unknown };
 }
 
 type Props = {
   useCase: OnboardingUseCase;
+  deviceModelId: DeviceModelId | null;
 };
 
 function useRedirectToPortfolio({
@@ -255,9 +294,25 @@ function useRedirectToPortfolio({
   }, [enabled, redirectToPostOnboarding, useCase]);
 }
 
-export default function Tutorial({ useCase }: Props) {
+const USE_CASE_SEED_CONFIG = {
+  [OnboardingUseCase.setupDevice]: "new_seed",
+  [OnboardingUseCase.recoveryPhrase]: "restore_seed",
+  [OnboardingUseCase.recover]: "recover_seed",
+  [OnboardingUseCase.connectDevice]: "connect",
+};
+
+export default function Tutorial({ useCase, deviceModelId }: Props) {
+  const trackProperties = useMemo(() => {
+    return {
+      seedConfiguration: USE_CASE_SEED_CONFIG[useCase],
+      deviceModelId,
+    };
+  }, [deviceModelId, useCase]);
   const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
+  const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const recoverFF = useFeature("protectServicesDesktop");
@@ -298,14 +353,34 @@ export default function Tutorial({ useCase }: Props) {
     }
   }, [history.location.state]);
 
-  const screens = useMemo<IScreen[]>(
-    () => [
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "receive",
+    "MODAL_RECEIVE",
+  );
+
+  const completeOnboarding = useCallback(() => {
+    dispatch(
+      saveSettings({
+        hasCompletedOnboarding: true,
+      }),
+    );
+    dispatch(setLastOnboardedDevice(connectedDevice));
+    dispatch(setOnboardingUseCase(useCase));
+    dispatch(setHasRedirectedToPostOnboarding(false));
+    dispatch(setHasBeenUpsoldRecover(false));
+    track("Onboarding - End", trackProperties);
+    setOnboardingDone(true);
+  }, [dispatch, connectedDevice, useCase, trackProperties]);
+
+  const screens = useMemo<IScreen[]>(() => {
+    const unfilteredScreens = [
       {
         id: ScreenId.howToGetStarted,
         component: HowToGetStarted,
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
-          track("Onboarding - Get started step 1");
+          track("Onboarding - Get started step 1", trackProperties);
           history.push(`${path}/${ScreenId.deviceHowTo}`);
         },
         previous: () => history.push("/onboarding/select-use-case"),
@@ -357,7 +432,7 @@ export default function Tutorial({ useCase }: Props) {
         canContinue: userChosePinCodeHimself,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Pin code step 1");
+            track("Onboarding - Pin code step 1", trackProperties);
           }
           history.push(`${path}/${ScreenId.pinCodeHowTo}`);
         },
@@ -383,14 +458,14 @@ export default function Tutorial({ useCase }: Props) {
         ],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Pin code step 2");
+            track("Onboarding - Pin code step 2", trackProperties);
             // setHelpPinCode(true);
           }
           setHelpPinCode(true);
           // useCase === UseCase.recoveryPhrase
           /* else {
-            history.push(`${path}/${ScreenId.existingRecoveryPhrase}`);
-          } */
+              history.push(`${path}/${ScreenId.existingRecoveryPhrase}`);
+            } */
         },
         previous: () => history.push(`${path}/${ScreenId.pinCode}`),
       },
@@ -407,7 +482,7 @@ export default function Tutorial({ useCase }: Props) {
         canContinue: userUnderstandConsequences,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Recovery step 1");
+            track("Onboarding - Recovery step 1", trackProperties);
           }
           history.push(`${path}/${ScreenId.useRecoverySheet}`);
         },
@@ -419,7 +494,7 @@ export default function Tutorial({ useCase }: Props) {
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Recovery step 2");
+            track("Onboarding - Recovery step 2", trackProperties);
           }
           history.push(`${path}/${ScreenId.recoveryHowTo3}`);
         },
@@ -447,7 +522,7 @@ export default function Tutorial({ useCase }: Props) {
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Recovery step 3");
+            track("Onboarding - Recovery step 3", trackProperties);
           }
           setHelpRecoveryPhrase(true);
         },
@@ -458,14 +533,14 @@ export default function Tutorial({ useCase }: Props) {
         component: HideRecoveryPhrase,
         props: {
           handleHelp: () => {
-            track("Onboarding - Recovery step 4 - HELP CLICK");
+            track("Onboarding - Recovery step 4 - HELP CLICK", trackProperties);
             setHelpHideRecoveryPhrase(true);
           },
         },
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Recovery step 4");
+            track("Onboarding - Recovery step 4", trackProperties);
           }
           setHelpHideRecoveryPhrase(true);
         },
@@ -504,7 +579,7 @@ export default function Tutorial({ useCase }: Props) {
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Pair start");
+            track("Onboarding - Pair start", trackProperties);
           }
           history.push(`${path}/${ScreenId.pairMyNano}`);
         },
@@ -516,7 +591,7 @@ export default function Tutorial({ useCase }: Props) {
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Pair start");
+            track("Onboarding - Pair start", trackProperties);
           }
           history.push(`${path}/${ScreenId.pairMyNano}`);
         },
@@ -527,7 +602,7 @@ export default function Tutorial({ useCase }: Props) {
         component: PairMyNano,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            track("Onboarding - Genuine Check");
+            track("Onboarding - Genuine Check", trackProperties);
           }
           if (useCase === OnboardingUseCase.recover) {
             history.push(`${path}/${ScreenId.recoverHowTo}`);
@@ -560,17 +635,9 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          dispatch(
-            saveSettings({
-              hasCompletedOnboarding: true,
-            }),
-          );
-          dispatch(setLastOnboardedDevice(connectedDevice));
-          dispatch(setOnboardingUseCase(useCase));
-          dispatch(setHasRedirectedToPostOnboarding(false));
-          dispatch(setHasBeenUpsoldRecover(false));
-          track("Onboarding - End");
-          setOnboardingDone(true);
+          if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature)
+            history.push(`${path}/${ScreenId.secureYourCrypto}`);
+          else completeOnboarding();
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
@@ -587,19 +654,64 @@ export default function Tutorial({ useCase }: Props) {
             ? history.push(recoverDiscoverPath)
             : history.push("/onboarding/select-use-case"),
       },
-    ],
-    [
-      userChosePinCodeHimself,
-      useCase,
-      userUnderstandConsequences,
-      connectedDevice,
-      history,
-      path,
-      fromRecover,
-      recoverDiscoverPath,
-      dispatch,
-    ],
-  );
+      {
+        id: ScreenId.secureYourCrypto,
+        component: SecureYourCrypto,
+        useCases: [OnboardingUseCase.setupDevice],
+        next: () => {
+          track("Onboarding - Secure my crypto", trackProperties);
+          dispatch(
+            setIsOnboardingReceiveFlow({
+              isFlow: true,
+              isSuccess: false,
+            }),
+          );
+          openAssetFlow();
+        },
+        nextSecondary: () => {
+          track("Onboarding - Maybe later", trackProperties);
+          history.push(`${path}/${ScreenId.welcomeToWalletWithoutFunds}`);
+        },
+        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
+      },
+      {
+        id: ScreenId.welcomeToWalletWithFunds,
+        component: WelcomeToWalletWithFunds,
+        useCases: [OnboardingUseCase.setupDevice],
+        next: completeOnboarding,
+      },
+      {
+        id: ScreenId.welcomeToWalletWithoutFunds,
+        component: WelcomeToWalletWithoutFunds,
+        useCases: [OnboardingUseCase.setupDevice],
+        next: completeOnboarding,
+      },
+    ];
+    return nanoOnboardingFundWalletFeature
+      ? unfilteredScreens
+      : unfilteredScreens.filter(
+          ({ id }) =>
+            ![
+              ScreenId.secureYourCrypto,
+              ScreenId.welcomeToWalletWithFunds,
+              ScreenId.welcomeToWalletWithoutFunds,
+            ].includes(id),
+        );
+  }, [
+    completeOnboarding,
+    connectedDevice,
+    dispatch,
+    fromRecover,
+    history,
+    nanoOnboardingFundWalletFeature,
+    openAssetFlow,
+    path,
+    recoverDiscoverPath,
+    trackProperties,
+    useCase,
+    userChosePinCodeHimself,
+    userUnderstandConsequences,
+  ]);
 
   const steps = useMemo(() => {
     const stepList = [
@@ -642,8 +754,19 @@ export default function Tutorial({ useCase }: Props) {
       stepList.splice(3, 1);
     }
 
+    if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature) {
+      stepList.push({
+        name: "secureYourCrypto",
+        screens: [
+          ScreenId.secureYourCrypto,
+          ScreenId.welcomeToWalletWithFunds,
+          ScreenId.welcomeToWalletWithoutFunds,
+        ],
+      });
+    }
+
     return stepList;
-  }, [useCase]);
+  }, [nanoOnboardingFundWalletFeature, useCase]);
 
   const currentScreenIndex = useMemo(
     () => screens.findIndex(s => s.id === currentStep),
@@ -653,6 +776,7 @@ export default function Tutorial({ useCase }: Props) {
     component,
     canContinue,
     next,
+    nextSecondary,
     previous,
     id: currentScreenId,
   } = screens[currentScreenIndex];
@@ -660,6 +784,7 @@ export default function Tutorial({ useCase }: Props) {
     Illustration: JSX.Element;
     Footer: React.ElementType;
     continueLabel: string;
+    continueLabelSecondary: string;
   };
 
   const screenStepIndex = useMemo(
@@ -732,6 +857,25 @@ export default function Tutorial({ useCase }: Props) {
     useCase,
   ]);
 
+  useEffect(() => {
+    if (!isOnboardingReceiveFlow && isOnboardingReceiveSuccess) {
+      dispatch(
+        setIsOnboardingReceiveFlow({
+          isFlow: false,
+          isSuccess: false,
+        }),
+      );
+      history.push(`${path}/${ScreenId.welcomeToWalletWithFunds}`);
+    }
+  }, [
+    isOnboardingReceiveFlow,
+    isOnboardingReceiveSuccess,
+    history,
+    path,
+    currentScreenId,
+    dispatch,
+  ]);
+
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
@@ -798,8 +942,10 @@ export default function Tutorial({ useCase }: Props) {
           )
         }
         continueLabel={CurrentScreen.continueLabel}
+        continueLabelSecondary={CurrentScreen.continueLabelSecondary}
         continueLoading={onboardingDone}
         handleContinue={next}
+        handleContinueSecondary={nextSecondary}
         handleBack={previous}
       >
         <Switch>

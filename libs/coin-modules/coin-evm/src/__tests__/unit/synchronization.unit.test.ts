@@ -6,8 +6,9 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
-import { makeTokenAccount } from "../fixtures/common.fixtures";
+import { setCryptoAssetsStore, getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
 import * as synchronization from "../../bridge/synchronization";
@@ -32,7 +33,6 @@ import { getCoinConfig } from "../../config";
 import * as logic from "../../logic";
 import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
 import usdcTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
-import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -49,8 +49,38 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  let mockStore: CryptoAssetsStore;
+
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    mockStore = {
+      findTokenById: async (id: string) => {
+        if (id === "ethereum/erc20/usd__coin") {
+          return tokenCurrencies[0];
+        }
+        if (id === "ethereum/erc20/usd_tether__erc20_") {
+          return tokenCurrencies[1];
+        }
+        return undefined;
+      },
+      findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+        const normalizedAddress = address.toLowerCase();
+        if (
+          normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
+          currencyId === "ethereum"
+        ) {
+          return tokenCurrencies[0];
+        }
+        if (
+          normalizedAddress === "0xdac17f958d2ee523a2206206994597c13d831ec7" &&
+          currencyId === "ethereum"
+        ) {
+          return tokenCurrencies[1];
+        }
+        return undefined;
+      },
+      getTokensSyncHash: async () => "",
+    };
+    setCryptoAssetsStore(mockStore);
   });
 
   beforeEach(() => {
@@ -259,11 +289,16 @@ describe("EVM Family", () => {
         it("should keep the operations from a sync to another", async () => {
           const operations = [coinOperations[0]];
           const tokenOps = [tokenOperations[0]];
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           const accountWithSubAccount = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 operations,
                 subAccounts: [{ ...tokenAccount, operations: tokenOps }],
               },
@@ -275,7 +310,7 @@ describe("EVM Family", () => {
         });
 
         it("should do a full sync when syncHash changes", async () => {
-          jest.spyOn(logic, "getSyncHash").mockImplementationOnce(() => "0xNope");
+          jest.spyOn(logic, "getSyncHash").mockResolvedValueOnce("0xNope");
 
           await synchronization.getAccountShape(
             {
@@ -299,11 +334,16 @@ describe("EVM Family", () => {
         });
 
         it("should do an incremental sync when syncHash is identical", async () => {
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 blockHeight: 123,
                 operations: [coinOperations[2]],
                 subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
@@ -371,10 +411,15 @@ describe("EVM Family", () => {
         });
 
         it("should add the fetched transactions to the operations", async () => {
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           const accountShape = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
-              initialAccount: account,
+              initialAccount,
             },
             {} as any,
           );
@@ -418,7 +463,7 @@ describe("EVM Family", () => {
               nftOperations: [],
               internalOperations: [internalOperations[2]],
               date: internalOperations[2].date,
-              transactionSequenceNumber: 0,
+              transactionSequenceNumber: new BigNumber(0),
               extra: {},
             },
           ]);
@@ -460,11 +505,18 @@ describe("EVM Family", () => {
               nftOperations: [erc721Operations[0], erc1155Operations[0]],
             },
           ];
+
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
+
           const accountShape = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 operations,
               },
             },
@@ -473,7 +525,7 @@ describe("EVM Family", () => {
 
           expect(accountShape).toEqual({
             type: "Account",
-            id: account.id,
+            id: initialAccount.id,
             syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{7,8}$/), // matching a 32 bits hex string (MurmurHash result)
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
@@ -481,7 +533,7 @@ describe("EVM Family", () => {
             blockHeight: 6969,
             operations: [coinOperations[2], ...operations],
             operationsCount: 3,
-            subAccounts: account.subAccounts,
+            subAccounts: initialAccount.subAccounts,
             lastSyncDate: new Date("2014-04-21"),
           });
         });
@@ -495,10 +547,11 @@ describe("EVM Family", () => {
             { blacklistedTokenIds: [tokenCurrencies[0].id] } as any,
           );
 
+          const syncHash = await logic.getSyncHash(account.currency, [tokenCurrencies[0].id]);
           expect(accountShape).toEqual({
             type: "Account",
             id: account.id,
-            syncHash: logic.getSyncHash(account.currency, [tokenCurrencies[0].id]),
+            syncHash,
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             nfts: [nfts[0], nfts[1]],
@@ -530,7 +583,7 @@ describe("EVM Family", () => {
                 nftOperations: [],
                 internalOperations: [internalOperations[2]],
                 date: internalOperations[2].date,
-                transactionSequenceNumber: 0,
+                transactionSequenceNumber: new BigNumber(0),
                 extra: {},
               },
             ],
@@ -668,10 +721,11 @@ describe("EVM Family", () => {
     describe("getSubAccounts", () => {
       beforeEach(() => {
         jest.spyOn(nodeApi, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
-          switch (contractAddress) {
-            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+          const normalizedAddress = contractAddress.toLowerCase();
+          switch (normalizedAddress) {
+            case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": // usdc
               return new BigNumber(1);
-            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+            case "0xdac17f958d2ee523a2206206994597c13d831ec7": // usdt
               return new BigNumber(2);
             default:
               return new BigNumber(0);
@@ -683,10 +737,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -766,8 +817,253 @@ describe("EVM Family", () => {
         expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
       });
 
+      it("should return the right subAccounts when CAL has changed", async () => {
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
+
+        findTokenByAddressInCurrency.mockImplementation(
+          (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+            if (address === tokenOperations[0].contract) {
+              return Promise.resolve(tokenCurrencies[0]);
+            }
+
+            return Promise.resolve(undefined);
+          },
+        );
+
+        const swapHistoryMap = createSwapHistoryMap(account);
+        let tokenAccounts = await synchronization.getSubAccounts(
+          {
+            ...getAccountShapeParameters,
+            initialAccount: account,
+          },
+          account.id,
+          [
+            tokenOperations[0],
+            tokenOperations[1],
+            { contract: "unknown-contract" } as Operation, // Won't be used to build sub accounts
+            tokenOperations[3],
+          ],
+          undefined,
+          swapHistoryMap,
+          (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+        );
+
+        const usdcAccountId = encodeTokenAccountId(account.id, usdcTokenData as TokenCurrency);
+        const expectedUsdcAccount = {
+          ...tokenAccount,
+          balance: new BigNumber(1),
+          spendableBalance: new BigNumber(1),
+          operations: [
+            {
+              ...tokenOperations[0],
+              id: encodeOperationId(
+                usdcAccountId,
+                tokenOperations[0].hash,
+                tokenOperations[0].type,
+              ),
+              accountId: usdcAccountId,
+            },
+            {
+              ...tokenOperations[1],
+              id: encodeOperationId(
+                usdcAccountId,
+                tokenOperations[1].hash,
+                tokenOperations[1].type,
+              ),
+              accountId: usdcAccountId,
+            },
+          ],
+          operationsCount: 2,
+          swapHistory,
+        };
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[0].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[1].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[3].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
+        expect(tokenAccounts).toEqual([expectedUsdcAccount]);
+
+        findTokenByAddressInCurrency.mockClear();
+        findTokenByAddressInCurrency.mockImplementation(
+          (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+            if (address === tokenOperations[3].contract) {
+              return Promise.resolve(tokenCurrencies[1]);
+            }
+
+            return Promise.resolve(undefined);
+          },
+        );
+
+        tokenAccounts = await synchronization.getSubAccounts(
+          {
+            ...getAccountShapeParameters,
+            initialAccount: account,
+          },
+          account.id,
+          [
+            tokenOperations[0],
+            tokenOperations[1],
+            { contract: "unknown-contract" } as Operation, // Won't be used to build sub accounts
+            tokenOperations[3],
+          ],
+          undefined,
+          swapHistoryMap,
+          (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+        );
+
+        const usdtAccountId = encodeTokenAccountId(account.id, usdtTokenData as TokenCurrency);
+        const expectedUsdtAccount = {
+          ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
+          balance: new BigNumber(2),
+          spendableBalance: new BigNumber(2),
+          operations: [
+            {
+              ...tokenOperations[3],
+              id: encodeOperationId(
+                usdtAccountId,
+                tokenOperations[3].hash,
+                tokenOperations[3].type,
+              ),
+              accountId: usdtAccountId,
+            },
+          ],
+          operationsCount: 1,
+          swapHistory: [],
+        };
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[0].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[1].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[3].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
+        expect(tokenAccounts).toEqual([expectedUsdtAccount]);
+
+        findTokenByAddressInCurrency.mockClear();
+        findTokenByAddressInCurrency.mockImplementation(
+          (address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+            if (address === tokenOperations[0].contract) {
+              return Promise.resolve(tokenCurrencies[0]);
+            } else if (address === tokenOperations[1].contract) {
+              return Promise.resolve(tokenCurrencies[1]);
+            } else if (address === tokenOperations[3].contract) {
+              return Promise.resolve(tokenCurrencies[1]);
+            }
+
+            return Promise.resolve(undefined);
+          },
+        );
+
+        tokenAccounts = await synchronization.getSubAccounts(
+          {
+            ...getAccountShapeParameters,
+            initialAccount: account,
+          },
+          account.id,
+          [
+            tokenOperations[0],
+            tokenOperations[1],
+            { contract: "unknown-contract" } as Operation, // Won't be used to build sub accounts
+            tokenOperations[3],
+          ],
+          undefined,
+          swapHistoryMap,
+          (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[0].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[1].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[3].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
+        expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
+      });
+
+      it("should return no subAccounts when CAL do not return tokens", async () => {
+        const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
+
+        findTokenByAddressInCurrency.mockImplementation(
+          (_address: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
+            return Promise.resolve(undefined);
+          },
+        );
+
+        const swapHistoryMap = createSwapHistoryMap(account);
+        const tokenAccounts = await synchronization.getSubAccounts(
+          {
+            ...getAccountShapeParameters,
+            initialAccount: account,
+          },
+          account.id,
+          [
+            tokenOperations[0],
+            tokenOperations[1],
+            { contract: "unknown-contract" } as Operation, // Won't be used to build sub accounts
+            tokenOperations[3],
+          ],
+          undefined,
+          swapHistoryMap,
+          (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[0].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[1].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          tokenOperations[3].contract,
+          "ethereum",
+        );
+
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
+        expect(tokenAccounts).toEqual([]);
+      });
+
       it("should return filtered subAccounts from blacklistedTokenIds, recomputing operations `id` and `accountId`", async () => {
-        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+        const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
@@ -808,10 +1104,11 @@ describe("EVM Family", () => {
     describe("getSubAccountShape", () => {
       beforeEach(() => {
         jest.spyOn(nodeApi, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
-          switch (contractAddress) {
-            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+          const normalizedAddress = contractAddress.toLowerCase();
+          switch (normalizedAddress) {
+            case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": // usdc
               return new BigNumber(1);
-            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+            case "0xdac17f958d2ee523a2206206994597c13d831ec7": // usdt
               return new BigNumber(2);
             default:
               return new BigNumber(0);
@@ -889,7 +1186,7 @@ describe("EVM Family", () => {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
-          transactionSequenceNumber: 123,
+          transactionSequenceNumber: new BigNumber(123),
         };
 
         const operationStatus = await synchronization.getOperationStatus(currency, {
@@ -933,7 +1230,7 @@ describe("EVM Family", () => {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
-          transactionSequenceNumber: 123,
+          transactionSequenceNumber: new BigNumber(123),
         };
 
         const operationStatus = await synchronization.getOperationStatus(currency, {

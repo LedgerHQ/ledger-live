@@ -68,7 +68,7 @@ const History = () => {
       if (!getEnv("PLAYWRIGHT_RUN")) {
         path = await ipcRenderer.invoke("show-save-dialog", {
           title: "Exported swap history",
-          defaultPath: `ledgerlive-swap-history-${getDateTxt()}.csv`,
+          defaultPath: `ledgerwallet-swap-history-${getDateTxt()}.csv`,
           filters: [
             {
               name: "All Files",
@@ -79,7 +79,7 @@ const History = () => {
       } else {
         path = {
           canceled: false,
-          filePath: "./ledgerlive-swap-history.csv",
+          filePath: "./ledgerwallet-swap-history.csv",
         };
       }
       if (path && mappedSwapOperations) {

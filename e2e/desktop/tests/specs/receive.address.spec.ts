@@ -1,8 +1,8 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -38,7 +38,15 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Receive`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          ...(account.account === Account.SOL_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
@@ -68,7 +76,6 @@ for (const account of accounts) {
         await app.receive.continue();
         const displayedAddress = await app.receive.getAddressDisplayed();
         await app.receive.expectValidReceiveAddress(displayedAddress);
-
         await app.speculos.expectValidAddressDevice(account.account, displayedAddress);
         await app.receive.expectApproveLabel();
       },
@@ -95,7 +102,7 @@ test.describe("Receive", () => {
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",

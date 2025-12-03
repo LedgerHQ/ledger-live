@@ -24,6 +24,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
       useToggleOnboardingEarlyCheck({
         toggleOnboardingEarlyCheckAction: mockedToggleOnboardingEarlyCheckAction,
         deviceId: "",
+        deviceName: null,
         toggleType: "enter",
       }),
     );
@@ -50,6 +51,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
       useToggleOnboardingEarlyCheck({
         toggleOnboardingEarlyCheckAction: mockedToggleOnboardingEarlyCheckAction,
         deviceId: "",
+        deviceName: null,
         toggleType,
       }),
     );

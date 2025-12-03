@@ -12,13 +12,13 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import Graph from "./Graph";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
-import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./DateFormat/FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "~/analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "~/types/helpers";
 import { GraphPlaceholder } from "./Graph/Placeholder";
+import CurrencyIcon from "./CurrencyIcon";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const Placeholder = styled(Flex).attrs({
@@ -74,7 +74,7 @@ function AssetCentricGraphCard({
       return { value: 0, countervalue: 0 };
     }
     return { value: currencyBalance, countervalue: currencyUnitValue.value };
-  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue.value]);
+  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue]);
 
   const items = [
     {
@@ -118,7 +118,7 @@ function AssetCentricGraphCard({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 
@@ -141,7 +141,7 @@ function AssetCentricGraphCard({
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
-            <ParentCurrencyIcon size={32} currency={currency} />
+            <CurrencyIcon size={32} currency={currency} circle />
             <Flex alignItems="center">
               <Flex>
                 {!balanceHistory ? (

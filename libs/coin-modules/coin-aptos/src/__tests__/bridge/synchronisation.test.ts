@@ -66,7 +66,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -120,7 +120,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -173,7 +173,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -206,7 +206,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -259,7 +259,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -312,7 +312,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -813,7 +813,7 @@ describe("getAccountShape", () => {
 
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -874,7 +874,7 @@ describe("getAccountShape", () => {
         extra: {
           version: "2532591427",
         },
-        transactionSequenceNumber: 121,
+        transactionSequenceNumber: new BigNumber(121),
         hasFailed: false,
       },
       {
@@ -892,7 +892,7 @@ describe("getAccountShape", () => {
         extra: {
           version: "2532549325",
         },
-        transactionSequenceNumber: 120,
+        transactionSequenceNumber: new BigNumber(120),
         hasFailed: false,
       },
     ] as Operation[];
@@ -914,7 +914,7 @@ describe("getAccountShape", () => {
         extra: {
           version: "2532591427",
         },
-        transactionSequenceNumber: 121,
+        transactionSequenceNumber: new BigNumber(121),
         hasFailed: false,
       },
       {
@@ -933,7 +933,7 @@ describe("getAccountShape", () => {
         extra: {
           version: "2532549325",
         },
-        transactionSequenceNumber: 120,
+        transactionSequenceNumber: new BigNumber(120),
         hasFailed: false,
       },
     ] as Operation[];
@@ -941,7 +941,7 @@ describe("getAccountShape", () => {
     const stakingOperations = [] as Operation[];
 
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+    jest.mocked(txsToOps).mockResolvedValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {
@@ -1298,7 +1298,7 @@ describe("getSubAccountShape", () => {
       extra: {
         version: "2553182323",
       },
-      transactionSequenceNumber: 32,
+      transactionSequenceNumber: new BigNumber(32),
       hasFailed: false,
     },
     {
@@ -1317,7 +1317,7 @@ describe("getSubAccountShape", () => {
       extra: {
         version: "2544815758",
       },
-      transactionSequenceNumber: 31,
+      transactionSequenceNumber: new BigNumber(31),
       hasFailed: false,
     },
   ] as Operation[];
@@ -1412,7 +1412,7 @@ describe("getSubAccounts", () => {
       extra: {
         version: "2553182323",
       },
-      transactionSequenceNumber: 32,
+      transactionSequenceNumber: new BigNumber(32),
       hasFailed: false,
     },
     {
@@ -1431,7 +1431,7 @@ describe("getSubAccounts", () => {
       extra: {
         version: "2544815758",
       },
-      transactionSequenceNumber: 31,
+      transactionSequenceNumber: new BigNumber(31),
       hasFailed: false,
     },
   ] as Operation[];
@@ -1447,7 +1447,7 @@ describe("getSubAccounts", () => {
       getBalances: mockGetBalances,
     }));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -1557,7 +1557,7 @@ describe("getSubAccounts", () => {
             id: "js:2:aptos:474d:aptos-0x2011-IN",
             recipients: ["0xa0d8"],
             senders: ["0x4e5e"],
-            transactionSequenceNumber: 32,
+            transactionSequenceNumber: new BigNumber(32),
             type: "IN",
             value: BigNumber(2000000),
           },
@@ -1574,7 +1574,7 @@ describe("getSubAccounts", () => {
             id: "js:2:aptos:474d:aptos-0x06a6-IN",
             recipients: ["0xa0d8"],
             senders: ["0x4e5e"],
-            transactionSequenceNumber: 31,
+            transactionSequenceNumber: new BigNumber(31),
             type: "IN",
             value: BigNumber(2000000),
           },
@@ -1617,7 +1617,7 @@ describe("getStake", () => {
         extra: {
           version: "2532591427",
         },
-        transactionSequenceNumber: 121,
+        transactionSequenceNumber: new BigNumber(121),
         hasFailed: false,
       },
     ] as Operation[];
@@ -2069,7 +2069,7 @@ describe("getStake", () => {
 
     const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -2130,7 +2130,7 @@ describe("getStake", () => {
         extra: {
           version: "2532591427",
         },
-        transactionSequenceNumber: 121,
+        transactionSequenceNumber: new BigNumber(121),
         hasFailed: false,
       },
       {
@@ -2148,7 +2148,7 @@ describe("getStake", () => {
         extra: {
           version: "2532549325",
         },
-        transactionSequenceNumber: 120,
+        transactionSequenceNumber: new BigNumber(120),
         hasFailed: false,
       },
     ] as Operation[];
@@ -2170,7 +2170,7 @@ describe("getStake", () => {
         extra: {
           version: "2532591427",
         },
-        transactionSequenceNumber: 121,
+        transactionSequenceNumber: new BigNumber(121),
         hasFailed: false,
       },
       {
@@ -2189,7 +2189,7 @@ describe("getStake", () => {
         extra: {
           version: "2532549325",
         },
-        transactionSequenceNumber: 120,
+        transactionSequenceNumber: new BigNumber(120),
         hasFailed: false,
       },
     ] as Operation[];
@@ -2207,7 +2207,7 @@ describe("getStake", () => {
     }));
 
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+    jest.mocked(txsToOps).mockResolvedValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {

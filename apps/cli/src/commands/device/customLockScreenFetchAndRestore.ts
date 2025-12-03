@@ -70,6 +70,7 @@ const exec = async (opts: CustomLockScreenFetchAndRestoreJobOpts) => {
       customLockScreenLoad({
         deviceId,
         request: { hexImage: hexImageWithoutHeader, deviceModelId: clsSupportedDeviceModelId },
+        deviceName: null,
       }).subscribe(
         x => console.log(x),
         e => {

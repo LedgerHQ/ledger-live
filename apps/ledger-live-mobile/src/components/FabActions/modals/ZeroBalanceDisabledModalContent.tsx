@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
-import ParentCurrencyIcon from "../../ParentCurrencyIcon";
+import CurrencyIcon from "../../CurrencyIcon";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "../../wrappedUi/Button";
 import {
@@ -17,6 +17,7 @@ import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "react-redux";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -34,6 +35,11 @@ function ZeroBalanceDisabledModalContent({
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
+
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "zero-balance-disabled-modal",
+    currency,
+  });
 
   const goToBuy = useCallback(() => {
     if (readOnlyModeEnabled && !hasOrderedNano) {
@@ -74,12 +80,7 @@ function ZeroBalanceDisabledModalContent({
         },
       });
     } else {
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
-        params: {
-          currency: actionCurrency!,
-        },
-      });
+      handleOpenReceiveDrawer();
     }
     onClose();
   }, [
@@ -91,6 +92,7 @@ function ZeroBalanceDisabledModalContent({
     navigation,
     actionCurrency,
     parentAccount?.id,
+    handleOpenReceiveDrawer,
   ]);
 
   return (
@@ -104,7 +106,7 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />}
+      Icon={<CurrencyIcon size={48} currency={actionCurrency as Currency} circle />}
     >
       <Flex mx={16} flexDirection={"row"}>
         <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>

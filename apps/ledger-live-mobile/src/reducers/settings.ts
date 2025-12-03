@@ -62,7 +62,6 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
-  SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
@@ -77,6 +76,8 @@ import type {
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
+  SettingsIsPostOnboardingFlowPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -155,7 +156,6 @@ export const INITIAL_STATE: SettingsState = {
   hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingType: null,
   depositFlow: {
-    hasClosedNetworkBanner: false,
     hasClosedWithdrawBanner: false,
   },
   userNps: null,
@@ -167,6 +167,8 @@ export const INITIAL_STATE: SettingsState = {
   mevProtection: true,
   selectedTabPortfolioAssets: "Assets",
   isOnboardingFlow: false,
+  isOnboardingFlowReceiveSuccess: false,
+  isPostOnboardingFlow: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -292,6 +294,22 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       isOnboardingFlow: !!payload,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS]: (state, action) => {
+    const payload = (action as Action<SettingsIsOnboardingFlowReceiveSuccessPayload>).payload;
+    return {
+      ...state,
+      isOnboardingFlowReceiveSuccess: !!payload,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW]: (state, action) => {
+    const payload = (action as Action<SettingsIsPostOnboardingFlowPayload>).payload;
+    return {
+      ...state,
+      isPostOnboardingFlow: !!payload,
     };
   },
 
@@ -470,14 +488,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_ONBOARDING_TYPE]: (state, action) => ({
     ...state,
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_CLOSED_NETWORK_BANNER]: (state, action) => ({
-    ...state,
-    depositFlow: {
-      ...state.depositFlow,
-      hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
-    },
   }),
 
   [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
@@ -739,6 +749,9 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
 export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
+export const isOnboardingFlowReceiveSuccessSelector = (state: State) =>
+  state.settings.isOnboardingFlowReceiveSuccess;
+export const isPostOnboardingFlowSelector = (state: State) => state.settings.isPostOnboardingFlow;
 export const hasInstalledAnyAppSelector = (state: State) => state.settings.hasInstalledAnyApp;
 export const countervalueFirstSelector = (state: State) => state.settings.graphCountervalueFirst;
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
@@ -801,8 +814,6 @@ export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensi
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const isRebornSelector = (state: State) => state.settings.isReborn;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
-export const hasClosedNetworkBannerSelector = (state: State) =>
-  state.settings.depositFlow.hasClosedNetworkBanner;
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;

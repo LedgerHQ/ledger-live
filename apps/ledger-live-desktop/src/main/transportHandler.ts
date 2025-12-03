@@ -6,9 +6,10 @@ import { ipcMain } from "electron";
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import TransportHttp from "@ledgerhq/hw-transport-http";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
 
 const LOG_TYPE = "main-transport-handler";
 
@@ -30,7 +31,7 @@ export function setupTransportHandlers() {
         const req: SpeculosHttpTransportOpts = {
           apiPort: String(process.env.SPECULOS_API_PORT || "5000"),
         };
-        transport = await SpeculosHttpTransport.open(req);
+        transport = await DeviceManagementKitTransportSpeculos.open(req);
       } else if (process.env.DEVICE_PROXY_URL) {
         // HTTP proxy transport
         const TransportHttpProxy = TransportHttp(process.env.DEVICE_PROXY_URL.split("|"));

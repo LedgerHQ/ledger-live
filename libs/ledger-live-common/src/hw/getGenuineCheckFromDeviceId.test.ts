@@ -85,6 +85,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -147,6 +148,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -227,6 +229,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         const subscriber = getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -286,6 +289,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {

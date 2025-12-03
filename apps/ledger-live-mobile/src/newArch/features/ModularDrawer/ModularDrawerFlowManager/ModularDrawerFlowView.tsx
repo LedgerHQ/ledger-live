@@ -49,7 +49,11 @@ export function ModularDrawerFlowView({
     );
   };
 
-  return <View style={styles.container}>{activeSteps.map(renderAnimatedStep)}</View>;
+  return (
+    <View style={styles.container} testID="modular-drawer-flow-view">
+      {activeSteps.map(renderAnimatedStep)}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

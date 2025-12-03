@@ -1,9 +1,12 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -11,6 +14,10 @@ import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Spinner from "~/renderer/components/Spinner";
 import { TransactionConfirm } from "../components/TransactionConfirm";
 import { StepId, StepProps } from "../types";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+import { isAxiosError } from "axios";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionAccounts = memo(
   ({
@@ -97,6 +104,13 @@ const getStatusMessage = (status?: OnboardStatus): string => {
   }
 };
 
+const getErrorMessage = (error: Error | null) => {
+  if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+    return <Trans i18nKey={error.message} />;
+  }
+  return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
+};
+
 export default function StepOnboard({
   device,
   currency,
@@ -105,7 +119,10 @@ export default function StepOnboard({
   creatableAccount,
   importableAccounts,
   onboardingStatus,
+  error,
 }: StepProps) {
+  const link = useLocalizedUrl(urls.canton.learnMore);
+  const onClick = () => openURL(link);
   const renderContent = (onboardingStatus?: OnboardStatus) => {
     switch (onboardingStatus) {
       case OnboardStatus.INIT:
@@ -150,6 +167,22 @@ export default function StepOnboard({
         );
 
       case OnboardStatus.ERROR:
+        if (isAxiosError(error) && error.status === 429) {
+          return (
+            <Box>
+              <Alert type="error">
+                <Trans i18nKey="families.canton.addAccount.onboard.error429" />
+                <LinkWithExternalIcon
+                  style={{
+                    display: "inline-flex",
+                  }}
+                  onClick={onClick}
+                  label={<Trans i18nKey="common.learnMore" />}
+                />
+              </Alert>
+            </Box>
+          );
+        }
         return (
           <Box>
             <SectionAccounts
@@ -161,9 +194,7 @@ export default function StepOnboard({
             />
 
             <Box>
-              <Alert type="error">
-                <Trans i18nKey="families.canton.addAccount.onboard.error" />
-              </Alert>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
             </Box>
           </Box>
         );
@@ -201,6 +232,8 @@ export const StepOnboardFooter = ({
   onRetryOnboardAccount,
   transitionTo,
 }: StepProps) => {
+  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
+
   if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
   }
@@ -209,7 +242,13 @@ export const StepOnboardFooter = ({
     switch (onboardingStatus) {
       case OnboardStatus.SUCCESS:
         return (
-          <Button primary disabled={isProcessing} onClick={() => transitionTo(StepId.AUTHORIZE)}>
+          <Button
+            primary
+            disabled={isProcessing}
+            onClick={() =>
+              transitionTo(skipCantonPreapprovalStep?.enabled ? StepId.FINISH : StepId.AUTHORIZE)
+            }
+          >
             <Trans i18nKey="common.continue" />
           </Button>
         );

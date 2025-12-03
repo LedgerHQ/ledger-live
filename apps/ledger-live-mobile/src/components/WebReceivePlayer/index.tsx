@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 import { ScopeProvider } from "jotai-scope";
 import { useNavigation } from "@react-navigation/native";
@@ -11,7 +11,6 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
-import { NavigatorName } from "~/const";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -43,12 +42,43 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
-  navigation.setOptions({
-    headerRight: () => null,
-    headerLeft: () => null,
-    headerTitle: () => null,
-    headerShown: true,
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => null,
+      headerLeft: () => null,
+      headerTitle: "",
+      headerShown: true,
+    });
+  }, [navigation]);
+
+  const handleClose = useCallback(async () => {
+    try {
+      const parent = navigation.getParent();
+
+      if (parent && "pop" in parent && typeof parent.pop === "function") {
+        parent.pop();
+      } else if ("closeDrawer" in navigation && typeof navigation.closeDrawer === "function") {
+        navigation.closeDrawer();
+      } else if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
+
+      return;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("[WebReceivePlayer] Error in close handler:", error);
+      throw error;
+    }
+  }, [navigation]);
+
+  const customHandlers = useMemo(
+    () => ({
+      "custom.close": async () => {
+        await handleClose();
+      },
+    }),
+    [handleClose],
+  );
 
   return (
     <ScopeProvider atoms={[currentAccountAtom]}>
@@ -58,13 +88,7 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
           manifest={manifest}
           inputs={inputs}
           allowsBackForwardNavigationGestures={false}
-          customHandlers={{
-            "custom.close": () => {
-              navigation.popTo(NavigatorName.Base, {
-                screen: NavigatorName.Main,
-              });
-            },
-          }}
+          customHandlers={customHandlers}
           onStateChange={setWebviewState}
         />
         <ProviderInterstitial

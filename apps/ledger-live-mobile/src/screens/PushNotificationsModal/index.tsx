@@ -70,10 +70,10 @@ const PushNotificationsModal = () => {
             {t("notifications.prompt.desc")}
           </Text>
         </Flex>
-        <Button type={"main"} mt={8} mb={7} onPress={modalAllowNotifications}>
+        <Button type={"main"} mt={8} mb={7} onPressIn={modalAllowNotifications}>
           {t("notifications.prompt.allow")}
         </Button>
-        <TextLink type={"shade"} onPress={modalDelayLater} testID="notifications-prompt-later">
+        <TextLink type={"shade"} onPressIn={modalDelayLater} testID="notifications-prompt-later">
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>

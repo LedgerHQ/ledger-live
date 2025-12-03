@@ -1,4 +1,9 @@
-import { AssetInfo, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
+import {
+  AssetInfo,
+  MemoNotSupported,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
@@ -21,12 +26,24 @@ function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
   return "NONE";
 }
 
-function computeValue(asset: AssetConfig, op: LiveOperation, type: OperationType): bigint {
-  if (type === "FEES") return BigInt(op.fee.toFixed(0));
-  if (asset.type === "native" && op.type === "OUT")
+function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
+  if (asset.type === "native" && ["OUT", "FEES"].includes(op.type)) {
     return BigInt(op.value.toFixed(0)) - BigInt(op.fee.toFixed(0));
+  }
+
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return BigInt(asset.parents[op.hash].value.toFixed(0));
+  }
 
   return BigInt(op.value.toFixed(0));
+}
+
+function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return asset.parents[op.hash].hasFailed ?? false;
+  }
+
+  return op.hasFailed ?? false;
 }
 
 function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
@@ -39,7 +56,8 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   }
 
   const type = extractType(asset, op);
-  const value = computeValue(asset, op, type);
+  const value = computeValue(asset, op);
+  const failed = computeFailed(asset, op);
 
   return {
     id: op.id,
@@ -56,10 +74,20 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
+      failed,
     },
     details: {
-      ledgerOpType: op.type,
-      ...(asset.type === "token" ? { assetAmount: op.value.toFixed(0) } : {}),
+      sequence: op.transactionSequenceNumber,
+      ...(asset.type === "token"
+        ? {
+            ledgerOpType: op.type,
+            assetAmount: op.value.toFixed(0),
+            assetSenders: op.senders,
+            assetRecipients: op.recipients,
+            parentSenders: asset.parents[op.hash]?.senders ?? [],
+            parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+          }
+        : {}),
     },
   };
 }
@@ -67,7 +95,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  minHeight: number,
+  pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
   const { lastCoinOperations, lastTokenOperations, lastNftOperations } =
@@ -75,13 +103,13 @@ export async function listOperations(
       currency,
       address,
       `js:2:${currency.id}:${address}:`,
-      minHeight,
+      pagination.minHeight,
     );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
     ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
   const isTokenOperation = (coinOperation: LiveOperation): boolean =>
-    lastTokenOperations.map(op => op.hash).includes(coinOperation.hash);
+    [...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
   const parents = Object.fromEntries(
     lastCoinOperations.filter(isTokenOperation).map(op => [op.hash, op]),
   );
@@ -89,17 +117,31 @@ export async function listOperations(
   const nativeOperations = lastCoinOperations
     .filter(isNativeOperation)
     .map<Operation<MemoNotSupported>>(op => toOperation({ type: "native" }, op));
-  const tokenOperations = lastTokenOperations.map<Operation<MemoNotSupported>>(op =>
-    toOperation({ type: "token", owner: address, parents }, op),
-  );
+  const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
+    Operation<MemoNotSupported>
+  >(op => toOperation({ type: "token", owner: address, parents }, op));
 
   const hasValidType = (operation: Operation): boolean =>
-    ["NONE", "FEES", "IN", "OUT", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(operation.type);
-  const isAlone = (operation: Operation): boolean =>
-    ["NONE", "FEES"].includes(operation.type) && !("assetAmount" in (operation.details ?? {}));
+    [
+      "NONE",
+      "FEES",
+      "IN",
+      "OUT",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "NFT_IN",
+      "NFT_OUT",
+    ].includes(operation.type);
 
-  return [
-    nativeOperations.concat(tokenOperations).filter(op => hasValidType(op) && !isAlone(op)),
-    "",
-  ];
+  const operations = nativeOperations
+    .concat(tokenOperations)
+    .filter(hasValidType)
+    .sort((a, b) =>
+      pagination.order === "asc"
+        ? a.tx.date.getTime() - b.tx.date.getTime()
+        : b.tx.date.getTime() - a.tx.date.getTime(),
+    );
+
+  return [operations, ""];
 }

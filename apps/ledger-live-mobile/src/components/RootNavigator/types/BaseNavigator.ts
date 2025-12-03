@@ -14,7 +14,6 @@ import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/e
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
@@ -76,7 +75,6 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
-import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
@@ -315,8 +313,6 @@ export type BaseNavigatorStackParamList = {
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
-  // MODULAR DRAWER
-  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
   [ScreenName.MockedModularDrawer]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
@@ -330,14 +326,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.WalletTab]: NavigatorScreenParams<WalletTabNavigatorStackParamList>;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
-  >;
-  [NavigatorName.AssetSelection]?: Partial<
-    NavigatorScreenParams<AssetSelectionNavigatorParamsList> & {
-      context?: "addAccounts" | "receiveFunds";
-      token?: string;
-      currency?: string;
-      sourceScreenName?: string;
-    } // in some cases we need to pass directly the context to the navigator and let it handle the logic
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;

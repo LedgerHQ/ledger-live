@@ -3,7 +3,7 @@ import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
+import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -13,11 +13,11 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
+import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
@@ -25,6 +25,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -35,7 +36,6 @@ import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
-import RtkQueryDevPanel from "~/screens/Settings/Debug/Debugging/RTK";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
@@ -46,13 +46,12 @@ import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
-import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
+import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
-import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
@@ -61,6 +60,7 @@ import {
   setOsTheme,
   setPersonalizedRecommendations,
   setIsOnboardingFlow,
+  setIsPostOnboardingFlow,
 } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
@@ -70,17 +70,17 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
-import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
+import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -98,10 +98,11 @@ import {
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
-import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -130,12 +131,14 @@ function App() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
+  const initiatedIsPostOnboardingFlow = useRef<boolean>(isPostOnboardingFlow);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
-  useNativeStartupInfo();
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -154,6 +157,12 @@ function App() {
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber && isLDMKEnabled) {
@@ -183,8 +192,15 @@ function App() {
   ]);
 
   useEffect(() => {
+    /*
+    / To capture all tracking events under the same flow we have these states set
+    / and to prevent the flow state leaking we reset them here
+    */
     if (initiatedIsOnboardingFlow.current) {
       dispatch(setIsOnboardingFlow(false));
+    }
+    if (initiatedIsPostOnboardingFlow.current) {
+      dispatch(setIsPostOnboardingFlow(false));
     }
   }, [dispatch]);
 
@@ -193,10 +209,9 @@ function App() {
     const setUserEquipmentId = async () => {
       const { user } = await getOrCreateUser();
       if (!user) return;
-      const { id } = user; // id is the user uuid aka equipment ID (used
-      // in segment)
+      const { datadogId } = user;
       DdSdkReactNative.setUserInfo({
-        id,
+        id: datadogId,
       });
     };
     initializeDatadogProvider(
@@ -216,10 +231,11 @@ function App() {
     }
   }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
-  useAccountsWithFundsListener(accounts, updateIdentify);
+  const checkAccountsWithFunds = useCheckAccountWithFunds();
+
+  useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
-  useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
 
   return (
@@ -227,17 +243,15 @@ function App() {
       <ConfigureDBSaveEffects />
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
-      <ExperimentalHeader />
       {datadogFF?.enabled ? (
         <DatadogProvider configuration={datadogAutoInstrumentation}>
-          <RootNavigator />
+          <AppView />
         </DatadogProvider>
       ) : (
-        <RootNavigator />
+        <AppView />
       )}
 
       <AnalyticsConsole />
-      <RtkQueryDevPanel />
 
       <DebugTheme />
       <Modals />
@@ -245,6 +259,32 @@ function App() {
         <StoragePerformanceOverlay />
       </FeatureToggle>
     </>
+  );
+}
+
+/**
+ * AppView is used to wrap the experimental header and the root navigator.
+ * Both the experimental header and the root navigator must be taken into
+ * account when calculating screen offsets or insets (e.g. KeyboardView or
+ * SafeAreaView).
+ */
+function AppView() {
+  // TODO: Normally, we should use a SafeAreaView as root view to avoid
+  // importing it everywhere and recalculating the insets.
+  return (
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        height: "100%",
+      }}
+    >
+      <ExperimentalHeader />
+      <View style={{ flex: 1 }}>
+        <RootNavigator />
+      </View>
+    </View>
   );
 }
 
@@ -302,7 +342,7 @@ export default class Root extends Component {
   render() {
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {(ready, initialCountervalues) =>
+        {({ ready, initialCountervalues, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -314,35 +354,36 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
-                <FirebaseRemoteConfigProvider>
-                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <WaitForAppReady currencyInitialized={currencyInitialized}>
                     <I18nextProvider i18n={i18n}>
                       <LocaleProvider>
                         <PlatformAppProviderWrapper>
                           <SafeAreaProvider>
-                            <StorylyProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
+                            <ModalSystemPrimer />
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <BridgeSyncProvider>
                                           <App />
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
-                              </StylesProvider>
-                            </StorylyProvider>
+                                        </BridgeSyncProvider>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
                           </SafeAreaProvider>
                         </PlatformAppProviderWrapper>
                       </LocaleProvider>
                     </I18nextProvider>
-                  </FirebaseFeatureFlagsProvider>
-                </FirebaseRemoteConfigProvider>
+                  </WaitForAppReady>
+                </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>
           ) : (

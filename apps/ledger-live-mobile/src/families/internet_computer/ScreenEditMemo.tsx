@@ -12,10 +12,11 @@ import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -39,8 +40,7 @@ function InternetComputerEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    // @ts-expect-error FIXME: No current / next navigation params?
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo: memo && memo.toString(),
@@ -94,7 +94,7 @@ function InternetComputerEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.value"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { InternetComputerEditMemo as component, options };
 const styles = StyleSheet.create({

@@ -19,6 +19,7 @@ import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getIgnoredOSUpdatesForDeviceModelAndPlatform } from "@ledgerhq/live-common/deviceSDK/hooks/getIgnoredOSUpdatesForDeviceModelAndPlatform";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -124,6 +125,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGenuineCheck({
     isHookEnabled: genuineCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
@@ -147,6 +149,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 
@@ -398,7 +401,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     shouldForceFirmwareUpdate({ currentVersion: deviceInfo.version, deviceModelId });
 
   return (
-    <>
+    <SafeAreaViewFixed isFlex>
       {firmwareUpdateUiStepStatus === "completed" ? (
         <TrackScreen name="Success: device is genuine and OS check up to date" />
       ) : hasLatestAvailableFirmwareStatus ? (
@@ -448,6 +451,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         onUpdateFirmware={onUpdateFirmware}
       />
       <LanguagePrompt device={device} />
-    </>
+    </SafeAreaViewFixed>
   );
 };

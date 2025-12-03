@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import BaseNavigator from "./BaseNavigator";
@@ -34,4 +34,4 @@ export default function RootNavigator() {
     </StartupTimeMarker>
   );
 }
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();

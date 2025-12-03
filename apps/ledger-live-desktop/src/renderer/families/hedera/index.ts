@@ -1,7 +1,7 @@
 import {
   getTransactionExplorer,
   sendRecipientCanNext,
-} from "@ledgerhq/live-common/families/hedera/logic";
+} from "@ledgerhq/live-common/families/hedera/utils";
 import AccountSubHeader from "./AccountSubHeader";
 import NoAssociatedAccounts from "./NoAssociatedAccounts";
 import sendRecipientFields from "./SendRecipientFields";
@@ -23,6 +23,9 @@ const family: HederaFamily = {
   NoAssociatedAccounts,
   getTransactionExplorer,
   sendRecipientCanNext,
+  receiveTokensConfig: {
+    networkFamily: "hedera",
+  },
 };
 
 export default family;

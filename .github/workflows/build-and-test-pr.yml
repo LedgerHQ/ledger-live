@@ -108,6 +108,21 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  test-additional:
+    name: "Test Additional"
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    secrets: inherit
+
+  notify-e2e-required:
+    name: "Notify E2E Required"
+    needs: determine-affected
+    if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    secrets: inherit
+    with:
+      affected_paths: ${{ needs.determine-affected.outputs.paths }}
+
   scan-sonar:
     name: "Sonar Cloud"
     needs:
@@ -134,6 +149,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - test-additional
       - determine-affected
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'

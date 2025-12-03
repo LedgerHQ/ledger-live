@@ -16,6 +16,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -39,8 +40,8 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    // @ts-expect-error FIXME: No current / next navigation params?
-    navigation.navigate(ScreenName.SendSummary, {
+
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         transferId: transferId && transferId.toString(),
@@ -94,7 +95,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.transferId"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { CasperEditTransferId as component, options };
 const styles = StyleSheet.create({

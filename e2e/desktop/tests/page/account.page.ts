@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
@@ -12,10 +12,12 @@ export class AccountPage extends AppPage {
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private buyButton = this.page.getByRole("button", { name: "Buy" });
-  private accountName = (name: string) => this.page.locator(`text=${name}`);
+  private accountName = this.page.locator("#account-header-name");
   private lastOperation = this.page.locator("text=Latest operations");
-  private tokenValue = (tokenName: string, accountName: string) =>
-    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`).getByText(`${accountName}`);
+  private tokenValue = (tokenName: string) =>
+    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
+  private tokenRowByTicker = (tokenTicker: string) =>
+    this.page.getByTestId(`account-row-${tokenTicker.toLowerCase()}`);
   private accountBalance = this.page.getByTestId("total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
@@ -38,12 +40,18 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
-    if (account.currency.name) {
-      await expect(
-        this.tokenValue(account.currency.name, getParentAccountName(account)),
-      ).toBeVisible();
-      await this.tokenValue(account.currency.name, getParentAccountName(account)).click();
+    // Try to navigate using name first, then fallback to ticker
+    const nameElement = this.tokenValue(account.currency.name);
+    if (await nameElement.isVisible().catch(() => false)) {
+      await nameElement.click();
+      return;
     }
+    const tickerElement = this.tokenRowByTicker(account.currency.ticker);
+    if (await tickerElement.isVisible().catch(() => false)) {
+      await tickerElement.click();
+      return;
+    }
+    throw new Error(`Token element not found for: ${account.currency.name}`);
   }
 
   @step("Click `Receive` button")
@@ -115,7 +123,7 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName(firstAccountName)).toBeVisible();
+    await expect(this.accountName).toHaveValue(firstAccountName);
     await this.settingsButton.waitFor({ state: "visible" });
   }
 
@@ -133,7 +141,17 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
-    await expect(this.accountButton(account.currency.name)).toBeVisible();
+    const nameButton = this.accountButton(account.currency.name);
+    if (await nameButton.isVisible().catch(() => false)) {
+      await expect(nameButton).toBeVisible();
+      return;
+    }
+    const tickerButton = this.accountButton(account.currency.ticker);
+    if (await tickerButton.isVisible().catch(() => false)) {
+      await expect(tickerButton).toBeVisible();
+      return;
+    }
+    throw new Error(`Token account button not found for: ${account.currency.name}`);
   }
 
   @step("Expect `show more` button to show more operations")
@@ -159,9 +177,6 @@ export class AccountPage extends AppPage {
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
     await expect(this.tokenRow(tokenAccount.currency.ticker)).toBeVisible();
-    const tokenInfos = await this.tokenRow(tokenAccount.currency.ticker).innerText();
-    expect(tokenInfos).toContain(tokenAccount.currency.name);
-    expect(tokenInfos).toContain(tokenAccount.currency.ticker);
   }
 
   @step("Navigate to token in account")

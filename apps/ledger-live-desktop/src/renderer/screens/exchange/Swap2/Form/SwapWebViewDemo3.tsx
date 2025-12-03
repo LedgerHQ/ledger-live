@@ -29,7 +29,12 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
-import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
+import {
+  WebviewAPI,
+  WebviewProps,
+  WebviewState,
+  WebviewLoader,
+} from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
@@ -58,6 +63,8 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
+import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
+import { SwapLoader } from "./SwapLoader";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -92,6 +99,8 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  isEmbedded?: boolean;
+  Loader?: WebviewLoader;
 };
 
 type TokenParams = {
@@ -115,7 +124,7 @@ const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
-const SwapWebView = ({ manifest }: SwapWebProps) => {
+const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -146,12 +155,16 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     defaultAmountFrom?: string;
     from?: string;
     defaultToken?: TokenParams;
+    affiliate?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
-
+  const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
+  const lldModularDrawerFF = useFeature("lldModularDrawer");
+  const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
+  const distinctId = useGetMixpanelDistinctId();
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -435,43 +448,51 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [customPTXHandlers],
   );
 
-  const hashString = useMemo(
-    () =>
-      new URLSearchParams({
-        ...(isOffline ? { isOffline: "true" } : {}),
-        ...(state?.defaultAccount
-          ? {
-              fromAccountId: accountToWalletAPIAccount(
-                walletState,
-                state?.defaultAccount,
-                state?.defaultParentAccount,
-              ).id,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-        ...(state?.from
-          ? {
-              fromPath: simplifyFromPath(state?.from),
-            }
-          : {}),
-        ...(state?.defaultToken
-          ? {
-              fromTokenId: state.defaultToken.fromTokenId,
-              toTokenId: state.defaultToken.toTokenId,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-      }).toString(),
-    [
-      isOffline,
-      state?.defaultAccount,
-      state?.defaultParentAccount,
-      state?.defaultAmountFrom,
-      state?.from,
-      state?.defaultToken,
-      walletState,
-    ],
-  );
+  const hashString = useMemo(() => {
+    const params = new URLSearchParams({
+      ...(isOffline ? { isOffline: "true" } : {}),
+      ...(state?.defaultAccount
+        ? {
+            toAccountId: accountToWalletAPIAccount(
+              walletState,
+              state?.defaultAccount,
+              state?.defaultParentAccount,
+            ).id,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.from
+        ? {
+            fromPath: simplifyFromPath(state?.from),
+          }
+        : {}),
+      ...(state?.defaultToken
+        ? {
+            fromTokenId: state.defaultToken.fromTokenId,
+            toTokenId: state.defaultToken.toTokenId,
+            fromToken: state.defaultToken.fromTokenId,
+            toToken: state.defaultToken.toTokenId,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.affiliate
+        ? {
+            affiliate: state.affiliate,
+          }
+        : {}),
+    }).toString();
+
+    return params;
+  }, [
+    isOffline,
+    state?.defaultAccount,
+    state?.defaultParentAccount,
+    state?.defaultAmountFrom,
+    state?.from,
+    state?.defaultToken,
+    state?.affiliate,
+    walletState,
+  ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);
@@ -534,11 +555,16 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
+            ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
+            isModularDrawer: isLldModularDrawer ? "true" : "false",
+            distinctId,
+            isEmbedded: isEmbedded ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           customHandlers={customHandlers as never}
+          Loader={Loader}
         />
       </SwapWebAppWrapper>
     </>

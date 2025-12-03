@@ -252,6 +252,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_HEDERA_THIRDWEB_URL: {
+    def: "https://hedera-tokens.coin.ledger.com",
+    parser: stringParser,
+    desc: "Thirdweb API for Hedera",
+  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
@@ -467,6 +472,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
+    parser: stringParser,
+    desc: "Ledger regtest Bitcoin explorer API",
+  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
@@ -551,6 +561,11 @@ const envDefinitions = {
     def: 1000,
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
+  },
+  MIXPANEL_API_HOST: {
+    def: "https://api.mixpanel.com",
+    parser: stringParser,
+    desc: "Mixpanel API host URL",
   },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
@@ -888,6 +903,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url",
   },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
@@ -962,6 +982,11 @@ const envDefinitions = {
     def: "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json",
     parser: stringParser,
     desc: "List of sanctioned addresses",
+  },
+  BIG_NUMBER_DECIMAL_PLACES: {
+    def: 40,
+    parser: intParser,
+    desc: "bignumber.js decimal places configuration",
   },
 };
 

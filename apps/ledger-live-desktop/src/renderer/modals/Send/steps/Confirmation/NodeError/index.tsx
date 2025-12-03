@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Flex, Icons, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
-import { CircleWrapper } from "~/renderer/components/CryptoCurrencyIcon";
+import { CircleWrapper } from "~/renderer/components/CircleWrapper";
 import { useExportLogs } from "LLD/hooks/useExportLogs";
 import { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import { urls } from "~/config/urls";

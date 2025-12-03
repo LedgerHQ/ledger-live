@@ -4,9 +4,11 @@ import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import {
   getAccounts,
   getCountervalues,
+  getCryptoAssetsCacheState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -27,10 +29,19 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
+import type { SettingsState } from "~/reducers/types";
+import {
+  restoreTokensToCache,
+  PERSISTENCE_VERSION,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 interface Props {
   onInitFinished: () => void;
-  children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => ReactNode;
+  children: (props: {
+    ready: boolean;
+    initialCountervalues?: CounterValuesStateRaw;
+    currencyInitialized: boolean;
+  }) => ReactNode;
   store: Store;
 }
 
@@ -55,14 +66,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   const [initialCountervalues, setInitialCountervalues] = useState<
     CounterValuesStateRaw | undefined
   >(undefined);
+  const [currencyInitialized, setCurrencyInitialized] = useState(false);
 
   const init = useCallback(async () => {
     try {
       const [
         bleData,
         settingsData,
-        cachedCurrencyIds,
-        supportedFiats,
         accountsData,
         postOnboardingState,
         marketState,
@@ -71,11 +81,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         protect,
         initialCountervalues,
         largeMoverState,
+        cryptoAssetsCache,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
-        retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY),
-        retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
@@ -84,50 +93,37 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+        retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
 
-      // hydrate the store with the bridge/cache
-      // Promise.allSettled doesn't exist in RN
-      await Promise.all(
-        cachedCurrencyIds
-          .map(id => {
-            const currency = findCryptoCurrencyById?.(id);
-            return currency ? hydrateCurrency(currency) : Promise.reject();
-          })
-          .map(promise =>
-            promise
-              .then((value: unknown) => ({ status: "fulfilled", value }))
-              .catch((reason: unknown) => ({ status: "rejected", reason })),
-          ),
-      );
+      store.dispatch(importSettings(settingsData));
 
-      const bitcoin = getCryptoCurrencyById("bitcoin");
-      const ethereum = getCryptoCurrencyById("ethereum");
-      const possibleIntermediaries = [bitcoin, ethereum];
-
-      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-        .map(currency => ({
-          value: currency.ticker,
-          ticker: currency.ticker,
-          label: `${currency.name} - ${currency.ticker}`,
-          currency,
-        }))
-        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-
-      store.dispatch(setSupportedCounterValues(supportedCounterValues));
-
-      if (
-        settingsData &&
-        settingsData.counterValue &&
-        !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
-      ) {
-        settingsData.counterValue = settingsState.counterValue;
+      // Hydrate persisted crypto assets tokens BEFORE importing accounts
+      // This ensures tokens are available when decoding accounts (which now uses findTokenById)
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      if (cryptoAssetsCache?.tokens) {
+        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
+          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
+          );
+        }
       }
 
-      store.dispatch(importSettings(settingsData));
-      store.dispatch(importAccountsRaw(accountsData));
+      // Handle account import with error recovery for async issues
+      try {
+        store.dispatch(await importAccountsRaw(accountsData));
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to import accounts during initialization:", error);
+        // Continue with app initialization even if account import fails
+        // This prevents blocking deeplink navigation
+      }
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -157,6 +153,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setInitialCountervalues(initialCountervalues);
       setReady(true);
       onInitFinished();
+
+      await Promise.all([
+        hydrateCurrencies(),
+        updateSupportedCountervalues(store, settingsData),
+      ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
         error instanceof Error
@@ -170,7 +171,59 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     init();
   }, [init]);
 
-  return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
+  return (
+    <Provider store={store}>
+      <InitialQueriesProvider>
+        {children({ ready, initialCountervalues, currencyInitialized })}
+      </InitialQueriesProvider>
+    </Provider>
+  );
 };
 
 export default LedgerStoreProvider;
+
+async function hydrateCurrencies() {
+  const cachedCurrencyIds = await retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY);
+
+  // hydrate the store with the bridge/cache
+  // Promise.allSettled doesn't exist in RN
+  await Promise.all(
+    cachedCurrencyIds
+      .map(id => {
+        const currency = findCryptoCurrencyById?.(id);
+        return currency ? hydrateCurrency(currency) : Promise.reject();
+      })
+      .map(promise =>
+        promise
+          .then((value: unknown) => ({ status: "fulfilled", value }))
+          .catch((reason: unknown) => ({ status: "rejected", reason })),
+      ),
+  );
+}
+
+async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+  const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const ethereum = getCryptoCurrencyById("ethereum");
+  const possibleIntermediaries = [bitcoin, ethereum];
+
+  const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+    .map(currency => ({
+      value: currency.ticker,
+      ticker: currency.ticker,
+      label: `${currency.name} - ${currency.ticker}`,
+      currency,
+    }))
+    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+
+  store.dispatch(setSupportedCounterValues(supportedCounterValues));
+
+  if (
+    settingsData?.counterValue &&
+    !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue) &&
+    settingsData.counterValue !== settingsState.counterValue
+  ) {
+    settingsData.counterValue = settingsState.counterValue;
+    store.dispatch(importSettings(settingsData));
+  }
+}

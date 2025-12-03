@@ -25,6 +25,7 @@ export const INITIAL_STATE = {
           manager: true,
           accounts: true,
           settings: true,
+          postOnboarding: true,
         },
       },
     },

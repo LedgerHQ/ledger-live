@@ -46,7 +46,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
   );
 
   return (
-    <Flex height="100%" justifyContent="space-between">
+    <Flex justifyContent="space-between">
       <TrackScreen category={"App Language Manager"} type="drawer" refreshSource={false} />
       <Flex flexShrink={1}>
         <Text variant="h4" textAlign="center">

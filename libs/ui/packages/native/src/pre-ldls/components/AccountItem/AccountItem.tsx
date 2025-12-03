@@ -203,6 +203,7 @@ export const AccountItem = ({
                 fontSize="18px"
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                testID={`account-item-name-${name}`}
               >
                 {name}
               </Text>

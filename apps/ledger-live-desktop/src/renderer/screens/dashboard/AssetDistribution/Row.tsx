@@ -59,7 +59,7 @@ const PriceSection = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    display: block;
+    display: inline-block;
   }
 `;
 const Distribution = styled.div`
@@ -94,7 +94,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
-  const icon = <CryptoCurrencyIcon currency={currency} size={16} />;
+  const icon = <CryptoCurrencyIcon currency={currency} size={22} />;
   const onClick = useCallback(() => {
     setTrackingSource("asset allocation");
     history.push({

@@ -5,7 +5,6 @@ inputs:
     description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
     type: string
     required: false
-    default: 's3.amazonaws.com'
   key:
     type: string
     required: true
@@ -24,6 +23,11 @@ inputs:
   region:
     type: string
     required: true
+  destination:
+    description: "The destination path to extract the cache files to"
+    type: string
+    required: false
+    default: ${{ github.workspace }}
 outputs:
   cache-hit:
     description: "Indicates if the cache was successfully downloaded"
@@ -34,9 +38,8 @@ runs:
     - name: Downloading files
       id: download-cache
       shell: bash
-      continue-on-error: true
       run: |
-        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }} --no-progress
+        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }} --region ${{ inputs.region }} --no-progress
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
@@ -46,13 +49,13 @@ runs:
       if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        tar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+        tar -xf /tmp/cache.tzst -C ${{ inputs.destination }} --use-compress-program unzstd
 
     - name: Un-Compress files (macOS)
       if: runner.os == 'macOS' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        gtar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+        gtar -xf /tmp/cache.tzst -C ${{ inputs.destination }} --use-compress-program unzstd
 
     - name: Cleanup
       shell: bash

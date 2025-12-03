@@ -1,8 +1,9 @@
 import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
-import { version } from "@ledgerhq/device-core/package.json";
+import { version } from "../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
+import { sanitizeError } from "./index";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -13,10 +14,24 @@ export function getSpeculosModel(): DeviceModelId {
       return DeviceModelId.nanoS;
     case CryptoWallet.LNX.name:
       return DeviceModelId.nanoX;
+    case CryptoWallet.STAX.name:
+      return DeviceModelId.stax;
+    case CryptoWallet.FLEX.name:
+    case DeviceModelId.europa:
+      return DeviceModelId.europa;
+    case CryptoWallet.NANO_GEN_5.name:
+      return DeviceModelId.apex;
     case CryptoWallet.LNSP.name:
     default:
       return DeviceModelId.nanoSP;
   }
+}
+
+export function isTouchDevice(): boolean {
+  const model = getSpeculosModel();
+  return (
+    model === DeviceModelId.stax || model === DeviceModelId.europa || model === DeviceModelId.apex
+  );
 }
 
 function getDeviceTargetId(device: DeviceModelId): number {
@@ -24,6 +39,9 @@ function getDeviceTargetId(device: DeviceModelId): number {
     [DeviceModelId.nanoS]: CryptoWallet.LNS.targetId,
     [DeviceModelId.nanoX]: CryptoWallet.LNX.targetId,
     [DeviceModelId.nanoSP]: CryptoWallet.LNSP.targetId,
+    [DeviceModelId.stax]: CryptoWallet.STAX.targetId,
+    [DeviceModelId.europa]: CryptoWallet.FLEX.targetId,
+    [DeviceModelId.apex]: CryptoWallet.NANO_GEN_5.targetId,
   };
   return modelToTargetIdMap[device];
 }
@@ -61,7 +79,7 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
     }
     fs.writeFileSync(jsonFilePath, JSON.stringify(appCatalog, null, 2), "utf8");
   } catch (error) {
-    console.error("Unable to create app version file:", error);
+    console.error("Unable to create app version file:", sanitizeError(error));
   }
 }
 

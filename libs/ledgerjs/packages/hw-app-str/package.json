@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-str",
-  "version": "7.2.8",
+  "version": "7.2.9",
   "description": "Ledger Hardware Wallet Stellar Application API",
   "keywords": [
     "Ledger",

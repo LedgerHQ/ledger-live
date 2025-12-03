@@ -283,8 +283,6 @@ export type LLDCoinFamily<
     footer: React.ComponentType<SendStepProps>;
   };
 
-  shouldUseReceiveOptions?: (currencyId: string | undefined) => boolean;
-
   /**
    * One time modal that is trigger only one time on a account that never send
    */
@@ -318,6 +316,17 @@ export type LLDCoinFamily<
    * Allow to add component below the token select on Account step in Receive modal
    */
   StepReceiveAccountCustomAlert?: React.ComponentType<ReceiveStepProps & { account: AccountLike }>;
+
+  /**
+   * Configuration for receive tokens mode using cal-client
+   * When present, the receive flow will use useTokensData hook instead of listTokensForCryptoCurrency
+   */
+  receiveTokensConfig?: {
+    /**
+     * The network family to pass to useTokensData hook (e.g. "hedera")
+     */
+    networkFamily: string;
+  };
 
   /**
    * Change Receive funds with this component (example: Hedera)
@@ -358,6 +367,13 @@ export type LLDCoinFamily<
    * Component banner before Account body header
    */
   StakeBanner?: React.ComponentType<{
+    account: A;
+  }>;
+
+  /**
+   * Component to display pending transfer proposals
+   */
+  PendingTransferProposals?: React.ComponentType<{
     account: A;
   }>;
 

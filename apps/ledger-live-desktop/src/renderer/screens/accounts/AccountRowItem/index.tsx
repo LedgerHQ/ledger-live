@@ -2,7 +2,6 @@ import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account, TokenAccount, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
@@ -75,7 +74,7 @@ const TokenBarIndicator = styled.div`
   width: 15px;
   border-left: 1px solid ${p => p.theme.colors.palette.divider};
   z-index: 2;
-  margin-left: 29px;
+  margin-left: 33px;
   position: absolute;
   left: 0;
   margin-top: -16px;
@@ -165,7 +164,7 @@ const AccountRowItem = (props: Props) => {
   if (account.type !== "Account") {
     currency = account.token;
     mainAccount = parentAccount;
-    isToken = mainAccount && listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
+    isToken = mainAccount && (mainAccount.currency.tokenTypes || []).length > 0;
     if (!mainAccount) return null;
   } else {
     currency = account.currency;
@@ -174,7 +173,7 @@ const AccountRowItem = (props: Props) => {
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
     );
     disabled = !matchesSearch(walletState, search, account);
-    isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
+    isToken = (currency.tokenTypes || []).length > 0;
     if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);

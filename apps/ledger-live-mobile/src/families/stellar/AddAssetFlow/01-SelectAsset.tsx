@@ -1,12 +1,11 @@
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -24,6 +23,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 
 const Row = ({
   item,
@@ -121,7 +121,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
     },
     [bridge, transaction, navigation, route.params, status],
   );
-  const options = listTokensForCryptoCurrency(mainAccount.currency);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: mainAccount.currency.id,
+  });
+
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
+
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   // @ts-expect-error this does not make any type of sense... we get a string yet we pass it to a function expecting a boolean
   const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
@@ -129,6 +135,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const renderList = useCallback(
     (list: TokenCurrency[]) => (
       <FlatList
+        onEndReached={loadNext}
         data={list}
         renderItem={({ item }: { item: TokenCurrency }) => (
           <Row
@@ -145,7 +152,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
       />
     ),
-    [mainAccount.subAccounts, onNext, openModal],
+    [loadNext, mainAccount.subAccounts, onNext, openModal],
   );
   return (
     <SafeAreaView

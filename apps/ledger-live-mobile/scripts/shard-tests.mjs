@@ -7,10 +7,29 @@ import path from "path";
 
 const baseDir = path.resolve(path.dirname(new URL(import.meta.url).pathname));
 
+// Cross-platform deterministic string comparison
+function compareStrings(a, b) {
+  const normalizedA = path.normalize(a);
+  const normalizedB = path.normalize(b);
+
+  return normalizedA.localeCompare(normalizedB, "en", {
+    sensitivity: "case",
+    numeric: true,
+    ignorePunctuation: false,
+  });
+}
+
 function findTestFiles(dir) {
   let results = [];
   try {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => {
+      if (a.isDirectory() !== b.isDirectory()) {
+        return a.isDirectory() ? -1 : 1;
+      }
+      return compareStrings(a.name, b.name);
+    });
+
+    for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         results = results.concat(findTestFiles(fullPath));
@@ -22,13 +41,14 @@ function findTestFiles(dir) {
     console.error("[shard-tests] Error reading directory:", dir, e);
     throw new Error(`Failed to read directory ${dir}: ${e.message}`);
   }
-  return results;
+  return results.sort(compareStrings);
 }
 
 function filterTestFiles(files, testFilter) {
   if (!testFilter) return files;
   const filters = testFilter.toLowerCase().split(/\s+/).filter(Boolean);
-  return files.filter(f => filters.some(filter => f.toLowerCase().includes(filter)));
+  const filtered = files.filter(f => filters.some(filter => f.toLowerCase().includes(filter)));
+  return filtered.sort(compareStrings);
 }
 
 function loadTimingData(platform, testRootDir) {
@@ -82,7 +102,13 @@ function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
   });
 
   // Sort by duration (longest first for better load balancing)
-  filesWithTiming.sort((a, b) => b.duration - a.duration);
+  filesWithTiming.sort((a, b) => {
+    if (b.duration !== a.duration) {
+      return b.duration - a.duration;
+    }
+    // When durations are equal, sort by file path
+    return compareStrings(a.file, b.file);
+  });
 
   // Separate tests with actual timing from tests with 0ms duration
   const testsWithTiming = filesWithTiming.filter(f => f.duration > 0);
@@ -94,6 +120,7 @@ function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
   // First, distribute tests with actual timing using greedy approach
   for (const { file, duration } of testsWithTiming) {
     // Find shard with minimum total time
+    // When multiple shards have the same total time, prefer the one with lower index for determinism
     let minShardIndex = 0;
     let minTotalTime = Infinity;
 

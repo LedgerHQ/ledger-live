@@ -1,10 +1,8 @@
 import React from "react";
 import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { Flex } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/styles/theme";
 
@@ -25,19 +23,17 @@ import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase"
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
-import OnboardingPairNew from "~/screens/Onboarding/steps/pairNew";
+import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
-import NavigationOverlay from "../NavigationOverlay";
 import NavigationModalContainer from "../NavigationModalContainer";
 import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
 import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
 import OnboardingGeneralInformation from "~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
 import OnboardingBluetoothInformation from "~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
 import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
-import GetDeviceScreen from "~/screens/GetDeviceScreen";
 import OnboardingProtectFlow from "~/screens/Onboarding/steps/protectFlow";
 
 import {
@@ -48,18 +44,20 @@ import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
+import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 
-const Stack = createStackNavigator<OnboardingNavigatorParamList>();
+const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
-  createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
+  createNativeStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
 
 function OnboardingPreQuizModalNavigator(
   props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingPreQuiz>,
 ) {
-  const options: Partial<StackNavigationOptions> = {
+  const options: Partial<NativeStackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
       <Flex bg="constant.purple">
@@ -84,16 +82,12 @@ function OnboardingPreQuizModalNavigator(
   );
 }
 
-const modalOptions: Partial<StackNavigationOptions> = {
-  presentation: "transparentModal",
-  cardOverlayEnabled: true,
-  cardOverlay: () => <NavigationOverlay />,
+const modalOptions: Partial<NativeStackNavigationOptions> = {
   headerShown: false,
-  ...TransitionPresets.ModalTransition,
+  animation: "slide_from_bottom",
 };
 
-const infoModalOptions = ({ theme }: { theme: Theme }): Partial<StackNavigationOptions> => ({
-  ...TransitionPresets.ModalTransition,
+const infoModalOptions = ({ theme }: { theme: Theme }): Partial<NativeStackNavigationOptions> => ({
   headerStyle: {
     backgroundColor: theme.colors.background.drawer,
   },
@@ -112,7 +106,6 @@ export default function OnboardingNavigator() {
         headerTitle: "",
         headerShadowVisible: false,
         headerStyle: { backgroundColor: theme.colors.background.main },
-        cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
       <Stack.Screen
@@ -134,11 +127,6 @@ export default function OnboardingNavigator() {
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
-      />
-      <Stack.Screen
-        name={ScreenName.GetDevice}
-        component={GetDeviceScreen}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingLanguage}
@@ -221,9 +209,7 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingInfoModal}
         component={OnboardingInfoModal}
-        options={{
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-        }}
+        options={{ animation: "slide_from_bottom" }}
       />
 
       <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
@@ -235,6 +221,12 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
       <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+      <Stack.Screen
+        name={ScreenName.OnboardingSecureYourCrypto}
+        component={OnboardingSecureYourCrypto}
+      />
+
+      <Stack.Screen name={ScreenName.OnboardingFundSuccess} component={OnboardingFundSuccess} />
 
       <Stack.Screen
         name={NavigatorName.AnalyticsOptInPrompt}

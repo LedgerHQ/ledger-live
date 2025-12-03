@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
@@ -21,7 +21,11 @@ import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings
 import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  BaseNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
@@ -34,7 +38,7 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
-const Manager = ({ navigation, route }: NavigationProps) => {
+const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const {
     device,
     deviceInfo,
@@ -50,6 +54,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceName } = result;
   const [state, dispatch] = useApps(result, device, appsToRestore);
   const reduxDispatch = useDispatch();
+  const baseNavigation = useNavigation<BaseNavigation>();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
@@ -175,20 +180,31 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      navigation.navigate(NavigatorName.Main, {
-        screen: NavigatorName.MyLedger,
-        params: {
-          screen: ScreenName.MyLedgerChooseDevice,
-          // If the fw update was completed or not yet started, we know the device in a correct state,
-          // we can automatically connect to it.
-          // Otherwise navigating back to the chooseDeviceScreen without settings a device
-          // so it does not try to automatically connect to the device while it
-          // might still be on an unknown state because the fw update was just stopped
-          params: ["start", "completed"].includes(updateState) ? { device } : {},
-        },
+      baseNavigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Main,
+            state: {
+              routes: [
+                {
+                  name: NavigatorName.MyLedger,
+                  state: {
+                    routes: [
+                      {
+                        name: ScreenName.MyLedgerChooseDevice,
+                        params: ["start", "completed"].includes(updateState) ? { device } : {},
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       });
     },
-    [device, navigation],
+    [device, baseNavigation],
   );
 
   const appsInstallUninstallWithDependenciesContextValue = useMemo(
@@ -239,7 +255,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
           state={state}
           dispatch={dispatch}
           device={device}
-          navigation={navigation}
           setStorageWarning={setStorageWarning}
           deviceId={deviceId}
           initialDeviceName={deviceName}
@@ -284,4 +299,4 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 };
 
-export default memo<NavigationProps>(Manager);
+export default memo<NavigationProps>(MyLedgerDevice);

@@ -78,7 +78,7 @@ const sortNetworks = (
 
 export const createNetworkConfigurationHook =
   (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  ({ networksConfig, accounts$ }: CreateNetworkConfigurationHookProps) => {
+  ({ networksConfig }: CreateNetworkConfigurationHookProps) => {
     const { leftElement, rightElement } = networksConfig ?? {};
     const leftHook = getLeftElement(NetworkConfigurationDeps)(leftElement);
     const rightHook = getRightElement(NetworkConfigurationDeps)(rightElement);
@@ -90,7 +90,6 @@ export const createNetworkConfigurationHook =
     ): Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }> => {
       const hookResults = hooks.map(hook =>
         hook({
-          accounts$,
           networks,
         }),
       );

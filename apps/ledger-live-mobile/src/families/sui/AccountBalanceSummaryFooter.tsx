@@ -1,8 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -74,12 +73,10 @@ export default function AccountBalanceFooter({ account }: Props) {
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("sui");
-  const SuiIcon = getCryptoCurrencyIcon(currency);
-  invariant(SuiIcon, "Icon is expected");
   return {
     available: [
       {
-        Icon: () => <SuiIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={20} />,
         title: t("sui.info.available.title"),
         description: t("sui.info.available.description"),
       },

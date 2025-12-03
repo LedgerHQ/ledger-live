@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Subscription } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
-import { TouchableOpacity, Linking } from "react-native";
+import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -11,6 +11,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { track, TrackScreen } from "~/analytics";
 import { accountScreenSelector } from "~/reducers/accounts";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -30,6 +31,8 @@ import { e2eBridgeClient } from "../../../e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { getFreshAccountAddress } from "~/utils/address";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
@@ -55,6 +58,24 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const [error, setError] = useState<Error | null>(null);
+
+  // Animated height to prevent layout shift when error state changes
+  const animatedHeight = useSharedValue(0);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      if (layout.height > 0) {
+        animatedHeight.value = withTiming(layout.height, { duration: 200 });
+      }
+    },
+    [animatedHeight],
+  );
+
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: animatedHeight.value > 0 ? animatedHeight.value : undefined,
+    }),
+    [animatedHeight],
+  );
 
   useTrackReceiveFlow({
     location: HOOKS_TRACKING_LOCATIONS.receiveFlow,
@@ -149,69 +170,73 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   if (!account || !currency || !mainAccount || !device) return null;
 
   return (
-    <>
+    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
       <PreventNativeBack />
       <SkipLock />
       <SyncSkipUnderPriority priority={100} />
-      {error ? (
-        <>
-          <TrackScreen category="Deposit" name="Address Verification Denied" />
-          <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-            <Illustration
-              lightSource={illustrations.light}
-              darkSource={illustrations.dark}
-              size={240}
-            />
-            <LText variant="h4" bold textAlign="center" mb={6}>
-              {t("transfer.receive.verifyAddress.cancel.title")}
-            </LText>
-            <LText variant="body" color="neutral.c70" textAlign="center" mb={6}>
-              {t("transfer.receive.verifyAddress.cancel.subtitle")}
-            </LText>
+      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+        <Flex onLayout={onLayout} flex={1}>
+          {error ? (
+            <>
+              <TrackScreen category="Deposit" name="Address Verification Denied" />
+              <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
+                <Illustration
+                  lightSource={illustrations.light}
+                  darkSource={illustrations.dark}
+                  size={240}
+                />
+                <LText variant="h4" bold textAlign="center" mb={6}>
+                  {t("transfer.receive.verifyAddress.cancel.title")}
+                </LText>
+                <LText variant="body" color="neutral.c70" textAlign="center" mb={6}>
+                  {t("transfer.receive.verifyAddress.cancel.subtitle")}
+                </LText>
 
-            <TouchableOpacity onPress={redirectToSupport}>
-              <LText variant="body" color="neutral.c70" textAlign="center">
-                <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
-                  <LText color="primary.c80" style={{ textDecorationLine: "underline" }} />
-                </Trans>
+                <TouchableOpacity onPress={redirectToSupport}>
+                  <LText variant="body" color="neutral.c70" textAlign="center">
+                    <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
+                      <LText color="primary.c80" style={{ textDecorationLine: "underline" }} />
+                    </Trans>
+                  </LText>
+                </TouchableOpacity>
+              </Flex>
+              <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
+                <Button flex={1} type="secondary" outline onPress={goBack}>
+                  {t("common.cancel")}
+                </Button>
+                <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
+                  {t("common.retry")}
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
+              <TrackScreen category="Deposit" name="Verify Address" />
+              <LText variant="h4" textAlign="center" mb={6} testID={"receive-verifyAddress-title"}>
+                {t("transfer.receive.verifyAddress.title")}
               </LText>
-            </TouchableOpacity>
-          </Flex>
-          <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
-            <Button flex={1} type="secondary" outline onPress={goBack}>
-              {t("common.cancel")}
-            </Button>
-            <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
-              {t("common.retry")}
-            </Button>
-          </Flex>
-        </>
-      ) : (
-        <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen category="Deposit" name="Verify Address" />
-          <LText variant="h4" textAlign="center" mb={6} testID={"receive-verifyAddress-title"}>
-            {t("transfer.receive.verifyAddress.title")}
-          </LText>
-          <LText variant="body" color="neutral.c70" textAlign="center">
-            {t("transfer.receive.verifyAddress.subtitle")}
-          </LText>
-          <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
-            <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
-              {mainAccount.freshAddress}
-            </LText>
-          </Flex>
-          <AnimationContainer>
-            <Animation
-              style={{ width: "100%" }}
-              source={getDeviceAnimation({
-                modelId: device.modelId,
-                key: "verify",
-                theme: themeKind,
-              })}
-            />
-          </AnimationContainer>
+              <LText variant="body" color="neutral.c70" textAlign="center">
+                {t("transfer.receive.verifyAddress.subtitle")}
+              </LText>
+              <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
+                <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
+                  {getFreshAccountAddress(mainAccount)}
+                </LText>
+              </Flex>
+              <AnimationContainer>
+                <Animation
+                  style={{ width: "100%" }}
+                  source={getDeviceAnimation({
+                    modelId: device.modelId,
+                    key: "verify",
+                    theme: themeKind,
+                  })}
+                />
+              </AnimationContainer>
+            </Flex>
+          )}
         </Flex>
-      )}
-    </>
+      </Animated.View>
+    </SafeAreaViewFixed>
   );
 }

@@ -1,18 +1,20 @@
 import Config from "react-native-config";
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
+import { applyLlmRTKApiMiddlewares } from "./rtkQueryApi";
+import { setupCryptoAssetsStore } from "../config/bridge-setup";
+import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
   reducer: reducers,
   devTools: !!Config.DEBUG_RNDEBUGGER,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
-      .concat(assetsDataApi.middleware)
-      .concat(rebootMiddleware),
+    applyLlmRTKApiMiddlewares(
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    ).concat(rebootMiddleware),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
@@ -23,3 +25,6 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
+
+setupRecentAddressesStore(store);
+setupCryptoAssetsStore(store);

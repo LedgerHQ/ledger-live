@@ -1,17 +1,20 @@
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { isIos } from "../helpers/commonHelpers";
+import { delay, isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 
 export default class CommonPage {
+  assetScreenFlatlistId = "asset-screen-flatlist";
   searchBarId = "common-search-field";
   successViewDetailsButtonId = "success-view-details-button";
+  validateSuccessScreenId = "validate-success-screen";
   proceedButtonId = "proceed-button";
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
   deviceItemRegex = /device-item-.*/;
+  walletApiWebview = "wallet-api-webview";
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -58,7 +61,9 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
+    await waitForElementById(this.validateSuccessScreenId);
     await waitForElementById(this.successViewDetailsButtonId);
+    await delay(1000);
     await tapById(this.successViewDetailsButtonId);
   }
 
@@ -69,11 +74,11 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemNameRegExp);
+    await scrollToId(this.accountItemNameRegExp, this.assetScreenFlatlistId);
     await tapByElement(this.accountItem(accountId));
   }
 
-  @Step("Check number of account rows: $0")
+  @Step("Check number of account rows")
   async checkAccountRowNumber(nbr: number) {
     jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }

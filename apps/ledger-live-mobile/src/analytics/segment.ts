@@ -19,7 +19,11 @@ import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  getStablecoinYieldSetting,
+  getBitcoinYieldSetting,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
@@ -42,6 +46,7 @@ import {
   seenDevicesSelector,
   isRebornSelector,
   isOnboardingFlowSelector,
+  isPostOnboardingFlowSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -115,6 +120,8 @@ const getFeatureFlagProperties = () => {
         : "flag not loaded";
 
     const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+    const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+    const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
@@ -123,6 +130,8 @@ const getFeatureFlagProperties = () => {
       stakingProvidersEnabled,
       ptxCard: ptxCard?.enabled,
       stablecoinYield,
+      bitcoinYield,
+      ethDepositScreen,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
@@ -226,6 +235,9 @@ const extraProperties = async (store: AppStore) => {
   const llmSyncOnboardingIncr1 = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("llmSyncOnboardingIncr1")
     : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -239,6 +251,7 @@ const extraProperties = async (store: AppStore) => {
     : {};
 
   const isOnboardingFlow = isOnboardingFlowSelector(state);
+  const isPostOnboardingFlow = isPostOnboardingFlowSelector(state);
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const isReborn = isRebornSelector(state);
 
@@ -281,6 +294,8 @@ const extraProperties = async (store: AppStore) => {
       : [];
 
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+  const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -316,6 +331,7 @@ const extraProperties = async (store: AppStore) => {
     onboardingHasDevice,
     // For tracking receive flow events during onboarding
     ...(isOnboardingFlow ? { flow: "onboarding" } : {}),
+    ...(isPostOnboardingFlow ? { flow: "post-onboarding" } : {}),
     ...(satisfaction
       ? {
           satisfaction,
@@ -331,6 +347,8 @@ const extraProperties = async (store: AppStore) => {
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     stablecoinYield,
+    bitcoinYield,
+    ethDepositScreen,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
@@ -339,6 +357,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,

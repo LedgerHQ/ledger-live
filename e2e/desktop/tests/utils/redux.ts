@@ -33,18 +33,23 @@ export class Redux {
     });
   };
 
-  public async waitForReduxAction(actionType: string, timeout: number = 5000) {
-    this.actions = [];
+  public async waitForReduxAction(actionType: string, timeout: number = 10000) {
     return new Promise((resolve, reject) => {
       const checkAction = () => {
         const action = this.actions.find(action => action.type === actionType);
         if (action) {
+          clearTimeout(timeoutId);
+          clearInterval(intervalId);
           resolve(action);
-        } else {
-          setTimeout(checkAction, 100);
         }
       };
-      setTimeout(() => reject(new Error(`Timeout waiting for action: ${actionType}`)), timeout);
+
+      const intervalId = setInterval(checkAction, 100);
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        reject(new Error(`Timeout waiting for action: ${actionType}`));
+      }, timeout);
+
       checkAction();
     });
   }

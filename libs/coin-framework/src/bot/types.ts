@@ -12,10 +12,9 @@ import {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { SpeculosButton } from "./specs";
-
-import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
-export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+export type SpeculosTransport = DeviceManagementKitTransportSpeculos | SpeculosTransportWebsocket;
 
 // Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {
@@ -255,7 +254,7 @@ export type Step<T extends TransactionCommon> = {
       title: string;
       value: string;
     }>,
-  ) => string;
+  ) => string | Promise<string>;
   ignoreAssertionFailure?: boolean;
   trimValue?: boolean;
   button?: SpeculosButton;

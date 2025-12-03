@@ -52,7 +52,6 @@ import {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
-  SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
@@ -67,6 +66,8 @@ import {
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
+  SettingsIsPostOnboardingFlowPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -120,6 +121,13 @@ export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload
 );
 export const setIsOnboardingFlow = createAction<SettingsIsOnboardingFlowPayload>(
   SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW,
+);
+export const setIsOnboardingFlowReceiveSuccess =
+  createAction<SettingsIsOnboardingFlowReceiveSuccessPayload>(
+    SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS,
+  );
+export const setIsPostOnboardingFlow = createAction<SettingsIsPostOnboardingFlowPayload>(
+  SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW,
 );
 export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
   SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,
@@ -209,10 +217,7 @@ export const setNeverClickedOnAllowNotificationsButton =
   createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
     SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
   );
-export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
-  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
-);
-export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =

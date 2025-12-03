@@ -1,5 +1,5 @@
 import { Page, expect, ElectronApplication } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 
 export abstract class PageHolder {
   constructor(

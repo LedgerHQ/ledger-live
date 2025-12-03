@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,8 @@ import {
   useLedgerSyncAnalytics,
   AnalyticsFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
+import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 type Props = {
   isNewBackup: boolean;
@@ -17,6 +19,7 @@ type Props = {
 export default function ActivationFinalStep({ isNewBackup }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const completeAction = useCompleteActionCallback();
   const title = isNewBackup ? "walletSync.success.backup.title" : "walletSync.success.synch.title";
   const desc = isNewBackup ? "" : "walletSync.success.synch.desc";
 
@@ -39,6 +42,11 @@ export default function ActivationFinalStep({ isNewBackup }: Props) {
       flow: AnalyticsFlow,
     });
   };
+
+  useEffect(() => {
+    completeAction(PostOnboardingActionId.syncAccounts);
+  }, [completeAction]);
+
   return (
     <Success
       title={t(title)}

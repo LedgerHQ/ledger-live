@@ -59,7 +59,7 @@ export type DataOfUser = {
 };
 
 export type NotificationCategory = {
-  /** Whether or not the category is displayed in the Ledger Live notifications settings */
+  /** Whether or not the category is displayed in the Ledger Wallet notifications settings */
   displayed?: boolean;
   /** The key of the category */
   category?: string;

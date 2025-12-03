@@ -25,6 +25,7 @@ import logger from "./logger";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -61,6 +62,7 @@ type DatabaseValues = {
   trustchain: TrustchainStore;
   wallet: ExportedWalletState;
   market: Market;
+  cryptoAssets: PersistedCAL;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };
@@ -76,14 +78,14 @@ type DatabaseValue<
   T = K extends keyof Transforms ? Transforms[K] : unknown,
   // This is needed to make the type inference work here.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  V = T extends Transform<any, any> ? ReturnType<T["get"]> : DatabaseValues[K],
+  V = T extends Transform<any, any> ? Awaited<ReturnType<T["get"]>> : DatabaseValues[K],
 > = V;
 
 // A Transformer is a pair of functions to encode/decode the raw data.
 type Transform<R, M> = {
   get: (
     raws: Parameters<DataModel<R, M>["decode"]>[0][],
-  ) => ReturnType<DataModel<R, M>["decode"]>[] | null;
+  ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[] | null>;
   set: (
     raws: Parameters<DataModel<R, M>["encode"]>[0][],
   ) => ReturnType<DataModel<R, M>["encode"]>[];
@@ -96,14 +98,14 @@ type Transforms = {
 
 const transforms: Transforms = {
   accounts: {
-    get: raws => {
+    get: async raws => {
       // NB to prevent parsing encrypted string as JSON
       if (typeof raws === "string") return null;
       const accounts: Array<[Account, AccountUserData]> = [];
       if (raws) {
         for (const raw of raws) {
           try {
-            accounts.push(accountModel.decode(raw));
+            accounts.push(await accountModel.decode(raw));
           } catch (e) {
             logger.critical(e);
           }
@@ -132,7 +134,7 @@ export const getKey = async <
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const transform = transforms[keyPath as keyof Transforms];
   if (transform) {
-    data = transform.get(data);
+    data = await transform.get(data);
   }
   return data;
 };

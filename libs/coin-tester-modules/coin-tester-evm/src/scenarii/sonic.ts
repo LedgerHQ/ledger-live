@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -13,14 +12,11 @@ import { VITALIK, callMyDealer, getBridges, sonic } from "../helpers";
 import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { BRIDGED_USDC_ON_SONIC } from "../tokenFixtures";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const usdcOnSonic = findTokenById(
-  "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
-);
-if (!usdcOnSonic) throw new Error("USDC on Sonic token not found");
-const USDC_ON_SONIC = usdcOnSonic;
+const USDC_ON_SONIC = BRIDGED_USDC_ON_SONIC;
 
 const makeScenarioTransactions = ({ address }: { address: string }): SonicScenarioTransaction[] => {
   const scenarioSendSTransaction: SonicScenarioTransaction = {

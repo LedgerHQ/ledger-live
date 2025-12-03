@@ -1,6 +1,6 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import i18next from "i18next";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,9 +13,10 @@ import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
 import { isModelSupported } from "./SendRowsCustom";
+import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
+  NativeStackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
 >;
 
 function SolanaEditMemo({ navigation, route }: NavigationProps) {
@@ -40,8 +41,8 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
         },
       },
     });
-    // @ts-expect-error FIXME: no current / next navigation param?
-    navigation.navigate(ScreenName.SendSummary, {
+
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: nextTx,
     });
@@ -84,7 +85,7 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 
 export { SolanaEditMemo as component, options };

@@ -7,10 +7,12 @@ import { createAggregator } from "./aggregator";
 
 import accounts from "./modules/accounts";
 import accountNames from "./modules/accountNames";
+import recentAddresses from "./modules/recentAddresses";
 
 const modules = {
   accounts,
   accountNames,
+  recentAddresses,
 };
 
 /**

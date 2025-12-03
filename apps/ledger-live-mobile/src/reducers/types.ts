@@ -33,8 +33,8 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { ToolsState } from "./tools";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { LLMRTKApiState } from "~/context/rtkQueryApi";
+import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -141,7 +141,7 @@ export type DynamicContentState = {
   categoriesCards: CategoryContentCard[];
   /** Dynamic content cards displayed in the landing page as sticky CTA */
   landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
-  /** Dynamic content cards for Ledger Live Mobile */
+  /** Dynamic content cards for Ledger Wallet Mobile */
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
@@ -227,6 +227,8 @@ export type SettingsState = {
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
   isOnboardingFlow: boolean;
+  isOnboardingFlowReceiveSuccess: boolean;
+  isPostOnboardingFlow: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
@@ -276,7 +278,6 @@ export type SettingsState = {
   hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
-    hasClosedNetworkBanner: boolean;
     hasClosedWithdrawBanner: boolean;
   };
   userNps: number | null;
@@ -377,10 +378,9 @@ export type LargeMoverState = {
 
 // === ROOT STATE ===
 
-export type State = {
+export type State = LLMRTKApiState & {
   accounts: AccountsState;
   appstate: AppState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
@@ -390,7 +390,7 @@ export type State = {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
-  tools: ToolsState;
+  receiveOptionsDrawer: ReceiveOptionsDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

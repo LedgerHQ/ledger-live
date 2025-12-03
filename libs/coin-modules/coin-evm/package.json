@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.32.0",
+  "version": "2.35.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -71,10 +71,10 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
-    "ethers": "6.15.0",
+    "ethers": "catalog:",
     "expect": "^27.4.6",
     "imurmurhash": "^0.1.4",
     "invariant": "^2.2.2",

@@ -12,10 +12,6 @@ import messageInCAL from "../../fixtures/messages/2.json";
 const CAL = jest.requireActual("../../fixtures/CAL").default;
 
 jest.mock("axios");
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712", () => require("../../fixtures/CAL"));
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2", () =>
-  require("../../fixtures/CAL"),
-);
 
 describe("evm-tools", () => {
   describe("message", () => {
@@ -114,7 +110,13 @@ describe("evm-tools", () => {
             data: dynamicCALWithNoMatch,
           });
 
-          const result = await getFiltersForMessage(messageInCAL, false, "http://CAL-ADDRESS");
+          const result = await getFiltersForMessage(
+            messageInCAL,
+            false,
+            "http://CAL-ADDRESS",
+            null,
+            CAL,
+          );
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
           expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
@@ -195,14 +197,20 @@ describe("evm-tools", () => {
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
-          const result = await getFiltersForMessage(messageInCAL);
+          const result = await getFiltersForMessage(
+            messageInCAL,
+            false,
+            "http://CAL-ADDRESS",
+            null,
+            CAL,
+          );
           expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
 
         it("should find the filters for a message in static CAL if no dynamic CAL URI is provided", async () => {
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
-          const result = await getFiltersForMessage(messageInCAL);
+          const result = await getFiltersForMessage(messageInCAL, false, null, null, CAL);
           expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
 
@@ -210,7 +218,13 @@ describe("evm-tools", () => {
           (axios.get as jest.Mock).mockRejectedValue(new Error());
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
-          const result = await getFiltersForMessage(messageInCAL, false, "http://CAL-ADDRESS");
+          const result = await getFiltersForMessage(
+            messageInCAL,
+            false,
+            "http://CAL-ADDRESS",
+            null,
+            CAL,
+          );
           expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
       });
@@ -230,7 +244,7 @@ describe("evm-tools", () => {
         });
 
         it("should return the correct fields for a message with filters", async () => {
-          const fields = await getEIP712FieldsDisplayedOnNano(messageInCAL);
+          const fields = await getEIP712FieldsDisplayedOnNano(messageInCAL, undefined, null, CAL);
 
           expect(fields).toEqual([
             {
@@ -288,7 +302,7 @@ describe("evm-tools", () => {
         });
 
         it("should return the correct fields for a message with multidimensional filters", async () => {
-          const fields = await getEIP712FieldsDisplayedOnNano(complexMessage);
+          const fields = await getEIP712FieldsDisplayedOnNano(complexMessage, undefined, null, CAL);
 
           expect(fields).toEqual([
             {

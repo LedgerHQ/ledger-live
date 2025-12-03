@@ -106,6 +106,7 @@ describe("api/index", () => {
         block: { height: 1 },
         fees: 1n,
         date: new Date(),
+        failed: false,
       },
     };
     const mockListOperations = jest

@@ -18,8 +18,7 @@ import { inferDescriptorFromAccount, AccountDescriptor } from "@ledgerhq/coin-bi
 import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 setSupportedCurrencies(["bitcoin"]);
 jest.setTimeout(10000);
@@ -192,18 +191,21 @@ describe("parseSatStackConfig", () => {
   });
 });
 describe("stringifySatStackConfig", () => {
-  test("stringify config with accounts", () => {
+  test("stringify config with accounts", async () => {
+    const accounts = await Promise.all(
+      (dataset.accounts || []).map(async a => {
+        const account = await fromAccountRaw(a.raw);
+        return inferDescriptorFromAccount(account);
+      }),
+    );
+
     expect(
       stringifySatStackConfig({
         node: mockConfig,
         extra: {
           foo: "bar",
         },
-        accounts: (
-          (dataset.accounts || [])
-            .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
-            .filter(Boolean) as AccountDescriptor[]
-        ).map((descriptor, i) => ({
+        accounts: (accounts.filter(Boolean) as AccountDescriptor[]).map((descriptor, i) => ({
           descriptor,
           extra: {
             i,
@@ -231,27 +233,36 @@ describe("stringifySatStackConfig", () => {
 }`);
   });
 });
+
 describe("editSatStackConfig", () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  setCryptoAssetsStoreForCoinFramework({
-    findTokenById: (_: string) => undefined,
-    findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-  } as CryptoAssetsStore);
-  const config = {
-    node: { ...mockConfig, tls: false },
-    extra: {
-      foo: "bar",
-    },
-    accounts: (dataset.accounts || [])
-      .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
-      .filter(Boolean)
-      .map((descriptor, i) => ({
+  setupMockCryptoAssetsStore({
+    getTokensSyncHash: async () => "0",
+  });
+
+  let config: any;
+
+  beforeAll(async () => {
+    const accounts = await Promise.all(
+      (dataset.accounts || []).map(async a => {
+        const account = await fromAccountRaw(a.raw);
+        return inferDescriptorFromAccount(account);
+      }),
+    );
+
+    config = {
+      node: { ...mockConfig, tls: false },
+      extra: {
+        foo: "bar",
+      },
+      accounts: (accounts.filter(Boolean) as AccountDescriptor[]).map((descriptor, i) => ({
         descriptor,
         extra: {
           i,
         },
       })),
-  };
+    };
+  });
+
   test("restore identity", () => {
     expect(parseSatStackConfig(stringifySatStackConfig(config as SatStackConfig))).toEqual(config);
   });

@@ -13,6 +13,9 @@ import {
   LanguagePackageResponseEntity,
 } from "../entities/LanguagePackageEntity";
 import { getProviderIdUseCase } from "../use-cases/getProviderIdUseCase";
+import { LocalTracer } from "@ledgerhq/logs";
+
+const tracer = new LocalTracer("live-dmk-tracer", { function: "HttpManagerApiRepository" });
 
 export class HttpManagerApiRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -29,6 +32,9 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   readonly fetchLatestFirmware: ManagerApiRepository["fetchLatestFirmware"] = makeLRUCache(
     async ({ current_se_firmware_final_version, device_version, providerId, userId }) => {
       const salt = getUserHashes(userId).firmwareSalt;
+      tracer.trace("Fetch latest firmware", {
+        salt,
+      });
       const {
         data,
       }: {

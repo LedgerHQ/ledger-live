@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester",
-  "version": "0.10.1",
+  "version": "0.12.0",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
   "scripts": {
@@ -13,9 +13,10 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
     "lodash": "^4.17.21",

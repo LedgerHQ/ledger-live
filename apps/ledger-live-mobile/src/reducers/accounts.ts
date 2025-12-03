@@ -188,13 +188,10 @@ export const accountsTuplesByCurrencySelector = createSelector(
   walletSelector,
   accountsSelector,
   (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
-  (_: State, currency: CryptoCurrency | TokenCurrency, accountIds?: Map<string, boolean>) =>
-    accountIds,
   (
     wallet,
     accounts,
     currency,
-    accountIds,
   ): { account: AccountLike; subAccount: TokenAccount | null; name: string }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
@@ -219,10 +216,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
     }
 
     return accounts
-      .filter(
-        account =>
-          account.currency.id === currency.id && (accountIds ? accountIds.has(account.id) : true),
-      )
+      .filter(account => account.currency.id === currency.id)
       .map(account => ({
         name: accountNameWithDefaultSelector(wallet, account),
         account,
@@ -242,10 +236,10 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
 
 const emptyTuples: ReturnType<typeof accountsTuplesByCurrencySelector> = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoOrTokenCurrency, accountIds?: Map<string, boolean>) => (state: State) => {
+  (currency: CryptoOrTokenCurrency) => (state: State) => {
     // TODO look if we can remove this check as the types should already protect here
     if (!currency) return emptyTuples;
-    return accountsTuplesByCurrencySelector(state, currency, accountIds);
+    return accountsTuplesByCurrencySelector(state, currency);
   };
 
 const emptyArray: AccountLike[] = [];

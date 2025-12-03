@@ -22,12 +22,14 @@ import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
+import ModularDrawer from "./drawer/modular.drawer";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
-import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { initTestAccounts } from "../models/currencies";
 import { setupEnvironment } from "../helpers/commonHelpers";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 setupEnvironment();
 
@@ -35,6 +37,7 @@ type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testedCurrencies?: string[];
+  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
 const lazyInit = <T>(PageClass: new () => T) => {
@@ -71,14 +74,24 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private transferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
+  private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
-  public async init({ userdata, knownDevices, testedCurrencies }: ApplicationOptions) {
+  public async init({
+    userdata,
+    knownDevices,
+    testedCurrencies,
+    featureFlags,
+  }: ApplicationOptions) {
     userdata && (await loadConfig(userdata, true));
 
     knownDevices && (await loadBleState({ knownDevices }));
     if (testedCurrencies) {
       this.testAccounts = initTestAccounts(testedCurrencies);
       await loadAccounts(this.testAccounts);
+    }
+
+    if (featureFlags) {
+      await setFeatureFlags(featureFlags);
     }
   }
 
@@ -176,5 +189,9 @@ export class Application {
 
   public get walletTabNavigator() {
     return this.walletTabNavigatorPageInstance();
+  }
+
+  public get modularDrawer() {
+    return this.modularDrawerPageInstance();
   }
 }

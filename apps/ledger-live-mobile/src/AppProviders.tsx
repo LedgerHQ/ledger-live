@@ -4,10 +4,9 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
-import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
+import GlobalDrawers from "./GlobalDrawers";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import React from "react";
-import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
@@ -26,26 +25,24 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BridgeSyncProvider>
-        <WalletSyncProvider>
-          <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
-            <CountervaluesMarketcapBridgedProvider>
-              <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                <BottomSheetModalProvider>
-                  <PostOnboardingProviderWrapped>
-                    <NotificationsProvider>
-                      <SnackbarContainer />
-                      <InViewProvider>
-                        <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                      </InViewProvider>
-                    </NotificationsProvider>
-                  </PostOnboardingProviderWrapped>
-                </BottomSheetModalProvider>
-              </CountervaluesBridgedProvider>
-            </CountervaluesMarketcapBridgedProvider>
-          </DeviceManagementKitProvider>
-        </WalletSyncProvider>
-      </BridgeSyncProvider>
+      <WalletSyncProvider>
+        <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
+          <CountervaluesMarketcapBridgedProvider>
+            <CountervaluesBridgedProvider initialState={initialCountervalues}>
+              <BottomSheetModalProvider>
+                <PostOnboardingProviderWrapped>
+                  <NotificationsProvider>
+                    <SnackbarContainer />
+                    <InViewProvider>
+                      <GlobalDrawers>{children}</GlobalDrawers>
+                    </InViewProvider>
+                  </NotificationsProvider>
+                </PostOnboardingProviderWrapped>
+              </BottomSheetModalProvider>
+            </CountervaluesBridgedProvider>
+          </CountervaluesMarketcapBridgedProvider>
+        </DeviceManagementKitProvider>
+      </WalletSyncProvider>
     </QueryClientProvider>
   );
 }

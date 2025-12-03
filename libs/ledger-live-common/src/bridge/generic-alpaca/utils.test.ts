@@ -1,5 +1,7 @@
 import {
   adaptCoreOperationToLiveOperation,
+  buildOptimisticOperation,
+  cleanedOperation,
   extractBalance,
   findCryptoCurrencyByNetwork,
   transactionToIntent,
@@ -7,9 +9,243 @@ import {
 import BigNumber from "bignumber.js";
 import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
-import { GenericTransaction } from "./types";
+import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("buildOptimisticOperation", () => {
+    it.each([
+      [
+        "coin",
+        "changeTrust",
+        {},
+        {
+          parentType: "OPT_IN",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "delegate",
+        {},
+        {
+          parentType: "DELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "stake",
+        {},
+        {
+          parentType: "DELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "undelegate",
+        {},
+        {
+          parentType: "UNDELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "unstake",
+        {},
+        {
+          parentType: "UNDELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
+        "send",
+        {},
+        {
+          parentType: "OUT",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "token",
+        "changeTrust",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "OPT_IN",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "delegate",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "DELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "stake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "DELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "undelegate",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "unstake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "send",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "OUT",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+    ])("builds an optimistic %s operation with %s mode ", (_s, mode, params, expected) => {
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+          subAccounts: [{ id: "sub-account-id", token: { contractAddress: "contract-address" } }],
+        } as Account,
+        {
+          mode,
+          amount: new BigNumber(50),
+          fees: new BigNumber(12),
+          recipient: "recipient-address",
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
+          ...params,
+        } as GenericTransaction,
+        3n,
+      );
+
+      expect(operation).toMatchObject({
+        id: `parent-account-id--${expected.parentType}`,
+        transactionSequenceNumber: new BigNumber(3),
+        type: expected.parentType,
+        value: expected.parentValue,
+        accountId: "parent-account-id",
+        senders: ["account-address"],
+        recipients: ["recipient-address"],
+        fee: new BigNumber(12),
+        blockHash: null,
+        blockHeight: null,
+        transactionRaw: {
+          amount: expected.subType ? "0" : expected.parentValue.toFixed(),
+          fees: "12",
+          recipient: expected.parentRecipient,
+          recipientDomain: {
+            registry: "ens",
+            domain: "recipient.eth",
+            address: "recipient-address",
+            type: "forward",
+          },
+        },
+        ...(expected.subType
+          ? {
+              subOperations: [
+                {
+                  id: `sub-account-id--${expected.subType}`,
+                  transactionSequenceNumber: new BigNumber(3),
+                  accountId: "sub-account-id",
+                  type: expected.subType,
+                  senders: ["account-address"],
+                  recipients: ["recipient-address"],
+                  value: new BigNumber(50),
+                  blockHash: null,
+                  blockHeight: null,
+                  transactionRaw: {
+                    amount: "50",
+                    fees: "12",
+                    recipient: "recipient-address",
+                  },
+                },
+              ],
+            }
+          : {}),
+      });
+    });
+  });
+
+  describe("cleanedOperation", () => {
+    it("creates a cleaned version of an operation without mutating it", () => {
+      const dirty = {
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { assetAmount: 5, assetReference: "USDC", paginationToken: "pagination" },
+      } as unknown as OperationCommon;
+
+      const clean = cleanedOperation(dirty);
+
+      expect(clean).toEqual({
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { paginationToken: "pagination" },
+      });
+      expect(dirty).toEqual({
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { assetAmount: 5, assetReference: "USDC", paginationToken: "pagination" },
+      });
+    });
+  });
+
   describe("transactionToIntent", () => {
     describe("type", () => {
       it("fallbacks to 'Payment' without a transaction mode", () => {
@@ -131,6 +367,7 @@ describe("Alpaca utils", () => {
           height: 123456,
         },
         date: new Date("2025-08-29T12:00:00Z"),
+        failed: false,
       },
       senders: ["sender1"],
       recipients: ["recipient1"],
@@ -151,6 +388,7 @@ describe("Alpaca utils", () => {
               height: 123456,
             },
             date: new Date("2025-08-29T12:00:00Z"),
+            failed: false,
           },
           senders: ["sender"],
           recipients: ["recipient"],
@@ -197,18 +435,21 @@ describe("Alpaca utils", () => {
       });
     });
 
-    it("handles FEES operation where value = value + fees", () => {
-      const op = {
-        ...baseOp,
-        type: "FEES",
-        value: BigInt(5),
-        tx: { ...baseOp.tx, fees: BigInt(2) },
-      };
+    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"]])(
+      "handles %s operation where value = value + fees",
+      operationType => {
+        const op = {
+          ...baseOp,
+          type: operationType,
+          value: BigInt(5),
+          tx: { ...baseOp.tx, fees: BigInt(2) },
+        };
 
-      const result = adaptCoreOperationToLiveOperation(accountId, op);
+        const result = adaptCoreOperationToLiveOperation(accountId, op);
 
-      expect(result.value.toString()).toEqual("7");
-    });
+        expect(result.value.toString()).toEqual("7");
+      },
+    );
 
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
@@ -221,6 +462,23 @@ describe("Alpaca utils", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, op);
 
       expect(result.value.toString()).toEqual("50");
+    });
+
+    it("shows fees in value when transaction has failed", () => {
+      const failedOp = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(100),
+        tx: { ...baseOp.tx, fees: BigInt(25), failed: true },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, failedOp);
+
+      expect(result).toMatchObject({
+        hasFailed: true,
+        value: new BigNumber(25),
+        fee: new BigNumber(25),
+      });
     });
   });
 });

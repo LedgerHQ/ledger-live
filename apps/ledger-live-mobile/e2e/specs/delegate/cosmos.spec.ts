@@ -12,6 +12,7 @@ import BigNumber from "bignumber.js";
 describe("Cosmos delegate flow", () => {
   let deviceAction: DeviceAction;
   const testedCurrency = "cosmos";
+  const testedTicker = "ATOM";
   const defaultProvider = "Ledger";
   const knownDevice = knownDevices.nanoX;
 
@@ -47,8 +48,9 @@ describe("Cosmos delegate flow", () => {
       .integerValue(BigNumber.ROUND_CEIL);
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
-    await app.stake.selectCurrency(testedCurrency);
-    await app.common.selectAccount(testAccount.id);
+    await app.modularDrawer.performSearchByTicker(testedTicker);
+    await app.modularDrawer.selectCurrencyByTicker(testedTicker);
+    await app.modularDrawer.selectAccount(0);
 
     await app.stake.setAmountPercent(testedCurrency, delegatedPercent);
     await app.stake.expectRemainingAmount(

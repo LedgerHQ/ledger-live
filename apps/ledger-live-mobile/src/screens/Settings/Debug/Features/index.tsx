@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
@@ -10,13 +10,16 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
+import InfoModal from "~/modals/Info";
 
 export default function Features() {
+  const [showBaseModalDemo, setShowBaseModalDemo] = useState(false);
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const navigateToLargeMover = () => {
     navigation.navigate(ScreenName.LargeMoverLandingPage, {
       currencyIds: "BTC,ETH,SOL",
       initialRange: InitialRange.Day,
+      ledgerIds: "bitcoin,ethereum,solana,ethereum/erc20/usd__coin,ethereum/erc20/wrapped_bitcoin",
     });
   };
   return (
@@ -74,10 +77,16 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugVideos)}
       />
       <SettingsRow
-        title="Storyly"
-        desc="Remote video slides (stories) used on the new onboarding"
-        iconLeft={<IconsLegacy.InstagramMedium size={24} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
+        title="Tooltip"
+        desc="Open a screen that demonstrates a tooltip"
+        iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTooltip)}
+      />
+      <SettingsRow
+        title="BaseModal demo"
+        desc="Opens InfoModal (BaseModal-based)"
+        iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}
+        onPress={() => setShowBaseModalDemo(true)}
       />
 
       <SettingsRow
@@ -131,6 +140,16 @@ export default function Features() {
           onPress={() => navigation.navigate(ScreenName.DebugModularAssetDrawer)}
         />
       </FeatureToggle>
+      <InfoModal
+        isOpened={showBaseModalDemo}
+        onClose={() => setShowBaseModalDemo(false)}
+        data={[
+          {
+            title: "Demo title",
+            description: "This InfoModal uses BaseModal under the hood.",
+          },
+        ]}
+      />
     </SettingsNavigationScrollView>
   );
 }

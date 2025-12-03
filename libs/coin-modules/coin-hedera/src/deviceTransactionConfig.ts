@@ -1,9 +1,10 @@
-import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { isTokenAssociateTransaction } from "./logic";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import { HEDERA_TRANSACTION_MODES } from "./constants";
+import { isTokenAssociateTransaction } from "./logic/utils";
+import type { Transaction, TransactionStatus } from "./types";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
   status: { estimatedFees },
 }: {
@@ -11,7 +12,7 @@ function getDeviceTransactionConfig({
   parentAccount?: Account;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
 
   const method = (() => {
@@ -37,6 +38,14 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "fees",
       label: "Fees",
+    });
+  }
+
+  if (transaction.mode === HEDERA_TRANSACTION_MODES.Send && transaction.gasLimit) {
+    fields.push({
+      type: "text",
+      label: "Gas Limit",
+      value: transaction.gasLimit.toString(),
     });
   }
 

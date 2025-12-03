@@ -1,25 +1,25 @@
-import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo } from "react";
-import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useSuiMappedStakingPositions } from "@ledgerhq/live-common/families/sui/react";
 import type { MappedStake, SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { Account } from "@ledgerhq/types-live";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Linking, StyleSheet, View } from "react-native";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
-import DelegationDrawer from "~/components/DelegationDrawer";
-import type { IconProps } from "~/components/DelegationDrawer";
-import Touchable from "~/components/Touchable";
-import { rgba } from "../../../colors";
-import { ScreenName, NavigatorName } from "~/const";
 import Circle from "~/components/Circle";
+import type { IconProps } from "~/components/DelegationDrawer";
+import DelegationDrawer from "~/components/DelegationDrawer";
 import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
+import { NavigatorName, ScreenName } from "~/const";
 import UndelegateIcon from "~/icons/Undelegate";
-import StakingPositionRow from "./Row";
+import { rgba } from "../../../colors";
 import LabelRight from "./LabelRight";
+import StakingPositionRow from "./Row";
 import ValidatorImageWrapper from "./ValidatorImageWrapper";
 
 const UnstakeActionIcon =
@@ -40,11 +40,11 @@ type DelegationDrawerActions = DelegationDrawerProps["actions"];
 function StakingPositions({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account) as SuiAccount;
+  const mainAccount = getMainAccount(account);
   const stakingPositions = useSuiMappedStakingPositions(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
 
   const [stakingPosition, setStakingPosition] = useState<MappedStake>();
 
@@ -59,7 +59,7 @@ function StakingPositions({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setStakingPosition(undefined);
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      navigation.navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });
@@ -117,6 +117,20 @@ function StakingPositions({ account }: Props) {
                   {stakingPosition.validator.name}
                 </LText>
               </Touchable>
+            ),
+          },
+          {
+            label: t("sui.info.estimatedReward"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText]}
+                color="live"
+              >
+                {stakingPosition.formattedEstimatedReward}
+              </LText>
             ),
           },
           {

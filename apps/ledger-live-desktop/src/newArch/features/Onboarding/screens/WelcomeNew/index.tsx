@@ -73,7 +73,7 @@ export function WelcomeNew() {
       <ContentOverlay>
         <TopSection>
           <Box onClick={() => handleOpenFeatureFlagsDrawer("1")}>
-            <Logos.LedgerLiveRegular color={colors.neutral.c100} />
+            <Logos.LedgerLiveRegular color={colors.neutral.c100} height={32} />
           </Box>
           <ProgressBarsContainer onClick={() => handleOpenFeatureFlagsDrawer("2")}>
             {VIDEO_SLIDES.map(({ id }, index) => (

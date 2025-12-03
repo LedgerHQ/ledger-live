@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
@@ -44,7 +45,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
@@ -68,7 +69,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
-      return sequence.plus(1).toNumber();
+      return BigInt(sequence.plus(1).toFixed());
     },
     getTokenFromAsset,
     getAssetFromToken,
@@ -83,6 +84,9 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
         throwIfPendingOperation: true,
       },
     }),
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
   };
 }
 

@@ -7,7 +7,7 @@ import styled, { useTheme } from "styled-components";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { useTranslation } from "react-i18next";
-import { getProductName } from "~/newArch/utils/getProductName";
+import { getProductName } from "LLD/utils/getProductName";
 
 type Props = {
   modelId: DeviceModelId;

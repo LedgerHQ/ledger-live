@@ -26,7 +26,8 @@
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
     "src/synchronization.ts",
-    "src/types/bridge.fixture.ts"
+    "src/types/bridge.fixture.ts",
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": [

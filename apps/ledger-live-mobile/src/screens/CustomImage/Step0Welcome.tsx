@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/core";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
@@ -26,7 +26,7 @@ const analyticsButtonEventProps = {
 };
 
 const Step0Welcome: React.FC<
-  StackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
+  NativeStackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
 > = ({ route }) => {
   const { t } = useTranslation();
 
@@ -85,15 +85,9 @@ const Step0Welcome: React.FC<
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
       <Flex flex={1} mt={8} alignItems={"center"} justifyContent={"space-between"} pb={8}>
-        <Flex my={"auto"}>
+        <Flex my={"auto"} testID="custom-image-welcome-title">
           <Animation source={animationSource} style={{ width: "100%" }} />
-          <Text
-            variant="h4"
-            fontWeight="semiBold"
-            textAlign="center"
-            mt={-10}
-            testID="custom-image-welcome-title"
-          >
+          <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={-10}>
             {t("customImage.landingPage.title", {
               productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
             })}

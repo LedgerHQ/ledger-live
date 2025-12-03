@@ -12,6 +12,7 @@ import {
   saveAccounts,
   saveBle,
   saveCountervalues,
+  saveCryptoAssetsCacheState,
   saveLargeMoverState,
   saveMarketState,
   savePostOnboardingState,
@@ -28,6 +29,7 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
+import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 type MaybeState = Maybe<State>;
 
@@ -127,6 +129,11 @@ const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
+const cryptoAssetsNotEquals = (a: State, b: State) => {
+  // Compare RTK Query state reference
+  return a.cryptoAssetsApi !== b.cryptoAssetsApi;
+};
+
 export const ConfigureDBSaveEffects = () => {
   const getPostOnboardingStateChanged = useCallback(
     (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
@@ -202,6 +209,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: largeMoverNotEquals,
     lense: exportLargeMoverSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveCryptoAssetsCacheState,
+    throttle: 1000,
+    getChangesStats: cryptoAssetsNotEquals,
+    lense: extractPersistedCALFromState,
   });
 
   return null;

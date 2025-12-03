@@ -106,6 +106,7 @@ export enum BleActionTypes {
   BLE_REMOVE_DEVICE = "BLE_REMOVE_DEVICE",
   BLE_REMOVE_DEVICES = "BLE_REMOVE_DEVICES",
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
+  BLE_UPDATE_DEVICE = "BLE_UPDATE_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -114,12 +115,14 @@ export enum BleActionTypes {
 export type BleRemoveKnownDevicePayload = string;
 export type BleRemoveKnownDevicesPayload = string[];
 export type BleAddKnownDevicePayload = DeviceLike;
+export type BleUpdateKnownDevicePayload = DeviceLike;
 export type BleImportBlePayload = BleState;
 export type BleSaveDeviceNamePayload = { deviceId: string; name: string };
 export type BlePayload =
   | BleRemoveKnownDevicePayload
   | BleRemoveKnownDevicesPayload
   | BleAddKnownDevicePayload
+  | BleUpdateKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
 
@@ -263,6 +266,8 @@ export enum SettingsActionTypes {
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
   SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
+  SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS = "SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS",
+  SETTINGS_SET_IS_POST_ONBOARDING_FlOW = "SETTINGS_SET_IS_POST_ONBOARDING_FlOW",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
   SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
@@ -303,7 +308,6 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING = "SET_HAS_BEEN_REDIRECTED_TO_POST_ONBOARDING",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
-  SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
@@ -369,7 +373,6 @@ export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
-export type SettingsSetClosedNetworkBannerPayload = boolean;
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
@@ -396,6 +399,12 @@ export type SettingsSetHasBeenRedirectedToPostOnboardingPayload =
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsIsOnboardingFlowPayload = void | SettingsState["isOnboardingFlow"];
+export type SettingsIsOnboardingFlowReceiveSuccessPayload =
+  | void
+  | SettingsState["isOnboardingFlowReceiveSuccess"];
+
+export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOnboardingFlow"];
+
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
@@ -451,11 +460,12 @@ export type SettingsPayload =
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsIsOnboardingFlowPayload
+  | SettingsIsOnboardingFlowReceiveSuccessPayload
+  | SettingsIsPostOnboardingFlowPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt

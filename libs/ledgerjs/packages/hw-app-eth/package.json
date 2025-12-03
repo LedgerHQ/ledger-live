@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "6.46.0",
+  "version": "6.47.1",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -29,7 +29,6 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/rlp": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
-    "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
@@ -37,7 +36,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "semver": "^7.3.5"
   },

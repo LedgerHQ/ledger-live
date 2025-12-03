@@ -61,7 +61,6 @@ describe("estimateMaxSpendable Test", () => {
 
       const result = await estimateMaxSpendable({
         account,
-        parentAccount: account,
         transaction,
       });
 
@@ -82,7 +81,6 @@ describe("estimateMaxSpendable Test", () => {
 
       const result = await estimateMaxSpendable({
         account,
-        parentAccount: account,
         transaction,
       });
 

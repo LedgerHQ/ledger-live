@@ -139,12 +139,19 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyCantonNetworkDevnet: DefaultFeature;
+  currencyCantonNetworkTestnet: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
   currencyWestend: DefaultFeature;
   currencyAssetHubWestend: DefaultFeature;
   currencyAssetHubPolkadot: DefaultFeature;
+  currencyPolkadot: DefaultFeature;
+  currencyMonad: DefaultFeature;
+  currencyMonadTestnet: DefaultFeature;
+  currencySomnia: DefaultFeature;
+  currencyZeroGravity: DefaultFeature;
 };
 
 /**
@@ -153,6 +160,8 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
+  nanoOnboardingFundWallet: DefaultFeature;
+  mixpanelAnalytics: DefaultFeature;
   welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
@@ -176,6 +185,7 @@ export type Features = CurrencyFeatures & {
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
+  recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
@@ -192,9 +202,10 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
-  ptxEarnDrawerApy: Feature_PtxEarnDrawerApy;
+  ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -212,17 +223,16 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
-  llmMarketQuickActions: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
-  llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lwmLedgerSyncOptimisation: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -232,10 +242,9 @@ export type Features = CurrencyFeatures & {
   lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
+  ldmkSolanaSigner: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
-  llmOfacGeoBlocking: DefaultFeature;
-  lldOfacGeoBlocking: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
     params: Partial<{
@@ -266,7 +275,12 @@ export type Features = CurrencyFeatures & {
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
-  noah: DefaultFeature;
+  cantonSkipPreapprovalStep: DefaultFeature;
+  noah: Feature_Noah;
+  newSendFlow: DefaultFeature;
+  lldSessionReplay: Feature_LldSessionReplay;
+  zcashShielded: DefaultFeature;
+  llmNanoOnboardingFundWallet: DefaultFeature;
 };
 
 /**
@@ -473,6 +487,10 @@ export type Feature_ProtectServicesDesktop = Feature<{
   protectId: string;
 }>;
 
+export type Feature_RecoverUpsellPostOnboarding = Feature<{
+  deviceIds: DeviceModelId[];
+}>;
+
 export type Feature_DeviceInitialApps = Feature<{
   apps: string[];
 }>;
@@ -624,12 +642,14 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+  postOnboarding: boolean;
 }>;
 
 export type Feature_LlNftEntryPoint = Feature<{
@@ -651,7 +671,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-type Feature_ModularDrawer = Feature<{
+export type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
   live_apps_allowlist: string[];
@@ -661,6 +681,10 @@ type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+}>;
+
+export type Feature_Noah = Feature<{
+  activeCurrencyIds: string[];
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -680,7 +704,17 @@ export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
-export type Feature_PtxEarnDrawerApy = DefaultFeature;
+export type Feature_PtxEarnDrawerConfiguration = Feature<{
+  assets?: {
+    filter?: "topNetworks" | "undefined";
+    leftElement?: "apy" | "marketTrend" | "undefined";
+    rightElement?: "balance" | "marketTrend" | "undefined";
+  };
+  networks?: {
+    leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+    rightElement?: "balance" | "undefined";
+  };
+}>;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
@@ -724,3 +758,7 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
+
+export type Feature_LldSessionReplay = Feature<{
+  sampling: number;
+}>;

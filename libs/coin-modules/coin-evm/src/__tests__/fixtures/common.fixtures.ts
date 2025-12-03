@@ -2,11 +2,7 @@
 
 import BigNumber from "bignumber.js";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import {
-  decodeAccountId,
-  decodeTokenAccountId,
-  encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
@@ -114,7 +110,7 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
 export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? accountId.split("+")[0] : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "OUT";
@@ -130,7 +126,7 @@ export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
     senders: [xpubOrAddress],
     recipients: ["0xlmb"],
     accountId,
-    transactionSequenceNumber: 0,
+    transactionSequenceNumber: new BigNumber(0),
     date: new Date(),
     nftOperations: [],
     subOperations: [],
@@ -146,7 +142,7 @@ export const makeNftOperation = (
 ): Operation => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress, currencyId } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? accountId.split("+")[0] : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "NFT_OUT";
@@ -169,7 +165,7 @@ export const makeNftOperation = (
     senders: [xpubOrAddress],
     recipients: ["0xlmb"],
     accountId,
-    transactionSequenceNumber: 0,
+    transactionSequenceNumber: new BigNumber(0),
     date: new Date(),
     extra: {},
     ...partialOp,

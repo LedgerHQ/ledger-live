@@ -1,5 +1,85 @@
 # @ledgerhq/react-ui
 
+## 0.41.1
+
+### Patch Changes
+
+- Updated dependencies [[`42d9805`](https://github.com/LedgerHQ/ledger-live/commit/42d98050de48a1222bfca663dd4b8da7aafa3ee9)]:
+  - @ledgerhq/crypto-icons-ui@1.23.0
+
+## 0.41.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`42d9805`](https://github.com/LedgerHQ/ledger-live/commit/42d98050de48a1222bfca663dd4b8da7aafa3ee9)]:
+  - @ledgerhq/crypto-icons-ui@1.23.0-next.0
+
+## 0.41.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd) Thanks [@thesan](https://github.com/thesan)! - Change Ledger live svg logo to use L Wallet svg logo
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12255](https://github.com/LedgerHQ/ledger-live/pull/12255) [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - enhance icons from Market
+
+- [#12286](https://github.com/LedgerHQ/ledger-live/pull/12286) [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add isNeutral prop and active background choice to vertical timeline
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0
+  - @ledgerhq/ui-shared@0.5.0
+  - @ledgerhq/icons-ui@0.16.0
+
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd) Thanks [@thesan](https://github.com/thesan)! - Change Ledger live svg logo to use L Wallet svg logo
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12255](https://github.com/LedgerHQ/ledger-live/pull/12255) [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - enhance icons from Market
+
+- [#12286](https://github.com/LedgerHQ/ledger-live/pull/12286) [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add isNeutral prop and active background choice to vertical timeline
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0-next.0
+  - @ledgerhq/ui-shared@0.5.0-next.0
+  - @ledgerhq/icons-ui@0.16.0-next.0
+
+## 0.40.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12194](https://github.com/LedgerHQ/ledger-live/pull/12194) [`759b6c3`](https://github.com/LedgerHQ/ledger-live/commit/759b6c3c0ea39bef84ff340f8a3ee0dc8c48f9b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD MAD fix address display
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0
+  - @ledgerhq/icons-ui@0.15.0
+
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12194](https://github.com/LedgerHQ/ledger-live/pull/12194) [`759b6c3`](https://github.com/LedgerHQ/ledger-live/commit/759b6c3c0ea39bef84ff340f8a3ee0dc8c48f9b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD MAD fix address display
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0-next.0
+  - @ledgerhq/icons-ui@0.15.0-next.0
+
 ## 0.39.0
 
 ### Minor Changes

@@ -48,7 +48,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   return {
     ...common,
     family: t.family,
-    fee: t.fee ? t.fee.toString() : null,
+    fee: t.fee ? t.fee.toFixed() : null,
     tokenId: t.tokenId,
   };
 };

@@ -11,6 +11,7 @@ type SwapLiveUrlParams = {
   fromAccountId?: string;
   fromToken?: string;
   amountFrom?: string;
+  affiliate?: string;
 };
 
 const isTokenAccount = (account: AccountLike | TokenAccount): account is TokenAccount =>
@@ -41,6 +42,9 @@ export const useTranslateToSwapAccount = (
     const defaultAccount = params.defaultAccount;
     // @ts-expect-error params.currency comes from market
     const defaultCurrency = params.defaultCurrency || params.currency;
+
+    // Pass through affiliate parameter from deep links
+    if (params.affiliate) newParams.affiliate = params.affiliate;
 
     // A specific account was given
     if (defaultAccount) {
@@ -79,6 +83,6 @@ export const useTranslateToSwapAccount = (
       return newParams;
     }
 
-    return {};
+    return newParams;
   }, [params, walletState, currentAccounts]);
 };

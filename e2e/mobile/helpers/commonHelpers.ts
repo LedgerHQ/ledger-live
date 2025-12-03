@@ -5,6 +5,7 @@ import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { readFile } from "fs/promises";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -57,6 +58,22 @@ export async function addDelayBeforeInteractingWithDevice(
   await delay(process.env.CI ? ciDelay : localDelay);
 }
 
+/**
+ * Creates a regex string for Detox URL blacklisting
+ * @returns Formatted regex string for Detox
+ */
+function createDetoxURLBlacklistRegex(): string {
+  const patterns = [
+    ".*sdk.*.braze.*",
+    ".*.googleapis.com/.*",
+    ".*clients3.google.com.*",
+    ".*tron.coin.ledger.com/wallet/getBrokerage.*",
+    ".*crypto-assets-service.api.ledger.com.*",
+  ];
+
+  return `\\("${patterns.join('","')}"\\)`;
+}
+
 export async function launchApp() {
   const port = await findFreePort();
   closeBridge();
@@ -64,8 +81,7 @@ export async function launchApp() {
   await device.launchApp({
     launchArgs: {
       wsPort: port,
-      detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
+      detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       IS_TEST: true,
@@ -111,6 +127,14 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export async function takeAppScreenshot(screenshotName: string) {
+  const screenshotPath = await device.takeScreenshot(screenshotName);
+  if (screenshotPath) {
+    const screenshotData = await readFile(screenshotPath);
+    await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+  }
+}
 
 export const normalizeText = (text: string) =>
   text

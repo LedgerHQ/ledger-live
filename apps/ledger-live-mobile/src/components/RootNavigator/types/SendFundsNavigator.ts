@@ -10,6 +10,10 @@ import type {
   Transaction as CardanoTransaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import type {
+  CantonAccount,
+  Transaction as CantonTransaction,
+} from "@ledgerhq/live-common/families/canton/types";
+import type {
   Transaction as BitcoinTransaction,
   TransactionStatus as BitcoinTransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -170,6 +174,14 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.CantonEditMemo]: {
+    accountId: string;
+    parentId?: string;
+    account: CantonAccount;
+    transaction: CantonTransaction;
+    currentNavigation: ScreenName.SendSummary;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
+  };
   [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
@@ -286,6 +298,21 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.StellarEditMemoValue]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StellarTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+  };
   [ScreenName.StellarEditMemoType]: {
     accountId: string;
     parentId?: string;
@@ -358,4 +385,5 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.NewSendFlow]: Record<string, object>;
 };

@@ -1,16 +1,12 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
-
-export interface OperationCommon extends Operation {
-  extra: Record<string, any>;
-}
-
-export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
+import { mergeOps } from "../jsHelpers";
+import { cleanedOperation } from "./utils";
+import { OperationCommon } from "./types";
 
 function buildTokenAccount({
   parentAccountId,
@@ -31,13 +27,18 @@ function buildTokenAccount({
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
 
-  const tokenOperations = operations.map(op => ({
-    ...op,
-    id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
-    accountId: id,
-    type: op.extra?.ledgerOpType,
-    value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
-  }));
+  const tokenOperations = operations.map(op =>
+    cleanedOperation({
+      ...op,
+      id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
+      accountId: id,
+      type: op.extra?.ledgerOpType,
+      contract: token.contractAddress,
+      value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
+      senders: op.extra?.assetSenders ?? op.senders,
+      recipients: op.extra?.assetRecipients ?? op.recipients,
+    }),
+  );
 
   return {
     type: "TokenAccount",
@@ -56,14 +57,12 @@ function buildTokenAccount({
 }
 
 export async function buildSubAccounts({
-  currency,
   accountId,
   allTokenAssetsBalances,
   syncConfig,
   operations,
   getTokenFromAsset,
 }: {
-  currency: CryptoCurrency;
   accountId: string;
   allTokenAssetsBalances: Balance[];
   syncConfig: SyncConfig;
@@ -71,15 +70,14 @@ export async function buildSubAccounts({
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
 }): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  const allTokens = listTokensForCryptoCurrency(currency);
   const tokenAccounts: TokenAccount[] = [];
 
-  if (allTokens.length === 0 || allTokenAssetsBalances.length === 0) {
+  if (allTokenAssetsBalances.length === 0 || !getTokenFromAsset) {
     return tokenAccounts;
   }
 
   for (const balance of allTokenAssetsBalances) {
-    const token = getTokenFromAsset && (await getTokenFromAsset(balance.asset));
+    const token = await getTokenFromAsset(balance.asset);
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
       tokenAccounts.push(
@@ -98,4 +96,43 @@ export async function buildSubAccounts({
   }
 
   return tokenAccounts;
+}
+
+export function mergeSubAccounts(
+  oldSubAccounts: Array<TokenAccount>,
+  newSubAccounts: Array<TokenAccount>,
+): Array<TokenAccount> {
+  if (!oldSubAccounts.length) {
+    return newSubAccounts;
+  }
+
+  const oldSubAccountsByTokenId = Object.fromEntries(
+    oldSubAccounts.map(account => [account.token.id, account]),
+  );
+
+  const newSubAccountsToAdd: Array<TokenAccount> = [];
+
+  for (const newSubAccount of newSubAccounts) {
+    const existingSubAccount = oldSubAccountsByTokenId[newSubAccount.token.id];
+
+    if (!existingSubAccount) {
+      // New sub account does not exist yet. Just add it as is.
+      newSubAccountsToAdd.push(newSubAccount);
+      continue;
+    }
+
+    // New sub account is already known, probably outdated
+    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    oldSubAccountsByTokenId[newSubAccount.token.id] = {
+      ...existingSubAccount,
+      balance: newSubAccount.balance,
+      spendableBalance: newSubAccount.spendableBalance,
+      operations,
+      operationsCount: operations.length,
+    };
+  }
+
+  const updatedOldSubAccounts = Object.values(oldSubAccountsByTokenId);
+
+  return [...updatedOldSubAccounts, ...newSubAccountsToAdd];
 }

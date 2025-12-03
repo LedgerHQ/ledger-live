@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.25.0",
+  "version": "24.28.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -40,11 +40,11 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
@@ -73,7 +73,7 @@
     "usb": "*",
     "winston": "3.13.0",
     "ws": "8.17.1",
-    "@zondax/ledger-live-icp": "1.3.2"
+    "@zondax/ledger-live-icp": "1.4.1"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

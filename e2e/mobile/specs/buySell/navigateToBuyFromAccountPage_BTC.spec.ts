@@ -12,7 +12,7 @@ const testConfig = {
   tmsLinks: ["B2CQA-3467"],
   provider: Provider.MOONPAY,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runNavigateToBuyFromAccountPageTest(

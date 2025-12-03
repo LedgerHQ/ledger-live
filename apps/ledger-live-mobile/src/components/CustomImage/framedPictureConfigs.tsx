@@ -108,15 +108,15 @@ export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = 
 };
 
 /*  The dimensions of the Apex device image */
-const APEX_FRAME_WIDTH = 354;
-const APEX_FRAME_HEIGHT = 392;
+const APEX_FRAME_WIDTH = 270;
+const APEX_FRAME_HEIGHT = 397;
 export const apexFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameWidth: APEX_FRAME_WIDTH,
   frameHeight: APEX_FRAME_HEIGHT,
-  innerWidth: 224,
-  innerHeight: 282,
-  innerRight: 66,
-  innerTop: 29,
+  innerWidth: 210,
+  innerHeight: 281,
+  innerRight: 32,
+  innerTop: 28,
   borderRightRadius: 4,
   borderLeftRadius: 4,
   resizeMode: "cover",

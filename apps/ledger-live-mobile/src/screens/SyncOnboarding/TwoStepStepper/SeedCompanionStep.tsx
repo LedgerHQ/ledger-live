@@ -4,8 +4,6 @@ import { Flex, Link, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { TrackScreen, useTrack } from "~/analytics";
 import { Image, Linking } from "react-native";
 import SecretRecoveryPhraseImage from "../assets/srp.png";
-import Stories from "~/components/StorylyStories";
-import { StorylyInstanceID } from "@ledgerhq/types-live";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
@@ -61,13 +59,11 @@ const SeedStep = ({
           <Text variant="h5" fontWeight="semiBold" mb={6}>
             {t("syncOnboarding.seedStep.newSeedTitle")}
           </Text>
-          <BodyText mb={8} textAlign="center">
-            {t("syncOnboarding.seedStep.newSeedDescription", {
-              productName,
-            })}
+          <BodyText mb={2} textAlign="center">
+            {t("syncOnboarding.seedStep.newSeedDescription")}
           </BodyText>
         </Flex>
-        <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
+
         <ContinueOnDeviceWithAnim
           deviceModelId={device.modelId}
           text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ButtonV2 from "~/renderer/components/Button";
-import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import {
@@ -11,7 +9,8 @@ import {
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
+import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
+import { Switch, Button } from "@ledgerhq/ldls-ui-react";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
 import includes from "lodash/includes";
@@ -133,14 +132,13 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             <Text>{t("settings.developer.showButtonDesc")}</Text>
             <Switch
               name="button-feature-flags-visibible"
-              checked={featureFlagsButtonVisible}
+              selected={featureFlagsButtonVisible}
               onChange={setFeatureFlagButtonVisible}
             />
           </Flex>
           <Button
-            alignSelf={"flex-start"}
-            mt={3}
-            variant="color"
+            style={{ alignSelf: "flex-start", marginTop: 12 }}
+            appearance="accent"
             onClick={resetFeatures}
             disabled={!hasLocallyOverriddenFlags}
           >
@@ -186,9 +184,9 @@ const FeatureFlagsSettings = () => {
       childrenContainerStyle={{ alignSelf: contentExpanded ? "flex-start" : "center" }}
       desc={<FeatureFlagContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={toggleContentVisibility}>
+      <Button size="sm" appearance="accent" onClick={toggleContentVisibility}>
         {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
-      </ButtonV2>
+      </Button>
     </Row>
   );
 };

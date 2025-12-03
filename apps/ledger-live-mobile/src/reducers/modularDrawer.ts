@@ -1,15 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MODULAR_DRAWER_KEY } from "LLM/features/ModularDrawer/types";
+import { MODULAR_DRAWER_KEY, ModularDrawerStep } from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { ModularDrawerStep } from "~/newArch/features/ModularDrawer/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;
   preselectedCurrencies: string[];
   callbackId?: string;
   enableAccountSelection?: boolean;
-  accountsObservableId?: string;
   flow: string;
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -25,7 +23,6 @@ export const INITIAL_STATE: ModularDrawerState = {
   preselectedCurrencies: [],
   callbackId: undefined,
   enableAccountSelection: false,
-  accountsObservableId: undefined,
   flow: "",
   source: "",
   assetsConfiguration: {
@@ -62,7 +59,6 @@ const modularDrawerSlice = createSlice({
         currencies?: string[];
         callbackId?: string;
         enableAccountSelection?: boolean;
-        accountsObservableId?: string;
         flow?: string;
         source?: string;
         assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -78,7 +74,6 @@ const modularDrawerSlice = createSlice({
         currencies,
         callbackId,
         enableAccountSelection,
-        accountsObservableId,
         flow,
         source,
         assetsConfiguration,
@@ -96,9 +91,6 @@ const modularDrawerSlice = createSlice({
       }
       if (enableAccountSelection !== undefined) {
         state.enableAccountSelection = enableAccountSelection;
-      }
-      if (accountsObservableId !== undefined) {
-        state.accountsObservableId = accountsObservableId;
       }
       if (flow !== undefined) {
         state.flow = flow;
@@ -127,7 +119,6 @@ const modularDrawerSlice = createSlice({
       state.preselectedCurrencies = [];
       state.callbackId = undefined;
       state.enableAccountSelection = false;
-      state.accountsObservableId = undefined;
       state.flow = "";
       state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
@@ -140,9 +131,6 @@ const modularDrawerSlice = createSlice({
 
     setCallbackId: (state, action: PayloadAction<string | undefined>) => {
       state.callbackId = action.payload;
-    },
-    setAccountsObservableId: (state, action: PayloadAction<string | undefined>) => {
-      state.accountsObservableId = action.payload;
     },
     setAssetsConfiguration: (
       state,

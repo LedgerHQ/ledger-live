@@ -1,7 +1,10 @@
 import { faker } from "@faker-js/faker";
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
@@ -30,6 +33,28 @@ describe("scanAccounts", () => {
   const currency = getCryptoCurrencyById("vechain");
 
   beforeAll(() => {
+    const vthoToken: TokenCurrency = {
+      type: "TokenCurrency",
+      id: "vechain/vip180/vtho",
+      contractAddress: "0x0000000000000000000000000000456E65726779",
+      parentCurrency: currency,
+      tokenType: "vip180",
+      name: "VeThor",
+      ticker: "VTHO",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "VeThor", code: "VTHO", magnitude: 18 }],
+    };
+
+    setupMockCryptoAssetsStore({
+      findTokenById: async (id: string) => {
+        if (id === "vechain/vip180/vtho") {
+          return vthoToken;
+        }
+        return undefined;
+      },
+    });
+
     setupServer().listen({ onUnhandledRequest: "error" });
   });
 
@@ -53,6 +78,9 @@ describe("scanAccounts", () => {
     mockGetLastBlockHeight.mockResolvedValueOnce(blockHeight);
     mockGetOperations.mockResolvedValueOnce([]);
     mockGetTokenOperations.mockResolvedValueOnce([]);
+
+    // Get the token asynchronously
+    const vthoToken = await getCryptoAssetsStore().findTokenById("vechain/vip180/vtho");
 
     // When
     const scanAccounts = makeScanAccounts({
@@ -102,13 +130,13 @@ describe("scanAccounts", () => {
         swapHistory: [],
         type: "Account",
         used: false,
-        feesCurrency: findTokenById("vechain/vip180/vtho"),
+        feesCurrency: vthoToken,
         subAccounts: [
           {
             type: "TokenAccount",
             id: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain+vechain%2Fvip180%2Fvtho",
             parentId: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
-            token: findTokenById("vechain/vip180/vtho"),
+            token: vthoToken,
             balance: new BigNumber("0"),
             spendableBalance: new BigNumber("0"),
             creationDate: expect.any(Date),

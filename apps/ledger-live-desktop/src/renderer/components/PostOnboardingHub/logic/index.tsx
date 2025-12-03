@@ -1,29 +1,13 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
+import {
+  PostOnboardingAction,
+  PostOnboardingActionId,
+  StartActionArgs,
+} from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
 import CustomImage from "~/renderer/screens/customImage";
-import { getStoreValue } from "~/renderer/store";
-
-const customImage: PostOnboardingAction = {
-  id: PostOnboardingActionId.customImage,
-  Icon: Icons.PictureImage,
-  title: "customImage.postOnboarding.title",
-  titleCompleted: "customImage.postOnboarding.title",
-  description: "customImage.postOnboarding.description",
-  actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: ({ deviceModelId }) =>
-    setDrawer(
-      CustomImage,
-      {
-        isFromPostOnboardingEntryPoint: true,
-        deviceModelId,
-      },
-      { forceDisableFocusTrap: true },
-    ),
-  buttonLabelForAnalyticsEvent: "Set lock screen picture",
-};
 
 const assetsTransfer: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -34,7 +18,10 @@ const assetsTransfer: PostOnboardingAction = {
   description: "postOnboarding.actions.assetsTransfer.description",
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  startAction: ({ openModalCallback }) => openModalCallback("MODAL_RECEIVE"),
+  startAction: ({ openModalCallback }: StartActionArgs) => openModalCallback?.("MODAL_RECEIVE"),
+  getIsAlreadyCompletedByState: ({ accounts }) => {
+    return !!accounts && accounts.some(account => account?.balance.isGreaterThan(0));
+  },
 };
 
 const buyCrypto: PostOnboardingAction = {
@@ -46,25 +33,45 @@ const buyCrypto: PostOnboardingAction = {
   actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
   buttonLabelForAnalyticsEvent: "Buy Crypto",
   shouldCompleteOnStart: true,
-  startAction: ({ navigationCallback }) => navigationCallback({ pathname: "/exchange" }),
+  startAction: ({ navigationCallback }: StartActionArgs) =>
+    navigationCallback?.({ pathname: "/exchange" }),
 };
 
-const recover: PostOnboardingAction = {
-  id: PostOnboardingActionId.recover,
-  Icon: Icons.ShieldCheck,
-  title: "postOnboarding.actions.recover.title",
-  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
-  description: "postOnboarding.actions.recover.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
-  buttonLabelForAnalyticsEvent: "Subscribe to Recover",
-  shouldCompleteOnStart: true,
-  getIsAlreadyCompleted: async ({ protectId }) => {
-    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
-
-    return recoverSubscriptionState === "BACKUP_DONE";
+const syncAccounts: PostOnboardingAction = {
+  id: PostOnboardingActionId.syncAccounts,
+  featureFlagId: "lldLedgerSyncEntryPoints",
+  featureFlagParamId: "postOnboarding",
+  Icon: Icons.Refresh,
+  title: "postOnboarding.actions.syncAccounts.title",
+  titleCompleted: "postOnboarding.actions.syncAccounts.titleCompleted",
+  description: "postOnboarding.actions.syncAccounts.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.syncAccounts.popupLabel",
+  buttonLabelForAnalyticsEvent: "Sync accounts",
+  startAction: ({ openActivationDrawer }: StartActionArgs) => {
+    openActivationDrawer?.();
   },
-  startAction: ({ navigationCallback, protectId }) =>
-    navigationCallback(`/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`),
+  getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
+    return !!isLedgerSyncActive;
+  },
+};
+
+const customImage: PostOnboardingAction = {
+  id: PostOnboardingActionId.customImage,
+  Icon: Icons.PictureImage,
+  title: "customImage.postOnboarding.title",
+  titleCompleted: "customImage.postOnboarding.title",
+  description: "customImage.postOnboarding.description",
+  actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
+  startAction: ({ deviceModelId }: StartActionArgs) =>
+    setDrawer(
+      CustomImage,
+      {
+        isFromPostOnboardingEntryPoint: true,
+        deviceModelId: deviceModelId || null,
+      },
+      { forceDisableFocusTrap: true },
+    ),
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
 const claimMock: PostOnboardingAction = {
@@ -134,51 +141,34 @@ const buyCryptoMock: PostOnboardingAction = {
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.buyCryptoMock }),
 };
 
-const recoverMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.recoverMock,
-  Icon: Icons.ShieldCheck,
-  title: "postOnboarding.actions.recover.title",
-  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
-  description: "postOnboarding.actions.recover.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
-  startAction: () =>
-    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.recoverMock }),
-};
-
 /**
  * All implemented post onboarding actions.
  */
 const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
-  claimMock,
-  personalizeMock,
-  migrateAssetsMock,
-  customImage,
   assetsTransfer,
   buyCrypto,
-  recover,
+  syncAccounts,
+  customImage,
+  // Mocks for desktop development and tests
   assetsTransferMock,
   buyCryptoMock,
   customImageMock,
-  recoverMock,
+  claimMock,
+  personalizeMock,
+  migrateAssetsMock,
 };
 
-/**
- * Mock of post onboarding actions for DeviceModelId.stax
- */
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
   personalizeMock,
   migrateAssetsMock,
+  syncAccounts,
 ];
 
-/**
- * Mock of post onboarding actions for DeviceModelId.europa
- */
 const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   buyCryptoMock,
   customImageMock,
-  recoverMock,
 ];
 
 const apexPostOnboardingActionsMock: PostOnboardingAction[] = [customImageMock];
@@ -189,16 +179,20 @@ export function getPostOnboardingAction(
   return postOnboardingActions[id];
 }
 
-/**
- * Returns the list of post onboarding actions for a given device.
- * TODO: keep this updated as we implement feature that we want to add in the
- * post onboarding.
- */
 export function getPostOnboardingActionsForDevice(
   deviceModelId: DeviceModelId,
   mock = false,
 ): PostOnboardingAction[] {
   switch (deviceModelId) {
+    case DeviceModelId.stax:
+      if (mock) return staxPostOnboardingActionsMock;
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
+    case DeviceModelId.europa:
+      if (mock) return europaPostOnboardingActionsMock;
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
+    case DeviceModelId.apex:
+      if (mock) return apexPostOnboardingActionsMock;
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
     case DeviceModelId.nanoS:
       /** Set here the list of actions for the post onboarding of the Nano S */
       return [];
@@ -208,19 +202,6 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.nanoX:
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
-    case DeviceModelId.stax:
-      if (mock) return staxPostOnboardingActionsMock;
-      /**
-       * Set here the list of actions for the post onboarding of the
-       * DeviceModelId.stax
-       * */
-      return [assetsTransfer, buyCrypto, customImage, recover];
-    case DeviceModelId.europa:
-      if (mock) return europaPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, customImage, recover];
-    case DeviceModelId.apex:
-      if (mock) return apexPostOnboardingActionsMock;
-      return [customImage];
     default:
       return [];
   }

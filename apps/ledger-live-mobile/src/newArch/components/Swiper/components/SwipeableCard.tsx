@@ -53,7 +53,7 @@ function useSwipeStyle(swipeX: SharedValue<number>, swipeY: SharedValue<number>,
 
       zIndex: isActive ? 100 : 100 - index,
     };
-  });
+  }, [index, swipeX, swipeY]);
 }
 
 export default function SwipeableCard({ children, index, swipeX, swipeY }: SwipeableCardProps) {

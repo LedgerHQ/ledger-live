@@ -50,6 +50,7 @@ import {
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -57,6 +58,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -77,8 +79,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   return useMemo(
     () => ({
       "account.request": ({
-        accounts$,
-        currencies,
+        currencyIds,
         drawerConfiguration,
         areCurrenciesFiltered,
         useCase,
@@ -87,18 +88,19 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       }) => {
         ipcRenderer.send("show-app", {});
 
+        // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
+        const shouldUseCurrencies =
+          (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
+
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
 
-          // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
-          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
           openAssetAndAccountDrawer({
-            accounts$,
-            drawerConfiguration,
-            currencies:
-              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
+            drawerConfiguration: finalDrawerConfiguration,
+            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
             areCurrenciesFiltered,
             useCase,
             onSuccess,
@@ -108,12 +110,12 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           setDrawer(
             SelectAccountAndCurrencyDrawer,
             {
-              currencies,
+              currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+              useCase,
               onAccountSelected: (account, parentAccount) => {
                 setDrawer();
                 onSuccess(account, parentAccount);
               },
-              accounts$,
               flow,
             },
             {
@@ -291,7 +293,17 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [modularDrawerVisible, flow, dispatch, manifest, pushToast, t, tracking, source],
+    [
+      modularDrawerVisible,
+      dispatch,
+      flow,
+      source,
+      createDrawerConfiguration,
+      manifest,
+      pushToast,
+      t,
+      tracking,
+    ],
   );
 }
 
@@ -422,8 +434,7 @@ function useWebView(
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDomReady, handleMessage, onLoad]);
+  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
 
   const webviewStyle = useMemo(() => {
     return {

@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -14,14 +13,11 @@ import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
+import { USDC_ON_POLYGON } from "../tokenFixtures";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
-
-const usdcOnPolygon = findTokenById("polygon/erc20/usd_coin_(pos)");
-if (!usdcOnPolygon) throw new Error("USDC on Polygon token not found");
-const USDC_ON_POLYGON = usdcOnPolygon;
 const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
-const yootTokenId = "1988";
+const yootTokenId = "1953";
 const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";
 const platinumTokenId = "4";
 

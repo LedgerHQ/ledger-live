@@ -49,6 +49,7 @@ setSupportedCurrencies([
   "komodo",
   "zencash",
   "bitcoin_testnet",
+  "bitcoin_regtest",
   "ethereum_sepolia",
   "ethereum_holesky",
   "ethereum_hoodi",
@@ -119,4 +120,8 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "kaspa",
+  "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
 ]);

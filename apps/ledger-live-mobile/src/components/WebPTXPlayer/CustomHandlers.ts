@@ -5,10 +5,13 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPICustomHandlers,
+  AccountIdFormatsResponse,
+} from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -22,6 +25,12 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { createCustomErrorClass } from "@ledgerhq/errors";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
 
@@ -43,9 +52,38 @@ export function useCustomExchangeHandlers({
   handleLoaderDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const route = useRoute();
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device>();
   const syncAccountById = useSyncAccountById();
+  const { state: liveAppRegistryState } = useRemoteLiveAppContext();
+  const { state: localLiveAppState } = useLocalLiveAppContext();
+
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "earn_redirect_provider",
+  });
+
+  const goToAccountStakeFlow = useStakingDrawer({
+    navigation: navigation.getParent() || navigation,
+    parentRoute: route,
+    alwaysShowNoFunds: false,
+  });
+
+  // Helper to get manifest by ID - checks local first, then remote
+  const getManifestById = useCallback(
+    (liveAppId: string) => {
+      // Check local manifests first (takes precedence)
+      const localManifest = localLiveAppState?.find(app => app.id === liveAppId);
+      if (localManifest) return localManifest;
+
+      // Fall back to remote manifests
+      return (
+        liveAppRegistryState.value?.liveAppFilteredById?.[liveAppId] ||
+        liveAppRegistryState.value?.liveAppById?.[liveAppId]
+      );
+    },
+    [liveAppRegistryState, localLiveAppState],
+  );
 
   // Add refs to track active promises
   const activePromises = useRef<
@@ -129,6 +167,76 @@ export function useCustomExchangeHandlers({
             reject(error);
           }
         });
+      },
+      "custom.navigate": async (request: {
+        params?: { action?: string; currencyId?: string; accountId?: string; source?: string };
+      }) => {
+        const { action } = request.params || {};
+
+        if (!action) {
+          throw new Error("Missing action parameter");
+        }
+
+        if (action === "go-back") {
+          navigation.goBack();
+          return { success: true };
+        } else if (action === "redirect-provider") {
+          const { accountId: walletAccountId } = request.params || {};
+
+          if (walletAccountId) {
+            // If we have a specific account, go directly to the stake flow for that account
+            const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+            const account = accounts.find(acc => acc.id === accountId);
+
+            if (account) {
+              const parentAccount = isTokenAccount(account)
+                ? getParentAccount(account, accounts)
+                : undefined;
+
+              // Go directly to stake flow for this specific account
+              goToAccountStakeFlow(account, parentAccount);
+              return { success: true };
+            }
+          }
+
+          // If no account specified or not found, open the general stake drawer
+          handleOpenStakeDrawer();
+
+          return { success: true };
+        }
+        throw new Error("Unknown navigation action");
+      },
+      "custom.getAccountIdFormats": async (request: { params?: { liveAppIds?: string[] } }) => {
+        const { liveAppIds } = request.params || {};
+
+        if (!liveAppIds) {
+          throw new Error("Missing liveAppIds parameter");
+        }
+
+        if (!Array.isArray(liveAppIds)) {
+          throw new Error("liveAppIds must be an array");
+        }
+
+        const results: AccountIdFormatsResponse = {};
+
+        // For each liveAppId, fetch the manifest and check if it uses uuid format
+        for (const liveAppId of liveAppIds) {
+          try {
+            const fetchedManifest = getManifestById(liveAppId);
+
+            if (fetchedManifest) {
+              results[liveAppId] = usesEncodedAccountIdFormat(fetchedManifest) ? "encoded" : "uuid";
+            } else {
+              // If manifest not found, default to "encoded" (safer fallback)
+              results[liveAppId] = "encoded";
+            }
+          } catch (error) {
+            // On error, default to "encoded" format
+            results[liveAppId] = "encoded";
+          }
+        }
+
+        return results;
       },
     };
 
@@ -302,6 +410,9 @@ export function useCustomExchangeHandlers({
     sendAppReady,
     syncAccountById,
     tracking,
+    handleOpenStakeDrawer,
+    goToAccountStakeFlow,
+    getManifestById,
   ]);
 }
 

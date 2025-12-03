@@ -4,7 +4,7 @@ import { Text } from "@ledgerhq/native-ui";
 
 export const LogoView = Styled(View)`
   position: absolute;
-  top: 80px;
+  top: 86px;
   left: 22px;
   z-index: 1;
 `;
@@ -14,7 +14,7 @@ export const VideoTitleText = Styled(Text).attrs({
   color: "constant.white",
 })`
   position: absolute;
-  top: 128px;
+  top: 136px;
   left: 16px;
   right: 16px;
   text-align: left;

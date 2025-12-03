@@ -1,15 +1,38 @@
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as tokenModule from "@ledgerhq/cryptoassets/tokens";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
+beforeAll(() => {
+  // Setup mock store for unit tests
+  const mockStore: CryptoAssetsStore = {
+    findTokenById: async (id: string) => {
+      // Return USDC token for the test
+      if (id === "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN") {
+        return {
+          type: "TokenCurrency",
+          id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          parentCurrency: getCryptoCurrencyById("stellar"),
+          tokenType: "stellar",
+          name: "USDC",
+          ticker: "USDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDC", code: "USDC", magnitude: 7 }],
+        } as TokenCurrency;
+      }
+      return undefined;
+    },
+    findTokenByAddressInCurrency: async () => undefined,
+    getTokensSyncHash: async () => "",
+  };
+  setCryptoAssetsStore(mockStore);
+});
+
 describe("getTokenFromAsset", () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("computes the token of the USDC asset, trusting the CAL", async () => {
-    const findTokenById = jest.spyOn(tokenModule, "findTokenById");
-
+  it("computes the token of the USDC asset", async () => {
     expect(
       await getTokenFromAsset({
         type: "token",
@@ -21,14 +44,9 @@ describe("getTokenFromAsset", () => {
       contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
       name: "USDC",
     });
-    expect(findTokenById).toHaveBeenCalledWith(
-      "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-    );
   });
 
   it("does not compute the token of an unknown asset, trusting the CAL", async () => {
-    const findTokenById = jest.spyOn(tokenModule, "findTokenById");
-
     expect(
       await getTokenFromAsset({
         type: "token",
@@ -36,7 +54,6 @@ describe("getTokenFromAsset", () => {
         assetOwner: "unknown-owner",
       }),
     ).toBeUndefined();
-    expect(findTokenById).toHaveBeenCalledWith("stellar/asset/unknown-reference:unknown-owner");
   });
 });
 

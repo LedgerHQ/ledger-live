@@ -6,11 +6,11 @@ import type {
   HederaResourcesRaw,
 } from "../../types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { getMockedCurrency, getMockedTokenCurrency } from "./currency.fixture";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const defaultMockedCurrency = getMockedCurrency();
-const defaultMockedTokenCurrency = getMockedTokenCurrency();
+const defaultMockedTokenCurrency = getMockedHTSTokenCurrency();
 const defaultMockAccountId = "js:2:hedera:0.0.1234567:hederaBip44";
 const defaultMockTokenAccountId = `${defaultMockAccountId}+${defaultMockedTokenCurrency.id}`;
 const defaultBalance = new BigNumber(100000000);
@@ -120,4 +120,22 @@ export const getMockedTokenAccount = (
     },
     ...overrides,
   };
+};
+
+export const MAINNET_TEST_ACCOUNTS = {
+  pristine: {
+    accountId: "0.0.800000",
+    publicKey: "3608128be58bfb7e753068e0bc82430ec77e51eed578e0a7055a0bd1296fe334",
+  },
+  withoutTokens: {
+    accountId: "0.0.8000000",
+    publicKey: "96eae0821a63a138f37e0a60a83f9a0317fa11dde4d7669a62afb5ced2158141",
+  },
+  withTokens: {
+    accountId: "0.0.8835924",
+    publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
+    associatedTokenWithBalance: "0.0.456858",
+    associatedTokenWithoutBalance: "0.0.7243470",
+    notAssociatedToken: "0.0.3176721",
+  },
 };

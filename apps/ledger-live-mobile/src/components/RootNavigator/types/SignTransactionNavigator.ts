@@ -174,6 +174,21 @@ export type SignTransactionNavigatorParamList = {
     sompiPerByte?: BigNumber | null;
     setSompiPerByte?: (_: BigNumber) => void;
   };
+  [ScreenName.StellarEditMemoValue]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StellarTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+  };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
     parentId?: string;

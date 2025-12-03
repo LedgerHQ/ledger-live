@@ -35,6 +35,7 @@ jobs:
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
+      skip-bundle-size-reporting: true
       max-shards: 1
       skip-pod-checks: "true"
 

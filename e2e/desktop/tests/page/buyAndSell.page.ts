@@ -218,6 +218,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     if (await this.isTextVisible(this.showMoreQuotes)) {
       await this.clickElementByText(this.showMoreQuotes);
     }
+    await this.scrollToElement(this.provider(providerName));
     await this.clickElement(this.provider(providerName));
     await this.verifyElementText(this.formCta, `${operation} with ${providerName}`);
   }

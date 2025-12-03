@@ -12,6 +12,7 @@ import MarketPage from "./market/market.page";
 import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
 import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
+import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
 import PortfolioPage from "./wallet/portfolio.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
@@ -27,14 +28,12 @@ import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnDashboardPage from "./trade/earnDasboard.page";
+import ModularDrawer from "./drawer/modular.drawer";
 
 import path from "path";
 import fs from "fs";
-import { setupEnvironment } from "../helpers/commonHelpers";
 import { InitializationManager, InitOptions } from "../utils/initUtil";
 import { randomUUID } from "crypto";
-
-setupEnvironment();
 
 export type ApplicationOptions = InitOptions;
 
@@ -65,6 +64,7 @@ export class Application {
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private receivePageInstance = lazyInit(ReceivePage);
   private sendPageInstance = lazyInit(SendPage);
@@ -80,6 +80,7 @@ export class Application {
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private earnDashboardPageInstance = lazyInit(EarnDashboardPage);
+  private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -153,6 +154,10 @@ export class Application {
     return this.portfolioPageInstance();
   }
 
+  public get portfolioEmptyState() {
+    return this.portfolioEmptyStatePageInstance();
+  }
+
   public get receive() {
     return this.receivePageInstance();
   }
@@ -207,5 +212,9 @@ export class Application {
 
   public get earnDashboard() {
     return this.earnDashboardPageInstance();
+  }
+
+  public get modularDrawer() {
+    return this.modularDrawerPageInstance();
   }
 }

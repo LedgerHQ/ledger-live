@@ -65,7 +65,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
     <ItemWrapper className="bookmarked-account-item" active={active} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
         <ParentCryptoCurrencyIconWrapper>
-          <ParentCryptoCurrencyIcon inactive={!active} currency={getAccountCurrency(account)} />
+          <ParentCryptoCurrencyIcon currency={getAccountCurrency(account)} />
         </ParentCryptoCurrencyIconWrapper>
         <Box flex={1}>
           <Hide visible={!collapsed}>

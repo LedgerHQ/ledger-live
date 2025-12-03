@@ -6,12 +6,6 @@ import {
 } from "./isFirmwareUpdateSupported";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
-// {
-//   nanoS: ">=1.6.1",
-//   nanoX: ">=1.3.0",
-//   nanoSP: ">=1.0.0",
-//   stax: ">=1.0.0",
-// };
 const staxDevice = {
   modelId: DeviceModelId.stax,
 } as Device;
@@ -100,11 +94,11 @@ describe("isNewFirmwareUpdateUxSupported", () => {
       isNewFirmwareUpdateUxSupported(nanoXSupportedDevice, nanoXSupportedDeviceModelInfo),
     ).toBe(true);
     expect(isNewFirmwareUpdateUxSupported(apexDevice, apexDeviceModelInfo)).toBe(true);
+    expect(isNewFirmwareUpdateUxSupported(nanoSPDevice, nanoSPDeviceModelInfo)).toBe(true);
   });
 
   it("should return false if new firmware update flow is not supported", () => {
     expect(isNewFirmwareUpdateUxSupported(nanoSDevice, nanoSDeviceModelInfo)).toBe(false);
-    expect(isNewFirmwareUpdateUxSupported(nanoSPDevice, nanoSPDeviceModelInfo)).toBe(false);
     expect(isNewFirmwareUpdateUxSupported(blueDevice, blueDeviceModelInfo)).toBe(false);
     expect(
       isNewFirmwareUpdateUxSupported(nanoXNotSupportedDevice, nanoXNotSupportedDeviceModelInfo),

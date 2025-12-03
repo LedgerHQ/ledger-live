@@ -34,7 +34,7 @@ export function genericEstimateMaxSpendable(
       transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
       { value: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n },
     );
-    if (network === "stellar") {
+    if (["stellar", "tezos"].includes(network)) {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
     }
     const bnFee = BigNumber(fees.toString());

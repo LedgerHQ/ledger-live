@@ -25,9 +25,6 @@ export default function Home() {
           <Link href="/networkTroubleshoot">Network Troubleshooting</Link>
         </li>
         <li>
-          <Link href="/svg-icons">SVG Icons</Link>
-        </li>
-        <li>
           <Link href="/sync">Synchronisation</Link>
         </li>
         <li>

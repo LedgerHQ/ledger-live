@@ -104,6 +104,12 @@ export abstract class WebViewAppPage extends AppPage {
     await webview.getByTestId(testId).click();
   }
 
+  @step("Scroll to element in WebView")
+  protected async scrollToElement(testId: string) {
+    const webview = await this.getWebView();
+    await webview.getByTestId(testId).scrollIntoViewIfNeeded();
+  }
+
   @step("Get element in WebView by testId: $0")
   protected async getWebViewElementByTestId(testId: string) {
     const webview = await this.getWebView();

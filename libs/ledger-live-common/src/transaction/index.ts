@@ -36,10 +36,10 @@ export const toTransactionStatusRaw = (
   return TM.toTransactionStatusRaw(t as any);
 };
 
-export const formatTransaction = (t: Transaction, a: Account): string => {
+export const formatTransaction = async (t: Transaction, a: Account): Promise<string> => {
   const TM = transactionModulePerFamily[t.family];
   // FIXME: something is wrong with TM.formatTransaction expecting a (arg: never) => for some reasons
-  return TM.formatTransaction ? TM.formatTransaction(t as any, a as any) : "";
+  return TM.formatTransaction ? await TM.formatTransaction(t as any, a as any) : "";
 };
 
 export const formatTransactionStatus = (

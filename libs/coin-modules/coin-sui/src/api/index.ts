@@ -11,6 +11,7 @@ import {
   craftTransaction,
   getStakes,
   getRewards,
+  getValidators as logicGetValidators,
 } from "../logic";
 import {
   AlpacaApi,
@@ -30,7 +31,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
@@ -42,6 +43,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
     listOperations: logicListOperations,
     getStakes,
     getRewards,
+    getValidators: logicGetValidators,
   };
 }
 

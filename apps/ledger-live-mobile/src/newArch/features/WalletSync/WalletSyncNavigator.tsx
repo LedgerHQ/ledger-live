@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -19,10 +19,13 @@ import { useClose } from "./hooks/useClose";
 import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useSelector } from "react-redux";
 
-const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<WalletSyncNavigatorStackParamList>();
 
 export default function WalletSyncNavigator() {
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
@@ -60,8 +63,15 @@ export default function WalletSyncNavigator() {
         component={ActivationLoading}
         options={{
           title: "",
-          headerLeft: () => null,
-          headerRight: () => <NavigationHeaderCloseButton onPress={close} />,
+          ...(hasCompletedOnboarding
+            ? {
+                headerLeft: () => null,
+                headerRight: () => <NavigationHeaderCloseButton onPress={close} />,
+              }
+            : {
+                headerLeft: () => <NavigationHeaderBackButton onPress={close} />,
+                headerRight: () => null,
+              }),
         }}
       />
 

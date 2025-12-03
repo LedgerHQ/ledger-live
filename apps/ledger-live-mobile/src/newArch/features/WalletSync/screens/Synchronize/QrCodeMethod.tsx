@@ -58,7 +58,7 @@ const QrCodeMethod = ({
   };
 
   return (
-    <Flex flexDirection={"column"} alignItems={"center"} rowGap={24} width={"100%"} height={"100%"}>
+    <Flex flexDirection={"column"} alignItems={"center"} rowGap={24}>
       <DrawerTabSelector
         options={[Options.SCAN, Options.SHOW_QR]}
         selectedOption={currentOption}

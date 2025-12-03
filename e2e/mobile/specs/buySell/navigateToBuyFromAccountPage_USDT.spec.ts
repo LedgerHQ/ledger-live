@@ -10,9 +10,9 @@ const testConfig = {
     operation: OperationType.Buy,
   },
   tmsLinks: ["B2CQA-3468"],
-  provider: Provider.COINBASE,
+  provider: Provider.TRANSAK,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runNavigateToBuyFromAccountPageTest(

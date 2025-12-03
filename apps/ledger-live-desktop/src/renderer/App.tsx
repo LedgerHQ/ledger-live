@@ -27,12 +27,12 @@ import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
+import { ThemeProvider } from "@ledgerhq/ldls-ui-react";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -66,47 +66,47 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
-      <ThrowBlock
-        onError={() => {
-          if (!__DEV__) {
-            setReloadEnabled(false);
-          }
-        }}
-      >
-        <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-            <ConnectEnvsToSentry />
-            <UpdaterProvider>
-              <AppDataStorageProvider>
-                <DeviceManagementKitProvider>
-                  <CountervaluesMarketcapBridgedProvider>
-                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                      <ToastProvider>
-                        <AnnouncementProviderWrapper>
-                          <Router>
-                            <PostOnboardingProviderWrapped>
-                              <PlatformAppProviderWrapper>
-                                <DrawerProvider>
-                                  <StorylyProvider>
+      <ThemeProvider defaultMode={selectedPalette}>
+        <ThrowBlock
+          onError={() => {
+            if (!__DEV__) {
+              setReloadEnabled(false);
+            }
+          }}
+        >
+          <FirebaseRemoteConfigProvider>
+            <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+              <ConnectEnvsToSentry />
+              <UpdaterProvider>
+                <AppDataStorageProvider>
+                  <DeviceManagementKitProvider>
+                    <CountervaluesMarketcapBridgedProvider>
+                      <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                        <ToastProvider>
+                          <AnnouncementProviderWrapper>
+                            <Router>
+                              <PostOnboardingProviderWrapped>
+                                <PlatformAppProviderWrapper>
+                                  <DrawerProvider>
                                     <QueryClientProvider client={queryClient}>
                                       <Default />
                                       <ReactQueryDevtoolsProvider />
                                     </QueryClientProvider>
-                                  </StorylyProvider>
-                                </DrawerProvider>
-                              </PlatformAppProviderWrapper>
-                            </PostOnboardingProviderWrapped>
-                          </Router>
-                        </AnnouncementProviderWrapper>
-                      </ToastProvider>
-                    </CountervaluesBridgedProvider>
-                  </CountervaluesMarketcapBridgedProvider>
-                </DeviceManagementKitProvider>
-              </AppDataStorageProvider>
-            </UpdaterProvider>
-          </FirebaseFeatureFlagsProvider>
-        </FirebaseRemoteConfigProvider>
-      </ThrowBlock>
+                                  </DrawerProvider>
+                                </PlatformAppProviderWrapper>
+                              </PostOnboardingProviderWrapped>
+                            </Router>
+                          </AnnouncementProviderWrapper>
+                        </ToastProvider>
+                      </CountervaluesBridgedProvider>
+                    </CountervaluesMarketcapBridgedProvider>
+                  </DeviceManagementKitProvider>
+                </AppDataStorageProvider>
+              </UpdaterProvider>
+            </FirebaseFeatureFlagsProvider>
+          </FirebaseRemoteConfigProvider>
+        </ThrowBlock>
+      </ThemeProvider>
     </StyleProvider>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { track } from "~/renderer/analytics/segment";
@@ -12,10 +12,15 @@ import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { Dispatch } from "redux";
+import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId | null;
+    isLedgerSyncActive: boolean;
+    accounts: Account[];
   };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
@@ -31,22 +36,30 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     tagLabel,
     buttonLabelForAnalyticsEvent,
     completed,
-    getIsAlreadyCompleted,
     deviceModelId,
     shouldCompleteOnStart,
+    getIsAlreadyCompletedByState,
+    isLedgerSyncActive,
+    accounts,
   } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch: Dispatch = useDispatch();
   const history = useHistory();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
+
+  const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
+    entryPoint: EntryPoint.postOnboarding,
+    needEligibleDevice: false,
+  });
 
   const completeAction = useCompleteActionCallback();
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
   const initIsActionCompleted = useCallback(async () => {
-    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
-  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
 
   useEffect(() => {
     initIsActionCompleted();
@@ -62,7 +75,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     };
 
     if ("startAction" in props && deviceModelId !== null) {
-      props.startAction({ openModalCallback, navigationCallback, deviceModelId, protectId });
+      props.startAction({
+        openModalCallback,
+        navigationCallback,
+        deviceModelId,
+        protectId,
+        openActivationDrawer,
+      });
       buttonLabelForAnalyticsEvent &&
         track("button_clicked2", {
           button: buttonLabelForAnalyticsEvent,
@@ -81,6 +100,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     id,
     shouldCompleteOnStart,
     protectId,
+    openActivationDrawer,
   ]);
 
   return (
@@ -92,7 +112,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       borderRadius={3}
       marginBottom={4}
       completed={isActionCompleted}
-      padding="32px 24px 32px 24px"
+      padding="32px 24px"
       {...(isActionCompleted
         ? undefined
         : {

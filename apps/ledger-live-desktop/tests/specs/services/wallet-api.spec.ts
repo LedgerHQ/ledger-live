@@ -1,3 +1,4 @@
+import "../../../src/live-common-set-supported-currencies";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
@@ -8,8 +9,11 @@ import { DeviceAction } from "../../models/DeviceAction";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 import { version as LLD_VERSION } from "../../../package.json";
 import { expectedCurrencyList, mockedAccountList } from "tests/fixtures/wallet-api";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 
 const methods = [
+  "currency.list",
+  "account.list",
   "account.request",
   "account.receive",
   "message.sign",
@@ -186,7 +190,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
       "bitcoin",
       "ethereum",
       "ethereum/erc20/usd_tether__erc20_",
-      // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+      "arbitrum/erc20/arbitrum",
     ]);
 
     await liveAppWebview.currencyList();
@@ -222,31 +226,28 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
         color: "#0ebdcd",
         decimals: 6,
       },
-      // {
-      //   type: "TokenCurrency",
-      //   standard: "ERC20",
-      //   id: "arbitrum/erc20/arbitrum",
-      //   ticker: "ARB",
-      //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-      //   name: "Arbitrum",
-      //   parent: "arbitrum",
-      //   color: "#28a0f0",
-      //   decimals: 18,
-      // },
+      {
+        type: "TokenCurrency",
+        standard: "ERC20",
+        id: "arbitrum/erc20/arbitrum",
+        ticker: "ARB",
+        contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+        name: "Arbitrum",
+        parent: "arbitrum",
+        color: "#28a0f0",
+        decimals: 18,
+      },
     ]);
 
     await resetWebview();
   });
 
   await test.step("currency.list should stay stable for CryptoCurrency", async () => {
+    await liveAppWebview.setCurrencyIds(listSupportedCurrencies().map(c => c.id));
     await liveAppWebview.currencyList();
 
     const res = await liveAppWebview.getResOutput();
-    // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
-    const currencies = res.filter(
-      (currency: { type: string }) => currency.type === "CryptoCurrency",
-    );
-    expect(currencies).toMatchObject(expectedCurrencyList);
+    expect(res).toMatchObject(expectedCurrencyList);
 
     await resetWebview();
   });

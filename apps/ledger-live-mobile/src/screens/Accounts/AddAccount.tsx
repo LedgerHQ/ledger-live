@@ -4,10 +4,10 @@ import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
-  const { currency } = cryptoAssetsHooks.useCurrencyById(currencyId || "");
+  const { currency } = useCurrencyById(currencyId || "");
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
   function openAddModal() {

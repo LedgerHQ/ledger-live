@@ -10,7 +10,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
-import { CantonCurrencyBridge, CantonSigner } from "../types";
+import { CantonCurrencyBridge, CantonSigner, CantonAccount } from "../types";
 import type { Transaction } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -21,6 +21,8 @@ import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
+import { buildTransferInstruction } from "./acceptOffer";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,
@@ -38,6 +40,7 @@ export function createBridges(
 
   const onboardAccount = buildOnboardAccount(signerContext);
   const authorizePreapproval = buildAuthorizePreapproval(signerContext);
+  const transferInstruction = buildTransferInstruction(signerContext);
 
   const currencyBridge: CantonCurrencyBridge = {
     preload: () => Promise.resolve({}),
@@ -45,17 +48,16 @@ export function createBridges(
     scanAccounts,
     onboardAccount,
     authorizePreapproval,
+    transferInstruction,
   };
 
   const signOperation = buildSignOperation(signerContext);
   const sync = makeSync({ getAccountShape: makeGetAccountShape(signerContext) });
-  // we want one method per file
-  const accountBridge: AccountBridge<Transaction> = {
+
+  const accountBridge: AccountBridge<Transaction, CantonAccount> = {
     broadcast,
     createTransaction,
     updateTransaction,
-    // NOTE: use updateTransaction: defaultUpdateTransaction<Transaction>,
-    // if you don't need to update the transaction patch object
     prepareTransaction,
     getTransactionStatus,
     estimateMaxSpendable,
@@ -65,6 +67,8 @@ export function createBridges(
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },
+    assignToAccountRaw,
+    assignFromAccountRaw,
     getSerializedAddressParameters,
   };
 
