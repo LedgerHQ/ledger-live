@@ -23,6 +23,7 @@ export type StepId =
   | "stakeMaturity"
   | "splitNeuron"
   | "addHotKey";
+
 export type StepProps = {
   lastManageAction?: ICPTransactionType;
   setLastManageAction: (a: ICPTransactionType) => void;

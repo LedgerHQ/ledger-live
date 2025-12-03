@@ -12,7 +12,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
-// import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Track from "~/renderer/analytics/Track";
@@ -128,49 +127,47 @@ function Body({
   } else if (bridgeError) {
     errorSteps.push(0);
   }
-  const stepperProps = {
-    title: t("internetComputer.manageNeuronFlow.title"),
-    device,
-    account,
-    transaction,
-    signed,
-    stepId,
-    steps,
-    neurons: optimisticOperation?.extra?.neurons ?? accountProp.neurons,
-    errorSteps,
-    disabledSteps: [],
-    hideBreadcrumb: !!error && ["amount"].includes(stepId),
-    onRetry: handleRetry,
-    onStepChange: handleStepChange,
-    onClose,
-    error,
-    status,
-    manageNeuronIndex,
-    setManageNeuronIndex,
-    needsRefresh,
-    setNeedsRefresh,
-    optimisticOperation,
-    openModal,
-    setSigned,
-    lastManageAction,
-    setLastManageAction,
-    onChangeTransaction: setTransaction,
-    onUpdateTransaction: updateTransaction,
-    onOperationBroadcasted: handleOperationBroadcasted,
-    onTransactionError: handleTransactionError,
-    bridgePending,
-    followTopic,
-    setFollowTopic,
-  };
   return (
-    <Stepper {...stepperProps}>
+    <Stepper
+      title={t("internetComputer.manageNeuronFlow.title")}
+      device={device}
+      account={account}
+      transaction={transaction}
+      signed={signed}
+      stepId={stepId}
+      steps={steps}
+      neurons={optimisticOperation?.extra?.neurons ?? accountProp.neurons}
+      errorSteps={errorSteps}
+      disabledSteps={[]}
+      hideBreadcrumb={!!error && ["amount"].includes(stepId)}
+      onRetry={handleRetry}
+      onStepChange={handleStepChange}
+      onClose={onClose}
+      error={error}
+      status={status}
+      manageNeuronIndex={manageNeuronIndex}
+      setManageNeuronIndex={setManageNeuronIndex}
+      needsRefresh={needsRefresh}
+      setNeedsRefresh={setNeedsRefresh}
+      optimisticOperation={optimisticOperation}
+      openModal={openModal}
+      setSigned={setSigned}
+      lastManageAction={lastManageAction}
+      setLastManageAction={setLastManageAction}
+      onChangeTransaction={setTransaction}
+      onUpdateTransaction={updateTransaction}
+      onOperationBroadcasted={handleOperationBroadcasted}
+      onTransactionError={handleTransactionError}
+      bridgePending={bridgePending}
+      followTopic={followTopic}
+      setFollowTopic={setFollowTopic}
+    >
       <SyncSkipUnderPriority priority={100} />
       <Track onUnmount event="CloseModalUndelegation" />
     </Stepper>
   );
 }
-const C = compose<React.ComponentType<OwnProps>>(
+export default compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
-export default C;

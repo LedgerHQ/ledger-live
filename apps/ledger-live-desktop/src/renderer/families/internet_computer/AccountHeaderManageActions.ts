@@ -18,7 +18,7 @@ type Props = {
   source?: string;
 };
 
-const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onClickManageNeurons = useCallback(
@@ -48,14 +48,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           type: "create_neuron",
         },
         onConfirmationHandler: (optimisticOperation: InternetComputerOperation) => {
-          dispatch(
-            updateAccountWithUpdater(account.id, account => {
-              if (optimisticOperation.type !== "NONE") {
-                account = addPendingOperation(account, optimisticOperation);
-              }
-              return account;
-            }),
-          );
+          const updatedAccount =
+            optimisticOperation.type !== "NONE"
+              ? addPendingOperation(account, optimisticOperation)
+              : account;
+
+          dispatch(updateAccountWithUpdater(account.id, () => updatedAccount));
           dispatch(
             openModal("MODAL_ICP_LIST_NEURONS", {
               account,
@@ -98,4 +96,4 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   ];
 };
 
-export default AccountHeaderActions;
+export default AccountHeaderManageActions;

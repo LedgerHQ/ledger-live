@@ -12,6 +12,8 @@ import { StepProps } from "../types";
 import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
+const neuronIdsList = Object.entries(KNOWN_NEURON_IDS);
+
 export function StepSelectFollowees({
   followTopic,
   transitionTo,
@@ -27,17 +29,16 @@ export function StepSelectFollowees({
   const neuron = neurons.fullNeurons[manageNeuronIndex];
   const hasInitialFollowees = neuron.followees.length > 0;
 
-  const [followees, setFollowees] = useState<string[]>([
-    ...(Object.entries(neuron.modFollowees)
+  const [followees, setFollowees] = useState<string[]>(
+    Object.entries(neuron.modFollowees)
       .map(([key, value]) => {
         if (value.includes(followTopic)) {
           return key;
-        } else {
-          return undefined;
         }
+        return undefined;
       })
-      .filter(Boolean) as string[]),
-  ]);
+      .filter((item): item is string => item !== undefined),
+  );
 
   const onChangeFollowNeuronId = useCallback(
     (value: string) => {
@@ -54,7 +55,7 @@ export function StepSelectFollowees({
   );
 
   const onClickFollowNeuron = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     onChangeTransaction(
       bridge.updateTransaction(initTx, {
@@ -126,7 +127,7 @@ export function StepSelectFollowees({
           {t("internetComputer.manageNeuronFlow.selectFollowees.options")}
         </Text>
         <Box style={{ gap: 15 }}>
-          {Object.entries(KNOWN_NEURON_IDS).map(([key, value]) => (
+          {neuronIdsList.map(([key, value]) => (
             <Box
               key={value}
               style={{ gap: 10, flexDirection: "row", justifyContent: "space-between" }}

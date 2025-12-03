@@ -25,7 +25,7 @@ export function AddHotKey({
   const onChangeHotKey = useCallback(
     (value: string) => {
       setHotKey(value);
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -39,7 +39,7 @@ export function AddHotKey({
   );
 
   const onClickConfirmAddHotKey = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     const action = "add_hot_key";
     onChangeTransaction(

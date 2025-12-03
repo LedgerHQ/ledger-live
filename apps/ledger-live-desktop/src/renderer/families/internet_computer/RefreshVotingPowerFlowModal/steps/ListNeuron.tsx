@@ -111,9 +111,9 @@ export default function StepListNeuron({
           action="refreshVotingPower"
           currency={currencyId}
         />
-        {signed ? (
+        {signed && (
           <BroadcastErrorDisclaimer title={t("internetComputer.confirmation.broadcastError")} />
-        ) : null}
+        )}
         <ErrorDisplay error={error} withExportLogs />
       </Container>
     );

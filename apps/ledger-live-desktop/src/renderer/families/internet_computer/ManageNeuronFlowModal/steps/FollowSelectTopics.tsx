@@ -9,10 +9,13 @@ import { useTranslation } from "react-i18next";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 
+type KnownTopic = keyof typeof KNOWN_TOPICS;
+const topicsList = Object.entries(KNOWN_TOPICS);
+
 export function StepFollowSelectTopics({ setFollowTopic, transitionTo }: StepProps) {
   const { t } = useTranslation();
   const onClickSelectTopic = useCallback(
-    (topic: keyof typeof KNOWN_TOPICS) => {
+    (topic: KnownTopic) => {
       setFollowTopic(topic);
       transitionTo("selectFollowees");
     },
@@ -29,7 +32,7 @@ export function StepFollowSelectTopics({ setFollowTopic, transitionTo }: StepPro
           <Trans i18nKey="internetComputer.manageNeuronFlow.selectTopics.listOfTopics" />
         </Text>
         <Box style={{ gap: 10 }}>
-          {Object.entries(KNOWN_TOPICS).map(([key]) => (
+          {topicsList.map(([key]) => (
             <Box
               key={key}
               style={{
@@ -62,7 +65,7 @@ export function StepFollowSelectTopics({ setFollowTopic, transitionTo }: StepPro
                   <Button
                     primary
                     style={{ margin: "auto" }}
-                    onClick={() => onClickSelectTopic(parseInt(key) as keyof typeof KNOWN_TOPICS)}
+                    onClick={() => onClickSelectTopic(parseInt(key) as KnownTopic)}
                   >
                     <Trans i18nKey="internetComputer.manageNeuronFlow.selectTopics.addAction" />
                   </Button>

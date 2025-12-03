@@ -17,7 +17,6 @@ export default function RefreshVotingPowerModal() {
     setStepId(id);
   }, []);
   const isModalLocked = ["device", "confirmation"].includes(stepId);
-  const modalName = "MODAL_ICP_REFRESH_VOTING_POWER";
   let width: number | undefined;
   if (stepId === "listNeuron") {
     width = 650;
@@ -25,7 +24,7 @@ export default function RefreshVotingPowerModal() {
 
   return (
     <Modal
-      name={modalName}
+      name="MODAL_ICP_REFRESH_VOTING_POWER"
       centered
       width={width}
       onHide={onHide}
