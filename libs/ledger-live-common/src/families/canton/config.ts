@@ -23,9 +23,9 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-live-devnet",
+      nodeUrl: "https://canton-gateway-devnet.api.live.ledger-test.com/v1/node/ledger-live-devnet",
       nodeId: "ledger-live-devnet",
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,
       networkType: "devnet",
@@ -39,9 +39,10 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-live-testnet",
+      nodeUrl:
+        "https://canton-gateway-testnet.api.live.ledger-test.com/v1/node/ledger-live-testnet",
       nodeId: "ledger-live-testnet",
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      gatewayUrl: "https://canton-gateway-testnet.api.live.ledger-test.com",
       minReserve: 0,
       nativeInstrumentId: "Amulet",
       useGateway: true,

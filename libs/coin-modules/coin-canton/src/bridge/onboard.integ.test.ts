@@ -27,7 +27,7 @@ describe.skip("onboard (devnet)", () => {
 
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
