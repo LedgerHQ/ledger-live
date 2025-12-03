@@ -274,7 +274,7 @@ jobs:
 
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/qaa_ci_fixes
         with:
           total_shards: 4
           status_1: ${{ needs.e2e-tests-linux.outputs.status_1 }}
@@ -431,7 +431,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
         with:
-          channel-id: "C05FKJ7DFAP"
+          channel-id: "CTMQ0S5SB"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
