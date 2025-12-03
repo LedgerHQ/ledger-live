@@ -25,6 +25,7 @@ import {
   mockDispatch,
   mockDomMeasurements,
   mockOnAccountSelected,
+  DialogTestWrapper,
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
@@ -34,7 +35,10 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
-const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
+// Helper to get the back button from DialogHeader (uses aria-label since DialogHeader doesn't expose test-id)
+const getBackButton = () => {
+  return screen.getByLabelText("components.sheetBar.goBackAriaLabel");
+};
 
 beforeEach(() => {
   mockDomMeasurements();
@@ -48,30 +52,34 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   });
   it("should render AssetSelection step with correct props", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
     );
 
-    expect(screen.getByText(/select asset/i)).toBeVisible();
+    expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
   });
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.queryByText(/arbitrum/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
@@ -79,10 +87,12 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should navigate to AccountSelection step after network selection", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -98,7 +108,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     const arbitrumNetwork = screen.getByText(/ethereum/i);
     await user.click(arbitrumNetwork);
 
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     expect(screen.getByText(/ethereum 2/i)).toBeVisible();
     expect(screen.getByText(/1 eth/i)).toBeVisible();
@@ -106,10 +116,12 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should call onSelectAccount after accountSelection", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -133,11 +145,13 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should navigate directly to accountSelection step", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={[ethereumCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[ethereumCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -151,28 +165,32 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should navigate directly to networkSelection step", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByText(/select network/i)).toBeVisible());
+    await waitFor(() => expect(screen.getAllByText(/select network/i)[0]).toBeVisible());
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/arbitrum/i)).toBeVisible();
   });
 
   it("should display empty screen if there is no account", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={[bitcoinCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[bitcoinCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
+    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
   });
@@ -181,14 +199,16 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={[bitcoinCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[bitcoinCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
+    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     await user.click(screen.getByText(/add new or existing account/i));
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -206,22 +226,24 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.queryByText(/arbitrum/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
-    const backButton = screen.getByTestId(MAD_BACK_BUTTON_TEST_ID);
+    const backButton = getBackButton();
     await user.click(backButton);
-    expect(screen.getByText(/select asset/i)).toBeVisible();
+    expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
     expect(screen.queryByText(/arbitrum/i)).not.toBeInTheDocument();
@@ -229,10 +251,12 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should go back to NetworkSelection step when clicking on back button", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -247,10 +271,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     const ethereumNetwork = screen.getByText(/ethereum/i);
     await user.click(ethereumNetwork);
 
-    const backButton = screen.getByTestId(MAD_BACK_BUTTON_TEST_ID);
+    const backButton = getBackButton();
     await user.click(backButton);
 
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/arbitrum/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
@@ -258,36 +282,42 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should not display back button on AccountSelection step if only one account", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={[ethereumCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[ethereumCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
-    expect(screen.queryByTestId(MAD_BACK_BUTTON_TEST_ID)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
+    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
   });
 
   it("should not display back button on AccountSelection step if only one currency", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByText(/select network/i)).toBeVisible());
-    expect(screen.queryByTestId(MAD_BACK_BUTTON_TEST_ID)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getAllByText(/select network/i)[0]).toBeVisible());
+    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
   });
 
   it("should not re trigger page tracking on asset search", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
       { initialState: { modularDrawer: { flow: "flowTest", source: "sourceTest" } } },
     );
 
@@ -339,31 +369,38 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should navigate normaly doing a complex flow", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    await user.type(screen.getByRole("textbox"), "ethereum");
+    const input = screen.getByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "ethereum");
 
-    await waitFor(() => {
-      expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     await user.click(screen.getByText(/ethereum/i));
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
 
     await user.click(screen.getByText(/arbitrum/i));
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
 
-    await user.click(screen.getByTestId(MAD_BACK_BUTTON_TEST_ID));
+    await user.click(getBackButton());
 
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
 
-    await user.click(screen.getByTestId(MAD_BACK_BUTTON_TEST_ID));
+    await user.click(getBackButton());
 
     expect(screen.getByRole("textbox")).toHaveValue("ethereum");
 
@@ -374,16 +411,18 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     });
 
     await user.click(screen.getByText(/bitcoin/i));
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
   });
 
   it("should navigate to usdc account selection step", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={[usdcToken.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={[usdcToken.id]}
+          onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
+        />
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -394,41 +433,18 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getByText(/usdc/i)).toBeVisible());
     await user.click(screen.getByText(/usdc/i));
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
   });
 
   it("should navigate to bitcoin account selection step", async () => {
     const { user } = render(
-      <ModularDialogFlowManager
-        currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
-        onAccountSelected={mockOnAccountSelected}
-        areCurrenciesFiltered
-      />,
-      {
-        ...INITIAL_STATE,
-        initialState: {
-          accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
-        },
-      },
-    );
-
-    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
-    await user.click(screen.getByText(/bitcoin/i));
-    expect(screen.getByText(/select account/i)).toBeVisible();
-    expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
-  });
-
-  it("should keep the MAD opened during add account flow", async () => {
-    const { user } = render(
-      <>
-        <div id="modals" />
+      <DialogTestWrapper>
         <ModularDialogFlowManager
           currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
           onAccountSelected={mockOnAccountSelected}
           areCurrenciesFiltered
         />
-        <ModalsLayer />
-      </>,
+      </DialogTestWrapper>,
       {
         ...INITIAL_STATE,
         initialState: {
@@ -439,7 +455,34 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
     await user.click(screen.getByText(/bitcoin/i));
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
+    expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
+  });
+
+  it("should keep the MAD opened during add account flow", async () => {
+    const { user } = render(
+      <DialogTestWrapper>
+        <>
+          <div id="modals" />
+          <ModularDialogFlowManager
+            currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
+            onAccountSelected={mockOnAccountSelected}
+            areCurrenciesFiltered
+          />
+          <ModalsLayer />
+        </>
+      </DialogTestWrapper>,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
+        },
+      },
+    );
+
+    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await user.click(screen.getByText(/bitcoin/i));
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
 
     await user.click(screen.getByText(/add new or existing account/i));
     expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
@@ -448,10 +491,12 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should auto focus on search input when autoFocus is true", async () => {
     render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAccountSelected={mockOnAccountSelected}
-      />,
+      <DialogTestWrapper>
+        <ModularDialogFlowManager
+          currencies={mockCurrencies}
+          onAccountSelected={mockOnAccountSelected}
+        />
+      </DialogTestWrapper>,
     );
 
     await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());

@@ -1,11 +1,16 @@
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDialogFlowManager from "../../ModularDialogFlowManager";
 import { useOpenAssetFlowDialog } from "../useOpenAssetFlow";
+import * as DialogModule from "LLD/components/Dialog";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
+}));
+
+jest.mock("LLD/components/Dialog", () => ({
+  openDialog: jest.fn(),
+  closeDialog: jest.fn(),
 }));
 
 describe("useOpenAssetFlowDialog", () => {
@@ -62,39 +67,37 @@ describe("useOpenAssetFlowDialog", () => {
       },
     );
 
-    const selectAsset = jest.fn();
-    (setDrawer as jest.Mock).mockImplementation((_, props) =>
-      selectAsset.mockImplementation(props?.onAssetSelected),
-    );
+    let onAssetSelectedHandler: ((currency: unknown) => void) | undefined;
 
-    // Should open the drawer
+    (DialogModule.openDialog as jest.Mock).mockImplementation(content => {
+      const dialogProps = (content as React.ReactElement).props;
+      onAssetSelectedHandler = dialogProps?.onAssetSelected;
+    });
+
+    // Should open the dialog
     result.current.openAssetFlowDialog();
 
-    expect(setDrawer).toHaveBeenCalledTimes(1);
-    expect(setDrawer).toHaveBeenLastCalledWith(
-      ModularDialogFlowManager,
-      {
-        currencies: [],
-        drawerConfiguration: {
-          assets: { leftElement: "undefined", rightElement: "balance" },
-          networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
-        },
-        onAssetSelected: expect.any(Function),
+    expect(DialogModule.openDialog).toHaveBeenCalledTimes(1);
+    const call = (DialogModule.openDialog as jest.Mock).mock.calls[0];
+    const dialogContent = call[0];
+    const dialogProps = (dialogContent as React.ReactElement).props;
+
+    expect(dialogProps).toMatchObject({
+      currencies: [],
+      drawerConfiguration: {
+        assets: { leftElement: "undefined", rightElement: "balance" },
+        networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
       },
-      {
-        closeButtonComponent: expect.any(Function),
-        onRequestClose: expect.any(Function),
-      },
-    );
+    });
+    expect(dialogProps.onAssetSelected).toBeDefined();
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBeFalsy();
 
-    // Select currency in the drawer
+    // Select currency in the dialog
     const mockCurrency = { id: "btc", type: "CryptoCurrency" };
-    selectAsset(mockCurrency);
-
-    expect(setDrawer).toHaveBeenCalledTimes(2);
-    expect(setDrawer).toHaveBeenCalledWith();
+    if (onAssetSelectedHandler) {
+      onAssetSelectedHandler(mockCurrency);
+    }
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,

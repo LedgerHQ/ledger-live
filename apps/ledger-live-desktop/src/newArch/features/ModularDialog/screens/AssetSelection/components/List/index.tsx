@@ -9,7 +9,7 @@ import {
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
-import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
+import SkeletonList from "LLD/features/ModularDialog/components/SkeletonList";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
