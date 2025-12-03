@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -64,10 +64,6 @@ on:
         required: false
         type: boolean
         default: false
-      currency_family_filter:
-        description: "Filter currencies/families by tag (e.g. '@bitcoin,@evm')"
-        required: false
-        type: string
 
   workflow_call:
     inputs:
@@ -76,7 +72,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       invert_filter:
@@ -111,10 +107,6 @@ on:
         required: false
         type: boolean
         default: false
-      currency_family_filter:
-        description: "Filter currencies/families by tag (e.g. '@bitcoin,@evm')"
-        required: false
-        type: string
 
 permissions:
   id-token: write
@@ -190,14 +182,9 @@ jobs:
         id: test-filter
         run: |
           BASE_FILTER="${{ inputs.test_filter }}"
-          TAG_FILTER="${{ inputs.currency_family_filter }}"
 
-          if [ -n "$TAG_FILTER" ]; then
-            TAG_FILTER="${TAG_FILTER//,/|}"
-          fi
-
-          if [ -z "$BASE_FILTER" ] && [ -n "$TAG_FILTER" ]; then
-            BASE_FILTER="$TAG_FILTER"
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
           fi
 
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then

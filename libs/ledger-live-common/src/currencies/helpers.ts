@@ -1,5 +1,5 @@
 import { Currency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {
   return currency.type === "CryptoCurrency";
@@ -18,10 +18,6 @@ export type CurrencyFilters = {
 };
 
 export function getFamilyByCurrencyId(currencyId: string): CryptoCurrency["family"] | undefined {
-  try {
-    const currency = getCryptoCurrencyById(currencyId);
-    return currency.family;
-  } catch {
-    return undefined;
-  }
+  const currency = findCryptoCurrencyById(currencyId);
+  return currency?.family;
 }
