@@ -18,12 +18,20 @@ describe("getBlock", () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
-    mockGetNodeApi.mockReturnValue({
-      getBlockByHeight: jest.fn().mockResolvedValue({
+    const mockGetBlockByHeight = jest.fn();
+    mockGetBlockByHeight
+      .mockResolvedValueOnce({
         hash: "0xabc123",
         height: 12345,
         timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
-      }),
+      })
+      .mockResolvedValueOnce({
+        hash: "0xparent123",
+        height: 12344,
+        timestamp: new Date("2025-01-15T10:29:00Z").getTime(),
+      });
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
     } as any);
 
     const mockWithApi = jest.mocked(rpcCommon.withApi);
@@ -64,6 +72,11 @@ describe("getBlock", () => {
       hash: "0xabc123",
       height: 12345,
       time: new Date("2025-01-15T10:30:00Z"),
+      parent: {
+        hash: "0xparent123",
+        height: 12344,
+        time: new Date("2025-01-15T10:29:00Z"),
+      },
     });
     expect(result.transactions).toHaveLength(2);
     expect(result.transactions[0].hash).toBe("0xtx1");
@@ -79,12 +92,20 @@ describe("getBlock", () => {
     );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
-    mockGetNodeApi.mockReturnValue({
-      getBlockByHeight: jest.fn().mockResolvedValue({
+    const mockGetBlockByHeight = jest.fn();
+    mockGetBlockByHeight
+      .mockResolvedValueOnce({
         hash: "0xabc123",
         height: 12345,
         timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
-      }),
+      })
+      .mockResolvedValueOnce({
+        hash: "0xparent123",
+        height: 12344,
+        timestamp: new Date("2025-01-15T10:29:00Z").getTime(),
+      });
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
     } as any);
 
     const mockFetchWithRetries = jest.mocked(fetchWithRetries);
@@ -155,6 +176,11 @@ describe("getBlock", () => {
       hash: "0xabc123",
       height: 12345,
       time: new Date("2025-01-15T10:30:00Z"),
+      parent: {
+        hash: "0xparent123",
+        height: 12344,
+        time: new Date("2025-01-15T10:29:00Z"),
+      },
     });
     expect(result.transactions).toHaveLength(2);
     expect(result.transactions[0].hash).toBe("0xtx1");

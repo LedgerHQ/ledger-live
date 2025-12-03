@@ -152,6 +152,26 @@ describe.each([
       expect(result.transactions.length).toBeGreaterThan(0);
     });
 
+    it("returns block with parent for a block with height > 0", async () => {
+      const result = await module.getBlock(20000000);
+
+      expect(result.info.parent).toBeDefined();
+      expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.parent?.height).toBe(19999999);
+      expect(result.info.parent?.height).toBe(result.info.height - 1);
+      expect(result.info.parent?.time).toBeInstanceOf(Date);
+      expect(result.info.parent?.time!.getTime()).toBeLessThan(result.info.time!.getTime());
+    });
+
+    it("returns block without parent for genesis block", async () => {
+      const result = await module.getBlock(0);
+
+      expect(result.info.height).toBe(0);
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.info.parent).toBeUndefined();
+    });
+
     it("returns block with operations extracted from transactions", async () => {
       const result = await module.getBlock(20000000);
 
