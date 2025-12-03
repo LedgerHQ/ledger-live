@@ -2526,8 +2526,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
-        address: "https://www.mintscan.io/quicksilver/validators/$address",
+        tx: "https://explorer.quicksilver.zone/transactions/$hash",
+        address: "https://explorer.quicksilver.zone/validators/$address",
       },
     ],
   },

@@ -56,9 +56,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
     if (validator !== undefined) {
       return validator;
     }
-
+    if (mainAccount.currency.id === "persistence" || mainAccount.currency.id === "quicksilver") {
+      return undefined;
+    }
     return validators[0];
-  }, [validators, validator]);
+  }, [validators, validator, mainAccount.currency.id]);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
@@ -92,7 +94,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenValidator.validatorAddress !== transaction.validators[0].address) {
+    if (chosenValidator && chosenValidator.validatorAddress !== transaction.validators[0].address) {
       setTransaction(
         bridge.updateTransaction(transaction, {
           validators: [
@@ -176,7 +178,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       parentId: parentAccount?.id,
       transaction,
       status,
-      validatorName: chosenValidator.name,
+      validatorName: chosenValidator ? chosenValidator.name : "",
     });
   }, [
     navigation,
@@ -184,7 +186,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     parentAccount?.id,
     transaction,
     status,
-    chosenValidator.name,
+    chosenValidator,
     route.params.source,
   ]);
 
@@ -225,7 +227,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
                 >
                   <ValidatorImage
                     isLedger={cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
-                      chosenValidator.validatorAddress,
+                      chosenValidator?.validatorAddress ?? "",
                     )}
                     name={chosenValidator?.name ?? chosenValidator?.validatorAddress}
                   />
