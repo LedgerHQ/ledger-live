@@ -1,6 +1,5 @@
 ---
 "@ledgerhq/hw-app-vet": minor
-"@ledgerhq/crypto-icons-ui": minor
 "live-mobile": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/native-ui": minor
