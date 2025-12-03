@@ -60,9 +60,7 @@ export const SelectAccountList = ({
       return;
     }
 
-    const tupleWithSub = accounts.find(
-      ({ subAccount }) => subAccount && subAccount.id === accountId,
-    );
+    const tupleWithSub = accounts.find(({ subAccount }) => subAccount?.id === accountId);
     if (tupleWithSub?.subAccount) {
       onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
       trackAccountClick(tupleWithSub.subAccount.token.ticker);

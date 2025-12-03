@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
@@ -8,11 +8,16 @@ import { NetworkSelection } from "./screens/NetworkSelection";
 import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
-import { resetModularDrawerState } from "~/renderer/reducers/modularDrawer";
+import {
+  resetModularDrawerState,
+  modularDrawerFlowSelector,
+} from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import { DialogHeader } from "@ledgerhq/ldls-ui-react";
 import { useDialog } from "LLD/components/Dialog";
 import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
@@ -27,13 +32,25 @@ const ModularDialogFlowManager = ({
   areCurrenciesFiltered,
   onAssetSelected,
   onAccountSelected,
+  onClose,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const { closeDialog } = useDialog();
+  const flow = useSelector(modularDrawerFlowSelector);
 
   const { t } = useTranslation();
+
+  const handleClose = () => {
+    track("button_clicked", {
+      button: "Close",
+      flow,
+      page: currentRouteNameRef.current,
+    });
+    onClose?.();
+    closeDialog();
+  };
 
   useEffect(() => {
     return () => {
@@ -108,7 +125,7 @@ const ModularDialogFlowManager = ({
       <DialogHeader
         appearance="extended"
         title={t(TranslationKeyMap[currentStep])}
-        onClose={closeDialog}
+        onClose={handleClose}
         onBack={handleBack}
       />
       <div style={{ height: "480px", overflow: "hidden" }}>

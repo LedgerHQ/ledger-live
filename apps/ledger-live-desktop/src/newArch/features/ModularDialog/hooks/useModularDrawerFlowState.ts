@@ -79,10 +79,10 @@ export function useModularDrawerFlowState({
       const correspondingCurrency =
         providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
 
-      if (!isSelectAccountFlow) {
-        onAssetSelected?.(correspondingCurrency);
-      } else {
+      if (isSelectAccountFlow) {
         goToAccountSelection(correspondingCurrency, network);
+      } else {
+        onAssetSelected?.(correspondingCurrency);
       }
     },
     [goToAccountSelection, isSelectAccountFlow, onAssetSelected, providers],

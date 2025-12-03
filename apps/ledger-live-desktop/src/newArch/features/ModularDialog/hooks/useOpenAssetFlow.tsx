@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -13,13 +12,14 @@ import { GlobalModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import ModularDrawerFlowManager from "../ModularDialogFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { CloseButton } from "../components/CloseButton"; // TODO move to AddAccount
+import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
-import { closeDialog, openDialog } from "LLD/components/Dialog";
+import { useDialog } from "LLD/components/Dialog";
 
 function selectCurrencyDialog(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
+  openDialog: (content: React.ReactNode, onClose?: () => void) => void,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
   drawerConfiguration?: EnhancedModularDrawerConfiguration,
@@ -52,6 +52,8 @@ export function useOpenAssetFlowDialog(
   });
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const featureNetworkBasedAddAccount = useFeature("lldNetworkBasedAddAccount");
+
+  const { openDialog, closeDialog } = useDialog();
 
   const handleClose = useCallback(() => {
     setDrawer();
@@ -109,6 +111,7 @@ export function useOpenAssetFlowDialog(
       }
     },
     [
+      closeDialog,
       dispatch,
       featureNetworkBasedAddAccount?.enabled,
       modalNameToReopen,
@@ -122,7 +125,13 @@ export function useOpenAssetFlowDialog(
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
         dispatch(setSourceValue(source));
-        selectCurrencyDialog(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
+        selectCurrencyDialog(
+          openAddAccountFlow,
+          openDialog,
+          undefined,
+          handleClose,
+          drawerConfiguration,
+        );
       } else {
         closeDialog();
         dispatch(
@@ -133,12 +142,14 @@ export function useOpenAssetFlowDialog(
       }
     },
     [
+      closeDialog,
       dispatch,
       handleClose,
       isModularDrawerVisible,
       modalNameToReopen,
       modularDrawerVisibleParams,
       openAddAccountFlow,
+      openDialog,
       source,
     ],
   );

@@ -18,7 +18,7 @@ const currencyFamiliesRules = {
 };
 
 const livecommonRules = {
-  files: ["src/**"],
+  files: ["src/**", "tests/**"],
   rules: {
     "no-restricted-imports": [
       "error",

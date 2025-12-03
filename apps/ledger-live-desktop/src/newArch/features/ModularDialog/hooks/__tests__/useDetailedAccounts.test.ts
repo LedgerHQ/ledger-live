@@ -12,13 +12,17 @@ jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 describe("useDetailedAccounts", () => {
   it("should return formatted accounts for a crypto currency", () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset), {
-      ...INITIAL_STATE,
-      initialState: {
-        accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+    const { result } = renderHook(
+      () => useDetailedAccounts(asset),
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        },
       },
-    });
+      false,
+    );
 
     expect(result.current.detailedAccounts).toEqual([
       {
@@ -40,13 +44,17 @@ describe("useDetailedAccounts", () => {
 
   it('should return onAddAccountClick function that dispatches "ADD_ACCOUNT" action', () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset), {
-      ...INITIAL_STATE,
-      initialState: {
-        accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+    const { result } = renderHook(
+      () => useDetailedAccounts(asset),
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        },
       },
-    });
+      false,
+    );
 
     const onAddAccountClick = result.current.onAddAccountClick;
     expect(onAddAccountClick).toBeDefined();
@@ -64,13 +72,17 @@ describe("useDetailedAccounts", () => {
 
   it("should return accounts for a token currency", () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset), {
-      ...INITIAL_STATE,
-      initialState: {
-        accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+    const { result } = renderHook(
+      () => useDetailedAccounts(asset),
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        },
       },
-    });
+      false,
+    );
 
     expect(result.current.accounts).toEqual([
       {

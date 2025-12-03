@@ -2,15 +2,19 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useOpenAssetFlowDialog } from "../useOpenAssetFlow";
-import * as DialogModule from "LLD/components/Dialog";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
 }));
 
+const mockOpenDialog = jest.fn();
+const mockCloseDialog = jest.fn();
+
 jest.mock("LLD/components/Dialog", () => ({
-  openDialog: jest.fn(),
-  closeDialog: jest.fn(),
+  useDialog: jest.fn(() => ({
+    openDialog: mockOpenDialog,
+    closeDialog: mockCloseDialog,
+  })),
 }));
 
 describe("useOpenAssetFlowDialog", () => {
@@ -69,18 +73,18 @@ describe("useOpenAssetFlowDialog", () => {
 
     let onAssetSelectedHandler: ((currency: unknown) => void) | undefined;
 
-    (DialogModule.openDialog as jest.Mock).mockImplementation(content => {
-      const dialogProps = (content as React.ReactElement).props;
+    mockOpenDialog.mockImplementation((content: React.ReactNode) => {
+      // @ts-expect-error - accessing props from React element in test
+      const dialogProps = content?.props;
       onAssetSelectedHandler = dialogProps?.onAssetSelected;
     });
 
     // Should open the dialog
     result.current.openAssetFlowDialog();
 
-    expect(DialogModule.openDialog).toHaveBeenCalledTimes(1);
-    const call = (DialogModule.openDialog as jest.Mock).mock.calls[0];
-    const dialogContent = call[0];
-    const dialogProps = (dialogContent as React.ReactElement).props;
+    expect(mockOpenDialog).toHaveBeenCalledTimes(1);
+    const call = mockOpenDialog.mock.calls[0];
+    const dialogProps = call[0].props;
 
     expect(dialogProps).toMatchObject({
       currencies: [],
@@ -94,7 +98,10 @@ describe("useOpenAssetFlowDialog", () => {
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBeFalsy();
 
     // Select currency in the dialog
-    const mockCurrency = { id: "btc", type: "CryptoCurrency" };
+    const mockCurrency = {
+      id: "btc",
+      type: "CryptoCurrency",
+    };
     if (onAssetSelectedHandler) {
       onAssetSelectedHandler(mockCurrency);
     }

@@ -7,7 +7,6 @@ import type {
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
-import { closeDialog, openDialog } from "LLD/components/Dialog";
 
 type Result = {
   account: AccountLike;
@@ -21,11 +20,21 @@ type DrawerParams = {
   areCurrenciesFiltered?: boolean;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
+  openDialog: (content: React.ReactNode, onClose?: () => void) => void;
+  closeDialog: () => void;
 };
 
-function openAssetAndAccountDialog(params: DrawerParams): void {
-  const { currencies, drawerConfiguration, useCase, areCurrenciesFiltered, onSuccess, onCancel } =
-    params;
+function openAssetAndAccountDialog(params: DrawerParams) {
+  const {
+    currencies,
+    drawerConfiguration,
+    useCase,
+    areCurrenciesFiltered,
+    onSuccess,
+    onCancel,
+    openDialog,
+    closeDialog,
+  } = params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
@@ -34,7 +43,7 @@ function openAssetAndAccountDialog(params: DrawerParams): void {
     onSuccess?.(result.account, result.parentAccount);
   };
 
-  return openDialog(
+  openDialog(
     <ModularDialogFlowManager
       currencies={currencies ?? []}
       onAccountSelected={(account, parentAccount) => {
@@ -43,26 +52,11 @@ function openAssetAndAccountDialog(params: DrawerParams): void {
       drawerConfiguration={modularDrawerConfiguration}
       useCase={useCase}
       areCurrenciesFiltered={areCurrenciesFiltered}
-    ></ModularDialogFlowManager>,
+      onClose={onCancel}
+    />,
     onCancel,
   );
 }
-
-// TODO implement the following
-// const CloseButtonWithTracking = ({ onRequestClose }: React.ComponentProps<typeof CloseButton>) => {
-//   const flow = useSelector(modularDrawerFlowSelector);
-
-//   const handleClose: React.ComponentProps<typeof CloseButton>["onRequestClose"] = mouseEvent => {
-//     track("button_clicked", {
-//       button: "Close",
-//       flow,
-//       page: currentRouteNameRef.current,
-//     });
-//     onRequestClose(mouseEvent);
-//   };
-
-//   return <CloseButton onRequestClose={handleClose} />;
-// };
 
 function openAssetAndAccountDialogPromise(
   drawerParams: Omit<DrawerParams, "onSuccess" | "onCancel">,

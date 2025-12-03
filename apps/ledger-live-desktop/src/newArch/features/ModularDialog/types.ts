@@ -24,4 +24,5 @@ export type ModularDrawerFlowManagerProps = {
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
+  onClose?: () => void;
 };

@@ -5,20 +5,10 @@ import {
   openAssetAndAccountDialogPromise,
 } from "../AssetAndAccountDrawer";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
-import * as DialogModule from "LLD/components/Dialog";
 
 jest.mock("../../ModularDialogFlowManager", () => {
   return ({ children }: { children: React.ReactNode }) => children;
 });
-
-jest.mock("../../components/CloseButton", () => ({
-  CloseButton: () => null,
-}));
-
-jest.mock("LLD/components/Dialog", () => ({
-  openDialog: jest.fn(),
-  closeDialog: jest.fn(),
-}));
 
 const mockAccount = { id: "account1" } as AccountLike;
 const mockParentAccount = { id: "parent1" } as Account;
@@ -26,6 +16,9 @@ const mockParentAccount = { id: "parent1" } as Account;
 const config = createModularDrawerConfiguration({});
 
 describe("openAssetAndAccountDialog", () => {
+  const openDialog = jest.fn();
+  const closeDialog = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -35,10 +28,12 @@ describe("openAssetAndAccountDialog", () => {
     openAssetAndAccountDialog({
       onSuccess,
       drawerConfiguration: config,
+      openDialog,
+      closeDialog,
     });
 
-    expect(DialogModule.openDialog).toHaveBeenCalledTimes(1);
-    const call = (DialogModule.openDialog as jest.Mock).mock.calls[0];
+    expect(openDialog).toHaveBeenCalledTimes(1);
+    const call = openDialog.mock.calls[0];
     const dialogContent = call[0];
 
     // Simulate account selection by finding the onAccountSelected handler in the dialog content
@@ -48,6 +43,7 @@ describe("openAssetAndAccountDialog", () => {
       dialogProps.onAccountSelected(mockAccount, mockParentAccount);
     }
 
+    expect(closeDialog).toHaveBeenCalled();
     expect(onSuccess).toHaveBeenCalledWith(mockAccount, mockParentAccount);
   });
 
@@ -57,10 +53,12 @@ describe("openAssetAndAccountDialog", () => {
     openAssetAndAccountDialog({
       onCancel,
       drawerConfiguration: config,
+      openDialog,
+      closeDialog,
     });
 
-    expect(DialogModule.openDialog).toHaveBeenCalledTimes(1);
-    const call = (DialogModule.openDialog as jest.Mock).mock.calls[0];
+    expect(openDialog).toHaveBeenCalledTimes(1);
+    const call = openDialog.mock.calls[0];
     const onClose = call[1];
 
     // Simulate cancel by calling the onClose callback
@@ -73,6 +71,9 @@ describe("openAssetAndAccountDialog", () => {
 });
 
 describe("openAssetAndAccountDialogPromise", () => {
+  const openDialog = jest.fn();
+  const closeDialog = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -83,13 +84,15 @@ describe("openAssetAndAccountDialogPromise", () => {
       | undefined;
 
     // Mock openDialog to capture the onAccountSelected handler
-    (DialogModule.openDialog as jest.Mock).mockImplementation(content => {
+    openDialog.mockImplementation(content => {
       const dialogProps = (content as React.ReactElement).props;
       onAccountSelectedHandler = dialogProps?.onAccountSelected;
     });
 
     const resultPromise = openAssetAndAccountDialogPromise({
       drawerConfiguration: config,
+      openDialog,
+      closeDialog,
     });
 
     // Simulate account selection after the promise is created
@@ -100,20 +103,22 @@ describe("openAssetAndAccountDialogPromise", () => {
     const result = await resultPromise;
 
     expect(result).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
-    expect(DialogModule.openDialog).toHaveBeenCalled();
-    expect(DialogModule.closeDialog).toHaveBeenCalled();
+    expect(openDialog).toHaveBeenCalled();
+    expect(closeDialog).toHaveBeenCalled();
   });
 
   it("should reject with an error on cancel", async () => {
     let onCloseHandler: (() => void) | undefined;
 
     // Mock openDialog to capture the onClose handler
-    (DialogModule.openDialog as jest.Mock).mockImplementation((content, onClose) => {
+    openDialog.mockImplementation((content, onClose) => {
       onCloseHandler = onClose;
     });
 
     const resultPromise = openAssetAndAccountDialogPromise({
       drawerConfiguration: config,
+      openDialog,
+      closeDialog,
     });
 
     // Simulate cancellation by calling onClose

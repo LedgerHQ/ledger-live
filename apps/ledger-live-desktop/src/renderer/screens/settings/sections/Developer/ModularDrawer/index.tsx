@@ -19,11 +19,13 @@ import {
 import { Button } from "@ledgerhq/ldls-ui-react";
 import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { useDialog } from "LLD/components/Dialog";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
   const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
   const dispatch = useDispatch();
+  const { openDialog, closeDialog } = useDialog();
 
   const {
     assetsLeftElement,
@@ -75,13 +77,11 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
   };
 
   const openDrawerFunctionsDialog: Record<ModularDrawerLocation, () => void> = {
-    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration),
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration), // needs to call handleClose
     [ModularDrawerLocation.LIVE_APP]: () => {
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
-      openAssetAndAccountDialog({
-        drawerConfiguration,
-      });
+      openAssetAndAccountDialog({ drawerConfiguration, openDialog, closeDialog });
     },
     [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
     [ModularDrawerLocation.SEND_FLOW]: () => {},
