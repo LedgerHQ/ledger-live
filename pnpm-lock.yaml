@@ -1061,8 +1061,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@braze/react-native-sdk':
-        specifier: 13.2.0
-        version: 13.2.0
+        specifier: 18.0.0
+        version: 18.0.0
       '@datadog/mobile-react-native':
         specifier: 2.8.2
         version: 2.8.2(react-native@0.77.3(patch_hash=hcyge4gdiiwuwax5k7xvija4ca)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -11946,8 +11946,8 @@ packages:
   '@blooo/hw-app-acre@1.1.1':
     resolution: {integrity: sha512-wWYUGR0sj4Yyy3GtiFRpRuaBdIgzbg8BnXCfUeduUzjQaMWzQ66wSvaJn4pHrIAdGwmdyqJWn3UqFgb1YPq0VQ==}
 
-  '@braze/react-native-sdk@13.2.0':
-    resolution: {integrity: sha512-npmL4Xufd/htiOnQ3SQvPzkGtWZb5QLd24PP2B5C1+hDGCq5ytL1B4AfP5SNGYV/Gom8WUtAKRwHr/DnElCc6w==}
+  '@braze/react-native-sdk@18.0.0':
+    resolution: {integrity: sha512-6VEFpvDObYqr9nMfNHUTVpIQXS3ibJTbEnIZs8/2rw0qyn3cZdMPDHBWTawR8GuQiKHF0UwGLJiEkCu2mOozDw==}
 
   '@braze/web-sdk@4.10.2':
     resolution: {integrity: sha512-S5OtBpmHDeZZVG1WjCdJ1w/SjzhGGULPkNjJONnl4YqUKK85BrGxK3beWXutduT5uoUl1Vfq4c32wx/DRsVDBw==}
@@ -41567,7 +41567,7 @@ snapshots:
       typescript: 5.8.3
       varuint-bitcoin: 1.1.2
 
-  '@braze/react-native-sdk@13.2.0': {}
+  '@braze/react-native-sdk@18.0.0': {}
 
   '@braze/web-sdk@4.10.2': {}
 
