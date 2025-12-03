@@ -96,6 +96,11 @@ describe("getEstimatedFees", () => {
     const gasPriceTinybars = new BigNumber(900);
     const transferAmount = BigInt(1000000);
 
+    (apiClient.getAccount as jest.Mock).mockImplementation(address => ({
+      address,
+      evm_address: `0x${address}`,
+    }));
+
     (apiClient.getNetworkFees as jest.Mock).mockResolvedValueOnce({
       fees: [
         {
@@ -130,11 +135,12 @@ describe("getEstimatedFees", () => {
       .multipliedBy(gasPriceTinybars)
       .integerValue(BigNumber.ROUND_CEIL);
 
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(2);
     expect(apiClient.getNetworkFees).toHaveBeenCalledTimes(1);
     expect(apiClient.estimateContractCallGas).toHaveBeenCalledTimes(1);
     expect(apiClient.estimateContractCallGas).toHaveBeenCalledWith(
-      toEVMAddress(senderAddress),
-      toEVMAddress(recipientAddress),
+      await toEVMAddress(senderAddress),
+      await toEVMAddress(recipientAddress),
       mockedTokenCurrencyERC20.contractAddress,
       transferAmount,
     );

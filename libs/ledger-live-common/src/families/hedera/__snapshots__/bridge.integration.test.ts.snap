@@ -12,7 +12,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "31416932358",
         "nodeId": 20,
-        "pendingReward": "0",
+        "pendingReward": "4301172",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -71,7 +71,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "100226095",
         "nodeId": 0,
-        "pendingReward": "3288",
+        "pendingReward": "13210",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -182,7 +182,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "100000000",
         "nodeId": 7,
-        "pendingReward": "150678",
+        "pendingReward": "171225",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,

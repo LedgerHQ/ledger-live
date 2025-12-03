@@ -606,13 +606,27 @@ describe("logic utils", () => {
   });
 
   describe("toEVMAddress", () => {
-    it("returns correct EVM address for valid Hedera account ID", () => {
-      const evmAddress = toEVMAddress("0.0.12345");
-      expect(evmAddress).toBe("0x0000000000000000000000000000000000003039");
+    const mockMirrorAccount = {
+      account: "0.0.12345",
+      evm_address: "0xae2e616828973ec543bbce40cf640c012c5a3805",
+    };
+
+    it("returns correct EVM address for valid Hedera account ID", async () => {
+      (apiClient.getAccount as jest.Mock).mockResolvedValueOnce(mockMirrorAccount);
+
+      const evmAddress = await toEVMAddress(mockMirrorAccount.account);
+
+      expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
+      expect(apiClient.getAccount).toHaveBeenCalledWith(mockMirrorAccount.account);
+      expect(evmAddress).toBe(mockMirrorAccount.evm_address);
     });
 
-    it("returns null for invalid Hedera account ID", () => {
-      const evmAddress = toEVMAddress("invalid_account_id");
+    it("returns null when API call fails", async () => {
+      (apiClient.getAccount as jest.Mock).mockRejectedValueOnce(new Error("API error"));
+
+      const evmAddress = await toEVMAddress(mockMirrorAccount.account);
+
+      expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
       expect(evmAddress).toBeNull();
     });
   });

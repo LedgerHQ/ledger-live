@@ -21,8 +21,10 @@ const estimateContractCallFees = async (
   let gas = new BigNumber(0);
 
   const tokenEvmAddress = "assetReference" in txIntent.asset ? txIntent.asset.assetReference : null;
-  const senderEvmAddress = toEVMAddress(txIntent.sender);
-  const recipientEvmAddress = toEVMAddress(txIntent.recipient);
+  const [senderEvmAddress, recipientEvmAddress] = await Promise.all([
+    toEVMAddress(txIntent.sender),
+    toEVMAddress(txIntent.recipient),
+  ]);
 
   if (!tokenEvmAddress || !senderEvmAddress || !recipientEvmAddress) {
     return {
