@@ -195,7 +195,7 @@ export function getPostOnboardingActionsForDevice(
       return [assetsTransfer, buyCrypto, syncAccounts, customImage];
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no custom lock screen step).
-      return [assetsTransfer, buyCrypto, syncAccounts];
+      return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
       // Post-onboarding actions for Nano S Plus (no custom lock screen step).
       return [assetsTransfer, buyCrypto, syncAccounts];
