@@ -20,7 +20,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import { useTimeRemaining } from "./utils";
+import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 
 type PendingProposal = {

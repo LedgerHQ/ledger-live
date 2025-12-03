@@ -3,6 +3,7 @@ import { Flex, Text, Button, Checkbox, IconBox, Alert } from "@ledgerhq/native-u
 import LedgerIcon from "~/icons/Ledger";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CantonOnboardAccountParamList } from "../types";
 import { take, filter } from "rxjs/operators";
@@ -75,11 +76,36 @@ export default function Accept({ navigation, route }: Props) {
   const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
-  // Get the bridge for the currency
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
   const bridge = getCurrencyBridge(cryptoCurrency) as CantonCurrencyBridge;
+
+  const finishOnboarding = useCallback(() => {
+    if (!result) return;
+    const newAccount = accs.find(a => a.freshAddressPath === result.account.freshAddressPath);
+    if (newAccount) {
+      newAccount.id = result.account.id;
+      newAccount.xpub = result.account.xpub;
+    }
+    setError(null);
+    dispatch(
+      addAccountsAction({
+        existingAccounts,
+        scannedAccounts: accs,
+        selectedIds: accs.map(account => account.id),
+        renamings: {},
+      }),
+    );
+    navigation.getParent()?.navigate(NavigatorName.AddAccounts, {
+      screen: ScreenName.AddAccountsSuccess,
+      params: {
+        accountsToAdd: accs,
+        currency: cryptoCurrency,
+      },
+    });
+  }, [accs, dispatch, existingAccounts, navigation, cryptoCurrency, result]);
 
   const retryOnboard = useCallback(() => {
     if (!device) return;
@@ -103,6 +129,10 @@ export default function Accept({ navigation, route }: Props) {
         result => {
           setError(null);
           setDisabled(false);
+          if (skipCantonPreapprovalStep?.enabled) {
+            finishOnboarding();
+            return;
+          }
           if (isCantonOnboardResult(result)) {
             setResult(result);
           }
@@ -113,7 +143,15 @@ export default function Accept({ navigation, route }: Props) {
         },
       );
     setSubscription(sub);
-  }, [cryptoCurrency, device, accs, bridge, subscription]);
+  }, [
+    cryptoCurrency,
+    device,
+    accs,
+    bridge,
+    subscription,
+    skipCantonPreapprovalStep?.enabled,
+    finishOnboarding,
+  ]);
 
   const onPress = useCallback(() => {
     if (!device || !result) return;
@@ -129,40 +167,10 @@ export default function Accept({ navigation, route }: Props) {
         take(1),
       )
       .subscribe(() => {
-        const newAccount = accs.find(a => a.freshAddressPath === result.account.freshAddressPath);
-        if (newAccount) {
-          newAccount.id = result.account.id;
-          newAccount.xpub = result.account.xpub;
-        }
-        setError(null);
-        dispatch(
-          addAccountsAction({
-            existingAccounts,
-            scannedAccounts: accs,
-            selectedIds: accs.map(account => account.id),
-            renamings: {},
-          }),
-        );
-        navigation.getParent()?.navigate(NavigatorName.AddAccounts, {
-          screen: ScreenName.AddAccountsSuccess,
-          params: {
-            accountsToAdd: accs,
-            currency: cryptoCurrency,
-          },
-        });
+        finishOnboarding();
       });
     setSubscription(sub);
-  }, [
-    cryptoCurrency,
-    device,
-    bridge,
-    result,
-    navigation,
-    dispatch,
-    existingAccounts,
-    accs,
-    subscription,
-  ]);
+  }, [cryptoCurrency, device, bridge, result, finishOnboarding, subscription]);
 
   const action = useAppDeviceAction();
 
@@ -171,29 +179,23 @@ export default function Accept({ navigation, route }: Props) {
     const notUsedAccount = accs.find(account => !account.used);
     if (!notUsedAccount) return;
 
-    setDisabled(true);
-    const sub = bridge
-      .onboardAccount(cryptoCurrency, device.deviceId, notUsedAccount)
-      .pipe(
-        filter(value => isCantonOnboardResult(value) && !!value.partyId),
-        take(1),
-      )
-      .subscribe(
-        result => {
-          setError(null);
-          setDisabled(false);
-          if (isCantonOnboardResult(result)) {
-            setResult(result);
-          }
-        },
-        (e: Error) => {
-          setError(e);
-          setDisabled(false);
-        },
-      );
-    setSubscription(sub);
-    return () => sub.unsubscribe();
-  }, [cryptoCurrency, device, accs, bridge, currency, navigation]);
+    retryOnboard();
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, [
+    cryptoCurrency,
+    device,
+    accs,
+    bridge,
+    currency,
+    navigation,
+    skipCantonPreapprovalStep?.enabled,
+    retryOnboard,
+    subscription,
+  ]);
 
   useLayoutEffect(() => {
     const notUsedAccounts = accs.filter(account => !account.used);

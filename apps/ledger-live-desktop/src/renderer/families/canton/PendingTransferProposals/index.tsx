@@ -22,9 +22,11 @@ import IconSend from "~/renderer/icons/Send";
 import IconCross from "~/renderer/icons/Cross";
 import DeviceAppModal from "./DeviceAppModal";
 import Tooltip from "~/renderer/components/Tooltip";
-import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
+import {
+  useCantonAcceptOrRejectOffer,
+  useTimeRemaining,
+} from "@ledgerhq/live-common/families/canton/react";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useTimeRemaining } from "./utils";
 
 const TableRow = styled(BaseTableRow)`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};

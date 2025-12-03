@@ -1,5 +1,14 @@
-import { renderHook, act } from "tests/testSetup";
-import { getRemainingTime, useTimeRemaining } from "./utils";
+/**
+ * @jest-environment jsdom
+ */
+
+// Mock the bridge to avoid loading all bridge implementations with ESM dependencies
+jest.mock("../../bridge", () => ({
+  getCurrencyBridge: jest.fn(),
+}));
+
+import { renderHook, act } from "@testing-library/react";
+import { getRemainingTime, useTimeRemaining } from "./react";
 
 const MILLISECOND = 1000;
 const SECOND = 1 * MILLISECOND;

@@ -37,6 +37,7 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
+import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
 
 type Props = {
   account?: AccountLike;
@@ -106,6 +107,9 @@ export function useListHeaderComponents({
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
   const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
+  const PendingTransferProposals = (
+    perFamilyPendingTransferProposals as Record<string, MaybeComponent>
+  )[family];
 
   const AccountBalanceSummaryFooter =
     perFamilyAccountBalanceSummaryFooter[
@@ -220,6 +224,13 @@ export function useListHeaderComponents({
                 parentAccount={account}
                 useCounterValue={shouldUseCounterValue}
               />
+            </SectionContainer>,
+          ]
+        : []),
+      ...(account.type === "Account" && PendingTransferProposals
+        ? [
+            <SectionContainer px={2} key="PendingTransferProposals">
+              <PendingTransferProposals account={account} />
             </SectionContainer>,
           ]
         : []),

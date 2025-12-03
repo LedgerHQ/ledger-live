@@ -8046,6 +8046,50 @@
       "quickFix": "Quick Fix: Send some funds to yourself to consolidate.",
       "warning": "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
       "consolidate": "Consolidate"
+    },
+    "pendingTransactions": {
+      "expired": "Expired",
+      "accept": "Accept",
+      "reject": "Reject",
+      "review": "Review",
+      "withdraw": "Cancel transfer",
+      "incoming": {
+        "title": "Incoming transfer to review"
+      },
+      "outgoing": {
+        "title": "Outgoing transfer"
+      },
+      "details": {
+        "incomingTitle": "Incoming transfer details",
+        "outgoingTitle": "Outgoing transfer details"
+      },
+      "amount": "Amount",
+      "from": "From",
+      "to": "To",
+      "memo": "Memo",
+      "expiresAt": "Expires at",
+      "expiresIn": "Expires in",
+      "status": {
+        "label": "Status"
+      },
+      "deviceAppModal": {
+        "contractId": "Contract ID",
+        "processing": "Processing...",
+        "success": {
+          "accept": {
+            "title": "Transfer accepted",
+            "description": "The incoming transfer has been successfully accepted."
+          },
+          "reject": {
+            "title": "Transfer rejected",
+            "description": "The incoming transfer has been successfully rejected."
+          },
+          "withdraw": {
+            "title": "Transfer rejected",
+            "description": "The outgoing transfer has been successfully rejected."
+          }
+        }
+      }
     }
   }
 }
