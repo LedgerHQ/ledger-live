@@ -83,5 +83,5 @@
   "prConcurrentLimit": 5,
   "separateMinorPatch": true,
   "timezone": "Europe/Paris",
-  "enabledManagers": ["npm", "pnpm"]
+  "enabledManagers": ["npm"]
 }
