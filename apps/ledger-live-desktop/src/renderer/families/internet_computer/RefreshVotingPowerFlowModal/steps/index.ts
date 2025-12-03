@@ -11,20 +11,20 @@ export function useSteps(): St[] {
     () => [
       {
         id: "listNeuron",
-        label: "Neurons",
+        label: t("internetComputer.common.neurons"),
         component: StepListNeuron,
         noScroll: true,
         footer: ConfirmationFooter,
       },
       {
         id: "device",
-        label: t("cosmos.undelegation.flow.steps.device.title"),
+        label: t("internetComputer.common.connectDevice.title"),
         component: GenericStepConnectDevice as React.ComponentType<StepProps>,
         noScroll: true,
       },
       {
         id: "confirmation",
-        label: "Confirmation",
+        label: t("internetComputer.common.confirmation"),
         component: StepConfirmation as React.ComponentType<StepProps>,
         onBack: ({ transitionTo }: StepProps) => {
           transitionTo("listNeuron");

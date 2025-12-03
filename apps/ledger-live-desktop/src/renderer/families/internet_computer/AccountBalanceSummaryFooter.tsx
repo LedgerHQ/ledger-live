@@ -15,7 +15,6 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { InternetComputerFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTranslation } from "react-i18next";
@@ -55,9 +54,7 @@ const AmountValue = styled(Text).attrs(() => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
-}))<{ paddingRight?: number }>`
-  ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
-`;
+}))``;
 
 const Separator = styled.div`
   width: 1px;
@@ -73,17 +70,15 @@ interface StakedBalanceCountervalue {
   countervalueAvailable: boolean;
 }
 
-const useStakedBalanceCountervalue = (account: AccountLike): StakedBalanceCountervalue | null => {
+const useStakedBalanceCountervalue = (account: ICPAccount): StakedBalanceCountervalue | null => {
   const { history, countervalueAvailable } = useBalanceHistoryWithCountervalue({
     account,
     range: "day",
   });
-  if (account.type !== "Account") return null;
-  const icpAccount = account as unknown as ICPAccount;
-  if (!icpAccount.neurons?.totalStaked) return null;
-  const lastHistory = history[history.length - 1];
+  if (!account.neurons?.totalStaked) return null;
+  const lastHistory = history.at(-1);
   if (!lastHistory?.countervalue || !lastHistory?.value) return null;
-  const stakedRatio = icpAccount.neurons.totalStaked.div(account.balance);
+  const stakedRatio = account.neurons.totalStaked.div(account.balance);
   return {
     stakedCountervalue: lastHistory.countervalue * stakedRatio.toNumber(),
     stakedValue: lastHistory.value * stakedRatio.toNumber(),
@@ -101,15 +96,14 @@ const AccountBalanceSummaryFooter: InternetComputerFamily["AccountBalanceSummary
   discreetMode,
 }) => {
   const { t } = useTranslation();
+  const icpAccount = account as unknown as ICPAccount; // TokenAccount is not possible here
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const counterValue = useSelector(counterValueCurrencySelector);
-  const stakedCountervalue = useStakedBalanceCountervalue(account);
+  const stakedCountervalue = useStakedBalanceCountervalue(icpAccount);
   const { countervalueFirst } = useCountervaluePreferences();
 
   if (account.type !== "Account") return null;
-
-  const icpAccount = account as unknown as ICPAccount;
   const { neurons } = icpAccount;
 
   const formatConfig = {
@@ -124,16 +118,14 @@ const AccountBalanceSummaryFooter: InternetComputerFamily["AccountBalanceSummary
     showCode: !countervalueFirst,
   });
 
-  const stakedCountervalueFormatted = stakedCountervalue
-    ? formatCurrencyUnit(
-        counterValue.units[0],
-        new BigNumber(stakedCountervalue.stakedCountervalue),
-        {
-          ...formatConfig,
-          showCode: true,
-        },
-      )
-    : null;
+  const stakedCountervalueFormatted = formatCurrencyUnit(
+    counterValue.units[0],
+    new BigNumber(stakedCountervalue?.stakedCountervalue ?? 0),
+    {
+      ...formatConfig,
+      showCode: true,
+    },
+  );
 
   const maturityBalance = formatCurrencyUnit(
     unit,
@@ -215,7 +207,9 @@ const AccountBalanceSummaryFooter: InternetComputerFamily["AccountBalanceSummary
           fontSize={4}
           color="palette.text.shade60"
         >
-          {`${t("internetComputer.lastSynced")}: ${new Date(neurons.lastUpdatedMSecs).toLocaleString()}`}
+          {t("internetComputer.lastSynced")
+            .concat(": ")
+            .concat(new Date(neurons.lastUpdatedMSecs).toLocaleString())}
         </Box>
       )}
     </Wrapper>

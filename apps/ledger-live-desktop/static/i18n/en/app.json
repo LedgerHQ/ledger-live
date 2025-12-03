@@ -7798,6 +7798,10 @@
       "warnbox": "No neurons found, try syncing existing neurons created through NNS dapp or stake to create new neurons."
     },
     "common": {
+      "confirmation": "Confirmation",
+      "connectDevice": {
+        "title": "Device"
+      },
       "neuronId": "Neuron ID",
       "neuronIds": "Neuron Ids",
       "state": "State",
@@ -7811,6 +7815,7 @@
       "votingPower": "Voting Power",
       "hotkey": "Hotkey",
       "neuron": "Neuron",
+      "neurons": "Neurons",
       "disburse": "Disburse",
       "startDissolving": "Start Dissolving",
       "stopDissolving": "Stop Dissolving",
@@ -7829,6 +7834,9 @@
     },
     "manageNeuronFlow": {
       "title": "Manage Neurons",
+      "manageAction": {
+        "title": "Manage Neuron Acton"
+      },
       "stakeMaturity": {
         "title": "Stake Maturity",
         "description": "Choose how much of the maturity available to stake into this neuron.",
@@ -7852,6 +7860,7 @@
       },
       "selectFollowees": {
         "title": "Followee's Neuron ID",
+        "altTitle": "Select Followees",
         "placeholder": "Enter neuron ID",
         "options": "Options For Following"
       },
@@ -7865,6 +7874,7 @@
         "title": "Add HotKey"
       },
       "manage": {
+        "title": "Manage Neuron",
         "header": {
           "hotkeyControlDescription": "This neuron is controlled by a hotkey and has limited control from the Ledger Live interface.",
           "hotkeyControl": "HotKey Control",
@@ -7917,6 +7927,7 @@
         }
       },
       "listNeuron": {
+        "title": "Select Neuron",
         "warnbox": "Select a neuron from the list below to manage its stake, maturity, and dissolve delay settings."
       }
     },
