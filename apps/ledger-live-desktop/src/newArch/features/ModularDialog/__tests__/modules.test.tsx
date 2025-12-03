@@ -20,7 +20,7 @@ import {
   scrollCurrency,
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -59,7 +59,7 @@ const mockedInitialState = {
 
 const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency].map(c => c.id);
 
-describe("ModularDrawerFlowManager - Modules configuration", () => {
+describe("ModularDialogFlowManager - Modules configuration", () => {
   // This is tempory as in the future balance will be displayed by default for all assets but right now it's not the case
   it("should display balance on the right at assetSelection by default", async () => {
     const mixedCurrencies = [
@@ -70,7 +70,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       bitcoinCurrency,
     ];
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mixedCurrencies.map(c => c.id)}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -87,7 +87,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display balance on the right at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{
@@ -111,7 +111,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display APY tag at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{
@@ -130,7 +130,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display market trend on the left at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{
@@ -151,7 +151,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display market trend on the right at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{
@@ -174,7 +174,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should not display balance on the right at assetSelection step when enableModularization is false ", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{
@@ -208,7 +208,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display number of accounts for network with numberOfAccounts flag", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
@@ -234,7 +234,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display number of accounts and APY for network with numberOfAccountsAndApy flag", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
@@ -255,7 +255,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
   it("should display the total balance of an asset a specific network", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ networks: { rightElement: "balance" } }}
@@ -281,7 +281,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
   // Skipping because flaky, test to be rewritten in refactor from LIVE-21033
   it.skip("render the eth balance of scroll base and arbitrum as ethereum", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ assets: { rightElement: "balance" } }}
@@ -310,7 +310,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       bitcoinCurrency,
     ].map(c => c.id);
     renderWithMockedCounterValuesProvider(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ assets: { rightElement: "balance" } }}

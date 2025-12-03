@@ -26,7 +26,7 @@ import {
   mockDomMeasurements,
   mockOnAccountSelected,
 } from "../../__tests__/shared";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -42,13 +42,13 @@ beforeEach(() => {
 
 const mockCurrencies = currencies.map(currency => currency.id);
 
-describe("ModularDrawerFlowManager - Select Account Flow", () => {
+describe("ModularDialogFlowManager - Select Account Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   it("should render AssetSelection step with correct props", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -61,7 +61,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -79,7 +79,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate to AccountSelection step after network selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -106,7 +106,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should call onSelectAccount after accountSelection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -133,7 +133,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate directly to accountSelection step", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[ethereumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -151,7 +151,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate directly to networkSelection step", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -165,7 +165,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should display empty screen if there is no account", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -181,7 +181,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -206,7 +206,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -229,7 +229,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should go back to NetworkSelection step when clicking on back button", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -258,7 +258,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should not display back button on AccountSelection step if only one account", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[ethereumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -271,7 +271,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should not display back button on AccountSelection step if only one currency", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -284,7 +284,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should not re trigger page tracking on asset search", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -339,7 +339,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate normaly doing a complex flow", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
@@ -379,7 +379,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate to usdc account selection step", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[usdcToken.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -399,7 +399,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should navigate to bitcoin account selection step", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
@@ -422,7 +422,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     const { user } = render(
       <>
         <div id="modals" />
-        <ModularDrawerFlowManager
+        <ModularDialogFlowManager
           currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
           onAccountSelected={mockOnAccountSelected}
           areCurrenciesFiltered
@@ -448,7 +448,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
   it("should auto focus on search input when autoFocus is true", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,

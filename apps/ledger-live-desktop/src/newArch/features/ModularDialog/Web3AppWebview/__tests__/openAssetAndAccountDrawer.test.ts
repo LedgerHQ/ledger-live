@@ -1,12 +1,12 @@
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
-  openAssetAndAccountDrawer,
-  openAssetAndAccountDrawerPromise,
+  openAssetAndAccountDialog,
+  openAssetAndAccountDialogPromise,
 } from "../AssetAndAccountDrawer";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
-jest.mock("../../ModularDrawerFlowManager", () => {
+jest.mock("../../ModularDialogFlowManager", () => {
   return ({ children }: { children: React.ReactNode }) => children;
 });
 
@@ -23,7 +23,7 @@ const mockParentAccount = { id: "parent1" } as Account;
 
 const config = createModularDrawerConfiguration({});
 
-describe("openAssetAndAccountDrawer", () => {
+describe("openAssetAndAccountDialog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -40,7 +40,7 @@ describe("openAssetAndAccountDrawer", () => {
 
   it("should handle callback mode success", () => {
     const onSuccess = jest.fn();
-    openAssetAndAccountDrawer({
+    openAssetAndAccountDialog({
       onSuccess,
       drawerConfiguration: config,
     });
@@ -56,7 +56,7 @@ describe("openAssetAndAccountDrawer", () => {
   it("should handle callback mode cancel", () => {
     const onCancel = jest.fn();
 
-    openAssetAndAccountDrawer({
+    openAssetAndAccountDialog({
       onCancel,
       drawerConfiguration: config,
     });
@@ -70,7 +70,7 @@ describe("openAssetAndAccountDrawer", () => {
   });
 });
 
-describe("openAssetAndAccountDrawerPromise", () => {
+describe("openAssetAndAccountDialogPromise", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -86,7 +86,7 @@ describe("openAssetAndAccountDrawerPromise", () => {
   });
 
   it("should resolve with account and parentAccount on success", async () => {
-    const result = await openAssetAndAccountDrawerPromise({
+    const result = await openAssetAndAccountDialogPromise({
       drawerConfiguration: config,
     });
 
@@ -103,7 +103,7 @@ describe("openAssetAndAccountDrawerPromise", () => {
     });
 
     await expect(
-      openAssetAndAccountDrawerPromise({
+      openAssetAndAccountDialogPromise({
         drawerConfiguration: config,
       }),
     ).rejects.toThrow("Canceled by user");

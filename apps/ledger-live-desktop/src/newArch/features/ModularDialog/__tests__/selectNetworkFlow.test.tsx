@@ -8,7 +8,7 @@ import {
   scrollCurrency,
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -30,13 +30,13 @@ const mixedCurrencies = [
   ethereumCurrency,
 ];
 const mixedCurrenciesIds = mixedCurrencies.map(currency => currency.id);
-describe("ModularDrawerFlowManager - Select Network Flow", () => {
+describe("ModularDialogFlowManager - Select Network Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   it("should render AssetSelection step with correct props", async () => {
     render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -49,7 +49,7 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected when an asset is selected", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -64,7 +64,7 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -82,7 +82,7 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected after network selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -98,10 +98,10 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     expect(mockOnAssetSelected).toHaveBeenCalledWith(arbitrumCurrency);
   });
 
-  // This test is to ensure that we display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies it refers to the setAssetsToDisplay in the useMemo done inside ModularDrawerFlowManager.tsx
+  // This test is to ensure that we display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies it refers to the setAssetsToDisplay in the useMemo done inside ModularDialogFlowManager.tsx
   it("should display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mixedCurrenciesIds}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -125,7 +125,7 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should handle the search in the assetsSelection screen when I have no provider currencies but only provided currencies", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mixedCurrenciesIds}
         onAssetSelected={mockOnAssetSelected}
       />,
@@ -156,7 +156,7 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should display the empty state when there are no assets", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager
+      <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
       />,

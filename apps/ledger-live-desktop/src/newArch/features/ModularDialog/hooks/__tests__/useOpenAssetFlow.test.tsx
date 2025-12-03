@@ -1,14 +1,14 @@
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDrawerFlowManager from "../../ModularDrawerFlowManager";
-import { useOpenAssetFlow } from "../useOpenAssetFlow";
+import ModularDialogFlowManager from "../../ModularDialogFlowManager";
+import { useOpenAssetFlowDialog } from "../useOpenAssetFlow";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
 }));
 
-describe("useOpenAssetFlow", () => {
+describe("useOpenAssetFlowDialog", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -17,7 +17,7 @@ describe("useOpenAssetFlow", () => {
 
   it("should dispatch openModal if the modular drawer is not visible", async () => {
     const { result, store } = renderHook(
-      () => useOpenAssetFlow({ location: modularDrawerLocation }, "test"),
+      () => useOpenAssetFlowDialog({ location: modularDrawerLocation }, "test"),
       {
         initialState: {
           settings: {
@@ -31,7 +31,7 @@ describe("useOpenAssetFlow", () => {
       },
     );
 
-    result.current.openAssetFlow();
+    result.current.openAssetFlowDialog();
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
@@ -42,7 +42,7 @@ describe("useOpenAssetFlow", () => {
 
   it("should open the modular drawer if it is visible and open the legacy modal once a currency is chosen and the lldNetworkBasedAddAccount flag is off", () => {
     const { result, store } = renderHook(
-      () => useOpenAssetFlow({ location: modularDrawerLocation }, "test"),
+      () => useOpenAssetFlowDialog({ location: modularDrawerLocation }, "test"),
       {
         initialState: {
           settings: {
@@ -68,11 +68,11 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow();
+    result.current.openAssetFlowDialog();
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
-      ModularDrawerFlowManager,
+      ModularDialogFlowManager,
       {
         currencies: [],
         drawerConfiguration: {

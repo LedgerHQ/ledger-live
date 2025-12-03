@@ -23,7 +23,7 @@ import {
   ethereumCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
+import ModularDialogFlowManager from "./ModularDialogFlowManager";
 import { ModularDrawerFlowManagerProps } from "./types";
 
 const createMockState = () => ({
@@ -99,7 +99,7 @@ const mockCurrencies = [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitco
 
 const meta: Meta<StoryArgs> = {
   title: "ModularDrawer/ModularDrawerFlowManager",
-  component: ModularDrawerFlowManager,
+  component: ModularDialogFlowManager,
   args: {
     currencies: mockCurrencies,
     onAssetSelected: () => null,
@@ -236,7 +236,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
             borderTop: "1px solid #ccc",
           }}
         >
-          <ModularDrawerFlowManager
+          <ModularDialogFlowManager
             currencies={mockCurrencies}
             onAssetSelected={() => null}
             onAccountSelected={() => null}

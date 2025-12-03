@@ -27,6 +27,7 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
+import { DialogProvider } from "~/newArch/components/Dialog";
 
 config.disabled = true;
 
@@ -124,9 +125,11 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
-        <StyleProvider selectedPalette="dark">
-          <ContextMenuWrapper>{children}</ContextMenuWrapper>
-        </StyleProvider>
+        <DialogProvider>
+          <StyleProvider selectedPalette="dark">
+            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          </StyleProvider>
+        </DialogProvider>
       </DrawerProvider>
     </I18nextProvider>
   );

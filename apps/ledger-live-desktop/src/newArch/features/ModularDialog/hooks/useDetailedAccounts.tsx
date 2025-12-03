@@ -13,7 +13,7 @@ import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hoo
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
-import { useOpenAssetFlow } from "./useOpenAssetFlow";
+import { useOpenAssetFlowDialog } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
@@ -28,7 +28,7 @@ export const useDetailedAccounts = (
   const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDrawerSourceSelector);
-  const { openAddAccountFlow } = useOpenAssetFlow(
+  const { openAddAccountFlow } = useOpenAssetFlowDialog(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
   );
