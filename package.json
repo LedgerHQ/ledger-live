@@ -207,7 +207,7 @@
     "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "0.5.0",
+    "@changesets/changelog-github": "0.5.2",
     "@changesets/cli": "2.27.7",
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "17.8.1",
