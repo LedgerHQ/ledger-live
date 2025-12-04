@@ -87,7 +87,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       });
       navigation.navigate(navigationArgs[0], navigationArgs[1]);
     } else if ("startAction" in props) {
-      props.startAction({
+      props.startAction?.({
         openActivationDrawer,
       });
     }
@@ -125,7 +125,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
                 </Tag>
               ) : null}
             </Flex>
-            {isActionCompleted ? null : (
+            {isActionCompleted || description === undefined ? null : (
               <Text variant="body" fontWeight="medium" color="neutral.c70">
                 {t(description, { productName })}
               </Text>

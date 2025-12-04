@@ -47,7 +47,7 @@ type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: (args: StartActionArgs) => void;
+  startAction?: (args: StartActionArgs) => void;
   /**
    * Optional Redux dispatch function
    */
@@ -99,7 +99,7 @@ export type PostOnboardingAction = {
   /**
    * Description displayed for this action in the post onboarding hub.
    */
-  description: string;
+  description?: string;
 
   /**
    * Tag displayed for this action in the post onboarding hub.

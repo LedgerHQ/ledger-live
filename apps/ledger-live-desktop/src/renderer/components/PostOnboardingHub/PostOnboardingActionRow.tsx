@@ -75,7 +75,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     };
 
     if ("startAction" in props && deviceModelId !== null) {
-      props.startAction({
+      props.startAction?.({
         openModalCallback,
         navigationCallback,
         deviceModelId,
@@ -131,7 +131,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           >
             {t(title)}
           </Text>
-          {!isActionCompleted ? (
+          {!isActionCompleted && description ? (
             <Text variant="body" fontWeight="medium" color="neutral.c70">
               {t(description, {
                 productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,

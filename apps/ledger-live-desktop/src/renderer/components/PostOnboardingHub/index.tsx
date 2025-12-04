@@ -40,11 +40,9 @@ const PostOnboardingHub = () => {
         id={PostOnboardingActionId.deviceOnboarded}
         title="postOnboarding.actions.deviceOnboarded.titleCompleted"
         titleCompleted="postOnboarding.actions.deviceOnboarded.titleCompleted"
-        description=""
         completed
         deviceModelId={deviceModelId}
         Icon={Icons.LedgerDevices}
-        startAction={() => {}}
       />
       {postOnboardingRows}
     </Flex>

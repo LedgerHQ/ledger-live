@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Divider, Flex, Text, Button } from "@ledgerhq/native-ui";
+import { Divider, Flex, Text, Button, ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -13,7 +13,6 @@ import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingA
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
-import { ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { setHasBeenRedirectedToPostOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
@@ -104,10 +103,8 @@ const PostOnboardingHub = () => {
               id={PostOnboardingActionId.deviceOnboarded}
               title="postOnboarding.actions.deviceOnboarded.titleCompleted"
               titleCompleted="postOnboarding.actions.deviceOnboarded.titleCompleted"
-              description=""
               completed
               Icon={Icons.LedgerDevices}
-              startAction={() => {}}
               deviceModelId={deviceModelId}
               productName={productName}
             />
