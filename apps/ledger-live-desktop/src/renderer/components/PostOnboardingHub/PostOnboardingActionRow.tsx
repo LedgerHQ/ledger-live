@@ -50,7 +50,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.postOnboarding,
-    needEligibleDevice: false,
+    needEligibleDevice: true,
   });
 
   const completeAction = useCompleteActionCallback();
