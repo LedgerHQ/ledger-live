@@ -1,6 +1,6 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeEmptyTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { makeEmptyTokenAccount, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
@@ -41,9 +41,13 @@ export const useAddAccountFlowNavigation = ({
         );
         const tokenAccount =
           existingTokenAccount || makeEmptyTokenAccount(parentAccount, originalCurrency);
-        return { account: tokenAccount, parent: parentAccount };
+        // Use getMainAccount to get the parent account (which is the main account for a token)
+        const mainAccount = getMainAccount(tokenAccount, parentAccount);
+        return { account: tokenAccount, parent: mainAccount };
       }
-      return { account: parentAccount };
+      // For non-token accounts, the account itself is the main account
+      // Using getMainAccount for consistency (returns parentAccount since it's already an Account)
+      return { account: getMainAccount(parentAccount, undefined) };
     },
     [originalCurrency],
   );
