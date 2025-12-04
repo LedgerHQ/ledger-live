@@ -23,9 +23,9 @@ import type {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
   TapRequest,
+  TransactionType,
   TransferProposal,
 } from "../types/gateway";
-import { TransactionType } from "../types/gateway";
 import {
   PreApprovalResult,
   PrepareTransactionRequest,

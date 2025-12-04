@@ -13,74 +13,85 @@ import { CantonAccount, CantonSigner } from "../types";
 import type { OperationView } from "../types/gateway";
 import { isAccountOnboarded } from "./onboard";
 
+function determineOperationType(
+  details: Record<string, unknown>,
+  partyId: string,
+  senders: string[],
+  transferValue: string,
+  txType: string,
+): OperationType {
+  const operationType = details.operationType;
+  if (operationType === "transfer-proposal") return "TRANSFER_PROPOSAL";
+  if (operationType === "transfer-rejected") return "TRANSFER_REJECTED";
+  if (operationType === "transfer-withdrawn") return "TRANSFER_WITHDRAWN";
+
+  switch (txType) {
+    case "Send":
+      // Zero-value sends are fee-only transactions
+      if (transferValue === "0") return "FEES";
+      // Otherwise, determine if it's outgoing or incoming based on sender
+      return senders.includes(partyId) ? "OUT" : "IN";
+
+    case "Receive":
+      return "IN";
+
+    case "Initialize":
+      return "PRE_APPROVAL";
+
+    default:
+      return "UNKNOWN";
+  }
+}
+
+function extractMemo(details: Record<string, unknown>) {
+  if (!details || typeof details !== "object") return undefined;
+
+  const metadata = details.metadata;
+  if (!metadata || typeof metadata !== "object") return undefined;
+
+  const reason = "reason" in metadata ? metadata.reason : undefined;
+  return reason !== undefined ? String(reason) : undefined;
+}
+
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
   (txInfo: OperationView): Operation => {
     const {
-      transaction_hash,
       uid,
+      fee: { value: fee },
       block: { height, hash },
       senders = [],
       recipients = [],
-      transaction_timestamp,
-      fee: { value: fee },
       transfers = [],
+      transaction_timestamp,
+      transaction_hash,
     } = txInfo;
 
     const transferValue = transfers[0]?.value ?? "0";
     const details = transfers[0]?.details ?? {};
-
-    let type: OperationType = "UNKNOWN";
-    if (details.operationType === "transfer-proposal") {
-      type = "TRANSFER_PROPOSAL";
-    } else if (details.operationType === "transfer-rejected") {
-      type = "TRANSFER_REJECTED";
-    } else if (details.operationType === "transfer-withdrawn") {
-      type = "TRANSFER_WITHDRAWN";
-    } else if (txInfo.type === "Send" && transferValue === "0") {
-      type = "FEES";
-    } else if (txInfo.type === "Send") {
-      type = senders.includes(partyId) ? "OUT" : "IN";
-    } else if (txInfo.type === "Receive") {
-      type = "IN";
-    } else if (txInfo.type === "Initialize") {
-      type = "PRE_APPROVAL";
-    }
+    const memo = extractMemo(details);
+    const type = determineOperationType(details, partyId, senders, transferValue, txInfo.type);
+    const feeValue = new BigNumber(fee);
     let value = new BigNumber(transferValue);
 
     if (type === "OUT" || type === "FEES") {
-      // We add fees when it's an outgoing transaction or a fees-only transaction
-      value = value.plus(fee);
+      value = value.plus(feeValue);
     }
-
-    const feeValue = new BigNumber(fee);
-    const memo =
-      details &&
-      typeof details === "object" &&
-      "metadata" in details &&
-      details.metadata &&
-      typeof details.metadata === "object" &&
-      "reason" in details.metadata
-        ? String(details.metadata.reason)
-        : undefined;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
       hash: transaction_hash,
-      accountId,
       type,
       value,
       fee: feeValue,
-      blockHash: hash,
-      blockHeight: height,
       senders,
       recipients,
-      date: new Date(transaction_timestamp),
+      blockHeight: height,
+      blockHash: hash,
       transactionSequenceNumber: new BigNumber(height),
-      extra: {
-        uid,
-        memo,
-      },
+      accountId,
+      date: new Date(transaction_timestamp),
+      extra: { uid, memo },
     };
 
     return op;
@@ -133,17 +144,11 @@ export function makeGetAccountShape(
       ? await getPendingTransferProposals(currency, xpubOrAddress)
       : [];
 
-    const balancesData = (balances || []).reduce(
-      (acc, balance) => {
-        if (balance.locked) {
-          acc[`Locked${balance.instrumentId}`] = balance;
-        } else {
-          acc[balance.instrumentId] = balance;
-        }
-        return acc;
-      },
-      {} as Record<string, CantonBalance>,
-    );
+    const initialBalancesData: Record<string, CantonBalance> = {};
+    const balancesData = balances.reduce((acc, balance) => {
+      acc[balance.locked ? `Locked${balance.instrumentId}` : balance.instrumentId] = balance;
+      return acc;
+    }, initialBalancesData);
 
     const unlockedAmount = new BigNumber(balancesData[nativeInstrumentId]?.value.toString() || "0");
     const lockedAmount = new BigNumber(
@@ -184,23 +189,24 @@ export function makeGetAccountShape(
     const blockHeight = await getLedgerEnd(currency);
 
     const creationDate =
-      operations.length > 0
-        ? new Date(Math.min(...operations.map(op => op.date.getTime())))
-        : new Date();
+      initialAccount?.creationDate ||
+      (operations.length > 0
+        ? operations.reduce((min, op) => (op.date < min ? op.date : min), operations[0].date)
+        : new Date());
 
     const shape = {
       id: accountId,
       type: "Account" as const,
+      freshAddress: address,
+      seedIdentifier: address,
+      xpub: xpubOrAddress,
       balance: totalBalance,
+      spendableBalance,
       blockHeight,
       creationDate,
       lastSyncDate: new Date(),
-      freshAddress: address,
-      seedIdentifier: address,
       operations,
       operationsCount: operations.length,
-      spendableBalance,
-      xpub: xpubOrAddress,
       used,
       cantonResources: {
         instrumentUtxoCounts,

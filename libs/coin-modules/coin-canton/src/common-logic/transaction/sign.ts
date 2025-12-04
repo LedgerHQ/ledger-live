@@ -1,6 +1,6 @@
 import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import { PrepareTransactionResponse } from "../../types/onboard";
-import { CantonSigner, CantonSignature } from "../../types/signer";
+import { CantonSignature, CantonSigner } from "../../types/signer";
 import { splitTransaction } from "./split";
 
 /**
