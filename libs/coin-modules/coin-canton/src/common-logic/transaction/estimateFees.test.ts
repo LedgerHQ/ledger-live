@@ -1,6 +1,6 @@
-import { estimateFees } from "./estimateFees";
-import * as coinConfigModule from "../../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import * as coinConfigModule from "../../config";
+import { estimateFees } from "./estimateFees";
 
 const mockCurrency = {
   id: "canton_network",

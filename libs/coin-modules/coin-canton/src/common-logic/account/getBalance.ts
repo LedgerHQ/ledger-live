@@ -1,8 +1,8 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../../config";
 import { getBalance as gatewayGetBalance } from "../../network/gateway";
 import type { InstrumentBalance } from "../../types/gateway";
-import coinConfig from "../../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type CantonBalance = Balance & {
   utxoCount: number;

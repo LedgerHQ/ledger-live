@@ -1,15 +1,15 @@
 import { BigNumber } from "bignumber.js";
+import { craftTransaction } from "../common-logic";
+import { createMockAccount } from "../test/fixtures";
+import prepareTransferMock from "../test/prepare-transfer.json";
 import {
-  CantonSigner,
   CantonPreparedTransaction,
   CantonSignature,
+  CantonSigner,
   CantonUntypedVersionedMessage,
+  Transaction,
 } from "../types";
-import { Transaction } from "../types";
-import { craftTransaction } from "../common-logic";
-import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
-import { createMockAccount } from "../test/fixtures";
 
 jest.mock("../common-logic", () => {
   const actual = jest.requireActual("../common-logic");

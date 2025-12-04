@@ -1,11 +1,11 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { validateTopology } from "./getTransactionStatus";
-import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
+import type { Account } from "@ledgerhq/types-live";
 import { signTransaction } from "../common-logic/transaction/sign";
-import { isCantonAccount } from "./serialization";
+import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
 import type { CantonSigner } from "../types";
+import { validateTopology } from "./getTransactionStatus";
+import { isCantonAccount } from "./serialization";
 
 type TransferInstructionType =
   | "accept-transfer-instruction"

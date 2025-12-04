@@ -32,7 +32,7 @@ export type OnboardingPrepareResponse = {
 
 export type OnboardingPrepareRequest = {
   public_key: string;
-  public_key_type: "ECDSA_P256" | "ECDSA_P384" | "ED25519";
+  public_key_type: "ed25519";
 };
 
 /**

@@ -1,10 +1,10 @@
-import { SimulationError } from "../types/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
-import coinConfig from "../config";
-import { AccountInfoResponse, SubmitResponse } from "./types";
 import crypto from "crypto";
+import coinConfig from "../config";
+import { SimulationError } from "../types/errors";
+import { AccountInfoResponse, SubmitResponse } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl || "";
 const getNetworkType = () => coinConfig.getCoinConfig().networkType;

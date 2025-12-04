@@ -1,7 +1,7 @@
-import { lastBlock } from "./lastBlock";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getLedgerEnd as gatewayGetLedgerEnd } from "../../network/gateway";
 import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { lastBlock } from "./lastBlock";
 
 jest.mock("../../network/gateway", () => ({
   getLedgerEnd: jest.fn(),

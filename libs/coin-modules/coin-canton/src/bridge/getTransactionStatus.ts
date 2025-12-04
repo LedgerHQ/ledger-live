@@ -1,3 +1,5 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -7,20 +9,18 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import BigNumber from "bignumber.js";
+import { isRecipientValid } from "../common-logic/utils";
+import { default as coinConfig } from "../config";
+import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
-  Transaction,
-  TransactionStatus,
   CantonAccount,
   TooManyUtxosCritical,
   TooManyUtxosWarning,
+  Transaction,
+  TransactionStatus,
 } from "../types";
-import { isRecipientValid } from "../common-logic/utils";
-import coinConfig from "../config";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
-import { isTopologyChangeRequiredCached } from "../network/gateway";
 import { TopologyChangeError } from "../types/errors";
 
 export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;

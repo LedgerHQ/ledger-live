@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   getDerivationModesForCurrency,
@@ -7,9 +6,10 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Account, Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
-import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
+import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
 import { CantonAccount } from "../types";
 import { makeGetAccountShape } from "./sync";
 

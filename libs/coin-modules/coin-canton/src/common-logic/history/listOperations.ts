@@ -1,6 +1,6 @@
-import type { Operation, Pagination, AssetInfo } from "@ledgerhq/coin-framework/api/index";
-import { getOperations } from "../../network/gateway";
+import type { AssetInfo, Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getOperations } from "../../network/gateway";
 import type { AssetView } from "../../types/gateway";
 
 function convertAssetViewToAssetInfo(asset?: AssetView): AssetInfo {

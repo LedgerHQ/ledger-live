@@ -1,10 +1,10 @@
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { craftTransaction, estimateFees } from "../common-logic";
-import { getNextSequence } from "../network/node";
-import { prepareTransaction } from "./prepareTransaction";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
 import coinConfig from "../config";
+import { getNextSequence } from "../network/node";
+import { Transaction } from "../types";
+import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../network/node");
 jest.mock("../common-logic");

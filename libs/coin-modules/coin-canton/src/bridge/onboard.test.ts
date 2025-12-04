@@ -1,12 +1,12 @@
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
-import * as gateway from "../network/gateway";
 import * as signTransactionModule from "../common-logic/transaction/sign";
+import * as gateway from "../network/gateway";
 import { createMockAccount } from "../test/fixtures";
-import type { CantonSigner, CantonSignature } from "../types";
-import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
+import type { CantonSignature, CantonSigner } from "../types";
+import { CantonOnboardProgress, CantonOnboardResult, OnboardStatus } from "../types/onboard";
+import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
 jest.mock("../common-logic/transaction/sign");

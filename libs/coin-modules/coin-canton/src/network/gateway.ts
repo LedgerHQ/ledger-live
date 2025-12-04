@@ -125,7 +125,7 @@ export async function prepareOnboarding(
     url: fullUrl,
     data: {
       public_key: pubKey,
-      public_key_type: "ED25519",
+      public_key_type: "ed25519",
     },
   });
 
@@ -177,7 +177,7 @@ export async function submitOnboarding(
       data: {
         prepare_request: {
           public_key: publicKey,
-          public_key_type: "ED25519",
+          public_key_type: "ed25519",
         },
         prepare_response: prepareResponse,
         signature,

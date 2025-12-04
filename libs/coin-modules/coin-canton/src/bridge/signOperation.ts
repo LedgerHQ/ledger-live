@@ -1,13 +1,13 @@
-import { Observable } from "rxjs";
-import BigNumber from "bignumber.js";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
 import { combine, craftTransaction } from "../common-logic";
 import { signTransaction } from "../common-logic/transaction/sign";
-import { Transaction, CantonSigner } from "../types";
+import { CantonSigner, Transaction } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>

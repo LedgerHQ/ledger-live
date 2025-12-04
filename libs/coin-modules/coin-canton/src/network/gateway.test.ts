@@ -1,15 +1,13 @@
-import {
-  getBalance,
-  isPartyAlreadyExists,
-  submitOnboarding,
-  type GetBalanceResponse,
-  type InstrumentBalance,
-  type OnboardingPrepareResponse,
-} from "./gateway";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
 import { TopologyChangeError } from "../types/errors";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import type {
+  GetBalanceResponse,
+  InstrumentBalance,
+  OnboardingPrepareResponse,
+} from "../types/gateway";
+import { getBalance, isPartyAlreadyExists, submitOnboarding } from "./gateway";
 
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
@@ -20,14 +18,18 @@ import network from "@ledgerhq/live-network";
 
 const mockBalances: InstrumentBalance[] = [
   {
+    admin_id: "AmuletAdmin",
     instrument_id: "Amulet",
     amount: "10000000000000000000000000000000000000000",
     locked: false,
+    utxo_count: 1,
   },
   {
-    instrument_id: "LockedAmulet",
+    admin_id: "LockedAmuletAdmin",
+    instrument_id: "Amulet",
     amount: "5000000000000000000000000000000000000000",
     locked: true,
+    utxo_count: 1,
   },
 ];
 

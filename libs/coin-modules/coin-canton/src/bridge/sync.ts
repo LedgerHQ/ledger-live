@@ -1,17 +1,17 @@
-import BigNumber from "bignumber.js";
-import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { getLedgerEnd, getOperations, getPendingTransferProposals } from "../network/gateway";
-import type { OperationView } from "../types/gateway";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
+import { isCantonAccountEmpty } from "../helpers";
+import { getLedgerEnd, getOperations, getPendingTransferProposals } from "../network/gateway";
 import resolver from "../signer";
 import { CantonAccount, CantonSigner } from "../types";
+import type { OperationView } from "../types/gateway";
 import { isAccountOnboarded } from "./onboard";
-import { isCantonAccountEmpty } from "../helpers";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>

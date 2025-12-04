@@ -1,8 +1,8 @@
 import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import {
   CantonPreparedTransaction,
-  CantonSigner,
   CantonSignature,
+  CantonSigner,
   CantonUntypedVersionedMessage,
 } from "../../types/signer";
 import { signTransaction } from "./sign";

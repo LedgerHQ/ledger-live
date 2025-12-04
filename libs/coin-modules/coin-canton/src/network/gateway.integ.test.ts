@@ -1,20 +1,20 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
 import { generateMockKeyPair } from "../test/cantonTestUtils";
+import type { OnboardingPrepareResponse } from "../types/gateway";
 import {
-  getLedgerEnd,
-  prepareOnboarding,
   getBalance,
+  getLedgerEnd,
   getOperations,
   getPartyById,
   getPartyByPubKey,
-  submitOnboarding,
-  prepareTapRequest,
-  submitTapRequest,
+  prepareOnboarding,
   preparePreApprovalTransaction,
+  prepareTapRequest,
+  submitOnboarding,
   submitPreApprovalTransaction,
-  type OnboardingPrepareResponse,
+  submitTapRequest,
 } from "./gateway";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockCurrency = {
   id: "canton_network",

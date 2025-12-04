@@ -10,19 +10,19 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
-import { CantonCurrencyBridge, CantonSigner, CantonAccount } from "../types";
 import type { Transaction } from "../types";
+import { CantonAccount, CantonCurrencyBridge, CantonSigner } from "../types";
+import { buildTransferInstruction } from "./acceptOffer";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { buildAuthorizePreapproval, buildOnboardAccount } from "./onboard";
 import { prepareTransaction } from "./prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
-import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
-import { buildTransferInstruction } from "./acceptOffer";
-import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,

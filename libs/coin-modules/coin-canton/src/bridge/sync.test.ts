@@ -1,12 +1,12 @@
-import { makeGetAccountShape } from "./sync";
-import type { OperationView } from "../types/gateway";
-import * as gateway from "../network/gateway";
-import * as onboard from "./onboard";
-import * as config from "../config";
-import resolver from "../signer";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import * as config from "../config";
+import * as gateway from "../network/gateway";
+import resolver from "../signer";
+import type { OperationView } from "../types/gateway";
+import * as onboard from "./onboard";
+import { makeGetAccountShape } from "./sync";
 
 jest.mock("../network/gateway");
 jest.mock("../signer");

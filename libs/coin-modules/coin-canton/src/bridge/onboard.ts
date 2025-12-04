@@ -1,34 +1,33 @@
-import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { log } from "@ledgerhq/logs";
-import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-
-import {
-  getNetworkType,
-  prepareOnboarding,
-  submitOnboarding,
-  getPartyByPubKey,
-  prepareTapRequest,
-  submitTapRequest,
-  preparePreApprovalTransaction,
-  submitPreApprovalTransaction,
-  getTransferPreApproval,
-  clearIsTopologyChangeRequiredCache,
-} from "../network/gateway";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { signTransaction } from "../common-logic/transaction/sign";
 import {
-  OnboardStatus,
-  AuthorizeStatus,
-  CantonOnboardProgress,
-  CantonOnboardResult,
-  CantonAuthorizeProgress,
-  CantonAuthorizeResult,
-} from "../types/onboard";
+  clearIsTopologyChangeRequiredCache,
+  getNetworkType,
+  getPartyByPubKey,
+  getTransferPreApproval,
+  prepareOnboarding,
+  preparePreApprovalTransaction,
+  prepareTapRequest,
+  submitOnboarding,
+  submitPreApprovalTransaction,
+  submitTapRequest,
+} from "../network/gateway";
 import resolver from "../signer";
 import type { CantonSigner } from "../types";
+import {
+  AuthorizeStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
+  CantonOnboardProgress,
+  CantonOnboardResult,
+  OnboardStatus,
+} from "../types/onboard";
 
 export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: string) => {
   try {
