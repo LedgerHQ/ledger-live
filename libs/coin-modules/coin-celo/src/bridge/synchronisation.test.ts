@@ -1,36 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { lockedGold, nonVoting, electionConfig } from "./__mocks__/celokit.mock";
+import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
+import { mockGetTokenBalance, mockGetCoinBalance, mockTokenEvmLogic } from "./__mocks__/evm.mock";
 import { getAccountShape } from "./synchronisation";
 
-const getAccount = jest.fn();
-
-jest.mock("./account-sync-helpers", () => {
-  return {
-    getAccount: () => getAccount(),
-  };
-});
-
-const mockListOfOps = [
-  {
-    id: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:-0x9bca21a15bc5f8b073eb488ecba36e214cbff0efb21258d4c502cc0e8e80e3f1-OUT",
-    hash: "0x9bca21a15bc5f8b073eb488ecba36e214cbff0efb21258d4c502cc0e8e80e3f1",
-    type: "OUT",
-    senders: ["0x79D5A290D7ba4b99322d91b577589e8d0BF87072"],
-    recipients: ["0x8D6677192144292870907E3Fa8A5527fE55A7ff6"],
-    accountId: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:",
-    blockHash: "0xd7a0438d5b9edd9588a2aee375cede92f9dc7654d1c88e38aac10cc97d7ebbaa",
-    blockHeight: 51840387,
-    extra: {},
-    date: "2025-11-21T16:05:45.000Z",
-    value: "7743784739000000",
-    fee: "7743784739000000",
-    transactionSequenceNumber: "116",
-    hasFailed: false,
-  },
-];
-
-const info = {
+const defaultInfo = {
   address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
   currency: getCryptoCurrencyById("celo"),
   index: 0,
@@ -38,7 +13,7 @@ const info = {
   derivationMode: "",
   initialAccount: undefined,
 } as const;
-const config = { blacklistedTokenIds: [], paginationConfig: {} };
+const defaultConfig = { blacklistedTokenIds: [], paginationConfig: {} };
 
 const defaultShape = {
   balance: new BigNumber(1010),
@@ -57,44 +32,65 @@ electionConfig.mockResolvedValue({ maxNumGroupsVotedFor: 10 });
 describe("When getting the account shape", () => {
   it("returns the account with correct balance and spendable balance", async () => {
     // Given
-    getAccount.mockResolvedValueOnce({ ...defaultShape });
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce([[]]),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
 
     // When
-    const result = await getAccountShape(info, config);
+    const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
     expect(result).toBeDefined();
     expect(result.balance).toEqual(BigNumber(1010));
-    expect(result.spendableBalance).toEqual(BigNumber(20));
+    expect(result.spendableBalance).toEqual(BigNumber(1010));
   });
 
   it("returns the account with 0 operations", async () => {
     // Given
-    getAccount.mockResolvedValueOnce({ ...defaultShape });
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce([[]]),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
 
     // When
-    const result = await getAccountShape(info, config);
+    const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
     expect(result).toBeDefined();
     expect(result.operations?.length).toBe(0);
   });
 
-  it("returns the account with 1 operations", async () => {
-    getAccount.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
+  it("returns the account with 1 erc20 operation", async () => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce([[erc20Operation]]),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
     // Given
-    const info = {
-      address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
-      currency: getCryptoCurrencyById("celo"),
-      index: 0,
-      derivationPath: "44'/52752'/0'",
-      derivationMode: "",
-      initialAccount: undefined,
-    } as const;
-    const config = { blacklistedTokenIds: [], paginationConfig: {} };
+    mockTokenEvmLogic.mockResolvedValueOnce({ ticker: "USDC", id: "0xcc" });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
 
     // When
-    const result = await getAccountShape(info, config);
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+
+    // Then
+    expect(result).toBeDefined();
+    expect(result.operations?.length).toBe(0);
+    expect(result.subAccounts?.length).toBe(1);
+  });
+
+  it("returns the account with 1 native operation", async () => {
+    // Given
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce([[nativeOperation]]),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(1010));
+
+    // When
+    const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
     expect(result).toBeDefined();
@@ -102,20 +98,15 @@ describe("When getting the account shape", () => {
   });
 
   it("returns the account with correct id, and celo resources", async () => {
-    getAccount.mockResolvedValueOnce({ ...defaultShape, operations: mockListOfOps });
     // Given
-    const info = {
-      address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
-      currency: getCryptoCurrencyById("celo"),
-      index: 0,
-      derivationPath: "44'/52752'/0'",
-      derivationMode: "",
-      initialAccount: undefined,
-    } as const;
-    const config = { blacklistedTokenIds: [], paginationConfig: {} };
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce([[nativeOperation]]),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(20));
 
     // When
-    const result = await getAccountShape(info, config);
+    const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
     expect(result).toBeDefined();
