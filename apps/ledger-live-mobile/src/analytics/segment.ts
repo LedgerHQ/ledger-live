@@ -296,13 +296,15 @@ const extraProperties = async (store: AppStore) => {
       : [];
 
   // Currency or token ids from all stakeable accounts & subAccounts with positive balance
-  const combinedIds = getTotalStakeableAssets(
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
     accounts,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   );
 
-  const totalStakeableAssets = combinedIds.size;
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
 
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
@@ -372,7 +374,8 @@ const extraProperties = async (store: AppStore) => {
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
-    totalStakeableAssets,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
   };
 };
 

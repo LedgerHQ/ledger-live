@@ -49,32 +49,37 @@ const mockedAccounts: Account[] = [
 describe("getTotalStakeableAssets", () => {
   it("should return empty Set if no accounts", () => {
     const result = getTotalStakeableAssets([], [], []);
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should return empty Set if accounts is null", () => {
     const result = getTotalStakeableAssets(null, [], []);
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should return empty Set if accounts is undefined", () => {
     const result = getTotalStakeableAssets(undefined, [], []);
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should return empty Set if no staking currencies enabled", () => {
     const result = getTotalStakeableAssets(mockedAccounts, [], []);
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should return empty Set if staking currencies enabled is string (flag not loaded)", () => {
     const result = getTotalStakeableAssets(mockedAccounts, "flag not loaded", []);
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should return Set with matching currency ID when staking currency is enabled", () => {
@@ -87,9 +92,15 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([account], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has(ETH.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(1);
+    expect(result.combinedIds.has(ETH.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(1);
+    expect(result.stakeableAssets[0]).toEqual({
+      ticker: ETH.ticker,
+      networkName: ETH.name,
+      id: ETH.id,
+    });
   });
 
   it("should return Set with matching token IDs when staking tokens are enabled", () => {
@@ -101,10 +112,17 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([account], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(2);
-    expect(result.has(ZRX_TOKEN.id)).toBe(true);
-    expect(result.has(REP_TOKEN.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(2);
+    expect(result.combinedIds.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.combinedIds.has(REP_TOKEN.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(2);
+    expect(result.stakeableAssets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: ZRX_TOKEN.id, ticker: ZRX_TOKEN.ticker }),
+        expect.objectContaining({ id: REP_TOKEN.id, ticker: REP_TOKEN.ticker }),
+      ]),
+    );
   });
 
   it("should return Set with both currency and token IDs when both are enabled", () => {
@@ -113,11 +131,19 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([account], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(3);
-    expect(result.has(ETH.id)).toBe(true);
-    expect(result.has(ZRX_TOKEN.id)).toBe(true);
-    expect(result.has(REP_TOKEN.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(3);
+    expect(result.combinedIds.has(ETH.id)).toBe(true);
+    expect(result.combinedIds.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.combinedIds.has(REP_TOKEN.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(3);
+    expect(result.stakeableAssets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: ETH.id, ticker: ETH.ticker }),
+        expect.objectContaining({ id: ZRX_TOKEN.id, ticker: ZRX_TOKEN.ticker }),
+        expect.objectContaining({ id: REP_TOKEN.id, ticker: REP_TOKEN.ticker }),
+      ]),
+    );
   });
 
   it("should filter out currencies without funds", () => {
@@ -127,8 +153,9 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([accountWithZeroBalance], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should filter out tokens without funds", () => {
@@ -140,10 +167,14 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([accountWithEmptyToken], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has(ZRX_TOKEN.id)).toBe(true);
-    expect(result.has(REP_TOKEN.id)).toBe(false);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(1);
+    expect(result.combinedIds.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.combinedIds.has(REP_TOKEN.id)).toBe(false);
+    expect(result.stakeableAssets.length).toBe(1);
+    expect(result.stakeableAssets[0]).toEqual(
+      expect.objectContaining({ id: ZRX_TOKEN.id, ticker: ZRX_TOKEN.ticker }),
+    );
   });
 
   it("should include partner staking currencies enabled", () => {
@@ -157,10 +188,17 @@ describe("getTotalStakeableAssets", () => {
       partnerStakingCurrenciesEnabled,
     );
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(2);
-    expect(result.has(ETH.id)).toBe(true);
-    expect(result.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(2);
+    expect(result.combinedIds.has(ETH.id)).toBe(true);
+    expect(result.combinedIds.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(2);
+    expect(result.stakeableAssets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: ETH.id, ticker: ETH.ticker }),
+        expect.objectContaining({ id: ZRX_TOKEN.id, ticker: ZRX_TOKEN.ticker }),
+      ]),
+    );
   });
 
   it("should deduplicate IDs when same currency appears in both lists", () => {
@@ -174,9 +212,15 @@ describe("getTotalStakeableAssets", () => {
       partnerStakingCurrenciesEnabled,
     );
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has(ETH.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(1);
+    expect(result.combinedIds.has(ETH.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(1);
+    expect(result.stakeableAssets[0]).toEqual({
+      ticker: ETH.ticker,
+      networkName: ETH.name,
+      id: ETH.id,
+    });
   });
 
   it("should handle multiple accounts with different currencies", () => {
@@ -189,10 +233,17 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets(accounts, stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(2);
-    expect(result.has(ETH.id)).toBe(true);
-    expect(result.has(BTC.id)).toBe(true);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(2);
+    expect(result.combinedIds.has(ETH.id)).toBe(true);
+    expect(result.combinedIds.has(BTC.id)).toBe(true);
+    expect(result.stakeableAssets.length).toBe(2);
+    expect(result.stakeableAssets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: ETH.id, ticker: ETH.ticker }),
+        expect.objectContaining({ id: BTC.id, ticker: BTC.ticker }),
+      ]),
+    );
   });
 
   it("should only include IDs that match staking currencies enabled", () => {
@@ -201,26 +252,32 @@ describe("getTotalStakeableAssets", () => {
 
     const result = getTotalStakeableAssets([account], stakingCurrenciesEnabled, []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has(ZRX_TOKEN.id)).toBe(true);
-    expect(result.has(ETH.id)).toBe(false);
-    expect(result.has(REP_TOKEN.id)).toBe(false);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(1);
+    expect(result.combinedIds.has(ZRX_TOKEN.id)).toBe(true);
+    expect(result.combinedIds.has(ETH.id)).toBe(false);
+    expect(result.combinedIds.has(REP_TOKEN.id)).toBe(false);
+    expect(result.stakeableAssets.length).toBe(1);
+    expect(result.stakeableAssets[0]).toEqual(
+      expect.objectContaining({ id: ZRX_TOKEN.id, ticker: ZRX_TOKEN.ticker }),
+    );
   });
 
   it("should handle empty arrays for staking currencies", () => {
     const account = mockedAccounts[0];
     const result = getTotalStakeableAssets([account], [], []);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 
   it("should handle undefined for staking currencies", () => {
     const account = mockedAccounts[0];
     const result = getTotalStakeableAssets([account], undefined, undefined);
 
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.combinedIds).toBeInstanceOf(Set);
+    expect(result.combinedIds.size).toBe(0);
+    expect(result.stakeableAssets).toEqual([]);
   });
 });

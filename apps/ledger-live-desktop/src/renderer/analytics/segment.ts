@@ -253,12 +253,14 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
-  const combinedIds = getTotalStakeableAssets(
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
     accounts,
     ptxAttributes.stakingCurrenciesEnabled,
     ptxAttributes.partnerStakingCurrenciesEnabled,
   );
-  const totalStakeableAssets = combinedIds.size;
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
 
   const accountsWithFunds = accounts
     ? [
@@ -305,7 +307,8 @@ const extraProperties = (store: ReduxStore) => {
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
-    totalStakeableAssets,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
   };
 };
 

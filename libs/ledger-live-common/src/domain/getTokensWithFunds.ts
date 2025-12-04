@@ -1,12 +1,8 @@
 import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { Account } from "@ledgerhq/types-live";
 
-/** Format defaults to "USDT on Ethereum". format: "currencyId" returns the id of each token, e.g. "ethereum/erc20/usde". */
-export const getTokensWithFunds = (accounts: Account[], customFormat?: "currencyId"): string[] => {
-  if (!accounts?.length) return [];
-
+export const getTokensWithFundsMap = (accounts: Account[]) => {
   const tokensMap = new Map<string, { ticker: string; networkName: string; id: string }>();
-
   for (const account of accounts) {
     const { balance, currency } = account || {};
     if (!balance?.gt(0) || !currency) continue;
@@ -34,6 +30,16 @@ export const getTokensWithFunds = (accounts: Account[], customFormat?: "currency
       });
     });
   }
+  return tokensMap;
+};
+/** Format defaults to "USDT on Ethereum". format: "currencyId" returns the id of each token, e.g. "ethereum/erc20/usde". */
+export const getTokensWithFunds = (
+  accounts: Account[],
+  customFormat: "currencyId" | "default" = "default",
+) => {
+  if (!accounts?.length) return [];
+
+  const tokensMap = getTokensWithFundsMap(accounts);
 
   if (customFormat === "currencyId") {
     return Array.from(tokensMap.values(), token => token.id);
