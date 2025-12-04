@@ -12,6 +12,7 @@ import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import FormatDate from "~/components/DateFormat/FormatDate";
+import { type TransferProposalAction } from "./types";
 
 type PendingProposal = {
   contract_id: string;
@@ -26,7 +27,7 @@ type PendingProposal = {
 type Props = {
   account: Account;
   contractId: string;
-  onOpenModal: (contractId: string, action: "accept" | "reject" | "withdraw") => void;
+  onOpenModal: (contractId: string, action: TransferProposalAction) => void;
   isOpen: boolean;
   onClose?: () => void;
 };

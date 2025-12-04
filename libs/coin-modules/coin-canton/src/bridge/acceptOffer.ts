@@ -1,9 +1,10 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
+import { validateTopology } from "./getTransactionStatus";
 import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
 import { signTransaction } from "../common-logic/transaction/sign";
+import { isCantonAccount } from "./serialization";
 import type { CantonSigner } from "../types";
 
 type TransferInstructionType =
@@ -22,6 +23,13 @@ export const buildTransferInstruction =
     type: TransferInstructionType,
     reason?: string,
   ) => {
+    if (isCantonAccount(account)) {
+      const topologyError = await validateTopology(account);
+      if (topologyError) {
+        throw topologyError;
+      }
+    }
+
     const preparedTransaction = await prepareTransferInstruction(currency, partyId, {
       type,
       contract_id: contractId,

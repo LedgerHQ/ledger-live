@@ -7,12 +7,17 @@ import BigNumber from "bignumber.js";
 export enum HEDERA_TRANSACTION_MODES {
   Send = "send",
   TokenAssociate = "token-associate",
+  Delegate = "delegate",
+  Undelegate = "undelegate",
+  Redelegate = "redelegate",
+  ClaimRewards = "claim-rewards",
 }
 
 /**
  * Enum representing the supported Hedera operation types for fee estimation
  */
 export enum HEDERA_OPERATION_TYPES {
+  CryptoUpdate = "CryptoUpdate",
   CryptoTransfer = "CryptoTransfer",
   TokenTransfer = "TokenTransfer",
   TokenAssociate = "TokenAssociate",
@@ -40,6 +45,15 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
 /**
+ * Enum representing the delegation status of a Hedera account
+ */
+export enum HEDERA_DELEGATION_STATUS {
+  Inactive = "inactive",
+  Overstaked = "overstaked",
+  Active = "active",
+}
+
+/**
  * https://docs.hedera.com/hedera/networks/mainnet/fees
  *
  * These are Hedera's estimated fee costs in USD, scaled to tinybars (1 HBAR = 10^8 tinybars),
@@ -49,6 +63,7 @@ export const HEDERA_MAINNET_CHAIN_ID = 295;
  * has sufficient balance to cover the cost of a transaction (e.g. token association).
  */
 export const BASE_USD_FEE_BY_OPERATION_TYPE = {
+  [HEDERA_OPERATION_TYPES.CryptoUpdate]: 0.00022 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.CryptoTransfer]: 0.0001 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.TokenTransfer]: 0.001 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.TokenAssociate]: 0.05 * 10 ** TINYBAR_SCALE,
@@ -84,3 +99,10 @@ export const SUPPORTED_ERC20_TOKENS = [
     tokenId: "0.0.10047837",
   },
 ];
+
+export const MAP_STAKING_MODE_TO_MEMO = {
+  [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Collect Staking Rewards",
+  [HEDERA_TRANSACTION_MODES.Delegate]: "Stake",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "Unstake",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "Restake",
+} as const;

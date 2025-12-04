@@ -5,9 +5,9 @@ import type {
   HederaResources,
   HederaResourcesRaw,
 } from "../../types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const defaultMockedCurrency = getMockedCurrency();
 const defaultMockedTokenCurrency = getMockedHTSTokenCurrency();
@@ -19,11 +19,13 @@ const defaultTokenBalance = new BigNumber(10);
 export const mockHederaResources: HederaResources = {
   maxAutomaticTokenAssociations: 0,
   isAutoTokenAssociationEnabled: false,
+  delegation: null,
 };
 
 export const mockHederaResourcesRaw: HederaResourcesRaw = {
   maxAutomaticTokenAssociations: 0,
   isAutoTokenAssociationEnabled: false,
+  delegation: null,
 };
 
 /**

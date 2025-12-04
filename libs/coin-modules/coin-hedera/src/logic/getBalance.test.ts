@@ -29,7 +29,6 @@ describe("getBalance", () => {
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
-    expect(result).toHaveLength(1);
     expect(result).toEqual([
       {
         asset: { type: "native" },
@@ -80,7 +79,6 @@ describe("getBalance", () => {
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(1);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(result).toHaveLength(2);
     expect(result).toEqual(
       expect.arrayContaining([
         {
@@ -150,21 +148,22 @@ describe("getBalance", () => {
 
     const result = await getBalance(mockCurrency, address);
 
-    expect(result).toHaveLength(2);
-    expect(result[0]).toEqual({
-      asset: { type: "native" },
-      value: BigInt("1000000000"),
-    });
-    expect(result[1]).toEqual({
-      value: BigInt("5000"),
-      asset: {
-        type: mockTokenHTS.tokenType,
-        assetReference: mockTokenHTS.contractAddress,
-        assetOwner: address,
-        name: mockTokenHTS.name,
-        unit: mockTokenHTS.units[0],
+    expect(result).toEqual([
+      {
+        asset: { type: "native" },
+        value: BigInt("1000000000"),
       },
-    });
+      {
+        value: BigInt("5000"),
+        asset: {
+          type: mockTokenHTS.tokenType,
+          assetReference: mockTokenHTS.contractAddress,
+          assetOwner: address,
+          name: mockTokenHTS.name,
+          unit: mockTokenHTS.units[0],
+        },
+      },
+    ]);
   });
 
   it("should throw when failing to getAccount data", async () => {

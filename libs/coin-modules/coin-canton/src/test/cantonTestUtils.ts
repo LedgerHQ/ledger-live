@@ -225,7 +225,7 @@ export function createMockSigner(keyPair: CantonTestKeyPair) {
 
       const cleanHash = hashToSign.startsWith("0x") ? hashToSign.slice(2) : hashToSign;
       const signature = keyPair.sign(cleanHash);
-      return signature;
+      return { signature };
     },
   };
 }

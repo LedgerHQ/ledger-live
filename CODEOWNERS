@@ -165,6 +165,7 @@ apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/liv
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
+apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
 libs/**/devices/                                                   @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
@@ -184,7 +185,6 @@ libs/live-dmk-mobile/                                              @ledgerhq/liv
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
-
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/                                @ledgerhq/recover-software

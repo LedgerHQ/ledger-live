@@ -59,6 +59,7 @@ export type OperationType =
   // HEDERA
   | "ASSOCIATE_TOKEN"
   | "CONTRACT_CALL"
+  | "UPDATE_ACCOUNT"
   // CANTON
   | "PRE_APPROVAL"
   | "TRANSFER_PROPOSAL"

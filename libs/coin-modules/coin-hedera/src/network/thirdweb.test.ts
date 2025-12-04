@@ -84,7 +84,7 @@ describe("fetchERC20Transactions", () => {
     };
     const result = await thirdwebClient.fetchERC20Transactions(mockedERC20TokenAddress1, params);
 
-    expect(result).toHaveLength(0);
+    expect(result).toEqual([]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 
@@ -139,7 +139,7 @@ describe("getERC20TransactionsForAccount", () => {
       since: null,
     });
 
-    expect(result).toHaveLength(0);
+    expect(result).toEqual([]);
   });
 
   it("should return exactly 2 transactions (out & in)", async () => {
