@@ -59,7 +59,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
 
 export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
-  setup: async strategy => {
+  setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Sonic/app_${defaultNanoApp.version}.elf`, {
         libraries: [
@@ -111,7 +111,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(sonic).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(strategy, transport, "sonic");
+    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "sonic");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: sonic,
@@ -157,7 +157,6 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
     );
-    // expect(account.operations.length).toBe(3);
   },
   teardown: async () => {
     resetIndexer();

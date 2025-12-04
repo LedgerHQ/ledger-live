@@ -5,7 +5,15 @@ import {
   isStuckOperation as isStuckOperationEvm,
   getStuckAccountAndOperation as getStuckAccountAndOperationEvm,
 } from "@ledgerhq/coin-evm/operation";
+import { getCurrencyConfiguration } from "./config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 export * from "@ledgerhq/coin-framework/operation";
+
+function hasGasTracker(currency: CryptoCurrency): boolean {
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency);
+  return !!config.gasTracker;
+}
 
 /**
  * Return weather an operation is editable or not.
@@ -18,7 +26,7 @@ export const isEditableOperation = ({
   operation: Operation;
 }): boolean => {
   if (account.currency.family === "evm") {
-    return isEditableOperationEvm(account, operation);
+    return isEditableOperationEvm(account, operation, hasGasTracker);
   }
 
   return false;
@@ -58,7 +66,7 @@ export const getStuckAccountAndOperation = (
   const mainAccount = getMainAccount(account, parentAccount);
 
   if (mainAccount.currency.family === "evm") {
-    return getStuckAccountAndOperationEvm(account, parentAccount);
+    return getStuckAccountAndOperationEvm(account, parentAccount, hasGasTracker);
   }
 
   return undefined;

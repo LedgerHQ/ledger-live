@@ -43,7 +43,7 @@ function legacyIntent(
 }
 
 function eip1559Intent(
-  intent: Omit<Partial<TransactionIntent>, "type">,
+  intent: Omit<Partial<TransactionIntent<MemoNotSupported, BufferTxData>>, "type">,
 ): TransactionIntent<MemoNotSupported, BufferTxData> {
   return {
     type: "send-eip1559",
@@ -104,6 +104,7 @@ describe("validateIntent", () => {
         nextBaseFee: null,
       },
     });
+    jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(30);
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -182,7 +183,10 @@ describe("validateIntent", () => {
     it("detects the recipient not being an EIP55 address with a warning", async () => {
       const res = await validateIntent(
         { name: "Ethereum" } as CryptoCurrency,
-        eip1559Intent({ amount: 1n, recipient: "0xe2ca7390e76c5a992749bb622087310d2e63ca29" }),
+        eip1559Intent({
+          amount: 1n,
+          recipient: "0xe2ca7390e76c5a992749bb622087310d2e63ca29",
+        }),
       );
 
       expect(res.warnings).toEqual(
@@ -194,6 +198,23 @@ describe("validateIntent", () => {
   });
 
   describe("amount", () => {
+    it("detects an intent for a smart contract interaction without amount-related errors", async () => {
+      const res = await validateIntent(
+        {} as CryptoCurrency,
+        eip1559Intent({
+          amount: 0n,
+          asset: { type: "native" },
+          data: { type: "buffer", value: Buffer.from([0xca, 0xfe]) },
+        }),
+      );
+
+      expect(res.errors).toEqual(
+        expect.not.objectContaining({
+          amount: new AmountRequired(),
+        }),
+      );
+    });
+
     it("detects an intent for native asset sending without amount with an error", async () => {
       const res = await validateIntent(
         {} as CryptoCurrency,
@@ -354,6 +375,19 @@ describe("validateIntent", () => {
               },
             },
           );
+          const notEnoughBalanceSponsoredRes = await validateIntent(
+            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            createIntent({ recipient: "recipient-address", sponsored: true }),
+            {
+              value: 11n,
+              parameters: {
+                gasLimit: 11n,
+                gasPrice: 1n,
+                maxFeePerGas: 1n,
+                maxPriorityFeePerGas: 1n,
+              },
+            },
+          );
           const enoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
@@ -369,6 +403,11 @@ describe("validateIntent", () => {
           );
 
           expect(notEnoughBalanceRes.errors).toEqual(
+            expect.objectContaining({
+              gasPrice: new NotEnoughGas(),
+            }),
+          );
+          expect(notEnoughBalanceSponsoredRes.errors).not.toEqual(
             expect.objectContaining({
               gasPrice: new NotEnoughGas(),
             }),
@@ -589,195 +628,241 @@ describe("validateIntent", () => {
 
   describe.each([
     [
-      "native asset",
+      "native asset and no additional fees",
       { type: "native" },
       { amount: 10000000n },
-      { expectedTotalSpent: 10105000n, expectedAmount: 10000000n },
+      { additionalFees: undefined },
+      { expectedTotalFees: 105000n, expectedTotalSpent: 10105000n, expectedAmount: 10000000n },
     ],
     [
-      "native asset, using all amounts",
+      "native asset and additional fees",
+      { type: "native" },
+      { amount: 10000000n },
+      { additionalFees: 4000n },
+      { expectedTotalFees: 109000n, expectedTotalSpent: 10109000n, expectedAmount: 10000000n },
+    ],
+    [
+      "native asset and no additional fees, using all amounts",
       { type: "native" },
       { useAllAmount: true },
-      { expectedTotalSpent: 20000000n, expectedAmount: 19895000n },
+      { additionalFees: undefined },
+      { expectedTotalFees: 105000n, expectedTotalSpent: 20000000n, expectedAmount: 19895000n },
     ],
     [
-      "token asset",
+      "native asset and additional fees, using all amounts",
+      { type: "native" },
+      { useAllAmount: true },
+      { additionalFees: 4000n },
+      { expectedTotalFees: 109000n, expectedTotalSpent: 20000000n, expectedAmount: 19891000n },
+    ],
+    [
+      "token asset and no additional fees",
       { type: "erc20", assetReference: "contract-address" },
       { amount: 2n },
-      { expectedTotalSpent: 2n, expectedAmount: 2n },
+      { additionalFees: undefined },
+      { expectedTotalFees: 105000n, expectedTotalSpent: 2n, expectedAmount: 2n },
     ],
     [
-      "token asset, using all amounts",
+      "token asset and additional fees",
+      { type: "erc20", assetReference: "contract-address" },
+      { amount: 2n },
+      { additionalFees: 4000n },
+      { expectedTotalFees: 109000n, expectedTotalSpent: 2n, expectedAmount: 2n },
+    ],
+    [
+      "token asset and no additional fees, using all amounts",
       { type: "erc20", assetReference: "contract-address" },
       { useAllAmount: true },
-      { expectedTotalSpent: 10n, expectedAmount: 10n },
+      { additionalFees: undefined },
+      { expectedTotalFees: 105000n, expectedTotalSpent: 10n, expectedAmount: 10n },
     ],
-  ])("valid intent with %s", (_s, asset, amount, { expectedTotalSpent, expectedAmount }) => {
-    it("does not return any error or warning for a valid legacy intent", async () => {
-      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
-        lastCoinOperations: [],
-        lastInternalOperations: [],
-        lastNftOperations: [],
-        lastTokenOperations: [{ contract: "contract-address" } as Operation],
-      });
-      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
+    [
+      "token asset and additional fees, using all amounts",
+      { type: "erc20", assetReference: "contract-address" },
+      { useAllAmount: true },
+      { additionalFees: 4000n },
+      { expectedTotalFees: 109000n, expectedTotalSpent: 10n, expectedAmount: 10n },
+    ],
+  ])(
+    "valid intent with %s",
+    (
+      _s,
+      asset,
+      amount,
+      additionalFees,
+      { expectedTotalFees, expectedTotalSpent, expectedAmount },
+    ) => {
+      it("does not return any error or warning for a valid legacy intent", async () => {
+        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+          lastCoinOperations: [],
+          lastInternalOperations: [],
+          lastNftOperations: [],
+          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+        });
+        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
+        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
 
-      const res = await validateIntent(
-        {} as CryptoCurrency,
-        legacyIntent({
-          ...amount,
-          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
-          asset,
-        }),
-        {
-          value: 105000n,
-          parameters: { gasLimit: 21000n, gasPrice: 5n },
-        },
-      );
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          legacyIntent({
+            ...amount,
+            recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+            asset,
+          }),
+          {
+            value: 105000n,
+            parameters: { gasLimit: 21000n, gasPrice: 5n, ...additionalFees },
+          },
+        );
 
-      expect(res).toEqual({
-        estimatedFees: 105000n,
-        totalFees: 105000n,
-        totalSpent: expectedTotalSpent,
-        amount: expectedAmount,
-        errors: {},
-        warnings: {},
-      });
-    });
-
-    it("does not return any error or warning for a valid eip1559 intent", async () => {
-      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
-        lastCoinOperations: [],
-        lastInternalOperations: [],
-        lastNftOperations: [],
-        lastTokenOperations: [{ contract: "contract-address" } as Operation],
-      });
-      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
-      jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
-        slow: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: BigNumber(2),
-          gasPrice: null,
-          nextBaseFee: null,
-        },
-        medium: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: null,
-          gasPrice: null,
-          nextBaseFee: BigNumber(4),
-        },
-        fast: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: BigNumber(6),
-          gasPrice: null,
-          nextBaseFee: null,
-        },
+        expect(res).toEqual({
+          estimatedFees: 105000n,
+          totalFees: expectedTotalFees,
+          totalSpent: expectedTotalSpent,
+          amount: expectedAmount,
+          errors: {},
+          warnings: {},
+        });
       });
 
-      const res = await validateIntent(
-        {} as CryptoCurrency,
-        eip1559Intent({
-          ...amount,
-          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
-          asset,
-        }),
-        {
-          value: 105000n,
-          parameters: { gasLimit: 21000n, maxPriorityFeePerGas: 3n, maxFeePerGas: 5n },
-        },
-      );
+      it("does not return any error or warning for a valid eip1559 intent", async () => {
+        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+          lastCoinOperations: [],
+          lastInternalOperations: [],
+          lastNftOperations: [],
+          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+        });
+        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
+        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
+        jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
+          slow: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: BigNumber(2),
+            gasPrice: null,
+            nextBaseFee: null,
+          },
+          medium: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: null,
+            nextBaseFee: BigNumber(4),
+          },
+          fast: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: BigNumber(6),
+            gasPrice: null,
+            nextBaseFee: null,
+          },
+        });
 
-      expect(res).toEqual({
-        estimatedFees: 105000n,
-        totalFees: 105000n,
-        totalSpent: expectedTotalSpent,
-        amount: expectedAmount,
-        errors: {},
-        warnings: {},
-      });
-    });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({
+            ...amount,
+            recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+            asset,
+          }),
+          {
+            value: 105000n,
+            parameters: {
+              gasLimit: 21000n,
+              maxPriorityFeePerGas: 3n,
+              maxFeePerGas: 5n,
+              ...additionalFees,
+            },
+          },
+        );
 
-    it("does not call the gas tracker if unnecessary", async () => {
-      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
-        lastCoinOperations: [],
-        lastInternalOperations: [],
-        lastNftOperations: [],
-        lastTokenOperations: [{ contract: "contract-address" } as Operation],
-      });
-      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
-      const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
-        slow: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: null,
-          gasPrice: null,
-          nextBaseFee: null,
-        },
-        medium: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: null,
-          gasPrice: null,
-          nextBaseFee: null,
-        },
-        fast: {
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: null,
-          gasPrice: null,
-          nextBaseFee: null,
-        },
+        expect(res).toEqual({
+          estimatedFees: 105000n,
+          totalFees: expectedTotalFees,
+          totalSpent: expectedTotalSpent,
+          amount: expectedAmount,
+          errors: {},
+          warnings: {},
+        });
       });
 
-      const res = await validateIntent(
-        {} as CryptoCurrency,
-        eip1559Intent({
-          ...amount,
-          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
-          asset,
-        }),
-        {
-          value: 105000n,
-          parameters: {
-            gasLimit: 21000n,
-            additionalFees: 4000n,
-            maxPriorityFeePerGas: 3n,
-            maxFeePerGas: 5n,
-            gasOptions: {
-              slow: {
-                maxFeePerGas: null,
-                maxPriorityFeePerGas: 2n,
-                gasPrice: null,
-                nextBaseFee: null,
-              },
-              medium: {
-                maxFeePerGas: null,
-                maxPriorityFeePerGas: null,
-                gasPrice: null,
-                nextBaseFee: 4n,
-              },
-              fast: {
-                maxFeePerGas: null,
-                maxPriorityFeePerGas: 6n,
-                gasPrice: null,
-                nextBaseFee: null,
+      it("does not call the gas tracker if unnecessary", async () => {
+        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+          lastCoinOperations: [],
+          lastInternalOperations: [],
+          lastNftOperations: [],
+          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+        });
+        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
+        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
+        const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
+          slow: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: null,
+            nextBaseFee: null,
+          },
+          medium: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: null,
+            nextBaseFee: null,
+          },
+          fast: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: null,
+            nextBaseFee: null,
+          },
+        });
+
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({
+            ...amount,
+            recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+            asset,
+          }),
+          {
+            value: 105000n,
+            parameters: {
+              gasLimit: 21000n,
+              maxPriorityFeePerGas: 3n,
+              maxFeePerGas: 5n,
+              ...additionalFees,
+              gasOptions: {
+                slow: {
+                  maxFeePerGas: null,
+                  maxPriorityFeePerGas: 2n,
+                  gasPrice: null,
+                  nextBaseFee: null,
+                },
+                medium: {
+                  maxFeePerGas: null,
+                  maxPriorityFeePerGas: null,
+                  gasPrice: null,
+                  nextBaseFee: 4n,
+                },
+                fast: {
+                  maxFeePerGas: null,
+                  maxPriorityFeePerGas: 6n,
+                  gasPrice: null,
+                  nextBaseFee: null,
+                },
               },
             },
           },
-        },
-      );
+        );
 
-      expect(res).toEqual({
-        estimatedFees: 105000n,
-        totalFees: 109000n,
-        totalSpent: expectedTotalSpent,
-        amount: expectedAmount,
-        errors: {},
-        warnings: {},
+        expect(res).toEqual({
+          estimatedFees: 105000n,
+          totalFees: expectedTotalFees,
+          totalSpent: expectedTotalSpent,
+          amount: expectedAmount,
+          errors: {},
+          warnings: {},
+        });
+        expect(getGasOptions).not.toHaveBeenCalled();
       });
-      expect(getGasOptions).not.toHaveBeenCalled();
-    });
-  });
+    },
+  );
 
   it.each([
     ["legacy", legacyIntent, { value: 10n, parameters: { gasLimit: 5n, gasPrice: 3n } }],

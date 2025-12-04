@@ -341,6 +341,7 @@ export type TransactionIntent<
   senderPublicKey?: string;
   sequence?: bigint;
   expiration?: number;
+  sponsored?: boolean;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 

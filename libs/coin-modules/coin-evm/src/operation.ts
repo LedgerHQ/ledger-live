@@ -2,14 +2,16 @@ import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/acc
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { getCoinConfig } from "./config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Return weather an operation is editable or not.
  */
-export const isEditableOperation = (account: Account, operation: Operation): boolean => {
-  const config = getCoinConfig(account.currency).info;
-
+export const isEditableOperation = (
+  account: Account,
+  operation: Operation,
+  hasGasTracker: (currency: CryptoCurrency) => boolean,
+): boolean => {
   const { currency } = account;
 
   if (currency.family !== "evm") {
@@ -18,7 +20,7 @@ export const isEditableOperation = (account: Account, operation: Operation): boo
 
   // gasTracker is needed to perform the edit transaction logic,
   // it is used to estimate the fees and let the user choose them
-  if (!config?.gasTracker) {
+  if (!hasGasTracker(currency)) {
     return false;
   }
 
@@ -56,6 +58,7 @@ export const isStuckOperation = (operation: Operation): boolean => {
 export const getStuckAccountAndOperation = (
   account: AccountLike,
   parentAccount: Account | undefined | null,
+  hasGasTracker: (currency: CryptoCurrency) => boolean,
 ):
   | {
       account: AccountLike;
@@ -72,7 +75,8 @@ export const getStuckAccountAndOperation = (
   }
 
   const stuckOperations = mainAccount.pendingOperations.filter(
-    pendingOp => isEditableOperation(mainAccount, pendingOp) && isStuckOperation(pendingOp),
+    pendingOp =>
+      isEditableOperation(mainAccount, pendingOp, hasGasTracker) && isStuckOperation(pendingOp),
   );
 
   if (stuckOperations.length === 0) {

@@ -1,4 +1,3 @@
-import { createTransaction } from "@ledgerhq/coin-evm/bridge/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import {
@@ -6,8 +5,41 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
+import BigNumber from "bignumber.js";
+import { AccountLike } from "@ledgerhq/types-live";
+import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
 
 const CAN_EDIT_FEES = true;
+
+const getChainId = (account: AccountLike): number => {
+  if (account.type === "Account") {
+    return account.currency.ethereumLikeInfo?.chainId || 0;
+  }
+  if (account.type === "TokenAccount") {
+    return account.token.parentCurrency.ethereumLikeInfo?.chainId || 0;
+  }
+  return 0;
+};
+
+/**
+ * EVM Transaction factory.
+ * By default the transaction is an EIP-1559 transaction.
+ * @see prepareTransaction that will make sure it's compatible or not
+ */
+export const createTransaction: (account: AccountLike) => Transaction = account => ({
+  family: "evm",
+  mode: "send",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "",
+  maxFeePerGas: new BigNumber(0),
+  maxPriorityFeePerGas: new BigNumber(0),
+  gasLimit: DEFAULT_GAS_LIMIT,
+  nonce: DEFAULT_NONCE,
+  chainId: getChainId(account),
+  feesStrategy: "medium",
+  type: 2,
+});
 
 const areFeesProvided: AreFeesProvided<WalletAPIEthereumTransaction> = tx =>
   !!((tx.gasLimit && tx.gasPrice) || (tx.gasLimit && tx.maxFeePerGas && tx.maxPriorityFeePerGas));

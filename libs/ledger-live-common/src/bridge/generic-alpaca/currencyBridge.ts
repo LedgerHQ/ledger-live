@@ -13,9 +13,7 @@ export function getAlpacaCurrencyBridge(
   const signer = customSigner ?? getSigner(network);
   return {
     preload: () => Promise.resolve({}),
-    hydrate: () => {
-      return;
-    },
+    hydrate: () => undefined,
     scanAccounts: makeScanAccounts({
       getAccountShape: genericGetAccountShape(network, kind),
       getAddressFn: signer.getAddress.bind(signer),

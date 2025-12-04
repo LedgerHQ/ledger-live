@@ -143,7 +143,23 @@ describe("listOperations", () => {
         },
       ],
       lastNftOperations: [],
-      lastInternalOperations: [],
+      lastInternalOperations: [
+        {
+          id: "internal-op-1",
+          accountId: "",
+          type: "IN",
+          senders: ["contract-address"],
+          recipients: ["address"],
+          value: new BigNumber(3),
+          hash: "token-op-3-tx-hash",
+          blockHeight: 20,
+          blockHash: "token-op-3-block-hash",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(5),
+          extra: {},
+        },
+      ],
     });
 
     expect(
@@ -271,6 +287,28 @@ describe("listOperations", () => {
             parentSenders: ["address"],
             parentRecipients: ["contract-address"],
             sequence: BigNumber(5),
+          },
+        },
+        {
+          id: "internal-op-1",
+          type: "IN",
+          recipients: ["address"],
+          senders: ["contract-address"],
+          value: 3n,
+          asset: { type: "native" },
+          tx: {
+            block: {
+              hash: "coin-op-3-block-hash",
+              height: 20,
+            },
+            date: new Date("2025-02-20"),
+            failed: false,
+            fees: 20n,
+            hash: "token-op-3-tx-hash",
+          },
+          details: {
+            internal: true,
+            sequence: new BigNumber(5),
           },
         },
       ],

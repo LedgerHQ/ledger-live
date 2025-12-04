@@ -4811,9 +4811,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/live-signer-evm':
-        specifier: workspace:^
-        version: link:../../live-signer-evm
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
