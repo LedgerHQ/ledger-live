@@ -26,6 +26,7 @@ import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import CustomCALRefInput from "./CustomCALRefInput";
+import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
@@ -90,6 +91,7 @@ const Default = () => {
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
+      {__DEV__ && <EnvVariableOverride />}
       <Row
         title={t("settings.developer.enableLearnStagingUrl")}
         desc={t("settings.developer.enableLearnStagingUrlDesc")}

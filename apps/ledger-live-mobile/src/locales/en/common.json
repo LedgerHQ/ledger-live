@@ -8038,6 +8038,15 @@
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
       "title": "Automatically accept incoming funds",
+      "reonboard": {
+        "title": "Account Update Required",
+        "account": "Account",
+        "authorize": "Re-authorize Validator",
+        "warning": {
+          "title": "Topology Change Detected",
+          "description": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it."
+        }
+      },
       "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
     },
     "tooManyUtxos": {

@@ -26,9 +26,15 @@ const SectionAccounts = memo(
     editedNames,
     creatableAccount,
     importableAccounts,
+    isReonboarding,
   }: Pick<
     StepProps,
-    "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
+    | "currency"
+    | "accountName"
+    | "editedNames"
+    | "creatableAccount"
+    | "importableAccounts"
+    | "isReonboarding"
   >) => {
     return (
       <SectionAccountsStyled>
@@ -74,7 +80,13 @@ const SectionAccounts = memo(
             textTransform="uppercase"
             mb={3}
           >
-            <Trans i18nKey="families.canton.addAccount.onboard.newAccount" />
+            <Trans
+              i18nKey={
+                isReonboarding
+                  ? "families.canton.addAccount.onboard.account"
+                  : "families.canton.addAccount.onboard.newAccount"
+              }
+            />
           </Box>
           {creatableAccount && (
             <AccountRow
@@ -120,6 +132,7 @@ export default function StepOnboard({
   importableAccounts,
   onboardingStatus,
   error,
+  isReonboarding,
 }: StepProps) {
   const link = useLocalizedUrl(urls.canton.learnMore);
   const onClick = () => openURL(link);
@@ -134,11 +147,18 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
-              <Alert type="hint">
-                <Trans i18nKey="families.canton.addAccount.onboard.init" />
+              <Alert type={isReonboarding ? "warning" : "hint"}>
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.init"
+                      : "families.canton.addAccount.onboard.init"
+                  }
+                />
               </Alert>
             </Box>
           </Box>
@@ -156,11 +176,18 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
               <Alert type="success">
-                <Trans i18nKey="families.canton.addAccount.onboard.success" />
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.success"
+                      : "families.canton.addAccount.onboard.success"
+                  }
+                />
               </Alert>
             </Box>
           </Box>
@@ -191,6 +218,7 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
@@ -208,6 +236,7 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <LoadingRow>

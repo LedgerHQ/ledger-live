@@ -9,11 +9,12 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import Button from "~/components/Button";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { type TransferProposalAction } from "./types";
 
 type Props = {
   isOpen: boolean;
   onConfirm: (deviceId: string) => Promise<void>;
-  action: "accept" | "reject" | "withdraw";
+  action: TransferProposalAction;
   appName: string;
   onClose?: () => void;
 };

@@ -126,6 +126,29 @@ describe("gateway (devnet)", () => {
       },
       30000,
     );
+
+    it("should handle PARTY_ALREADY_EXISTS error and return party_id and public_key", async () => {
+      // GIVEN
+      const { keyPair, partyId } = getOnboardedAccount();
+      const signature = keyPair.sign(prepareResponse?.transactions?.combined_hash || "");
+
+      // WHEN
+      const response = await submitOnboarding(
+        mockCurrency,
+        keyPair.publicKeyHex,
+        prepareResponse!,
+        {
+          signature,
+        },
+      );
+
+      // THEN
+      expect(response).toHaveProperty("party");
+      expect(response.party).toHaveProperty("party_id");
+      expect(response.party).toHaveProperty("public_key");
+      expect(response.party.party_id).toBe(partyId);
+      expect(response.party.public_key).toBe(keyPair.publicKeyHex);
+    }, 30000);
   });
 
   describe("getLedgerEnd", () => {

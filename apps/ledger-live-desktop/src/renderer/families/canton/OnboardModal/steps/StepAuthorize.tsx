@@ -23,6 +23,7 @@ const StepAuthorize = ({
   device,
   onboardingResult,
   error,
+  isReonboarding,
 }: StepProps) => {
   invariant(onboardingResult?.completedAccount, "canton: completed account is required");
   const link = useLocalizedUrl(urls.canton.learnMore);
@@ -80,7 +81,13 @@ const StepAuthorize = ({
               <Alert type="error">{getErrorMessage(error)}</Alert>
             ) : (
               <Alert>
-                <Trans i18nKey="families.canton.addAccount.auth.hint" />
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.auth.reonboard.hint"
+                      : "families.canton.addAccount.auth.hint"
+                  }
+                />
                 <br />
                 <Link href={link} type="external">
                   <Trans i18nKey="common.learnMore" />

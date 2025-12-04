@@ -7,8 +7,8 @@ import {
 import BigNumber from "bignumber.js";
 import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
-import SendRecipientFields from "../SendRecipientFields";
-import { createMockAccount } from "./testUtils";
+import SendRecipientFields from "./SendRecipientFields";
+import { createMockAccount } from "./__tests__/testUtils";
 
 jest.mock("~/renderer/actions/modals", () => ({
   closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
@@ -16,13 +16,15 @@ jest.mock("~/renderer/actions/modals", () => ({
 }));
 jest.mock("react-i18next", () => ({
   ...jest.requireActual("react-i18next"),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
   Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
 }));
-jest.mock("../CommentField", () => {
-  return function MockCommentField() {
-    return <div data-testid="comment-field" />;
-  };
-});
+jest.mock("./CommentField", () => ({
+  __esModule: true,
+  default: () => <div data-testid="comment-field" />,
+}));
 
 const createMockTransactionStatus = (
   overrides: Partial<TransactionStatus> = {},
@@ -55,6 +57,7 @@ describe("SendRecipientFields", () => {
         instrumentUtxoCounts: {
           Amulet: 5, // Below warning threshold
         },
+        publicKey: "test-public-key",
       },
     } satisfies CantonAccount,
     transaction: {
