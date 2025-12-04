@@ -1,3 +1,4 @@
+import "LLM/utils/logStartup/beforeJSImports";
 require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
@@ -81,8 +82,9 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
-import { logStartupEvent, useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
+import { useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -105,6 +107,8 @@ import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
+
+logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -292,13 +296,11 @@ function AppView() {
 }
 
 function RebootProvider({ children }: { children: React.ReactNode }) {
-  useLogStartupEvent("RebootProvider render");
   const rebootId = useSelector(rebootIdSelector);
   return <React.Fragment key={rebootId}>{children}</React.Fragment>;
 }
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
-  useLogStartupEvent("StylesProvider render");
   const { theme } = useSettings();
   const osTheme = useSelector(osThemeSelector);
   const dispatch = useDispatch();

@@ -5,7 +5,6 @@ import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
-import { useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import {
   getAccounts,
   getCountervalues,
@@ -63,7 +62,6 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 }
 
 const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
-  useLogStartupEvent("LedgerStoreProvider render");
   const [ready, setReady] = useState(false);
   const [initialCountervalues, setInitialCountervalues] = useState<
     CounterValuesStateRaw | undefined
