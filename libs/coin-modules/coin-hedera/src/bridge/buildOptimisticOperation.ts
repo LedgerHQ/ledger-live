@@ -5,8 +5,12 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
-import { safeParseAccountId, isTokenAssociateTransaction } from "../logic/utils";
-import type { HederaOperationExtra, Transaction } from "../types";
+import {
+  safeParseAccountId,
+  isTokenAssociateTransaction,
+  isStakingTransaction,
+} from "../logic/utils";
+import type { HederaAccount, HederaOperationExtra, Transaction } from "../types";
 
 const buildOptimisticTokenAssociateOperation = async ({
   account,
@@ -200,6 +204,44 @@ const buildOptimisticERC20TokenOperation = async ({
   return operation;
 };
 
+const buildOptimisticUpdateAccountOperation = async ({
+  account,
+  transaction,
+}: {
+  account: HederaAccount;
+  transaction: Transaction;
+}): Promise<Operation> => {
+  invariant(isStakingTransaction(transaction), "invalid transaction properties");
+
+  const estimatedFee = await estimateFees({
+    operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+    currency: account.currency,
+  });
+  const value = transaction.amount;
+  const type: OperationType = "UPDATE_ACCOUNT";
+
+  const operation: Operation = {
+    id: encodeOperationId(account.id, "", type),
+    hash: "",
+    type,
+    value,
+    fee: estimatedFee.tinybars,
+    blockHash: null,
+    blockHeight: null,
+    senders: [account.freshAddress.toString()],
+    recipients: [transaction.recipient],
+    accountId: account.id,
+    date: new Date(),
+    extra: {
+      memo: transaction.memo ?? null,
+      targetStakingNodeId: transaction.properties?.stakingNodeId ?? null,
+      previousStakingNodeId: account.hederaResources?.delegation?.nodeId ?? null,
+    } satisfies Partial<HederaOperationExtra>,
+  };
+
+  return operation;
+};
+
 export const buildOptimisticOperation = async ({
   account,
   transaction,
@@ -219,6 +261,12 @@ export const buildOptimisticOperation = async ({
     return buildOptimisticHTSTokenOperation({ account, tokenAccount: subAccount, transaction });
   } else if (isERC20TokenTransaction) {
     return buildOptimisticERC20TokenOperation({ account, tokenAccount: subAccount, transaction });
+  } else if (
+    transaction.mode === HEDERA_TRANSACTION_MODES.Redelegate ||
+    transaction.mode === HEDERA_TRANSACTION_MODES.Undelegate ||
+    transaction.mode === HEDERA_TRANSACTION_MODES.Delegate
+  ) {
+    return buildOptimisticUpdateAccountOperation({ account, transaction });
   } else {
     return buildOptimisticCoinOperation({ account, transaction });
   }

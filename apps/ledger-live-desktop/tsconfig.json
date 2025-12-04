@@ -30,6 +30,7 @@
     "tests",
     "tests/handlers/**/*.json",
     "index-types.d.ts",
-    "tests/jestSetup.ts"
+    "tests/jestSetup.ts",
+    "tailwind.config.ts"
   ]
 }

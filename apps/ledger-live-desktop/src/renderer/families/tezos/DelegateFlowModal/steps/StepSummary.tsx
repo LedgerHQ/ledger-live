@@ -54,7 +54,7 @@ const Placeholder = styled(Box)`
 
 const StepSummary = ({ account, transaction, eventType, transitionTo, status }: StepProps) => {
   invariant(
-    account && transaction && transaction.family === "tezos",
+    account && transaction?.family === "tezos",
     "step summary requires account and transaction settled",
   );
   const accountName = useAccountName(account);
@@ -90,7 +90,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
               />
             </Text>
             <Container mt={1}>
-              <CryptoCurrencyIcon size={32} currency={currency} />
+              <CryptoCurrencyIcon size={44} currency={currency} />
               <Ellipsis>
                 <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
                   {accountName}

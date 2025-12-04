@@ -132,7 +132,7 @@ const SelectCurrency = ({
     <Select
       id={id}
       autoFocus={autoFocus}
-      value={selectedOption as CurrencyOption}
+      value={selectedOption}
       options={filteredOptions}
       filterOption={null}
       getOptionValue={getOptionValue}
@@ -240,7 +240,7 @@ export function CurrencyOption({
   );
   return (
     <OptionBox role="option">
-      <CryptoCurrencyIcon circle currency={currency} size={26} />
+      <CryptoCurrencyIcon currency={currency} size={30} />
       {textContents}
     </OptionBox>
   );

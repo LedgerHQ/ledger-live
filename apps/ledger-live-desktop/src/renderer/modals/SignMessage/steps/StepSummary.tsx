@@ -173,7 +173,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={14} currency={account.currency} />
+              <CryptoCurrencyIcon size={20} currency={account.currency} />
             </div>
             <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
               {accountName}

@@ -7,7 +7,7 @@ import styled, { useTheme } from "styled-components";
 import Box from "../Box";
 import { Icons } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
-import { CircleWrapper } from "../CryptoCurrencyIcon";
+import { CircleWrapper } from "../CircleWrapper";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import TrackPage from "~/renderer/analytics/TrackPage";

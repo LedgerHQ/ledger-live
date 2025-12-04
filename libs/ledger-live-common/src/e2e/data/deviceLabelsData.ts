@@ -112,6 +112,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
   },
   [DeviceModelId.stax]: TOUCHSCREEN_DEVICE_CONFIG,
   [DeviceModelId.europa]: TOUCHSCREEN_DEVICE_CONFIG,
+  [DeviceModelId.apex]: TOUCHSCREEN_DEVICE_CONFIG,
   default: {
     receiveVerify: {
       [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,

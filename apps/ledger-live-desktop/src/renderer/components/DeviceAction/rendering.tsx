@@ -1265,9 +1265,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     sourceAccount: (
       <>
-        {sourceAccountCurrency && (
-          <CryptoCurrencyIcon circle currency={sourceAccountCurrency} size={18} />
-        )}
+        {sourceAccountCurrency && <CryptoCurrencyIcon currency={sourceAccountCurrency} size={25} />}
         <EllipsesTextStyled textTransform={"capitalize"} title={sourceAccountName}>
           {sourceAccountName}
         </EllipsesTextStyled>
@@ -1275,9 +1273,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     targetAccount: (
       <>
-        {targetAccountCurrency && (
-          <CryptoCurrencyIcon circle currency={targetAccountCurrency} size={18} />
-        )}
+        {targetAccountCurrency && <CryptoCurrencyIcon currency={targetAccountCurrency} size={25} />}
         <EllipsesTextStyled textTransform={"capitalize"} title={targetAccountName}>
           {targetAccountName}
         </EllipsesTextStyled>

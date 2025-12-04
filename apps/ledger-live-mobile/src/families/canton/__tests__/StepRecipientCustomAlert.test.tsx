@@ -9,7 +9,8 @@ import {
 } from "@ledgerhq/live-common/families/canton/types";
 import BigNumber from "bignumber.js";
 import SendSelectRecipient from "../SendSelectRecipient";
-import { createMockAccount } from "../Onboard/steps/__tests__/test-utils";
+import { createMockAccount, createMockNavigation } from "../Onboard/steps/__tests__/test-utils";
+import { ScreenName } from "~/const";
 
 const StepRecipientCustomAlert = SendSelectRecipient.StepRecipientCustomAlert;
 
@@ -45,6 +46,16 @@ jest.mock("~/components/Alert", () => {
   };
 });
 
+jest.mock("@react-navigation/native", () => ({
+  useNavigation: jest.fn(() => createMockNavigation()),
+  useRoute: jest.fn(() => ({
+    name: ScreenName.SendSelectRecipient,
+    params: {},
+    key: "test-route-key",
+    path: undefined,
+  })),
+}));
+
 const createMockTransactionStatus = (
   overrides: Partial<TransactionStatus> = {},
 ): TransactionStatus => ({
@@ -65,6 +76,7 @@ describe("StepRecipientCustomAlert", () => {
         instrumentUtxoCounts: {
           Amulet: 5, // Below warning threshold
         },
+        publicKey: "test-public-key",
       },
     } satisfies CantonAccount,
     transaction: {

@@ -82,6 +82,7 @@ export default class ModularDrawer {
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
       const id = this.networkItemIdMAD(networkName);
       if (!(await IsIdVisible(id))) {
+        await getElementById(this.networkBasedTitleIdMAD).swipe("up");
         await scrollToId(id, this.networkSelectionScrollViewId);
       }
       await tapById(id, 0);

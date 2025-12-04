@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import Illustration from "~/images/illustration/Illustration";
 import BaseStepperView, {
@@ -70,6 +71,7 @@ function OnboardingStepNewDevice() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { theme } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
+  const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
 
   const { deviceModelId } = route.params;
 
@@ -197,12 +199,18 @@ function OnboardingStepNewDevice() {
 
   return (
     <>
-      <TrackScreen category="Onboarding" name="SetupNewDevice" />
+      <TrackScreen
+        category="Onboarding"
+        name="SetupNewDevice"
+        deviceModelId={deviceModelId}
+        seedConfiguration="new_seed"
+      />
       <BaseStepperView
         onNext={nextPage}
         steps={scenes}
         metadata={metadata}
         deviceModelId={deviceModelId}
+        extraStepsLength={isFundWalletEnabled ? 3 : 0}
       />
     </>
   );

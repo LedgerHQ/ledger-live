@@ -112,7 +112,7 @@ export default function BlacklistedTokens() {
               <Body>
                 {tokens.map((token: TokenCurrency) => (
                   <BlacklistedTokenRow key={token.id}>
-                    <CryptoCurrencyIcon currency={token} size={20} />
+                    <CryptoCurrencyIcon currency={token} size={28} />
                     <Text
                       style={{
                         marginLeft: 10,

@@ -41,6 +41,7 @@ for (const currency of currencies) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
         ],
         annotation: {

@@ -13,6 +13,28 @@
   },
   "packageRules": [
     {
+      "description": "LDLS UI React - version updates",
+      "matchPackageNames": ["@ledgerhq/ldls-ui-react"],
+      "matchFiles": ["apps/ledger-live-desktop/package.json"],
+      "prTitle": "feat(desktop): update {{depName}} to {{newVersion}}",
+      "commitMessageTopic": "{{depName}}",
+      "commitMessageAction": "update",
+      "labels": ["dependencies", "ui", "ldls"],
+      "reviewers": ["team:@ledgerhq/live-hub"],
+      "assignees": ["team:@ledgerhq/live-hub"]
+    },
+    {
+      "description": "LDLS Design Core - Catalog updates",
+      "matchPackageNames": ["@ledgerhq/ldls-design-core"],
+      "matchFiles": ["pnpm-workspace.yaml"],
+      "prTitle": "feat: update {{depName}} catalog to {{newVersion}}",
+      "commitMessageTopic": "{{depName}} catalog",
+      "commitMessageAction": "update",
+      "labels": ["dependencies", "ui", "ldls", "catalog"],
+      "reviewers": ["team:@ledgerhq/live-hub"],
+      "assignees": ["team:@ledgerhq/live-hub"]
+    },
+    {
       "description": "Core Ownership Rules",
       "matchPackagePatterns": [
         "changesets",

@@ -1,9 +1,12 @@
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import React from "react";
+import { Pressable, TextInput, View } from "react-native";
 
-// Mock the CantonOnboardResult type since it's not available in the test environment
 export type CantonOnboardResult = {
   account: Account;
   partyId: string;
@@ -14,7 +17,6 @@ export const createMockAccount = (overrides: Partial<Account> = {}): Account => 
   id: "test-account-id",
   currency: {
     type: "CryptoCurrency",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     id: "canton" as any,
     name: "Canton",
     ticker: "CANTON",
@@ -57,7 +59,6 @@ export const createMockCurrency = (
 ): CryptoOrTokenCurrency =>
   ({
     type: "CryptoCurrency",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     id: "canton" as any,
     name: "Canton",
     ticker: "CANTON",
@@ -77,7 +78,6 @@ export const createMockCurrency = (
 export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
   deviceId: "test-device-id",
   deviceName: "Test Device",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modelId: "nanoSP" as any,
   wired: false,
   ...overrides,
@@ -114,4 +114,84 @@ export const createMockNavigation = () => ({
   getState: jest.fn(),
   getId: jest.fn(),
   getCurrentRoute: jest.fn(),
+});
+
+export const mockViewComponent = ({ children, testID, ...props }: any) =>
+  React.createElement(View, { testID, ...props }, children);
+
+export const getMockReactRedux = () => {
+  const mockHoursAndMinutesOptions = { format: (date: Date) => date.toISOString() };
+  return {
+    useDispatch: jest.fn(() => jest.fn()),
+    useSelector: jest.fn((selector: any) => {
+      const selectorStr = selector?.toString() || "";
+      if (selectorStr.includes("lastConnectedDeviceSelector")) return createMockDevice();
+      if (selectorStr.includes("accountsSelector")) return [];
+      if ((selector as any)?.__mockHoursAndMinutesSelector) return mockHoursAndMinutesOptions;
+      return null;
+    }),
+    useStore: jest.fn(() => ({
+      getState: jest.fn(() => ({})),
+      dispatch: jest.fn(),
+      subscribe: jest.fn(),
+    })),
+  };
+};
+
+export const getMockReactI18next = () => ({
+  Trans: ({ i18nKey }: { i18nKey: string }) =>
+    React.createElement(View, { testID: `trans-${i18nKey}` }, i18nKey),
+  useTranslation: () => ({ t: (key: string) => key }),
+  initReactI18next: {
+    type: "languageDetector",
+    async: false,
+    detect: () => "en",
+    init: () => {},
+    cacheUserLanguage: () => {},
+  },
+});
+
+export const getMockNativeUI = () => {
+  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
+    React.createElement(View, { testID, ...props }, children);
+  return {
+    Flex: mockViewComponentFn,
+    Text: mockViewComponentFn,
+    Button: ({ children, onPress, testID, disabled, iconName, ...props }: any) =>
+      React.createElement(
+        Pressable,
+        { testID, onPress: disabled ? undefined : onPress, disabled, ...props },
+        React.createElement(View, {}, children),
+      ),
+    Checkbox: ({ checked, testID, ...props }: any) =>
+      React.createElement(TextInput, { testID, value: checked ? "checked" : "", ...props }),
+    IconBox: ({ Icon, testID, ...props }: any) =>
+      React.createElement(View, { testID, ...props }, React.createElement(Icon)),
+    Alert: mockViewComponentFn,
+    IconsLegacy: {
+      InfoMedium: () => React.createElement(View, { testID: "info-medium-icon" }, "InfoMedium"),
+    },
+  };
+};
+
+export const getMockLocale = () => ({
+  useLocale: () => ({ locale: "en" }),
+  LocaleProvider: ({ children }: any) => children,
+});
+
+export const getMockTouchable = () => ({
+  __esModule: true,
+  default: ({ onPress, testID, children }: any) =>
+    React.createElement(Pressable, { testID, onPress }, children),
+});
+
+export const getMockFormatDate = () => {
+  const mockHoursAndMinutesOptions = { format: (date: Date) => date.toISOString() };
+  const mockSelector = jest.fn(() => mockHoursAndMinutesOptions);
+  (mockSelector as any).__mockHoursAndMinutesSelector = true;
+  return { hoursAndMinutesOptionsSelector: mockSelector };
+};
+
+export const getMockUseAccountUnit = () => ({
+  useAccountUnit: jest.fn(() => ({ code: "CANTON", name: "Canton", magnitude: 8 })),
 });

@@ -3,7 +3,6 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/acco
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import { ViewStyle, StyleProp, Pressable } from "react-native";
 import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
@@ -37,7 +36,6 @@ const AccountCard = ({
   iconSize = 48,
   ...props
 }: Props) => {
-  const { colors } = useTheme();
   const accounts = useSelector(accountsSelector);
 
   const accountNameFromStore = useMaybeAccountName(account);
@@ -77,13 +75,7 @@ const AccountCard = ({
         style={style}
         {...props}
       >
-        <CurrencyIcon
-          currency={currency}
-          disabled={disabled}
-          color={colors.constant.white}
-          size={iconSize}
-          circle
-        />
+        <CurrencyIcon currency={currency} disabled={disabled} size={iconSize} circle />
         <Flex flexGrow={1} flexShrink={1} marginLeft={4} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text

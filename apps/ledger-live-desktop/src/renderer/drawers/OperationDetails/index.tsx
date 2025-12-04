@@ -589,7 +589,7 @@ const OperationD = (props: Props) => {
           <Box flex="1" ml={2} horizontal justifyContent="flex-end">
             <Box horizontal alignItems="center" flex="unset">
               <Box mt={0} mr={1}>
-                <CryptoCurrencyIcon currency={mainCurrency} size={16} />
+                <CryptoCurrencyIcon currency={mainCurrency} size={22} />
               </Box>
 
               <TextEllipsis>
@@ -605,7 +605,7 @@ const OperationD = (props: Props) => {
                 <Separator>{"/"}</Separator>
                 <Box horizontal alignItems="center" flex="unset">
                   <Box mt={0} mr={1}>
-                    <CryptoCurrencyIcon currency={currency} size={16} />
+                    <CryptoCurrencyIcon currency={currency} size={22} />
                   </Box>
                   <TextEllipsis>
                     <Link onClick={goToSubAccount}>{currency.name}</Link>

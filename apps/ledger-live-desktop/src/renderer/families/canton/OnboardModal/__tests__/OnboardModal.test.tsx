@@ -1,99 +1,60 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
 import React from "react";
-import { render, screen, fireEvent, waitFor, cleanup } from "tests/testSetup";
+import { cleanup, fireEvent, render, screen, waitFor } from "tests/testSetup";
+import { closeModal, openModal } from "~/renderer/actions/modals";
+import type { NavigationSnapshot } from "../../hooks/topologyChangeError";
 import OnboardModal from "../index";
 import { StepId } from "../types";
 import {
+  createMockAccount,
+  createMockCantonBridge,
   createMockCantonCurrency,
   createMockDevice,
-  createMockAccount,
   createMockImportableAccount,
-  createMockUserProps,
-  createMockCantonBridge,
   createMockObservable,
+  createMockUserProps,
   mockOnboardingProgress,
 } from "./testUtils";
 
-jest.mock("rxjs", () => ({
-  Subscription: jest.fn().mockImplementation(() => ({
-    unsubscribe: jest.fn(),
-    add: jest.fn(),
-    remove: jest.fn(),
-    closed: false,
-  })),
-  Subject: jest.fn().mockImplementation(() => ({
-    next: jest.fn(),
-    complete: jest.fn(),
-    subscribe: jest.fn(),
-    unsubscribe: jest.fn(),
-    asObservable: jest.fn(() => ({
-      subscribe: jest.fn(),
-    })),
-  })),
-  Observable: jest.fn(),
-  BehaviorSubject: jest.fn().mockImplementation(() => ({
-    next: jest.fn(),
-    complete: jest.fn(),
-    subscribe: jest.fn(),
-    unsubscribe: jest.fn(),
-    getValue: jest.fn(),
-    asObservable: jest.fn(() => ({
-      subscribe: jest.fn(),
-    })),
-  })),
-  interval: jest.fn(() => ({
-    pipe: jest.fn(() => ({
-      subscribe: jest.fn(),
-    })),
-  })),
-  from: jest.fn(() => ({
-    pipe: jest.fn(() => ({
-      subscribe: jest.fn(),
-    })),
-  })),
-  of: jest.fn(() => ({
-    pipe: jest.fn(() => ({
-      subscribe: jest.fn(),
-    })),
+jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
+  addAccountsAction: jest.fn(() => ({
+    type: "ADD_ACCOUNTS",
+    payload: {
+      allAccounts: [],
+      editedNames: new Map(),
+    },
   })),
 }));
-jest.mock("rxjs/operators", () => ({
-  switchMap: jest.fn(() => jest.fn()),
-  filter: jest.fn(() => jest.fn()),
-  share: jest.fn(() => jest.fn()),
-  delay: jest.fn(() => jest.fn()),
-}));
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
-  getDefaultAccountName: jest.fn(account => `${account.currency.name} ${account.index + 1}`),
-  getDefaultAccountNameForCurrencyIndex: jest.fn(
-    ({ currency, index }) => `${currency.name} ${index + 1}`,
-  ),
-}));
-jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({ addAccountsAction: jest.fn() }));
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({ getCurrencyBridge: jest.fn() }));
-jest.mock("~/renderer/logger", () => ({
-  error: jest.fn(),
-  onReduxAction: jest.fn(),
+jest.mock("~/renderer/actions/modals", () => ({
+  closeModal: jest.fn((name: string) => ({
+    type: "MODAL_CLOSE",
+    payload: { name },
+  })),
+  openModal: jest.fn((name: string, data?: unknown) => ({
+    type: "MODAL_OPEN",
+    payload: { name, data },
+  })),
 }));
-jest.mock("~/renderer/actions/modals", () => ({ closeModal: jest.fn(), openModal: jest.fn() }));
+jest.mock("~/renderer/drawers/Provider", () => ({
+  __esModule: true,
+  setDrawer: jest.fn(),
+  default: ({ children }: any) => <>{children}</>,
+}));
+jest.mock("react-i18next", () => ({
+  ...jest.requireActual("react-i18next"),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: ({ i18nKey }: any) => <span>{i18nKey}</span>,
+}));
 jest.mock("~/renderer/components/Stepper", () => ({
   __esModule: true,
-  default: ({
-    steps,
-    stepId,
-    onStepChange,
-    onClose,
-    ...props
-  }: {
-    steps: Array<{ id: string; component: React.ComponentType; footer: React.ComponentType }>;
-    stepId: string;
-    onStepChange: (step: { id: string }) => void;
-    onClose: () => void;
-  }) => {
-    const currentStep = steps.find(s => s.id === stepId);
+  default: ({ steps, stepId, onStepChange, onClose, ...props }: any) => {
+    const currentStep = steps.find((s: any) => s.id === stepId);
     return (
       <div data-testid="stepper">
         <div>Current Step: {stepId}</div>
-        <div>Steps: {steps.map(step => step.id).join(", ")}</div>
         <button onClick={() => onStepChange({ id: StepId.AUTHORIZE })}>Go to Authorize</button>
         <button onClick={() => onStepChange({ id: StepId.FINISH })}>Go to Finish</button>
         <button onClick={onClose}>Close Modal</button>
@@ -109,12 +70,7 @@ jest.mock("~/renderer/components/Stepper", () => ({
 }));
 jest.mock("~/renderer/components/Modal", () => ({
   __esModule: true,
-  default: ({
-    render: renderModal,
-    ...props
-  }: {
-    render: (props: { onClose: () => void }) => React.ReactNode;
-  }) => (
+  default: ({ render: renderModal, ...props }: any) => (
     <div data-testid="modal" {...props}>
       {renderModal({ onClose: jest.fn() })}
     </div>
@@ -122,6 +78,8 @@ jest.mock("~/renderer/components/Modal", () => ({
 }));
 
 const mockCantonBridge = createMockCantonBridge();
+const mockOpenModal = openModal as jest.MockedFunction<typeof openModal>;
+const mockCloseModal = closeModal as jest.MockedFunction<typeof closeModal>;
 
 describe("OnboardModal", () => {
   const mockCurrency = createMockCantonCurrency();
@@ -151,7 +109,7 @@ describe("OnboardModal", () => {
   it("should render modal with correct initial state", () => {
     render(<OnboardModal {...defaultProps} />, {
       initialState: {
-        devices: { currentDevice: mockDevice },
+        devices: { currentDevice: mockDevice, devices: [mockDevice] },
         accounts: { active: [] },
       },
     });
@@ -172,12 +130,12 @@ describe("OnboardModal", () => {
 
     render(<OnboardModal {...defaultProps} />, {
       initialState: {
-        devices: { currentDevice: mockDevice },
+        devices: { currentDevice: mockDevice, devices: [mockDevice] },
         accounts: { active: [] },
       },
     });
 
-    const onboardButton = await screen.findByRole("button", { name: "Continue" });
+    const onboardButton = await screen.findByRole("button", { name: "common.continue" });
     fireEvent.click(onboardButton);
 
     await waitFor(() => {
@@ -198,12 +156,12 @@ describe("OnboardModal", () => {
 
     render(<OnboardModal {...defaultProps} />, {
       initialState: {
-        devices: { currentDevice: mockDevice },
+        devices: { currentDevice: mockDevice, devices: [mockDevice] },
         accounts: { active: [] },
       },
     });
 
-    const onboardButton = await screen.findByRole("button", { name: "Continue" });
+    const onboardButton = await screen.findByRole("button", { name: "common.continue" });
     fireEvent.click(onboardButton);
 
     await waitFor(() => {
@@ -212,7 +170,7 @@ describe("OnboardModal", () => {
 
     await waitFor(
       () => {
-        expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "common.tryAgain" })).toBeInTheDocument();
       },
       { timeout: 100 },
     );
@@ -231,6 +189,118 @@ describe("OnboardModal", () => {
       } else {
         expect(() => render(<OnboardModal {...props} />)).not.toThrow();
       }
+    });
+  });
+
+  describe("re-onboarding", () => {
+    it("should restore modal state after successful re-onboarding", async () => {
+      const mockOnboardObservable = createMockObservable([
+        mockOnboardingProgress.PREPARE,
+        mockOnboardingProgress.SIGN,
+        mockOnboardingProgress.SUBMIT,
+        mockOnboardingProgress.SUCCESS,
+      ]);
+      mockCantonBridge.onboardAccount.mockReturnValue(mockOnboardObservable);
+
+      const accountToReonboard = createMockAccount({ used: true });
+      const navigationSnapshot: NavigationSnapshot = {
+        type: "modal",
+        modalName: "MODAL_SEND",
+        modalData: { account: accountToReonboard },
+      };
+
+      const props = createMockUserProps({
+        currency: mockCurrency,
+        device: mockDevice,
+        selectedAccounts: [accountToReonboard],
+        isReonboarding: true,
+        accountToReonboard,
+        navigationSnapshot,
+      });
+
+      render(<OnboardModal {...props} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      const onboardButton = await screen.findByRole("button", { name: "common.continue" });
+      fireEvent.click(onboardButton);
+
+      await waitFor(() => {
+        expect(mockCantonBridge.onboardAccount).toHaveBeenCalled();
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const finishButton = screen.getByRole("button", { name: "Go to Finish" });
+      fireEvent.click(finishButton);
+
+      const doneButton = await screen.findByTestId("add-accounts-finish-close-button");
+      fireEvent.click(doneButton);
+
+      await waitFor(() => {
+        expect(mockCloseModal).toHaveBeenCalledWith("MODAL_CANTON_ONBOARD_ACCOUNT");
+        expect(mockOpenModal).toHaveBeenCalledWith("MODAL_SEND", { account: accountToReonboard });
+      });
+    });
+
+    it("should restore transfer-proposal state after successful re-onboarding", async () => {
+      const mockOnboardObservable = createMockObservable([
+        mockOnboardingProgress.PREPARE,
+        mockOnboardingProgress.SIGN,
+        mockOnboardingProgress.SUBMIT,
+        mockOnboardingProgress.SUCCESS,
+      ]);
+      mockCantonBridge.onboardAccount.mockReturnValue(mockOnboardObservable);
+
+      const accountToReonboard = createMockAccount({ used: true });
+      const mockHandler = jest.fn();
+      const navigationSnapshot: NavigationSnapshot = {
+        type: "transfer-proposal",
+        handler: mockHandler,
+        props: {
+          action: "accept",
+          contractId: "contract-123",
+        },
+      };
+
+      const props = createMockUserProps({
+        currency: mockCurrency,
+        device: mockDevice,
+        selectedAccounts: [accountToReonboard],
+        isReonboarding: true,
+        accountToReonboard,
+        navigationSnapshot,
+      });
+
+      render(<OnboardModal {...props} />, {
+        initialState: {
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+          accounts: { active: [] },
+        },
+      });
+
+      const onboardButton = await screen.findByRole("button", { name: "common.continue" });
+      fireEvent.click(onboardButton);
+
+      await waitFor(() => {
+        expect(mockCantonBridge.onboardAccount).toHaveBeenCalled();
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const finishButton = screen.getByRole("button", { name: "Go to Finish" });
+      fireEvent.click(finishButton);
+
+      const doneButton = await screen.findByTestId("add-accounts-finish-close-button");
+      fireEvent.click(doneButton);
+
+      await waitFor(() => {
+        expect(mockCloseModal).toHaveBeenCalledWith("MODAL_CANTON_ONBOARD_ACCOUNT");
+        expect(mockHandler).toHaveBeenCalledWith("contract-123", "accept");
+      });
     });
   });
 });

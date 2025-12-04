@@ -11,7 +11,7 @@ import CounterValue from "~/components/CounterValue";
 import { ensureContrast } from "../../colors";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "~/const";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
@@ -83,7 +83,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     <Container onPress={navigateToAccounts}>
       <Flex flexDirection="row">
         <IconContainer>
-          <ParentCurrencyIcon currency={currency} size={35} />
+          <CurrencyIcon currency={currency} size={35} circle />
         </IconContainer>
         <CoinInfoContainer>
           <CurrencyRow>

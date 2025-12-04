@@ -1,6 +1,7 @@
 import { EnvName } from "@ledgerhq/live-env";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getFeature, DEFAULT_FEATURES } from "../featureFlags";
+import axios, { AxiosError } from "axios";
 
 export const getAllFeatureFlags = (
   appLanguage?: string,
@@ -52,4 +53,23 @@ export const formatEnvData = (data: { [key in EnvName]: unknown }) => {
     allureData += `ENV.${key} = ${value}\n`;
   }
   return allureData;
+};
+
+export const sanitizeError = (error: unknown): Error => {
+  if (!axios.isAxiosError(error)) {
+    return error instanceof Error ? error : new Error(String(error ?? "Unknown error"));
+  }
+
+  const err = error as AxiosError;
+  const sanitized = new Error(err.message || "Axios request failed");
+
+  Object.assign(sanitized, {
+    name: err.name,
+    code: err.code,
+    url: err.config?.url,
+    method: err.config?.method,
+    status: err.response?.status,
+  });
+
+  return sanitized;
 };

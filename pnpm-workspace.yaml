@@ -38,15 +38,17 @@ catalog:
   react-native-reanimated: 3.16.7
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.12.1
-  "@ledgerhq/context-module": 1.10.0
-  "@ledgerhq/device-management-kit": 0.11.1
-  "@ledgerhq/device-signer-kit-ethereum": 1.9.2
-  "@ledgerhq/device-signer-kit-solana": 1.4.0
+  "@ledgerhq/context-module": 1.11.0
+  "@ledgerhq/device-management-kit": 0.11.2
+  "@ledgerhq/device-signer-kit-ethereum": 1.9.3
+  "@ledgerhq/device-signer-kit-solana": 1.5.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.0
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.1
   "@ledgerhq/device-transport-kit-web-hid": 1.2.1
   "@ledgerhq/device-transport-kit-speculos": 1.1.0
   "@ledgerhq/speculos-device-controller": 0.1.0
+  "@ledgerhq/ldls-design-core": 0.0.31
+  "tailwindcss": ^3.4.0
 
 overrides:
   node-abi: ^4.9.0

@@ -174,7 +174,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
       }}
     >
       {!isValue && nested ? tokenTick : null}
-      <CryptoCurrencyIcon currency={currency} size={16} />
+      <CryptoCurrencyIcon currency={currency} size={22} />
       {textContents}
     </Box>
   );

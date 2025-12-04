@@ -13,7 +13,7 @@ import { handleActions } from "redux-actions";
 import { State } from ".";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
@@ -29,6 +29,10 @@ export function latestDistantStateSelector(state: State): DistantState | null {
 
 export function latestDistantVersionSelector(state: State): number {
   return walletSyncStateSelector(walletSelector(state)).version;
+}
+
+export function recentAddressesSelector(state: State): RecentAddressesState {
+  return walletSelector(state).recentAddresses;
 }
 
 const getAccountName = (

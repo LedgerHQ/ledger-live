@@ -8,6 +8,9 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import { EvmFamily } from "./types";
 
 const family: EvmFamily = {
+  operationDetails: {
+    OperationDetailsExtra: () => null,
+  },
   AccountBodyHeader,
   AccountFooter,
   accountHeaderManageActions,

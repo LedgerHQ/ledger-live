@@ -364,6 +364,18 @@ export const WebElementHelpers = {
     return currentUrl;
   },
 
+    async waitForWebElementToMatchRegex(webElementId: string, regexPattern: RegExp, timeout = 10000): Promise<string> {
+    let webElementText = "";
+    await retryUntilTimeout(async () => {
+      webElementText = await WebElementHelpers.getWebElementText(webElementId)
+      if (new RegExp(regexPattern).test(webElementText)) {
+        return webElementText;
+      }
+      throw new Error(`Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`);
+    }, timeout);
+    return webElementText;
+  },
+
   async isWebElementEnabled(element: WebElement) {
     const isEnabled = await element.runScript(
       (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {

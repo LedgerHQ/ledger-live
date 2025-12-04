@@ -44,6 +44,10 @@ import type { TezosDelegationFlowParamList } from "../../../families/tezos/Deleg
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
+import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
+import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
+import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
+import type { HederaClaimRewardsFlowParamList } from "../../../families/hedera/ClaimRewardsFlow/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -291,6 +295,10 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
+  [NavigatorName.HederaDelegationFlow]: NavigatorScreenParams<HederaDelegationFlowParamList>;
+  [NavigatorName.HederaUndelegationFlow]: NavigatorScreenParams<HederaUndelegationFlowParamList>;
+  [NavigatorName.HederaRedelegationFlow]: NavigatorScreenParams<HederaRedelegationFlowParamList>;
+  [NavigatorName.HederaClaimRewardsFlow]: NavigatorScreenParams<HederaClaimRewardsFlowParamList>;
 
   // Canton
   [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;

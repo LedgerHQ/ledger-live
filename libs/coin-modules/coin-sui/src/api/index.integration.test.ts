@@ -266,9 +266,9 @@ describe("Sui Api", () => {
   });
 
   describe("getStakes", () => {
-    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+    test("Account 0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d", async () => {
       const stakes = await module.getStakes(
-        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
       );
       expect(stakes.items.length).toBeGreaterThan(0);
       stakes.items.forEach(stake => {

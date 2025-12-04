@@ -246,6 +246,7 @@ describe("Wallet store", () => {
       accountNames: [],
       starredAccountIds: [],
     },
+    recentAddresses: {},
   };
 
   it("allows partial wallet state", () => {
@@ -395,6 +396,7 @@ describe("Wallet store", () => {
             ? ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"]
             : ["mock:1:ethereum:eth:"],
       },
+      recentAddresses: {},
     });
     const stateImport2 = handlers.IMPORT_WALLET_SYNC(
       stateImport1,

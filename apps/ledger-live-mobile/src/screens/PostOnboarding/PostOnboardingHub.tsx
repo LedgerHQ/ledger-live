@@ -81,6 +81,7 @@ const PostOnboardingHub = () => {
         justifyContent="space-between"
         flex={1}
         paddingBottom={safeAreaInsets.bottom}
+        testID="post-onboarding-hub-container"
       >
         <Flex pb={8}>
           <Text variant="h1Inter" fontWeight="semiBold">
@@ -133,6 +134,7 @@ const PostOnboardingHub = () => {
                   deviceModelId,
                   flow: "post-onboarding",
                 }}
+                testID="post-onboarding-hub-skip-button"
               >
                 {t("postOnboarding.hub.skip")}
               </Link>

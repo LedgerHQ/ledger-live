@@ -5,7 +5,8 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type ParentCryptoCurrencyIconWrapperProps = {
   doubleIcon?: boolean;
@@ -57,25 +58,33 @@ type Props = {
   currency: Currency;
   withTooltip?: boolean;
   bigger?: boolean;
-  inactive?: boolean;
   flat?: boolean;
 };
-const ParentCryptoCurrencyIcon = ({
-  currency,
-  withTooltip,
-  bigger,
-  inactive,
-  flat = false,
-}: Props) => {
+const ParentCryptoCurrencyIcon = ({ currency, withTooltip, bigger, flat = false }: Props) => {
+  // Only handle crypto currencies, not fiat
+  if (currency.type === "FiatCurrency") {
+    return null;
+  }
+
   const parent = currency.type === "TokenCurrency" ? currency.parentCurrency : null;
+
+  // Use CryptoIcon directly to avoid nesting issues
+  const iconSize = bigger ? 28 : 22; // Match list mode size (28px) and increase default
+  const ledgerId = currency.id;
+  const ticker = currency.ticker;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+
   const content = (
-    <ParentCryptoCurrencyIconWrapper doubleIcon={!!parent} bigger={bigger} flat={flat}>
-      {parent && (
-        <CryptoCurrencyIcon inactive={inactive} currency={parent} size={bigger ? 20 : 16} />
-      )}
-      <CryptoCurrencyIcon inactive={inactive} currency={currency} size={bigger ? 20 : 16} />
+    <ParentCryptoCurrencyIconWrapper doubleIcon={false} bigger={bigger} flat={flat}>
+      <CryptoIcon
+        ledgerId={ledgerId}
+        ticker={ticker}
+        size={getValidCryptoIconSize(iconSize)}
+        network={network}
+      />
     </ParentCryptoCurrencyIconWrapper>
   );
+
   if (withTooltip && parent) {
     return <Tooltip content={<CryptoCurrencyIconTooltip name={parent.name} />}>{content}</Tooltip>;
   }

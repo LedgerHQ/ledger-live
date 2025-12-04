@@ -81,7 +81,7 @@ const shouldRefreshValidators = (
 export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
   await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
-  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+  let minimumBondBalance;
   let currentStakingProgress;
   try {
     // Should we just check for asset-hub ?
@@ -94,6 +94,13 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
       bondingDuration: 28,
     };
   }
+
+  try {
+    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+  } catch (e) {
+    minimumBondBalance = BigNumber(0);
+  }
+
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
   let validators = previousValidators;

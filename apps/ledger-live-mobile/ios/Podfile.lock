@@ -1,9 +1,9 @@
 PODS:
   - boost (1.84.0)
-  - braze-react-native-sdk (13.2.0):
-    - BrazeKit (~> 11.2.0)
-    - BrazeLocation (~> 11.2.0)
-    - BrazeUI (~> 11.2.0)
+  - braze-react-native-sdk (18.0.0):
+    - BrazeKit (~> 13.3.0)
+    - BrazeLocation (~> 13.3.0)
+    - BrazeUI (~> 13.3.0)
     - DoubleConversion
     - glog
     - hermes-engine
@@ -24,11 +24,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - BrazeKit (11.2.0)
-  - BrazeLocation (11.2.0):
-    - BrazeKit (= 11.2.0)
-  - BrazeUI (11.2.0):
-    - BrazeKit (= 11.2.0)
+  - BrazeKit (13.3.0)
+  - BrazeLocation (13.3.0):
+    - BrazeKit (= 13.3.0)
+  - BrazeUI (13.3.0):
+    - BrazeKit (= 13.3.0)
   - BVLinearGradient (2.8.3):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
@@ -2917,10 +2917,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  braze-react-native-sdk: d044f7a174ab8d7d8c974beb8ebf2e2bf78f2cff
-  BrazeKit: d430e506a325f0f5a1b60cea61ef95035c1d396b
-  BrazeLocation: f574503d26e00658c7a6ddfa1efec68ddaa12e4d
-  BrazeUI: 1500cfce86252db6ce280815c94e0eed03e42691
+  braze-react-native-sdk: 77878a8c58266f00feb6de545f2a9c3735ba7349
+  BrazeKit: 53ac2d77c7d5ab54ab73df75c9058ae89236fc54
+  BrazeLocation: 47cde4ac51568718b76d4677475c926ea840633b
+  BrazeUI: 4de47810a95f225e0199cf6ddc9756f9dab662eb
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84

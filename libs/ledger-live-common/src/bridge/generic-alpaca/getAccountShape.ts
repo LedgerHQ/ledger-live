@@ -17,6 +17,10 @@ function isNftCoreOp(operation: Operation): boolean {
   );
 }
 
+function isInternalLiveOp(operation: OperationCommon): boolean {
+  return !!operation.extra?.internal;
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
@@ -58,7 +62,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     // Calculate minHeight for pagination
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
-    const paginationParams: Pagination = { minHeight, order: "asc" };
+    const paginationParams: Pagination = { minHeight, order: "desc" };
     if (lastPagingToken && !syncFromScratch) {
       paginationParams.lastPagingToken = lastPagingToken;
     }
@@ -74,6 +78,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         operation?.extra?.assetOwner &&
         !["OPT_IN", "OPT_OUT"].includes(operation.type),
     );
+    const newInternalOperations = newOps.filter(isInternalLiveOp);
     const newSubAccounts = await buildSubAccounts({
       accountId,
       allTokenAssetsBalances,
@@ -85,22 +90,29 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       ? newSubAccounts
       : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
-    const newOpsWithSubs = newOps.map(op => {
-      const subOperations = inferSubOperations(op.hash, newSubAccounts);
+    const newOpsWithSubs = newOps
+      .filter(operation => !isInternalLiveOp(operation))
+      .map(op => {
+        const subOperations = inferSubOperations(op.hash, newSubAccounts);
+        const internalOperations = newInternalOperations.filter(it => it.hash === op.hash);
 
-      return cleanedOperation({
-        ...op,
-        subOperations,
+        return cleanedOperation({
+          ...op,
+          subOperations,
+          internalOperations,
+        });
       });
-    });
+    // Try to refresh known pending operations (if not already updated)
+    // Useful for integrations without explorers
+    const operationsToRefresh = initialAccount?.pendingOperations.filter(
+      pendingOp => !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash),
+    );
     const confirmedOperations =
-      alpacaApi.refreshOperations && initialAccount?.pendingOperations.length
-        ? await alpacaApi.refreshOperations(initialAccount.pendingOperations)
+      alpacaApi.refreshOperations && operationsToRefresh?.length
+        ? await alpacaApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    const operations = syncFromScratch
-      ? newOperations
-      : (mergeOps(oldOps, newOperations) as OperationCommon[]);
+    const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
 
     const res: Partial<Account> = {
       id: accountId,

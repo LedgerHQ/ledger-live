@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import LearnMoreCta from "LLD/features/MemoTag/components/LearnMoreCta";
-import { CircleWrapper } from "~/renderer/components/CryptoCurrencyIcon";
+import { CircleWrapper } from "~/renderer/components/CircleWrapper";
 import Text from "~/renderer/components/Text";
 import { urls } from "~/config/urls";
 

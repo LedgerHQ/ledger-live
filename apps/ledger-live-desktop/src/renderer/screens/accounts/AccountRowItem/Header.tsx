@@ -17,7 +17,7 @@ type Props = {
 // from AccountRowItem/index.js TokenBarIndicator
 const NestedIndicator = styled.div`
   height: 44px;
-  width: 14px;
+  width: 28px;
 `;
 const Header = ({ account, nested }: Props) => {
   const theme = useTheme();
@@ -43,7 +43,7 @@ const Header = ({ account, nested }: Props) => {
           color,
         }}
       >
-        <CryptoCurrencyIcon currency={currency} size={20} />
+        <CryptoCurrencyIcon currency={currency} size={28} />
       </Box>
       <Box
         style={{

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { generateRandomAccounts, injectMockAccounts } from "./utils";
 
 type Props = {
@@ -26,7 +26,8 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
   return (
     <SettingsSectionRow title={title} desc={desc}>
       <Button
-        primary
+        appearance="accent"
+        size="sm"
         onClick={() => {
           if (window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) {
             handleGenerate();
