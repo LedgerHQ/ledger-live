@@ -1,9 +1,8 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
 import * as signTransactionModule from "../common-logic/transaction/sign";
 import * as gateway from "../network/gateway";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
 import type { CantonSignature, CantonSigner } from "../types";
 import { CantonOnboardProgress, CantonOnboardResult, OnboardStatus } from "../types/onboard";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
@@ -14,10 +13,7 @@ const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 const mockedSignTransaction = signTransactionModule as jest.Mocked<typeof signTransactionModule>;
 
 describe("onboard", () => {
-  const mockPartyId = "test-party-id";
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
+  const mockCurrency = createMockCantonCurrency();
 
   describe("isCantonCoinPreapproved", () => {
     it("should return true when contract exists and is not expired", async () => {
@@ -27,7 +23,7 @@ describe("onboard", () => {
 
       mockedGateway.getTransferPreApproval.mockResolvedValue({
         contract_id: "test-contract-id",
-        receiver: mockPartyId,
+        receiver: "test-party-id",
         provider: "test-provider",
         valid_from: "2024-01-01T00:00:00Z",
         last_renewed_at: "2024-01-01T00:00:00Z",
@@ -35,11 +31,14 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockCurrency, "test-party-id");
 
       // THEN
       expect(result).toBe(true);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(
+        mockCurrency,
+        "test-party-id",
+      );
     });
 
     it("should return false when contract exists but is expired", async () => {
@@ -49,7 +48,7 @@ describe("onboard", () => {
 
       mockedGateway.getTransferPreApproval.mockResolvedValue({
         contract_id: "test-contract-id",
-        receiver: mockPartyId,
+        receiver: "test-party-id",
         provider: "test-provider",
         valid_from: "2024-01-01T00:00:00Z",
         last_renewed_at: "2024-01-01T00:00:00Z",
@@ -57,11 +56,14 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockCurrency, "test-party-id");
 
       // THEN
       expect(result).toBe(false);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(
+        mockCurrency,
+        "test-party-id",
+      );
     });
   });
 
@@ -94,7 +96,7 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockAccount({ xpub: undefined });
+      const account = createMockCantonAccount({ xpub: undefined });
       mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: mockPartyId });
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
@@ -117,7 +119,7 @@ describe("onboard", () => {
     it("should proceed with submission when account has xpub (re-onboarding scenario)", async () => {
       // GIVEN - account already has xpub (re-onboarding)
       const existingPartyId = "existing-party-id";
-      const account = createMockAccount({ xpub: existingPartyId });
+      const account = createMockCantonAccount({ xpub: existingPartyId });
       const newPartyId = "new-party-id";
 
       mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: existingPartyId });

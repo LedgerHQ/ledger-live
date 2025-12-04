@@ -17,7 +17,7 @@ describe.skip("devnet", () => {
   describe("listOperations", () => {
     it("should return ops", async () => {
       const ops = await api.listOperations(
-        "party-4f2e1485107adf5f::122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
+        "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876",
         {
           minHeight: 0,
         },

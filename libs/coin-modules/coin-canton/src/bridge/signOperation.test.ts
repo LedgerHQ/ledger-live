@@ -1,14 +1,12 @@
-import { BigNumber } from "bignumber.js";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { craftTransaction } from "../common-logic";
-import { createMockAccount } from "../test/fixtures";
-import prepareTransferMock from "../test/prepare-transfer.json";
 import {
-  CantonPreparedTransaction,
-  CantonSignature,
-  CantonSigner,
-  CantonUntypedVersionedMessage,
-  Transaction,
-} from "../types";
+  createMockCantonAccount,
+  createMockCantonSigner,
+  createMockSignerContext,
+  createMockTransaction,
+} from "../test/fixtures";
+import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../common-logic", () => {
@@ -21,74 +19,30 @@ jest.mock("../common-logic", () => {
 
 const mockCraftTransaction = craftTransaction as jest.MockedFunction<typeof craftTransaction>;
 
-class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string, display?: boolean) {
-    return {
-      publicKey: "mock-public-key",
-      address: "mock-address",
-      path,
-    };
-  }
-
-  async signTransaction(
-    path: string,
-    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
-  ): Promise<CantonSignature> {
-    if (typeof data === "string") {
-      return { signature: `txhash-signature-${data}` };
-    } else if ("transactions" in data) {
-      const result: CantonSignature = {
-        signature: `untyped-signature-${data.transactions.length}`,
-      };
-      if (data.challenge) {
-        result.applicationSignature = `challenge-signature-${data.challenge}`;
-      }
-      return result;
-    } else {
-      return {
-        signature: `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`,
-      };
-    }
-  }
-}
-
 describe("buildSignOperation", () => {
-  const mockDeviceId = "test-device-id";
-  const mockDerivationPath = "44'/6767'/0'/0'/0'";
-
   beforeEach(() => {
     jest.clearAllMocks();
     mockCraftTransaction.mockReset();
   });
 
-  const mockAccount = createMockAccount({
-    id: "js:2:canton_network:test-party-id:",
-    freshAddress: "test-address",
-    freshAddressPath: mockDerivationPath,
-    xpub: "test-party-id",
-  });
-
-  const mockTransaction: Transaction = {
-    family: "canton",
-    recipient: "bob::44444444444444444444444444444444444444444444444444444444444444444444",
-    amount: new BigNumber("1000000"),
-    tokenId: "Amulet",
-    fee: new BigNumber("1000"),
-    memo: "Test transaction",
-  };
+  const mockAccount = createMockCantonAccount();
+  const mockTransaction = createMockTransaction();
+  const mockDeviceId = "test-device-id";
 
   it("should handle prepared transaction signing", async () => {
     // GIVEN
-    const mockSigner = new MockCantonSigner();
-    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
-      return await callback(mockSigner);
-    });
+    const mockSigner = createMockCantonSigner();
+    const mockSignerContext = createMockSignerContext(mockSigner);
 
     mockCraftTransaction.mockResolvedValue({
       nativeTransaction: {
-        // @ts-expect-error fix types
-        transaction: prepareTransferMock.transaction,
-        metadata: prepareTransferMock.metadata,
+        json: {
+          transaction: prepareTransferMock.transaction,
+          metadata: prepareTransferMock.metadata,
+        },
+        serialized: "serialized-transaction",
+        hash: "mock-hash",
+        step: { type: "single-step" },
       },
       serializedTransaction: "serialized-transaction",
       hash: "mock-hash",
@@ -116,8 +70,15 @@ describe("buildSignOperation", () => {
     expect(mockCraftTransaction).toHaveBeenCalled();
     expect(result).toMatchObject({
       signedOperation: {
-        signature: expect.stringContaining("prepared-transaction-signature-"),
+        signature: expect.any(String),
       },
+    });
+
+    const signedResult = result as { signedOperation: { signature: string } };
+    const parsedSignature = JSON.parse(signedResult.signedOperation.signature);
+    expect(parsedSignature).toMatchObject({
+      serialized: "serialized-transaction",
+      signature: expect.stringMatching(/^[0-9a-f]+__PARTY__test_address$/i),
     });
   });
 });

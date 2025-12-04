@@ -1,8 +1,7 @@
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { craftTransaction, estimateFees } from "../common-logic";
-import coinConfig from "../config";
 import { getNextSequence } from "../network/node";
+import { createMockCantonAccount, setupMockCoinConfig } from "../test/fixtures";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
@@ -15,15 +14,7 @@ describe("prepareTransaction", () => {
   let craftTransactionSpy: jest.SpyInstance;
 
   beforeAll(async () => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-    }));
+    setupMockCoinConfig();
   });
   beforeEach(() => {
     getNextSequenceSpy = jest.spyOn({ getNextSequence }, "getNextSequence");
@@ -36,7 +27,7 @@ describe("prepareTransaction", () => {
     getNextSequenceSpy.mockResolvedValue(42);
     const oldTx = { fee: new BigNumber(0) };
     estimateFeesSpy.mockResolvedValue(BigInt(1));
-    const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
+    const newTx = await prepareTransaction(createMockCantonAccount(), oldTx as Transaction);
     expect(newTx.fee).toEqual(new BigNumber(1));
   });
 });

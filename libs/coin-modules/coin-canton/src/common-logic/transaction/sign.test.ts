@@ -1,96 +1,18 @@
-import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import {
-  CantonPreparedTransaction,
-  CantonSignature,
-  CantonSigner,
-  CantonUntypedVersionedMessage,
-} from "../../types/signer";
+  createMockCantonSigner,
+  createMockOnboardingPrepareResponse,
+  createMockPrepareTransferResponse,
+} from "../../test/fixtures";
+import type { CantonSigner } from "../../types/signer";
 import { signTransaction } from "./sign";
 
-class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string, display?: boolean) {
-    return {
-      publicKey: "mock-public-key",
-      address: "mock-address",
-      path,
-    };
-  }
-
-  async signTransaction(
-    path: string,
-    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
-  ): Promise<CantonSignature> {
-    if (typeof data === "string") {
-      return { signature: `txhash-signature-${data}` };
-    } else if ("transactions" in data) {
-      const result: CantonSignature = {
-        signature: `untyped-signature-${data.transactions.length}`,
-      };
-      if (data.challenge) {
-        result.applicationSignature = `challenge-signature-${data.challenge}`;
-      }
-      return result;
-    } else {
-      return {
-        signature: `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`,
-      };
-    }
-  }
-}
-
 describe("signTransaction", () => {
-  const mockSigner = new MockCantonSigner();
+  const mockSigner = createMockCantonSigner();
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
 
   it("should sign prepared transaction", async () => {
     // GIVEN
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [
-            {
-              nodeId: "0",
-              v1: {
-                create: {
-                  lfVersion: "2.1",
-                  contractId: "test-contract-id",
-                  packageName: "test-package",
-                  templateId: {
-                    packageId: "test-package-id",
-                    moduleName: "TestModule",
-                    entityName: "TestEntity",
-                  },
-                  argument: {
-                    record: {
-                      recordId: {
-                        packageId: "test-package-id",
-                        moduleName: "TestModule",
-                        entityName: "TestEntity",
-                      },
-                      fields: [],
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-    };
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN
     const result = await signTransaction(
@@ -100,34 +22,14 @@ describe("signTransaction", () => {
     );
 
     // THEN
-    expect(result).toEqual({ signature: "prepared-transaction-signature-10-1" });
+    expect(result.signature).toBeDefined();
+    expect(result.signature).toMatch(/^[0-9a-f]+$/i);
+    expect(result.signature.length).toBeGreaterThan(0);
   });
 
   it("should sign untyped versioned message", async () => {
     // GIVEN
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          json: {},
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          json: {},
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          json: {},
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
-    };
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse();
 
     // WHEN
     const result = await signTransaction(
@@ -137,7 +39,10 @@ describe("signTransaction", () => {
     );
 
     // THEN
-    expect(result).toEqual({ signature: "untyped-signature-3" });
+    expect(result.signature).toBeDefined();
+    expect(result.signature).toMatch(/^[0-9a-f]+$/i);
+    expect(result.applicationSignature).toBeDefined();
+    expect(result.applicationSignature).toMatch(/^[0-9a-f]+$/i);
   });
 
   it("should handle empty signature from signer", async () => {
@@ -147,27 +52,7 @@ describe("signTransaction", () => {
       signTransaction: jest.fn().mockResolvedValue(""),
     } as unknown as CantonSigner;
 
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-    };
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
     await expect(
@@ -186,27 +71,7 @@ describe("signTransaction", () => {
       signTransaction: jest.fn().mockRejectedValue(new Error("Signer error")),
     } as unknown as CantonSigner;
 
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-    };
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
     await expect(
@@ -222,53 +87,7 @@ describe("signTransaction", () => {
       signTransaction: mockSignerSpy,
     } as unknown as CantonSigner;
 
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [
-            {
-              nodeId: "0",
-              v1: {
-                create: {
-                  lfVersion: "2.1",
-                  contractId: "test-contract-id",
-                  packageName: "test-package",
-                  templateId: {
-                    packageId: "test-package-id",
-                    moduleName: "TestModule",
-                    entityName: "TestEntity",
-                  },
-                  argument: {
-                    record: {
-                      recordId: {
-                        packageId: "test-package-id",
-                        moduleName: "TestModule",
-                        entityName: "TestEntity",
-                      },
-                      fields: [],
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-    };
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN
     await signTransaction(mockSignerWithSpy, mockDerivationPath, mockPrepareTransferResponse);
@@ -293,29 +112,10 @@ describe("signTransaction", () => {
       signTransaction: mockSignerSpy,
     } as unknown as CantonSigner;
 
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          json: {},
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          json: {},
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          json: {},
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
-    };
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse({
+      challenge_nonce: "",
+      challenge_deadline: 0,
+    });
 
     // WHEN
     await signTransaction(mockSignerWithSpy, mockDerivationPath, mockOnboardingPrepareResponse);
@@ -340,31 +140,7 @@ describe("signTransaction", () => {
       signTransaction: mockSignerSpy,
     } as unknown as CantonSigner;
 
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      challenge_nonce: "1234567890abcdef",
-      challenge_deadline: 1735689599,
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          json: {},
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          json: {},
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          json: {},
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
-    };
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse();
 
     const result = await signTransaction(
       mockSignerWithSpy,

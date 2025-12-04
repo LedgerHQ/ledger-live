@@ -1,6 +1,6 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getLedgerEnd as gatewayGetLedgerEnd } from "../../network/gateway";
 import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
+import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
 import { lastBlock } from "./lastBlock";
 
 jest.mock("../../network/gateway", () => ({
@@ -19,9 +19,7 @@ jest.mock("../../config", () => ({
 
 import coinConfig from "../../config";
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
 
 describe("lastBlock", () => {
   beforeEach(() => {
@@ -29,7 +27,7 @@ describe("lastBlock", () => {
   });
 
   it("should use gateway.getLedgerEnd when useGateway is true", async () => {
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ useGateway: true });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue(createMockCoinConfigValue());
     (gatewayGetLedgerEnd as jest.Mock).mockResolvedValue(100);
 
     const result = await lastBlock(mockCurrency);
@@ -40,7 +38,9 @@ describe("lastBlock", () => {
   });
 
   it("should use node.getLedgerEnd when useGateway is false", async () => {
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ useGateway: false });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue(
+      createMockCoinConfigValue({ useGateway: false }),
+    );
     (nodeGetLedgerEnd as jest.Mock).mockResolvedValue(200);
 
     const result = await lastBlock(mockCurrency);

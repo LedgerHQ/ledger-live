@@ -42,7 +42,7 @@ export const buildSignOperation =
               params.memo = transaction.memo;
             }
 
-            const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
+            const { nativeTransaction, serializedTransaction } = await craftTransaction(
               account.currency,
               {
                 address,
@@ -50,13 +50,16 @@ export const buildSignOperation =
               params,
             );
 
-            const { signature } = await signTransaction(signer, derivationPath, {
-              json: nativeTransaction,
-              serialized: serializedTransaction,
-              hash: hash,
-            });
+            const signatureResult = await signTransaction(
+              signer,
+              derivationPath,
+              nativeTransaction,
+            );
 
-            return combine(serializedTransaction, `${signature}__PARTY__${address}`);
+            return combine(
+              serializedTransaction,
+              `${signatureResult.signature}__PARTY__${address}`,
+            );
           });
 
           o.next({

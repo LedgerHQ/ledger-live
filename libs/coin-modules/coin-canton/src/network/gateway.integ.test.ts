@@ -1,6 +1,6 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
-import { generateMockKeyPair } from "../test/cantonTestUtils";
+import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
+import { createMockCantonCurrency } from "../test/fixtures";
 import type { OnboardingPrepareResponse } from "../types/gateway";
 import {
   getBalance,
@@ -16,9 +16,7 @@ import {
   submitTapRequest,
 } from "./gateway";
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
 
 describe("gateway (devnet)", () => {
   let onboardedAccount: {
@@ -82,6 +80,15 @@ describe("gateway (devnet)", () => {
       prepareResponse = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
+      // Verify signature is valid
+      const verification = verifySignature(
+        keyPair.publicKeyHex,
+        signature,
+        prepareResponse.transactions.combined_hash,
+      );
+      expect(verification.isValid).toBe(true);
+      expect(verification.error).toBeUndefined();
+
       // WHEN
       const response = await submitOnboarding(mockCurrency, keyPair.publicKeyHex, prepareResponse, {
         signature,
@@ -110,6 +117,14 @@ describe("gateway (devnet)", () => {
         const { keyPair } = getOnboardedAccount();
         const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);
 
+        // Verify signature is valid
+        const verification = verifySignature(
+          keyPair.publicKeyHex,
+          signature,
+          prepareResponse!.transactions.combined_hash,
+        );
+        expect(verification.isValid).toBe(true);
+
         // WHEN
         const response = await submitOnboarding(
           mockCurrency,
@@ -130,7 +145,12 @@ describe("gateway (devnet)", () => {
     it("should handle PARTY_ALREADY_EXISTS error and return party_id and public_key", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const signature = keyPair.sign(prepareResponse?.transactions?.combined_hash || "");
+      const hashToSign = prepareResponse?.transactions?.combined_hash || "";
+      const signature = keyPair.sign(hashToSign);
+
+      // Verify signature is valid
+      const verification = verifySignature(keyPair.publicKeyHex, signature, hashToSign);
+      expect(verification.isValid).toBe(true);
 
       // WHEN
       const response = await submitOnboarding(
@@ -172,11 +192,10 @@ describe("gateway (devnet)", () => {
 
   describe("getPartyById", () => {
     it("should return party info", async () => {
-      const party = await getPartyById(
-        mockCurrency,
-        "ldg::12208b12fa34be8a079bcbb68bba828e58313046c4208855b39885fab48661322e68",
-      );
+      const { partyId } = getOnboardedAccount();
+      const party = await getPartyById(mockCurrency, partyId);
       expect(party).toBeDefined();
+      expect(party.party_id).toBe(partyId);
     });
   });
 
@@ -194,7 +213,7 @@ describe("gateway (devnet)", () => {
     it("should return user transactions", async () => {
       const { operations } = await getOperations(
         mockCurrency,
-        "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
+        "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890",
         {},
       );
       expect(operations.length).toBeGreaterThanOrEqual(0);
@@ -227,6 +246,14 @@ describe("gateway (devnet)", () => {
         amount: 1000,
       });
       const tapSignature = keyPair.sign(tapPrepareResponse.hash);
+
+      // Verify signature is valid
+      const verification = verifySignature(
+        keyPair.publicKeyHex,
+        tapSignature,
+        tapPrepareResponse.hash,
+      );
+      expect(verification.isValid).toBe(true);
 
       // WHEN
       const response = await submitTapRequest(mockCurrency, {
@@ -265,6 +292,14 @@ describe("gateway (devnet)", () => {
       const { keyPair, partyId } = getOnboardedAccount();
       const preparedTransaction = await preparePreApprovalTransaction(mockCurrency, partyId);
       const preApprovalSignature = keyPair.sign(preparedTransaction.hash);
+
+      // Verify signature is valid
+      const verification = verifySignature(
+        keyPair.publicKeyHex,
+        preApprovalSignature,
+        preparedTransaction.hash,
+      );
+      expect(verification.isValid).toBe(true);
 
       // WHEN
       const response = await submitPreApprovalTransaction(

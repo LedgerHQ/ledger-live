@@ -1,10 +1,8 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as coinConfigModule from "../../config";
+import { createMockCantonCurrency } from "../../test/fixtures";
 import { estimateFees } from "./estimateFees";
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
 
 const magnitude: bigint = 10n ** 38n;
 

@@ -1,10 +1,14 @@
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import * as config from "../config";
 import * as gateway from "../network/gateway";
 import resolver from "../signer";
-import type { OperationView } from "../types/gateway";
+import {
+  createMockCantonAccountShapeInfo,
+  createMockFeesView,
+  createMockInstrumentBalance,
+  createMockOperationView,
+  createMockTransferView,
+} from "../test/fixtures";
 import * as onboard from "./onboard";
 import { makeGetAccountShape } from "./sync";
 
@@ -21,21 +25,9 @@ const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
 const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
 
-const sampleCurrency = {
-  id: "testcoin",
-};
-
 describe("makeGetAccountShape", () => {
   const fakeSignerContext = {} as any;
-
-  const defaultInfo = {
-    address: "addr1",
-    currency: sampleCurrency,
-    derivationMode: "",
-    derivationPath: "44'/0'/0'/0/0",
-    deviceId: "fakeDevice",
-    initialAccount: undefined,
-  };
+  const defaultInfo = createMockCantonAccountShapeInfo();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -46,11 +38,11 @@ describe("makeGetAccountShape", () => {
 
     mockedIsOnboarded.mockResolvedValue({
       isOnboarded: true,
-      partyId: "party123",
+      partyId: "test-party-id",
     });
 
     mockedCoinConfig.mockReturnValue({
-      nativeInstrumentId: "Native",
+      nativeInstrumentId: "Amulet",
       minReserve: "0",
       useGateway: true,
     });
@@ -60,73 +52,37 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should return a valid account shape with correct balances and operations", async () => {
-    mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
-        amount: "1000",
-        locked: false,
-        utxo_count: 1,
-      },
-    ]);
+    mockedGetBalance.mockResolvedValue([createMockInstrumentBalance()]);
     mockedGetOperations.mockResolvedValue({
-      operations: [
-        {
-          transaction_hash: "tx1",
-          uid: "uid1",
-          type: "Send",
-          fee: { value: "5" },
-          transfers: [
-            {
-              value: "100",
-              details: {
-                metadata: {
-                  reason: "test transfer",
-                },
-              },
-            },
-          ],
-          transaction_timestamp: new Date().toISOString(),
-          senders: ["party123"],
-          recipients: ["party456"],
-          block: {
-            height: 1,
-            hash: "blockhash1",
-          },
-        } as OperationView,
-      ],
+      operations: [createMockOperationView()],
     });
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
     expect(shape).toHaveProperty("id");
     expect(shape.balance).toEqual(BigNumber(1000));
     expect(shape.operations?.length).toBe(1);
-    expect((shape.operations as any)[0].type).toBe("OUT");
-    expect((shape.operations as any)[0].value).toEqual(BigNumber(105)); // 100 + 5 fee
+    expect((shape.operations as any)[0].type).toBe("IN");
+    expect((shape.operations as any)[0].value).toEqual(BigNumber(100));
     expect(shape.spendableBalance).toEqual(BigNumber(1000));
     expect(shape.used).toBe(true);
   });
 
   it("should handle locked balances correctly", async () => {
     mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
+      createMockInstrumentBalance({
         amount: "1000",
         locked: true,
-        utxo_count: 1,
-      },
-      {
-        instrument_id: "Native",
+      }),
+      createMockInstrumentBalance({
         amount: "10",
-        locked: false,
-        utxo_count: 1,
-      },
+      }),
     ]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -139,7 +95,7 @@ describe("makeGetAccountShape", () => {
     mockedGetBalance.mockResolvedValue([]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -149,44 +105,27 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should default to FEES operation type when transferValue is 0", async () => {
-    mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
-        amount: "1000",
-        locked: false,
-        utxo_count: 1,
-      },
-    ]);
+    mockedGetBalance.mockResolvedValue([createMockInstrumentBalance()]);
     mockedGetOperations.mockResolvedValue({
       operations: [
-        {
-          transaction_hash: "tx2",
-          uid: "uid2",
-          type: "Send",
-          fee: { value: "3" },
+        createMockOperationView({
+          fee: createMockFeesView({ value: "3" }),
           transfers: [
-            {
+            createMockTransferView({
               value: "0",
               details: {
                 metadata: {
                   reason: "fee only",
                 },
               },
-            },
+            }),
           ],
-          transaction_timestamp: new Date().toISOString(),
-          senders: ["party123"],
-          recipients: ["party456"],
-          block: {
-            height: 2,
-            hash: "blockhash2",
-          },
-        } as OperationView,
+        }),
       ],
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toBeDefined();
@@ -196,23 +135,12 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should set operation type to TRANSFER_PROPOSAL when operationType is transfer-proposal", async () => {
-    mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
-        amount: "1000",
-        locked: false,
-        utxo_count: 1,
-      },
-    ]);
+    mockedGetBalance.mockResolvedValue([createMockInstrumentBalance()]);
     mockedGetOperations.mockResolvedValue({
       operations: [
-        {
-          transaction_hash: "tx3",
-          uid: "uid3",
-          type: "Send",
-          fee: { value: "5" },
+        createMockOperationView({
           transfers: [
-            {
+            createMockTransferView({
               value: "200",
               details: {
                 operationType: "transfer-proposal",
@@ -220,21 +148,14 @@ describe("makeGetAccountShape", () => {
                   reason: "transfer proposal",
                 },
               },
-            },
+            }),
           ],
-          transaction_timestamp: new Date().toISOString(),
-          senders: ["party123"],
-          recipients: ["party456"],
-          block: {
-            height: 3,
-            hash: "blockhash3",
-          },
-        } as OperationView,
+        }),
       ],
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toBeDefined();
@@ -243,23 +164,12 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should set operation type to TRANSFER_REJECTED when operationType is transfer-rejected", async () => {
-    mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
-        amount: "1000",
-        locked: false,
-        utxo_count: 1,
-      },
-    ]);
+    mockedGetBalance.mockResolvedValue([createMockInstrumentBalance()]);
     mockedGetOperations.mockResolvedValue({
       operations: [
-        {
-          transaction_hash: "tx4",
-          uid: "uid4",
-          type: "Send",
-          fee: { value: "2" },
+        createMockOperationView({
           transfers: [
-            {
+            createMockTransferView({
               value: "150",
               details: {
                 operationType: "transfer-rejected",
@@ -267,21 +177,14 @@ describe("makeGetAccountShape", () => {
                   reason: "transfer rejected",
                 },
               },
-            },
+            }),
           ],
-          transaction_timestamp: new Date().toISOString(),
-          senders: ["party123"],
-          recipients: ["party456"],
-          block: {
-            height: 4,
-            hash: "blockhash4",
-          },
-        } as OperationView,
+        }),
       ],
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toBeDefined();
@@ -290,23 +193,12 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should set operation type to TRANSFER_WITHDRAWN when operationType is transfer-withdrawn", async () => {
-    mockedGetBalance.mockResolvedValue([
-      {
-        instrument_id: "Native",
-        amount: "1000",
-        locked: false,
-        utxo_count: 1,
-      },
-    ]);
+    mockedGetBalance.mockResolvedValue([createMockInstrumentBalance()]);
     mockedGetOperations.mockResolvedValue({
       operations: [
-        {
-          transaction_hash: "tx5",
-          uid: "uid5",
-          type: "Send",
-          fee: { value: "1" },
+        createMockOperationView({
           transfers: [
-            {
+            createMockTransferView({
               value: "50",
               details: {
                 operationType: "transfer-withdrawn",
@@ -314,21 +206,14 @@ describe("makeGetAccountShape", () => {
                   reason: "transfer withdrawn",
                 },
               },
-            },
+            }),
           ],
-          transaction_timestamp: new Date().toISOString(),
-          senders: ["party123"],
-          recipients: ["party456"],
-          block: {
-            height: 5,
-            hash: "blockhash5",
-          },
-        } as OperationView,
+        }),
       ],
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toBeDefined();

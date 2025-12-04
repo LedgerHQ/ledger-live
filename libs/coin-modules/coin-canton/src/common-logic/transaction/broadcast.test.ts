@@ -1,6 +1,6 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as coinConfigModule from "../../config";
 import { submit } from "../../network/gateway";
+import { createMockCantonCurrency } from "../../test/fixtures";
 import { broadcast } from "./broadcast";
 
 jest.mock("../../network/gateway", () => ({
@@ -12,9 +12,7 @@ const mockSerialized = JSON.stringify({
   signature: "signature__PARTY__alice:123",
 });
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
 
 describe("broadcast", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");

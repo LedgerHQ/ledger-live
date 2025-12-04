@@ -2,7 +2,7 @@ import { firstValueFrom, toArray } from "rxjs";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
-import { createMockAccount, createMockCantonCurrency } from "../test/fixtures";
+import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
 import {
   AuthorizeStatus,
   CantonAuthorizeProgress,
@@ -20,7 +20,7 @@ import {
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockCurrency = createMockCantonCurrency();
-  const mockAccount = createMockAccount();
+  const mockAccount = createMockCantonAccount();
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
