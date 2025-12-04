@@ -210,7 +210,7 @@ describe("onboard (devnet)", () => {
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
       const keyPair = generateMockKeyPair();
-      const mockAccount = createMockAccount({ xpub: keyPair.publicKeyHex });
+      const mockAccount = createMockCantonAccount({ xpub: keyPair.publicKeyHex });
       const mockSigner = createMockSigner(keyPair);
       const mockSignerContext = jest.fn().mockImplementation((_, callback) => {
         return callback(mockSigner);

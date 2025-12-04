@@ -316,6 +316,6 @@ describe("gateway (devnet)", () => {
       expect(response.isApproved).toBe(true);
       expect(typeof response.submissionId).toBe("string");
       expect(typeof response.updateId).toBe("string");
-    });
+    }, 30000);
   });
 });
