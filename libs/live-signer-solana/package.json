@@ -37,6 +37,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@types/bs58": "catalog:",
     "bs58": "catalog:",
     "rxjs": "catalog:",
