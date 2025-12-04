@@ -1,17 +1,7 @@
-import { StacksMainnet, StacksTestnet } from "@stacks/network";
-import { getEnv } from "@ledgerhq/live-env";
-
-export const StacksNetwork = {
-  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
-  testnet: new StacksTestnet(),
-};
-
 export interface EstimatedFeesRequest {
   to: string;
   from: string;
 }
-
-export type EstimatedFeesResponse = number;
 
 export interface TransactionsResponse {
   limit: number;
@@ -35,6 +25,11 @@ export interface TransactionResponse {
       principal: {
         type_id: string;
         address: string;
+      };
+      asset: {
+        asset_name: string;
+        contract_address: string;
+        contract_name: string;
       };
     }>;
     anchor_mode: string;
@@ -165,6 +160,18 @@ export interface BalanceResponse {
   balance: string;
 }
 
+export interface TokenBalance {
+  token: string;
+  balance: string;
+}
+
+export interface TokenBalanceResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: TokenBalance[];
+}
+
 export interface NetworkStatusResponse {
   server_version: string;
   status: string;
@@ -173,9 +180,29 @@ export interface NetworkStatusResponse {
 
 export type BroadcastTransactionRequest = Buffer;
 
-export type BroadcastTransactionResponse = string;
-
 interface BlockIdentifier {
   block_height: number;
   block_hash: string;
+}
+
+export interface FungibleTokenMetadata {
+  tx_id: string;
+  sender_address: string;
+  asset_identifier: string;
+  contract_principal: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  total_supply: string;
+  token_uri: string;
+  description: string;
+  image_uri: string;
+  image_canonical_uri: string;
+}
+
+export interface FungibleTokenMetadataResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: FungibleTokenMetadata[];
 }

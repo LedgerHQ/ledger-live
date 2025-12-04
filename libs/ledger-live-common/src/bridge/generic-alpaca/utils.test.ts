@@ -201,6 +201,7 @@ describe("Alpaca utils", () => {
                   type: expected.subType,
                   senders: ["account-address"],
                   recipients: ["recipient-address"],
+                  fee: new BigNumber(12),
                   value: new BigNumber(50),
                   blockHash: null,
                   blockHeight: null,

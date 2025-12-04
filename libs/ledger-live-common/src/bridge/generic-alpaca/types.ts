@@ -70,7 +70,9 @@ export type GenericTransaction = TransactionCommon & {
   gasPrice?: BigNumber | null;
   maxFeePerGas?: BigNumber | null;
   maxPriorityFeePerGas?: BigNumber | null;
+  additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
+  sponsored?: boolean;
 };
 
 export type GenericTransactionRaw = TransactionCommonRaw & {
@@ -104,7 +106,9 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   gasPrice?: string | null;
   maxFeePerGas?: string | null;
   maxPriorityFeePerGas?: string | null;
+  additionalFees?: string | null;
   gasOptions?: GasOptionsRaw;
+  sponsored?: boolean;
 };
 
 export interface OperationCommon extends Operation {

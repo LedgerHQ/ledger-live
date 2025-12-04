@@ -71,7 +71,7 @@ describe("genericGetAccountShape", () => {
         "sync-hash",
         {
           minHeight: 11,
-          order: "asc",
+          order: "desc",
           lastPagingToken: "pt1",
         },
         [
@@ -100,7 +100,7 @@ describe("genericGetAccountShape", () => {
         "outdated-sync-hash",
         {
           minHeight: 0,
-          order: "asc",
+          order: "desc",
         },
         [
           {

@@ -86,6 +86,19 @@ export const genericSignOperation =
         const alpacaApi = getAlpacaApi(account.currency.id, kind);
         if (!transaction.fees) throw new FeeNotLoaded();
         const fees = BigInt(transaction.fees?.toString() || "0");
+        const feesParameters = {
+          ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
+          ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
+          ...(transaction.maxFeePerGas
+            ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
+            : {}),
+          ...(transaction.maxPriorityFeePerGas
+            ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
+            : {}),
+          ...(transaction.additionalFees
+            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+            : {}),
+        };
         if (transaction.useAllAmount) {
           const draftTransaction = {
             mode: transaction.mode,
@@ -98,10 +111,12 @@ export const genericSignOperation =
             family: transaction.family,
             feesStrategy: transaction.feesStrategy,
             data: transaction.data,
+            type: transaction.type,
           };
+          // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-            { value: fees },
+            { value: fees, parameters: feesParameters },
           );
           transaction.amount = new BigNumber(amount.toString());
         }
@@ -119,7 +134,7 @@ export const genericSignOperation =
           // Enrich with memo and asset information
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
-          if (typeof transactionIntent.sequence !== "bigint") {
+          if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
             const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;
@@ -128,6 +143,7 @@ export const genericSignOperation =
           /* Craft unsigned blob via Alpaca */
           const { transaction: unsigned } = await alpacaApi.craftTransaction(transactionIntent, {
             value: fees,
+            parameters: feesParameters,
           });
 
           /* Notify UI that the device is now showing the tx */

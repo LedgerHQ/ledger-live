@@ -26,6 +26,7 @@ export function genericGetTransactionStatus(
       feesStrategy: transaction.feesStrategy,
       data: transaction.data,
       type: transaction.type,
+      sponsored: transaction.sponsored,
     };
 
     if (alpacaApi.getChainSpecificRules) {
@@ -37,10 +38,24 @@ export function genericGetTransactionStatus(
       }
     }
 
+    const fees = BigInt(transaction.fees?.toString() || "0");
+    const feesParameters = {
+      ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
+      ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
+      ...(transaction.maxFeePerGas
+        ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
+        : {}),
+      ...(transaction.maxPriorityFeePerGas
+        ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
+        : {}),
+      ...(transaction.additionalFees
+        ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+        : {}),
+    };
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
       await alpacaApi.validateIntent(
         transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-        { value: transaction.fees ? BigInt(transaction.fees.toString()) : 0n },
+        { value: fees, parameters: feesParameters },
       );
 
     return {
