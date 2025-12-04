@@ -39,6 +39,7 @@ catalog:
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.12.1
   "@ledgerhq/context-module": 1.11.0
+  "@ledgerhq/crypto-icons": "1.4.0"
   "@ledgerhq/device-management-kit": 0.11.2
   "@ledgerhq/device-signer-kit-ethereum": 1.9.3
   "@ledgerhq/device-signer-kit-solana": 1.5.0
@@ -49,6 +50,7 @@ catalog:
   "@ledgerhq/speculos-device-controller": 0.1.0
   "@ledgerhq/ldls-design-core": 0.0.31
   "tailwindcss": ^3.4.0
+
 
 overrides:
   node-abi: ^4.9.0

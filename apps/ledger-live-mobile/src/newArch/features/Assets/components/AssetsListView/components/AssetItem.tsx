@@ -23,7 +23,7 @@ const AssetItem: React.FC<AssetItemProps> = ({ asset, balance }) => {
 
   return (
     <>
-      <CurrencyIcon currency={currency} size={40} circle />
+      <CurrencyIcon currency={currency} size={40} />
       <Flex flex={1} flexShrink={1} testID={`assetItem-${currency.name}`}>
         <Text
           numberOfLines={1}

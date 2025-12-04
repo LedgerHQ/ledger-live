@@ -137,7 +137,7 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                <CurrencyIcon size={18} currency={mainAccount.currency} circle />
+                <CurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
                 {maybeAccountName}

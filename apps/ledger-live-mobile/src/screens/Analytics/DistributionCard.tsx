@@ -83,7 +83,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     <Container onPress={navigateToAccounts}>
       <Flex flexDirection="row">
         <IconContainer>
-          <CurrencyIcon currency={currency} size={35} circle />
+          <CurrencyIcon currency={currency} size={35} />
         </IconContainer>
         <CoinInfoContainer>
           <CurrencyRow>

@@ -106,7 +106,7 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={<CurrencyIcon size={48} currency={actionCurrency as Currency} circle />}
+      Icon={<CurrencyIcon size={48} currency={actionCurrency as Currency} />}
     >
       <Flex mx={16} flexDirection={"row"}>
         <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>

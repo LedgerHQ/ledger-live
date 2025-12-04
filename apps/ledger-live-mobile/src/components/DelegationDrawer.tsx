@@ -60,7 +60,7 @@ export default function DelegationDrawer({
           left={
             icon || (
               <Circle size={iconWidth} bg={rgba(color, 0.2)}>
-                <CurrencyIcon size={iconWidth / 2} currency={currency} bg={"rgba(0,0,0,0)"} />
+                <CurrencyIcon size={iconWidth / 2} currency={currency} />
               </Circle>
             )
           }
