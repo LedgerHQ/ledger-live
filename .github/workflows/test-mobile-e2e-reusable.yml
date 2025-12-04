@@ -805,7 +805,7 @@ jobs:
           platform: iOS
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/qaa_ci_fixes
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -856,7 +856,7 @@ jobs:
           platform: android
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/qaa_ci_fixes
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
