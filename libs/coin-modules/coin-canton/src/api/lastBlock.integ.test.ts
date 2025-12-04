@@ -8,7 +8,7 @@ describe.skip("devnet", () => {
     api = createApi({
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",
       networkType: "devnet",
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
       useGateway: true,
       nativeInstrumentId: "Amulet",
     });
