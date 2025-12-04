@@ -19,6 +19,7 @@ apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 apps/cli/src/commands/live                               @ledgerhq/live-hub
 apps/ledger-live-desktop/                                @ledgerhq/live-hub
 apps/ledger-live-mobile/                                 @ledgerhq/live-hub
+apps/web-tools/                                          @ledgerhq/live-hub
 libs/**/errors/                                          @ledgerhq/live-hub
 libs/**/logs/                                            @ledgerhq/live-hub
 libs/**/types-live/                                      @ledgerhq/live-hub
@@ -45,7 +46,6 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
-apps/web-tools/                                          @ledgerhq/coin-integration
 libs/coin-*/                                             @ledgerhq/coin-integration
 libs/domain-service/                                     @ledgerhq/coin-integration
 libs/evm-tools/                                          @ledgerhq/coin-integration
