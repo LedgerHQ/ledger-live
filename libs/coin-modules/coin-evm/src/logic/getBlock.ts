@@ -1,11 +1,9 @@
 import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { JsonRpcProvider } from "ethers";
 import { getCoinConfig } from "../config";
 import { fetchWithRetries } from "../network/node/ledger";
 import { getNodeApi } from "../network/node";
-import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig, isLedgerNodeConfig } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import {
@@ -37,7 +35,11 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
 
   let transactions: BlockTransaction[] = [];
   if (isExternalNodeConfig(node)) {
-    transactions = await getTransactionsFromRpcNode(currency, height);
+    transactions = await getTransactionsFromRpcNode(
+      currency,
+      result.transactionHashes || [],
+      nodeApi,
+    );
   } else if (isLedgerNodeConfig(node)) {
     transactions = await getTransactionsFromLedgerNode(currency, node.explorerId, info.hash!);
   }
@@ -47,21 +49,17 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     transactions,
   };
 }
-
 async function getTransactionsFromRpcNode(
   currency: CryptoCurrency,
-  height: number,
+  transactionHashes: string[],
+  nodeApi: ReturnType<typeof getNodeApi>,
 ): Promise<BlockTransaction[]> {
-  const block = await withApi(currency, async (api: JsonRpcProvider) => {
-    return await api.getBlock(height, true);
-  });
-
-  if (!block?.transactions) {
+  if (transactionHashes.length === 0) {
     return [];
   }
 
-  const transactionPromises = block.transactions.map(async (txHash: string) => {
-    return await getTransactionFromHash(currency, txHash);
+  const transactionPromises = transactionHashes.map(async (txHash: string) => {
+    return await getTransactionFromHash(currency, txHash, nodeApi);
   });
 
   const transactionResults = await Promise.all(transactionPromises);
@@ -71,32 +69,21 @@ async function getTransactionsFromRpcNode(
 async function getTransactionFromHash(
   currency: CryptoCurrency,
   txHash: string,
+  nodeApi: ReturnType<typeof getNodeApi>,
 ): Promise<BlockTransaction | null> {
-  const txData = await withApi(currency, async (api: JsonRpcProvider) => {
-    const [fullTx, receipt] = await Promise.all([
-      api.getTransaction(txHash),
-      api.getTransactionReceipt(txHash),
-    ]);
-    return { fullTx, receipt };
-  });
+  const txInfo = await nodeApi.getTransaction(currency, txHash);
 
-  if (!txData.fullTx || !txData.receipt) {
-    return null;
-  }
+  const failed = txInfo.status === 0;
+  const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
 
-  const failed = txData.receipt.status === 0;
-  const gasPrice = txData.fullTx.gasPrice?.toString() || "0";
-  const gasUsed = txData.receipt.gasUsed.toString();
-  const fees = BigInt(gasUsed) * BigInt(gasPrice);
-
-  const operations = rpcTransactionToBlockOperations(txData.fullTx);
+  const operations = rpcTransactionToBlockOperations(txInfo.from, BigInt(txInfo.value), txInfo.to);
 
   return {
     hash: txHash,
     failed,
     operations,
     fees,
-    feesPayer: txData.fullTx.from || "",
+    feesPayer: txInfo.from,
   };
 }
 

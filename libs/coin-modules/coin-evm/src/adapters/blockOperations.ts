@@ -3,7 +3,6 @@ import type {
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
-import { TransactionResponse } from "ethers";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
@@ -14,7 +13,7 @@ import { safeEncodeEIP55 } from "../utils";
 function addTransferOperations(
   operations: BlockOperation[],
   from: string | null,
-  to: string | null,
+  to: string | undefined,
   asset: AssetInfo,
   amount: bigint,
 ): void {
@@ -49,12 +48,14 @@ function addTransferOperations(
  * This extracts native ETH transfers from the transaction value field.
  */
 export function rpcTransactionToBlockOperations(
-  tx: TransactionResponse | { from: string | null; to: string | null; value: bigint },
+  from: string,
+  value: bigint,
+  to: string | undefined,
 ): BlockOperation[] {
   const operations: BlockOperation[] = [];
 
-  if (tx.value && tx.value > 0n) {
-    addTransferOperations(operations, tx.from, tx.to, { type: "native" }, tx.value);
+  if (value && value > 0n) {
+    addTransferOperations(operations, from, to, { type: "native" }, value);
   }
 
   return operations;

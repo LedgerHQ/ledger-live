@@ -93,6 +93,8 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
       gasPrice: receipt.gasPrice.toString(),
       status: receipt.status,
       value: tx.value.toString(),
+      from: tx.from,
+      to: tx.to ?? undefined,
     };
   });
 
@@ -252,11 +254,14 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
   withApi(currency, async api => {
     const block = await api.getBlock(blockHeight);
 
+    const transactionHashes = block?.transactions as string[] | undefined;
+
     return {
       hash: block?.hash || "",
       height: block?.number ?? 0,
       // timestamp is returned in seconds by getBlock, we need milliseconds
       timestamp: (block?.timestamp ?? 0) * 1000,
+      ...(transactionHashes !== undefined && { transactionHashes }),
     };
   });
 

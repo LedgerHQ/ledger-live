@@ -16,51 +16,45 @@ describe("EVM Family", () => {
     describe("blockOperations", () => {
       describe("rpcTransactionToBlockOperations", () => {
         it("should extract native ETH transfer operations from RPC transaction with value", () => {
-          const tx = {
-            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-            value: 1000000000000000000n, // 1 ETH
-          };
-
-          const operations = rpcTransactionToBlockOperations(tx);
-
-          expect(operations).toHaveLength(2);
-          expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "native" },
-            amount: -1000000000000000000n,
-          });
-          expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "native" },
-            amount: 1000000000000000000n,
-          });
+          const operations = rpcTransactionToBlockOperations(
+            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            1000000000000000000n,
+            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          );
+          expect(operations).toEqual([
+            {
+              type: "transfer",
+              address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              asset: { type: "native" },
+              amount: -1000000000000000000n,
+            },
+            {
+              type: "transfer",
+              address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              asset: { type: "native" },
+              amount: 1000000000000000000n,
+            },
+          ]);
         });
 
         it("should return empty array for transaction with zero value", () => {
-          const tx = {
-            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-            value: 0n,
-          };
-
-          const operations = rpcTransactionToBlockOperations(tx);
+          const operations = rpcTransactionToBlockOperations(
+            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            0n,
+            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          );
 
           expect(operations).toHaveLength(0);
         });
 
         it("should handle transaction with null to address (contract creation)", () => {
-          const tx = {
-            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            to: null,
-            value: 500000000000000000n, // 0.5 ETH
-          };
-
-          const operations = rpcTransactionToBlockOperations(tx);
+          const operations = rpcTransactionToBlockOperations(
+            "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            500000000000000000n,
+            undefined,
+          );
 
           expect(operations).toHaveLength(1);
           expect(operations[0]).toEqual({
@@ -73,13 +67,11 @@ describe("EVM Family", () => {
         });
 
         it("should handle transaction with null from address", () => {
-          const tx = {
-            from: null,
-            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-            value: 2000000000000000000n, // 2 ETH
-          };
-
-          const operations = rpcTransactionToBlockOperations(tx);
+          const operations = rpcTransactionToBlockOperations(
+            "",
+            2000000000000000000n,
+            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          );
 
           expect(operations).toHaveLength(1);
           expect(operations[0]).toEqual({
@@ -92,13 +84,7 @@ describe("EVM Family", () => {
         });
 
         it("should handle invalid addresses gracefully", () => {
-          const tx = {
-            from: "0x0",
-            to: "0x",
-            value: 1000000000000000000n,
-          };
-
-          const operations = rpcTransactionToBlockOperations(tx);
+          const operations = rpcTransactionToBlockOperations("0x0", 1000000000000000000n, "0x");
 
           expect(operations).toHaveLength(0);
         });

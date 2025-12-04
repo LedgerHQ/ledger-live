@@ -181,6 +181,8 @@ describe("EVM Family", () => {
           blockHash: "0x6db17db08345729953a1408a56dcc588aa3d23e8cc917f2624b8bf047148cce2",
           nonce: 271392,
           status: 1,
+          from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
+          to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
         });
       });
     });
@@ -559,11 +561,13 @@ describe("EVM Family", () => {
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
+          transactionHashes: ["0xTx1", "0xTx2"],
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
+          transactionHashes: ["0xTx3", "0xTx4"],
         });
       });
     });

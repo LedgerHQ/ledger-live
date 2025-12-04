@@ -1,12 +1,10 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as rpcCommon from "../network/node/rpc.common";
 import { fetchWithRetries } from "../network/node/ledger";
 import { getNodeApi } from "../network/node";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node/ledger");
-jest.mock("../network/node/rpc.common");
 jest.mock("../network/node");
 
 describe("getBlock", () => {
@@ -24,47 +22,44 @@ describe("getBlock", () => {
         hash: "0xabc123",
         height: 12345,
         timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+        transactionHashes: ["0xtx1", "0xtx2"],
       })
       .mockResolvedValueOnce({
         hash: "0xparent123",
         height: 12344,
         timestamp: new Date("2025-01-15T10:29:00Z").getTime(),
       });
+    const mockGetTransaction = jest.fn();
+    mockGetTransaction
+      .mockResolvedValueOnce({
+        hash: "0xtx1",
+        blockHeight: 12345,
+        blockHash: "0xabc123",
+        nonce: 1,
+        gasUsed: "21000",
+        gasPrice: "20000000000",
+        status: 1,
+        value: "1000",
+        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+      })
+      .mockResolvedValueOnce({
+        hash: "0xtx2",
+        blockHeight: 12345,
+        blockHash: "0xabc123",
+        nonce: 2,
+        gasUsed: "21000",
+        gasPrice: "20000000000",
+        status: 1,
+        value: "2000",
+        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+      });
+
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
+      getTransaction: mockGetTransaction,
     } as any);
-
-    const mockWithApi = jest.mocked(rpcCommon.withApi);
-    let callCount = 0;
-    mockWithApi.mockImplementation(async (_currency, fn) => {
-      if (callCount === 0) {
-        // First call: getBlock
-        callCount++;
-        const mockProvider = {
-          getBlock: jest.fn().mockResolvedValue({
-            transactions: ["0xtx1", "0xtx2"],
-          }),
-        };
-        return fn(mockProvider as any);
-      } else {
-        // Subsequent calls: getTransaction and getTransactionReceipt (called in Promise.all)
-        callCount++;
-        const txValue = callCount === 2 ? 1000n : 2000n;
-        const mockProvider = {
-          getTransaction: jest.fn().mockResolvedValue({
-            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-            value: txValue,
-            gasPrice: 20000000000n,
-          }),
-          getTransactionReceipt: jest.fn().mockResolvedValue({
-            status: 1,
-            gasUsed: 21000n,
-          }),
-        };
-        return fn(mockProvider as any);
-      }
-    });
 
     const result = await getBlock({} as CryptoCurrency, 12345);
 
