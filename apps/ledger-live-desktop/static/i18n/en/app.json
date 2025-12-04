@@ -7595,6 +7595,11 @@
   "walletSync": {
     "title": "Ledger Sync",
     "close": "Close",
+    "banner": {
+      "title": "Your wallet isn't synced",
+      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "cta": "Sync my wallet"
+    },
     "activate": {
       "title": "Turn on Ledger Sync for this computer?",
       "description": "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",

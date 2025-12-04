@@ -84,10 +84,12 @@ const getMarketWidgetAnalytics = (state: State) => {
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 
