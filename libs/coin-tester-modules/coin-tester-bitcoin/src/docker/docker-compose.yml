@@ -8,7 +8,7 @@ services:
     volumes:
       - "./postgres:/docker-entrypoint-initdb.d"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U username"]
+      test: [ "CMD-SHELL", "pg_isready -U username" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,6 +18,50 @@ services:
     command: /app/bitcoin/bin/bitcoind -datadir=/config -regtest -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=user -rpcpassword=pass -fallbackfee=0.001 -deprecatedrpc=addresses -txindex -zmqpubsequence=tcp://0.0.0.0:19999
     ports:
       - "18443:18443" # exposes RPC
+  atlas-indexer:
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-indexer-v2:rolling
+    platform: linux/amd64
+    cpus: 1
+    pull_policy: always
+    command: /app/bin/atlas /config/indexer.conf
+    volumes:
+      - "./atlas:/config"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      btcliked:
+        condition: service_started
+    restart: on-failure
+    healthcheck:
+      test: curl --fail http://localhost:9877/_health || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  atlas-explorer:
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-explorer-v2:rolling
+    platform: linux/amd64
+    cpus: 1
+    pull_policy: always
+    command: /app/bin/atlas /config/explorer.conf
+    volumes:
+      - "./atlas:/config"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      atlas-indexer:
+        condition: service_healthy
+      atlas-pending:
+        condition: service_started
+      btcliked:
+        condition: service_started
+    restart: on-failure
+    healthcheck:
+      test: curl --fail http://localhost:9877/_health || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 5s
   atlas-pending:
     image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-pending-v2:rolling
     platform: linux/amd64
@@ -29,27 +73,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      btcliked:
-        condition: service_started
-    restart: on-failure
-    healthcheck:
-      test: curl --fail http://localhost:9877/_health || exit 1
-      interval: 10s
-      retries: 5
-      timeout: 5s
-  atlas:
-    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-v2:rolling
-    platform: linux/amd64
-    cpus: 1
-    pull_policy: always
-    command: /app/bin/atlas /config/bitcoin.conf
-    volumes:
-      - "./atlas:/config"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      atlas-pending:
-        condition: service_started
       btcliked:
         condition: service_started
     restart: on-failure
@@ -71,6 +94,6 @@ services:
     volumes:
       - "./nginx:/etc/nginx/conf.d/"
     depends_on:
-      - atlas
+      - atlas-explorer
     ports:
       - "9876:9876"
