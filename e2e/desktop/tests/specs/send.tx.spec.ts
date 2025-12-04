@@ -248,9 +248,7 @@ test.describe("Send flows", () => {
             "@Flex",
             "@NanoGen5",
             `@${transaction.transaction.accountToDebit.currency.id}`,
-            ...(family && family !== transaction.transaction.accountToDebit.currency.id
-              ? [`@${family}`]
-              : []),
+            ...(family ? [`@family-${family}`] : []),
             ...(transaction.transaction.accountToDebit === Account.BTC_NATIVE_SEGWIT_1
               ? ["@smoke"]
               : []),
@@ -314,9 +312,7 @@ test.describe("Send flows", () => {
             "@Flex",
             "@NanoGen5",
             `@${transaction.transaction.accountToDebit.currency.id}`,
-            ...(family && family !== transaction.transaction.accountToDebit.currency.id
-              ? [`@${family}`]
-              : []),
+            ...(family ? [`@family-${family}`] : []),
           ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
@@ -373,9 +369,7 @@ test.describe("Send flows", () => {
           "@Flex",
           "@NanoGen5",
           `@${transactionInputValid.accountToDebit.currency.id}`,
-          ...(family && family !== transactionInputValid.accountToDebit.currency.id
-            ? [`@${family}`]
-            : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -431,9 +425,7 @@ test.describe("Send flows", () => {
             "@Flex",
             "@NanoGen5",
             `@${transaction.transaction.accountToDebit.currency.id}`,
-            ...(family && family !== transaction.transaction.accountToDebit.currency.id
-              ? [`@${family}`]
-              : []),
+            ...(family ? [`@family-${family}`] : []),
           ],
           annotation: {
             type: "TMS",
@@ -487,9 +479,7 @@ test.describe("Send flows", () => {
             "@Flex",
             "@NanoGen5",
             `@${transaction.transaction.accountToDebit.currency.id}`,
-            ...(family && family !== transaction.transaction.accountToDebit.currency.id
-              ? [`@${family}`]
-              : []),
+            ...(family ? [`@family-${family}`] : []),
           ],
           annotation: {
             type: "TMS",
@@ -555,9 +545,7 @@ test.describe("Send flows", () => {
           "@Flex",
           "@NanoGen5",
           `@${transactionEnsAddress.accountToDebit.currency.id}`,
-          ...(family && family !== transactionEnsAddress.accountToDebit.currency.id
-            ? [`@${family}`]
-            : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",

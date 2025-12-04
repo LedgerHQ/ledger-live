@@ -61,7 +61,7 @@ for (const token of subAccounts) {
           "@Flex",
           "@NanoGen5",
           `@${token.account.currency.id}`,
-          ...(family && family !== token.account.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
           ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
         ],
         annotation: {
@@ -121,7 +121,7 @@ for (const token of subAccountReceive) {
           "@Flex",
           "@NanoGen5",
           `@${token.account.currency.id}`,
-          ...(family && family !== token.account.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -172,7 +172,7 @@ for (const token of subAccounts) {
           "@Flex",
           "@NanoGen5",
           `@${token.account.currency.id}`,
-          ...(family && family !== token.account.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
           ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -224,7 +224,7 @@ for (const transaction of transactionE2E) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
       {
-        tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana"],
+        tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -322,9 +322,7 @@ for (const transaction of transactionsAddressInvalid) {
           "@Flex",
           "@NanoGen5",
           `@${transaction.transaction.accountToDebit.currency.id}`,
-          ...(family && family !== transaction.transaction.accountToDebit.currency.id
-            ? [`@${family}`]
-            : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -379,7 +377,17 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke", "@solana"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          "@smoke",
+          "@solana",
+          "@family-solana",
+        ],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -466,7 +474,7 @@ for (const transaction of tokenTransactionInvalid) {
           "@Flex",
           "@NanoGen5",
           `@${transaction.tx.accountToDebit.currency.id}`,
-          ...(family && family !== transaction.tx.accountToDebit.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -519,7 +527,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   test(
     `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@evm"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2703, B2CQA-475, B2CQA-3901",
@@ -583,7 +591,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
   test(
     `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
       annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
     },
     async ({ app }) => {

@@ -39,7 +39,7 @@ for (const account of accounts) {
           "@Flex",
           "@NanoGen5",
           `@${account.account.currency.id}`,
-          ...(family && family !== account.account.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",

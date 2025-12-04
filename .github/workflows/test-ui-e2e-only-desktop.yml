@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)

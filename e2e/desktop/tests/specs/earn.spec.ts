@@ -69,7 +69,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@Flex",
           "@NanoGen5",
           `@${account.currency.id}`,
-          ...(family && family !== account.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
           ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
@@ -105,7 +105,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",
@@ -192,6 +192,8 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.currency.id);
+
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
@@ -202,6 +204,8 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(account === Account.NEAR_1 ? ["@smoke"] : []),
         ],
         annotation: {

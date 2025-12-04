@@ -46,7 +46,7 @@ for (const currency of currencies) {
           "@Flex",
           "@NanoGen5",
           `@${currency.currency.id}`,
-          ...(family && family !== currency.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
         ],
         annotation: {

@@ -82,7 +82,7 @@ for (const asset of assets) {
           "@Flex",
           "@NanoGen5",
           `@${crypto.currency.id}`,
-          ...(family && family !== crypto.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -133,7 +133,7 @@ for (const asset of assets) {
           "@Flex",
           "@NanoGen5",
           `@${crypto.currency.id}`,
-          ...(family && family !== crypto.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
         ],
         annotation: {
           type: "TMS",
@@ -174,7 +174,7 @@ for (const asset of assets) {
           "@Flex",
           "@NanoGen5",
           `@${crypto.currency.id}`,
-          ...(family && family !== crypto.currency.id ? [`@${family}`] : []),
+          ...(family ? [`@family-${family}`] : []),
           ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -251,7 +251,7 @@ test.describe("Sell flow - ", () => {
         "@Flex",
         "@NanoGen5",
         `@${crypto.currency.id}`,
-        ...(family && family !== crypto.currency.id ? [`@${family}`] : []),
+        ...(family ? [`@family-${family}`] : []),
       ],
       annotation: {
         type: "TMS",
