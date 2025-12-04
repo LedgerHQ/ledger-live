@@ -3,8 +3,9 @@
 import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CoinType, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Btc from "@ledgerhq/hw-app-btc";
+import Zcash from "@ledgerhq/hw-app-zcash"; // Should be a DMK instance
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
@@ -19,7 +20,9 @@ import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
 import { SignMessage } from "../../hw/signMessage/types";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency) => {
-  return new Btc({ transport, currency: currency.id });
+  return currency.coinType === CoinType.ZCASH
+    ? new Zcash(transport)
+    : new Btc({ transport, currency: currency.id });
 };
 
 const signerContext: SignerContext = <T>(

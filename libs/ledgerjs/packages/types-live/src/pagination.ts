@@ -22,4 +22,5 @@ export type SyncConfig = {
   // allows to disable the synchronization part – typically to only paginate more
   withoutSynchronize?: boolean;
   blacklistedTokenIds?: string[];
+  txType?: number;
 };

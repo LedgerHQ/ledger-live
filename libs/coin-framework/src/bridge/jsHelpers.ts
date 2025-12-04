@@ -81,6 +81,10 @@ export type GetAccountShape<A extends Account = Account> = (
   accountShape: AccountShapeInfo<A>,
   config: SyncConfig,
 ) => Promise<Partial<A>>;
+export type GetAccountShapeStream<A extends Account = Account> = (
+  accountShape: AccountShapeInfo<A>,
+  config: SyncConfig,
+) => Observable<Partial<A>>;
 type AccountUpdater<A extends Account = Account> = (account: A) => A;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
@@ -187,12 +191,12 @@ export const makeSync =
     postSync = (_, a) => a,
     shouldMergeOps = true,
   }: {
-    getAccountShape: GetAccountShape<A>;
+    getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean;
   }): AccountBridge<T, A, U, O, R>["sync"] =>
-  (initial, syncConfig): Observable<AccountUpdater<A>> =>
-    new Observable((o: Observer<(acc: A) => A>) => {
+  (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
+    new Observable((o: Observer<AccountUpdater<A>>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -209,56 +213,63 @@ export const makeSync =
             initial.derivationMode as DerivationMode,
           );
 
-          const shape = await getAccountShape(
-            {
-              currency: initial.currency,
-              index: initial.index,
-              address: initial.freshAddress,
-              derivationPath: freshAddressPath,
-              derivationMode: initial.derivationMode as DerivationMode,
-              initialAccount: needClear ? clearAccount(initial) : initial,
-            },
-            syncConfig,
+          const shape$ = from(
+            getAccountShape(
+              {
+                currency: initial.currency,
+                index: initial.index,
+                address: initial.freshAddress,
+                derivationPath: freshAddressPath,
+                derivationMode: initial.derivationMode as DerivationMode,
+                initialAccount: needClear ? clearAccount(initial) : initial,
+              },
+              syncConfig,
+            ),
           );
 
-          const updater = (acc: A): A => {
-            let a = acc; // a is a immutable version of Account, based on acc
+          const updater =
+            (shape: Partial<A>) =>
+            (acc: A): A => {
+              let a = acc; // a is a immutable version of Account, based on acc
 
-            if (needClear) {
-              a = clearAccount(acc);
-            }
+              if (needClear) {
+                a = clearAccount(acc);
+              }
 
-            // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-            const operations = shouldMergeOps
-              ? mergeOps(a.operations, shape.operations || [])
-              : shape.operations || [];
+              // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
+              const operations = shouldMergeOps
+                ? mergeOps(a.operations, shape.operations || [])
+                : shape.operations || [];
 
-            a = postSync(a, {
-              ...a,
-              id: accountId,
-              spendableBalance: shape.balance || a.balance,
-              operationsCount: shape.operationsCount || operations.length,
-              lastSyncDate: new Date(),
-              creationDate:
-                operations.length > 0 ? operations[operations.length - 1].date : new Date(),
-              ...shape,
-              operations,
-              pendingOperations: a.pendingOperations.filter(op =>
-                shouldRetainPendingOperation(a, op),
-              ),
-            });
+              a = postSync(a, {
+                ...a,
+                id: accountId,
+                spendableBalance: shape.balance || a.balance,
+                operationsCount: shape.operationsCount || operations.length,
+                lastSyncDate: new Date(),
+                creationDate:
+                  operations.length > 0 ? operations[operations.length - 1].date : new Date(),
+                ...shape,
+                operations,
+                pendingOperations: a.pendingOperations.filter(op =>
+                  shouldRetainPendingOperation(a, op),
+                ),
+              });
 
-            a = recalculateAccountBalanceHistories(a, acc);
+              a = recalculateAccountBalanceHistories(a, acc);
 
-            if (!a.used) {
-              a.used = !isAccountEmpty(a);
-            }
+              if (!a.used) {
+                a.used = !isAccountEmpty(a);
+              }
 
-            return a;
-          };
+              return a;
+            };
 
-          o.next(updater);
-          o.complete();
+          shape$.subscribe({
+            next: shape => o.next(updater(shape)),
+            complete: () => o.complete(),
+            error: e => o.error(e),
+          });
         } catch (e) {
           o.error(e);
         }

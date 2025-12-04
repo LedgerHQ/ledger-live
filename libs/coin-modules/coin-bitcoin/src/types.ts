@@ -178,3 +178,18 @@ export type BtcOperationExtra = {
   inputs?: string[];
 };
 export type BtcOperation = Operation<BtcOperationExtra>;
+
+//-- Types to expose from a dedicated Zcash lib
+// It is important to use the `type` here as we only want to load the types and not the logic
+// We want as much as possible to leverage lazy loading process
+// import type {} from ("ledgerhq/zcash-module");
+export type ZcashAddon = {
+  isShieldedActivated: boolean;
+  lastOrchardBlock: number;
+  orchardTransactions: any[];
+};
+
+export type ZcashAccount = BitcoinAccount & ZcashAddon;
+export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
+  return "isShieldedActivated" in a;
+}
