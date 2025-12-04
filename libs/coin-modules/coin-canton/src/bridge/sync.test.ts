@@ -1,5 +1,5 @@
 import { makeGetAccountShape } from "./sync";
-import { OperationInfo } from "../network/gateway";
+import type { OperationView } from "../types/gateway";
 import * as gateway from "../network/gateway";
 import * as onboard from "./onboard";
 import * as config from "../config";
@@ -92,7 +92,7 @@ describe("makeGetAccountShape", () => {
             height: 1,
             hash: "blockhash1",
           },
-        } as OperationInfo,
+        } as OperationView,
       ],
     });
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
@@ -181,7 +181,7 @@ describe("makeGetAccountShape", () => {
             height: 2,
             hash: "blockhash2",
           },
-        } as OperationInfo,
+        } as OperationView,
       ],
     });
 
@@ -229,7 +229,7 @@ describe("makeGetAccountShape", () => {
             height: 3,
             hash: "blockhash3",
           },
-        } as OperationInfo,
+        } as OperationView,
       ],
     });
 
@@ -276,7 +276,7 @@ describe("makeGetAccountShape", () => {
             height: 4,
             hash: "blockhash4",
           },
-        } as OperationInfo,
+        } as OperationView,
       ],
     });
 
@@ -323,7 +323,7 @@ describe("makeGetAccountShape", () => {
             height: 5,
             hash: "blockhash5",
           },
-        } as OperationInfo,
+        } as OperationView,
       ],
     });
 

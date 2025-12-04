@@ -2,7 +2,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import * as signTransactionModule from "../common-logic/transaction/sign";
-import type { PrepareTransferResponse } from "../network/gateway";
+import type { PrepareTransferResponse } from "../types/gateway";
 import * as gateway from "../network/gateway";
 import type { CantonAccount } from "../types";
 import { TopologyChangeError } from "../types/errors";

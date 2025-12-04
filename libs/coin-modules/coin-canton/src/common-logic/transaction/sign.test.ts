@@ -1,4 +1,4 @@
-import { OnboardingPrepareResponse, PrepareTransferResponse } from "../../network/gateway";
+import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import {
   CantonPreparedTransaction,
   CantonSigner,

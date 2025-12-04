@@ -16,7 +16,7 @@ import type {
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "./onboard";
-import type { TransferProposal } from "../network/gateway";
+import type { TransferProposal } from "./gateway";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (

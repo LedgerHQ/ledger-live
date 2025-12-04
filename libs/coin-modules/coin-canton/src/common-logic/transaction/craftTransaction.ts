@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
-import {
-  PrepareTransferRequest,
-  prepareTransferRequest,
-  PrepareTransferResponse,
-} from "../../network/gateway";
+import type { PrepareTransferRequest, PrepareTransferResponse } from "../../types/gateway";
+import { prepareTransferRequest } from "../../network/gateway";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function craftTransaction(

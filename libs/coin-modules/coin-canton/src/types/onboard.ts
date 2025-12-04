@@ -1,4 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
+import type { TransferStep } from "./gateway";
 
 export enum OnboardStatus {
   INIT,
@@ -35,30 +36,17 @@ export type CantonAuthorizeResult = {
   isApproved: boolean;
 };
 
-/**
- * Types for Canton Gateway Transaction API
- * Based on the API endpoints in canton-gateway
- */
-
 export interface PrepareTransactionRequest {
   type: "transfer-pre-approval-proposal";
   receiver: string;
 }
 
 export interface PrepareTransactionResponse {
-  serialized: string; // Hex-encoded serialized protobuf
+  serialized: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   json: any; // JSON representation
-  hash: string; // Transaction hash for signing
-}
-
-export interface SubmitTransactionRequest {
-  serialized: string; // Hex-encoded serialized protobuf
-  signature: string; // Hex-encoded signature
-}
-
-export interface SubmitTransactionResponse {
-  submission_id: string;
-  update_id: string;
+  hash: string;
+  step: TransferStep;
 }
 
 export interface PreApprovalResult {

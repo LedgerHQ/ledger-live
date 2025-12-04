@@ -1,5 +1,5 @@
 import * as protobuf from "protobufjs";
-import { PrepareTransferResponse } from "../../network/gateway";
+import type { PrepareTransferResponse } from "../../types/gateway";
 import { CantonPreparedTransaction } from "../../types/signer";
 import * as transactionProto from "../../types/transaction-proto.json";
 

@@ -4,12 +4,8 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import {
-  getLedgerEnd,
-  getOperations,
-  type OperationInfo,
-  getPendingTransferProposals,
-} from "../network/gateway";
+import { getLedgerEnd, getOperations, getPendingTransferProposals } from "../network/gateway";
+import type { OperationView } from "../types/gateway";
 import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import resolver from "../signer";
@@ -19,17 +15,20 @@ import { isCantonAccountEmpty } from "../helpers";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
-  (txInfo: OperationInfo): Operation => {
+  (txInfo: OperationView): Operation => {
     const {
       transaction_hash,
       uid,
       block: { height, hash },
-      senders,
-      recipients,
+      senders = [],
+      recipients = [],
       transaction_timestamp,
       fee: { value: fee },
-      transfers: [{ value: transferValue, details }],
+      transfers = [],
     } = txInfo;
+
+    const transferValue = transfers[0]?.value ?? "0";
+    const details = transfers[0]?.details ?? {};
 
     let type: OperationType = "UNKNOWN";
     if (details.operationType === "transfer-proposal") {
@@ -55,7 +54,15 @@ const txInfoToOperationAdapter =
     }
 
     const feeValue = new BigNumber(fee);
-    const memo = details.metadata.reason;
+    const memo =
+      details &&
+      typeof details === "object" &&
+      "metadata" in details &&
+      details.metadata &&
+      typeof details.metadata === "object" &&
+      "reason" in details.metadata
+        ? String(details.metadata.reason)
+        : undefined;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
@@ -80,7 +87,7 @@ const txInfoToOperationAdapter =
   };
 
 const filterOperations = (
-  transactions: OperationInfo[],
+  transactions: OperationView[],
   accountId: string,
   partyId: string,
 ): Operation[] => {

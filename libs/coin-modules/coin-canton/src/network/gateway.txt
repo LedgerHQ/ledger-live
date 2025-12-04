@@ -1,0 +1,28 @@
+#tag/System
+– List all available node IDs
+– Get node info
+– Get instruments
+– Get raw transactions
+– Get normalized transactions
+#tag/Nodes
+– List all available node IDs
+– Get node info
+– Get instruments
+– Get raw transactions
+– Get normalized transactions
+#tag/Parties
+– Get party by identifier or public key
+– Prepare onboarding transactions
+– Submit onboarding transactions
+#tag/State
+– Get balance
+– Get active contracts (debug)
+– Get raw transactions
+– Get normalized transactions
+– Get operations
+– List transfer proposals pending receiver acceptance
+– Get transfer pre-approval for a party
+– Get current ledger end
+#tag/Transaction
+- Prepare transaction
+- Submit transaction
