@@ -3212,6 +3212,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live

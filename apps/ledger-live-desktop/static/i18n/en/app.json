@@ -207,7 +207,8 @@
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
-      "CONTRACT_CALL": "Contract call"
+      "CONTRACT_CALL": "Contract call",
+      "UPDATE_ACCOUNT": "Updated account"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -1864,7 +1865,13 @@
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
       "version": "Version",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "associatedTokenId": "Associated token ID",
+      "targetStakingNodeId": "Target node ID",
+      "previousStakingNodeId": "Previous node ID",
+      "gasConsumed": "Gas consumed",
+      "gasUsed": "Gas used",
+      "gasLimit": "Gas limit"
     }
   },
   "operationList": {
@@ -6898,6 +6905,15 @@
       "title": "EVM address verification required",
       "description": "Please verify the EVM address visible on your Ledger device before confirming."
     },
+    "HederaRedundantStakingNodeIdError": {
+      "title": "You are already delegating to this node"
+    },
+    "HederaInvalidStakingNodeIdError": {
+      "title": "Selected node is not a valid validator"
+    },
+    "HederaNoStakingRewardsError": {
+      "title": "No rewards to claim"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -7223,6 +7239,152 @@
             "cta": "View details"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "account": {
+      "header": {
+        "actions": {
+          "stake": {
+            "alreadyDelegatedTooltip": "Your entire balance is already delegated"
+          }
+        }
+      },
+      "balanceFooter": {
+        "delegated": {
+          "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"
+        },
+        "claimable": {
+          "tooltip": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
+        }
+      },
+      "bodyHeader": {
+        "delegatedPositions": {
+          "header": "Delegation",
+          "button": "Claim rewards",
+          "columns": {
+            "inactiveTooltip": "Validator not found",
+            "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+            "activeTooltip": "Delegated amount generates rewards",
+            "delegated": "Delegated",
+            "rewards": "Rewards"
+          },
+          "actions": {
+            "redelegation": "Redelegate",
+            "undelegation": "Undelegate",
+            "claimRewards": "Claim rewards"
+          }
+        }
+      }
+    },
+    "delegation": {
+      "totalStake": "Total stake",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "validator": {
+            "title": "Validators",
+            "rowTitle": "Node {{index}}: {{name}}",
+            "rowSubtitlePercentage": "Staked {{percentage}}% of max",
+            "rowSubtitleOverstaked": "Node is overstaked"
+          },
+          "amount": {
+            "title": "Amount",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "summary": {
+            "title": "Amount",
+            "validatorLabel": "Validator",
+            "amountLabel": "Amount to undelegate",
+            "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "Redelegate assets",
+        "steps": {
+          "validators": {
+            "title": "Validators",
+            "currentValidatorLabel": "Current delegation",
+            "newValidatorLabel": "New delegation",
+            "newValidatorSelectPlaceholder": "Select validator",
+            "removedValidatorSelectPlaceholder": "Previously selected validator is no longer available",
+            "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
+            "amountLabel": "Amount to redelegate",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully redelegated your assets",
+              "text": "The redelegation will update once the blockchain has confirmed the transaction",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Claim rewards",
+        "steps": {
+          "rewards": {
+            "title": "Rewards",
+            "description": "You earned <0>{{formattedClaimableRewards}}</0> from the validator below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
+            "currentValidatorLabel": "Delegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully claimed your rewards",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
         }
       }
     },

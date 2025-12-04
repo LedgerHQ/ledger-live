@@ -242,6 +242,21 @@ const envDefinitions = {
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
+  HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID: {
+    def: "0.0.163372",
+    parser: stringParser,
+    desc: "dead address that receives 1 tinybar from tx that is made to trigger rewards claiming",
+  },
+  HEDERA_STAKING_REWARD_ACCOUNT_ID: {
+    def: "0.0.800",
+    parser: stringParser,
+    desc: "hedera staking reward account id",
+  },
+  HEDERA_STAKING_LEDGER_NODE_ID: {
+    def: -1,
+    parser: intParser,
+    desc: "hedera staking ledger node id, used to determine the default validator",
+  },
   HEDERA_TOKEN_ASSOCIATION_MIN_USD: {
     def: 0.05,
     parser: floatParser,

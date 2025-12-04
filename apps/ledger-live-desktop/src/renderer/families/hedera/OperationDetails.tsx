@@ -1,7 +1,10 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { OperationType } from "@ledgerhq/types-live";
-import { isValidExtra } from "@ledgerhq/live-common/families/hedera/utils";
+import {
+  isValidExtra,
+  getOperationDetailsExtraFields,
+} from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
@@ -13,6 +16,7 @@ import type {
   OperationDetailsPostAccountSectionProps,
 } from "~/renderer/families/types";
 import Alert from "~/renderer/components/Alert";
+import Ellipsis from "~/renderer/components/Ellipsis";
 import { Cell } from "~/renderer/components/OperationsList/AddressCell";
 import Box from "~/renderer/components/Box";
 import {
@@ -46,6 +50,33 @@ const OperationDetailsPostAccountSection = ({
         </TextEllipsis>
       </OpDetailsData>
     </OpDetailsSection>
+  );
+};
+
+const OperationDetailsExtra = ({
+  operation,
+}: OperationDetailsExtraProps<HederaAccount, HederaOperation>) => {
+  const extra = isValidExtra(operation.extra) ? operation.extra : null;
+
+  if (!extra) {
+    return null;
+  }
+
+  const extraFields = getOperationDetailsExtraFields(extra);
+
+  return (
+    <>
+      {extraFields.map(item => (
+        <OpDetailsSection key={item.key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${item.key}`} defaults={item.key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{item.value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      ))}
+    </>
   );
 };
 
@@ -108,12 +139,30 @@ const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
   );
 };
 
+const UpdateAccountAddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
+  const memo = operation.extra.memo;
+
+  if (!memo) {
+    return null;
+  }
+
+  return (
+    <Cell>
+      <Box color="palette.text.shade80" ff="Inter" fontSize={3}>
+        {memo}
+      </Box>
+    </Cell>
+  );
+};
+
 const addressCell = {
   ASSOCIATE_TOKEN: AddressCell,
+  UPDATE_ACCOUNT: UpdateAccountAddressCell,
 } satisfies Partial<Record<OperationType, unknown>>;
 
 export default {
   OperationDetailsPostAccountSection,
   OperationDetailsPostAlert,
+  OperationDetailsExtra,
   addressCell,
 };

@@ -13,7 +13,7 @@ export type EstimateFeesParams =
       operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
     }
   | {
-      operationType: typeof HEDERA_OPERATION_TYPES.ContractCall;
+      operationType: HEDERA_OPERATION_TYPES.ContractCall;
       txIntent: TransactionIntent;
     };
 
@@ -41,4 +41,9 @@ export interface ERC20OperationFields {
   extra: HederaOperationExtra;
   standard: "erc20";
   hasFailed: false;
+}
+
+export interface OperationDetailsExtraField {
+  key: string;
+  value: string | number;
 }

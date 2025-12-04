@@ -20,6 +20,7 @@ export interface HederaMirrorTokenTransfer {
 export interface HederaMirrorTransaction {
   transfers: HederaMirrorCoinTransfer[];
   token_transfers: HederaMirrorTokenTransfer[];
+  staking_reward_transfers: HederaMirrorCoinTransfer[];
   charged_tx_fee: number;
   transaction_hash: string;
   transaction_id: string;
@@ -43,6 +44,8 @@ export interface HederaMirrorToken {
 export interface HederaMirrorAccount {
   account: string;
   max_automatic_token_associations: number;
+  staked_node_id: number | null;
+  pending_reward: number;
   balance: {
     balance: number;
     timestamp: string;
@@ -102,4 +105,22 @@ export interface HederaMirrorContractCallEstimate {
 
 export interface HederaMirrorContractCallBalance {
   result: string;
+}
+
+export interface HederaMirrorNode {
+  node_id: number;
+  node_account_id: string;
+  description: string;
+  max_stake: number;
+  min_stake: number;
+  stake: number;
+  stake_rewarded: number;
+  reward_rate_start: number;
+}
+
+export interface HederaMirrorNodesResponse {
+  nodes: HederaMirrorNode[];
+  links: {
+    next: string | null;
+  };
 }
