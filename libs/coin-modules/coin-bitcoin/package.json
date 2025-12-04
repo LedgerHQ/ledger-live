@@ -69,7 +69,8 @@
     "rxjs": "catalog:",
     "@noble/curves": "^1.9.7",
     "utility-types": "^3.10.0",
-    "varuint-bitcoin": "1.1.2"
+    "varuint-bitcoin": "1.1.2",
+    "@ledgerhq/zcash-shielded": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

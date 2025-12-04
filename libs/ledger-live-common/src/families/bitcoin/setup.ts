@@ -18,7 +18,8 @@ import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
 import { SignMessage } from "../../hw/signMessage/types";
 
-const createSigner = (transport: Transport, currency: CryptoCurrency) => {
+const createSigner = (transport: Transport, currency: CryptoCurrency) => {  
+  // TODO: setup zcash signer
   return new Btc({ transport, currency: currency.id });
 };
 
