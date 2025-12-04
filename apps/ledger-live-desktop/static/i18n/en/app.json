@@ -5854,8 +5854,15 @@
       "comment": "Comment",
       "addAccount": {
         "title": "Add Canton Account",
+        "reonboard": {
+          "title": "Account Update Required",
+          "init": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it.",
+          "success": "Account updated successfully",
+          "successDescription": "You can now continue using your account"
+        },
         "onboard": {
           "title": "Onboarding",
+          "account": "Account",
           "newAccount": "New Account",
           "init": "Set up your new Canton account by clicking Continue",
           "onboarded": "Onboarded accounts",
@@ -5872,6 +5879,9 @@
           "title": "Authorization",
           "validator": "Authorize",
           "hint": "Automaticaly accept incoming funds to this account.",
+          "reonboard": {
+            "hint": "A topology change has been detected. Please re-authorize the Ledger validator to continue receiving funds automatically."
+          },
           "error": "Authorization failed. Please try again.",
           "validatorLabel": "Ledger Validator",
           "validatorDescription": "Automated fund acceptance"
@@ -5879,6 +5889,9 @@
         "finish": {
           "title": "Confirmation"
         }
+      },
+      "topologyChangeError": {
+        "message": "Topology change detected. Re-onboarding required."
       },
       "tooManyUtxos": {
         "title": "Action Needed: Too Many UTXOs",

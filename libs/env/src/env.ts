@@ -342,6 +342,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "API key for Canton network gateway authentication",
   },
+  CANTON_NODE_ID_OVERRIDE: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) Switch Canton gateway nodeId for testing different presets.",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,
