@@ -98,4 +98,20 @@ describe("getBlock", () => {
       amount: BigInt(-567179 + 67179),
     });
   });
+
+  it("should include memo in details", async () => {
+    const mockTx = {
+      transaction_id: "0.0.999-1234567890-000000000",
+      transaction_hash: "hash",
+      name: "CRYPTOTRANSFER",
+      result: "SUCCESS",
+      charged_tx_fee: 67179,
+      memo_base64: "dGVzdA==",
+    };
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlock(100);
+
+    expect(result.transactions[0].details).toEqual({ memo: "test" });
+  });
 });
