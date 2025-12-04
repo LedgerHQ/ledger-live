@@ -385,6 +385,16 @@ describe("createApi", () => {
         expect(tx.fees).toBeGreaterThanOrEqual(0n);
       });
     });
+
+    it("returns block with transaction memo", async () => {
+      const blockHeight = 176180671;
+      const txHash = "4Ksb7RTwtvvk9r6vvK0Gwxb38kwPqVbJjP6bL4bu2gTvdwrIGZGk6TWntlgRsjvU";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHash);
+
+      expect(transaction?.details?.memo).toBe("test");
+    });
   });
 
   describe("lastBlock", () => {
