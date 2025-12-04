@@ -13,6 +13,7 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
 import type { CosmosRedelegationFlowParamList } from "./types";
+import RedelegationBridgeTransaction from "./03-BridgeTransaction";
 
 const totalSteps = "3";
 
@@ -20,6 +21,7 @@ function RedelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -78,6 +80,11 @@ function RedelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.CosmosRedelegationBridgeTransaction}
+        component={RedelegationBridgeTransaction}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
         name={ScreenName.CosmosRedelegationSelectDevice}

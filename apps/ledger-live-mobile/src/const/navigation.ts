@@ -218,6 +218,7 @@ export enum ScreenName {
   CosmosDefaultRedelegationAmount = "CosmosDefaultRedelegationAmount",
   CosmosRedelegationValidator = "CosmosRedelegationValidator",
   CosmosRedelegationAmount = "CosmosRedelegationAmount",
+  CosmosRedelegationBridgeTransaction = "CosmosRedelegationBridgeTransaction",
   CosmosRedelegationSelectDevice = "CosmosRedelegationSelectDevice",
   CosmosRedelegationConnectDevice = "CosmosRedelegationConnectDevice",
   CosmosRedelegationValidationError = "CosmosRedelegationValidationError",

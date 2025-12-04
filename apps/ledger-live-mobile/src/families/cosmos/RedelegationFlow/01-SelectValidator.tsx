@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import type {
   CosmosAccount,
   CosmosValidatorItem,
-  Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -36,6 +35,7 @@ type Props = StackNavigatorProps<
 >;
 
 function RedelegationSelectValidator({ navigation, route }: Props) {
+  // console.log("RedelegationSelectValidator route.params:", route.params);
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
@@ -44,19 +44,28 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations;
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
+  const { transaction, status } = useBridgeTransaction(() => {
+    const tx = route.params.transaction;
+    console.log("TX in redelegation select validator:", route.params);
+    if (!tx) {
+      const t = bridge.createTransaction(mainAccount);
+      // console.log("route.params?.validatorSrcAddress", route.params?.validatorSrcAddress);
+      return {
+        account,
+        transaction: bridge.updateTransaction(t, {
+          mode: "redelegate",
+          validators: [],
+          sourceValidator: route.params?.validatorSrcAddress,
+        }),
+      };
+    }
     return {
       account,
-      transaction: bridge.updateTransaction(t, {
-        mode: "redelegate",
-        validators: [],
-        sourceValidator: route.params?.validatorSrcAddress,
-      }),
+      transaction: tx,
     };
   });
-  const { status } = bridgeTransaction;
-  const transaction = bridgeTransaction.transaction as Transaction;
+  // const { status } = bridgeTransaction;
+  // const transaction = bridgeTransaction.transaction as Transaction;
   invariant(transaction && transaction.sourceValidator, "transaction src validator required");
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
@@ -104,18 +113,27 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     [delegations, transaction, validators],
   );
   const onSelect = useCallback(
-    (validator: CosmosValidatorItem) => {
+    (validator: CosmosValidatorItem, value?: BigNumber | null) => {
+      const tx = bridge.updateTransaction(transaction, {
+        validators: [
+          {
+            address: validator.validatorAddress,
+            amount: value,
+          },
+        ],
+      });
       navigation.navigate(ScreenName.CosmosRedelegationAmount, {
         ...route.params,
-        transaction,
+        transaction: tx,
         validatorSrc,
         validator,
+        value: value as BigNumber,
         max: max ?? new BigNumber(0),
         status,
-        nextScreen: ScreenName.CosmosRedelegationSelectDevice,
+        nextScreen: ScreenName.CosmosRedelegationBridgeTransaction,
       });
     },
-    [navigation, route.params, transaction, status, max, validatorSrc],
+    [navigation, route.params, transaction, status, max, validatorSrc, bridge],
   );
   const renderItem = useCallback(
     ({ item }: SectionListRenderItemInfo<CosmosValidatorItem>) => (
