@@ -1,7 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getTimeSinceStartup } from "react-native-startup-time";
-
-export const startupEvents: Promise<{ event: string; time: number }>[] = [];
+import {
+  logStartupEvent,
+  resolveStartupEvents as _resolveStartupEvents,
+  type StartupEvent,
+} from "../utils/logStartupTime";
 
 export function useLogStartupEvent(eventName: string) {
   const state = useRef({ firstCall: true });
@@ -11,14 +14,23 @@ export function useLogStartupEvent(eventName: string) {
   }
 }
 
-let startupTsp: Promise<number>;
-
-export function logStartupEvent(eventName: string) {
-  const now = Date.now();
-  if (!startupTsp) {
-    startupTsp = getTimeSinceStartup().then((startedSince: number) => now - startedSince);
-  }
-  const event = startupTsp.then(start => ({ event: eventName, time: now - start }));
-  startupEvents.push(event);
-  return event;
+export function useStartupEvents() {
+  const [startupEvents, setStartupEvents] = useState<StartupEvent[]>([]);
+  useEffect(() => {
+    resolveStartupEvents().then(setStartupEvents);
+  }, []);
+  return startupEvents;
 }
+
+// This function is here instead of in utils/logStartupTime.ts to avoid importing startup-time there
+let startupTsp: Promise<number>;
+export function resolveStartupEvents() {
+  if (!startupTsp) {
+    const now = Date.now();
+    // react-native-startup-time get startup timestamp by running a native module before react-native launch
+    startupTsp = getTimeSinceStartup().then((startedXAgo: number) => now - startedXAgo);
+  }
+  return _resolveStartupEvents(startupTsp);
+}
+
+export { logStartupEvent };

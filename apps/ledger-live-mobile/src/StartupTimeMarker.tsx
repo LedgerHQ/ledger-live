@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { logStartupEvent } from "LLM/hooks/useLogStartupEvent";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { resolveStartupEvents } from "LLM/hooks/useLogStartupEvent";
 
 /**
  * Time from app cold start to first render of a screen.
@@ -12,7 +13,6 @@ let nativeMethodInvokedOnce = false;
 export const StartupTimeMarker = ({ children }: { children: React.ReactNode }) => {
   const onLayout = React.useCallback(() => {
     if (!nativeMethodInvokedOnce) {
-      // react-native-startup-time get startup timestamp by running a native module before react-native launch
       logStartupEvent("App started")
         .then(({ time }) => {
           appStartupTime = time;
@@ -33,6 +33,7 @@ export const StartupTimeMarker = ({ children }: { children: React.ReactNode }) =
         });
       nativeMethodInvokedOnce = true;
     }
+    resolveStartupEvents();
   }, []);
   return (
     <View style={{ flex: 1 }} onLayout={onLayout}>
