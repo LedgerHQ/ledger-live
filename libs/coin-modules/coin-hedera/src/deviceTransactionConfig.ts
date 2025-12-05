@@ -1,6 +1,6 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { HEDERA_TRANSACTION_MODES } from "./constants";
+import { HEDERA_TRANSACTION_MODES, MAP_STAKING_MODE_TO_METHOD } from "./constants";
 import { isTokenAssociateTransaction, isStakingTransaction } from "./logic/utils";
 import type { Transaction, TransactionStatus } from "./types";
 
@@ -19,10 +19,7 @@ async function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Method",
-      value:
-        transaction.mode === HEDERA_TRANSACTION_MODES.ClaimRewards
-          ? "Claim Rewards"
-          : "Update Account",
+      value: MAP_STAKING_MODE_TO_METHOD[transaction.mode],
     });
 
     if (!estimatedFees.isZero()) {

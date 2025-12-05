@@ -385,7 +385,7 @@ describe("createApi", () => {
             asset: {
               type: "native",
             },
-            amount: -2000000n, // 3176695n - 1176695n fee
+            amount: -2000000n, // -3176695n + 1176695n fee
           },
           {
             type: "transfer",
@@ -475,6 +475,90 @@ describe("createApi", () => {
       const transaction = block.transactions.find(tx => tx.hash === txHash);
 
       expect(transaction?.details?.memo).toBe("test");
+    });
+
+    it("correctly identifies staking operations in blocks", async () => {
+      const [delegateBlock, undelegateBlock, redelegateBlock, rewardsBlock] = await Promise.all([
+        api.getBlock(176220207),
+        api.getBlock(176220201),
+        api.getBlock(176220211),
+        api.getBlock(176397349),
+      ]);
+
+      const delegateOperations = delegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const undelegateOperations = undelegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const redelegateOperations = redelegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const rewardsTransaction = rewardsBlock.transactions.find(
+        tx => tx.hash === "Axie2CIoLVxhU6gcHEDJEdNbQ0BW1AqYXqUu97ume44JGvdfSTvF9go2Svc/lms8",
+      );
+
+      expect(delegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "DELEGATE",
+          stakedNodeId: 34,
+          previousStakedNodeId: null,
+          amount: BigInt(21083561014),
+        },
+      ]);
+      expect(undelegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "UNDELEGATE",
+          stakedNodeId: null,
+          previousStakedNodeId: 22,
+          amount: BigInt(21083561014),
+        },
+      ]);
+      expect(redelegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "REDELEGATE",
+          stakedNodeId: 6,
+          previousStakedNodeId: 34,
+          amount: BigInt(21083561014),
+        },
+      ]);
+      expect(rewardsTransaction?.operations).toEqual([
+        {
+          type: "transfer",
+          address: "0.0.800",
+          amount: BigInt(-6013422),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.801",
+          amount: BigInt(1968210),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.8835924",
+          amount: BigInt(4045212 + 1968210),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.8835924",
+          amount: BigInt(6013422),
+          asset: {
+            type: "native",
+          },
+        },
+      ]);
     });
   });
 
@@ -566,26 +650,41 @@ describe("createApi", () => {
       });
     });
 
-    it("returns claim rewards operations with correct metadata", async () => {
-      const lastPagingToken = "1761825341.000000000";
+    it("returns staking operations with correct metadata", async () => {
+      const lastPagingToken = "1762202113.000000000";
       const block = await api.lastBlock();
       const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.activeStaking.accountId, {
         minHeight: block.height,
         order: "desc",
-        limit: 10,
+        limit: 30,
         lastPagingToken,
       });
 
-      const rewardOps = ops.filter(op => op.type === "REWARD");
-      const updateAccountOps = ops.filter(op => op.type === "UPDATE_ACCOUNT");
+      const rewardOp = ops.find(op => op.type === "REWARD");
+      const delegateOp = ops.find(op => op.type === "DELEGATE");
+      const undelegateOp = ops.find(op => op.type === "UNDELEGATE");
+      const redelegateOp = ops.find(op => op.type === "REDELEGATE");
 
-      expect(updateAccountOps.length).toBeGreaterThan(0);
-      expect(updateAccountOps[0]).toMatchObject({
-        asset: { type: "native" },
-        details: { memo: "Restake" },
+      expect(delegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.details).toMatchObject({
+        previousStakingNodeId: null,
+        targetStakingNodeId: expect.any(Number),
       });
-      expect(rewardOps.length).toBeGreaterThan(0);
-      expect(rewardOps[0].value).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.details).toMatchObject({
+        previousStakingNodeId: expect.any(Number),
+        targetStakingNodeId: null,
+      });
+      expect(redelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.details).toMatchObject({
+        previousStakingNodeId: expect.any(Number),
+        targetStakingNodeId: expect.any(Number),
+      });
+      expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
+      expect(rewardOp?.tx.fees).toBe(BigInt(0));
     });
 
     it.each(["desc", "asc"] as const)(

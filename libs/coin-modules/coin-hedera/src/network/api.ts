@@ -4,6 +4,7 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
   HederaMirrorAccountTokensResponse,
@@ -39,11 +40,28 @@ async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorA
   return accounts;
 }
 
-async function getAccount(address: string): Promise<HederaMirrorAccount> {
+/**
+ * Fetches account information from the Hedera Mirror Node API, excluding transactions.
+ *
+ * @param address - The Hedera account ID (e.g., "0.0.12345")
+ * @param timestamp - Optional timestamp filter to get historical account state.
+ *                    Supports comparison operators:
+ *                    - "lt:1234567890.123456789" - state before the timestamp
+ *                    - "eq:1234567890.123456789" - state at the timestamp
+ *                    Used primarily for analyzing state changes in staking operations.
+ * @returns Promise resolving to account data
+ * @throws HederaAddAccountError if account not found (404)
+ */
+async function getAccount(address: string, timestamp?: string): Promise<HederaMirrorAccount> {
   try {
+    const params = new URLSearchParams({
+      transactions: "false",
+      ...(timestamp && { timestamp }),
+    });
+
     const res = await network<HederaMirrorAccount>({
       method: "GET",
-      url: `${API_URL}/api/v1/accounts/${address}`,
+      url: `${API_URL}/api/v1/accounts/${address}?${params.toString()}`,
     });
     const account = res.data;
 
@@ -191,8 +209,11 @@ async function findTransactionByContractCall(
     url: `${API_URL}/api/v1/transactions?timestamp=${timestamp}`,
   });
   const transactions = res.data.transactions;
+  const relatedTx = transactions.find(
+    el => el.name === HEDERA_TRANSACTION_NAMES.ContractCall && el.entity_id === contractId,
+  );
 
-  return transactions.find(el => el.name === "CONTRACTCALL" && el.entity_id === contractId) ?? null;
+  return relatedTx ?? null;
 }
 
 async function getERC20Balance(

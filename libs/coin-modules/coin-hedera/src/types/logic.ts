@@ -47,3 +47,10 @@ export interface OperationDetailsExtraField {
   key: string;
   value: string | number;
 }
+
+export interface StakingAnalysis {
+  operationType: OperationType;
+  targetStakingNodeId: number | null;
+  previousStakingNodeId: number | null;
+  amount: bigint;
+}
