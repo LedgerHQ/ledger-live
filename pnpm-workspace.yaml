@@ -48,7 +48,7 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.1
   "@ledgerhq/device-transport-kit-speculos": 1.1.0
   "@ledgerhq/speculos-device-controller": 0.2.0
-  "@ledgerhq/ldls-design-core": 0.0.31
+  "@ledgerhq/ldls-design-core": 0.0.32
   "tailwindcss": ^3.4.0
   rxjs: 7.8.2
   isomorphic-ws: 5.0.0
