@@ -81,7 +81,6 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
-import { useLogStartupEvent } from "LLM/hooks/useLogStartupEvent";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
@@ -127,7 +126,7 @@ const styles = StyleSheet.create({
 });
 
 function App() {
-  useLogStartupEvent("App render");
+  logStartupEvent("App render");
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");

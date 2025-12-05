@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { InitialQueriesContext } from "./InitialQueriesContext";
 import LoadingApp from "~/components/LoadingApp";
-import { logStartupEvent, useLogStartupEvent } from "../hooks/useLogStartupEvent";
+import { logStartupEvent } from "../utils/logStartupTime";
 
 export function WaitForAppReady({
   children,
   currencyInitialized,
 }: React.PropsWithChildren<{ currencyInitialized: boolean }>) {
-  useLogStartupEvent("WaitForAppReady render");
+  logStartupEvent("WaitForAppReady render");
 
   const initialQueries = useContext(InitialQueriesContext);
   if (
