@@ -93,7 +93,7 @@ const TokenContextualModal = ({
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
-          <CurrencyIcon size={48} currency={getAccountCurrency(account)} circle />
+          <CurrencyIcon size={48} currency={getAccountCurrency(account)} />
         ) : undefined
       }
       title={showingContextMenu ? account.token.name : undefined}

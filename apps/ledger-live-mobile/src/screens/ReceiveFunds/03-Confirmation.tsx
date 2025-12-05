@@ -11,7 +11,6 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
@@ -379,12 +378,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   bg="constant.white"
                   position="absolute"
                 >
-                  <CurrencyIcon
-                    currency={currency}
-                    bg={getCurrencyColor(currency) || colors.constant.black}
-                    size={48}
-                    circle
-                  />
+                  <CurrencyIcon currency={currency} size={48} />
                 </Flex>
               </Flex>
               <Text
