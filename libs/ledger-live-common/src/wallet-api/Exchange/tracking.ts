@@ -14,7 +14,14 @@ type TrackExchange = (
 interface TrackEventPayload {
   exchangeType: "SELL" | "FUND" | "SWAP";
   provider: string;
+  isEmbeddedSwap?: boolean;
 }
+
+/**
+ * Converts isEmbeddedSwap boolean to string for analytics consistency
+ */
+const formatIsEmbeddedSwap = (isEmbeddedSwap?: boolean): string | undefined =>
+  isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined;
 
 function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
@@ -29,24 +36,46 @@ function getEventData(manifest: AppManifest) {
 // in order to get the exact type matching the tracking wrapper API
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function trackingWrapper(trackCall: TrackExchange) {
-  const track = (event: string, properties: Record<string, string> | null) => {
-    return trackCall(event, properties, null);
+  const track = (event: string, properties: Record<string, string | undefined> | null) => {
+    // Filter out undefined values before passing to trackCall
+    if (!properties) {
+      return trackCall(event, null, null);
+    }
+    const filteredProperties: Record<string, string> = {};
+    for (const [key, value] of Object.entries(properties)) {
+      if (value !== undefined) {
+        filteredProperties[key] = value;
+      }
+    }
+    return trackCall(event, filteredProperties, null);
   };
 
   return {
     // Generate Exchange nonce modal open
-    startExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
-      track(`Starts Exchange ${exchangeType} Nonce request`, { provider, exchangeType });
+    startExchangeRequested: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+      track(`Starts Exchange ${exchangeType} Nonce request`, {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // Successfully generated an Exchange app nonce
-    startExchangeSuccess: ({ provider, exchangeType }: TrackEventPayload) => {
-      track(`Starts Exchange ${exchangeType} Nonce success`, { provider, exchangeType });
+    startExchangeSuccess: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+      track(`Starts Exchange ${exchangeType} Nonce success`, {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // Failed to generate an Exchange app nonce
-    startExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
-      track(`Starts Exchange ${exchangeType} Nonce fail`, { provider, exchangeType });
+    startExchangeFail: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+      track(`Starts Exchange ${exchangeType} Nonce fail`, {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // No Params to generate an Exchange app nonce
@@ -54,8 +83,12 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       track("Starts Exchange no params", getEventData(manifest));
     },
 
-    completeExchangeRequested: ({ provider, exchangeType }: TrackEventPayload) => {
-      track(`Completes Exchange ${exchangeType} requested`, { provider, exchangeType });
+    completeExchangeRequested: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+      track(`Completes Exchange ${exchangeType} requested`, {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // Successfully completed an Exchange
@@ -63,13 +96,23 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       provider,
       exchangeType,
       currency,
+      isEmbeddedSwap,
     }: TrackEventPayload & { currency: string }) => {
-      track(`Completes Exchange ${exchangeType} success`, { provider, exchangeType, currency });
+      track(`Completes Exchange ${exchangeType} success`, {
+        provider,
+        exchangeType,
+        currency,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // Failed to complete an Exchange
-    completeExchangeFail: ({ provider, exchangeType }: TrackEventPayload) => {
-      track(`Completes Exchange ${exchangeType} Nonce fail`, { provider, exchangeType });
+    completeExchangeFail: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+      track(`Completes Exchange ${exchangeType} Nonce fail`, {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+      });
     },
 
     // No Params to complete an Exchange

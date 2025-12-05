@@ -88,24 +88,25 @@ export async function signTransactionLogic(
     },
   ) => Promise<SignedOperation>,
   tokenCurrency?: string,
+  isEmbeddedSwap?: boolean,
 ): Promise<SignedOperation> {
-  tracking.signTransactionRequested(manifest);
+  tracking.signTransactionRequested(manifest, isEmbeddedSwap);
 
   if (!transaction) {
-    tracking.signTransactionFail(manifest);
+    tracking.signTransactionFail(manifest, isEmbeddedSwap);
     throw new Error("Transaction required");
   }
 
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
-    tracking.signTransactionFail(manifest);
+    tracking.signTransactionFail(manifest, isEmbeddedSwap);
     throw new Error(`accountId ${walletAccountId} unknown`);
   }
 
   const account = accounts.find(account => account.id === accountId);
 
   if (!account) {
-    tracking.signTransactionFail(manifest);
+    tracking.signTransactionFail(manifest, isEmbeddedSwap);
     throw new Error("Account required");
   }
 
