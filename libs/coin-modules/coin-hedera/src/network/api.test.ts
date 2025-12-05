@@ -124,6 +124,8 @@ describe("getAccountTransactions", () => {
 });
 
 describe("getAccount", () => {
+  const mockAddress = "0.0.1234";
+
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -131,7 +133,7 @@ describe("getAccount", () => {
   it("should call the correct endpoint and return account data", async () => {
     mockedNetwork.mockResolvedValueOnce(
       getMockResponse({
-        account: "0.0.1234",
+        account: mockAddress,
         max_automatic_token_associations: 0,
         balance: {
           balance: 1000,
@@ -141,12 +143,28 @@ describe("getAccount", () => {
       }),
     );
 
-    const result = await apiClient.getAccount("0.0.1234");
+    const result = await apiClient.getAccount(mockAddress);
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-    expect(result.account).toEqual("0.0.1234");
-    expect(requestUrl).toContain("/api/v1/accounts/0.0.1234");
+    expect(result.account).toEqual(mockAddress);
+    expect(requestUrl).toContain(`/api/v1/accounts/${mockAddress}?transactions=false`);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports timestamp filter", async () => {
+    const mockAccount = { account: mockAddress, staked_node_id: null };
+    const timestamp = "lt:1762202064.065172388";
+
+    (network as jest.Mock).mockResolvedValueOnce({ data: mockAccount });
+
+    const result = await apiClient.getAccount(mockAddress, timestamp);
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockAccount);
+    expect(requestUrl).toContain(
+      `/api/v1/accounts/${mockAddress}?transactions=false&timestamp=${encodeURIComponent(timestamp)}`,
+    );
   });
 });
 

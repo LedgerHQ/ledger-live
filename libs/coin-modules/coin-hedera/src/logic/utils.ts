@@ -15,7 +15,7 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import {
   HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
@@ -27,10 +27,12 @@ import { apiClient } from "../network/api";
 import type {
   HederaAccount,
   HederaMemo,
+  HederaMirrorTransaction,
   HederaOperationExtra,
   HederaTxData,
   HederaValidator,
   OperationDetailsExtraField,
+  StakingAnalysis,
   Transaction,
   TransactionStaking,
   TransactionStatus,
@@ -500,4 +502,61 @@ export const calculateAPY = (rewardRateStart: number): number => {
   const annualRate = dailyRate * 365;
 
   return annualRate;
+};
+
+/**
+ * Hedera uses the AccountUpdateTransaction for multiple purposes, including staking operations.
+ * Mirror node classifies all such transactions under the same name: "CRYPTOUPDATEACCOUNT".
+ *
+ * This function distinguishes between:
+ * - DELEGATE: Account started staking (staked_node_id changed from null to a node ID)
+ * - UNDELEGATE: Account stopped staking (staked_node_id changed from a node ID to null)
+ * - REDELEGATE: Account changed staking node (staked_node_id changed from one node to another)
+ *
+ * The analysis works by:
+ * 1. Fetching the account state BEFORE the transaction (using lt: timestamp filter)
+ * 2. Fetching the account state AFTER the transaction (using eq: timestamp filter)
+ * 3. Comparing the staked_node_id field to determine what changed
+ */
+export const analyzeStakingOperation = async (
+  address: string,
+  mirrorTx: HederaMirrorTransaction,
+): Promise<StakingAnalysis | null> => {
+  const [accountBefore, accountAfter] = await Promise.all([
+    apiClient.getAccount(address, `lt:${mirrorTx.consensus_timestamp}`),
+    apiClient.getAccount(address, `eq:${mirrorTx.consensus_timestamp}`),
+  ]);
+
+  let operationType: OperationType | null = null;
+  const previousStakingNodeId = accountBefore.staked_node_id;
+  const targetStakingNodeId = accountAfter.staked_node_id;
+
+  // stake: node id changed from null -> not null
+  if (previousStakingNodeId === null && targetStakingNodeId !== null) {
+    operationType = "DELEGATE";
+  }
+  // unstake: node id changed from not null -> null
+  else if (previousStakingNodeId !== null && targetStakingNodeId === null) {
+    operationType = "UNDELEGATE";
+  }
+  // restake: node id changed from not null -> different not null
+  else if (
+    previousStakingNodeId !== null &&
+    targetStakingNodeId !== null &&
+    previousStakingNodeId !== targetStakingNodeId
+  ) {
+    operationType = "REDELEGATE";
+  }
+
+  if (!operationType) {
+    return null;
+  }
+
+  return {
+    operationType,
+    previousStakingNodeId,
+    targetStakingNodeId,
+    // staked amount is always entire balance on Hedera that is fully liquid
+    amount: BigInt(accountAfter.balance.balance),
+  };
 };
