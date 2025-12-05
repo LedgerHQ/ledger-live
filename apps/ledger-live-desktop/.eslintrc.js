@@ -50,7 +50,11 @@ module.exports = {
     node: true,
   },
   plugins: ["react", "react-hooks"],
-  extends: ["plugin:react/recommended", "plugin:react-hooks/recommended"],
+  extends: [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:tailwindcss/recommended",
+  ],
   globals: {
     __DEV__: "readonly",
     INDEX_URL: "readonly",
