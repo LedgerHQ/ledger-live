@@ -16,8 +16,8 @@ export function getTotalStakeableAssets(
     .map(account => account?.currency);
 
   const allStakingCurrenciesEnabled = new Set([
-    ...(Array.isArray(stakingCurrenciesEnabled) ? stakingCurrenciesEnabled : []),
-    ...(Array.isArray(partnerStakingCurrenciesEnabled) ? partnerStakingCurrenciesEnabled : []),
+    ...stakingCurrenciesEnabled,
+    ...partnerStakingCurrenciesEnabled,
   ]);
 
   const tokenWithFundsMap = getTokensWithFundsMap(accounts);
