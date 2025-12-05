@@ -193,9 +193,14 @@ export function solanaTransaction({
   if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
     try {
       const parsed = JSON.parse(extraTransactionParameters);
-      templateId = parsed?.solanaTransaction?.templateId;
+      if (typeof parsed?.solanaTransaction?.templateId === "string") {
+        templateId = parsed.solanaTransaction.templateId;
+      } else {
+        console.warn(
+          `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
+        );
+      }
     } catch (e) {
-      // Silently ignore parsing errors, templateId will remain undefined
       console.warn("Failed to parse extraTransactionParameters", e);
     }
   }
