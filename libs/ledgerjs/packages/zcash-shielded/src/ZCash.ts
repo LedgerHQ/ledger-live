@@ -6,9 +6,10 @@ export default class ZCash {
   static AVERAGE_BLOCK_SYNC_TIME_SECONDS = 5;
 
   /**
-   * Estimates sync time given a starting block height.
+   * Estimates sync time given a start and an end block.
    *
-   * @param blockHeight
+   * @param startBlock starting block
+   * @param endBlock end block, usually the latest confirmed block
    * @return the estimated sync time
    */
   async estimateSyncTime(startBlock: number, endBlock: number) {
