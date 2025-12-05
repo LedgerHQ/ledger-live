@@ -56,7 +56,6 @@
     "src/deviceSDK/tasks/updateFirmware.ts",
     "src/deviceWordings.ts",
     "src/domain/getTokensWithFunds.ts",
-    "src/domain/getTokensWithFundsMap.ts",
     "src/domain/getTotalStakeableAssets.ts",
     "src/e2e/data/assetsDrawer.ts",
     "src/e2e/data/regexes.ts",
