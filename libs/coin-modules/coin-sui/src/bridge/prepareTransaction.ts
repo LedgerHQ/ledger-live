@@ -37,11 +37,12 @@ export const prepareTransaction: AccountBridge<
 
   let mode: SuiTransactionMode = transaction.mode ?? "send";
   let coinType = DEFAULT_COIN_TYPE;
-  if (transaction?.subAccountId) {
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const tokenId = subAccount?.token.id;
+
+  if (subAccount) {
     mode = "token.send";
-    coinType =
-      findSubAccountById(account, transaction.subAccountId)?.token.contractAddress ||
-      DEFAULT_COIN_TYPE;
+    coinType = subAccount?.token.contractAddress || DEFAULT_COIN_TYPE;
   }
 
   const patch: Partial<Transaction> = {
@@ -49,6 +50,7 @@ export const prepareTransaction: AccountBridge<
     fees,
     mode,
     coinType,
+    ...(tokenId ? { tokenId } : {}),
   };
 
   return updateTransaction(transaction, patch);

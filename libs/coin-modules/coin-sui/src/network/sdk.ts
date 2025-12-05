@@ -47,6 +47,7 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
 import { getInputObjects } from "@mysten/signers/ledger";
+import type { Resolution } from "../signer/getResolution";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -852,6 +853,7 @@ export const getCoinsForAmount = async (
  * @param address - The sender's address
  * @param transaction - The transaction details including recipient, amount, and coin type
  * @param withObjects - Return serialized input objects used in the transaction
+ * @param resolution - For token clear signing
  * @returns Promise<TransactionBlock> - A built transaction block ready for execution
  *
  */
@@ -859,6 +861,7 @@ export const createTransaction = async (
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean = false,
+  resolution?: Resolution,
 ): Promise<CoreTransaction> =>
   withApi(async api => {
     const tx = new Transaction();
@@ -926,12 +929,13 @@ export const createTransaction = async (
 
     const serialized = await tx.build({ client: api });
 
-    if (withObjects) {
-      const { bcsObjects } = await getInputObjects(tx, api);
-      return { unsigned: serialized, objects: bcsObjects as Uint8Array[] };
-    }
+    const { bcsObjects } = await getInputObjects(tx, api);
 
-    return { unsigned: serialized };
+    return {
+      unsigned: serialized,
+      ...(withObjects ? { objects: bcsObjects } : {}),
+      ...(transaction.coinType !== DEFAULT_COIN_TYPE && resolution ? { resolution } : {}),
+    };
   });
 
 /**

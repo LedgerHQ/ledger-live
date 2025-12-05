@@ -4236,6 +4236,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4261,11 +4264,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.5.0
-        version: 0.5.0(typescript@5.4.3)
+        specifier: 0.6.2
+        version: 0.6.2(typescript@5.4.3)
       '@mysten/sui':
-        specifier: 1.38.0
-        version: 1.38.0(typescript@5.4.3)
+        specifier: 1.45.2
+        version: 1.45.2(typescript@5.4.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -7014,8 +7017,8 @@ importers:
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
       '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.6.0
-        version: 0.6.0
+        specifier: 0.7.0
+        version: 0.7.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -15050,6 +15053,9 @@ packages:
   '@ledgerhq/hw-app-eth@6.29.7':
     resolution: {integrity: sha512-8ijfmsZdnaaWg5Ne+Zsu4y22Ba+VyGy1Nq7cuhM+1Uz1dpQDwrbbFlYqluqi17c4hRP0uaaPDLvyitxNelllNQ==}
 
+  '@ledgerhq/hw-bolos@6.32.9':
+    resolution: {integrity: sha512-4GDpBPPl0weqcvm/+gvYs01whsbwwl+HIiTtFi5iDfHa/6JmV7KxRaT8JfPRc8M4fSnJs5Z7NxHnrhEHu+tA2Q==}
+
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
 
@@ -15092,17 +15098,41 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
 
+  '@ledgerhq/ledger-cal-service@1.9.0':
+    resolution: {integrity: sha512-OuM5+pOcRYDs25VgTD1f5hzhc154g6Oh8dL3M+77MtpQOO3XCnLuWe7eFNS28r6jWrojN1v8I1aTYiVJh+vdeg==}
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    resolution: {integrity: sha512-Q83QXnLDFIDnm2Bv4WgWilurE1WGSX7gGaMEhVxb/BQXH1O78QlNgNRys8K35wnG7BxYKjBJGMoK9U6JdWwW2Q==}
+
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
+  '@ledgerhq/live-env@2.18.0':
+    resolution: {integrity: sha512-wasAK0IPyyX4ZAU0FLTZUsRzxJfdHlewyhkbz3HryYKbNofuMRwIWyaZ2xhpXXjEdP6qHb9HzewAZevjSn7DLQ==}
+
+  '@ledgerhq/live-env@2.21.0':
+    resolution: {integrity: sha512-A/+lCW6HNE9TWMCVo3dluZ0qTp9l+LMV9vH62SXqeHNYL3MqE/gsdZ1sZEMimLx8fURkCIKlHdNd1lN/tY5t/A==}
+
   '@ledgerhq/live-env@2.4.1':
     resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
+
+  '@ledgerhq/live-network@2.0.19':
+    resolution: {integrity: sha512-KVdqFDQcqEUNoC/TnaOJeo/I7TY39lQhzcVlnkAt2jbp5Xfv5YNuazL9lId5+bBb28jNPAv5uNJSlgvzpSSNIg==}
+
+  '@ledgerhq/live-network@2.1.1':
+    resolution: {integrity: sha512-58YMh/dUyntKubtzOsToyBjVakIM58h3k7nEyrUXY7UpO0VWY1TvSF0D4mdPGVpbwNs9C2KP3Lf/kowbAYpVJA==}
+
+  '@ledgerhq/live-promise@0.1.1':
+    resolution: {integrity: sha512-oFo6KUZIdFEndp2uokSU9XE9UCT/7NLOOKa1nQUfHhAfyKxRWqBlZOGRuivM/BIwKm0IUFa3+HE7uxK497kYPg==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
+  '@ledgerhq/logs@6.13.0':
+    resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
   '@ledgerhq/signer-utils@1.1.0':
     resolution: {integrity: sha512-zp8kyNF0sNMUG2VkgOL7rDu8W6U1P8yvTA3wIDjjlqoIOPanvodfezeub69fOuHJ2QG/JmnS8YZCGIoSWpQYkA==}
@@ -15234,18 +15264,18 @@ packages:
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
 
-  '@mysten/bcs@1.8.0':
-    resolution: {integrity: sha512-bDoLN1nN+XPONsvpNyNyqYHndM3PKWS419GLeRnbLoWyNm4bnyD1X4luEpJLLDq400hBuXiCan4RWjofvyTUIQ==}
+  '@mysten/bcs@1.9.2':
+    resolution: {integrity: sha512-kBk5xrxV9OWR7i+JhL/plQrgQ2/KJhB2pB5gj+w6GXhbMQwS3DPpOvi/zN0Tj84jwPvHMllpEl0QHj6ywN7/eQ==}
 
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
-    resolution: {integrity: sha512-UopsSSI1gphfoh59feiPPhZUEybYIvYEcvmudGR2RAIN3IDJHkaA3Uu0HPH8BZQbQXhkgvFW4V2KNWIWj2IE2g==}
+  '@mysten/ledgerjs-hw-app-sui@0.7.0':
+    resolution: {integrity: sha512-Z2ydxg35U2tk3pThsWzPewticDnHWqAeLlh2Vp4NhYU/YFyoVxK9obh21pnvU/hmRzL+BRpYlwbX5Nuo77+lwA==}
 
-  '@mysten/signers@0.5.0':
-    resolution: {integrity: sha512-BVbOJLTXLHzHSB/P2PHUSCEDnlQkkyQd8Xwl0ZTLEHMYWUeK9lMiKyijk+8dw8wF3hTJFfob7N8mBZ1PK3gJow==}
+  '@mysten/signers@0.6.2':
+    resolution: {integrity: sha512-TFdsoixjly/PHSRDF93wAl/6+cYGS/4J2PCg8lLoxmrLQZCDqIKYwP/dy1243qkXzyeN9d0Ri5IJvozcDpoY/g==}
     engines: {node: '>=20'}
 
-  '@mysten/sui@1.38.0':
-    resolution: {integrity: sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==}
+  '@mysten/sui@1.45.2':
+    resolution: {integrity: sha512-gftf7fNpFSiXyfXpbtP2afVEnhc7p2m/MEYc/SO5pov92dacGKOpQIF7etZsGDI1Wvhv+dpph+ulRNpnYSs7Bg==}
     engines: {node: '>=18'}
 
   '@mysten/utils@0.2.0':
@@ -15460,6 +15490,10 @@ packages:
 
   '@noble/curves@1.9.1':
     resolution: {integrity: sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/curves@1.9.4':
+    resolution: {integrity: sha512-2bKONnuM53lINoDrSmK8qP8W271ms7pygDhZt4SiLOoLwBtoHqeCFi6RG42V8zd3mLHuJFhU/Bmaqo4nX0/kBw==}
     engines: {node: ^14.21.3 || >=16}
 
   '@noble/curves@1.9.7':
@@ -16155,6 +16189,15 @@ packages:
   '@probot/pino@2.3.5':
     resolution: {integrity: sha512-IiyiNZonMw1dHC4EAdD55y5owV733d9Gll/IKsrLikB7EJ54+eMCOtL/qo+OmgWN9XV3NTDfziEQF2og/OBKog==}
     hasBin: true
+
+  '@protobuf-ts/grpcweb-transport@2.11.1':
+    resolution: {integrity: sha512-1W4utDdvOB+RHMFQ0soL4JdnxjXV+ddeGIUg08DvZrA8Ms6k5NN6GBFU2oHZdTOcJVpPrDJ02RJlqtaoCMNBtw==}
+
+  '@protobuf-ts/runtime-rpc@2.11.1':
+    resolution: {integrity: sha512-4CqqUmNA+/uMz00+d3CYKgElXO9VrEbucjnBFEjqI4GuDrEQ32MaI3q+9qPBvIGOlL4PmHXrzM32vBPWRhQKWQ==}
+
+  '@protobuf-ts/runtime@2.11.1':
+    resolution: {integrity: sha512-KuDaT1IfHkugM2pyz+FwiY80ejWrkH1pAtOBOZFuR6SXEFTsnb/jiQWQ1rCIrcKx2BtyxnxW6BWwsVSA/Ie+WQ==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -22411,6 +22454,9 @@ packages:
 
   axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
+
+  axios@1.11.0:
+    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
 
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
@@ -36526,8 +36572,13 @@ packages:
     resolution: {integrity: sha512-/EH/sDgxU2eGxajKdwLCDmQ4FWq+kpi3uCmBGpw1xJtnAxEjlD8j8PEiGWpCIMIs3ciNAgH0d3TTJiUkYzyZjA==}
     engines: {node: '>=10.12.0'}
 
-  valibot@0.36.0:
-    resolution: {integrity: sha512-CjF1XN4sUce8sBK9TixrDqFM7RwNkuXdJu174/AwmQUB62QbCQADg5lLe8ldBalFgtj1uKj+pKwDJiNo4Mn+eQ==}
+  valibot@1.2.0:
+    resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
@@ -46954,6 +47005,10 @@ snapshots:
       axios: 0.26.1
       bignumber.js: 9.1.2
 
+  '@ledgerhq/hw-bolos@6.32.9':
+    dependencies:
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
@@ -47007,19 +47062,63 @@ snapshots:
       react: 18.3.1
       tailwind-merge: 2.6.0
 
+  '@ledgerhq/ledger-cal-service@1.9.0':
+    dependencies:
+      '@ledgerhq/live-env': 2.21.0
+      '@ledgerhq/live-network': 2.1.1
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    dependencies:
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-network': 2.0.19
+
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
+
+  '@ledgerhq/live-env@2.18.0':
+    dependencies:
+      rxjs: 7.8.1
+      utility-types: 3.11.0
+
+  '@ledgerhq/live-env@2.21.0':
+    dependencies:
+      rxjs: 7.8.1
+      utility-types: 3.11.0
 
   '@ledgerhq/live-env@2.4.1':
     dependencies:
       rxjs: 7.8.1
       utility-types: 3.11.0
 
+  '@ledgerhq/live-network@2.0.19':
+    dependencies:
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-promise': 0.1.1
+      '@ledgerhq/logs': 6.13.0
+      axios: 1.11.0
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-network@2.1.1':
+    dependencies:
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/live-env': 2.21.0
+      '@ledgerhq/live-promise': 0.1.1
+      '@ledgerhq/logs': 6.13.0
+      axios: 1.12.2
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-promise@0.1.1':
+    dependencies:
+      '@ledgerhq/logs': 6.13.0
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
+
+  '@ledgerhq/logs@6.13.0': {}
 
   '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.11.2(rxjs@7.8.1))':
     dependencies:
@@ -47266,22 +47365,28 @@ snapshots:
     dependencies:
       bech32: 2.0.0
 
-  '@mysten/bcs@1.8.0':
+  '@mysten/bcs@1.9.2':
     dependencies:
       '@mysten/utils': 0.2.0
       '@scure/base': 1.2.6
 
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
+  '@mysten/ledgerjs-hw-app-sui@0.7.0':
     dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/hw-bolos': 6.32.9
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-cal-service': 1.9.0
+      '@ledgerhq/ledger-trust-service': 0.3.14
       fast-sha256: 1.3.0
+      semver: 7.7.1
 
-  '@mysten/signers@0.5.0(typescript@5.4.3)':
+  '@mysten/signers@0.6.2(typescript@5.4.3)':
     dependencies:
       '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.6.0
-      '@mysten/sui': 1.38.0(typescript@5.4.3)
-      '@noble/curves': 1.9.7
+      '@mysten/ledgerjs-hw-app-sui': 0.7.0
+      '@mysten/sui': 1.45.2(typescript@5.4.3)
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
       asn1-ts: 8.0.5
     transitivePeerDependencies:
@@ -47291,20 +47396,23 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mysten/sui@1.38.0(typescript@5.4.3)':
+  '@mysten/sui@1.45.2(typescript@5.4.3)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      '@mysten/bcs': 1.8.0
+      '@mysten/bcs': 1.9.2
       '@mysten/utils': 0.2.0
-      '@noble/curves': 1.9.7
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
+      '@protobuf-ts/grpcweb-transport': 2.11.1
+      '@protobuf-ts/runtime': 2.11.1
+      '@protobuf-ts/runtime-rpc': 2.11.1
       '@scure/base': 1.2.6
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       gql.tada: 1.8.13(graphql@16.11.0)(typescript@5.4.3)
       graphql: 16.11.0
       poseidon-lite: 0.2.1
-      valibot: 0.36.0
+      valibot: 1.2.0(typescript@5.4.3)
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
@@ -47527,6 +47635,10 @@ snapshots:
       '@noble/hashes': 1.7.1
 
   '@noble/curves@1.9.1':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
+  '@noble/curves@1.9.4':
     dependencies:
       '@noble/hashes': 1.8.0
 
@@ -48528,6 +48640,17 @@ snapshots:
       split2: 4.2.0
     transitivePeerDependencies:
       - supports-color
+
+  '@protobuf-ts/grpcweb-transport@2.11.1':
+    dependencies:
+      '@protobuf-ts/runtime': 2.11.1
+      '@protobuf-ts/runtime-rpc': 2.11.1
+
+  '@protobuf-ts/runtime-rpc@2.11.1':
+    dependencies:
+      '@protobuf-ts/runtime': 2.11.1
+
+  '@protobuf-ts/runtime@2.11.1': {}
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -57817,6 +57940,12 @@ snapshots:
   axios@0.26.1:
     dependencies:
       follow-redirects: 1.15.11
+
+  axios@1.11.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
 
   axios@1.12.2:
     dependencies:
@@ -79235,7 +79364,9 @@ snapshots:
       '@types/istanbul-lib-coverage': 2.0.6
       convert-source-map: 2.0.0
 
-  valibot@0.36.0: {}
+  valibot@1.2.0(typescript@5.4.3):
+    optionalDependencies:
+      typescript: 5.4.3
 
   validate-npm-package-license@3.0.4:
     dependencies:
