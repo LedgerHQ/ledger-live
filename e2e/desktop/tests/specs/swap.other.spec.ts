@@ -25,12 +25,31 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
+const getAddressCommand = (account: Account | TokenAccount) => async () => {
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+  return address;
+};
+const liveDataWithAddressCommand = (account: Account | TokenAccount) => (userdataPath?: string) =>
   CLI.liveData({
-    currency: currencyApp.name,
-    index,
+    currency: account.currency.speculosApp.name,
+    index: account.index,
     add: true,
     appjson: userdataPath,
+  }).then(async () => {
+    const { address } = await CLI.getAddress({
+      currency: account.currency.speculosApp.name,
+      path: account.accountPath,
+      derivationMode: account.derivationMode,
+    });
+
+    account.address = address;
+    return address;
   });
 
 test.describe("Swap - Provider redirection", () => {
@@ -59,11 +78,11 @@ test.describe("Swap - Provider redirection", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -121,11 +140,11 @@ test.describe("Swap - 1inch flow", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -179,11 +198,11 @@ test.describe("Swap - Check Best Offer", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -240,11 +259,11 @@ test.describe("Swap - Default currency when landing on swap", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -330,11 +349,11 @@ test.describe("Swap - Rejected on device", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -395,11 +414,11 @@ test.describe("Swap - Landing page", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -473,12 +492,25 @@ const swapWithDifferentSeed: SwapTestCase[] = [
 ];
 
 for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
-  test.describe("Swap - Using different seed", () => {
+  test.describe.only("Swap - Using different seed", () => {
     setupEnv(true);
 
     test.use({
       userdata: "speculos-x-other-account",
       speculosApp: app,
+      cliCommandsOnApp: [
+        [
+          {
+            app: swap.accountToDebit.currency.speculosApp,
+            cmd: getAddressCommand(swap.accountToDebit),
+          },
+          {
+            app: swap.accountToCredit.currency.speculosApp,
+            cmd: getAddressCommand(swap.accountToCredit),
+          },
+        ],
+        { scope: "test" },
+      ],
     });
 
     const familyDebit = getFamilyByCurrencyId(swap.accountToDebit.currency.id);
@@ -545,7 +577,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
       [
         {
           app: account1.currency.speculosApp,
-          cmd: liveDataCommand(account1.currency.speculosApp, account1.index),
+          cmd: liveDataWithAddressCommand(account1),
         },
       ],
       { scope: "test" },
@@ -616,7 +648,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
       [
         {
           app: account2.currency.speculosApp,
-          cmd: liveDataCommand(account2.currency.speculosApp, account2.index),
+          cmd: liveDataWithAddressCommand(account2),
         },
       ],
       { scope: "test" },
@@ -794,11 +826,11 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         [
           {
             app: accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+            cmd: liveDataWithAddressCommand(accountToDebit),
           },
           {
             app: accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+            cmd: liveDataWithAddressCommand(accountToCredit),
           },
         ],
         { scope: "test" },
@@ -893,11 +925,11 @@ test.describe(`Swap - Error message when network fees are above account balance 
       [
         {
           app: accountToDebit.currency.speculosApp,
-          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          cmd: liveDataWithAddressCommand(accountToDebit),
         },
         {
           app: accountToCredit.currency.speculosApp,
-          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          cmd: liveDataWithAddressCommand(accountToCredit),
         },
       ],
       { scope: "test" },
@@ -1013,11 +1045,11 @@ test.describe("Swap flow from different entry point", () => {
       [
         {
           app: accountToDebit.currency.speculosApp,
-          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          cmd: liveDataWithAddressCommand(accountToDebit),
         },
         {
           app: accountToCredit.currency.speculosApp,
-          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          cmd: liveDataWithAddressCommand(accountToCredit),
         },
       ],
       { scope: "test" },
@@ -1241,11 +1273,11 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
         { scope: "test" },
@@ -1418,11 +1450,11 @@ test.describe("Swap - Block blacklisted addresses", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },

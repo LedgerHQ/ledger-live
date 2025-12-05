@@ -7,6 +7,34 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
+const liveDataWithRecipientAddressCommand = (
+  tx: Transaction,
+  options?: { useScheme?: boolean },
+) => {
+  return async (appjsonPath: string) => {
+    await CLI.liveData({
+      currency: tx.accountToDebit.currency.id,
+      index: tx.accountToDebit.index,
+      ...(options?.useScheme && tx.accountToDebit.derivationMode
+        ? { scheme: tx.accountToDebit.derivationMode }
+        : {}),
+      add: true,
+      appjson: appjsonPath,
+    });
+
+    const { address } = await CLI.getAddress({
+      currency: tx.accountToCredit.currency.id,
+      path: tx.accountToCredit.accountPath,
+      derivationMode: tx.accountToCredit.derivationMode,
+    });
+
+    tx.accountToCredit.address = address;
+    tx.recipientAddress = address;
+
+    return address;
+  };
+};
+
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
 const transactionsAmountInvalid = [
@@ -40,26 +68,31 @@ const transactionsAmountInvalid = [
 const transactionsAddressInvalid = [
   {
     transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
+    address: "bc1q550hm43wj0jq949xwsw67kwzz0t3wy60y3gfax",
     expectedErrorMessage: "This is not a valid Ethereum address",
     xrayTicket: "B2CQA-2709",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.EMPTY, "0.00001", Fee.MEDIUM),
+    address: " ",
     expectedErrorMessage: null,
     xrayTicket: "B2CQA-2710",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2711",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined, "123456"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2712",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2713",
   },
@@ -227,16 +260,7 @@ test.describe("Send flows", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
-        ],
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -264,6 +288,7 @@ test.describe("Send flows", () => {
           if (transaction.bugTicket) {
             await addBugLink([transaction.bugTicket]);
           }
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -291,16 +316,7 @@ test.describe("Send flows", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
-        ],
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -348,16 +364,7 @@ test.describe("Send flows", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionInputValid.accountToDebit.currency.id,
-            index: transactionInputValid.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
     });
 
     const family = getFamilyByCurrencyId(transactionInputValid.accountToDebit.currency.id);
@@ -404,22 +411,14 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              scheme: transaction.transaction.accountToDebit.derivationMode,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
+          liveDataWithRecipientAddressCommand(transaction.transaction, { useScheme: true }),
         ],
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
 
       test(
-        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
+        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.xrayTicket})`,
         {
           tag: [
             "@NanoSP",
@@ -445,6 +444,12 @@ test.describe("Send flows", () => {
           );
 
           await app.account.clickSend();
+          const recipientAddress =
+            transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
+              ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
+              : transaction.transaction.accountToCredit.address ?? "";
+          transaction.transaction.accountToCredit.address = recipientAddress;
+
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
           await app.send.checkContinueButtonEnable();
@@ -459,13 +464,27 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
+          async (appjsonPath: string) => {
+            await CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
             });
+            if (
+              transaction.transaction.accountToCredit !== Account.EMPTY &&
+              transaction.transaction.accountToCredit !== Account.BTC_NATIVE_SEGWIT_1
+            ) {
+              const receiveAddress = await CLI.getAddress({
+                currency: transaction.transaction.accountToCredit.currency.id,
+                path: transaction.transaction.accountToCredit.accountPath,
+                derivationMode: transaction.transaction.accountToCredit.derivationMode,
+              });
+              transaction.address = receiveAddress.address;
+
+              return receiveAddress.address;
+            }
+            return transaction.address;
           },
         ],
       });
@@ -499,7 +518,7 @@ test.describe("Send flows", () => {
           );
 
           await app.account.clickSend();
-          await app.send.fillRecipientInfo(transaction.transaction);
+          await app.send.fillRecipient(transaction.address);
           await app.send.checkErrorMessage(transaction.expectedErrorMessage);
           await app.send.checkContinueButtonDisabled();
         },
@@ -524,16 +543,7 @@ test.describe("Send flows", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionEnsAddress.accountToDebit.currency.id,
-            index: transactionEnsAddress.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
     });
 
     const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);

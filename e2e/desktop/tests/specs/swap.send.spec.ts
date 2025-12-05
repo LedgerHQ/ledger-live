@@ -10,13 +10,23 @@ import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUt
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
+const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
+  await CLI.liveData({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
     add: true,
     appjson: userdataPath,
   });
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+  return address;
+};
 
 const swaps = [
   {
@@ -248,11 +258,11 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
         { scope: "test" },
