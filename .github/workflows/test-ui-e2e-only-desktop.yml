@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -72,7 +72,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       invert_filter:
@@ -186,14 +186,20 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "${{ inputs.test_filter }}" ]; then
-              echo "filter=@smoke ${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
             else
               echo "filter=@smoke" >> $GITHUB_OUTPUT
             fi
           else
-            echo "filter=${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
           fi
         shell: bash
 

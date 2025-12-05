@@ -13,7 +13,7 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
@@ -61,7 +61,7 @@ test.describe("Password", () => {
   test(
     "The user enter his password to access to the app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2343, B2CQA-1763, B2CQA-826",
@@ -108,7 +108,16 @@ test.describe("counter value selection", () => {
   test(
     "User can select a counter value to display amount",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-804",
@@ -164,7 +173,7 @@ test.describe("Reset app", () => {
   test(
     "Verify that user can Reset app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-821",
@@ -194,7 +203,7 @@ test.describe("Settings - Help tab", () => {
   test(
     "Verify that user can view user data folder and export logs",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-825, B2CQA-2074",

@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -35,6 +36,8 @@ for (const account of accounts) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.account.currency.id);
+
     test(
       `[${account.account.currency.name}] Receive`,
       {
@@ -45,6 +48,8 @@ for (const account of accounts) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${account.account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(account.account === Account.SOL_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -99,10 +104,22 @@ test.describe("Receive", () => {
       },
     ],
   });
+
+  const family = getFamilyByCurrencyId(account.currency.id);
+
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",
