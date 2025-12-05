@@ -14,7 +14,7 @@ describe("buildOptimisticOperation", () => {
     const result = buildOptimisticOperation(account, transaction, fee);
 
     // THEN
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       id: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui--OUT",
       hash: "",
       type: "OUT",
@@ -24,13 +24,13 @@ describe("buildOptimisticOperation", () => {
       recipients: ["0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24"],
       accountId: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui",
       date: expect.any(Date),
+      transactionSequenceNumber: expect.any(BigNumber),
       blockHash: null,
       blockHeight: null,
       extra: {
         transferAmount: new BigNumber(3000000000),
       },
     });
-    expect(result.transactionSequenceNumber).toBeInstanceOf(BigNumber);
   });
 
   it("should calculate correct value for OUT type", () => {
@@ -67,6 +67,6 @@ describe("buildOptimisticOperation", () => {
     // THEN
     expect(result1.transactionSequenceNumber).toBeInstanceOf(BigNumber);
     expect(result2.transactionSequenceNumber).toBeInstanceOf(BigNumber);
-    expect(result1.transactionSequenceNumber!.eq(result2.transactionSequenceNumber!)).toBe(false);
+    expect(result1.transactionSequenceNumber).not.toStrictEqual(result2.transactionSequenceNumber);
   });
 });
