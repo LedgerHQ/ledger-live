@@ -38,7 +38,7 @@ export function DialogProvider({ children }: Readonly<{ children: React.ReactNod
     <DialogContext.Provider value={contextValue}>
       {children}
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent>{dialogContent}</DialogContent>
+        <DialogContent className="!pb-0">{dialogContent}</DialogContent>
       </Dialog>
     </DialogContext.Provider>
   );

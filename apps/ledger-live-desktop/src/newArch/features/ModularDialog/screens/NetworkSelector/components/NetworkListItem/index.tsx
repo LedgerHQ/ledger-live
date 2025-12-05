@@ -41,7 +41,7 @@ export const NetworkListItem = ({
       leadingContent={leadingContent}
       trailingContent={getTrailingContent()}
       onClick={onClick}
-      data-testid={`network-item-${name}`}
+      data-testid={`network-item-name-${name}`}
     />
   );
 };

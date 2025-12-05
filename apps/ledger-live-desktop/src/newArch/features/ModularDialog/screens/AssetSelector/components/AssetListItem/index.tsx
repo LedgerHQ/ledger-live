@@ -37,27 +37,14 @@ export const AssetListItem = ({
     </div>
   );
 
-  const getTrailingContent = () => {
-    const hasCustomContent = leftElement || shouldDisplayId;
-
-    if (hasCustomContent) {
-      return (
-        <>
-          {customDescription}
-          {rightElement}
-        </>
-      );
-    }
-
-    return rightElement;
-  };
+  const hasCustomDescription = leftElement || shouldDisplayId;
 
   return (
     <ListItem
       title={name}
       leadingContent={leadingContent}
-      description={leftElement || shouldDisplayId ? undefined : ticker}
-      trailingContent={getTrailingContent()}
+      description={hasCustomDescription ? customDescription : ticker}
+      trailingContent={rightElement}
       onClick={handleClick}
       data-testid={`asset-item-${ticker}`}
     />

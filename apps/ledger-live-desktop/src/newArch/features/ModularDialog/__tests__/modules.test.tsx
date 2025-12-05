@@ -178,9 +178,8 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumIcon = screen.getByAltText(/eth/i);
-    const ethereumRow = ethereumIcon.parentElement?.parentElement;
-    const percentIndicator = ethereumRow?.querySelector(
+    const ethereumAsset = screen.getByTestId("asset-item-ETH");
+    const percentIndicator = ethereumAsset.querySelector(
       '[data-testid="market-price-indicator-percent"]',
     );
     expect(percentIndicator).toHaveTextContent(/-3.64%$/);
