@@ -1089,6 +1089,10 @@
       "title" : "Não foi possível verificar a associação do token",
       "description" : "Não foi possível confirmar se a conta de destino pode receber este token. O endereço pode estar inválido ou pode haver um problema de rede ou serviço."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "É necessário verificar o endereço EVM",
+      "description" : "Verifique o endereço EVM visível no seu dispositivo Ledger antes de confirmar."
+    },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
     },
@@ -1153,6 +1157,11 @@
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” da Ledger Wallet, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Provedor Inválido",
+      "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para mudá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente.",
+      "openSettings" : "Ir para configurações"
     },
     "GasLessThanEstimate" : {
       "title" : "Isto pode ser baixo demais Por favor, aumente"
@@ -1224,6 +1233,12 @@
     "AddressesSanctionedError" : {
       "title" : "Mantendo você em segurança",
       "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Quantia reduzida para se adequar às restrições UTXO."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Quantia muito grande para as restrições UTXO."
     }
   },
   "crash" : {
@@ -2730,6 +2745,9 @@
       "REWARD" : "Recompensa resgatada",
       "FEES" : "Taxas",
       "PRE_APPROVAL" : "Pré-aprovado",
+      "TRANSFER_PROPOSAL" : "Proposta de transferência",
+      "TRANSFER_REJECTED" : "Transferência rejeitada",
+      "TRANSFER_WITHDRAWN" : "Transferência cancelada",
       "OPT_IN" : "Aderir",
       "OPT_OUT" : "Não aderir",
       "CLOSE_ACCOUNT" : "Fechar conta",
@@ -2751,7 +2769,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "ASSOCIATE_TOKEN" : "Associar token"
+      "ASSOCIATE_TOKEN" : "Associar token",
+      "CONTRACT_CALL" : "Chamada do contrato"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3799,9 @@
       },
       "wrongDevice" : {
         "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
-        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live"
+        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através da Ledger Wallet",
+        "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
+        "swapWithAnotherProvider" : "Trocar com outro provedor"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
@@ -4430,7 +4451,7 @@
     "allowSecureConnection" : "Permitir uma conexão segura com a Ledger",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
-    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
+    "powerOnDevice" : "Ligue e desbloqueie sua {{deviceName}}",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "connectAnotherDevice" : "Conectar outra Ledger",
     "unlockDevice" : "Desbloqueie seu dispositivo",
@@ -4498,8 +4519,8 @@
       "label" : "Detecta automaticamente a sua Nano"
     },
     "bleDeviceNotAvailableDrawer" : {
-      "bannerHintTitle" : "Can't see your Ledger device?",
-      "scanSignersCta" : "Scan devices",
+      "bannerHintTitle" : "Não consegue ver seu dispositivo Ledger?",
+      "scanSignersCta" : "Escanear dispositivos",
       "helpCenterCta" : "Obter suporte"
     },
     "deviceNotFoundPairNewDevice" : "Emparelhar via Bluetooth",
@@ -7223,6 +7244,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Saiba mais"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Você está enviando um token ERC-20. Para este tipo de transação, o seu dispositivo Ledger exibirá o endereço EVM do remetente, e não o ID da conta dele.\nSiga este <0>guia</0> para verificar se o endereço está correto antes de confirmar."
         }
       }
     },
@@ -7311,11 +7335,11 @@
         "description" : "Escolha qualquer arte digital ou foto para exibir na tela de bloqueio da sua {{productName}}.",
         "popupLabel" : "Tela de bloqueio personalizada com sucesso"
       },
-      "recover" : {
-        "title" : "Inscrever-se no Ledger Recover",
-        "titleCompleted" : "Você se inscreveu no Ledger Recover",
-        "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
-        "popupLabel" : "Você se inscreveu com sucesso no Ledger Recover"
+      "syncAccounts" : {
+        "title" : "Sincronize suas contas cripto",
+        "titleCompleted" : "Suas contas estão sincronizadas",
+        "description" : "Ative o Ledger Sync para sincronizar suas contas cripto",
+        "popupLabel" : "Contas sincronizadas"
       }
     }
   },
