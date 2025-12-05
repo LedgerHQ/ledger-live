@@ -806,8 +806,12 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "transaction.signAndBroadcast",
-      async ({ accountId, tokenCurrency, transaction, options }) => {
+      async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
+        // isEmbedded is passed via meta (not transaction) as it's a tracking param, not a tx property
+        const isEmbeddedSwap =
+          transaction.family === "ethereum" &&
+          (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
 
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -824,18 +828,19 @@ export function useWalletAPIServer({
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionSuccess(manifest);
+                  tracking.signTransactionSuccess(manifest, isEmbeddedSwap);
                   resolve(signedOperation);
                 },
                 onError: error => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionFail(manifest);
+                  tracking.signTransactionFail(manifest, isEmbeddedSwap);
                   reject(error);
                 },
               });
             }),
           tokenCurrency,
+          isEmbeddedSwap,
         );
 
         return broadcastTransactionLogic(
@@ -858,9 +863,9 @@ export function useWalletAPIServer({
                     sponsored,
                   },
                 });
-                tracking.broadcastSuccess(manifest);
+                tracking.broadcastSuccess(manifest, isEmbeddedSwap);
               } catch (error) {
-                tracking.broadcastFail(manifest);
+                tracking.broadcastFail(manifest, isEmbeddedSwap);
                 throw error;
               }
             }
