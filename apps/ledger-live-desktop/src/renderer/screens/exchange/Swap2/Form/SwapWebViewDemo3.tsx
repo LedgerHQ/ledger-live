@@ -174,6 +174,8 @@ const SwapWebView = ({ manifest, isEmbedded = false }: SwapWebProps) => {
           customFeeConfig: object;
           SWAP_VERSION: string;
           gasLimit?: string;
+          data?: string;
+          recipient?: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -222,13 +224,15 @@ const SwapWebView = ({ manifest, isEmbedded = false }: SwapWebProps) => {
           ...transaction,
           subAccountId,
           recipient:
-            mainAccount.currency.id === "bitcoin"
+            params.recipient ||
+            (mainAccount.currency.id === "bitcoin"
               ? getSegWitAbandonSeedAddress()
-              : getAbandonSeedAddress(mainAccount.currency.id),
+              : getAbandonSeedAddress(mainAccount.currency.id)),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
           }),
+          data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
           feesStrategy: params.feeStrategy || "medium",
           customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
           ...transformToBigNumbers(params.customFeeConfig),
