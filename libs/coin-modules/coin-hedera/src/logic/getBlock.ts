@@ -7,7 +7,7 @@ import type {
 import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type { HederaMirrorCoinTransfer, HederaMirrorTokenTransfer } from "../types";
-import { getTimestampRangeFromBlockHeight } from "./utils";
+import { getMemoFromBase64, getTimestampRangeFromBlockHeight } from "./utils";
 
 function toHederaAsset(
   mirrorTransfer: HederaMirrorCoinTransfer | HederaMirrorTokenTransfer,
@@ -64,6 +64,7 @@ export async function getBlock(height: number): Promise<Block> {
       operations,
       fees: BigInt(tx.charged_tx_fee),
       feesPayer: payerAccount,
+      details: { memo: getMemoFromBase64(tx.memo_base64) },
     };
   });
 
