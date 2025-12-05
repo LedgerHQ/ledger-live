@@ -8198,6 +8198,8 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
+  libs/ledgerjs/packages/zcash-shielded: {}
+
   libs/live-config:
     dependencies:
       lodash:

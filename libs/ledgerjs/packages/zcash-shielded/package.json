@@ -1,0 +1,36 @@
+{
+  "name": "@ledgerhq/zcash-shielded",
+  "version": "1.0.0",
+  "description": "ZCash library shielded accounts",
+  "keywords": [
+    "ZCash"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/zcash-shielded",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/ZCash.js",
+  "module": "lib-es/Cosmos.js",
+  "types": "lib/Cosmos.d.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  }
+}
