@@ -1,6 +1,6 @@
-import { SimulationError } from "../types/errors";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
+import { SimulationError } from "../types/errors";
 import coinConfig from "../config";
 import { AccountInfoResponse, SubmitReponse } from "./types";
 

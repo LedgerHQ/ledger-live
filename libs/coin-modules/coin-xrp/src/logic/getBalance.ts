@@ -1,7 +1,7 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
+import BigNumber from "bignumber.js";
 import { getAccountInfo, getServerInfos } from "../network";
 import { parseAPIValue } from "./common";
-import BigNumber from "bignumber.js";
 
 export async function getBalance(address: string): Promise<Balance[]> {
   const accountInfo = await getAccountInfo(address);
