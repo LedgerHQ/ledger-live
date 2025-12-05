@@ -54,7 +54,7 @@
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "react-native-ble-plx": "3.4.0",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "vite": "6.0.9",
     "vitest": "2.1.9",
     "ws": "8.18.0"
@@ -63,7 +63,7 @@
     "react": "catalog:",
     "react-native": ">0.70",
     "react-native-ble-plx": ">3.4.0",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:"
   }
 }

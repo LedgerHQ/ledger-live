@@ -89,7 +89,7 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "viem": "^2.27.0"
   },
   "devDependencies": {
