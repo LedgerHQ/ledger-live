@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.99.0-next.2
+
+### Minor Changes
+
+- [#13153](https://github.com/LedgerHQ/ledger-live/pull/13153) [`3456464`](https://github.com/LedgerHQ/ledger-live/commit/345646432a5aecc8439c13174dd4a36979181ca0) Thanks [@qperrot](https://github.com/qperrot)! - Bump version for build
+
 ## 3.99.0-next.1
 
 ### Minor Changes
