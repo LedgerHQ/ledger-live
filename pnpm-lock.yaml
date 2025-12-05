@@ -75,6 +75,9 @@ catalogs:
     i18next:
       specifier: 23.10.1
       version: 23.10.1
+    isomorphic-ws:
+      specifier: 5.0.0
+      version: 5.0.0
     react:
       specifier: 18.3.1
       version: 18.3.1
@@ -111,6 +114,9 @@ catalogs:
     tailwindcss:
       specifier: ^3.4.0
       version: 3.4.3
+    ws:
+      specifier: 8.18.3
+      version: 8.18.3
 
 overrides:
   node-abi: ^4.9.0
@@ -411,8 +417,8 @@ importers:
         specifier: 3.13.0
         version: 3.13.0
       ws:
-        specifier: 8.17.1
-        version: 8.17.1
+        specifier: 'catalog:'
+        version: 8.18.3
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -800,8 +806,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1
       ws:
-        specifier: 7.5.10
-        version: 7.5.10
+        specifier: 'catalog:'
+        version: 8.18.3
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
@@ -1783,7 +1789,7 @@ importers:
         specifier: 2.6.2
         version: 2.6.2
       ws:
-        specifier: 8.18.3
+        specifier: 'catalog:'
         version: 8.18.3
 
   apps/web-tools:
@@ -2176,8 +2182,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       ws:
-        specifier: 7.5.10
-        version: 7.5.10
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/coin-framework:
     dependencies:
@@ -5358,14 +5364,14 @@ importers:
         specifier: '1'
         version: 1.5.1
       isomorphic-ws:
-        specifier: '5'
-        version: 5.0.0(ws@8.17.1)
+        specifier: 'catalog:'
+        version: 5.0.0(ws@8.18.3)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
       ws:
-        specifier: '8'
-        version: 8.17.1
+        specifier: 'catalog:'
+        version: 8.18.3
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -5731,8 +5737,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       isomorphic-ws:
-        specifier: ^4.0.1
-        version: 4.0.1(ws@7.5.10)
+        specifier: 'catalog:'
+        version: 5.0.0(ws@8.18.3)
       jotai:
         specifier: 2.12.4
         version: 2.12.4(@types/react@18.2.73)(react@18.3.1)
@@ -5942,8 +5948,8 @@ importers:
         specifier: ^8.3.2
         version: 8.3.2
       ws:
-        specifier: '7'
-        version: 7.5.10
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/ledger-services/cal:
     dependencies:
@@ -7294,8 +7300,8 @@ importers:
         specifier: 'catalog:'
         version: 1.12.2
       ws:
-        specifier: ^7.5.2
-        version: 7.5.10
+        specifier: 'catalog:'
+        version: 8.18.3
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -8254,8 +8260,8 @@ importers:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.10.10)(jsdom@25.0.1)
       ws:
-        specifier: 8.18.0
-        version: 8.18.0
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-dmk-mobile:
     dependencies:
@@ -8333,8 +8339,8 @@ importers:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.10.10)(jsdom@25.0.1)
       ws:
-        specifier: 8.18.0
-        version: 8.18.0
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-dmk-shared:
     dependencies:
@@ -8403,8 +8409,8 @@ importers:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.10.10)(jsdom@25.0.1)
       ws:
-        specifier: 8.18.0
-        version: 8.18.0
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-dmk-speculos:
     dependencies:
@@ -8464,8 +8470,8 @@ importers:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.10.10)(jsdom@25.0.1)
       ws:
-        specifier: 8.18.0
-        version: 8.18.0
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-hooks:
     devDependencies:
@@ -8623,8 +8629,8 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@22.10.1)(typescript@5.4.3)
       ws:
-        specifier: 8.18.0
-        version: 8.18.0
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-signer-solana:
     dependencies:
@@ -8735,7 +8741,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       isomorphic-ws:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0(ws@8.17.1)
       lodash:
         specifier: '4'
@@ -37437,18 +37443,6 @@ packages:
       utf-8-validate:
         optional: true
 
-  ws@8.18.0:
-    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   ws@8.18.3:
     resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
     engines: {node: '>=10.0.0'}
@@ -50006,7 +50000,7 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-is: 19.1.1
-      semver: 7.7.2
+      semver: 7.7.3
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
       uuid: 13.0.0
@@ -80714,8 +80708,6 @@ snapshots:
   ws@7.5.10: {}
 
   ws@8.17.1: {}
-
-  ws@8.18.0: {}
 
   ws@8.18.3: {}
 

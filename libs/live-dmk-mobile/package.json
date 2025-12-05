@@ -57,7 +57,7 @@
     "rxjs": "catalog:",
     "vite": "6.0.9",
     "vitest": "2.1.9",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

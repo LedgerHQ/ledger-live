@@ -31,7 +31,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "axios": "catalog:",
-    "ws": "^7.5.2"
+    "ws": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

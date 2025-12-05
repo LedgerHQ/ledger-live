@@ -164,7 +164,7 @@
     "winston": "3.13.0",
     "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
-    "ws": "7.5.10",
+    "ws": "catalog:",
     "xstate": "^5.19.2"
   },
   "devDependencies": {
