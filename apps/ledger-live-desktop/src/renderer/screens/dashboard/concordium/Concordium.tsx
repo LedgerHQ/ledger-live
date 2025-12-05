@@ -27,14 +27,14 @@ export default function Concordium() {
   const [availableSessions, setAvailableSessions] = useState<SessionTypes.Struct[]>([]);
   const [showSessionPicker, setShowSessionPicker] = useState(false);
 
-  const accountIndexRef = useRef(0);
+  const accountIndexRef = useRef(4);
   const accountsRef = useRef<{ refresh: () => void } | null>(null);
 
   const getOrInitClient = useCallback(async () => {
     if (client) return client;
 
     const c = await SignClient.init({
-      projectId: "TODO",
+      projectId: "255a67952f9dcfddbc3b1e4581bc75a3",
       relayUrl: "wss://relay.walletconnect.com",
       metadata: {
         name: "Ledger Live – Concordium",

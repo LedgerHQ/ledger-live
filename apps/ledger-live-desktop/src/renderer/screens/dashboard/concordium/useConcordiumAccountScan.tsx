@@ -1,4 +1,4 @@
-// ~/renderer/screens/dashboard/useConcordiumAccountScan.ts
+// ~/renderer/screens/dashboard/concordium/useConcordiumAccountScan.ts
 import { useCallback, useEffect, useState, useRef } from "react";
 
 const STORAGE_KEY = "concordium-saved-accounts";
