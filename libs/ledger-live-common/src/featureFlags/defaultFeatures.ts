@@ -734,6 +734,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
+  lldRebornABtest: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

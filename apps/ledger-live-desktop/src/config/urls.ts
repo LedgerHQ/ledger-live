@@ -47,6 +47,8 @@ export const urls = {
     "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   buyNew:
     "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+  reborn:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_destkop&utm_medium=self_referral&utm_content=onboarding-2",
   noDevice: {
     learnMore:
       "https://www.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",

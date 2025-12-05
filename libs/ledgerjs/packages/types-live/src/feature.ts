@@ -282,6 +282,7 @@ export type Features = CurrencyFeatures & {
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
+  lldRebornABtest: DefaultFeature;
 };
 
 /**
