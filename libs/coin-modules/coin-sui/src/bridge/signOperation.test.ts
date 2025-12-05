@@ -227,7 +227,11 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockLedgerSigner.signTransaction).toHaveBeenCalledWith(fakeUnsignedTx);
+            expect(mockLedgerSigner.signTransaction).toHaveBeenCalledWith(
+              fakeUnsignedTx,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -244,10 +248,16 @@ describe("buildSignOperation", () => {
               account: mockAccount,
               transaction: mockTransaction,
             });
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...mockTransaction,
-              amount: new BigNumber("100000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...mockTransaction,
+                amount: new BigNumber("100000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -358,10 +368,16 @@ describe("buildSignOperation", () => {
               account: mockAccount,
               transaction: transactionWithUseAllAmount,
             });
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithUseAllAmount,
-              amount: new BigNumber("500000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithUseAllAmount,
+                amount: new BigNumber("500000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -376,10 +392,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithoutUseAllAmount,
-              amount: new BigNumber("100000000"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithoutUseAllAmount,
+                amount: new BigNumber("100000000"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -434,10 +456,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithLargeAmount,
-              amount: largeAmount,
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithLargeAmount,
+                amount: largeAmount,
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,
@@ -453,10 +481,16 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(mockBuildTransaction).toHaveBeenCalledWith(mockAccount, {
-              ...transactionWithZeroAmount,
-              amount: new BigNumber("0"),
-            });
+            expect(mockBuildTransaction).toHaveBeenCalledWith(
+              mockAccount,
+              {
+                ...transactionWithZeroAmount,
+                amount: new BigNumber("0"),
+              },
+              true,
+              undefined,
+              undefined,
+            );
             done();
           },
           error: done,

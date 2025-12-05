@@ -1,3 +1,3 @@
 export * from "./bridge";
 export * from "./model";
-export * from "./signer";
+export type { SuiAddress, SuiSignature, SuiSigner } from "./signer";

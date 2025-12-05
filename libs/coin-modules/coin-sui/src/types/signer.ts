@@ -1,4 +1,4 @@
-import Sui from "@ledgerhq/hw-app-sui";
+import type Sui from "@ledgerhq/hw-app-sui";
 
 export type SuiAddress = {
   pubKey: string;
