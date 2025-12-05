@@ -1,23 +1,18 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { type CantonCoinConfig } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
-  BlockView,
-  FeesView,
   InstrumentBalance,
   OnboardingPrepareResponse,
-  OperationStatusView,
-  OperationTypeView,
-  OperationView,
   PrepareTransferResponse,
   TransferProposal,
-  TransferView,
 } from "../types/gateway";
 import type {
   CantonPreparedTransaction,
@@ -38,16 +33,12 @@ const DEFAULT_VALUES = {
     ID: "Amulet",
   },
   CONFIG: {
-    GATEWAY_URL: "https://canton-gateway.api.live.ledger-test.com",
+    GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
     NETWORK_TYPE: "devnet",
   },
-  DERIVATION_PATH: "44'/6767'/0'/0'/0'",
 } as const;
 
-let idCounter = 0;
-const generateUniqueId = (prefix: string): string => `${prefix}${++idCounter}`;
-
-function createFactory<T>(defaults: T) {
+export function createFactory<T>(defaults: T) {
   return (overrides: Partial<T> = {}): T => ({
     ...defaults,
     ...overrides,
@@ -77,7 +68,9 @@ export const createMockCantonAccount = (
 ) => {
   const currency = createMockCantonCurrency();
   const derivationMode = "canton" as const;
-  const freshAddressPath = DEFAULT_VALUES.DERIVATION_PATH;
+  const freshAddressPath = "44'/6767'/0'/0'/0'";
+  const freshAddress =
+    "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000";
 
   const cantonResources = {
     publicKey: "",
@@ -85,14 +78,22 @@ export const createMockCantonAccount = (
     pendingTransferProposals: [],
   };
 
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: freshAddress,
+    derivationMode,
+  });
+
   const baseAccount = {
-    id: `js:2:canton_network:test_address:canton`,
+    id: accountId,
     type: "Account",
     used: true,
     currency,
     derivationMode,
     index: 0,
-    freshAddress: "test_address",
+    freshAddress,
     freshAddressPath,
     creationDate: new Date(),
     lastSyncDate: new Date(),
@@ -124,22 +125,7 @@ export const createMockCantonAccount = (
   return baseAccount as CantonAccount;
 };
 
-export const createMockCantonAccountShapeInfo = <T extends Account = Account>(
-  overrides: Partial<AccountShapeInfo<T>> = {},
-): AccountShapeInfo<T> => {
-  const currency = createMockCantonCurrency();
-  return {
-    address: "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876",
-    currency,
-    derivationMode: "",
-    derivationPath: DEFAULT_VALUES.DERIVATION_PATH,
-    deviceId: "fakeDevice",
-    initialAccount: undefined,
-    ...overrides,
-  } as AccountShapeInfo<T>;
-};
-
-export class MockCantonSigner implements CantonSigner {
+class MockCantonSigner implements CantonSigner {
   private keyPair: CantonTestKeyPair;
   private mockSigner: ReturnType<typeof createCantonMockSigner>;
 
@@ -202,7 +188,7 @@ export const createMockCantonSignature = createFactory<CantonSignature>({
 export const createMockTransaction = createFactory<Transaction>({
   family: "canton",
   amount: new BigNumber(100),
-  recipient: "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890",
+  recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
   fee: new BigNumber(10),
   tokenId: "",
   memo: "",
@@ -246,7 +232,7 @@ export const createMockOnboardingPrepareResponse = createFactory<OnboardingPrepa
   challenge_deadline: 1735689599,
 });
 
-export const createMockInstrumentBalance = createFactory<InstrumentBalance>({
+const createMockInstrumentBalance = createFactory<InstrumentBalance>({
   admin_id: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
   instrument_id: DEFAULT_VALUES.INSTRUMENT.ID,
   amount: "1000",
@@ -262,56 +248,6 @@ export const createMockInstrumentBalances = (
   return Array.from({ length: count }, (_, index) =>
     createMockInstrumentBalance(overridesArray[index] || overridesArray[0] || {}),
   );
-};
-
-export const createMockTransferView = createFactory<TransferView>({
-  address: "party456",
-  type: "Send",
-  value: "100",
-  details: {
-    metadata: {
-      reason: "test transfer",
-    },
-  },
-  asset: DEFAULT_VALUES.INSTRUMENT.ID,
-});
-
-const createMockBlockView = createFactory<BlockView>({
-  height: 1,
-  time: new Date().toISOString(),
-  hash: "blockhash1",
-});
-
-export const createMockFeesView = createFactory<FeesView>({
-  value: "5",
-  asset: {
-    type: "native",
-    instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
-    instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
-  },
-  details: {},
-});
-
-export const createMockOperationView = (overrides: Partial<OperationView> = {}): OperationView => {
-  const transactionHash = overrides.transaction_hash || generateUniqueId("tx");
-  return {
-    uid: generateUniqueId("uid"),
-    transaction_hash: transactionHash,
-    transaction_timestamp: new Date().toISOString(),
-    status: "Success" as OperationStatusView,
-    type: "Send" as OperationTypeView,
-    senders: ["test-party-id-1"],
-    recipients: ["test-party-id-2"],
-    transfers: [createMockTransferView()],
-    block: createMockBlockView(),
-    fee: createMockFeesView(),
-    details: {
-      metadata: {
-        reason: "test transfer",
-      },
-    },
-    ...overrides,
-  };
 };
 
 export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> = {}): void => {
@@ -336,13 +272,18 @@ export const createMockCoinConfigValue = createFactory({
   networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
   minReserve: 100,
-  status: { type: "active" },
+  status: { type: "active" as const },
 });
+
+export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
+  const configValue = createMockCoinConfigValue();
+  return jest.fn(() => configValue);
+};
 
 export const createMockPendingTransferProposal = createFactory<TransferProposal>({
   contract_id: "test-contract-id",
-  sender: "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876",
-  receiver: "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890",
+  sender: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+  receiver: "bob::122014d3f17b82700d15bef451bcb1d112136eb82bb3f4fd2a4649f95a9c4632b000",
   instrument_admin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
   instrument_id: DEFAULT_VALUES.INSTRUMENT.ID,
   amount: "100",

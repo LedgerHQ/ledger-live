@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -15,7 +16,7 @@ import {
   createMockCoinConfigValue,
   createMockTransaction,
 } from "../test/fixtures";
-import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning } from "../types";
+import { TooManyUtxosCritical, TooManyUtxosWarning } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import {
   getTransactionStatus,
@@ -33,7 +34,6 @@ describe("getTransactionStatus", () => {
     {
       balance: new BigNumber(1000),
       spendableBalance: new BigNumber(1000),
-      freshAddress: "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890",
     },
     {
       instrumentUtxoCounts: {
@@ -89,7 +89,7 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughSpendableBalance error when total spent exceeds balance minus reserve", async () => {
       const transaction = createMockTransaction({
         amount: mockAccount.balance
-          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve))
+          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve ?? 100))
           .plus(1),
       });
 
@@ -100,7 +100,7 @@ describe("getTransactionStatus", () => {
 
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
       const transaction = createMockTransaction({
-        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve).minus(1),
+        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve ?? 100).minus(1),
       });
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -159,7 +159,7 @@ describe("getTransactionStatus", () => {
 
       const transaction = createMockTransaction({
         amount: new BigNumber(0),
-        recipient: "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876a",
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
       });
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -282,85 +282,57 @@ describe("getTransactionStatus", () => {
   describe("topology validation", () => {
     it("should return TopologyChangeError when isTopologyChangeRequiredCached returns true", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-        cantonResources: {
-          ...mockAccount.cantonResources,
-          publicKey: "test-public-key",
-        },
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(true);
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
       const transaction = createMockTransaction({
-        recipient: "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876a",
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
       });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached returns false", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-        cantonResources: {
-          ...mockAccount.cantonResources,
-          publicKey: "test-public-key",
-        },
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
       const transaction = createMockTransaction({
-        recipient: "alice::f9e8d7c6b5a4321098765432109876543210fedcba0987654321098765432109876a",
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
       });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached throws an error", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-        cantonResources: {
-          ...mockAccount.cantonResources,
-          publicKey: "test-public-key",
-        },
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockRejectedValue(new Error("Network error"));
-
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });

@@ -12,8 +12,8 @@ describe("getDeviceTransactionConfig", () => {
       errors: {},
       warnings: {},
       amount: new BigNumber(1),
-      estimatedFees: new BigNumber(0),
       totalSpent: new BigNumber(1),
+      estimatedFees: new BigNumber(0),
     };
 
     expect(
@@ -33,8 +33,8 @@ describe("getDeviceTransactionConfig", () => {
       errors: {},
       warnings: {},
       amount: new BigNumber(0),
-      estimatedFees: new BigNumber(1),
       totalSpent: new BigNumber(1),
+      estimatedFees: new BigNumber(1),
     };
 
     expect(

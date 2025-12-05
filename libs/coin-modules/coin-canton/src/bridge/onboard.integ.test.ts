@@ -1,8 +1,11 @@
 import { firstValueFrom, toArray } from "rxjs";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import coinConfig from "../config";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
-import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  setupMockCoinConfig,
+} from "../test/fixtures";
 import {
   AuthorizeStatus,
   CantonAuthorizeProgress,
@@ -18,9 +21,9 @@ import {
 } from "../network/gateway";
 
 describe("onboard (devnet)", () => {
-  const mockDeviceId = "test-device-id";
-  const mockCurrency = createMockCantonCurrency();
   const mockAccount = createMockCantonAccount();
+  const mockCurrency = createMockCantonCurrency();
+  const mockDeviceId = "test-device-id";
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -30,15 +33,7 @@ describe("onboard (devnet)", () => {
   } | null = null;
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-    }));
+    setupMockCoinConfig();
   });
 
   const getOnboardedAccount = () => {

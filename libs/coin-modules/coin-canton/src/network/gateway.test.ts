@@ -1,4 +1,5 @@
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import network from "@ledgerhq/live-network";
 import {
   createMockCantonCurrency,
   createMockInstrumentBalances,
@@ -9,12 +10,7 @@ import { TopologyChangeError } from "../types/errors";
 import type { GetBalanceResponse } from "../types/gateway";
 import { getBalance, isPartyAlreadyExists, submitOnboarding } from "./gateway";
 
-jest.mock("@ledgerhq/live-network", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
-
-import network from "@ledgerhq/live-network";
+jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
 
 const mockBalances = createMockInstrumentBalances(2, [
   {
@@ -35,7 +31,7 @@ const mockBalances = createMockInstrumentBalances(2, [
 
 describe("getBalance", () => {
   const mockCurrency = createMockCantonCurrency();
-
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {

@@ -23,6 +23,7 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
+          let transactionHash = "";
           const signature = await signerContext(deviceId, async signer => {
             const { id, freshAddressPath: derivationPath, xpub } = account;
             const address = xpub ?? decodeAccountId(id).xpubOrAddress;
@@ -42,13 +43,15 @@ export const buildSignOperation =
               params.memo = transaction.memo;
             }
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
               account.currency,
               {
                 address,
               },
               params,
             );
+
+            transactionHash = hash || "";
 
             const signatureResult = await signTransaction(
               signer,
@@ -67,7 +70,7 @@ export const buildSignOperation =
           });
 
           // We create an optimistic operation here, the framework will then replace this transaction with the one returned by the indexer
-          const hash = "";
+          const hash = transactionHash;
           const operation: Operation = {
             id: encodeOperationId(account.id, hash, "OUT"),
             hash,

@@ -6,7 +6,7 @@ import {
   createMockSignerContext,
   createMockTransaction,
 } from "../test/fixtures";
-import prepareTransferMock from "../test/prepare-transfer.json";
+import { transaction, metadata } from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../common-logic", () => {
@@ -36,10 +36,7 @@ describe("buildSignOperation", () => {
 
     mockCraftTransaction.mockResolvedValue({
       nativeTransaction: {
-        json: {
-          transaction: prepareTransferMock.transaction,
-          metadata: prepareTransferMock.metadata,
-        },
+        json: { transaction, metadata },
         serialized: "serialized-transaction",
         hash: "mock-hash",
         step: { type: "single-step" },
@@ -68,17 +65,14 @@ describe("buildSignOperation", () => {
 
     // THEN
     expect(mockCraftTransaction).toHaveBeenCalled();
-    expect(result).toMatchObject({
-      signedOperation: {
-        signature: expect.any(String),
-      },
-    });
-
+    expect(result).toMatchObject({ signedOperation: { signature: expect.any(String) } });
     const signedResult = result as { signedOperation: { signature: string } };
     const parsedSignature = JSON.parse(signedResult.signedOperation.signature);
     expect(parsedSignature).toMatchObject({
       serialized: "serialized-transaction",
-      signature: expect.stringMatching(/^[0-9a-f]+__PARTY__test_address$/i),
+      signature: expect.stringMatching(
+        new RegExp(`^[0-9a-f]+__PARTY__${mockAccount.freshAddress}$`, "i"),
+      ),
     });
   });
 });

@@ -9,7 +9,7 @@ import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
 import { CantonAccount } from "../types";
 import { makeGetAccountShape } from "./sync";
 
-const TEST_ADDRESS = "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890ab";
+const TEST_ADDRESS = "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000";
 const currency = getCryptoCurrencyById("canton_network");
 const derivationMode = getDerivationModesForCurrency(currency)[0];
 const derivationPath = "44'/6767'/0'/0'/0'";

@@ -2,6 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import crypto from "crypto";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
 import { TopologyChangeError } from "../types/errors";

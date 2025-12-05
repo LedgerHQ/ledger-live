@@ -3,44 +3,33 @@ import BigNumber from "bignumber.js";
 import { isAccountEmpty } from "./helpers";
 import { createMockCantonAccount, createMockPendingTransferProposal } from "./test/fixtures";
 
+const createMockSubAccount = (overrides: Partial<TokenAccount> = {}): TokenAccount => {
+  const account = createMockCantonAccount();
+  const tokenAccount: TokenAccount = {
+    ...account,
+    type: "TokenAccount",
+    parentId: "parent-id",
+    token: {
+      type: "TokenCurrency",
+      id: "token-id",
+      contractAddress: "0x123",
+      name: "Test Token",
+      ticker: "TEST",
+      units: [],
+      tokenType: "ERC20",
+      parentCurrency: account.currency,
+    },
+    ...overrides,
+  };
+  return tokenAccount;
+};
+
 describe("isAccountEmpty", () => {
   describe("when account is not of type Account", () => {
     it("should return false for TokenAccount", () => {
-      const tokenAccount: TokenAccount = {
-        type: "TokenAccount",
-        id: "token-account-id",
+      const tokenAccount = createMockSubAccount({
         parentId: "parent-account-id",
-        token: {
-          type: "TokenCurrency",
-          id: "token-id",
-          contractAddress: "0x123",
-          name: "Test Token",
-          ticker: "TEST",
-          decimals: 18,
-          parentCurrency: {
-            id: "ethereum",
-            type: "CryptoCurrency",
-            name: "Ethereum",
-            ticker: "ETH",
-            family: "evm",
-            units: [],
-            explorerViews: [],
-          },
-        },
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        balanceHistoryCache: {
-          HOUR: { latestDate: null, balances: [] },
-          DAY: { latestDate: null, balances: [] },
-          WEEK: { latestDate: null, balances: [] },
-        },
-        swapHistory: [],
-        creationDate: new Date(),
-        balanceHistory: [],
-      };
+      });
 
       expect(isAccountEmpty(tokenAccount)).toBe(false);
     });
@@ -78,35 +67,7 @@ describe("isAccountEmpty", () => {
 
     it("should return false when account has subAccounts", () => {
       const accountWithSubAccounts = createMockCantonAccount({
-        subAccounts: [
-          {
-            type: "TokenAccount",
-            id: "token-account-id",
-            parentId: "parent-id",
-            token: {
-              type: "TokenCurrency",
-              id: "token-id",
-              contractAddress: "0x123",
-              name: "Test Token",
-              ticker: "TEST",
-              decimals: 18,
-              parentCurrency: createMockCantonAccount().currency,
-            },
-            balance: new BigNumber(0),
-            spendableBalance: new BigNumber(0),
-            operationsCount: 0,
-            operations: [],
-            pendingOperations: [],
-            balanceHistoryCache: {
-              HOUR: { latestDate: null, balances: [] },
-              DAY: { latestDate: null, balances: [] },
-              WEEK: { latestDate: null, balances: [] },
-            },
-            swapHistory: [],
-            creationDate: new Date(),
-            balanceHistory: [],
-          },
-        ],
+        subAccounts: [createMockSubAccount()],
       });
 
       expect(isAccountEmpty(accountWithSubAccounts)).toBe(false);
@@ -135,35 +96,7 @@ describe("isAccountEmpty", () => {
     it("should return false when account has operations and subAccounts", () => {
       const accountWithOperationsAndSubAccounts = createMockCantonAccount({
         operationsCount: 2,
-        subAccounts: [
-          {
-            type: "TokenAccount",
-            id: "token-account-id",
-            parentId: "parent-id",
-            token: {
-              type: "TokenCurrency",
-              id: "token-id",
-              contractAddress: "0x123",
-              name: "Test Token",
-              ticker: "TEST",
-              decimals: 18,
-              parentCurrency: createMockCantonAccount().currency,
-            },
-            balance: new BigNumber(0),
-            spendableBalance: new BigNumber(0),
-            operationsCount: 0,
-            operations: [],
-            pendingOperations: [],
-            balanceHistoryCache: {
-              HOUR: { latestDate: null, balances: [] },
-              DAY: { latestDate: null, balances: [] },
-              WEEK: { latestDate: null, balances: [] },
-            },
-            swapHistory: [],
-            creationDate: new Date(),
-            balanceHistory: [],
-          },
-        ],
+        subAccounts: [createMockSubAccount()],
       });
 
       expect(isAccountEmpty(accountWithOperationsAndSubAccounts)).toBe(false);
@@ -188,33 +121,11 @@ describe("isAccountEmpty", () => {
           operationsCount: 10,
           balance: new BigNumber(10000),
           subAccounts: [
-            {
-              type: "TokenAccount",
-              id: "token-account-id",
-              parentId: "parent-id",
-              token: {
-                type: "TokenCurrency",
-                id: "token-id",
-                contractAddress: "0x123",
-                name: "Test Token",
-                ticker: "TEST",
-                decimals: 18,
-                parentCurrency: createMockCantonAccount().currency,
-              },
+            createMockSubAccount({
               balance: new BigNumber(100),
               spendableBalance: new BigNumber(100),
               operationsCount: 5,
-              operations: [],
-              pendingOperations: [],
-              balanceHistoryCache: {
-                HOUR: { latestDate: null, balances: [] },
-                DAY: { latestDate: null, balances: [] },
-                WEEK: { latestDate: null, balances: [] },
-              },
-              swapHistory: [],
-              creationDate: new Date(),
-              balanceHistory: [],
-            },
+            }),
           ],
         },
         {

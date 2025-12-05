@@ -1,6 +1,5 @@
-import coinConfig from "../config";
 import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
-import { createMockCantonCurrency } from "../test/fixtures";
+import { createMockCantonCurrency, setupMockCoinConfig } from "../test/fixtures";
 import type { OnboardingPrepareResponse } from "../types/gateway";
 import {
   getBalance,
@@ -27,15 +26,7 @@ describe("gateway (devnet)", () => {
   let prepareResponse: OnboardingPrepareResponse | null = null;
 
   beforeAll(async () => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-      networkType: "devnet",
-      status: {
-        type: "active",
-      },
-    }));
+    setupMockCoinConfig();
   });
 
   const getOnboardedAccount = () => {
@@ -50,11 +41,7 @@ describe("gateway (devnet)", () => {
       // GIVEN
       const keyPair = generateMockKeyPair();
 
-      // Save onboarded account for all tests that need a valid party ID
-      onboardedAccount = {
-        keyPair,
-        partyId: "", // set in next test
-      };
+      onboardedAccount = { keyPair, partyId: "" /* set in next test */ };
 
       // WHEN
       const response = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
@@ -67,7 +54,6 @@ describe("gateway (devnet)", () => {
       expect(response.transactions).toHaveProperty("combined_hash");
       expect(response.party_name).toBeDefined();
       expect(typeof response.party_name).toBe("string");
-
       expect(response.public_key_fingerprint).toBe(keyPair.fingerprint);
     });
   });
@@ -76,11 +62,9 @@ describe("gateway (devnet)", () => {
     it("should submit onboarding with proper signature", async () => {
       // GIVEN
       const { keyPair } = getOnboardedAccount();
-      // Save prepare response for next test
       prepareResponse = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
-      // Verify signature is valid
       const verification = verifySignature(
         keyPair.publicKeyHex,
         signature,
@@ -94,11 +78,7 @@ describe("gateway (devnet)", () => {
         signature,
       });
 
-      // Save onboarded account for next tests that need a valid party ID
-      onboardedAccount = {
-        keyPair,
-        partyId: response.party.party_id,
-      };
+      onboardedAccount = { keyPair, partyId: response.party.party_id };
 
       // THEN
       expect(response).toHaveProperty("party");
@@ -111,13 +91,10 @@ describe("gateway (devnet)", () => {
     testIfPrepared(
       "should not throw when already onboarded",
       async () => {
-        // Add delay to ensure previous operations are complete
-        await new Promise(resolve => setTimeout(resolve, 10000));
         // GIVEN
         const { keyPair } = getOnboardedAccount();
         const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);
 
-        // Verify signature is valid
         const verification = verifySignature(
           keyPair.publicKeyHex,
           signature,
@@ -148,7 +125,6 @@ describe("gateway (devnet)", () => {
       const hashToSign = prepareResponse?.transactions?.combined_hash || "";
       const signature = keyPair.sign(hashToSign);
 
-      // Verify signature is valid
       const verification = verifySignature(keyPair.publicKeyHex, signature, hashToSign);
       expect(verification.isValid).toBe(true);
 
@@ -213,7 +189,7 @@ describe("gateway (devnet)", () => {
     it("should return user transactions", async () => {
       const { operations } = await getOperations(
         mockCurrency,
-        "bob::a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567890",
+        "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
         {},
       );
       expect(operations.length).toBeGreaterThanOrEqual(0);
@@ -241,26 +217,14 @@ describe("gateway (devnet)", () => {
     it.skip("should submit tap request with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const tapPrepareResponse = await prepareTapRequest(mockCurrency, {
-        partyId,
-        amount: 1000,
-      });
-      const tapSignature = keyPair.sign(tapPrepareResponse.hash);
+      const { hash, serialized } = await prepareTapRequest(mockCurrency, { partyId, amount: 1000 });
+      const signature = keyPair.sign(hash);
 
-      // Verify signature is valid
-      const verification = verifySignature(
-        keyPair.publicKeyHex,
-        tapSignature,
-        tapPrepareResponse.hash,
-      );
+      const verification = verifySignature(keyPair.publicKeyHex, signature, hash);
       expect(verification.isValid).toBe(true);
 
       // WHEN
-      const response = await submitTapRequest(mockCurrency, {
-        partyId,
-        serialized: tapPrepareResponse.serialized,
-        signature: tapSignature,
-      });
+      const response = await submitTapRequest(mockCurrency, { partyId, serialized, signature });
 
       // THEN
       expect(response).toHaveProperty("submission_id");
@@ -293,7 +257,6 @@ describe("gateway (devnet)", () => {
       const preparedTransaction = await preparePreApprovalTransaction(mockCurrency, partyId);
       const preApprovalSignature = keyPair.sign(preparedTransaction.hash);
 
-      // Verify signature is valid
       const verification = verifySignature(
         keyPair.publicKeyHex,
         preApprovalSignature,

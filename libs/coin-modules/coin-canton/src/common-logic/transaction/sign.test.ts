@@ -6,8 +6,21 @@ import {
 import type { CantonSigner } from "../../types/signer";
 import { signTransaction } from "./sign";
 
+const createMockSigner = (signTransactionImpl: CantonSigner["signTransaction"]): CantonSigner => {
+  const signer = createMockCantonSigner();
+  return {
+    getAddress: signer.getAddress.bind(signer),
+    signTransaction: signTransactionImpl,
+  };
+};
+
 describe("signTransaction", () => {
-  const mockSigner = createMockCantonSigner();
+  const mockSigner = createMockSigner(
+    jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+    }),
+  );
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
 
   it("should sign prepared transaction", async () => {
@@ -29,14 +42,10 @@ describe("signTransaction", () => {
 
   it("should sign untyped versioned message", async () => {
     // GIVEN
-    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse();
+    const mockOnboardingPrepare = createMockOnboardingPrepareResponse();
 
     // WHEN
-    const result = await signTransaction(
-      mockSigner,
-      mockDerivationPath,
-      mockOnboardingPrepareResponse,
-    );
+    const result = await signTransaction(mockSigner, mockDerivationPath, mockOnboardingPrepare);
 
     // THEN
     expect(result.signature).toBeDefined();
@@ -47,11 +56,8 @@ describe("signTransaction", () => {
 
   it("should handle empty signature from signer", async () => {
     // GIVEN
-    const mockSignerWithEmptySignature = {
-      ...mockSigner,
-      signTransaction: jest.fn().mockResolvedValue(""),
-    } as unknown as CantonSigner;
-
+    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "" });
+    const mockSignerWithEmptySignature = createMockSigner(mockSignerSpy);
     const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
@@ -66,11 +72,8 @@ describe("signTransaction", () => {
 
   it("should handle signer errors", async () => {
     // GIVEN
-    const mockSignerWithError = {
-      ...mockSigner,
-      signTransaction: jest.fn().mockRejectedValue(new Error("Signer error")),
-    } as unknown as CantonSigner;
-
+    const mockSignerSpy = jest.fn().mockRejectedValue(new Error("Signer error"));
+    const mockSignerWithError = createMockSigner(mockSignerSpy);
     const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
@@ -81,12 +84,10 @@ describe("signTransaction", () => {
 
   it("should call signer with correct parameters for prepared transaction", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
-
+    const mockSignerSpy = jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+    });
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
     const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN
@@ -106,12 +107,10 @@ describe("signTransaction", () => {
 
   it("should call signer with correct parameters for untyped versioned message without challenge", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
-
+    const mockSignerSpy = jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+    });
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
     const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse({
       challenge_nonce: "",
       challenge_deadline: 0,
@@ -131,28 +130,26 @@ describe("signTransaction", () => {
   });
 
   it("should call signer with correct parameters for untyped versioned message with challenge", async () => {
+    // GIVEN
     const mockSignerSpy = jest.fn().mockResolvedValue({
-      signature: "main-signature",
-      applicationSignature: "challenge-signature",
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
     });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
-
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
     const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse();
 
+    // WHEN
     const result = await signTransaction(
       mockSignerWithSpy,
       mockDerivationPath,
       mockOnboardingPrepareResponse,
     );
 
+    // THEN
     expect(result).toEqual({
-      signature: "main-signature",
-      applicationSignature: "challenge-signature",
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
     });
-
     expect(mockSignerSpy).toHaveBeenCalledWith(mockDerivationPath, {
       transactions: [
         "namespace-transaction-data",
