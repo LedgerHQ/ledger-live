@@ -50,7 +50,13 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     );
 
     expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+
+    // Wait for the asset list to be rendered (skeletons are replaced with actual content)
+    await waitFor(() => {
+      expect(screen.getByTestId("asset-selector-list-container")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
   });
 
