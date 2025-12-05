@@ -50,6 +50,7 @@ catalog:
   "@ledgerhq/speculos-device-controller": 0.2.0
   "@ledgerhq/ldls-design-core": 0.0.31
   "tailwindcss": ^3.4.0
+  rxjs: 7.8.2
 
 
 overrides:

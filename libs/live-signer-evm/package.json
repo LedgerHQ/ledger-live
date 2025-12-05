@@ -33,7 +33,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "rxjs": "7.8.1"
+    "rxjs": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

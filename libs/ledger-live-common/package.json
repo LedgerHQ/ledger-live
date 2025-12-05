@@ -260,7 +260,7 @@
     "react-redux": "catalog:",
     "reselect": "^4.1.5",
     "rlp": "^3.0.0",
-    "rxjs": "7.8.1",
+    "rxjs": "catalog:",
     "semver": "^7.3.5",
     "triple-beam": "^1.3.0",
     "tsx": "^4.7.1",

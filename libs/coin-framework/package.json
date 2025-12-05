@@ -101,7 +101,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "uuid": "11.1.0"
   },
   "devDependencies": {

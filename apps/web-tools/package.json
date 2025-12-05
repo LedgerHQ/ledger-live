@@ -56,7 +56,7 @@
     "react-select": "^5.7.4",
     "react-table": "^6.11.4",
     "react-tooltip": "^5.26.4",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "semver": "^7.5.4",
     "styled-components": "^6.0.7",
     "typescript": "5.2.2",

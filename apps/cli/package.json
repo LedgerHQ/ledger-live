@@ -68,7 +68,7 @@
     "qrcode-terminal": "0.12.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "rxjs": "7.8.1",
+    "rxjs": "catalog:",
     "usb": "*",
     "winston": "3.13.0",
     "ws": "8.17.1",
