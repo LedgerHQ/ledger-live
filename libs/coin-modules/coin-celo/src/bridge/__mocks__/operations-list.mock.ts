@@ -18,7 +18,7 @@ export const erc20Operation = {
     assetAmount: "200000000000000000000",
   },
   id: "js:2:celo:address",
-  recipients: ["0x5a40FEE4eFebE3c85eDD3C79E15e221B7261a000"],
+  recipients: ["0x0000000000000000000000000000000000001d00"],
   senders: ["0x5a40FEE4eFebE3c85eDD3C79E15e221B7261a000"],
   tx: {
     block: {

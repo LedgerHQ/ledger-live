@@ -13,7 +13,7 @@ import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/c
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { TokenAccount } from "@ledgerhq/types-live";
 
 const kit = celoKit();
 
