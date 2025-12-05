@@ -1438,6 +1438,9 @@
       "dismiss": "Maybe later"
     },
     "actions": {
+      "deviceOnboarded": {
+        "titleCompleted": "Setup your Ledger device"
+      },
       "buyCrypto": {
         "title": "Buy Crypto",
         "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
