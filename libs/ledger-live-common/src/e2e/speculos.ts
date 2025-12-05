@@ -816,13 +816,11 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.sepETH:
     case Currency.POL:
     case Currency.ETH:
+    case Currency.ETH_USDT:
       await sendEVM(tx);
       break;
     case Currency.BTC:
       await sendBTC(tx);
-      break;
-    case Currency.ETH_USDT:
-      await sendEVM(tx);
       break;
     case Currency.DOGE:
     case Currency.BCH:

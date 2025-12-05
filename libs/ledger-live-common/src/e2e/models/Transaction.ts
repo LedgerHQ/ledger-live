@@ -4,6 +4,8 @@ import { AccountType } from "../enum/Account";
 export type TransactionType = Transaction;
 
 export class Transaction {
+  public recipientAddress?: string;
+
   constructor(
     public accountToDebit: AccountType,
     public accountToCredit: AccountType,
