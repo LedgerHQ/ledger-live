@@ -4,6 +4,8 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -132,7 +134,12 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const { appName, onSuccess, onError, analyticsPropertyFlow, transaction, status } = route.params;
+  const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { transaction, status } = useBridgeTransaction(() => ({
+    account: mainAccount,
+    transaction: route.params.transaction,
+  }));
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandler({
     account,
