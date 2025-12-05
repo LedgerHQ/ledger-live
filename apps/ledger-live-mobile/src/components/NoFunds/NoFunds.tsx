@@ -55,7 +55,7 @@ type ButtonItem = {
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route.params;
+  const { account, parentAccount, entryPoint, currencyId } = route.params;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
@@ -119,8 +119,13 @@ export default function NoFunds({ route }: Readonly<Props>) {
       button: "buy",
       page,
     });
-    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
-  }, [onNavigate, page, track]);
+    onNavigate(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+      params: {
+        defaultCurrencyId: currencyId,
+      },
+    });
+  }, [onNavigate, page, track, currencyId]);
 
   const buttonsList: ButtonItem[] = [
     {

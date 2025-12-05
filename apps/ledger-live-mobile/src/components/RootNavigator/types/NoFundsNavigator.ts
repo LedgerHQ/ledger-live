@@ -6,5 +6,6 @@ export type NoFundsNavigatorParamList = {
     account: AccountLike;
     parentAccount?: Account;
     entryPoint?: "get-funds" | undefined;
+    currencyId?: string;
   };
 };

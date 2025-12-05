@@ -139,6 +139,7 @@ export function useCustomExchangeHandlers({
       },
       "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
         const accountId = request.params?.accountId;
+        const currencyId = request.params?.currencyId;
 
         return new Promise<void>((resolve, reject) => {
           try {
@@ -158,6 +159,7 @@ export function useCustomExchangeHandlers({
                   parentAccount: isTokenAccount(account)
                     ? getParentAccount(account, accounts)
                     : undefined,
+                  currencyId,
                 },
               });
 
