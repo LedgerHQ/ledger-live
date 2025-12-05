@@ -1,3 +1,5 @@
+import React from "react";
+import { Dialog, DialogContent } from "@ledgerhq/ldls-ui-react";
 import {
   ethereumCurrency,
   bitcoinCurrency,
@@ -8,6 +10,18 @@ export const mockOnAccountSelected = jest.fn();
 export const mockOnAssetSelected = jest.fn();
 export const mockDispatch = jest.fn();
 export const currencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
+
+/**
+ * Helper component to wrap a component in an open Dialog for testing.
+ * This allows DialogHeader to work properly in tests without mocking it.
+ */
+export function DialogTestWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <Dialog open={true} onOpenChange={() => {}}>
+      <DialogContent>{children}</DialogContent>
+    </Dialog>
+  );
+}
 
 export function mockDomMeasurements() {
   Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
