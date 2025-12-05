@@ -1,0 +1,39 @@
+# Ledger Live - Cursor Rules
+
+## Design System - LDLS (Lumen)
+
+@node_modules/@ledgerhq/ldls-ui-react/ai-rules/RULES.md
+
+## Project Structure
+
+This is a pnpm monorepo containing:
+- `/apps/ledger-live-desktop` - Electron desktop application
+- `/apps/ledger-live-mobile` - React Native mobile app
+- `/libs/` - Shared libraries and packages
+
+## Code Standards
+
+### TypeScript
+- Always use TypeScript for new code
+- Prefer explicit types over `any`
+- Use proper typing for Redux actions and state
+
+### React
+- Use functional components with hooks
+- Prefer composition over inheritance
+- Keep components small and focused
+
+### Imports
+- Use workspace: protocol for internal packages
+- Use catalog: for shared dependencies (see pnpm-workspace.yaml)
+- Import paths: Use `~` alias for renderer code, `LLD` alias for newArch code
+
+### Styling
+- Desktop: Use Tailwind CSS with LDLS design tokens
+- Follow LDLS rules for colors, spacing, and typography
+- Avoid inline styles unless necessary
+
+## Testing
+- Write tests for business logic
+- Use `@testing-library` for component tests
+- Run `pnpm test` before committing
