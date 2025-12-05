@@ -1,21 +1,20 @@
 // NOTE don't import anything in order to measure the startup time with minimal overhead
-export type StartupEvent = { event: string; time: number };
+/* eslint-disable no-console */
 
-const resolvers: ((start: Promise<number>) => Promise<StartupEvent>)[] = [];
-const resolved: Promise<StartupEvent>[] = [];
+if (__DEV__) console.time("LogStartupTime");
+export const startupFirstImportTime = Date.now();
+
+export type StartupEvent = { event: string; time: number };
+export const startupEventsResolvers: ((start: number) => StartupEvent)[] = [];
 
 export function logStartupEvent(eventName: string) {
+  if (__DEV__) console.timeLog("LogStartupTime", eventName);
   const now = Date.now();
   return new Promise<StartupEvent>(res => {
-    resolvers.push(async start => {
-      const event = { event: eventName, time: now - (await start) };
+    startupEventsResolvers.push(start => {
+      const event = { event: eventName, time: now - start };
       res(event);
       return event;
     });
   });
-}
-
-export function resolveStartupEvents(start: Promise<number>) {
-  resolved.push(...resolvers.splice(0).map(resolver => resolver(start)));
-  return Promise.all(resolved);
 }
