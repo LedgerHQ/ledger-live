@@ -40,7 +40,7 @@ export function upToDate(app: Probot) {
             checkRun = response.data.check_runs[0];
           }
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
 

@@ -70,7 +70,7 @@ export default (arg: {
             chainCode,
             successResponse,
           ]);
-        } catch (e) {
+        } catch {
           return genericErrorResponse;
         }
       }

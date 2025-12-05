@@ -1,8 +1,7 @@
 import { PureComponent } from "react";
 import { BackHandler, NativeEventSubscription } from "react-native";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-class PreventNativeBack extends PureComponent<{}> {
+class PreventNativeBack extends PureComponent {
   removeBoundEventListener: NativeEventSubscription | undefined;
 
   componentDidMount() {

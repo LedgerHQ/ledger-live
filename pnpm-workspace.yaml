@@ -54,5 +54,8 @@ catalog:
   isomorphic-ws: 5.0.0
   ws: 8.18.3
 
+  "@typescript-eslint/eslint-plugin": 8.48.1
+  "@typescript-eslint/parser": 8.48.1
+
 overrides:
   node-abi: ^4.9.0

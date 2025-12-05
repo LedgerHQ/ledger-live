@@ -27,7 +27,7 @@ export function patchHermesTypedArraysIfNeeded() {
       const fixHermesTypedArrayBug = require("@exodus/patch-broken-hermes-typed-arrays");
       fixHermesTypedArrayBug();
       hermesTypedArrayPatched = true;
-    } catch (e) {
+    } catch {
       log("coin:stellar", "Failed to patch typed arrays");
     }
   }

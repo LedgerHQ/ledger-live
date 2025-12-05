@@ -41,20 +41,15 @@ module.exports = {
         varsIgnorePattern: "^_",
         args: "after-used",
         ignoreRestSiblings: true,
+        caughtErrors: "all",
+        caughtErrorsIgnorePattern: "^_",
       },
     ],
+
+    // Will be removed once we have migrated all packages
     "@typescript-eslint/no-require-imports": "warn",
+    "@typescript-eslint/no-unused-expressions": "warn",
+    "@typescript-eslint/no-empty-object-type": "warn",
+    "@typescript-eslint/no-unsafe-function-type": "warn",
   },
-  overrides: [
-    {
-      // Enable type-aware linting for TypeScript files only
-      files: ["*.ts", "*.tsx"],
-      parserOptions: {
-        project: true,
-      },
-      rules: {
-        "@typescript-eslint/no-deprecated": "error",
-      },
-    },
-  ],
 };

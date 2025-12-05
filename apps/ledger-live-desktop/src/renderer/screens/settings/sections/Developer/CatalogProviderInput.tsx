@@ -24,7 +24,7 @@ const CatalogProviderInput = () => {
       const response = await api.fetchLiveAppManifests(customProvider);
       if (response.length === 0) throw new Error("Invalid URL");
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   };

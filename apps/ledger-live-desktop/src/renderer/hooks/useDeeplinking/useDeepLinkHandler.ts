@@ -43,7 +43,7 @@ export function useDeepLinkHandler() {
     (
       pathname: string,
       state?: {
-        [k: string]: string | Object;
+        [k: string]: string | object;
       },
       search?: string,
     ) => {
@@ -326,7 +326,7 @@ export function useDeepLinkHandler() {
                 findCryptoCurrencyByKeyword(currencyId) ||
                 (await getCryptoAssetsStore().findTokenById(currencyId)) ||
                 null;
-            } catch (error) {
+            } catch {
               foundCurrency = null;
             }
 

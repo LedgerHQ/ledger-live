@@ -106,7 +106,7 @@ export function useWebView(
           const webview = safeGetRefValue(webviewRef);
 
           webview.postMessage(message);
-        } catch (error) {
+        } catch {
           console.warn(
             "wallet-api-server tried to send a message while the webview was not yet initialized.",
             message,

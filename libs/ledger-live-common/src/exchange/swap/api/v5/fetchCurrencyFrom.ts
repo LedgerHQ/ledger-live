@@ -45,7 +45,7 @@ export async function fetchCurrencyFrom({
       ...(headers !== undefined ? { headers } : {}),
     });
     return flattenV5CurrenciesToAndFrom(data);
-  } catch (e) {
+  } catch {
     throw Error("Something went wrong in fetchCurrencyFrom call");
   }
 }

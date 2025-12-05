@@ -23,7 +23,7 @@ class MockJsonProvider implements Provider {
 
     try {
       return configValue[key] ?? info.default;
-    } catch (err) {
+    } catch {
       throw new Error(`config key ${key} not found`);
     }
   }

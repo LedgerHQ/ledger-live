@@ -314,11 +314,11 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 }
 
 // FIXME: find better maybeMemo type without disabling the rule
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
 type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSupported
-  ? // eslint-disable-next-line @typescript-eslint/ban-types
+  ? // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     {}
   : { data: TxDataType };
 

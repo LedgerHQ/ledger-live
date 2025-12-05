@@ -56,7 +56,7 @@ export const resolveDomain = async (
       const checksummedAddress = (() => {
         try {
           return eip55.encode(promise.value.data);
-        } catch (e) {
+        } catch {
           return promise.value.data;
         }
       })();
@@ -98,7 +98,7 @@ export const resolveAddress = async (
   const checksummedAddress = (() => {
     try {
       return eip55.encode(address);
-    } catch (e) {
+    } catch {
       return address;
     }
   })();

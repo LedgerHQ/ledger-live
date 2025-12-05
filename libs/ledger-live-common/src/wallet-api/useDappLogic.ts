@@ -555,7 +555,7 @@ export function useDappLogic({
                   result: optimisticOperation.hash,
                 }),
               );
-            } catch (error) {
+            } catch {
               tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
@@ -609,7 +609,7 @@ export function useDappLogic({
                 result: signedMessage,
               }),
             );
-          } catch (error) {
+          } catch {
             tracking.dappPersonalSignFail(manifest);
             postMessage(
               JSON.stringify({
@@ -656,7 +656,7 @@ export function useDappLogic({
                 result: signedMessage,
               }),
             );
-          } catch (error) {
+          } catch {
             tracking.dappSignTypedDataFail(manifest);
             postMessage(
               JSON.stringify({

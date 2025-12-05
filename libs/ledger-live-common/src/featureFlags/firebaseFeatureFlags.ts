@@ -59,7 +59,7 @@ export const isFeature = (key: string): boolean => {
       return false;
     }
     return true;
-  } catch (error) {
+  } catch {
     console.error(`Failed to check if feature "${key}" exists`);
     return false;
   }

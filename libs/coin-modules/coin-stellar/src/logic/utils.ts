@@ -86,7 +86,7 @@ export function isAddressValid(address: string): boolean {
 
   try {
     return StrKey.isValidEd25519PublicKey(address) || StrKey.isValidMed25519PublicKey(address);
-  } catch (err) {
+  } catch {
     return false;
   }
 }

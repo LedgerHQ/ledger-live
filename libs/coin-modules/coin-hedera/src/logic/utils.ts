@@ -300,7 +300,7 @@ export const safeParseAccountId = (
     };
 
     return [null, result];
-  } catch (err) {
+  } catch {
     return [new InvalidAddress("", { currencyName }), null];
   }
 };

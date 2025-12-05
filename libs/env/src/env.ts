@@ -31,7 +31,7 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
     if (typeof v !== "string") throw new Error();
     return JSON.parse(v);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };

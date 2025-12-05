@@ -278,7 +278,7 @@ export const getOperationStatus = async (
         date,
       })),
     } as Operation;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
