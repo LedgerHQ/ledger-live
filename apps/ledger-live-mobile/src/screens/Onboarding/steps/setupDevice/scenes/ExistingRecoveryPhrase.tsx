@@ -8,13 +8,13 @@ const ExistingRecoveryPhraseScene = () => {
 
   return (
     <>
-      <Text variant="h2" color="palette.neutral.c100" mb={3} uppercase>
+      <Text variant="h2" color="neutral.c100" mb={3} uppercase>
         {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.title")}
       </Text>
-      <Text variant="paragraph" color="palette.neutral.c80" mb={3}>
+      <Text variant="paragraph" color="neutral.c80" mb={3}>
         {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.paragraph1")}
       </Text>
-      <Text variant="paragraph" color="palette.neutral.c80" mb={10}>
+      <Text variant="paragraph" color="neutral.c80" mb={10}>
         {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.paragraph2")}
       </Text>
     </>

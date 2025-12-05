@@ -33,13 +33,13 @@ const LinkBox = React.memo(({ text, url, event, mb = 0 }: LinkBoxProps) => (
       flexDirection="row"
       paddingX={6}
       paddingY={6}
-      backgroundColor="palette.primary.c20"
+      backgroundColor="primary.c20"
       mb={mb}
     >
-      <Text color="palette.primary.c80" variant="body" fontSize="14px" fontWeight="semiBold" mr={3}>
+      <Text color="primary.c80" variant="body" fontSize="14px" fontWeight="semiBold" mr={3}>
         {text}
       </Text>
-      <IconsLegacy.ExternalLinkMedium color="palette.primary.c80" size="18px" />
+      <IconsLegacy.ExternalLinkMedium color="primary.c80" size="18px" />
     </Flex>
   </Touchable>
 ));

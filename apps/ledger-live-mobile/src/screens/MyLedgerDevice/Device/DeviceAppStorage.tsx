@@ -64,11 +64,11 @@ const DeviceAppStorage = ({
           <Text
             variant={"small"}
             fontWeight={"medium"}
-            color={"palette.neutral.c100"}
+            color={"neutral.c100"}
             mr={3}
             testID="manager-storage-used"
           >
-            <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
+            <Text variant={"small"} fontWeight={"medium"} color={"neutral.c80"}>
               <Trans i18nKey="manager.storage.used" />
             </Text>{" "}
             <ByteSize
@@ -80,7 +80,7 @@ const DeviceAppStorage = ({
           <Text
             variant={"small"}
             fontWeight={"medium"}
-            color={"palette.neutral.c80"}
+            color={"neutral.c80"}
             testID="manager-installedApp-number"
           >
             <Trans
@@ -88,10 +88,10 @@ const DeviceAppStorage = ({
               values={{ number: apps.length }}
               i18nKey="manager.storage.appsInstalled"
             >
-              <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c100"}>
+              <Text variant={"small"} fontWeight={"medium"} color={"neutral.c100"}>
                 {"placeholder"}
               </Text>
-              <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
+              <Text variant={"small"} fontWeight={"medium"} color={"neutral.c80"}>
                 {"placeholder"}
               </Text>
             </Trans>
@@ -101,18 +101,18 @@ const DeviceAppStorage = ({
         <Flex flexDirection={"row"} alignItems={"center"}>
           {shouldWarnMemory && (
             <Box mr={2}>
-              <WarningMedium color={"palette.warning.c30"} size={14} />
+              <WarningMedium color={"warning.c30"} size={14} />
             </Box>
           )}
           {isDeviceFull ? (
-            <Text variant={"small"} fontWeight={"medium"} color={"palette.warning.c30"}>
+            <Text variant={"small"} fontWeight={"medium"} color={"warning.c30"}>
               <Trans i18nKey="manager.storage.noFreeSpace" />
             </Text>
           ) : (
             <Text
               variant={"small"}
               fontWeight={"medium"}
-              color={"palette.neutral.c80"}
+              color={"neutral.c80"}
               testID="manager-storage-available"
             >
               <ByteSize
