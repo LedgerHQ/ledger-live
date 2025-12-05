@@ -63,7 +63,7 @@
     "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "base64-js": "1",
-    "isomorphic-ws": "5",
+    "isomorphic-ws": "catalog:",
     "rxjs": "catalog:",
     "ws": "catalog:"
   },

@@ -75,6 +75,9 @@ catalogs:
     i18next:
       specifier: 23.10.1
       version: 23.10.1
+    isomorphic-ws:
+      specifier: 5.0.0
+      version: 5.0.0
     react:
       specifier: 18.3.1
       version: 18.3.1
@@ -5361,7 +5364,7 @@ importers:
         specifier: '1'
         version: 1.5.1
       isomorphic-ws:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.0.0(ws@8.18.3)
       rxjs:
         specifier: 'catalog:'
@@ -5734,8 +5737,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       isomorphic-ws:
-        specifier: ^4.0.1
-        version: 4.0.1(ws@8.18.3)
+        specifier: 'catalog:'
+        version: 5.0.0(ws@8.18.3)
       jotai:
         specifier: 2.12.4
         version: 2.12.4(@types/react@18.2.73)(react@18.3.1)
@@ -8738,7 +8741,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       isomorphic-ws:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0(ws@8.17.1)
       lodash:
         specifier: '4'
@@ -65703,10 +65706,6 @@ snapshots:
   isomorphic-ws@4.0.1(ws@7.5.10):
     dependencies:
       ws: 7.5.10
-
-  isomorphic-ws@4.0.1(ws@8.18.3):
-    dependencies:
-      ws: 8.18.3
 
   isomorphic-ws@5.0.0(ws@7.5.10):
     dependencies:
