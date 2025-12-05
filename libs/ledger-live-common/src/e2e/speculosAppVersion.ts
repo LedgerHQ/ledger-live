@@ -59,18 +59,30 @@ export async function getNanoAppCatalog(
   });
 }
 
-function getDeviceFirmwareVersion(): string {
-  const firmwareVersion = process.env.SPECULOS_FIRMWARE_VERSION;
-  if (!firmwareVersion) {
-    throw new Error("SPECULOS_FIRMWARE_VERSION environment variable is not set");
+async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+  const deviceVersion = await repository.getDeviceVersion({
+    targetId: getDeviceTargetId(device),
+    providerId: 1,
+  });
+
+  if (
+    !deviceVersion.se_firmware_final_versions ||
+    deviceVersion.se_firmware_final_versions.length === 0
+  ) {
+    throw new Error(`No firmware versions found for device version ${deviceVersion.id}`);
   }
-  return firmwareVersion;
+
+  const latestFirmwareId = Math.max(...deviceVersion.se_firmware_final_versions);
+  const firmware = await repository.getFinalFirmwareById(latestFirmwareId);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmware.version;
+  return firmware.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
   try {
     const device = getSpeculosModel();
-    const firmware = getDeviceFirmwareVersion();
+    const firmware = await getDeviceFirmwareVersion(device);
     const appCatalog = await getNanoAppCatalog(device, firmware);
     const jsonFilePath = path.join(process.cwd(), nanoAppFilePath);
     const dirPath = path.dirname(jsonFilePath);

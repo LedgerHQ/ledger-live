@@ -72,7 +72,7 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
-  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
+  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")] ?? "cli_speculos");
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
