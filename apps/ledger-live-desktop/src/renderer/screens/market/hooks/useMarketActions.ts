@@ -14,7 +14,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { isAvailableOnBuy, isAvailableOnStake, isAvailableOnSwap } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";

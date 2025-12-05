@@ -20,15 +20,12 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import {
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-  useModularDrawerVisibility,
-} from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "react-redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -331,12 +328,14 @@ export function useSelectAccount({
 
   const dispatch = useDispatch();
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   const onSelectAccount = useCallback(() => {
     if (modularDrawerVisible) {
       dispatch(setFlowValue(flow));
       dispatch(setSourceValue(source));
 
-      openAssetAndAccountDrawer({
+      openAssetAndAccount({
         currencies: currencyIds,
         onSuccess,
         onCancel,
@@ -356,7 +355,16 @@ export function useSelectAccount({
         },
       );
     }
-  }, [modularDrawerVisible, dispatch, flow, source, currencyIds, onSuccess, onCancel]);
+  }, [
+    modularDrawerVisible,
+    dispatch,
+    flow,
+    source,
+    openAssetAndAccount,
+    currencyIds,
+    onSuccess,
+    onCancel,
+  ]);
 
   return { onSelectAccount, currentAccount };
 }
