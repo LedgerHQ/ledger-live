@@ -18,7 +18,6 @@ export default function StyleProvider({ children, selectedPalette }: Props): Rea
       colors: {
         ...selectedTheme.colors,
         ...palettes[selectedPalette],
-        palette: palettes[selectedPalette],
       },
       theme: selectedPalette,
     }),

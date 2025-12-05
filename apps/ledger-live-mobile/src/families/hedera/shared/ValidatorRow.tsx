@@ -48,8 +48,8 @@ const ValidatorRow = ({ onPress, validator, account }: Props) => {
           </Text>
           {validator.overstaked ? (
             <View style={styles.overstakedWarning}>
-              <Icons.Warning size="XS" color="palette.warning.c70" style={styles.overstakedIcon} />
-              <Text numberOfLines={1} fontSize={10} color="palette.warning.c70">
+              <Icons.Warning size="XS" color="warning.c70" style={styles.overstakedIcon} />
+              <Text numberOfLines={1} fontSize={10} color="warning.c70">
                 <Trans i18nKey="hedera.delegation.steps.validator.rowSubtitleOverstaked" />
               </Text>
             </View>

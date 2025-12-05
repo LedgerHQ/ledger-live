@@ -336,7 +336,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
             activeOpacity={1}
-            underlayColor={colors.palette.opacityDefault.c10}
+            underlayColor={colors.opacityDefault.c10}
             alignItems="center"
             justifyContent="center"
             width={QRContainerSize}
