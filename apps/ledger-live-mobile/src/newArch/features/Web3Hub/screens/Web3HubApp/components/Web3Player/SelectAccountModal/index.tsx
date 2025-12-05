@@ -61,7 +61,6 @@ export default function SelectAccountModal({ isOpened, ...params }: Props) {
             testID="web3hub-select-network"
             keyExtractor={currencyKeyExtractor}
             renderItem={renderCurrencyItem}
-            estimatedItemSize={60}
             data={sortedCurrencies}
             extraData={onPressCurrencyItem}
           />
