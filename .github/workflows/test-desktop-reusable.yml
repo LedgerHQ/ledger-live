@@ -129,7 +129,6 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.25.9
       SPECULOS_DEVICE: nanoSP
-      SPECULOS_FIRMWARE_VERSION: "1.5.0"
     runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
@@ -180,7 +179,6 @@ jobs:
           TEST_EXECUTION: ""
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          SPECULOS_FIRMWARE_VERSION: ${{ env.SPECULOS_FIRMWARE_VERSION }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

@@ -57,11 +57,6 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
-      firmware_version:
-        description: "Firmware version to use for selected device"
-        required: false
-        type: string
-        default: "2.6.0"
 
   workflow_call:
     inputs:
@@ -92,10 +87,6 @@ on:
         required: false
         type: boolean
         default: false
-      firmware_version:
-        description: "Firmware version to use for selected device"
-        required: true
-        type: string
 
 permissions:
   id-token: write
@@ -111,7 +102,6 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || '0.25.9' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '2.6.0' }}
 
 jobs:
   determine-builds:
