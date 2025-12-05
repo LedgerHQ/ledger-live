@@ -255,8 +255,12 @@ const extraProperties = (store: ReduxStore) => {
 
   const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
     accounts,
-    ptxAttributes.stakingCurrenciesEnabled,
-    ptxAttributes.partnerStakingCurrenciesEnabled,
+    Array.isArray(ptxAttributes.stakingCurrenciesEnabled)
+      ? ptxAttributes.stakingCurrenciesEnabled
+      : [],
+    Array.isArray(ptxAttributes.partnerStakingCurrenciesEnabled)
+      ? ptxAttributes.partnerStakingCurrenciesEnabled
+      : [],
   );
   const stakeableAssetsList = stakeableAssets.map(
     asset => `${asset.ticker} on ${asset.networkName}`,

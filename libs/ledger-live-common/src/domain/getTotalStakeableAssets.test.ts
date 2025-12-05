@@ -75,13 +75,6 @@ describe("getTotalStakeableAssets", () => {
     expect(result.stakeableAssets).toEqual([]);
   });
 
-  it("should return empty Set if staking currencies enabled is string (flag not loaded)", () => {
-    const result = getTotalStakeableAssets(mockedAccounts, "flag not loaded", []);
-    expect(result.combinedIds).toBeInstanceOf(Set);
-    expect(result.combinedIds.size).toBe(0);
-    expect(result.stakeableAssets).toEqual([]);
-  });
-
   it("should return Set with matching currency ID when staking currency is enabled", () => {
     const account = mockedAccounts[0];
     const stakingCurrenciesEnabled = [ETH.id]; // "ethereum"
@@ -266,15 +259,6 @@ describe("getTotalStakeableAssets", () => {
   it("should handle empty arrays for staking currencies", () => {
     const account = mockedAccounts[0];
     const result = getTotalStakeableAssets([account], [], []);
-
-    expect(result.combinedIds).toBeInstanceOf(Set);
-    expect(result.combinedIds.size).toBe(0);
-    expect(result.stakeableAssets).toEqual([]);
-  });
-
-  it("should handle undefined for staking currencies", () => {
-    const account = mockedAccounts[0];
-    const result = getTotalStakeableAssets([account], undefined, undefined);
 
     expect(result.combinedIds).toBeInstanceOf(Set);
     expect(result.combinedIds.size).toBe(0);

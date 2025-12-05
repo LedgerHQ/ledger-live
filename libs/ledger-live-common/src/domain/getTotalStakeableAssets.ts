@@ -3,8 +3,8 @@ import { Account } from "@ledgerhq/types-live";
 
 export function getTotalStakeableAssets(
   accounts: Account[] | null | undefined,
-  stakingCurrenciesEnabled: string[] | string | undefined,
-  partnerStakingCurrenciesEnabled: string[] | string | undefined,
+  stakingCurrenciesEnabled: string[],
+  partnerStakingCurrenciesEnabled: string[],
 ): {
   combinedIds: Set<string>;
   stakeableAssets: { ticker: string; networkName: string; id: string }[];
@@ -15,16 +15,12 @@ export function getTotalStakeableAssets(
     .filter(account => account?.balance.isGreaterThan(0))
     .map(account => account?.currency);
 
-  //   const accountsWithFundsCurrenciesIds = new Set(
-  //     accountsWithFundsCurrencies.map(currency => currency.id),
-  //   );
   const allStakingCurrenciesEnabled = new Set([
     ...(Array.isArray(stakingCurrenciesEnabled) ? stakingCurrenciesEnabled : []),
     ...(Array.isArray(partnerStakingCurrenciesEnabled) ? partnerStakingCurrenciesEnabled : []),
   ]);
 
   const tokenWithFundsMap = getTokensWithFundsMap(accounts);
-  //   const tokenWithFunds = Array.from(tokenWithFundsMap.values()).map(token => token.id);
   const filteredAccountCurrencyIds = [...accountsWithFundsCurrencies].filter(currency =>
     allStakingCurrenciesEnabled.has(currency.id),
   );
