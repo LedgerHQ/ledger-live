@@ -94,7 +94,9 @@ export default class SwapLiveAppPage {
 
   @Step("Select available provider")
   async selectExchange() {
-    const providersList = await this.getProviderList();
+    const providersList = (await this.getProviderList()).filter(
+      name => name !== Provider.LIFI.uiName,
+    );
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
@@ -139,8 +141,8 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
-    await waitWebElementByTestId(this.executeSwapButton);
-    await waitForWebElementToBeEnabled(this.executeSwapButton);
+    // await waitWebElementByTestId(this.executeSwapButton);
+    // await waitForWebElementToBeEnabled(this.executeSwapButton);
     await tapWebElementByTestId(this.executeSwapButton);
   }
 

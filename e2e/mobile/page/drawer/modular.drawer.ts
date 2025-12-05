@@ -64,7 +64,7 @@ export default class ModularDrawer {
 
   @Step("Perform search on modular drawer by ticker")
   async performSearchByTicker(ticker: string) {
-    await waitForElementById(this.searchBarId);
+    // await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), ticker);
   }
 

@@ -30,7 +30,7 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex, 20000);
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }

@@ -6,7 +6,7 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
+let readyPromise: Promise<string>;
 const beforeAllFunction = async (swap: SwapType) => {
   await app.speculos.setExchangeDependencies(swap);
   await app.init({
@@ -53,7 +53,7 @@ const beforeAllFunction = async (swap: SwapType) => {
     ],
   });
   await app.portfolio.waitForPortfolioPageToLoad();
-  const readyPromise = waitSwapReady();
+  readyPromise = waitSwapReady();
   await app.swap.openViaDeeplink();
   await swapSetup();
   await readyPromise;
@@ -83,6 +83,7 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
         swapAmount,
       );
 
+      await readyPromise;
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.common.disableSynchronizationForiOS();
