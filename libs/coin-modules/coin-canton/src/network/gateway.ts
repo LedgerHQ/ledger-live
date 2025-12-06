@@ -312,11 +312,9 @@ export async function preparePreApprovalTransaction(currency: CryptoCurrency, pa
   return data;
 }
 
-export async function prepareTapRequest(
-  currency: CryptoCurrency,
-  { partyId, amount = 1000000 }: TapRequest,
-) {
-  const fixedPointAmount = BigInt(amount) * BigInt(10) ** BigInt(38);
+export async function prepareTapRequest(currency: CryptoCurrency, { partyId, amount }: TapRequest) {
+  // Default to 1.0 in fixed-point representation (1 * 10^38)
+  const fixedPointAmount = amount || "1000000000000000000000000000000000000000";
 
   const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",

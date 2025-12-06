@@ -1,6 +1,6 @@
-import prepareTransferMockSerialized from "../../test/prepare-transfer-serialized.json";
-import prepareTransferMock from "../../test/prepare-transfer.json";
-import { splitTransaction } from "./split";
+import prepareTransferMockSerialized from "./fixtures/prepare-transfer-serialized.json";
+import prepareTransferMock from "./fixtures/prepare-transfer.json";
+import { splitTransaction } from "../src/splitTransaction";
 
 function uint8ArrayToHex(bytes: Uint8Array): string {
   return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");

@@ -8,10 +8,12 @@
  * Parties
  */
 
+export type TopologyTransaction = unknown;
+
 export type TopologyTransactionData = {
   serialized: string;
   hash: string;
-  transaction: object; // TopologyTransaction JSON form
+  transaction: TopologyTransaction;
 };
 
 export type TopologyTransactions = {
@@ -43,8 +45,8 @@ export type OnboardingPrepareRequest = {
 export type Party = {
   party_id: string;
   public_key: string;
-  threshold?: number;
   participants?: string[];
+  threshold?: number;
 };
 
 export type OnboardingSubmitRequest = {
@@ -80,7 +82,7 @@ export type InstrumentBalance = {
 export type GetBalanceResponse =
   | {
       at_round: number;
-      balances: InstrumentBalance[];
+      balances?: InstrumentBalance[];
     }
   // temporary backwards compatibility
   | InstrumentBalance[];
@@ -114,6 +116,7 @@ export type AssetView =
       type: "native";
       instrumentAdmin: string;
       instrumentId: string;
+      issuer?: string;
     }
   | {
       type: "template";
@@ -132,14 +135,14 @@ export type AssetView =
 export type FeesView = {
   value: string;
   asset: AssetView;
-  details: Record<string, unknown>;
+  details: unknown;
 };
 
 export type TransferView = {
   address: string;
   type: OperationTypeView;
   value: string;
-  details: Record<string, unknown>;
+  details: unknown;
   asset: string;
 };
 
@@ -155,7 +158,7 @@ export type OperationView = {
   block: BlockView;
   fee: FeesView;
   asset?: AssetView;
-  details: Record<string, unknown> & {
+  details: unknown & {
     operationType?: OperationType;
     metadata?: {
       reason?: string;
@@ -188,6 +191,12 @@ export type GetTransferPreApprovalResponse = {
  * Transaction
  */
 
+export type SendPickingStrategy =
+  | "biggest-first"
+  | "biggest-first-minimal"
+  | "smallest-first"
+  | "smallest-first-minimal";
+
 export type TransferStep =
   | { type: "multi-step" }
   | { type: "single-step" }
@@ -209,11 +218,7 @@ export type PrepareTransferRequest = {
   execute_before_secs: number;
   instrument_admin?: string;
   reason?: string;
-  picking_strategy?:
-    | "biggest-first"
-    | "biggest-first-minimal"
-    | "smallest-first"
-    | "smallest-first-minimal";
+  picking_strategy?: SendPickingStrategy;
 };
 
 export type PrepareTransferInstructionRequest =
@@ -245,7 +250,7 @@ export type SubmitTransactionResponse = {
 
 export type TapRequest = {
   partyId: string;
-  amount?: number;
+  amount?: string;
 };
 
 export type PrepareTapResponse = {
@@ -276,10 +281,18 @@ export enum TransactionType {
  * Events
  */
 
-export type Timestamp = {
+export type CantonTimestamp = {
   seconds: number;
   nanos: number;
 };
+
+export type CantonIdentifier = {
+  package_id: string;
+  module_name: string;
+  entity_name: string;
+};
+
+export type Timestamp = CantonTimestamp;
 
 export type BaseEvent = {
   type: string;
@@ -287,40 +300,43 @@ export type BaseEvent = {
   details: string;
 };
 
-export type CreatedEvent = BaseEvent & {
-  template_id: {
-    package_id: string;
-    module_name: string;
-    entity_name: string;
-  };
-  signatories: string[];
-  observers: string[];
-  details: {
-    createArguments: { fields: unknown[] };
-  };
+export type CreatedEvent = {
+  type: "created";
+  contract_id: string;
+  template_id?: CantonIdentifier;
+  signatories?: string[];
+  observers?: string[];
+  details: unknown;
 };
 
-export type ExercisedEvent = BaseEvent & {
-  template_id: {
-    package_id: string;
-    module_name: string;
-    entity_name: string;
-  };
+export type ExercisedEvent = {
+  type: "exercised";
+  contract_id: string;
+  template_id?: CantonIdentifier;
   choice: string;
   consuming: boolean;
-  acting_parties: string[];
+  acting_parties?: string[];
+  details: unknown;
 };
+
+export type ArchivedEvent = {
+  type: "archived";
+  contract_id: string;
+  details: unknown;
+};
+
+export type CantonEvent = ArchivedEvent | CreatedEvent | ExercisedEvent;
 
 export type Event = BaseEvent | CreatedEvent | ExercisedEvent;
 
-export type TxInfo = {
+export type CantonTransaction = {
   update_id: string;
-  command_id: string;
-  workflow_id: string;
-  effective_at: Timestamp;
+  command_id?: string;
+  workflow_id?: string;
+  effective_at?: CantonTimestamp;
   offset: number;
   synchronizer_id: string;
-  record_time: Timestamp;
-  events: Record<string, Event>[];
-  trace_context: string;
+  record_time?: CantonTimestamp;
+  events?: CantonEvent[];
+  trace_context?: unknown;
 };

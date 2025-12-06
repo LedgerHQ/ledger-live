@@ -1,7 +1,7 @@
 import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import { PrepareTransactionResponse } from "../../types/onboard";
 import { CantonSignature, CantonSigner } from "../../types/signer";
-import { splitTransaction } from "./split";
+import { splitTransaction } from "@ledgerhq/hw-app-canton";
 
 /**
  * Sign a Canton transaction - handles both prepared transactions and untyped versioned messages

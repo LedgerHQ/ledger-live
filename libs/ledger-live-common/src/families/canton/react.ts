@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import { createTransferInstruction } from "@ledgerhq/coin-canton/bridge/acceptOffer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 
@@ -33,15 +34,8 @@ export function useCantonAcceptOrRejectOffer({
       { contractId, deviceId, reason }: TransferInstructionParams,
       type: TransferInstructionType,
     ) => {
-      return cantonBridge.transferInstruction(
-        currency,
-        deviceId,
-        account,
-        partyId,
-        contractId,
-        type,
-        reason,
-      );
+      const instruction = createTransferInstruction(type, contractId, reason);
+      return cantonBridge.transferInstruction(currency, deviceId, account, partyId, instruction);
     },
     [cantonBridge, currency, account, partyId],
   );

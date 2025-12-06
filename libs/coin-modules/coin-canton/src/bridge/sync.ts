@@ -14,13 +14,16 @@ import type { OperationView } from "../types/gateway";
 import { isAccountOnboarded } from "./onboard";
 
 function determineOperationType(
-  details: Record<string, unknown>,
+  details: unknown,
   partyId: string,
   senders: string[],
   transferValue: string,
   txType: string,
 ): OperationType {
-  const operationType = details.operationType;
+  const operationType =
+    details && typeof details === "object" && "operationType" in details
+      ? details.operationType
+      : undefined;
   if (operationType === "transfer-proposal") return "TRANSFER_PROPOSAL";
   if (operationType === "transfer-rejected") return "TRANSFER_REJECTED";
   if (operationType === "transfer-withdrawn") return "TRANSFER_WITHDRAWN";
@@ -43,10 +46,10 @@ function determineOperationType(
   }
 }
 
-function extractMemo(details: Record<string, unknown>) {
+function extractMemo(details: unknown) {
   if (!details || typeof details !== "object") return undefined;
 
-  const metadata = details.metadata;
+  const metadata = "metadata" in details ? details.metadata : undefined;
   if (!metadata || typeof metadata !== "object") return undefined;
 
   const reason = "reason" in metadata ? metadata.reason : undefined;

@@ -102,6 +102,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -125,7 +126,6 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "generate-proto": "node scripts/generate.js",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",

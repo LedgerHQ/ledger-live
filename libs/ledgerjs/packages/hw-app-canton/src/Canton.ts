@@ -2,6 +2,10 @@ import type Transport from "@ledgerhq/hw-transport";
 import { TransportStatusError } from "@ledgerhq/errors";
 import BIPPath from "bip32-path";
 
+// Re-export splitTransaction for convenience
+export { splitTransaction } from "./splitTransaction";
+export type * from "./types";
+
 const CLA = 0xe0;
 
 const P1_NON_CONFIRM = 0x00;

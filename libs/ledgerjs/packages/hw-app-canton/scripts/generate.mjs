@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-/* eslint @typescript-eslint/no-var-requires: off */
-/* eslint no-console: off */
+/* eslint-disable no-console */
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
@@ -10,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const outputFile = path.join(__dirname, "../src/types/transaction-proto.json");
+const outputJsonFile = path.join(__dirname, "../src/types/transaction-proto.json");
 const tempDir = path.join(__dirname, "temp-proto");
 
 const APP_CANTON_REPO = "LedgerHQ/app-canton";
@@ -20,50 +19,6 @@ const APP_CANTON_BASE_URL = `https://raw.githubusercontent.com/${APP_CANTON_REPO
 const DAML_REPO = "digital-asset/daml";
 const DAML_BRANCH = "main";
 const DAML_BASE_URL = `https://raw.githubusercontent.com/${DAML_REPO}/${DAML_BRANCH}`;
-
-const RESERVED_WORDS = [
-  { pattern: /\bbool bool\b/g, replacement: "bool bool_" },
-  { pattern: /\bEnum enum\b/g, replacement: "Enum enum_" },
-  { pattern: /\bstring constructor = (\d+);/g, replacement: "string constructor_ = $1;" },
-];
-
-function handleFileFinish(file, resolve) {
-  file.close();
-  resolve();
-}
-
-function handleFileError(filePath, reject) {
-  return err => {
-    fs.unlink(filePath, () => {
-      /* empty function */
-    });
-    reject(err);
-  };
-}
-
-function handleHttpResponse(url, file, filePath, resolve, reject) {
-  return response => {
-    if (response.statusCode !== 200) {
-      reject(new Error(`Failed to download ${url}: ${response.statusCode}`));
-      return;
-    }
-
-    response.pipe(file);
-
-    file.on("finish", () => handleFileFinish(file, resolve));
-    file.on("error", handleFileError(filePath, reject));
-  };
-}
-
-function downloadFile(url, filePath) {
-  return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(filePath);
-
-    https.get(url, handleHttpResponse(url, file, filePath, resolve, reject)).on("error", err => {
-      reject(err instanceof Error ? err : new Error(err));
-    });
-  });
-}
 
 const PROTO_FILES = [
   {
@@ -132,10 +87,63 @@ const PROTO_FILES = [
   },
 ];
 
+// Replace reserved words to make sure only C allowed names are used
+// see https://github.com/LedgerHQ/app-canton/blob/develop/proto/proto_gen.sh#L257
+const RESERVED_WORDS = [
+  { pattern: /\bbool bool\b/g, replacement: "bool bool_" },
+  { pattern: /\bEnum enum\b/g, replacement: "Enum enum_" },
+  { pattern: /\bstring constructor = (\d+);/g, replacement: "string constructor_ = $1;" },
+];
+
 function ensureDirectoryExists(dirPath) {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
+}
+
+function cleanup() {
+  if (fs.existsSync(tempDir)) {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    console.log("Cleaned up temporary files");
+  }
+}
+
+function handleFileFinish(file, resolve) {
+  file.close();
+  resolve();
+}
+
+function handleFileError(filePath, reject) {
+  return err => {
+    fs.unlink(filePath, () => {
+      /* empty function */
+    });
+    reject(err);
+  };
+}
+
+function handleHttpResponse(url, file, filePath, resolve, reject) {
+  return response => {
+    if (response.statusCode !== 200) {
+      reject(new Error(`Failed to download ${url}: ${response.statusCode}`));
+      return;
+    }
+
+    response.pipe(file);
+
+    file.on("finish", () => handleFileFinish(file, resolve));
+    file.on("error", handleFileError(filePath, reject));
+  };
+}
+
+function downloadFile(url, filePath) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(filePath);
+
+    https.get(url, handleHttpResponse(url, file, filePath, resolve, reject)).on("error", err => {
+      reject(err instanceof Error ? err : new Error(String(err)));
+    });
+  });
 }
 
 function getDownloadUrl(protoFile) {
@@ -153,7 +161,8 @@ async function downloadProtoFile(protoFile) {
     await downloadFile(url, localPath);
     console.log(`Downloaded: ${protoFile.localPath}`);
   } catch (error) {
-    console.error(`Failed to download ${protoFile.localPath}:`, error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to download ${protoFile.localPath}:`, errorMessage);
     throw error;
   }
 }
@@ -172,8 +181,6 @@ async function downloadProtoFiles() {
   console.log("All proto files downloaded successfully!");
 }
 
-// Replace reserved words to make sure only C allowed names are used
-// see https://github.com/LedgerHQ/app-canton/blob/develop/proto/proto_gen.sh#L257
 function replaceReservedWords(filePath) {
   if (!fs.existsSync(filePath)) return;
 
@@ -187,27 +194,16 @@ function replaceReservedWords(filePath) {
   console.log(`Updated field names in ${path.basename(filePath)}`);
 }
 
-// Clean up temp directory
-function cleanup() {
-  if (fs.existsSync(tempDir)) {
-    fs.rmSync(tempDir, { recursive: true, force: true });
-    console.log("Cleaned up temporary files");
-  }
-}
-
 function processProtoFiles() {
-  // Replace field names in proto files
   replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value.proto"));
   replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value_cb.proto"));
 }
 
 function generateProtobufBindings() {
-  // Sanitize paths to prevent command injection
   const sanitizedTempDir = path.resolve(tempDir);
-  const sanitizedOutputFile = path.resolve(outputFile);
+  const sanitizedOutputJsonFile = path.resolve(outputJsonFile);
   const deviceProtoPath = path.join(sanitizedTempDir, "device.proto");
 
-  // Validate that paths exist and are within expected directories
   if (!fs.existsSync(deviceProtoPath)) {
     throw new Error(`Device proto file not found: ${deviceProtoPath}`);
   }
@@ -216,46 +212,39 @@ function generateProtobufBindings() {
     throw new Error("Invalid temp directory path");
   }
 
-  if (!sanitizedOutputFile.startsWith(path.resolve(__dirname, ".."))) {
-    throw new Error("Invalid output file path");
+  if (!sanitizedOutputJsonFile.startsWith(path.resolve(__dirname, ".."))) {
+    throw new Error("Invalid output JSON file path");
   }
+
+  ensureDirectoryExists(path.dirname(sanitizedOutputJsonFile));
 
   // Use npx from the same Node.js installation directory to avoid PATH manipulation
   const npxPath = path.join(process.execPath, "..", "npx");
   const absoluteNpxPath = path.resolve(npxPath);
 
-  execSync(
-    absoluteNpxPath,
-    [
-      "pbjs",
-      "-t",
-      "json",
-      "-w",
-      "es6",
-      "--path",
-      sanitizedTempDir,
-      "-o",
-      sanitizedOutputFile,
-      deviceProtoPath,
-    ],
-    {
-      stdio: "inherit",
-      cwd: __dirname,
-    },
-  );
+  console.log("Generating JSON bindings...");
+  const pbjsJsonCommand = `${absoluteNpxPath} pbjs -t json -w es6 --path "${sanitizedTempDir}" -o "${sanitizedOutputJsonFile}" "${deviceProtoPath}"`;
+  execSync(pbjsJsonCommand, {
+    stdio: "inherit",
+    cwd: __dirname,
+    shell: true,
+  });
 }
 
-try {
-  console.log("Generating protobuf bindings...");
+(async () => {
+  try {
+    console.log("Generating protobuf bindings...");
 
-  await downloadProtoFiles();
-  processProtoFiles();
-  generateProtobufBindings();
+    await downloadProtoFiles();
+    processProtoFiles();
+    generateProtobufBindings();
 
-  console.log("Protobuf bindings generated successfully!");
-} catch (error) {
-  console.error("Error generating protobuf bindings:", error.message);
-  process.exit(1);
-} finally {
-  cleanup();
-}
+    console.log("Protobuf bindings generated successfully!");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error generating protobuf bindings:", errorMessage);
+    process.exit(1);
+  } finally {
+    cleanup();
+  }
+})();
