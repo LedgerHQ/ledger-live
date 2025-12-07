@@ -20,9 +20,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/Canton.js",
-  "module": "lib-es/Canton.js",
-  "types": "lib/Canton.d.ts",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",

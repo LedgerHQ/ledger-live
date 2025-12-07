@@ -14,11 +14,9 @@ export async function signTransaction(
 ): Promise<CantonSignature> {
   let signature: CantonSignature;
 
-  if ("json" in transactionData) {
-    const components = splitTransaction(transactionData.json);
-    signature = await signer.signTransaction(derivationPath, components);
-  } else {
-    const challenge = getTransactionChallenge(transactionData);
+  // Check if it's an OnboardingPrepareResponse (has transactions property)
+  if ("transactions" in transactionData && transactionData.transactions) {
+    const challenge = getTransactionChallenge(transactionData as OnboardingPrepareResponse);
 
     const transactions = [
       transactionData.transactions.namespace_transaction.serialized,
@@ -30,6 +28,14 @@ export async function signTransaction(
       transactions,
       ...(challenge && { challenge }),
     });
+  } else if ("json" in transactionData) {
+    // It's a PrepareTransferResponse or PrepareTransactionResponse with json property
+    const components = splitTransaction(transactionData.json);
+    signature = await signer.signTransaction(derivationPath, components);
+  } else {
+    // Assume it's already the JSON transaction object itself (from craftTransaction)
+    const components = splitTransaction(transactionData as any);
+    signature = await signer.signTransaction(derivationPath, components);
   }
 
   if (!signature?.signature) {

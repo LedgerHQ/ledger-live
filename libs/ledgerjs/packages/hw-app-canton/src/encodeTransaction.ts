@@ -69,7 +69,7 @@ export function encodeMetadata(data: {
   synchronizerId: string;
   mediatorGroup?: number;
   transactionUuid: string;
-  preparationTime: number;
+  submissionTime: number;
   inputContractsCount: number;
   minLedgerEffectiveTime?: number;
   maxLedgerEffectiveTime?: number;

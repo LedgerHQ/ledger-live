@@ -43,7 +43,7 @@ export function splitTransaction(transaction: CantonTransactionJson): CantonPrep
     synchronizerId: metadata.synchronizerId,
     ...(metadata.mediatorGroup !== undefined && { mediatorGroup: metadata.mediatorGroup }),
     transactionUuid: metadata.transactionUuid,
-    preparationTime: Number.parseInt(metadata.preparationTime, 10),
+    submissionTime: Number.parseInt(metadata.preparationTime, 10),
     inputContractsCount: metadata.inputContracts?.length || 0,
     ...(metadata.minLedgerEffectiveTime && {
       minLedgerEffectiveTime: Number.parseInt(metadata.minLedgerEffectiveTime, 10),

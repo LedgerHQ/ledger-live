@@ -1,34 +1,35 @@
-import type Transport from "@ledgerhq/hw-transport";
 import { TransportStatusError } from "@ledgerhq/errors";
+import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 
-// Re-export splitTransaction for convenience
-export { splitTransaction } from "./splitTransaction";
 export type * from "./types";
 
-const CLA = 0xe0;
+export const CLA = 0xe0;
 
-const P1_NON_CONFIRM = 0x00;
-const P1_CONFIRM = 0x01;
-const P1_SIGN_UNTYPED_VERSIONED_MESSAGE = 0x01;
-const P1_SIGN_PREPARED_TRANSACTION = 0x02;
+export const P1_NON_CONFIRM = 0x00;
+export const P1_CONFIRM = 0x01;
+export const P1_SIGN_UNTYPED_VERSIONED_MESSAGE = 0x01;
+export const P1_SIGN_PREPARED_TRANSACTION = 0x02;
 
-const P2_NONE = 0x00;
-const P2_FIRST = 0x01;
-const P2_MORE = 0x02;
-const P2_MSG_END = 0x04;
+export const P2_NONE = 0x00;
+export const P2_FIRST = 0x01;
+export const P2_MORE = 0x02;
+export const P2_MSG_END = 0x04;
 
-const INS = {
+export const INS = {
   GET_VERSION: 0x03,
   GET_APP_NAME: 0x04,
   GET_ADDR: 0x05,
   SIGN: 0x06,
 };
 
-const STATUS = {
+export const STATUS = {
   OK: 0x9000,
   USER_CANCEL: 0x6985,
 };
+
+export const SIGNATURE_FRAMING_BYTE = 0x40;
+export const SIGNATURE_END_BYTE = 0x00;
 
 const ED25519_SIGNATURE_HEX_LENGTH = 128; // hex characters (64 bytes)
 const CANTON_SIGNATURE_HEX_LENGTH = 132; // hex characters (66 bytes with framing)
@@ -428,9 +429,9 @@ export default class Canton {
     // Handle TLV (Type-Length-Value) format: [40][64B main][00][40][64B challenge] = 262 hex chars (131 bytes)
     if (
       response.length === 131 &&
-      response.readUInt8(0) === 0x40 &&
-      response.readUInt8(65) === 0x00 &&
-      response.readUInt8(66) === 0x40
+      response.readUInt8(0) === SIGNATURE_FRAMING_BYTE &&
+      response.readUInt8(65) === SIGNATURE_END_BYTE &&
+      response.readUInt8(66) === SIGNATURE_FRAMING_BYTE
     ) {
       const signature = response.slice(1, 65).toString("hex");
       const applicationSignature = response.slice(67, 131).toString("hex");
