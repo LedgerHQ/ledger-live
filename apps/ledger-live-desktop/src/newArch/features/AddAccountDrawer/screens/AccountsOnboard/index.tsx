@@ -17,8 +17,8 @@ import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
 import {
   getImportableAccounts,
   prepareAccountsForAdding,
-  useAccountPreparation,
-} from "./hooks/useAccountPreparation";
+  useOnboardingAccountData,
+} from "./hooks/useOnboardingAccountData";
 import { useOnboardingFlow } from "./hooks/useOnboardingFlow";
 import { getOnboardingBridge, getOnboardingConfig } from "./registry";
 import { AccountOnboardStatus, StepProps } from "./types";
@@ -48,7 +48,6 @@ export default function AccountsOnboard({
   const dispatch = useDispatch();
   const currentTheme = useSelector(userThemeSelector);
 
-  // Get onboarding config and bridge
   const onboardingConfig = (() => {
     const config = getOnboardingConfig(currency);
     invariant(config, `No onboarding config found for currency family: ${currency.family}`);
@@ -61,7 +60,6 @@ export default function AccountsOnboard({
     return bridge;
   })();
 
-  // Calculate creatableAccount first (before hooks that depend on it)
   const creatableAccount = useMemo(
     () =>
       isReonboarding && accountToReonboard
@@ -70,12 +68,10 @@ export default function AccountsOnboard({
     [selectedAccounts, isReonboarding, accountToReonboard],
   );
 
-  // Validate required props early
   invariant(device, "device is required");
   invariant(currency, "currency is required");
   invariant(creatableAccount, "creatableAccount is required");
 
-  // Use onboarding flow hook
   const {
     stepId,
     error,
@@ -93,20 +89,17 @@ export default function AccountsOnboard({
     onboardingConfig,
   });
 
-  // Calculate importable accounts
   const importableAccounts = useMemo(
     () => getImportableAccounts(selectedAccounts),
     [selectedAccounts],
   );
 
-  // Use account preparation hook with onboarding result for account name resolution
-  const { accountName } = useAccountPreparation({
+  const { accountName } = useOnboardingAccountData({
     selectedAccounts,
     currency,
     editedNames,
     isReonboarding,
     accountToReonboard,
-    onboardingResult,
   });
 
   const handleAddMore = useCallback(() => {
@@ -232,14 +225,12 @@ export default function AccountsOnboard({
     if (!FooterComponent) {
       const errorMessage = `No footer component found for stepId: ${stepId}. Available footers: ${Object.keys(onboardingConfig.footerComponents).join(", ")}`;
       logger.error(`[renderFooter] ${errorMessage}`);
-      // Return empty footer instead of null to maintain layout
       return null;
     }
     try {
       return <FooterComponent {...stepperProps} />;
     } catch (err) {
       logger.error(`[renderFooter] Error rendering footer component for ${stepId}`, err);
-      // Return empty footer on error to maintain layout
       return null;
     }
   };

@@ -19,6 +19,7 @@ jest.mock("~/renderer/logger", () => ({
   __esModule: true,
   default: {
     error: jest.fn(),
+    onReduxAction: jest.fn(),
   },
 }));
 

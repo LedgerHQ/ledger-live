@@ -2,14 +2,13 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
-import { OnboardingResult } from "../types";
 
 export function getCreatableAccount(
   selectedAccounts: Account[],
   isReonboarding?: boolean,
   accountToReonboard?: Account,
 ): Account | undefined {
-  if (isReonboarding && accountToReonboard) {
+  if (isReonboarding) {
     return accountToReonboard;
   }
   return selectedAccounts.find(account => !account.used);
@@ -135,20 +134,18 @@ export function prepareAccountsForAdding(config: AddAccountsConfig): {
   return prepareAccountsForNewOnboarding(importableAccounts, completedAccount, editedNames);
 }
 
-export function useAccountPreparation({
+export function useOnboardingAccountData({
   selectedAccounts,
   currency,
   editedNames,
   isReonboarding,
   accountToReonboard,
-  onboardingResult,
 }: {
   selectedAccounts: Account[];
   currency: CryptoCurrency;
   editedNames: { [accountId: string]: string };
   isReonboarding?: boolean;
   accountToReonboard?: Account;
-  onboardingResult?: OnboardingResult;
 }) {
   const importableAccounts = useMemo(
     () => getImportableAccounts(selectedAccounts),
@@ -171,23 +168,9 @@ export function useAccountPreparation({
     [creatableAccount, currency, editedNames, importableAccounts.length],
   );
 
-  const prepareAccounts = useMemo(
-    () => () =>
-      prepareAccountsForAdding({
-        selectedAccounts,
-        existingAccounts: [],
-        editedNames,
-        isReonboarding,
-        accountToReonboard,
-        onboardingResult,
-      }),
-    [selectedAccounts, editedNames, isReonboarding, accountToReonboard, onboardingResult],
-  );
-
   return {
     importableAccounts,
     creatableAccount,
     accountName,
-    prepareAccounts,
   };
 }

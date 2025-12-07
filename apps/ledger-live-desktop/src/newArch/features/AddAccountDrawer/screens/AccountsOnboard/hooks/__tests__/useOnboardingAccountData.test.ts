@@ -6,9 +6,9 @@ import {
   getImportableAccounts,
   prepareAccountsForAdding,
   resolveCreatableAccountName,
-} from "../useAccountPreparation";
+} from "../useOnboardingAccountData";
 
-describe("useAccountPreparation", () => {
+describe("useOnboardingAccountData", () => {
   const mockCurrency = {
     id: "canton",
     name: "Canton",
@@ -106,17 +106,17 @@ describe("useAccountPreparation", () => {
         0,
       );
       // Should use getDefaultAccountName which generates name from currency.name and index
-      expect(result).toBe("Canton 2"); // index 1 + 1 = 2
+      expect(result).toBe(`${mockCurrency.name} 2`); // index 1 + 1 = 2
     });
 
     it("should return currency name with index when creatableAccount is undefined", () => {
       const result = resolveCreatableAccountName(undefined, mockCurrency as CryptoCurrency, {}, 2);
-      expect(result).toBe("Canton 3");
+      expect(result).toBe(`${mockCurrency.name} 3`);
     });
 
     it("should calculate index correctly based on importableAccountsCount", () => {
       const result = resolveCreatableAccountName(undefined, mockCurrency as CryptoCurrency, {}, 5);
-      expect(result).toBe("Canton 6");
+      expect(result).toBe(`${mockCurrency.name} 6`);
     });
   });
 
@@ -144,7 +144,6 @@ describe("useAccountPreparation", () => {
       const result = prepareAccountsForAdding(config);
       expect(result.accounts).toHaveLength(1);
       expect(result.accounts[0].id).toBe(mockAccount1.id);
-      // Should merge completedAccount properties but keep original ID
       expect(result.renamings[mockAccount1.id]).toBe("Renamed Account");
     });
 
@@ -169,7 +168,7 @@ describe("useAccountPreparation", () => {
         existingAccounts: [],
         editedNames: {
           account1: "Importable Account",
-          tempId: "New Account Name", // Temporary ID for completed account
+          tempId: "New Account Name",
         },
         isReonboarding: false,
         onboardingResult: {
@@ -204,7 +203,6 @@ describe("useAccountPreparation", () => {
       };
 
       const result = prepareAccountsForAdding(config);
-      // Should find the temporary ID name and use it for the completed account
       expect(result.renamings[finalAccountId]).toBe("Temporary Name");
       expect(result.renamings.account1).toBe("Importable");
     });
@@ -233,7 +231,7 @@ describe("useAccountPreparation", () => {
       const result = prepareAccountsForAdding(config);
       expect(result.accounts).toEqual([mockAccount1]);
       // Should use getDefaultAccountName which generates "Canton 1" (index 0 + 1)
-      expect(result.renamings[mockAccount1.id]).toBe("Canton 1");
+      expect(result.renamings[mockAccount1.id]).toBe(`${mockCurrency.name} 1`);
     });
   });
 });
