@@ -72,7 +72,7 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
-  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")] ?? "cli_speculos");
+  const device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
@@ -85,10 +85,8 @@ export async function launchSpeculos(appName: string) {
     deviceId: device.id,
   });
 
-  if (device.appVersion) {
-    allure.parameter("App name:", device.appName || "");
-    allure.parameter("App version:", device.appVersion || "");
-  }
+  allure.description(`App name: ${device.appName || ""}`);
+  allure.description(`App version: ${device.appVersion || ""}`);
 
   return device;
 }
