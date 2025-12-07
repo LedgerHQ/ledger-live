@@ -3,6 +3,8 @@ import { getAlpacaApi } from "../alpaca";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("../alpaca", () => ({
   getAlpacaApi: jest.fn(),
@@ -153,5 +155,45 @@ describe("genericPrepareTransaction", () => {
     );
 
     expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ amount: 100n }), {});
+  });
+
+  it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {
+    setupMockCryptoAssetsStore({
+      findTokenById: tokenId =>
+        Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
+    });
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: () => Promise.resolve({ value: 0n }),
+      getAssetFromToken: (token, owner) =>
+        token.id === "usdc" ? { assetOwner: owner, assetReference: token.id } : undefined,
+    });
+    const prepareTransaction = genericPrepareTransaction(network, kind);
+
+    await prepareTransaction(
+      {
+        ...account,
+        freshAddress: "test-account-address",
+        subAccounts: [{ id: "test-sub-account+usdc" }],
+      },
+      {
+        subAccountId: "test-sub-account+usdc",
+        amount: new BigNumber(10),
+      } as GenericTransaction,
+    );
+
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      {
+        ...account,
+        freshAddress: "test-account-address",
+        subAccounts: [{ id: "test-sub-account+usdc" }],
+      },
+      {
+        subAccountId: "test-sub-account+usdc",
+        amount: new BigNumber(10),
+        assetOwner: "test-account-address",
+        assetReference: "usdc",
+      },
+      undefined,
+    );
   });
 });

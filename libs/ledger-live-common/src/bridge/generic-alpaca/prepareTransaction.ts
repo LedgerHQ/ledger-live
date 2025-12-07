@@ -71,10 +71,15 @@ export function genericPrepareTransaction(
     }
 
     // Pass any parameters that help estimating fees
+    // This includes `assetOwner` and `assetReference` that are not used by some apps that only rely on `subAccountId`
+    // TODO Remove `assetOwner` and `assetReference` in order to maintain one unique way of identifying the type of asset
+    // https://ledgerhq.atlassian.net/browse/LIVE-24044
     const intent = transactionToIntent(
       account,
       {
         ...transaction,
+        assetOwner,
+        assetReference,
         amount,
       },
       computeIntentType,
@@ -125,6 +130,8 @@ export function genericPrepareTransaction(
             account,
             {
               ...transaction,
+              assetOwner,
+              assetReference,
             },
             computeIntentType,
           ),
