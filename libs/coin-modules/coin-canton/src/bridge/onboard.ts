@@ -26,7 +26,7 @@ import {
   CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
-  OnboardStatus,
+  AccountOnboardStatus,
 } from "../types/onboard";
 
 export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: string) => {
@@ -77,7 +77,7 @@ export const buildOnboardAccount =
   ): Observable<CantonOnboardProgress | CantonOnboardResult> =>
     new Observable(o => {
       async function main() {
-        o.next({ status: OnboardStatus.INIT });
+        o.next({ status: AccountOnboardStatus.INIT });
 
         const getAddress = resolver(signerContext);
         const { publicKey } = await getAddress(deviceId, {
@@ -86,7 +86,7 @@ export const buildOnboardAccount =
           derivationMode: account.derivationMode,
         });
 
-        o.next({ status: OnboardStatus.PREPARE });
+        o.next({ status: AccountOnboardStatus.PREPARE });
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
 
@@ -101,13 +101,13 @@ export const buildOnboardAccount =
         const preparedTransaction = await prepareOnboarding(currency, publicKey);
         partyId = preparedTransaction.party_id;
 
-        o.next({ status: OnboardStatus.SIGN });
+        o.next({ status: AccountOnboardStatus.SIGN });
 
         const signature = await signerContext(deviceId, async signer => {
           return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
         });
 
-        o.next({ status: OnboardStatus.SUBMIT });
+        o.next({ status: AccountOnboardStatus.SUBMIT });
 
         await submitOnboarding(currency, publicKey, preparedTransaction, signature);
 

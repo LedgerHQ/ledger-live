@@ -1,14 +1,8 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import type { TransferStep } from "./gateway";
 
-export enum OnboardStatus {
-  INIT,
-  PREPARE,
-  SIGN,
-  SUBMIT,
-  SUCCESS,
-  ERROR,
-}
+// Re-export AccountOnboardStatus for backward compatibility
+export { AccountOnboardStatus };
 
 export enum AuthorizeStatus {
   INIT,
@@ -20,7 +14,7 @@ export enum AuthorizeStatus {
 }
 
 export type CantonOnboardProgress = {
-  status: OnboardStatus;
+  status: AccountOnboardStatus;
 };
 
 export type CantonOnboardResult = {

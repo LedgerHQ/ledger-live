@@ -26,6 +26,7 @@ import {
   getUnimportedAccounts,
 } from "./utils/processAccounts";
 import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
+import { hasOnboarding } from "../AccountsOnboard/registry";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -181,7 +182,9 @@ export function useScanAccounts({
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
 
-    if (hasCantonCreatableAccounts) {
+    // Check if currency supports onboarding (generic check)
+    const supportsOnboarding = hasOnboarding(currency);
+    if (hasCantonCreatableAccounts && supportsOnboarding) {
       // Check if modular drawer is enabled
       if (lldModularDrawer?.enabled && navigateToAccountsOnboard) {
         // Use new ACCOUNTS_ONBOARD step in drawer flow

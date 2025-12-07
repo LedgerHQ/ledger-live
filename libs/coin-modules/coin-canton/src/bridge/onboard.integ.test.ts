@@ -12,7 +12,7 @@ import {
   CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
-  OnboardStatus,
+  AccountOnboardStatus,
 } from "../types/onboard";
 import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } from "./onboard";
 import {
@@ -131,10 +131,10 @@ describe("onboard (devnet)", () => {
 
       // THEN
       // Check expected status progression
-      expect(progressValues.some(p => p.status === OnboardStatus.INIT)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.INIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SUBMIT)).toBe(true);
 
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);
@@ -257,10 +257,10 @@ describe("onboard (devnet)", () => {
       );
 
       // Check expected status progression
-      expect(progressValues.some(p => p.status === OnboardStatus.INIT)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.INIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SUBMIT)).toBe(true);
 
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);

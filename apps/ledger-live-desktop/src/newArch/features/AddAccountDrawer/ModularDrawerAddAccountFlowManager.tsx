@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDrawer.types";
@@ -14,7 +14,8 @@ import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
 import AccountsWarning from "./screens/AccountsWarning";
-import CantonOnboard from "./screens/AccountsOnboard";
+import AccountsOnboard from "./screens/AccountsOnboard";
+import { getOnboardingConfig } from "./screens/AccountsOnboard/registry";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
@@ -96,6 +97,16 @@ const ModularDrawerAddAccountFlowManager = ({
 
   const dispatch = useDispatch();
 
+  // Redirect to scan accounts if required state is missing for ACCOUNTS_ONBOARD step
+  useEffect(() => {
+    if (
+      currentStep === MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD &&
+      (!accountsOnboardState || !device)
+    ) {
+      navigateToScanAccounts();
+    }
+  }, [currentStep, accountsOnboardState, device, navigateToScanAccounts]);
+
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
@@ -128,27 +139,45 @@ const ModularDrawerAddAccountFlowManager = ({
             />
           </StepContainer>
         );
-      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD:
+      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD: {
         if (!accountsOnboardState || !device) {
-          throw new Error("Missing 'accountsOnboardState' or 'device'");
+          return null;
         }
+
+        // Get onboarding config for translation keys
+        const onboardingConfig = getOnboardingConfig(cryptoCurrency);
+        const titleKey = onboardingConfig
+          ? accountsOnboardState.isReonboarding
+            ? onboardingConfig.translationKeys.reonboardTitle
+            : onboardingConfig.translationKeys.title
+          : null;
+
+        if (!titleKey) {
+          // Fallback if no config found (should not happen if flow is correct)
+          return null;
+        }
+
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <CantonOnboard
-              currency={cryptoCurrency}
-              device={device}
-              selectedAccounts={accountsOnboardState.selectedAccounts}
-              existingAccounts={existingAccounts}
-              editedNames={accountsOnboardState.editedNames}
-              isReonboarding={accountsOnboardState.isReonboarding}
-              accountToReonboard={accountsOnboardState.accountToReonboard}
-              onComplete={(accounts: Account[]) => {
-                setSelectedAccounts(accounts);
-                navigateToAccountsAdded();
-              }}
-            />
+            <Title style={{ paddingLeft: 0 }}>{t(titleKey)}</Title>
+            <Flex flex={1} flexDirection="column" minHeight={0}>
+              <AccountsOnboard
+                currency={cryptoCurrency}
+                device={device}
+                selectedAccounts={accountsOnboardState.selectedAccounts}
+                existingAccounts={existingAccounts}
+                editedNames={accountsOnboardState.editedNames}
+                isReonboarding={accountsOnboardState.isReonboarding}
+                accountToReonboard={accountsOnboardState.accountToReonboard}
+                onComplete={(accounts: Account[]) => {
+                  setSelectedAccounts(accounts);
+                  navigateToAccountsAdded();
+                }}
+              />
+            </Flex>
           </StepContainer>
         );
+      }
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         return (
           <StepContainer paddingX="8px" data-test-id="content">

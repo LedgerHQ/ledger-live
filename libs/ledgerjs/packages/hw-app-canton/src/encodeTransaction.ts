@@ -24,11 +24,11 @@ const RESERVED_WORDS: Record<string, string> = {
   constructor: "constructor_",
 };
 
-function replaceReservedWords(obj: any) {
+function replaceReservedWords(obj: Omit<CantonInputContract, "eventBlob"> | unknown) {
   if (obj === null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(replaceReservedWords);
 
-  const transformed: any = {};
+  const transformed = {};
   for (const [key, value] of Object.entries(obj)) {
     const transformedKey = RESERVED_WORDS[key] ?? key;
     transformed[transformedKey] = replaceReservedWords(value);
@@ -73,7 +73,7 @@ export function encodeMetadata(
     synchronizerId: data.synchronizerId,
     ...(data.mediatorGroup !== undefined && { mediatorGroup: data.mediatorGroup }),
     transactionUuid: data.transactionUuid,
-    submissionTime: Number.parseInt(data.preparationTime, 10),
+    preparationTime: Number.parseInt(data.preparationTime, 10),
     inputContractsCount,
     ...(data.minLedgerEffectiveTime !== undefined && {
       minLedgerEffectiveTime: Number.parseInt(data.minLedgerEffectiveTime, 10),

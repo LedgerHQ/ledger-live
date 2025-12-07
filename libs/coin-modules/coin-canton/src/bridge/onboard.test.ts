@@ -9,7 +9,7 @@ import {
   createMockOnboardingPrepareResponse,
 } from "../test/fixtures";
 import type { CantonSignature, CantonSigner } from "../types";
-import { CantonOnboardProgress, CantonOnboardResult, OnboardStatus } from "../types/onboard";
+import { CantonOnboardProgress, CantonOnboardResult, AccountOnboardStatus } from "../types/onboard";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
@@ -146,9 +146,9 @@ describe("onboard", () => {
       const statuses = values
         .filter((v): v is CantonOnboardProgress => "status" in v)
         .map(v => v.status);
-      expect(statuses).toContain(OnboardStatus.PREPARE);
-      expect(statuses).toContain(OnboardStatus.SIGN);
-      expect(statuses).toContain(OnboardStatus.SUBMIT);
+      expect(statuses).toContain(AccountOnboardStatus.PREPARE);
+      expect(statuses).toContain(AccountOnboardStatus.SIGN);
+      expect(statuses).toContain(AccountOnboardStatus.SUBMIT);
 
       // Should call prepareOnboarding and submitOnboarding
       expect(mockedGateway.prepareOnboarding).toHaveBeenCalledWith(mockCurrency, mockPublicKey);
