@@ -1,30 +1,37 @@
 import * as protobuf from "protobufjs";
 import type { Root } from "protobufjs";
-// Import generated protobuf JSON bindings
-// We use JSON instead of the TypeScript static module because it's too large (15k+ lines)
 import transactionProtoJson from "./types/transaction-proto.json";
+import type {
+  CantonInputContract,
+  CantonTransactionNode,
+  CantonTransactionMetadata,
+  CantonTransactionData,
+} from "./types";
 
-// Initialize protobuf root from JSON bindings
 const root: Root = protobuf.Root.fromJSON(transactionProtoJson);
+const DeviceDamlTransactionType = root.lookupType(
+  "com.daml.ledger.api.v2.interactive.DeviceDamlTransaction",
+);
+const InputContractType = root.lookupType(
+  "com.daml.ledger.api.v2.interactive.DeviceMetadata.InputContract",
+);
+const DeviceMetadataType = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata");
+const NodeType = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
 
-function getProtobufRoot(): Root {
-  return root;
-}
-
-const RESERVED_WORDS = {
+const RESERVED_WORDS: Record<string, string> = {
   bool: "bool_",
   enum: "enum_",
   constructor: "constructor_",
 };
 
-function replaceReservedWords(obj: any): any {
+function replaceReservedWords(obj: any) {
   if (obj === null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(replaceReservedWords);
 
   const transformed: any = {};
   for (const [key, value] of Object.entries(obj)) {
-    transformed[RESERVED_WORDS[key as keyof typeof RESERVED_WORDS] || key] =
-      replaceReservedWords(value);
+    const transformedKey = RESERVED_WORDS[key] ?? key;
+    transformed[transformedKey] = replaceReservedWords(value);
   }
   return transformed;
 }
@@ -32,63 +39,56 @@ function replaceReservedWords(obj: any): any {
 /**
  * Encode DAML transaction to protobuf bytes
  */
-export function encodeDamlTransaction(data: {
-  version: string;
-  roots: string[];
-  nodesCount: number;
-  nodeSeeds: Array<{ seed: Uint8Array; nodeId?: number }>;
-}): Uint8Array {
-  const protobufRoot = getProtobufRoot();
-  const DeviceDamlTransaction = protobufRoot.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceDamlTransaction",
-  );
-  return DeviceDamlTransaction.encode(data).finish();
+export function encodeDamlTransaction(data: CantonTransactionData): Uint8Array {
+  const transformed = {
+    version: data.version,
+    roots: data.roots,
+    nodesCount: data.nodes?.length || 0,
+    nodeSeeds: (data.nodeSeeds || []).map(seed => ({
+      seed: Buffer.from(seed.seed, "base64"),
+      ...(seed.nodeId && seed.nodeId !== 0 && { nodeId: seed.nodeId }),
+    })),
+  };
+  return DeviceDamlTransactionType.encode(transformed).finish();
 }
 
 /**
  * Encode input contract to protobuf bytes
  */
-export function encodeInputContract(contract: any): Uint8Array {
+export function encodeInputContract(contract: CantonInputContract): Uint8Array {
   const { eventBlob, ...contractWithoutBlob } = contract;
-  const protobufRoot = getProtobufRoot();
-  const InputContract = protobufRoot.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceMetadata.InputContract",
-  );
-  const contractPb = InputContract.fromObject(replaceReservedWords(contractWithoutBlob));
-  return InputContract.encode(contractPb).finish();
+  const contractPb = InputContractType.fromObject(replaceReservedWords(contractWithoutBlob));
+  return InputContractType.encode(contractPb).finish();
 }
 
 /**
  * Encode metadata to protobuf bytes
  */
-export function encodeMetadata(data: {
-  submitterInfo: {
-    actAs: string[];
-    commandId: string;
+export function encodeMetadata(
+  data: CantonTransactionMetadata,
+  inputContractsCount: number,
+): Uint8Array {
+  const transformed = {
+    submitterInfo: data.submitterInfo,
+    synchronizerId: data.synchronizerId,
+    ...(data.mediatorGroup !== undefined && { mediatorGroup: data.mediatorGroup }),
+    transactionUuid: data.transactionUuid,
+    submissionTime: Number.parseInt(data.preparationTime, 10),
+    inputContractsCount,
+    ...(data.minLedgerEffectiveTime !== undefined && {
+      minLedgerEffectiveTime: Number.parseInt(data.minLedgerEffectiveTime, 10),
+    }),
+    ...(data.maxLedgerEffectiveTime !== undefined && {
+      maxLedgerEffectiveTime: Number.parseInt(data.maxLedgerEffectiveTime, 10),
+    }),
   };
-  synchronizerId: string;
-  mediatorGroup?: number;
-  transactionUuid: string;
-  submissionTime: number;
-  inputContractsCount: number;
-  minLedgerEffectiveTime?: number;
-  maxLedgerEffectiveTime?: number;
-}): Uint8Array {
-  const protobufRoot = getProtobufRoot();
-  const DeviceMetadata = protobufRoot.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceMetadata",
-  );
-  return DeviceMetadata.encode(data).finish();
+  return DeviceMetadataType.encode(transformed).finish();
 }
 
 /**
  * Encode transaction node to protobuf bytes
  */
-export function encodeNode(node: any): Uint8Array {
-  const protobufRoot = getProtobufRoot();
-  const Node = protobufRoot.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node",
-  );
-  const nodePb = Node.fromObject(replaceReservedWords(node));
-  return Node.encode(nodePb).finish();
+export function encodeNode(node: CantonTransactionNode): Uint8Array {
+  const nodePb = NodeType.fromObject(replaceReservedWords(node));
+  return NodeType.encode(nodePb).finish();
 }

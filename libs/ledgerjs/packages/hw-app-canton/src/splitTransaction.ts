@@ -19,15 +19,7 @@ export function splitTransaction(transaction: CantonTransactionJson): CantonPrep
   const { transaction: transactionData, metadata } = transaction;
 
   // Process DAML transaction
-  const damlTransactionBytes = encodeDamlTransaction({
-    version: transactionData.version,
-    roots: transactionData.roots,
-    nodesCount: transactionData.nodes?.length || 0,
-    nodeSeeds: (transactionData.nodeSeeds || []).map(seed => ({
-      seed: Uint8Array.from(Buffer.from(seed.seed, "base64")),
-      ...(seed.nodeId && seed.nodeId !== 0 && { nodeId: seed.nodeId }),
-    })),
-  });
+  const damlTransactionBytes = encodeDamlTransaction(transactionData);
 
   // Process input contracts
   const inputContracts = (metadata.inputContracts || []).map((contract: CantonInputContract) =>
@@ -35,32 +27,17 @@ export function splitTransaction(transaction: CantonTransactionJson): CantonPrep
   );
 
   // Process metadata
-  const metadataBytes = encodeMetadata({
-    submitterInfo: {
-      actAs: metadata.submitterInfo.actAs,
-      commandId: metadata.submitterInfo.commandId,
-    },
-    synchronizerId: metadata.synchronizerId,
-    ...(metadata.mediatorGroup !== undefined && { mediatorGroup: metadata.mediatorGroup }),
-    transactionUuid: metadata.transactionUuid,
-    submissionTime: Number.parseInt(metadata.preparationTime, 10),
-    inputContractsCount: metadata.inputContracts?.length || 0,
-    ...(metadata.minLedgerEffectiveTime && {
-      minLedgerEffectiveTime: Number.parseInt(metadata.minLedgerEffectiveTime, 10),
-    }),
-    ...(metadata.maxLedgerEffectiveTime && {
-      maxLedgerEffectiveTime: Number.parseInt(metadata.maxLedgerEffectiveTime, 10),
-    }),
-  });
+  const metadataBytes = encodeMetadata(metadata, inputContracts.length);
 
   // Process nodes
   const nodesArray: CantonTransactionNode[] = transactionData.nodes || [];
   const nodes = new Array(nodesArray.length);
+  const lastIndex = nodesArray.length - 1;
 
   for (const node of nodesArray) {
     const nodeId = Number.parseInt(node.nodeId || "0", 10);
     const nodeBytes = encodeNode(node);
-    const pos = nodesArray.length - 1 - nodeId;
+    const pos = lastIndex - nodeId;
     nodes[pos] = nodeBytes;
   }
 

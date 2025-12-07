@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { createEmptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import BigNumber from "bignumber.js";
 import coinConfig, { type CantonCoinConfig } from "../config";
 import type { CantonAccount, Transaction } from "../types";
@@ -25,7 +25,6 @@ import {
   createMockSigner as createCantonMockSigner,
   generateMockKeyPair,
 } from "./cantonTestUtils";
-import prepareTransferMock from "./prepare-transfer.json";
 
 const DEFAULT_VALUES = {
   INSTRUMENT: {

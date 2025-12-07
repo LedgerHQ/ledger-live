@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import * as signTransactionModule from "../common-logic/transaction/sign";
 import * as gateway from "../network/gateway";
 import {
@@ -9,7 +10,6 @@ import {
   createMockPrepareTransferResponse,
   createMockSignerContext,
 } from "../test/fixtures";
-import prepareTransferMock from "../test/prepare-transfer.json";
 import { TopologyChangeError } from "../types/errors";
 import { buildTransferInstruction, createTransferInstruction } from "./acceptOffer";
 import * as getTransactionStatusModule from "./getTransactionStatus";

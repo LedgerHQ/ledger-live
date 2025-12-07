@@ -12,10 +12,12 @@ import Canton, {
   SIGNATURE_END_BYTE,
   SIGNATURE_FRAMING_BYTE,
   STATUS,
-} from "../src/Canton";
-import { splitTransaction } from "../src/splitTransaction";
-import prepareTransferMockSerialized from "./fixtures/prepare-transfer-serialized.json";
-import prepareTransferMock from "./fixtures/prepare-transfer.json";
+} from "./Canton";
+import { splitTransaction } from "./splitTransaction";
+import prepareTransferMockSerialized from "../tests/fixtures/prepare-transfer-serialized.json";
+import prepareTransferMock from "../tests/fixtures/prepare-transfer.json";
+
+const fixturePath = path.join(__dirname, "fixtures", "prepare-transfer.apdus");
 
 class APDURecordingTransport extends Transport {
   recordStore: RecordStore;
@@ -47,6 +49,15 @@ class APDURecordingTransport extends Transport {
 
 function uint8ArrayToHex(bytes: Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
+}
+
+function loadExpectedAPDUs(fixturePath: string): string[] {
+  const fixtureContent = fs.readFileSync(fixturePath, "utf-8");
+  return fixtureContent
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.startsWith("=>"))
+    .map(line => line.replace(/^=>\s*/, ""));
 }
 
 describe("splitTransaction", () => {
@@ -96,15 +107,12 @@ describe("splitTransaction", () => {
     const transactionData = prepareTransferMock.json;
     const derivationPath = "44'/6767'/0'/0'/0'";
     const components = splitTransaction(transactionData);
-
-    // Create recording transport using RecordStore to capture APDUs
     const recordStore = new RecordStore();
     const recordingTransport = new APDURecordingTransport(recordStore);
     const canton = new Canton(recordingTransport);
 
-    // WHEN - Use Canton.signTransaction to generate APDUs
+    // WHEN
     await canton.signTransaction(derivationPath, components);
-
     // Extract recorded APDUs from RecordStore (RecordStore.queue contains [apduHex, responseHex] pairs)
     const generatedAPDUsHex = recordStore.queue.map(([apduHex]) => apduHex);
 
@@ -120,23 +128,12 @@ describe("splitTransaction", () => {
     expect(firstAPDUBuffer.readUInt8(2)).toBe(P1_SIGN_PREPARED_TRANSACTION);
     expect(firstAPDUBuffer.readUInt8(3)).toBe(P2_FIRST | P2_MORE);
 
-    // Load expected APDUs from fixture file
-    const fixturePath = path.join(__dirname, "fixtures", "prepare-transfer.apdus");
-    const fixtureContent = fs.readFileSync(fixturePath, "utf-8");
-    // Parse .apdus format: extract hex strings from lines starting with "=>"
-    const expectedAPDUs: string[] = fixtureContent
-      .split("\n")
-      .map(line => line.trim())
-      .filter(line => line.startsWith("=>"))
-      .map(line => line.replace(/^=>\s*/, ""));
-
-    // Verify fixture contains actual APDU data
+    const expectedAPDUs = loadExpectedAPDUs(fixturePath);
+    // Verify fixture contains actual APDU data and compare with generated APDUs
     if (expectedAPDUs.length > 0) {
-      // Compare generated APDUs with expected ones
       expect(generatedAPDUsHex.length).toBe(expectedAPDUs.length);
       expect(generatedAPDUsHex).toEqual(expectedAPDUs);
     } else {
-      // Fixture file is empty or invalid
       console.warn(
         "Fixture file contains no APDU data. Update prepare-transfer.apdus with actual APDU hex strings.",
       );

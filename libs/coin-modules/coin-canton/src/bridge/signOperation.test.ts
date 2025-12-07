@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import { craftTransaction } from "../common-logic";
 import {
   createMockCantonAccount,
@@ -6,7 +7,6 @@ import {
   createMockSignerContext,
   createMockTransaction,
 } from "../test/fixtures";
-import { transaction, metadata } from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../common-logic", () => {
@@ -17,6 +17,9 @@ jest.mock("../common-logic", () => {
   };
 });
 
+const {
+  json: { transaction, metadata },
+} = prepareTransferMock;
 const mockCraftTransaction = craftTransaction as jest.MockedFunction<typeof craftTransaction>;
 
 describe("buildSignOperation", () => {

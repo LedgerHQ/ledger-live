@@ -85,14 +85,22 @@ The rest of the documentation is about testing on NanoSP.
 
 ### 2. Compile app-canton
 
-You have to [compile](https://github.com/ledgerhq/app-canton) or retrieve the app binaries. In the following line, the binaries directory is set as `<ABSOLUTE_PATH_TO_ELFS>`
+You have to [compile](https://github.com/ledgerhq/app-canton) or retrieve the app binaries.
+
+From the `app-canton` directory, compile for NanoSP:
+
+```sh
+docker run --rm -ti --privileged -v "$(pwd):/app" -w /app ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest bash -c 'export BOLOS_SDK=$NANOSP_SDK && make clean && make DEBUG=1'
+```
+
+The compiled binary will be at `build/nanosp/bin/app.elf`. In the following steps, `<ABSOLUTE_PATH_TO_ELFS>` should point to the directory containing the `build` folder (or wherever you've placed the compiled `app.elf` file).
 
 ### 3. Launch CantonApp within Speculos
 
 ```sh
-docker run --rm -t -d -v "<ABSOLUTE_PATH_TO_ELFS>:/app" -p 5000:5000 ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
+docker run --rm -t -d --name speculos -v "<ABSOLUTE_PATH_TO_ELFS>:/app" -p 5000:5000 ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
 
-docker exec -it speculos bash -c 'speculos --model "nanosp" /app/exchange_nanosp.elf -l /app/ethereum_nanosp.elf --display headless'
+docker exec -it speculos bash -c 'speculos --model "nanosp" /app/build/nanosp/bin/app.elf --display headless'
 ```
 
 ### 4. Launch integration tests
@@ -133,7 +141,6 @@ The generate-proto script temporarily downloads `.proto` files and processes the
 The compiled definitions are saved to:
 
 - `src/types/transaction-proto.json` - JSON bindings for runtime use
-- `src/types/transaction-proto.d.ts` - TypeScript type definitions
 
 ### Key Protobuf Files
 
@@ -180,5 +187,6 @@ Test data is stored in:
 
 - `tests/fixtures/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
 - `tests/fixtures/prepare-transfer-serialized.json` — the expected serialized output, generated using [split_tx_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
+- `prepare-transfer.apdus` - APDU command sequences recorded when signing prepare-transfer reponse
 
 After updating protobuf bindings, make sure both files are refreshed with the latest Gateway data and serialized output.
