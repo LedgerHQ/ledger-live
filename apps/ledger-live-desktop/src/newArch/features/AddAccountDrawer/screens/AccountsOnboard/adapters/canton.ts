@@ -22,9 +22,14 @@ function isCantonCurrencyBridge(bridge: unknown): bridge is CantonCurrencyBridge
   if (!bridge || typeof bridge !== "object") {
     return false;
   }
+
+  if (!("onboardAccount" in bridge)) {
+    return false;
+  }
+
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const candidate = bridge as Record<string, unknown>;
-  return "onboardAccount" in candidate && typeof candidate.onboardAccount === "function";
+  const bridgeWithProperty = bridge as { onboardAccount: unknown };
+  return typeof bridgeWithProperty.onboardAccount === "function";
 }
 
 export function getCantonBridge(currency: CryptoCurrency): CantonCurrencyBridge | null {
@@ -34,8 +39,7 @@ export function getCantonBridge(currency: CryptoCurrency): CantonCurrencyBridge 
   }
 
   if (isCantonCurrencyBridge(bridge)) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return bridge as CantonCurrencyBridge;
+    return bridge;
   }
   return null;
 }

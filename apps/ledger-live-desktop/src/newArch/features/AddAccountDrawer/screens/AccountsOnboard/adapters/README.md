@@ -19,8 +19,14 @@ function isYourCurrencyBridge(bridge: unknown): bridge is YourCurrencyBridge {
   if (!bridge || typeof bridge !== "object") {
     return false;
   }
-  const candidate = bridge as Record<string, unknown>;
-  return "onboardAccount" in candidate && typeof candidate.onboardAccount === "function";
+
+  if (!("onboardAccount" in bridge)) {
+    return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const bridgeWithProperty = bridge as { onboardAccount: unknown };
+  return typeof bridgeWithProperty.onboardAccount === "function";
 }
 
 export function getYourCurrencyBridge(currency: CryptoCurrency): YourCurrencyBridge | null {
@@ -28,8 +34,9 @@ export function getYourCurrencyBridge(currency: CryptoCurrency): YourCurrencyBri
   if (!bridge) {
     return null;
   }
+
   if (isYourCurrencyBridge(bridge)) {
-    return bridge as YourCurrencyBridge;
+    return bridge;
   }
   return null;
 }
