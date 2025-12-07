@@ -73,12 +73,12 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type CantonResources = {
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
-  publicKey: string;
+  publicKey?: string;
 };
 export type CantonResourcesRaw = {
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
-  publicKey: string;
+  publicKey?: string;
 };
 
 export type CantonAccount = Account & {

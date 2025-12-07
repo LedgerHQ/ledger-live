@@ -9,7 +9,7 @@ import coinConfig from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import { getLedgerEnd, getOperations, getPendingTransferProposals } from "../network/gateway";
 import resolver from "../signer";
-import { CantonAccount, CantonSigner } from "../types";
+import { CantonAccount, CantonResources, CantonSigner } from "../types";
 import type { OperationView } from "../types/gateway";
 import { isAccountOnboarded } from "./onboard";
 
@@ -117,9 +117,14 @@ export function makeGetAccountShape(
     let xpubOrAddress = initialAccount?.xpub || "";
     let publicKey: string | undefined = initialAccount?.cantonResources?.publicKey;
 
-    if (!xpubOrAddress || !publicKey) {
+    if (!xpubOrAddress && !publicKey) {
+      if (!info.deviceId) {
+        throw new Error(
+          "Cannot sync: deviceId required when account data (xpub/publicKey) is missing",
+        );
+      }
       const getAddress = resolver(signerContext);
-      const addressResult = await getAddress(info.deviceId || "", {
+      const addressResult = await getAddress(info.deviceId, {
         path: derivationPath,
         currency: currency,
         derivationMode: derivationMode,
@@ -178,15 +183,17 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
+    const cantonResources: CantonResources = {
+      instrumentUtxoCounts,
+      pendingTransferProposals,
+      ...(publicKey && { publicKey }),
+    };
+
     const used = !isCantonAccountEmpty({
       operationsCount: operations.length,
       balance: totalBalance,
       subAccounts: initialAccount?.subAccounts ?? [],
-      cantonResources: {
-        instrumentUtxoCounts,
-        pendingTransferProposals,
-        publicKey,
-      },
+      cantonResources,
     });
 
     const blockHeight = await getLedgerEnd(currency);
@@ -211,11 +218,7 @@ export function makeGetAccountShape(
       operations,
       operationsCount: operations.length,
       used,
-      cantonResources: {
-        instrumentUtxoCounts,
-        pendingTransferProposals,
-        publicKey,
-      },
+      cantonResources,
     };
 
     return shape;

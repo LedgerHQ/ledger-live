@@ -274,4 +274,103 @@ describe("makeGetAccountShape", () => {
     expect(shape.operations![0].type).toBe("TRANSFER_WITHDRAWN");
     expect(shape.operations![0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
   });
+
+  it("should sync without device when account has xpub but no publicKey", async () => {
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
+    mockedGetOperations.mockResolvedValue({
+      operations: [createMockOperationView()],
+    });
+
+    const infoWithXpub = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "test-party-id",
+        cantonResources: {
+          publicKey: undefined, // Missing publicKey
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    expect(shape.xpub).toBe("test-party-id");
+    // Should not call getAddress since we have xpub
+    expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should sync without device when account has publicKey but no xpub", async () => {
+    mockedGetBalance.mockResolvedValue([]); // Empty balances since no xpub
+    mockedGetOperations.mockResolvedValue({
+      operations: [],
+    });
+
+    const infoWithPublicKey = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "", // Missing xpub
+        cantonResources: {
+          publicKey: "test-public-key",
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    // Should not call getAddress since we have publicKey (even though xpub is missing)
+    expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should sync without device when account has both xpub and publicKey", async () => {
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
+    mockedGetOperations.mockResolvedValue({
+      operations: [createMockOperationView()],
+    });
+
+    const infoWithBoth = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "test-party-id",
+        cantonResources: {
+          publicKey: "test-public-key",
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    expect(shape.xpub).toBe("test-party-id");
+    // Should not call getAddress since we have both values
+    expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should throw error when account has neither xpub nor publicKey and no deviceId", async () => {
+    const infoWithoutData = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "", // Missing xpub
+        cantonResources: {
+          publicKey: undefined, // Missing publicKey
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    await expect(getAccountShape(infoWithoutData, { paginationConfig: {} })).rejects.toThrow(
+      "Cannot sync: deviceId required when account data (xpub/publicKey) is missing",
+    );
+  });
 });
