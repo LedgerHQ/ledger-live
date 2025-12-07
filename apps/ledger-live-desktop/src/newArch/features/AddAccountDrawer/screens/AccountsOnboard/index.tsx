@@ -8,7 +8,6 @@ import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import logger from "~/renderer/logger";
 import { userThemeSelector } from "~/renderer/reducers/settings";
@@ -21,7 +20,7 @@ import {
 } from "./hooks/useOnboardingAccountData";
 import { useOnboardingFlow } from "./hooks/useOnboardingFlow";
 import { getOnboardingBridge, getOnboardingConfig } from "./registry";
-import { AccountOnboardStatus, StepProps } from "./types";
+import { AccountOnboardStatus, OnboardingBridge, OnboardingConfig, StepProps } from "./types";
 
 interface AccountsOnboardProps {
   currency: CryptoCurrency;
@@ -32,6 +31,7 @@ interface AccountsOnboardProps {
   isReonboarding?: boolean;
   accountToReonboard?: Account;
   onComplete: (accounts: Account[]) => void;
+  onAddMore: () => void;
 }
 
 export default function AccountsOnboard({
@@ -43,22 +43,14 @@ export default function AccountsOnboard({
   isReonboarding = false,
   accountToReonboard,
   onComplete,
+  onAddMore,
 }: AccountsOnboardProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const currentTheme = useSelector(userThemeSelector);
 
-  const onboardingConfig = (() => {
-    const config = getOnboardingConfig(currency);
-    invariant(config, `No onboarding config found for currency family: ${currency.family}`);
-    return config;
-  })();
-
-  const onboardingBridge = (() => {
-    const bridge = getOnboardingBridge(currency);
-    invariant(bridge, `No onboarding bridge found for currency family: ${currency.family}`);
-    return bridge;
-  })();
+  const onboardingConfig = useOnboardingConfig(currency);
+  const onboardingBridge = useOnboardingBridge(currency);
 
   const creatableAccount = useMemo(
     () =>
@@ -102,73 +94,51 @@ export default function AccountsOnboard({
     accountToReonboard,
   });
 
-  const handleAddMore = useCallback(() => {
-    const { accounts, renamings } = prepareAccountsForAdding({
+  const prepareAndAddAccounts = useCallback(
+    (onFinish: (accounts: Account[]) => void, shouldCloseDrawer: boolean = true) => {
+      const { accounts, renamings } = prepareAccountsForAdding({
+        selectedAccounts,
+        existingAccounts,
+        editedNames,
+        isReonboarding,
+        accountToReonboard,
+        onboardingResult,
+      });
+
+      dispatch(
+        addAccountsAction({
+          scannedAccounts: accounts,
+          existingAccounts,
+          selectedIds: accounts.map(account => account.id),
+          renamings,
+        }),
+      );
+
+      if (shouldCloseDrawer) {
+        setDrawer();
+      }
+      onFinish(accounts);
+    },
+    [
       selectedAccounts,
       existingAccounts,
       editedNames,
       isReonboarding,
       accountToReonboard,
       onboardingResult,
-    });
+      dispatch,
+    ],
+  );
 
-    dispatch(
-      addAccountsAction({
-        scannedAccounts: accounts,
-        existingAccounts,
-        selectedIds: accounts.map(account => account.id),
-        renamings,
-      }),
-    );
-
-    setDrawer();
-    dispatch(
-      openModal("MODAL_ADD_ACCOUNTS", {
-        currency,
-      }),
-    );
-  }, [
-    currency,
-    dispatch,
-    selectedAccounts,
-    existingAccounts,
-    editedNames,
-    isReonboarding,
-    accountToReonboard,
-    onboardingResult,
-  ]);
+  const handleAddMore = useCallback(() => {
+    prepareAndAddAccounts(() => {
+      onAddMore();
+    }, false);
+  }, [onAddMore, prepareAndAddAccounts]);
 
   const handleAddAccounts = useCallback(() => {
-    const { accounts, renamings } = prepareAccountsForAdding({
-      selectedAccounts,
-      existingAccounts,
-      editedNames,
-      isReonboarding,
-      accountToReonboard,
-      onboardingResult,
-    });
-
-    dispatch(
-      addAccountsAction({
-        scannedAccounts: accounts,
-        existingAccounts,
-        selectedIds: accounts.map(account => account.id),
-        renamings,
-      }),
-    );
-
-    setDrawer();
-    onComplete(accounts);
-  }, [
-    selectedAccounts,
-    existingAccounts,
-    editedNames,
-    isReonboarding,
-    accountToReonboard,
-    onboardingResult,
-    dispatch,
-    onComplete,
-  ]);
+    prepareAndAddAccounts(onComplete, true);
+  }, [onComplete, prepareAndAddAccounts]);
 
   const stepperProps: StepProps = {
     t,
@@ -251,4 +221,24 @@ export default function AccountsOnboard({
       </Box>
     </Flex>
   );
+}
+
+export function useOnboardingConfig(currency: CryptoCurrency): OnboardingConfig {
+  return useMemo(() => {
+    const config = getOnboardingConfig(currency);
+    if (!config) {
+      throw new Error(`No onboarding config found for currency family: ${currency.family}`);
+    }
+    return config;
+  }, [currency]);
+}
+
+export function useOnboardingBridge(currency: CryptoCurrency): OnboardingBridge {
+  return useMemo(() => {
+    const bridge = getOnboardingBridge(currency);
+    if (!bridge) {
+      throw new Error(`No onboarding bridge found for currency family: ${currency.family}`);
+    }
+    return bridge;
+  }, [currency]);
 }
