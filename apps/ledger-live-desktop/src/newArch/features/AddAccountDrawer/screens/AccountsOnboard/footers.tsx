@@ -1,7 +1,7 @@
 import { Button, Flex } from "@ledgerhq/react-ui";
 import React from "react";
 import { Trans } from "react-i18next";
-import { AccountOnboardStatus, StepId, StepProps } from "./types";
+import { AccountOnboardStatus, DynamicStepProps, StableStepProps, StepId } from "./types";
 
 export const StepOnboardFooter = ({
   isProcessing,
@@ -9,7 +9,8 @@ export const StepOnboardFooter = ({
   onOnboardAccount,
   onRetryOnboardAccount,
   transitionTo,
-}: StepProps) => {
+}: Pick<StableStepProps, "onOnboardAccount" | "onRetryOnboardAccount" | "transitionTo"> &
+  Pick<DynamicStepProps, "isProcessing" | "onboardingStatus">) => {
   if (onboardingStatus === AccountOnboardStatus.SIGN) {
     return <></>;
   }
@@ -74,7 +75,11 @@ export const StepFinishFooter = ({
   importableAccounts,
   creatableAccount,
   onboardingResult,
-}: StepProps) => {
+}: Pick<
+  StableStepProps,
+  "t" | "onAddAccounts" | "onAddMore" | "isReonboarding" | "importableAccounts" | "creatableAccount"
+> &
+  Pick<DynamicStepProps, "onboardingResult">) => {
   const handleDone = () => {
     const accounts = [...importableAccounts];
     if (onboardingResult?.completedAccount) {

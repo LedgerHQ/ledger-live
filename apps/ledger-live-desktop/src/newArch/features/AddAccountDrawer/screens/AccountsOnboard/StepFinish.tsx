@@ -1,7 +1,7 @@
 import { Box, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
-import { StepProps } from "./types";
+import { StableStepProps } from "./types";
 
 export default function StepFinish({
   t,
@@ -9,7 +9,7 @@ export default function StepFinish({
   creatableAccount,
   importableAccounts,
   isReonboarding,
-}: StepProps) {
+}: StableStepProps) {
   const accounts = [...importableAccounts, creatableAccount];
 
   return (

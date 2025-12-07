@@ -89,390 +89,388 @@ describe("useOnboardingFlow", () => {
     jest.clearAllMocks();
   });
 
-  describe("useOnboardingFlow", () => {
-    it("should initialize with correct default state", () => {
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+  it("should initialize with correct default state", () => {
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
 
-      expect(result.current.stepId).toBe(StepId.ONBOARD);
-      expect(result.current.error).toBeNull();
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.INIT);
-      expect(result.current.isProcessing).toBe(false);
-      expect(result.current.onboardingResult).toBeUndefined();
+    expect(result.current.stepId).toBe(StepId.ONBOARD);
+    expect(result.current.error).toBeNull();
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.INIT);
+    expect(result.current.isProcessing).toBe(false);
+    expect(result.current.onboardingResult).toBeUndefined();
+  });
+
+  it("should initialize with first step from stepFlow", () => {
+    const customConfig = {
+      ...mockOnboardingConfig,
+      stepFlow: [StepId.FINISH, StepId.ONBOARD],
+    };
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: customConfig,
+      }),
+    );
+
+    expect(result.current.stepId).toBe(StepId.FINISH);
+  });
+
+  it("should default to ONBOARD when stepFlow is empty", () => {
+    const customConfig = {
+      ...mockOnboardingConfig,
+      stepFlow: [],
+    };
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: customConfig,
+      }),
+    );
+
+    expect(result.current.stepId).toBe(StepId.ONBOARD);
+  });
+
+  it("should set processing state and PREPARE status when called", () => {
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should initialize with first step from stepFlow", () => {
-      const customConfig = {
-        ...mockOnboardingConfig,
-        stepFlow: [StepId.FINISH, StepId.ONBOARD],
-      };
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: customConfig,
-        }),
-      );
+    expect(result.current.isProcessing).toBe(true);
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.PREPARE);
+    expect(result.current.error).toBeNull();
+  });
 
-      expect(result.current.stepId).toBe(StepId.FINISH);
+  it("should call onboardAccount with correct parameters", () => {
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should default to ONBOARD when stepFlow is empty", () => {
-      const customConfig = {
-        ...mockOnboardingConfig,
-        stepFlow: [],
-      };
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: customConfig,
-        }),
-      );
+    expect(mockBridge.onboardAccount).toHaveBeenCalledWith(
+      mockCurrency,
+      mockDevice.deviceId,
+      mockCreatableAccount,
+    );
+  });
 
-      expect(result.current.stepId).toBe(StepId.ONBOARD);
+  it("should handle onboarding success flow", () => {
+    const successResult: OnboardResult = {
+      account: mockCompletedAccount,
+      metadata: { partyId: "test-party-id" },
+    };
+    const mockBridge = createMockBridge(of(successResult));
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should set processing state and PREPARE status when called", () => {
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
+    expect(result.current.isProcessing).toBe(false);
+    expect(result.current.onboardingResult).toEqual({
+      completedAccount: mockCompletedAccount,
+      metadata: { partyId: "test-party-id" },
+    });
+  });
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+  it("should handle progress updates", () => {
+    const progress: OnboardProgress = { status: AccountOnboardStatus.SIGN };
+    const successResult: OnboardResult = {
+      account: mockCompletedAccount,
+    };
 
-      expect(result.current.isProcessing).toBe(true);
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.PREPARE);
-      expect(result.current.error).toBeNull();
+    const mockBridge = createMockBridge(of(progress, successResult));
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should call onboardAccount with correct parameters", () => {
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
+    expect(result.current.onboardingResult).toBeDefined();
+  });
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+  it("should handle onboarding error", () => {
+    const testError = new Error("Onboarding failed");
+    const mockBridge = createMockBridge(throwError(() => testError));
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
 
-      expect(mockBridge.onboardAccount).toHaveBeenCalledWith(
-        mockCurrency,
-        mockDevice.deviceId,
-        mockCreatableAccount,
-      );
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should handle onboarding success flow", () => {
-      const successResult: OnboardResult = {
-        account: mockCompletedAccount,
-        metadata: { partyId: "test-party-id" },
-      };
-      const mockBridge = createMockBridge(of(successResult));
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.ERROR);
+    expect(result.current.isProcessing).toBe(false);
+    expect(result.current.error).toBe(testError);
+    expect(logger.error).toHaveBeenCalledWith("[handleOnboardAccount] failed", testError);
+  });
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+  it("should cleanup previous subscription when called multiple times", () => {
+    const unsubscribe1 = jest.fn();
+    const unsubscribe2 = jest.fn();
 
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
-      expect(result.current.isProcessing).toBe(false);
-      expect(result.current.onboardingResult).toEqual({
-        completedAccount: mockCompletedAccount,
-        metadata: { partyId: "test-party-id" },
-      });
+    let subscriptionCount = 0;
+    const mockBridge: OnboardingBridge = {
+      onboardAccount: jest.fn(() => {
+        subscriptionCount++;
+        return new Observable(_subscriber => {
+          if (subscriptionCount === 1) {
+            return { unsubscribe: unsubscribe1 };
+          }
+          return { unsubscribe: unsubscribe2 };
+        });
+      }),
+    };
+
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should handle progress updates", () => {
-      const progress: OnboardProgress = { status: AccountOnboardStatus.SIGN };
-      const successResult: OnboardResult = {
-        account: mockCompletedAccount,
-      };
-
-      const mockBridge = createMockBridge(of(progress, successResult));
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
-
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
-
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
-      expect(result.current.onboardingResult).toBeDefined();
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should handle onboarding error", () => {
-      const testError = new Error("Onboarding failed");
-      const mockBridge = createMockBridge(throwError(() => testError));
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+    // First subscription should be cleaned up
+    expect(unsubscribe1).toHaveBeenCalled();
+  });
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+  it("should reset all state to initial values", () => {
+    const successResult: OnboardResult = {
+      account: mockCompletedAccount,
+    };
+    const mockBridge = createMockBridge(of(successResult));
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
 
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.ERROR);
-      expect(result.current.isProcessing).toBe(false);
-      expect(result.current.error).toBe(testError);
-      expect(logger.error).toHaveBeenCalledWith("[handleOnboardAccount] failed", testError);
+    // First, complete an onboarding
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should cleanup previous subscription when called multiple times", () => {
-      const unsubscribe1 = jest.fn();
-      const unsubscribe2 = jest.fn();
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
+    expect(result.current.onboardingResult).toBeDefined();
 
-      let subscriptionCount = 0;
-      const mockBridge: OnboardingBridge = {
-        onboardAccount: jest.fn(() => {
-          subscriptionCount++;
-          return new Observable(_subscriber => {
-            if (subscriptionCount === 1) {
-              return { unsubscribe: unsubscribe1 };
-            }
-            return { unsubscribe: unsubscribe2 };
-          });
-        }),
-      };
-
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
-
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
-
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
-
-      // First subscription should be cleaned up
-      expect(unsubscribe1).toHaveBeenCalled();
+    // Then retry
+    act(() => {
+      result.current.handleRetryOnboardAccount();
     });
 
-    it("should reset all state to initial values", () => {
-      const successResult: OnboardResult = {
-        account: mockCompletedAccount,
-      };
-      const mockBridge = createMockBridge(of(successResult));
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+    expect(result.current.stepId).toBe(StepId.ONBOARD);
+    expect(result.current.error).toBeNull();
+    expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.INIT);
+    expect(result.current.isProcessing).toBe(false);
+    expect(result.current.onboardingResult).toBeUndefined();
+  });
 
-      // First, complete an onboarding
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+  it("should reset stepId to first step in stepFlow", () => {
+    const customConfig = {
+      ...mockOnboardingConfig,
+      stepFlow: [StepId.FINISH, StepId.ONBOARD],
+    };
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: customConfig,
+      }),
+    );
 
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.SUCCESS);
-      expect(result.current.onboardingResult).toBeDefined();
-
-      // Then retry
-      act(() => {
-        result.current.handleRetryOnboardAccount();
-      });
-
-      expect(result.current.stepId).toBe(StepId.ONBOARD);
-      expect(result.current.error).toBeNull();
-      expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.INIT);
-      expect(result.current.isProcessing).toBe(false);
-      expect(result.current.onboardingResult).toBeUndefined();
+    act(() => {
+      result.current.transitionTo(StepId.FINISH);
     });
 
-    it("should reset stepId to first step in stepFlow", () => {
-      const customConfig = {
-        ...mockOnboardingConfig,
-        stepFlow: [StepId.FINISH, StepId.ONBOARD],
-      };
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: customConfig,
-        }),
-      );
-
-      act(() => {
-        result.current.transitionTo(StepId.FINISH);
-      });
-
-      act(() => {
-        result.current.handleRetryOnboardAccount();
-      });
-
-      expect(result.current.stepId).toBe(StepId.FINISH);
+    act(() => {
+      result.current.handleRetryOnboardAccount();
     });
 
-    it("should cleanup subscription when retrying", () => {
-      const unsubscribe = jest.fn();
-      const mockBridge: OnboardingBridge = {
-        onboardAccount: jest.fn(
-          () =>
-            new Observable(() => ({
-              unsubscribe,
-            })),
-        ),
-      };
+    expect(result.current.stepId).toBe(StepId.FINISH);
+  });
 
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+  it("should cleanup subscription when retrying", () => {
+    const unsubscribe = jest.fn();
+    const mockBridge: OnboardingBridge = {
+      onboardAccount: jest.fn(
+        () =>
+          new Observable(() => ({
+            unsubscribe,
+          })),
+      ),
+    };
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
 
-      act(() => {
-        result.current.handleRetryOnboardAccount();
-      });
-
-      expect(unsubscribe).toHaveBeenCalled();
+    act(() => {
+      result.current.handleOnboardAccount();
     });
 
-    it("should transition to valid step", () => {
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
-
-      act(() => {
-        result.current.transitionTo(StepId.FINISH);
-      });
-
-      expect(result.current.stepId).toBe(StepId.FINISH);
+    act(() => {
+      result.current.handleRetryOnboardAccount();
     });
 
-    it("should not transition to invalid step and log error", () => {
-      const customConfig = {
-        ...mockOnboardingConfig,
-        stepFlow: [StepId.ONBOARD],
-      };
-      const mockBridge = createMockBridge(of());
-      const { result } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: customConfig,
-        }),
-      );
+    expect(unsubscribe).toHaveBeenCalled();
+  });
 
-      const initialStepId = result.current.stepId;
+  it("should transition to valid step", () => {
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
 
-      act(() => {
-        result.current.transitionTo(StepId.FINISH);
-      });
-
-      expect(result.current.stepId).toBe(initialStepId);
-      expect(logger.error).toHaveBeenCalledWith(expect.stringContaining("Invalid step transition"));
+    act(() => {
+      result.current.transitionTo(StepId.FINISH);
     });
 
-    it("should cleanup subscription on unmount", () => {
-      const unsubscribe = jest.fn();
-      const mockBridge: OnboardingBridge = {
-        onboardAccount: jest.fn(
-          () =>
-            new Observable(() => ({
-              unsubscribe,
-            })),
-        ),
-      };
+    expect(result.current.stepId).toBe(StepId.FINISH);
+  });
 
-      const { result, unmount } = renderHook(() =>
-        useOnboardingFlow({
-          currency: mockCurrency,
-          device: mockDevice,
-          creatableAccount: mockCreatableAccount,
-          onboardingBridge: mockBridge,
-          onboardingConfig: mockOnboardingConfig,
-        }),
-      );
+  it("should not transition to invalid step and log error", () => {
+    const customConfig = {
+      ...mockOnboardingConfig,
+      stepFlow: [StepId.ONBOARD],
+    };
+    const mockBridge = createMockBridge(of());
+    const { result } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: customConfig,
+      }),
+    );
 
-      act(() => {
-        result.current.handleOnboardAccount();
-      });
+    const initialStepId = result.current.stepId;
 
-      unmount();
-
-      expect(unsubscribe).toHaveBeenCalled();
+    act(() => {
+      result.current.transitionTo(StepId.FINISH);
     });
+
+    expect(result.current.stepId).toBe(initialStepId);
+    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining("Invalid step transition"));
+  });
+
+  it("should cleanup subscription on unmount", () => {
+    const unsubscribe = jest.fn();
+    const mockBridge: OnboardingBridge = {
+      onboardAccount: jest.fn(
+        () =>
+          new Observable(() => ({
+            unsubscribe,
+          })),
+      ),
+    };
+
+    const { result, unmount } = renderHook(() =>
+      useOnboardingFlow({
+        currency: mockCurrency,
+        device: mockDevice,
+        creatableAccount: mockCreatableAccount,
+        onboardingBridge: mockBridge,
+        onboardingConfig: mockOnboardingConfig,
+      }),
+    );
+
+    act(() => {
+      result.current.handleOnboardAccount();
+    });
+
+    unmount();
+
+    expect(unsubscribe).toHaveBeenCalled();
   });
 });

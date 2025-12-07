@@ -2,15 +2,21 @@ import { Box, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import logger from "~/renderer/logger";
-import { OnboardingConfig, StepId, StepProps } from "../types";
+import { DynamicStepProps, OnboardingConfig, StableStepProps, StepId } from "../types";
 
 interface StepContentProps {
   stepId: StepId;
-  stepperProps: StepProps;
+  stableProps: StableStepProps;
+  dynamicProps: DynamicStepProps;
   onboardingConfig: OnboardingConfig;
 }
 
-export const StepContent = ({ stepId, stepperProps, onboardingConfig }: StepContentProps) => {
+export const StepContent = ({
+  stepId,
+  stableProps,
+  dynamicProps,
+  onboardingConfig,
+}: StepContentProps) => {
   const { t } = useTranslation();
   const StepComponent = onboardingConfig.stepComponents[stepId];
 
@@ -27,7 +33,7 @@ export const StepContent = ({ stepId, stepperProps, onboardingConfig }: StepCont
   }
 
   try {
-    return <StepComponent {...stepperProps} />;
+    return <StepComponent {...stableProps} {...dynamicProps} />;
   } catch (err) {
     logger.error(`[StepContent] Error rendering step component for ${stepId}`, err);
     return (

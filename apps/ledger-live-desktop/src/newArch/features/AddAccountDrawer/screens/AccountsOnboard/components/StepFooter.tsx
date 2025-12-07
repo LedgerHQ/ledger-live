@@ -1,14 +1,20 @@
 import React from "react";
 import logger from "~/renderer/logger";
-import { OnboardingConfig, StepId, StepProps } from "../types";
+import { DynamicStepProps, OnboardingConfig, StableStepProps, StepId } from "../types";
 
 interface StepFooterProps {
   stepId: StepId;
-  stepperProps: StepProps;
+  stableProps: StableStepProps;
+  dynamicProps: DynamicStepProps;
   onboardingConfig: OnboardingConfig;
 }
 
-export const StepFooter = ({ stepId, stepperProps, onboardingConfig }: StepFooterProps) => {
+export const StepFooter = ({
+  stepId,
+  stableProps,
+  dynamicProps,
+  onboardingConfig,
+}: StepFooterProps) => {
   const FooterComponent = onboardingConfig.footerComponents[stepId];
 
   if (!FooterComponent) {
@@ -18,7 +24,7 @@ export const StepFooter = ({ stepId, stepperProps, onboardingConfig }: StepFoote
   }
 
   try {
-    return <FooterComponent {...stepperProps} />;
+    return <FooterComponent {...stableProps} {...dynamicProps} />;
   } catch (err) {
     logger.error(`[StepFooter] Error rendering footer component for ${stepId}`, err);
     return null;

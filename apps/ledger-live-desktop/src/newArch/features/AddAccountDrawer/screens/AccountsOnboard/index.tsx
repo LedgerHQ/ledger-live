@@ -14,13 +14,18 @@ import { ScrollContainer } from "../../components/ScrollContainer";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
 import { StepContent, StepFooter } from "./components";
 import {
-  getImportableAccounts,
   prepareAccountsForAdding,
   useOnboardingAccountData,
 } from "./hooks/useOnboardingAccountData";
 import { useOnboardingFlow } from "./hooks/useOnboardingFlow";
 import { getOnboardingBridge, getOnboardingConfig } from "./registry";
-import { AccountOnboardStatus, OnboardingBridge, OnboardingConfig, StepProps } from "./types";
+import {
+  AccountOnboardStatus,
+  DynamicStepProps,
+  OnboardingBridge,
+  OnboardingConfig,
+  StableStepProps,
+} from "./types";
 
 interface AccountsOnboardProps {
   currency: CryptoCurrency;
@@ -52,13 +57,13 @@ export default function AccountsOnboard({
   const onboardingConfig = useOnboardingConfig(currency);
   const onboardingBridge = useOnboardingBridge(currency);
 
-  const creatableAccount = useMemo(
-    () =>
-      isReonboarding && accountToReonboard
-        ? accountToReonboard
-        : selectedAccounts.find(account => !account.used),
-    [selectedAccounts, isReonboarding, accountToReonboard],
-  );
+  const { importableAccounts, creatableAccount, accountName } = useOnboardingAccountData({
+    selectedAccounts,
+    currency,
+    editedNames,
+    isReonboarding,
+    accountToReonboard,
+  });
 
   invariant(device, "device is required");
   invariant(currency, "currency is required");
@@ -79,19 +84,6 @@ export default function AccountsOnboard({
     creatableAccount,
     onboardingBridge,
     onboardingConfig,
-  });
-
-  const importableAccounts = useMemo(
-    () => getImportableAccounts(selectedAccounts),
-    [selectedAccounts],
-  );
-
-  const { accountName } = useOnboardingAccountData({
-    selectedAccounts,
-    currency,
-    editedNames,
-    isReonboarding,
-    accountToReonboard,
   });
 
   const prepareAndAddAccounts = useCallback(
@@ -140,7 +132,7 @@ export default function AccountsOnboard({
     prepareAndAddAccounts(onComplete, true);
   }, [onComplete, prepareAndAddAccounts]);
 
-  const stepperProps: StepProps = useMemo(
+  const stableProps = useMemo<StableStepProps>(
     () => ({
       t,
       device,
@@ -149,17 +141,13 @@ export default function AccountsOnboard({
       editedNames,
       creatableAccount,
       importableAccounts,
-      isProcessing,
-      onboardingResult,
-      onboardingStatus,
-      error,
       isReonboarding,
+      onboardingConfig,
       onAddAccounts: handleAddAccounts,
       onAddMore: handleAddMore,
       onOnboardAccount: handleOnboardAccount,
       onRetryOnboardAccount: handleRetryOnboardAccount,
       transitionTo,
-      onboardingConfig,
     }),
     [
       t,
@@ -169,18 +157,24 @@ export default function AccountsOnboard({
       editedNames,
       creatableAccount,
       importableAccounts,
-      isProcessing,
-      onboardingResult,
-      onboardingStatus,
-      error,
       isReonboarding,
+      onboardingConfig,
       handleAddAccounts,
       handleAddMore,
       handleOnboardAccount,
       handleRetryOnboardAccount,
       transitionTo,
-      onboardingConfig,
     ],
+  );
+
+  const dynamicProps = useMemo<DynamicStepProps>(
+    () => ({
+      isProcessing,
+      onboardingStatus,
+      onboardingResult,
+      error,
+    }),
+    [isProcessing, onboardingStatus, onboardingResult, error],
   );
 
   return (
@@ -191,7 +185,8 @@ export default function AccountsOnboard({
       <ScrollContainer>
         <StepContent
           stepId={stepId}
-          stepperProps={stepperProps}
+          stableProps={stableProps}
+          dynamicProps={dynamicProps}
           onboardingConfig={onboardingConfig}
         />
       </ScrollContainer>
@@ -203,7 +198,8 @@ export default function AccountsOnboard({
       >
         <StepFooter
           stepId={stepId}
-          stepperProps={stepperProps}
+          stableProps={stableProps}
+          dynamicProps={dynamicProps}
           onboardingConfig={onboardingConfig}
         />
       </Box>
