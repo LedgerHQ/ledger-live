@@ -1,6 +1,6 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { Box, Flex, Text } from "@ledgerhq/react-ui";
+import { Box, Flex } from "@ledgerhq/react-ui";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -9,10 +9,10 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import logger from "~/renderer/logger";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ScrollContainer } from "../../components/ScrollContainer";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
+import { StepContent, StepFooter } from "./components";
 import {
   getImportableAccounts,
   prepareAccountsForAdding,
@@ -140,84 +140,72 @@ export default function AccountsOnboard({
     prepareAndAddAccounts(onComplete, true);
   }, [onComplete, prepareAndAddAccounts]);
 
-  const stepperProps: StepProps = {
-    t,
-    device,
-    currency,
-    accountName,
-    editedNames,
-    creatableAccount,
-    importableAccounts,
-    isProcessing,
-    onboardingResult,
-    onboardingStatus,
-    error,
-    isReonboarding,
-    onAddAccounts: handleAddAccounts,
-    onAddMore: handleAddMore,
-    onOnboardAccount: handleOnboardAccount,
-    onRetryOnboardAccount: handleRetryOnboardAccount,
-    transitionTo,
-    onboardingConfig,
-  };
-
-  const renderStepContent = () => {
-    const StepComponent = onboardingConfig.stepComponents[stepId];
-    if (!StepComponent) {
-      const errorMessage = `No step component found for stepId: ${stepId}. Available steps: ${Object.keys(onboardingConfig.stepComponents).join(", ")}`;
-      logger.error(`[renderStepContent] ${errorMessage}`);
-      return (
-        <Box p={4}>
-          <Text variant="body" color="error.c100">
-            {t("error.componentNotFound", { defaultValue: "An error occurred. Please try again." })}
-          </Text>
-        </Box>
-      );
-    }
-    try {
-      return <StepComponent {...stepperProps} />;
-    } catch (err) {
-      logger.error(`[renderStepContent] Error rendering step component for ${stepId}`, err);
-      return (
-        <Box p={4}>
-          <Text variant="body" color="error.c100">
-            {t("error.renderingFailed", {
-              defaultValue: "Failed to render component. Please try again.",
-            })}
-          </Text>
-        </Box>
-      );
-    }
-  };
-
-  const renderFooter = () => {
-    const FooterComponent = onboardingConfig.footerComponents[stepId];
-    if (!FooterComponent) {
-      const errorMessage = `No footer component found for stepId: ${stepId}. Available footers: ${Object.keys(onboardingConfig.footerComponents).join(", ")}`;
-      logger.error(`[renderFooter] ${errorMessage}`);
-      return null;
-    }
-    try {
-      return <FooterComponent {...stepperProps} />;
-    } catch (err) {
-      logger.error(`[renderFooter] Error rendering footer component for ${stepId}`, err);
-      return null;
-    }
-  };
+  const stepperProps: StepProps = useMemo(
+    () => ({
+      t,
+      device,
+      currency,
+      accountName,
+      editedNames,
+      creatableAccount,
+      importableAccounts,
+      isProcessing,
+      onboardingResult,
+      onboardingStatus,
+      error,
+      isReonboarding,
+      onAddAccounts: handleAddAccounts,
+      onAddMore: handleAddMore,
+      onOnboardAccount: handleOnboardAccount,
+      onRetryOnboardAccount: handleRetryOnboardAccount,
+      transitionTo,
+      onboardingConfig,
+    }),
+    [
+      t,
+      device,
+      currency,
+      accountName,
+      editedNames,
+      creatableAccount,
+      importableAccounts,
+      isProcessing,
+      onboardingResult,
+      onboardingStatus,
+      error,
+      isReonboarding,
+      handleAddAccounts,
+      handleAddMore,
+      handleOnboardAccount,
+      handleRetryOnboardAccount,
+      transitionTo,
+      onboardingConfig,
+    ],
+  );
 
   return (
     <Flex flexDirection="column" height="100%">
       {onboardingStatus === AccountOnboardStatus.PREPARE ? (
         <LoadingOverlay theme={currentTheme || "dark"} />
       ) : null}
-      <ScrollContainer>{renderStepContent()}</ScrollContainer>
+      <ScrollContainer>
+        <StepContent
+          stepId={stepId}
+          stepperProps={stepperProps}
+          onboardingConfig={onboardingConfig}
+        />
+      </ScrollContainer>
       <Box
         paddingBottom={FOOTER_PADDING_BOTTOM_PX}
         paddingTop={FOOTER_PADDING_TOP_PX}
         paddingX="0px"
         zIndex={1}
       >
-        {renderFooter()}
+        <StepFooter
+          stepId={stepId}
+          stepperProps={stepperProps}
+          onboardingConfig={onboardingConfig}
+        />
       </Box>
     </Flex>
   );
