@@ -33,11 +33,11 @@ describe("acceptOffer", () => {
 
   const mockPreparedTransaction = createMockPrepareTransferResponse({
     json: {
-      ...prepareTransferMock,
+      ...prepareTransferMock.json,
       metadata: {
-        ...prepareTransferMock.metadata,
+        ...prepareTransferMock.json.metadata,
         submitterInfo: {
-          ...prepareTransferMock.metadata.submitterInfo,
+          ...prepareTransferMock.json.metadata.submitterInfo,
           actAs: [mockPartyId],
         },
       },

@@ -19,7 +19,7 @@ function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
   return {
     instrumentUtxoCounts,
     pendingTransferProposals,
-    publicKey,
+    ...(publicKey !== undefined && { publicKey }),
   };
 }
 
@@ -27,7 +27,7 @@ function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
   return {
     instrumentUtxoCounts: r.instrumentUtxoCounts,
     pendingTransferProposals: r.pendingTransferProposals,
-    publicKey: r.publicKey,
+    ...(r.publicKey !== undefined && { publicKey: r.publicKey }),
   };
 }
 

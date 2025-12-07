@@ -195,7 +195,7 @@ export const createMockTransaction = createFactory<Transaction>({
 
 export const createMockPrepareTransferResponse = createFactory<PrepareTransferResponse>({
   hash: "test-hash",
-  json: prepareTransferMock,
+  json: prepareTransferMock.json,
   serialized: "serialized-transaction",
   step: { type: "single-step" },
 });
