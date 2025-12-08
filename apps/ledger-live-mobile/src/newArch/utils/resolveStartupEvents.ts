@@ -1,4 +1,5 @@
 import { getTimeSinceStartup } from "react-native-startup-time";
+import { track } from "~/analytics";
 import {
   startupEventsResolvers,
   startupFirstImportTime,
@@ -16,7 +17,7 @@ const startupTsp = new Promise<number>(resolve => {
   getTimeSinceStartup().then(t => resolve(now - t));
 });
 
-export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
+export async function resolveStartupEvents(sendEvents = false): Promise<GroupedStartupEvent[]> {
   const awaitedTsp = await startupTsp;
   startupEventsResolvers.splice(0).forEach(resolver => {
     const { event, time } = resolver(awaitedTsp);
@@ -28,5 +29,11 @@ export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
     });
   });
 
-  return Array.from(resolved.values());
+  const events = Array.from(resolved.values());
+
+  if (sendEvents) {
+    track("app_startup_events", { events });
+  }
+
+  return events;
 }
