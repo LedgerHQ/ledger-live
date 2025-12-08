@@ -36,13 +36,13 @@ export default function StepFinish({
         textAlign="center"
       >
         {isReonboarding
-          ? t("families.canton.addAccount.reonboard.success")
+          ? t("families.canton.addAccount.reonboard.success", { count: accounts.length })
           : t("addAccounts.success", { count: accounts.length })}
       </Text>
       <Text variant="body" fontSize={14} color="neutral.c80" mt={2} textAlign="center">
         {isReonboarding
-          ? t("families.canton.addAccount.reonboard.successDescription")
-          : t("addAccounts.successDescription", { count: accounts.length })}
+          ? t("families.canton.addAccount.reonboard.successDescription", { count: accounts.length })
+          : t("families.canton.addAccount.onboard.successDescription", { count: accounts.length })}
       </Text>
     </Box>
   );

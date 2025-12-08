@@ -92,7 +92,6 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     authorizeStatus: AuthorizeStatus.INIT,
     error: null,
     onAddAccounts: jest.fn(),
-    onAddMore: jest.fn(),
     onAuthorizePreapproval: jest.fn(),
     onOnboardAccount: jest.fn(),
     onRetryOnboardAccount: jest.fn(),

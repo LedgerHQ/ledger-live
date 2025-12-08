@@ -36,7 +36,6 @@ interface AccountsOnboardProps {
   isReonboarding?: boolean;
   accountToReonboard?: Account;
   onComplete: (accounts: Account[]) => void;
-  onAddMore: () => void;
 }
 
 export default function AccountsOnboard({
@@ -48,7 +47,6 @@ export default function AccountsOnboard({
   isReonboarding = false,
   accountToReonboard,
   onComplete,
-  onAddMore,
 }: AccountsOnboardProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -122,12 +120,6 @@ export default function AccountsOnboard({
     ],
   );
 
-  const handleAddMore = useCallback(() => {
-    prepareAndAddAccounts(() => {
-      onAddMore();
-    }, false);
-  }, [onAddMore, prepareAndAddAccounts]);
-
   const handleAddAccounts = useCallback(() => {
     prepareAndAddAccounts(onComplete, true);
   }, [onComplete, prepareAndAddAccounts]);
@@ -144,7 +136,6 @@ export default function AccountsOnboard({
       isReonboarding,
       onboardingConfig,
       onAddAccounts: handleAddAccounts,
-      onAddMore: handleAddMore,
       onOnboardAccount: handleOnboardAccount,
       onRetryOnboardAccount: handleRetryOnboardAccount,
       transitionTo,
@@ -160,7 +151,6 @@ export default function AccountsOnboard({
       isReonboarding,
       onboardingConfig,
       handleAddAccounts,
-      handleAddMore,
       handleOnboardAccount,
       handleRetryOnboardAccount,
       transitionTo,

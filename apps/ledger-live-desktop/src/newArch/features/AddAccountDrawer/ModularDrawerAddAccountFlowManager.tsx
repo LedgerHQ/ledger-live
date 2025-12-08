@@ -173,7 +173,6 @@ const ModularDrawerAddAccountFlowManager = ({
                   setSelectedAccounts(accounts);
                   navigateToAccountsAdded();
                 }}
-                onAddMore={navigateToScanAccounts}
               />
             </Flex>
           </StepContainer>

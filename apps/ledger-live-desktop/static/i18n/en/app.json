@@ -5851,7 +5851,8 @@
           "title": "Account Update Required",
           "init": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it.",
           "success": "Account updated successfully",
-          "successDescription": "You can now continue using your account"
+          "successDescription": "You can now continue using your account",
+          "successDescription_other": "You can now continue using your accounts"
         },
         "onboard": {
           "title": "Onboarding",
@@ -5860,6 +5861,8 @@
           "init": "Set up your new Canton account by clicking Continue",
           "onboarded": "Onboarded accounts",
           "success": "Your new Canton account has been created and onboarded.",
+          "successDescription": "You can now use your account",
+          "successDescription_other": "You can now use your accounts",
           "error": "Failed to onboard new account. Please try again.",
           "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status": {

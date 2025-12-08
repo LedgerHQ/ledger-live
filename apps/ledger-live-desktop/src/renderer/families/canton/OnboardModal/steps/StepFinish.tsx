@@ -24,37 +24,25 @@ const StepFinish = ({
       />
       <Title>
         {isReonboarding
-          ? t("families.canton.addAccount.reonboard.success")
+          ? t("families.canton.addAccount.reonboard.success", { count: accounts.length })
           : t("addAccounts.success", { count: accounts.length })}
       </Title>
       <Text>
         {isReonboarding
-          ? t("families.canton.addAccount.reonboard.successDescription")
-          : t("addAccounts.successDescription", { count: accounts.length })}
+          ? t("families.canton.addAccount.reonboard.successDescription", {
+              count: accounts.length,
+            })
+          : t("families.canton.addAccount.reonboard.successDescription", {
+              count: accounts.length,
+            })}
       </Text>
     </Box>
   );
 };
 
-export const StepFinishFooter = ({ t, onAddAccounts, onAddMore, isReonboarding }: StepProps) => {
+export const StepFinishFooter = ({ t, onAddAccounts, isReonboarding }: StepProps) => {
   return (
-    <Box
-      horizontal
-      alignItems="center"
-      justifyContent={isReonboarding ? "flex-end" : "space-between"}
-      grow
-    >
-      {!isReonboarding && (
-        <Button
-          event="Page AddAccounts Step 4 AddMore"
-          data-testid="add-accounts-finish-add-more-button"
-          outlineGrey
-          onClick={onAddMore}
-          aria-label="Add more Canton accounts"
-        >
-          {t("addAccounts.cta.addMore")}
-        </Button>
-      )}
+    <Box horizontal alignItems="center" justifyContent="flex-end" grow>
       <Button
         event="Page AddAccounts Step 4 Close"
         data-testid="add-accounts-finish-close-button"

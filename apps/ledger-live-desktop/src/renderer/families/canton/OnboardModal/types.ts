@@ -30,7 +30,6 @@ export type StepProps = {
   error: Error | null;
   isReonboarding?: boolean;
   onAddAccounts: (accounts: Account[]) => void;
-  onAddMore: () => void;
   onAuthorizePreapproval: () => void;
   onOnboardAccount: () => void;
   onRetryOnboardAccount: () => void;

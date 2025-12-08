@@ -70,14 +70,13 @@ export const StepOnboardFooter = ({
 export const StepFinishFooter = ({
   t,
   onAddAccounts,
-  onAddMore,
   isReonboarding,
   importableAccounts,
   creatableAccount,
   onboardingResult,
 }: Pick<
   StableStepProps,
-  "t" | "onAddAccounts" | "onAddMore" | "isReonboarding" | "importableAccounts" | "creatableAccount"
+  "t" | "onAddAccounts" | "isReonboarding" | "importableAccounts" | "creatableAccount"
 > &
   Pick<DynamicStepProps, "onboardingResult">) => {
   const handleDone = () => {
@@ -92,11 +91,6 @@ export const StepFinishFooter = ({
 
   return (
     <Flex flexDirection="column" width="100%" rowGap="12px">
-      {!isReonboarding && (
-        <Button size="large" variant="main" outline onClick={onAddMore}>
-          {t("addAccounts.cta.addMore")}
-        </Button>
-      )}
       <Button size="xl" variant="main" onClick={handleDone}>
         {isReonboarding ? t("common.continue") : t("common.done")}
       </Button>

@@ -268,15 +268,6 @@ class OnboardModal extends PureComponent<Props, State> {
     this.setState({ stepId });
   };
 
-  handleAddMore = () => {
-    const { closeModal, openModal, currency } = this.props;
-    this.handleAddAccounts();
-    closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
-    openModal("MODAL_ADD_ACCOUNTS", {
-      currency,
-    });
-  };
-
   handleAddAccounts = () => {
     const {
       addAccountsAction,
@@ -462,7 +453,6 @@ class OnboardModal extends PureComponent<Props, State> {
       error,
       isReonboarding: isReonboarding || this.state.isReonboarding,
       onAddAccounts: this.handleAddAccounts,
-      onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,
       onOnboardAccount: this.handleOnboardAccount,
       onRetryOnboardAccount: this.handleRetryOnboardAccount,

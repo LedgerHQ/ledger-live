@@ -45,7 +45,6 @@ export type StableStepProps = {
   isReonboarding?: boolean;
   onboardingConfig?: OnboardingConfig;
   onAddAccounts: (accounts: Account[]) => void;
-  onAddMore: () => void;
   onOnboardAccount: () => void;
   onRetryOnboardAccount: () => void;
   transitionTo: (stepId: StepId) => void;
