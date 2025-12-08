@@ -47,6 +47,7 @@ interface RenderReturn {
   container: HTMLElement;
   i18n: typeof i18n;
 }
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function
   ? T
   : T extends Array<infer U>

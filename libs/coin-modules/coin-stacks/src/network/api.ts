@@ -120,7 +120,7 @@ export const fetchTokenBalancesPage = async (
       `/extended/v2/addresses/${addr}/balances/ft?offset=${offset}&limit=${limit}`,
     );
     return response;
-  } catch (e) {
+  } catch {
     return { limit, offset, total: 0, results: [] };
   }
 };
@@ -181,7 +181,7 @@ export const fetchTransactionsPage = async (
       `/extended/v2/addresses/${addr}/transactions?offset=${offset}&limit=${limit}`,
     );
     return response;
-  } catch (e) {
+  } catch {
     return { limit, offset, total: 0, results: [] };
   }
 };

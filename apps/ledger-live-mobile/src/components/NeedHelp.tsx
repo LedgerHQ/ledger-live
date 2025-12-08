@@ -30,5 +30,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default memo<{}>(NeedHelp);
+
+export default memo(NeedHelp);

@@ -34,7 +34,7 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     if (!verified) {
       throw new UpdateIncorrectSig();
     }
-  } catch (e) {
+  } catch {
     throw new UpdateIncorrectSig();
   }
 }

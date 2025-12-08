@@ -321,7 +321,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
         : ((): string | null => {
             try {
               return getSerializedTransaction(transaction);
-            } catch (e) {
+            } catch {
               return null;
             }
           })();

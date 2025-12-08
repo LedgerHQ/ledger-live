@@ -31,7 +31,6 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import { analyticsMiddleware } from "~/renderer/middlewares/analytics";
 import type { ReduxStore } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
@@ -56,6 +55,7 @@ import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
+import { startAnalytics } from "./analytics/segment";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -121,7 +121,6 @@ async function init() {
 
   const store = createStore({
     dbMiddleware,
-    analyticsMiddleware,
   });
 
   setupRecentAddressesStore(store);
@@ -170,10 +169,12 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
+  // Make sure startAnalytics is always called after a first getKey() because otherwise
+  // will run into issues where shareAnalytics state will not reflect the user's preferences and always be set to true...
+  startAnalytics(store);
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
-
   if (wasHardReset) {
     settingsToLoad.hasCompletedOnboarding = false;
   }

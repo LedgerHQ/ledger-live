@@ -142,7 +142,7 @@ export async function updateWatcherCheckRun(
             repo,
             ref: `${REF_PREFIX}/forked/${checkSuite.head_sha}`,
           });
-        } catch (error) {
+        } catch {
           // Ignore error / maybe ref doesn't exist
         }
 
@@ -181,7 +181,7 @@ export async function getTips(workflowFile: string): Promise<string | undefined>
   let tips = undefined;
   try {
     tips = await fs.readFile(p, "utf-8");
-  } catch (error) {
+  } catch {
     // ignore error, file is not found
   }
   return tips;

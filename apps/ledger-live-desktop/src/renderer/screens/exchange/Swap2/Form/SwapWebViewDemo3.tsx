@@ -371,7 +371,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
         try {
           const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
           return Promise.resolve(tx);
-        } catch (error) {
+        } catch {
           // not a real error, the node just didn't find the transaction yet
           return Promise.resolve({});
         }

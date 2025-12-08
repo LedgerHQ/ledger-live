@@ -99,7 +99,7 @@ const inferFamilyFromAccountId: (accountId: string) => string | null | undefined
     try {
       const { currencyId } = decodeAccountId(accountId);
       return getCryptoCurrencyById(currencyId).family;
-    } catch (e) {
+    } catch {
       return null;
     }
   },

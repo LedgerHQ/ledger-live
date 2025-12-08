@@ -61,7 +61,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     if (!inputValueDefaulted) return false;
     try {
       return JSON.parse(inputValueDefaulted)?.enabled;
-    } catch (e) {
+    } catch {
       return false;
     }
   }, [inputValueDefaulted]);

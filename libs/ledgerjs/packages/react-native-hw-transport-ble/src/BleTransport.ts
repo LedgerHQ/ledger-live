@@ -258,7 +258,7 @@ async function open(
         characteristics = await device.characteristicsForService(uuid);
         res = getInfosForServiceUuid(uuid);
         break;
-      } catch (e) {
+      } catch {
         // we attempt to connect to service
       }
     }

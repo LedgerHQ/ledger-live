@@ -47,7 +47,7 @@ async function getDistantFileContent(url: string, binary = false) {
     // @ts-expect-error axios versions mismatch, so types mismatch…
     const res = await network(query);
     return res.data;
-  } catch (err) {
+  } catch {
     throw new UpdateFetchFileFail(url);
   }
 }
