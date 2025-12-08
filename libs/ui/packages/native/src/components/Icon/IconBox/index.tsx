@@ -18,16 +18,15 @@ export type Props = {
 const DEFAULT_BOX_SIZE = 56;
 const DEFAULT_ICON_SIZE = 24;
 
-const IconContainer = styled(Flex).attrs<{ size: Props["boxSize"] }>(
-  ({ size = DEFAULT_BOX_SIZE }) => ({
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: "1px",
-    borderColor: "neutral.c40",
-    width: `${size}px`,
-    height: `${size}px`,
-  }),
-)`
+const IconContainer = styled(Flex).attrs<{ boxSize: number }>(({ boxSize = DEFAULT_BOX_SIZE }) => ({
+  justifyContent: "center",
+  alignItems: "center",
+  borderWidth: "1px",
+
+  borderColor: "neutral.c40",
+  width: `${boxSize}px`,
+  height: `${boxSize}px`,
+}))`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
@@ -40,7 +39,7 @@ export default function IconBox({
 }: Props): React.ReactElement {
   const { colors } = useTheme();
   return (
-    <IconContainer size={boxSize} {...iconContainerProps}>
+    <IconContainer boxSize={boxSize} {...iconContainerProps}>
       {React.isValidElement(Icon) ? (
         Icon
       ) : (
