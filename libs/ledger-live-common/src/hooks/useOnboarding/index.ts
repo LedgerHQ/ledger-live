@@ -7,3 +7,5 @@ export {
   useOnboardingAccountData,
 } from "./useOnboardingAccountData";
 export { useOnboardingFlow } from "./useOnboardingFlow";
+
+export type { BaseStableStepProps, DynamicStepProps } from "./types";

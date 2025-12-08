@@ -1,61 +1,28 @@
+import {
+  AccountOnboardStatus,
+  BaseStableStepProps,
+  DynamicStepProps as SharedDynamicStepProps,
+  OnboardingConfig as BaseOnboardingConfig,
+  OnboardingResult,
+  OnboardProgress,
+  OnboardResult,
+  OnboardingBridge,
+  StepId,
+} from "@ledgerhq/live-common/hooks/useOnboarding/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import React from "react";
-import { Observable } from "rxjs";
 
-export { AccountOnboardStatus };
+export { AccountOnboardStatus, StepId };
+export type { OnboardProgress, OnboardResult, OnboardingBridge, OnboardingResult };
 
-export enum StepId {
-  ONBOARD = "ONBOARD",
-  FINISH = "FINISH",
-}
-
-export type OnboardProgress = {
-  status: AccountOnboardStatus;
-};
-
-export type OnboardResult = {
-  account: Account;
-  metadata?: Record<string, unknown>;
-};
-
-export interface OnboardingBridge {
-  onboardAccount: (
-    currency: CryptoCurrency,
-    deviceId: string,
-    creatableAccount: Account,
-  ) => Observable<OnboardProgress | OnboardResult>;
-}
-
-export type OnboardingResult = {
-  completedAccount: Account;
-  metadata?: Record<string, unknown>;
-};
-
-export type StableStepProps = {
+export type StableStepProps = BaseStableStepProps & {
   t: TFunction;
   device: Device;
-  currency: CryptoCurrency;
-  accountName: string;
-  editedNames: { [accountId: string]: string };
-  creatableAccount: Account;
-  importableAccounts: Account[];
-  isReonboarding?: boolean;
   onboardingConfig?: OnboardingConfig;
-  onAddAccounts: (accounts: Account[]) => void;
-  onOnboardAccount: () => void;
-  onRetryOnboardAccount: () => void;
-  transitionTo: (stepId: StepId) => void;
 };
 
-export type DynamicStepProps = {
-  isProcessing: boolean;
-  onboardingStatus: AccountOnboardStatus;
-  onboardingResult: OnboardingResult | undefined;
-  error: Error | null;
-};
+export type DynamicStepProps = SharedDynamicStepProps;
 
 export type StepProps = StableStepProps & DynamicStepProps;
 
@@ -89,7 +56,7 @@ export type FooterComponent = React.ComponentType<StableStepProps & DynamicStepP
 
 export type TransactionConfirmComponent = React.ComponentType<{ device: Device }>;
 
-export interface OnboardingConfig {
+export interface OnboardingConfig extends BaseOnboardingConfig {
   stepComponents: {
     [StepId.ONBOARD]: StepComponent;
     [StepId.FINISH]: StepComponent;
@@ -100,6 +67,5 @@ export interface OnboardingConfig {
   };
   translationKeys: TranslationKeys;
   urls: UrlConfig;
-  stepFlow: StepId[];
   transactionConfirmComponent?: TransactionConfirmComponent;
 }

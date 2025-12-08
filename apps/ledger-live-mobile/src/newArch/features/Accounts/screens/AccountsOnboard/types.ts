@@ -1,5 +1,7 @@
 import {
   AccountOnboardStatus,
+  BaseStableStepProps,
+  DynamicStepProps as SharedDynamicStepProps,
   OnboardingConfig as BaseConfig,
   OnboardProgress,
   OnboardResult,
@@ -13,33 +15,17 @@ import React from "react";
 import type { NavigationSnapshot } from "~/families/canton/utils/navigationSnapshot";
 
 export { AccountOnboardStatus, StepId };
-
 export type { OnboardProgress, OnboardResult, OnboardingBridge, OnboardingResult };
 
 export type StepComponent = React.ComponentType<StableStepProps & DynamicStepProps>;
 export type FooterComponent = React.ComponentType<StableStepProps & DynamicStepProps>;
 
-export type StableStepProps = {
-  currency: CryptoCurrency;
+export type StableStepProps = BaseStableStepProps & {
   device: { deviceId: string };
-  accountName: string;
-  editedNames: { [accountId: string]: string };
-  creatableAccount: Account;
-  importableAccounts: Account[];
-  isReonboarding?: boolean;
   onboardingConfig?: OnboardingConfig;
-  onAddAccounts: (accounts: Account[]) => void;
-  onOnboardAccount: () => void;
-  onRetryOnboardAccount: () => void;
-  transitionTo: (stepId: StepId) => void;
 };
 
-export type DynamicStepProps = {
-  isProcessing: boolean;
-  onboardingStatus: AccountOnboardStatus;
-  onboardingResult: OnboardingResult | undefined;
-  error: Error | null;
-};
+export type DynamicStepProps = SharedDynamicStepProps;
 
 export type TranslationKeys = {
   title: string;
@@ -78,7 +64,6 @@ export interface OnboardingConfig extends BaseConfig {
   urls: UrlConfig;
 }
 
-// Navigation types
 export type AccountsOnboardParams = {
   accountsToAdd: Account[];
   currency: CryptoCurrency;
