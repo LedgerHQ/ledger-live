@@ -64,6 +64,7 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import { FlushOnScreenEventsPolicy } from "./CustomFushPolicy";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -377,6 +378,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   if (token) {
     segmentClient = createClient({
       writeKey: token,
+      flushPolicies: [new FlushOnScreenEventsPolicy()],
       debug: !!ANALYTICS_LOGS,
     });
     // This allows us to not retrieve users ip addresses for privacy reasons
