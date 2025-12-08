@@ -7517,7 +7517,7 @@
       "customImage": {
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
-        "description": "Display your favorite digital art or photo as your {{productName}}'s lock screen.",
+        "description": "Display your favorite digital art or photo as your device’s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
       "syncAccounts": {
