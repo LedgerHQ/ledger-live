@@ -112,7 +112,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || '0.25.9' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:${{ inputs.speculos_device == 'nanoS' && '4.15.0' || 'latest' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
     runs-on: [ledger-live-4xlarge-e2e]
     outputs:

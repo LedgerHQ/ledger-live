@@ -173,7 +173,7 @@ export async function createSpeculosDevice(
   const sdk = inferSDK(firmware, model);
 
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
-  const appPath = `./apps/${subpath}`;
+  const appPath = `/speculos/apps/${subpath}`;
 
   const params = [
     "run",
@@ -194,35 +194,35 @@ export async function createSpeculosDevice(
       : [
           // http ports
           "-p",
-          `${ports.apiPort}:40000`,
+          `${ports.apiPort}:5000`,
           "-p",
-          `${ports.vncPort}:41000`,
+          `${ports.vncPort}:5900`,
         ]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
     `${speculosID}`,
     process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
-    "--model",
-    getSpeculosModel(model),
+    "speculos",
     appPath,
     ...(dependency
       ? [
           "-l",
-          `${dependency}:./apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`,
+          `${dependency}:/speculos/apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`,
         ]
       : []),
     ...(dependencies !== undefined
       ? dependencies.flatMap(dependency => [
           "-l",
-          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
+          `${dependency.name}:/speculos/apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
         ])
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
+    "--model",
+    getSpeculosModel(model),
     "--display",
     "headless",
     ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
-    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [
           // websocket ports
@@ -236,7 +236,7 @@ export async function createSpeculosDevice(
       : [
           // http ports
           "--api-port",
-          "40000",
+          "5000",
         ]),
   ];
 

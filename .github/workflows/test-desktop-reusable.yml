@@ -127,7 +127,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.25.9
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
       SPECULOS_DEVICE: nanoSP
     runs-on: [ledger-live-4xlarge]
     steps:
