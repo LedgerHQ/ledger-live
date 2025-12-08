@@ -12,8 +12,8 @@ import { getTokenFromAsset } from "@ledgerhq/coin-evm/logic/index";
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
 
 const kit = celoKit();
 
@@ -35,14 +35,7 @@ const SAFE_REORG_THRESHOLD = 80;
 type OperationType = (typeof operationsTypes)[number];
 
 const getTypeFromString = (value: string) => {
-  const finding = operationsTypes.filter(item => {
-    return item === value;
-  });
-  let result: OperationType = "NONE";
-  if (finding.length > 0) {
-    result = finding[0];
-  }
-  return result;
+  return operationsTypes.find(item => item === value) ?? "NONE";
 };
 
 const resolveTypesFromContracts = (item: {
@@ -73,8 +66,8 @@ const getOperationsList = async ({
   accountId,
   contracts,
 }: {
-  info: Parameters<GetAccountShape<CeloAccount>>[0];
-  config: Parameters<GetAccountShape<CeloAccount>>[1];
+  info: AccountShapeInfo<CeloAccount>;
+  config: SyncConfig;
   accountId: string;
   contracts: {
     locked: string;

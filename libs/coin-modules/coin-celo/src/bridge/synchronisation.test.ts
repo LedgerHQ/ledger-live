@@ -42,9 +42,10 @@ describe("When getting the account shape", () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
-    expect(result).toBeDefined();
-    expect(result.balance).toEqual(BigNumber(1010));
-    expect(result.spendableBalance).toEqual(BigNumber(1010));
+    expect(result).toMatchObject({
+      balance: BigNumber(1010),
+      spendableBalance: BigNumber(1010),
+    });
   });
 
   it("returns the account with 0 operations", async () => {
@@ -59,7 +60,10 @@ describe("When getting the account shape", () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
-    expect(result).toBeDefined();
+    expect(result).toMatchObject({
+      blockHeight: 4444,
+      syncHash: "0x0000000000000000000000000000000000001d00",
+    });
     expect(result.operations?.length).toBe(0);
   });
 
@@ -76,7 +80,13 @@ describe("When getting the account shape", () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
-    expect(result).toBeDefined();
+    expect(result).toMatchObject({
+      blockHeight: 4444,
+      celoResources: {
+        registrationStatus: false,
+        pendingWithdrawals: [],
+      },
+    });
     expect(result.operations?.length).toBe(0);
     expect(result.subAccounts?.length).toBe(1);
   });
@@ -93,7 +103,10 @@ describe("When getting the account shape", () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
-    expect(result).toBeDefined();
+    expect(result).toMatchObject({
+      blockHeight: 4444,
+      operationsCount: 1,
+    });
     expect(result.operations?.length).toBe(1);
   });
 
@@ -110,13 +123,13 @@ describe("When getting the account shape", () => {
 
     // Then
     expect(result).toBeDefined();
-    expect(result.id).toEqual("js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:");
-    expect(result.celoResources?.electionAddress).toEqual(
-      "0x000000000000000000000000000000000000ce10",
-    );
-    expect(result.celoResources?.lockedGoldAddress).toEqual(
-      "0x0000000000000000000000000000000000001d00",
-    );
+    expect(result).toMatchObject({
+      id: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:",
+      celoResources: {
+        electionAddress: "0x000000000000000000000000000000000000ce10",
+        lockedGoldAddress: "0x0000000000000000000000000000000000001d00",
+      },
+    });
     expect(result.spendableBalance).toEqual(BigNumber(20));
   });
 });
