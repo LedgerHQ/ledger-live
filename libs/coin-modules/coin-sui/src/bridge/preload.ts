@@ -1,5 +1,6 @@
 import { Observable, Subject } from "rxjs";
 import type { SuiPreloadData } from "../types";
+import { getValidators } from "../network/sdk";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
@@ -28,9 +29,15 @@ export const getPreloadStrategy = () => ({
 });
 
 export const preload = async (): Promise<SuiPreloadData> => {
-  return { validators: [], tokens: [] };
+  const validators = await getValidators();
+  return { validators, tokens: [] };
 };
 
-export const hydrate = (_data: SuiPreloadData) => {
-  // noop
+export const hydrate = (data: SuiPreloadData) => {
+  if (data) {
+    setSuiPreloadData({
+      validators: data.validators ?? [],
+      tokens: [],
+    });
+  }
 };
