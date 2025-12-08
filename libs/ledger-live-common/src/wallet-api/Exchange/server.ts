@@ -390,11 +390,13 @@ export const handlers = ({
         customFeeConfig,
         swapAppVersion,
         sponsored,
+        isEmbedded,
       } = params;
 
       const trackingParams = {
         provider: params.provider,
         exchangeType: params.exchangeType,
+        isEmbeddedSwap: isEmbedded,
       };
 
       tracking.startExchangeRequested(trackingParams);
@@ -472,6 +474,7 @@ export const handlers = ({
       const trackingCompleteParams = {
         provider: params.provider,
         exchangeType: params.exchangeType,
+        isEmbeddedSwap: isEmbedded,
       };
       tracking.completeExchangeRequested(trackingCompleteParams);
 
