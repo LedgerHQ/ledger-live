@@ -1,5 +1,11 @@
 # @ledgerhq/react-native-hid
 
+## 6.33.0
+
+### Minor Changes
+
+- [#11943](https://github.com/LedgerHQ/ledger-live/pull/11943) [`aae83b9`](https://github.com/LedgerHQ/ledger-live/commit/aae83b968a6cc3a4bba17924091eebd2fdcfbb24) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add DMK react native HID transport
+
 ## 6.33.0-next.0
 
 ### Minor Changes
