@@ -15,19 +15,23 @@ function isCantonAccountRaw(accountRaw: AccountRaw): accountRaw is CantonAccount
 }
 
 function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
-  const { instrumentUtxoCounts, pendingTransferProposals, publicKey } = r;
+  const { isOnboarded, instrumentUtxoCounts, pendingTransferProposals, publicKey, xpub } = r;
   return {
+    isOnboarded: isOnboarded,
     instrumentUtxoCounts,
     pendingTransferProposals,
-    publicKey,
+    ...(publicKey !== undefined && { publicKey }),
+    ...(xpub !== undefined && { xpub }),
   };
 }
 
 function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
   return {
+    isOnboarded: r.isOnboarded,
     instrumentUtxoCounts: r.instrumentUtxoCounts,
     pendingTransferProposals: r.pendingTransferProposals,
-    publicKey: r.publicKey,
+    ...(r.publicKey !== undefined && { publicKey: r.publicKey }),
+    ...(r.xpub !== undefined && { xpub: r.xpub }),
   };
 }
 

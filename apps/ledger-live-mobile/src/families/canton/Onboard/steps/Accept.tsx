@@ -8,6 +8,7 @@ import type {
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Alert, Button, Checkbox, Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -94,7 +95,9 @@ export default function Accept({ navigation, route }: Props) {
     if (isReonboarding && accountToReonboard) {
       return accountToReonboard;
     }
-    return accountsToAdd.find(account => !account.used);
+    return (accountsToAdd as CantonAccount[]).find(
+      account => !account.cantonResources?.isOnboarded,
+    );
   }, [isReonboarding, accountToReonboard, accountsToAdd]);
 
   const selectedIds = useMemo(

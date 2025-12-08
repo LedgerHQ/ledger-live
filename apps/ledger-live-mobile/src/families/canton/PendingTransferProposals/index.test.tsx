@@ -239,6 +239,7 @@ const createCantonAccount = (
   const account = createMockAccount({ xpub: partyId }) as CantonAccount;
   const sender = isOutgoing ? partyId : "sender-address";
   account.cantonResources = {
+    isOnboarded: true,
     pendingTransferProposals: [
       {
         contract_id: contractId,
