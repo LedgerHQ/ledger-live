@@ -60,7 +60,7 @@ export default function StakingSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "delegate",
-            recipient: chosenValidator.suiAddress,
+            recipient: chosenValidator?.suiAddress ?? "",
           }),
         };
       }
@@ -85,6 +85,8 @@ export default function StakingSummary({ navigation, route }: Props) {
     if (tmpTransaction) {
       updateTransaction(_ => tmpTransaction);
     }
+
+    if (!chosenValidator) return;
 
     if (chosenValidator.suiAddress !== transaction.recipient) {
       setTransaction(
