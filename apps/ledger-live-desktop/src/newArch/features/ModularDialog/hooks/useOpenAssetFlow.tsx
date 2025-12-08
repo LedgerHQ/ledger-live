@@ -81,10 +81,7 @@ export function useOpenAssetFlowDialog(
         });
       };
 
-      const onFlowFinishedWithModalReopen = (
-        account: Account | TokenAccount,
-        parentAccount?: Account,
-      ) => {
+      const onFlowFinishedWithModalReopen = () => {
         setDrawer();
         if (modalNameToReopen) {
           dispatch(openModal(modalNameToReopen, undefined));
