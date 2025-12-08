@@ -2127,7 +2127,7 @@
         "desc_1" : "Verwende ein <1>OTG-Kabel</1>, um deine Ledger Nano X mit deinem Android-Smartphone zu verbinden (iOS wird nicht unterstützt). Verwalte deine Krypto mit Ledger Wallet Mobile oder einer anderen kompatiblen (Web-)App.",
         "bullets" : {
           "0" : {
-            "label" : "Vergewisseren Sie sich, dass Bluetooth auf Ihrem Smartphone und auf Ihrem Ledger Nano X aktiviert ist. Ihr Ledger Nano X sollte sich auf dem Dashboard, dem Hauptstartbildschirm, befinden.<br>"
+            "label" : "Vergewisseren Sie sich, dass Bluetooth auf Ihrem Smartphone und auf Ihrem Ledger Nano X aktiviert ist. Ihr Ledger Nano X sollte sich auf dem Dashboard, dem Hauptstartbildschirm, befinden.\n"
           },
           "1" : {
             "label" : "<1>{{Os}}</1>: Vergewissere dich, dass die Standortdienste in den Einstellungen deines Smartphones für Ledger Wallet aktiviert sind. Ledger Wallet nutzt niemals deine Standortinformationen. Dies ist eine Voraussetzung für Bluetooth unter {{Os}}."
@@ -3756,7 +3756,7 @@
         },
         "notAvailable" : {
           "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
-          "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
+          "content" : "Haben Sie noch etwas Geduld,\nwir werden diese Funktion sehr bald einführen"
         },
         "amount" : {
           "useMax" : "Max. verwenden"
