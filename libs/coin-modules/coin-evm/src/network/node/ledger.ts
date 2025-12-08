@@ -81,6 +81,8 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     gasUsed: ledgerTransaction.gas_used,
     value: ledgerTransaction.value,
     status: ledgerTransaction.status,
+    from: ledgerTransaction.from,
+    to: ledgerTransaction.to,
   };
 };
 
@@ -298,7 +300,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   }
 
   if (blockHeight === "latest") {
-    const { hash, height, time } = await fetchWithRetries<{
+    const { hash, height, time, txs } = await fetchWithRetries<{
       hash: string;
       height: number;
       time: string;
@@ -308,14 +310,14 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
     });
 
-    return { hash, height, timestamp: new Date(time).getTime() };
+    return { hash, height, timestamp: new Date(time).getTime(), transactionHashes: txs };
   }
 
   /**
    * for some reason, this explorer endpoint doesn't return the block object
    * but an array of one element with the requested block
    */
-  const [{ hash, height, time }] = await fetchWithRetries<
+  const [{ hash, height, time, txs }] = await fetchWithRetries<
     [
       {
         hash: string;
@@ -333,6 +335,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     hash,
     height,
     timestamp: new Date(time).getTime(),
+    transactionHashes: txs,
   };
 };
 

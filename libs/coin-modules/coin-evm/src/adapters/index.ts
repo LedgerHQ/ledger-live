@@ -3,3 +3,4 @@
 export * from "./ethers";
 export * from "./ledger";
 export * from "./etherscan";
+export * from "./blockOperations";
