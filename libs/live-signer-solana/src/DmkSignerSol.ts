@@ -14,10 +14,13 @@ import {
   SignTransactionDAError,
   SignerSolana,
 } from "@ledgerhq/device-signer-kit-solana";
-import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import {
+  DeviceActionStatus,
+  DeviceManagementKit,
+  LoggerPublisherService,
+} from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
 import { SolAppPleaseEnableContractData, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
 
 export type DAError =
   | GetAddressDAError
@@ -34,7 +37,7 @@ export class DmkSignerSol implements SolanaSigner {
     long: "long",
     short: "short",
   };
-  private _logger = (_str: string, _data?: { [key: string]: unknown }) => {};
+  private readonly logger: LoggerPublisherService;
 
   /**
    * @param dmk - instance of Device Management Kit
@@ -46,8 +49,7 @@ export class DmkSignerSol implements SolanaSigner {
       sessionId,
       originToken: "Solana",
     }).build();
-    this._logger = (str: string, data?: { [key: string]: unknown }) =>
-      log("dmk-signer-solana", str, data);
+    this.logger = dmk.getDMKLogger("Signer Solana");
   }
 
   private _mapError<E extends DAError>(error: E): Error {
@@ -83,7 +85,7 @@ export class DmkSignerSol implements SolanaSigner {
    * fetches current app configuration from the device via DMK
    */
   async getAppConfiguration(): Promise<AppConfig> {
-    this._logger("Called getAppConfiguration");
+    this.logger.debug("[DmkSignerSol getAppConfiguration] Fetching app configuration via DMK");
     const { observable } = this.dmkSigner.getAppConfiguration();
 
     return new Promise<AppConfig>((resolve, reject) => {
@@ -114,7 +116,7 @@ export class DmkSignerSol implements SolanaSigner {
    * @param display - whether to prompt user confirmation on device
    */
   async getAddress(path: string, display?: boolean): Promise<SolanaAddress> {
-    this._logger("Called getAddress", { path, display });
+    this.logger.debug(`[DmkSignerSol getAddress] Retrieving address for path ${path} via DMK`);
     const { observable } = this.dmkSigner.getAddress(path, {
       checkOnDevice: !!display,
       skipOpenApp: true,
@@ -148,7 +150,10 @@ export class DmkSignerSol implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
-    this._logger("Called signTransaction", { path, txBuffer, resolution });
+    this.logger.debug(
+      `[DmkSignerSol signTransaction] Signing transaction ${btoa(String.fromCharCode(...txBuffer))} for path ${path} via DMK `,
+      { data: resolution },
+    );
     const transactionResolutionContext = resolution
       ? {
           ...resolution,
@@ -183,7 +188,9 @@ export class DmkSignerSol implements SolanaSigner {
    * @param messageHex - message to sign in hexadecimal format
    */
   async signMessage(path: string, messageHex: string): Promise<SolanaSignature> {
-    this._logger("Called signMessage", { path, messageHex });
+    this.logger.debug(
+      `[DmkSignerSol signMessage] Signing message ${messageHex} for path ${path} via DMK `,
+    );
     const { observable } = this.dmkSigner.signMessage(path, messageHex, {
       skipOpenApp: true,
     });

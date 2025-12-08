@@ -254,6 +254,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const walletState = useSelector(walletSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
 
+  console.log(request, "HEREEE");
+
   useTrackManagerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
     device,
