@@ -1424,7 +1424,7 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Next up, use your\n{{productName}} to... ",
+      "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
       "exploreCTA": "Explore my portfolio"
     },
@@ -1433,7 +1433,7 @@
     },
     "postOnboardingBanner": {
       "title": "What's next for your {{productName}}?",
-      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "description": "Secure your assets and go further.",
       "link": "See what's next",
       "dismiss": "Maybe later"
     },
@@ -1442,13 +1442,13 @@
         "titleCompleted": "Setup your Ledger device"
       },
       "buyCrypto": {
-        "title": "Buy Crypto",
-        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
+        "title": "Buy crypto via Ledger Wallet",
+        "description": "Choose from 500+ coins and tokens.",
         "actionCompletedPopupLabel": "Crypto bought"
       },
       "assetsTransfer": {
-        "title": "Transfer your assets to Ledger",
-        "description": "From any exchange or wallet, directly to your Ledger.",
+        "title": "Transfer your assets",
+        "description": "Transfer from any exchange or wallet.",
         "actionCompletedPopupLabel": "Assets transferred"
       },
       "syncAccounts": {
@@ -7475,7 +7475,7 @@
     },
     "postOnboarding": {
       "title": "Customize the lock screen",
-      "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+      "description": "Display your favorite digital art or photo as your device’s lock screen.",
       "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",
