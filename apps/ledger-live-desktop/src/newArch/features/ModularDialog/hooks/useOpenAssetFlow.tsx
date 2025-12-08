@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -67,7 +67,7 @@ export function useOpenAssetFlowDialog(
     (
       currency: CryptoOrTokenCurrency,
       autoCloseDrawer: boolean = true,
-      onAccountSelected?: (account: Account) => void,
+      onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
     ) => {
       closeDialog();
       dispatch(setFlowValue("add account"));
