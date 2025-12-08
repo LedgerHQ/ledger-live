@@ -6131,6 +6131,13 @@
       "error": {
         "title": "An error occurred while broadcasting the transaction"
       }
+    },
+    "delegation": {
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "showAll": "Show all",
+      "showLess": "Show less",
+      "iDelegate": "I delegate"
     }
   },
   "stellar": {
