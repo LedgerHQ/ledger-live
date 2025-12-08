@@ -17,7 +17,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { getProductName } from "~/newArch/utils/getProductName";
+import { getProductName } from "LLD/utils/getProductName";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,

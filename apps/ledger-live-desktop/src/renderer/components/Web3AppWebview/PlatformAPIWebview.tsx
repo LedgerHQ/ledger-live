@@ -24,6 +24,7 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
@@ -89,7 +90,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const walletState = useSelector(walletSelector);
     const listAccounts = useListPlatformAccounts(walletState, accounts);
-    const listCurrencies = useListPlatformCurrencies();
+    const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+    const listCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { isModularDrawerVisible } = useModularDrawerVisibility({
       modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -111,9 +113,15 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         dispatch(setFlowValue(flow));
         dispatch(setSourceValue(source));
 
-        return requestAccountLogic(walletState, { manifest }, request, modularDrawerVisible);
+        return requestAccountLogic(
+          walletState,
+          { manifest },
+          request,
+          deactivatedCurrencyIds,
+          modularDrawerVisible,
+        );
       },
-      [manifest, dispatch, walletState, modularDrawerVisible],
+      [manifest, dispatch, walletState, deactivatedCurrencyIds, modularDrawerVisible],
     );
 
     const receiveOnAccount = useCallback(

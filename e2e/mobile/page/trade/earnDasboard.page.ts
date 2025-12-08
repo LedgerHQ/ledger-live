@@ -133,7 +133,7 @@ export default class EarnDashboardPage {
     );
   }
 
-  @Step("Go to $0 tab")
+  @Step("Go to tab")
   async goToTab(tabName: "My Rewards" | "Earn Opportunities") {
     const tabTestId = tabName === "My Rewards" ? "tab-assets" : "tab-earn-more";
     try {
@@ -149,7 +149,6 @@ export default class EarnDashboardPage {
     const earnButton = getWebElementByTestId(this.stakeCryptoAssetsButton, 0, "data-test-id");
     await scrollToWebElement(earnButton);
     await tapWebElementByElement(earnButton);
-    await app.common.flushDetoxSyncQueue();
     await app.stake.verifyChooseAssetPage();
   }
 }

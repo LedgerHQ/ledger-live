@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -71,7 +71,7 @@
     "esbuild": "^0.19.0",
     "glob": "^7.2.0",
     "react": "catalog:",
-    "react-native-svg": "15.11.2",
+    "react-native-svg": "catalog:",
     "rimraf": "^4.4.1",
     "styled-system": "^5.1.5",
     "tiny-glob": "^0.2.9"

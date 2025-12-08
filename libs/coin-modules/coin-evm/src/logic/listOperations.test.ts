@@ -75,6 +75,22 @@ describe("listOperations", () => {
           transactionSequenceNumber: new BigNumber(4),
           extra: {},
         },
+        {
+          id: "coin-op-5",
+          accountId: "",
+          type: "FEES",
+          senders: ["address"],
+          recipients: ["contract-address"],
+          value: new BigNumber(0),
+          hash: "token-op-3-tx-hash",
+          blockHeight: 20,
+          blockHash: "coin-op-3-block-hash",
+          fee: new BigNumber(20),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(5),
+          hasFailed: true,
+          extra: {},
+        },
       ],
       lastTokenOperations: [
         {
@@ -109,12 +125,30 @@ describe("listOperations", () => {
           transactionSequenceNumber: new BigNumber(2),
           extra: {},
         },
+        {
+          id: "token-op-3",
+          accountId: "",
+          type: "OUT",
+          senders: ["address"],
+          recipients: ["address1"],
+          contract: "contract-address",
+          value: new BigNumber(1),
+          hash: "token-op-3-tx-hash",
+          blockHeight: 20,
+          blockHash: "token-op-3-block-hash",
+          fee: new BigNumber(20),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(5),
+          extra: {},
+        },
       ],
       lastNftOperations: [],
       lastInternalOperations: [],
     });
 
-    expect(await listOperations({} as CryptoCurrency, "address", 5)).toEqual([
+    expect(
+      await listOperations({} as CryptoCurrency, "address", { minHeight: 5, order: "asc" }),
+    ).toEqual([
       [
         {
           id: "coin-op-1",
@@ -133,7 +167,7 @@ describe("listOperations", () => {
             date: new Date("2025-02-12"),
             failed: false,
           },
-          details: { status: "success", sequence: BigNumber(1) },
+          details: { sequence: BigNumber(1) },
         },
         {
           id: "coin-op-2",
@@ -152,7 +186,7 @@ describe("listOperations", () => {
             date: new Date("2025-02-20"),
             failed: true,
           },
-          details: { status: "failed", sequence: BigNumber(2) },
+          details: { sequence: BigNumber(2) },
         },
         {
           id: "token-op-1",
@@ -178,7 +212,6 @@ describe("listOperations", () => {
             assetRecipients: ["address1"],
             parentSenders: ["address"],
             parentRecipients: ["contract-address"],
-            status: "success",
             sequence: BigNumber(1),
           },
         },
@@ -210,8 +243,34 @@ describe("listOperations", () => {
             assetRecipients: ["address2"],
             parentSenders: ["address1"],
             parentRecipients: ["address2"],
-            status: "success",
             sequence: BigNumber(2),
+          },
+        },
+        {
+          id: "token-op-3",
+          type: "FEES",
+          senders: ["address"],
+          recipients: ["address1"],
+          value: 0n,
+          asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
+          tx: {
+            hash: "token-op-3-tx-hash",
+            block: {
+              height: 20,
+              hash: "token-op-3-block-hash",
+            },
+            fees: 20n,
+            date: new Date("2025-02-20"),
+            failed: true,
+          },
+          details: {
+            ledgerOpType: "OUT",
+            assetAmount: "1",
+            assetSenders: ["address"],
+            assetRecipients: ["address1"],
+            parentSenders: ["address"],
+            parentRecipients: ["contract-address"],
+            sequence: BigNumber(5),
           },
         },
       ],

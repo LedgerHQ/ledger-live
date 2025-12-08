@@ -58,6 +58,25 @@ export type PrepareTransferRequest = {
   reason?: string;
 };
 
+export type PrepareTransferInstructionRequest = {
+  type:
+    | "accept-transfer-instruction"
+    | "reject-transfer-instruction"
+    | "withdraw-transfer-instruction";
+  contract_id: string;
+  reason?: string;
+};
+
+export type TransferProposal = {
+  contract_id: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+  instrument_id: string;
+  memo: string;
+  expires_at_micros: number;
+};
+
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -90,6 +109,7 @@ export type GetBalanceResponse =
 export type InstrumentBalance = {
   instrument_id: string;
   amount: string;
+  admin_id: string;
   locked: boolean;
   utxo_count: number;
 };
@@ -148,6 +168,14 @@ export type TxInfo = {
   trace_context: string;
 };
 
+type OperationType =
+  | "pre-approval"
+  | "tap"
+  | "transfer"
+  | "transfer-proposal"
+  | "transfer-rejected"
+  | "transfer-withdrawn";
+
 export type OperationInfo =
   | {
       uid: string;
@@ -164,7 +192,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "pre-approval";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -191,7 +219,7 @@ export type OperationInfo =
         issuer: string;
       };
       details: {
-        type: "pre-approval";
+        operationType: OperationType;
       };
     }
   | {
@@ -209,7 +237,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "tap";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -236,7 +264,7 @@ export type OperationInfo =
         issuer: null;
       };
       details: {
-        type: "tap";
+        operationType: OperationType;
       };
     }
   | {
@@ -254,7 +282,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "transfer";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -281,7 +309,7 @@ export type OperationInfo =
         issuer: null;
       };
       details: {
-        type: "transfer";
+        operationType: OperationType;
       };
     };
 
@@ -376,6 +404,22 @@ export async function submit(
       serialized,
       signature,
     },
+  });
+  return data;
+}
+
+export async function prepare(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferRequest | PrepareTransferInstructionRequest,
+) {
+  const { data } = await gatewayNetwork<
+    PrepareTransferResponse,
+    PrepareTransferRequest | PrepareTransferInstructionRequest
+  >({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: params,
   });
   return data;
 }
@@ -502,13 +546,15 @@ export async function prepareTransferRequest(
   partyId: string,
   params: PrepareTransferRequest,
 ) {
-  const { data } = await gatewayNetwork<PrepareTransferResponse, PrepareTransferRequest>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
-    data: params,
-  });
+  return prepare(currency, partyId, params);
+}
 
-  return data;
+export async function prepareTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferInstructionRequest,
+) {
+  return prepare(currency, partyId, params);
 }
 
 export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
@@ -553,6 +599,15 @@ export async function submitPreApprovalTransaction(
   } satisfies PreApprovalResult;
 }
 
+export async function submitTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  return submit(currency, partyId, serialized, signature);
+}
+
 type GetTransferPreApprovalResponse = {
   contract_id: string;
   receiver: string;
@@ -566,6 +621,14 @@ export async function getTransferPreApproval(currency: CryptoCurrency, partyId: 
   const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
+}
+
+export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<TransferProposal[]>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
   });
   return data;
 }

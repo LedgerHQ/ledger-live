@@ -2,7 +2,7 @@ import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import {
   AnalyticsButton,
   AnalyticsPage,

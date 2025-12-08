@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-export { groupCurrenciesByProvider } from "./groupCurrenciesByProvider";
+export { groupCurrenciesByAsset } from "./groupCurrenciesByAsset";
 export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
 const getBaseId = (currency: CryptoOrTokenCurrency) =>

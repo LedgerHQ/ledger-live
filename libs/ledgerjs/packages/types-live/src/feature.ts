@@ -149,6 +149,9 @@ export type CurrencyFeatures = {
   currencyAssetHubPolkadot: DefaultFeature;
   currencyPolkadot: DefaultFeature;
   currencyMonad: DefaultFeature;
+  currencyMonadTestnet: DefaultFeature;
+  currencySomnia: DefaultFeature;
+  currencyZeroGravity: DefaultFeature;
 };
 
 /**
@@ -198,6 +201,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
@@ -237,6 +241,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
+  ldmkSolanaSigner: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -268,9 +273,11 @@ export type Features = CurrencyFeatures & {
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
-  noah: DefaultFeature;
+  cantonSkipPreapprovalStep: DefaultFeature;
+  noah: Feature_Noah;
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
+  zcashShielded: DefaultFeature;
 };
 
 /**
@@ -628,6 +635,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
   manager: boolean;
@@ -666,6 +674,10 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+}>;
+
+export type Feature_Noah = Feature<{
+  activeCurrencyIds: string[];
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

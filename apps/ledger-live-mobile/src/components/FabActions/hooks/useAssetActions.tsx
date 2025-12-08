@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,6 @@ import {
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ActionButtonEvent } from "..";
@@ -24,6 +23,7 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -41,7 +41,6 @@ const iconStake = IconsLegacy.CoinsMedium;
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
-  const route = useRoute();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
@@ -77,17 +76,25 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
-  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
-    useOpenStakeDrawer({
-      sourceScreenName: "asset_action",
-      currency,
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "asset_action",
+    currencies: currency ? [currency.id] : undefined,
+  });
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "asset",
+    currency,
+  });
+
+  const { openDrawer } = useModularDrawerController();
+
+  const handleOpenAddAccountDrawer = useCallback(() => {
+    openDrawer({
+      currencies: currency ? [currency.id] : [],
+      flow: "add_account",
+      source: "asset_action",
+      areCurrenciesFiltered: !!currency,
     });
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
-    useOpenReceiveDrawer({
-      sourceScreenName: "asset",
-      currency,
-    });
-  const noah = useFeature("noah");
+  }, [currency, openDrawer]);
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -183,17 +190,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         currency?.ticker ?? accountCurrency?.ticker ?? assetId.toUpperCase(),
                       flow: "stake",
                     },
-                    navigationParams: [
-                      NavigatorName.StakeFlow,
-                      {
-                        screen: ScreenName.Stake,
-                        params: {
-                          currencies: [assetId],
-                          parentRoute: route,
-                        },
-                      },
-                    ] as const,
-                    customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
+                    customHandler: handleOpenStakeDrawer,
                   },
                 ]
               : []),
@@ -201,23 +198,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "receive",
               label: t("transfer.receive.title"),
               Icon: iconReceive,
-              navigationParams: [
-                NavigatorName.ReceiveFunds,
-                {
-                  screen: ScreenName.ReceiveSelectAccount,
-                  params: {
-                    currency,
-                  },
-                },
-              ] as const,
-              // We have two features getting enabled at the same time that change the entry point of receive funds
-              // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
-              // if modular drawer is enabled but noah is not then go there
-              // if neither is enabled we'll go through the old flow
-              customHandler:
-                isModularDrawerEnabledReceive && !noah?.enabled
-                  ? handleOpenReceiveDrawer
-                  : undefined,
+              customHandler: handleOpenReceiveDrawer,
             },
             {
               id: "send",
@@ -254,15 +235,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     id: "add_account",
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
-                    navigationParams: [
-                      NavigatorName.AddAccounts,
-                      {
-                        screen: ScreenName.AddAccountsSelectCrypto,
-                        params: {
-                          filterCurrencyIds: currency ? [currency.id] : undefined,
-                        },
-                      },
-                    ] as const,
+                    customHandler: handleOpenAddAccountDrawer,
                   },
                 ]
               : []),
@@ -284,12 +257,9 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     assetId,
     stakeLabel,
     accountCurrency?.ticker,
-    route,
-    isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
-    isModularDrawerEnabledReceive,
     handleOpenReceiveDrawer,
-    noah,
+    handleOpenAddAccountDrawer,
   ]);
 
   return {

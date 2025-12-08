@@ -1,29 +1,49 @@
 import React from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
-import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-initializeLegacyTokens(addTokens);
+const Stack = createNativeStackNavigator();
 
-const Stack = createStackNavigator();
-
-let usdcCurrency: TokenCurrency;
 const moneroCurrency = getCryptoCurrencyById("monero");
 const kaspaCurrency = getCryptoCurrencyById("kaspa");
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
+let usdcCurrency: TokenCurrency;
+
 beforeAll(async () => {
-  const usdc = await legacyCryptoAssetsStore.findTokenById("ethereum/erc20/usd__coin");
+  // Setup mock store with USDC token for tests
+  setupMockCryptoAssetsStore({
+    findTokenById: async (id: string) => {
+      if (id === "ethereum/erc20/usd__coin") {
+        return {
+          type: "TokenCurrency",
+          id: "ethereum/erc20/usd__coin",
+          contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          parentCurrency: ethereumCurrency,
+          tokenType: "erc20",
+          name: "USD Coin",
+          ticker: "USDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+        } as TokenCurrency;
+      }
+      return undefined;
+    },
+  });
+  // Store is automatically set as global store by setupMockCryptoAssetsStore
+
+  const usdc = await getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin");
   if (!usdc) throw new Error("USDC token not found");
   usdcCurrency = usdc;
 });

@@ -9,10 +9,12 @@ import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import TextInput from "~/components/FocusedTextInput";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-
-type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.CosmosFamilyEditMemo>;
+import { popToScreen } from "~/helpers/navigationHelpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+type Props = BaseComposite<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.CosmosFamilyEditMemo>
+>;
 
 function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -24,7 +26,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
@@ -76,7 +78,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 
 export { CosmosFamilyEditMemo as component, options };

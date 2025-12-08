@@ -50,6 +50,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => {
+          const sendData = data || {};
           if (!newSendFlow?.enabled) {
             return (
               <Body
@@ -59,9 +60,21 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
                 params={data || {}}
               />
             );
-          } else {
-            return <SendWorkflow />;
           }
+
+          // New send flow enabled
+          if (sendData.account) {
+            // Temporary placeholder while the new modal-based steps are being implemented.
+            return (
+              <div style={{ padding: 24 }}>
+                <p>New send flow (work in progress)</p>
+                <p>Selected account: {sendData.account?.id}</p>
+              </div>
+            );
+          }
+
+          // No preselected account: start the MAD-based account selection flow.
+          return <SendWorkflow onClose={onClose} params={{}} />;
         }}
       />
     </DomainServiceProvider>

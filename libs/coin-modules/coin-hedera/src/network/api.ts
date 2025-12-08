@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+import { encodeFunctionData, erc20Abi } from "viem";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
@@ -10,23 +12,21 @@ import type {
   HederaMirrorAccountsResponse,
   HederaMirrorToken,
   HederaMirrorTransaction,
+  HederaMirrorNetworkFees,
+  HederaMirrorContractCallResult,
+  HederaMirrorContractCallBalance,
+  HederaMirrorContractCallEstimate,
 } from "../types";
 
-const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
-
-const fetch = <Result>(path: string) => {
-  return network<Result>({
-    method: "GET",
-    url: `${getMirrorApiUrl()}${path}`,
-  });
-};
+const API_URL = getEnv("API_HEDERA_MIRROR");
 
 async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorAccount[]> {
   let res;
   try {
-    res = await fetch<HederaMirrorAccountsResponse>(
-      `/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
-    );
+    res = await network<HederaMirrorAccountsResponse>({
+      method: "GET",
+      url: `${API_URL}/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
+    });
   } catch (e: unknown) {
     if (e instanceof LedgerAPI4xx) return [];
     throw e;
@@ -39,7 +39,10 @@ async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorA
 
 async function getAccount(address: string): Promise<HederaMirrorAccount> {
   try {
-    const res = await fetch<HederaMirrorAccount>(`/api/v1/accounts/${address}`);
+    const res = await network<HederaMirrorAccount>({
+      method: "GET",
+      url: `${API_URL}/api/v1/accounts/${address}`,
+    });
     const account = res.data;
 
     return account;
@@ -83,16 +86,19 @@ async function getAccountTransactions({
   }
 
   let nextCursor: string | null = null;
-  let nextUrl: string | null = `/api/v1/transactions?${params.toString()}`;
+  let nextPath: string | null = `/api/v1/transactions?${params.toString()}`;
 
   // WARNING: don't break the loop when `transactions` array is empty but `links.next` is present
   // the mirror node API enforces a 60-day max time range per query, even if `timestamp` param is set
   // see: https://hedera.com/blog/changes-to-the-hedera-operated-mirror-node
-  while (nextUrl) {
-    const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await fetch(nextUrl);
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
     const newTransactions = res.data.transactions;
     transactions.push(...newTransactions);
-    nextUrl = res.data.links.next;
+    nextPath = res.data.links.next;
 
     // stop fetching if pagination mode is used and we reached the limit
     if (!fetchAllPages && transactions.length >= limit) {
@@ -106,7 +112,7 @@ async function getAccountTransactions({
   }
 
   // set the next cursor only if we have more transactions to fetch
-  if (!fetchAllPages && nextUrl) {
+  if (!fetchAllPages && nextPath) {
     const lastTx = transactions.at(-1);
     nextCursor = lastTx?.consensus_timestamp ?? null;
   }
@@ -120,13 +126,16 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
     limit: "100",
   });
 
-  let nextUrl: string | null = `/api/v1/accounts/${address}/tokens?${params.toString()}`;
+  let nextPath: string | null = `/api/v1/accounts/${address}/tokens?${params.toString()}`;
 
-  while (nextUrl) {
-    const res: LiveNetworkResponse<HederaMirrorAccountTokensResponse> = await fetch(nextUrl);
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorAccountTokensResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
     const newTokens = res.data.tokens;
     tokens.push(...newTokens);
-    nextUrl = res.data.links.next;
+    nextPath = res.data.links.next;
   }
 
   return tokens;
@@ -138,9 +147,10 @@ async function getLatestTransaction(): Promise<HederaMirrorTransaction> {
     order: "desc",
   });
 
-  const res = await fetch<HederaMirrorTransactionsResponse>(
-    `/api/v1/transactions?${params.toString()}`,
-  );
+  const res = await network<HederaMirrorTransactionsResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/transactions?${params.toString()}`,
+  });
   const transaction = res.data.transactions[0];
 
   if (!transaction) {
@@ -150,10 +160,123 @@ async function getLatestTransaction(): Promise<HederaMirrorTransaction> {
   return transaction;
 }
 
+async function getNetworkFees(): Promise<HederaMirrorNetworkFees> {
+  const res = await network<HederaMirrorNetworkFees>({
+    method: "GET",
+    url: `${API_URL}/api/v1/network/fees`,
+  });
+
+  return res.data;
+}
+
+async function getContractCallResult(
+  transactionHash: string,
+): Promise<HederaMirrorContractCallResult> {
+  const res = await network<HederaMirrorContractCallResult>({
+    method: "GET",
+    url: `${API_URL}/api/v1/contracts/results/${transactionHash}`,
+  });
+
+  return res.data;
+}
+
+async function findTransactionByContractCall(
+  timestamp: string,
+  contractId: string,
+): Promise<HederaMirrorTransaction | null> {
+  const res = await network<HederaMirrorTransactionsResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/transactions?timestamp=${timestamp}`,
+  });
+  const transactions = res.data.transactions;
+
+  return transactions.find(el => el.name === "CONTRACTCALL" && el.entity_id === contractId) ?? null;
+}
+
+async function getERC20Balance(
+  accountEvmAddress: string,
+  contractEvmAddress: string,
+): Promise<BigNumber> {
+  const res = await network<HederaMirrorContractCallBalance>({
+    method: "POST",
+    url: `${API_URL}/api/v1/contracts/call`,
+    data: {
+      block: "latest",
+      to: contractEvmAddress,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "balanceOf",
+        args: [accountEvmAddress as `0x${string}`],
+      }),
+    },
+  });
+
+  return new BigNumber(res.data.result);
+}
+
+async function estimateContractCallGas(
+  senderEvmAddress: string,
+  recipientEvmAddress: string,
+  contractEvmAddress: string,
+  amount: bigint,
+): Promise<BigNumber> {
+  const res = await network<HederaMirrorContractCallEstimate>({
+    method: "POST",
+    url: `${API_URL}/api/v1/contracts/call`,
+    data: {
+      block: "latest",
+      estimate: true,
+      from: senderEvmAddress,
+      to: contractEvmAddress,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "transfer",
+        args: [recipientEvmAddress as `0x${string}`, amount],
+      }),
+    },
+  });
+
+  return new BigNumber(res.data.result);
+}
+
+async function getTransactionsByTimestampRange(
+  startTimestamp: string,
+  endTimestamp: string,
+): Promise<HederaMirrorTransaction[]> {
+  const transactions: HederaMirrorTransaction[] = [];
+  const params = new URLSearchParams({
+    limit: "100",
+    order: "desc",
+  });
+
+  params.append("timestamp", `gte:${startTimestamp}`);
+  params.append("timestamp", `lt:${endTimestamp}`);
+
+  let nextPath: string | null = `/api/v1/transactions?${params.toString()}`;
+
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
+    const newTransactions = res.data.transactions;
+    transactions.push(...newTransactions);
+    nextPath = res.data.links.next;
+  }
+
+  return transactions;
+}
+
 export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
   getAccountTokens,
   getAccountTransactions,
   getLatestTransaction,
+  getNetworkFees,
+  getContractCallResult,
+  findTransactionByContractCall,
+  getERC20Balance,
+  estimateContractCallGas,
+  getTransactionsByTimestampRange,
 };

@@ -1,11 +1,13 @@
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { isIos } from "../helpers/commonHelpers";
+import { delay, isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 
 export default class CommonPage {
+  assetScreenFlatlistId = "asset-screen-flatlist";
   searchBarId = "common-search-field";
   successViewDetailsButtonId = "success-view-details-button";
+  validateSuccessScreenId = "validate-success-screen";
   proceedButtonId = "proceed-button";
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
@@ -59,7 +61,9 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
+    await waitForElementById(this.validateSuccessScreenId);
     await waitForElementById(this.successViewDetailsButtonId);
+    await delay(1000);
     await tapById(this.successViewDetailsButtonId);
   }
 
@@ -70,11 +74,11 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemNameRegExp);
+    await scrollToId(this.accountItemNameRegExp, this.assetScreenFlatlistId);
     await tapByElement(this.accountItem(accountId));
   }
 
-  @Step("Check number of account rows: $0")
+  @Step("Check number of account rows")
   async checkAccountRowNumber(nbr: number) {
     jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }
@@ -121,14 +125,5 @@ export default class CommonPage {
 
   async enableSynchronization() {
     await device.enableSynchronization();
-  }
-
-  // Switching from webview to native view causes Detox issues. This workaround waits for a non existing element to flush detox queue
-  async flushDetoxSyncQueue(): Promise<void> {
-    try {
-      await waitForElementById("__flush_queue__", 500);
-    } catch {
-      console.log("Intentional failure to flush detox queue");
-    }
   }
 }

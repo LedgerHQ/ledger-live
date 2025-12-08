@@ -8,6 +8,7 @@ import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import {
   getAccounts,
   getCountervalues,
+  getCryptoAssetsCacheState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -28,7 +29,11 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
-import { SettingsState } from "~/reducers/types";
+import type { SettingsState } from "~/reducers/types";
+import {
+  restoreTokensToCache,
+  PERSISTENCE_VERSION,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 interface Props {
   onInitFinished: () => void;
@@ -76,6 +81,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         protect,
         initialCountervalues,
         largeMoverState,
+        cryptoAssetsCache,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -87,16 +93,33 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+        retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
 
       store.dispatch(importSettings(settingsData));
 
+      // Hydrate persisted crypto assets tokens BEFORE importing accounts
+      // This ensures tokens are available when decoding accounts (which now uses findTokenById)
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      if (cryptoAssetsCache?.tokens) {
+        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
+          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
+          );
+        }
+      }
+
       // Handle account import with error recovery for async issues
       try {
         store.dispatch(await importAccountsRaw(accountsData));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);
         // Continue with app initialization even if account import fails
         // This prevents blocking deeplink navigation

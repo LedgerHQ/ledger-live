@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload mobile application file as new version
         run: >
-          npx @datadog/datadog-ci@3.11.0 synthetics upload-application
+          datadog-ci synthetics upload-application
           --datadogSite ${{ inputs.datadog-site }}
           --apiKey ${{ secrets.DATADOG_API_KEY }}
           --appKey ${{ secrets.DATADOG_APP_KEY }}

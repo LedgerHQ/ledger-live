@@ -9,7 +9,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 
 import { useMarket } from "LLM/features/Market/hooks/useMarket";
-import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
+import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 import VersionNumber from "react-native-version-number";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
@@ -23,9 +23,10 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
 
-  const { marketParams, dataChart, loadingChart, loading, currency, refetch } = useMarketCoinData({
-    currencyId,
-  });
+  const { marketParams, dataChart, loadingChart, loading, currency, refetch } =
+    useMarketCoinDataWithChart({
+      currencyId,
+    });
 
   const { data, isLoading: isLoadingAsset } = assetsDataApi.useGetAssetDataQuery(
     {
@@ -36,7 +37,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
       includeTestNetworks: false,
     },
     {
-      skip: !currency,
+      skip: !currency?.ledgerIds?.length,
     },
   );
 

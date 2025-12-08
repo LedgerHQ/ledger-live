@@ -4,7 +4,7 @@ import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/mina/types";
 import { useTranslation } from "react-i18next";
-import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 const MemoField = ({
   onChange,

@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // Mock dependencies
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -14,7 +15,7 @@ jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
 }));
 
-jest.mock("../../bridge/crypto-assets/index", () => ({
+jest.mock("@ledgerhq/cryptoassets/state", () => ({
   getCryptoAssetsStore: jest.fn(),
 }));
 
@@ -150,12 +151,10 @@ describe("ACRE Server Handlers", () => {
   let mockUiHooks: any;
   let serverHandlers: any;
 
-  const { getCryptoAssetsStore } = jest.requireMock("../../bridge/crypto-assets/index");
-
   beforeEach(() => {
     jest.clearAllMocks();
 
-    getCryptoAssetsStore.mockReturnValue({
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenCurrency),
       findTokenById: jest.fn().mockResolvedValue(mockTokenCurrency),
     });

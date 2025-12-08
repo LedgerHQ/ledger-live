@@ -283,8 +283,6 @@ export type LLDCoinFamily<
     footer: React.ComponentType<SendStepProps>;
   };
 
-  shouldUseReceiveOptions?: (currencyId: string | undefined) => boolean;
-
   /**
    * One time modal that is trigger only one time on a account that never send
    */
@@ -369,6 +367,13 @@ export type LLDCoinFamily<
    * Component banner before Account body header
    */
   StakeBanner?: React.ComponentType<{
+    account: A;
+  }>;
+
+  /**
+   * Component to display pending transfer proposals
+   */
+  PendingTransferProposals?: React.ComponentType<{
     account: A;
   }>;
 

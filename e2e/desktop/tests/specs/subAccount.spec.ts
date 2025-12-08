@@ -26,12 +26,15 @@ const subAccounts = [
   { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
 ];
 
-const subAccountReceive = [
+const subAccountReceive: Array<{
+  account: TokenAccount;
+  xrayTicket: string;
+  shouldSelectTokenOnReceiveFlow?: boolean;
+}> = [
   { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
   { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
   { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
   { account: Account.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  { account: Account.BSC_SHIBA, xrayTicket: "B2CQA-2490" },
   { account: Account.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: Account.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
@@ -47,7 +50,14 @@ for (const token of subAccounts) {
     test(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(token.account === TokenAccount.XLM_USCD ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: token.xrayTicket1,
@@ -71,8 +81,11 @@ for (const token of subAccounts) {
           await app.addAccount.addAccounts();
           await app.addAccount.done();
         }
-        await app.layout.goToPortfolio();
-        await app.portfolio.navigateToAsset(token.account.currency.name);
+        if (token.account === TokenAccount.SUI_USDC_1) {
+          await app.portfolio.navigateToAsset(token.account.currency.ticker);
+        } else {
+          await app.portfolio.navigateToAsset(token.account.currency.name);
+        }
         await app.account.navigateToToken(token.account);
         await app.account.expectLastOperationsVisibility();
         await app.account.expectTokenAccount(token.account);
@@ -132,7 +145,14 @@ for (const token of subAccounts) {
     test(
       `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: token.xrayTicket2,
@@ -324,7 +344,7 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@smoke"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,

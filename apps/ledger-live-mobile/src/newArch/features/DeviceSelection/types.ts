@@ -29,7 +29,5 @@ export type DeviceSelectionNavigatorParamsList = {
   [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<NetworkBasedAddAccountNavigator>>;
 };
 
-export type DeviceSelectionNavigationProps = StackNavigatorProps<
-  DeviceSelectionNavigatorParamsList,
-  ScreenName.AddAccountsSelectCrypto
->;
+export type DeviceSelectionNavigationProps =
+  StackNavigatorProps<DeviceSelectionNavigatorParamsList>;

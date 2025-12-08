@@ -29,7 +29,11 @@ describe("ERC20 dynamic cal", () => {
       );
       const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
       const resolutionConfig = { erc20: true };
-      const resolution = await ledgerService.resolveTransaction(txHex, {}, resolutionConfig);
+      const resolution = await ledgerService.resolveTransaction(
+        txHex,
+        { staticERC20Signatures: { 1: SignatureCALEth } },
+        resolutionConfig,
+      );
       const eth = new Eth(transport);
       const result = await eth.signTransaction("44'/60'/0'/0/0", txHex, resolution);
 
@@ -49,7 +53,7 @@ describe("ERC20 dynamic cal", () => {
       const resolutionConfig = { erc20: true };
       const resolution = await ledgerService.resolveTransaction(
         txHex,
-        { cryptoassetsBaseURL: "notworking" },
+        { cryptoassetsBaseURL: "notworking", staticERC20Signatures: { 1: SignatureCALEth } },
         resolutionConfig,
       );
 
@@ -73,7 +77,7 @@ describe("ERC20 dynamic cal", () => {
       const resolutionConfig = { erc20: true };
       const resolution = await ledgerService.resolveTransaction(
         txHex,
-        { cryptoassetsBaseURL: "working" },
+        { cryptoassetsBaseURL: "working", staticERC20Signatures: { 1: SignatureCALEth } },
         resolutionConfig,
       );
 

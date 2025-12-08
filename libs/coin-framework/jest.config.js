@@ -18,4 +18,5 @@ module.exports = {
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
+  setupFilesAfterEnv: ["<rootDir>/src/setup.ts"],
 };

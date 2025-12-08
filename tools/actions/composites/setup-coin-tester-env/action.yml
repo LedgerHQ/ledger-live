@@ -3,12 +3,12 @@ description: "Installs deps, pulls docker, builds modules"
 runs:
   using: "composite"
   steps:
-    # Option `-p` of Speculos is only available on `master` tag
-    - run: docker pull ghcr.io/ledgerhq/speculos:master
+    # Pull `0.25.9` to match the version used by E2E tests
+    - run: docker pull ghcr.io/ledgerhq/speculos:0.25.9
       shell: bash
 
-    # Map `master` tag to `latest` in order to preserve local images
-    - run: docker tag ghcr.io/ledgerhq/speculos:master speculos:latest
+    # Map `0.25.9` tag to `latest` in order to preserve local images
+    - run: docker tag ghcr.io/ledgerhq/speculos:0.25.9 speculos:latest
       shell: bash
 
     - run: pnpm i --filter="!./apps/**"

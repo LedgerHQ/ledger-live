@@ -1,4 +1,4 @@
-import "../../__tests__/test-helpers/setup";
+import "../../__tests__/test-helpers/setup.integration";
 import { reduce } from "rxjs/operators";
 import { fromAccountRaw, getAccountCurrency } from "../../account";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

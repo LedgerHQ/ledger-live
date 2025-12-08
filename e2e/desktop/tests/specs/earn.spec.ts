@@ -46,7 +46,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -58,7 +58,14 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(provider === Provider.LIDO ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -170,7 +177,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -182,7 +189,14 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          ...(account === Account.NEAR_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,

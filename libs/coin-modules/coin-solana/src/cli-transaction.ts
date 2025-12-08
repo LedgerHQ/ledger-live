@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { Transaction } from "./types";
 import { assertUnreachable } from "./utils";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 const modes = [
   "send",

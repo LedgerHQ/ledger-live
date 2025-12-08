@@ -122,12 +122,18 @@ async function* getTransactionsBatched(
     const transactions = await api.getParsedTransactions(
       signaturesInfoBatch.map(tx => tx.signature),
     );
-    const txsDetails = transactions.reduce((acc, tx, index) => {
+    const sortedTransactions = transactions.sort((a, b) => (b?.slot ?? 0) - (a?.slot ?? 0));
+    const txsDetails = sortedTransactions.reduce((acc, tx) => {
       if (tx && !tx.meta?.err && tx.blockTime) {
-        acc.push({
-          info: signaturesInfoBatch[index],
-          parsed: tx,
-        });
+        const info = signaturesInfoBatch.find(s =>
+          tx.transaction.signatures.includes(s.signature),
+        )!;
+        if (info) {
+          acc.push({
+            info,
+            parsed: tx,
+          });
+        }
       }
       return acc;
     }, [] as TransactionDescriptor[]);

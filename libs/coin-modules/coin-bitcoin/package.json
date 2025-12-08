@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -58,7 +58,7 @@
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^5.2.0",
     "@noble/hashes": "1.8.0",
-    "bs58": "^4.0.1",
+    "bs58": "catalog:",
     "bs58check": "^2.1.2",
     "cashaddrjs": "^0.4.4",
     "coininfo": "^5.1.0",
@@ -74,7 +74,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bchaddrjs": "^0.4.3",
-    "@types/bs58": "^4.0.1",
+    "@types/bs58": "catalog:",
     "@types/bs58check": "^2.1.2",
     "@types/cashaddrjs": "^0.3.3",
     "@types/create-hmac": "^1.1.3",

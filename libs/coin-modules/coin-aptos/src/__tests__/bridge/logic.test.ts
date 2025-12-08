@@ -3,62 +3,70 @@ import BigNumber from "bignumber.js";
 import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { getMaxSendBalance, getBlankOperation, txsToOps } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+} from "../../bridge/bridge.fixture";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.mock("@ledgerhq/cryptoassets");
 jest.mock("@ledgerhq/coin-framework/account/index");
-jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+
+setupMockCryptoAssetsStore();
 
 describe("Aptos logic ", () => {
   describe("getMaxSendBalance", () => {
     it("should return the correct max send balance when amount is greater than total gas", () => {
       const amount = new BigNumber(1000000);
       const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
     });
 
     it("should return zero when amount is less than total gas", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should return zero when amount is equal to total gas", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should handle zero amount", () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should handle zero gas and gas price", () => {
       const amount = new BigNumber(1000000);
       const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
-      const transaction = createFixtureTransaction();
       const gas = new BigNumber(0);
       const gasPrice = new BigNumber(0);
-      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
+      const result = getMaxSendBalance(account, undefined, gas, gasPrice);
       expect(result.isEqualTo(amount)).toBe(true);
+    });
+
+    it("should return max spendable amount for the token account", () => {
+      const account = createFixtureAccountWithSubAccount("coin");
+      const gas = new BigNumber(200);
+      const gasPrice = new BigNumber(100);
+      const result = getMaxSendBalance(account.subAccounts![0], account, gas, gasPrice);
+      expect(result.isEqualTo(BigNumber(1000))).toBe(true);
     });
   });
 
@@ -442,48 +450,32 @@ describe("Aptos sync logic ", () => {
 
     it("should convert Aptos token transactions to operations correctly", async () => {
       (encodeTokenAccountId as jest.Mock).mockReturnValue("token_account_id");
-      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-        findTokenByAddressInCurrency: jest.fn().mockReturnValue({
-          type: "TokenCurrency",
-          id: "aptos/coin/dstapt::staked_coin::stakedaptos",
-          contractAddress: "0xd111::staked_coin::StakedAptos",
-          parentCurrency: {
-            type: "CryptoCurrency",
-            id: "aptos",
-            coinType: 637,
-            name: "Aptos",
-            managerAppName: "Aptos",
-            ticker: "APT",
-            scheme: "aptos",
-            color: "#231F20",
-            family: "aptos",
-            units: [
-              {
-                name: "APT",
-                code: "APT",
-                magnitude: 8,
-              },
-            ],
-            explorerViews: [
-              {
-                address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
-                tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
-              },
-            ],
-          },
-          name: "dstAPT",
-          tokenType: "coin",
-          ticker: "dstAPT",
-          disableCountervalue: false,
-          delisted: false,
-          units: [
-            {
+      setupMockCryptoAssetsStore({
+        findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+          // coin_id is converted to lowercase in txsToOps
+          if (address === "0xd111::staked_coin::stakedaptos") {
+            return {
+              type: "TokenCurrency" as const,
+              id: "aptos/coin/dstapt::staked_coin::stakedaptos",
+              contractAddress: "0xd111::staked_coin::StakedAptos",
+              parentCurrency: getCryptoCurrencyById("aptos"),
               name: "dstAPT",
-              code: "dstAPT",
-              magnitude: 8,
-            },
-          ],
-        }),
+              tokenType: "coin",
+              ticker: "dstAPT",
+              disableCountervalue: false,
+              delisted: false,
+              units: [
+                {
+                  name: "dstAPT",
+                  code: "dstAPT",
+                  magnitude: 8,
+                },
+              ],
+            };
+          }
+          return undefined;
+        },
+        getTokensSyncHash: async () => "0",
       });
 
       jest.mock("../../bridge/logic", () => ({
@@ -742,48 +734,31 @@ describe("Aptos sync logic ", () => {
     });
 
     it("should convert Aptos token transactions to operations correctly", async () => {
-      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
-        findTokenByAddressInCurrency: jest.fn().mockReturnValue({
-          type: "TokenCurrency",
-          id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
-          contractAddress: "0x2ebb",
-          parentCurrency: {
-            type: "CryptoCurrency",
-            id: "aptos",
-            coinType: 637,
-            name: "Aptos",
-            managerAppName: "Aptos",
-            ticker: "APT",
-            scheme: "aptos",
-            color: "#231F20",
-            family: "aptos",
-            units: [
-              {
-                name: "APT",
-                code: "APT",
-                magnitude: 8,
-              },
-            ],
-            explorerViews: [
-              {
-                address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
-                tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
-              },
-            ],
-          },
-          name: "CELLANA",
-          tokenType: "fungible_asset",
-          ticker: "CELL",
-          disableCountervalue: false,
-          delisted: false,
-          units: [
-            {
+      setupMockCryptoAssetsStore({
+        findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+          if (address === "0x2ebb") {
+            return {
+              type: "TokenCurrency" as const,
+              id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+              contractAddress: "0x2ebb",
+              parentCurrency: getCryptoCurrencyById("aptos"),
               name: "CELLANA",
-              code: "CELL",
-              magnitude: 8,
-            },
-          ],
-        }),
+              tokenType: "fungible_asset",
+              ticker: "CELL",
+              disableCountervalue: false,
+              delisted: false,
+              units: [
+                {
+                  name: "CELLANA",
+                  code: "CELL",
+                  magnitude: 8,
+                },
+              ],
+            };
+          }
+          return undefined;
+        },
+        getTokensSyncHash: async () => "0",
       });
 
       jest.mock("../../bridge/logic", () => ({

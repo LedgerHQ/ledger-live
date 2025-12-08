@@ -9,7 +9,6 @@ export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
   hideEmpty?: boolean | null,
-  accountIds?: Map<string, boolean>,
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts
@@ -33,10 +32,7 @@ export function getAccountTuplesForCurrency(
       .filter(a => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
   }
   return allAccounts
-    .filter(
-      account =>
-        account.currency.id === currency.id && (accountIds ? accountIds.has(account.id) : true),
-    )
+    .filter(account => account.currency.id === currency.id)
     .map(account => ({
       account,
       subAccount: null,

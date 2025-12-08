@@ -28,8 +28,8 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
+import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
@@ -41,9 +41,9 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
-import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
   [key: string]: Theme;
@@ -63,10 +63,6 @@ function isWalletConnectLink(url: string) {
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
-}
-
-function isStorylyLink(url: string) {
-  return url.startsWith("ledgerlive://storyly?") || url.startsWith("ledgerwallet://storyly?");
 }
 
 function getProxyURL(url: string, customBuySellUiAppId?: string) {
@@ -337,15 +333,16 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  // Hook to close drawers when deeplink is triggered after app was in background
+  const onDeeplinkReceived = useDeeplinkDrawerCleanup();
+
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
-  const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const modularDrawer = useFeature("llmModularDrawer");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -354,8 +351,6 @@ export const DeeplinksProvider = ({
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
-
-  const modularDrawerFlowConfigs = getDrawerFlowConfigs(modularDrawer);
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
     return (
@@ -372,14 +367,6 @@ export const DeeplinksProvider = ({
                     ...linkingOptions().config.screens[NavigatorName.Base],
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
-
-                      /**
-                       * Modular drawer flows (add-account & receive)
-                       * or classic flows when modular drawer is disabled
-                       */
-                      ...modularDrawerFlowConfigs.modularDrawer,
-                      ...modularDrawerFlowConfigs.classicAddAccount,
-                      ...modularDrawerFlowConfigs.classicReceive,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
@@ -514,6 +501,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Close all drawers if app was in background before deeplink
+            onDeeplinkReceived();
+
             // Prevent default deep link if we're already in a wallet connect route.
             const navigationState = navigationRef.current?.getState();
             if (
@@ -529,10 +519,6 @@ export const DeeplinksProvider = ({
               return;
             }
 
-            if (isStorylyLink(url)) {
-              storylyContext.setUrl(url);
-            }
-
             listener(getProxyURL(url, buySellUiManifestId));
           });
           // Clean up the event listeners
@@ -541,7 +527,7 @@ export const DeeplinksProvider = ({
           };
         },
         getStateFromPath: (path, config) => {
-          const url = new URL(`ledgerlive://${path}`);
+          const url = new URL(`ledgerwallet://${path}`);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
           const {
@@ -557,6 +543,7 @@ export const DeeplinksProvider = ({
             deeplinkChannel,
             deeplinkMedium,
             deeplinkCampaign,
+            deeplinkLocation,
           } = query;
 
           if (!ajsPropSource && !Config.MOCK) {
@@ -579,6 +566,7 @@ export const DeeplinksProvider = ({
               currency,
               installApp,
               appName,
+              deeplinkLocation,
               ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
             });
           } else
@@ -589,12 +577,14 @@ export const DeeplinksProvider = ({
               deeplinkChannel,
               deeplinkMedium,
               deeplinkCampaign,
+              deeplinkLocation,
             });
 
           const platform = pathname.split("/")[1];
 
-          if (isStorylyLink(url.toString())) {
-            storylyContext.setUrl(url.toString());
+          // Handle modular drawer deeplinks (receive & add-account)
+          if (hostname === "receive" || hostname === "add-account") {
+            return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
           }
 
           if (hostname === "earn") {
@@ -703,15 +693,14 @@ export const DeeplinksProvider = ({
     );
   }, [
     hasCompletedOnboarding,
-    modularDrawerFlowConfigs,
     llmAccountListUI?.enabled,
     AccountsListScreenName,
     userAcceptedTerms,
     buySellUiManifestId,
     dispatch,
-    storylyContext,
     liveAppProviderInitialized,
     manifests,
+    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
 

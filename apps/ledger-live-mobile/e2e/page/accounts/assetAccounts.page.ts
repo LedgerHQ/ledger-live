@@ -3,7 +3,8 @@ import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
   baseLink = "account";
-  assetBalance = () => getElementById("asset-graph-balance");
+  assetBalanceId = "asset-graph-balance";
+  assetBalance = () => getElementById(this.assetBalanceId);
   titleId = (assetName: string) => `accounts-title-${assetName}`;
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
@@ -13,6 +14,7 @@ export default class AssetAccountsPage {
   }
 
   async expectAccountsBalance(expectedBalance: string) {
+    await waitForElementById(this.assetBalanceId);
     await expect(this.assetBalance()).toHaveText(expectedBalance);
   }
 

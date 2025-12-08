@@ -6,6 +6,7 @@ import {
   UpdateFirmwareActionState,
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getDeviceHasBattery } from "@ledgerhq/live-common/device/use-cases/getDeviceHasBattery";
 import {
   Alert,
   Flex,
@@ -72,6 +73,7 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -188,6 +190,7 @@ export const FirmwareUpdate = ({
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
   const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
+  const hasBattery = getDeviceHasBattery(device.modelId);
   const {
     requestCompleted: batteryRequestCompleted,
     batteryStatusesState,
@@ -199,6 +202,7 @@ export const FirmwareUpdate = ({
     deviceId: device.deviceId,
     deviceName: device.deviceName ?? null,
     statuses: requiredBatteryStatuses,
+    enabled: hasBattery,
   });
 
   const {
@@ -462,21 +466,36 @@ export const FirmwareUpdate = ({
   ]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          onPress={() => {
-            if (isAllowedToClose) {
-              quitUpdate();
-            } else {
-              setIsCloseWarningOpen(true);
-            }
-          }}
-          Icon={IconsLegacy.CloseMedium}
-        />
-      ),
-    });
-  }, [navigation, quitUpdate, isAllowedToClose]);
+    const options = isBeforeOnboarding
+      ? {
+          headerLeft: () => (
+            <NavigationHeaderBackButton
+              onPress={() => {
+                if (isAllowedToClose) {
+                  quitUpdate();
+                } else {
+                  setIsCloseWarningOpen(true);
+                }
+              }}
+            />
+          ),
+        }
+      : {
+          headerRight: () => (
+            <Button
+              onPress={() => {
+                if (isAllowedToClose) {
+                  quitUpdate();
+                } else {
+                  setIsCloseWarningOpen(true);
+                }
+              }}
+              Icon={IconsLegacy.CloseMedium}
+            />
+          ),
+        };
+    navigation.setOptions(options);
+  }, [navigation, quitUpdate, isAllowedToClose, isBeforeOnboarding]);
 
   const steps: Item[] = useMemo(() => {
     const newSteps: UpdateSteps = {
@@ -790,6 +809,11 @@ export const FirmwareUpdate = ({
     isBeforeOnboarding,
     deviceInfo.version,
   ]);
+
+  /** For devices with no battery, start the update when the release notes are not shown */
+  useEffect(() => {
+    if (!hasBattery && !showReleaseNotes) startUpdate();
+  }, [hasBattery, startUpdate, showReleaseNotes]);
 
   useEffect(() => {
     if (!batteryRequestCompleted) return;

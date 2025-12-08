@@ -8,9 +8,10 @@ import WebSocket from "ws";
 import bodyParser from "body-parser";
 import os from "os";
 import { Observable } from "rxjs";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
 import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
@@ -96,7 +97,9 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
     transport = {
       id: `speculos-http-${speculosApiPort}`,
       open: id =>
-        id.includes(port.toString()) ? retry(() => SpeculosHttpTransport.open(req)) : null,
+        id.includes(port.toString())
+          ? retry(() => DeviceManagementKitTransportSpeculos.open(req))
+          : null,
       disconnect: () => Promise.resolve(),
     };
     registerTransportModule(transport);
@@ -183,8 +186,8 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
     let wsBusyIndex = 0;
     wss.on("connection", (ws: WebSocket) => {
       const index = ++wsIndex;
-      let transport: SpeculosHttpTransport;
-      let transportP: Promise<SpeculosHttpTransport>;
+      let transport: DeviceManagementKitTransportSpeculos;
+      let transportP: Promise<DeviceManagementKitTransportSpeculos>;
       let destroyed = false;
 
       const onClose = async () => {
@@ -214,7 +217,7 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
             return;
           }
 
-          transportP = Transport.open() as Promise<SpeculosHttpTransport>;
+          transportP = Transport.open() as Promise<DeviceManagementKitTransportSpeculos>;
           wsBusyIndex = index;
           log("proxy", `WS(${index}): opening...`);
 

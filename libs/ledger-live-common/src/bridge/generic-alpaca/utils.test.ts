@@ -466,8 +466,7 @@ describe("Alpaca utils", () => {
         ...baseOp,
         type: "OUT",
         value: BigInt(100),
-        tx: { ...baseOp.tx, fees: BigInt(25) },
-        details: { status: "failed" },
+        tx: { ...baseOp.tx, fees: BigInt(25), failed: true },
       };
 
       const result = adaptCoreOperationToLiveOperation(accountId, failedOp);

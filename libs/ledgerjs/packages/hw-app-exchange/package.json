@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@noble/curves": "1.9.7",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",

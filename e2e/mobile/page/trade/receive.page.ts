@@ -1,32 +1,26 @@
-import { by, element } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-common/lib/e2e/enum/TokenType";
-
+import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 export default class ReceivePage {
-  baseLink = "receive";
-  noVerifyAddressButton = "button-DontVerify-my-address";
-  noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
-  buttonVerifyAddressId = "button-verify-my-address";
-  buttonCreateAccountId = "button-create-account";
+  baseLink = "receive";
   buttonContinueId = "add-accounts-continue-button";
-  step2HeaderTitleId = "receive-header-step2-title";
+  buttonVerifyAddressId = "button-verify-my-address";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
-  receivePageScrollViewId = "receive-screen-scrollView";
+  noVerifyAddressButton = "button-DontVerify-my-address";
+  noVerifyValidateButton = "button-confirm-dont-verify";
   receiveConnectDeviceHeaderId = "receive-connect-device-header";
+  receivePageScrollViewId = "receive-screen-scrollView";
   selectCryptoScrollViewId = "select-crypto-scrollView";
 
-  currencyRowId = (t: string) => `big-currency-row-${t}`;
+  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencyNameIdByRegex = (type: string) => new RegExp(`big-currency-name-.*\\/${type}\\/.*`);
-  currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
-  step1HeaderTitle = () => getElementById("receive-header-step1-title");
-  step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
-  titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
-  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
+  receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
+    `option-button-content-${receiveFundsOption}`;
   receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
-  step2Accounts = () => getElementById("receive-header-step2-accounts");
+  titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -37,20 +31,6 @@ export default class ReceivePage {
   async receiveViaDeeplink(currencyLong?: string): Promise<void> {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
-  }
-
-  @Step("Expect first step")
-  async expectFirstStep() {
-    await detoxExpect(this.step1HeaderTitle()).toBeVisible();
-  }
-
-  @Step("Expect second step networks")
-  async expectSecondStepNetworks(networks: string[]): Promise<void> {
-    await detoxExpect(getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await detoxExpect(getElementById("receive-header-step2-networks")).toBeVisible();
-    for (const network of networks) {
-      await detoxExpect(getElementById(this.currencyNameId(network))).toBeVisible();
-    }
   }
 
   @Step("Select currency in receive list")
@@ -71,22 +51,10 @@ export default class ReceivePage {
     await tapById(id);
   }
 
-  @Step("Select assets")
-  async selectAsset(assetText: string): Promise<void> {
-    const id = this.currencySubtitleId(assetText);
-    await tapById(id);
-  }
-
   @Step("Select network")
   async selectNetwork(networkId: string): Promise<void> {
     const id = this.currencyNameId(networkId);
     await tapById(id);
-  }
-
-  @Step("Expect second step accounts")
-  async expectSecondStepAccounts() {
-    await detoxExpect(this.step2HeaderTitle()).toBeVisible();
-    await detoxExpect(this.step2Accounts()).toBeVisible();
   }
 
   @Step("Select network in list if needed")
@@ -109,44 +77,10 @@ export default class ReceivePage {
     return await getTextOfElement(this.accountFreshAddress);
   }
 
-  @Step("Expect number of account in list is displayed")
-  async expectNumberOfAccountInListIsDisplayed(
-    currencyName: string,
-    accountNumber: number,
-  ): Promise<void> {
-    const plural = accountNumber > 1 ? "s" : "";
-    const accountCountText = `${accountNumber} account${plural}`;
-    const networkRowID = new RegExp(this.currencyRowId(".*"));
-    const accountNameID = this.currencyNameId(currencyName);
-    const accountCountID = this.currencySubtitleId(accountCountText);
-
-    await detoxExpect(
-      element(
-        by
-          .id(networkRowID)
-          .withDescendant(by.id(accountNameID))
-          .withDescendant(by.id(accountCountID)),
-      ),
-    ).toBeVisible();
-  }
-
-  @Step("Create account")
-  async createAccount(): Promise<void> {
-    await waitForElementById(this.buttonCreateAccountId);
-    await tapById(this.buttonCreateAccountId);
-  }
-
   @Step("Continue to create account")
   async continueCreateAccount(): Promise<void> {
     await waitForElementById(this.buttonContinueId);
     await tapById(this.buttonContinueId);
-  }
-
-  @Step("Expect account is created")
-  async expectAccountIsCreated(accountName: string): Promise<void> {
-    await waitForElementById(this.step2HeaderTitleId);
-    await detoxExpect(getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await detoxExpect(getElementByText(accountName)).toBeVisible();
   }
 
   @Step("Select dont verify address")
@@ -208,5 +142,11 @@ export default class ReceivePage {
     await detoxExpect(getElementById(this.receiveConnectDeviceHeaderId)).toHaveText(
       "Connect Device",
     );
+  }
+
+  @Step("Select receive funds option")
+  async selectReceiveFundsOption(receiveFundsOption: ReceiveFundsOptionsType): Promise<void> {
+    await waitForElementById(this.receiveFundsOptionId(receiveFundsOption));
+    await tapById(this.receiveFundsOptionId(receiveFundsOption));
   }
 }

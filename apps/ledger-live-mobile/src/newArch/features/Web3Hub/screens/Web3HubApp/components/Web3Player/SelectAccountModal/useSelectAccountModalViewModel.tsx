@@ -1,15 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import {
   CurrentAccountHistDB,
-  useManifestCurrencies,
+  useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { AppProps } from "LLM/features/Web3Hub/types";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { NavigatorName, ScreenName } from "~/const";
 
 export type Params = {
@@ -27,7 +28,14 @@ export default function useSelectAccountModalViewModel({
 }: Params) {
   const [selectedCurrency, setSelectedCurrency] = useState<CryptoCurrency | undefined>();
 
-  const currencies = useManifestCurrencies(manifest);
+  const currencyIds = useDAppManifestCurrencyIds(manifest);
+  const currencies = useMemo(() => {
+    return currencyIds.reduce<CryptoCurrency[]>((acc, id) => {
+      const c = findCryptoCurrencyById(id);
+      if (c) acc.push(c);
+      return acc;
+    }, []);
+  }, [currencyIds]);
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const { setCurrentAccountHist, setCurrentAccount } = useDappCurrentAccount(currentAccountHistDb);

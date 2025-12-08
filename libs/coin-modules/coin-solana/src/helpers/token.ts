@@ -10,7 +10,7 @@ import {
 } from "../types";
 import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function tokenIsListedOnLedger(currencyId: string, mint: string): Promise<boolean> {
   const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);

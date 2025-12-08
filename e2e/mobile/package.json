@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-mobile-e2e-tests",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --cache",
@@ -25,9 +25,9 @@
     "@jest/types": "^29.6.3",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

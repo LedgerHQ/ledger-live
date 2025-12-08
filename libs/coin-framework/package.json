@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "6.9.0",
+  "version": "6.10.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -106,8 +106,8 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/imurmurhash": "^0.1.4",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
@@ -120,7 +120,7 @@
   "scripts": {
     "clean": "rm -rf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage || true",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

@@ -5,7 +5,6 @@ import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
@@ -38,7 +37,6 @@ import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
-import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, {
@@ -101,7 +99,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
   const { pushToast } = useToastsActions();
 
-  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName: "receive_confirmation",
     currency: mainAccount?.currency,
     hideBackButton: false,
@@ -109,15 +107,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const onClose = useCallback(() => {
     if (mainAccount) {
-      if (isModularDrawerEnabled) {
-        handleOpenReceiveDrawer();
-      } else {
-        navigation.navigate(ScreenName.ReceiveSelectAccount, {
-          currency: mainAccount.currency,
-        });
-      }
+      handleOpenReceiveDrawer();
     }
-  }, [mainAccount, isModularDrawerEnabled, handleOpenReceiveDrawer, navigation]);
+  }, [mainAccount, handleOpenReceiveDrawer]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -178,13 +170,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }
     }
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
-
-  const completeAction = useCompleteActionCallback();
-
-  useEffect(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -274,7 +259,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }),
       opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    [bannerHeight.value, bannerOpacity.value, hideBanner],
+    [bannerHeight, bannerOpacity, hideBanner],
   );
 
   const handleBannerClose = useCallback(() => {

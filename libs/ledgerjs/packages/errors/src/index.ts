@@ -51,6 +51,9 @@ export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",
 );
+export const SolAppPleaseEnableContractData = createCustomErrorClass(
+  "SolAppPleaseEnableContractData",
+);
 export const CeloAppPleaseEnableContractData = createCustomErrorClass(
   "CeloAppPleaseEnableContractData",
 );

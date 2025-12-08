@@ -50,7 +50,7 @@ import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
 import { tryParseAsMintAccount } from "./network/chain/account";
 import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getAccount(
   address: string,
@@ -132,12 +132,16 @@ export async function getTokenAccountsTransactions(
       const txs = json.result.length
         ? await api.getParsedTransactions(json.result.map(({ signature }) => signature))
         : [];
-      const descriptors = txs.reduce((acc, tx, index) => {
+      const sortedTxs = txs.sort((a, b) => (b?.slot ?? 0) - (a?.slot ?? 0));
+      const descriptors = sortedTxs.reduce((acc, tx) => {
         if (tx && !tx.meta?.err && tx.blockTime) {
-          acc.push({
-            info: json.result[index],
-            parsed: tx,
-          });
+          const info = json.result.find(s => tx.transaction.signatures.includes(s.signature))!;
+          if (info) {
+            acc.push({
+              info,
+              parsed: tx,
+            });
+          }
         }
         return acc;
       }, [] as TransactionDescriptor[]);

@@ -127,6 +127,7 @@ export default async function setup(): Promise<void> {
   global.clearTextByElement = NativeElementHelpers.clearTextByElement;
   global.countElementsById = NativeElementHelpers.countElementsById;
   global.detoxExpect = NativeElementHelpers.expect;
+  global.getAttributesOfElement = NativeElementHelpers.getAttributesOfElement;
   global.getElementById = NativeElementHelpers.getElementById;
   global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
   global.getElementByText = NativeElementHelpers.getElementByText;
@@ -135,7 +136,6 @@ export default async function setup(): Promise<void> {
   global.getIdOfElement = NativeElementHelpers.getIdOfElement;
   global.getTextOfElement = NativeElementHelpers.getTextOfElement;
   global.IsIdVisible = NativeElementHelpers.isIdVisible;
-  global.IsTextVisible = NativeElementHelpers.isTextVisible;
   global.scrollToId = NativeElementHelpers.scrollToId;
   global.scrollToText = NativeElementHelpers.scrollToText;
   global.tapByElement = NativeElementHelpers.tapByElement;
@@ -163,6 +163,7 @@ export default async function setup(): Promise<void> {
   global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
   global.tapWebElementByTestId = WebElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
+  global.waitForCurrentWebviewUrlToContain = WebElementHelpers.waitForCurrentWebviewUrlToContain;
   global.waitForWebElementToBeEnabled = WebElementHelpers.waitForWebElementToBeEnabled;
   global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
 }

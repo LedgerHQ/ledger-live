@@ -6,6 +6,9 @@ import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
+import { useStake } from "LLD/hooks/useStake";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {
   account: AccountLike;
@@ -16,6 +19,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const label = useGetStakeLabelLocaleBased();
+  const walletState = useSelector(walletSelector);
+  const { getRouteToPlatformApp } = useStake();
 
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
@@ -48,14 +53,24 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           parentAccount,
         }),
       );
+      return;
+    }
+
+    // Try to get route to platform app
+    const route = getRouteToPlatformApp(account, walletState, parentAccount || null);
+
+    if (route) {
+      // Redirect to platform app (earn, stakekit, etc.)
+      history.push(route);
     } else if (account.type === "Account") {
+      // Fallback: open existing modal if no platform app available
       dispatch(
         openModal("MODAL_EVM_STAKE", {
           account,
         }),
       );
     }
-  }, [account, dispatch, parentAccount]);
+  }, [account, dispatch, parentAccount, getRouteToPlatformApp, walletState, history]);
 
   const getStakeAction = useCallback(() => {
     if (isEthereumAccount) {

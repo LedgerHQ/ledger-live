@@ -16,11 +16,10 @@ describe("usePostOnboardingActionHandlers", () => {
     jest.clearAllMocks();
   });
 
-  describe("when modular drawer is enabled", () => {
+  describe("with modular drawer", () => {
     beforeEach(() => {
       mockUseOpenReceiveDrawer.mockReturnValue({
         handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-        isModularDrawerEnabled: true,
       });
     });
 
@@ -43,36 +42,9 @@ describe("usePostOnboardingActionHandlers", () => {
     });
   });
 
-  describe("when modular drawer is disabled", () => {
-    beforeEach(() => {
-      mockUseOpenReceiveDrawer.mockReturnValue({
-        handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-        isModularDrawerEnabled: false,
-      });
-    });
-
-    it("should not provide an assetsTransfer handler", () => {
-      const { result } = renderHook(() => usePostOnboardingActionHandlers());
-
-      expect(result.current[PostOnboardingActionId.assetsTransfer]).toBeUndefined();
-    });
-
-    it("should not invoke handleOpenReceiveDrawer when attempting to call undefined handler", () => {
-      const { result } = renderHook(() => usePostOnboardingActionHandlers());
-
-      act(() => {
-        const assetsTransferHandler = result.current[PostOnboardingActionId.assetsTransfer];
-        assetsTransferHandler?.();
-      });
-
-      expect(mockHandleOpenReceiveDrawer).not.toHaveBeenCalled();
-    });
-  });
-
   it("should initialize useOpenReceiveDrawer with the correct source screen name", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-      isModularDrawerEnabled: true,
     });
 
     renderHook(() => usePostOnboardingActionHandlers());
@@ -85,7 +57,6 @@ describe("usePostOnboardingActionHandlers", () => {
   it("should not provide handlers for unimplemented action IDs", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-      isModularDrawerEnabled: true,
     });
 
     const { result } = renderHook(() => usePostOnboardingActionHandlers());

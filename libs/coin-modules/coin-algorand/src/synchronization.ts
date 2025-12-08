@@ -2,7 +2,7 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -348,6 +348,7 @@ async function buildSubAccounts({
   const tokenAccounts: TokenAccount[] = [];
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
+  const assetsIds = assets.map(asset => asset.assetId);
 
   if (initialAccount && initialAccount.subAccounts) {
     for (const existingSubAccount of initialAccount.subAccounts) {
@@ -379,10 +380,15 @@ async function buildSubAccounts({
       if (tokenAccount) tokenAccounts.push(tokenAccount);
     }
   });
-  // Preserve order of tokenAccounts from the existing token accounts
+  // Preserve order of tokenAccounts from the existing token accounts, or use the
+  // order of input assets if no token accounts exist yet
   tokenAccounts.sort((a, b) => {
-    const i = existingAccountTickers.indexOf(a.token.ticker);
-    const j = existingAccountTickers.indexOf(b.token.ticker);
+    const i = existingAccountTickers.length
+      ? existingAccountTickers.indexOf(a.token.ticker)
+      : assetsIds.indexOf(extractTokenId(a.token.id));
+    const j = existingAccountTickers.length
+      ? existingAccountTickers.indexOf(b.token.ticker)
+      : assetsIds.indexOf(extractTokenId(b.token.id));
     if (i === j) return 0;
     if (i < 0) return 1;
     if (j < 0) return -1;

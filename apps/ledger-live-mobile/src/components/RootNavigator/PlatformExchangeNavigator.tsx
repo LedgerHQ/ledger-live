@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
@@ -37,4 +37,4 @@ export default function PlatformExchangeNavigator() {
   );
 }
 
-const Stack = createStackNavigator<PlatformExchangeNavigatorParamList>();
+const Stack = createNativeStackNavigator<PlatformExchangeNavigatorParamList>();

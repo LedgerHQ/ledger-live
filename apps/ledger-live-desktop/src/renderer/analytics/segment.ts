@@ -2,6 +2,7 @@ import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFu
 import {
   getStablecoinYieldSetting,
   getBitcoinYieldSetting,
+  getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
@@ -16,7 +17,7 @@ import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
-import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
 import {
@@ -137,6 +138,7 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+  const ptxSwapLiveAppOnPortfolio = analyticsFeatureFlagMethod("ptxSwapLiveAppOnPortfolio");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -167,6 +169,7 @@ const getPtxAttributes = () => {
       : "flag not loaded";
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+  const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
@@ -174,8 +177,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
+    ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio?.enabled,
     stablecoinYield,
     bitcoinYield,
+    ethDepositScreen,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };
@@ -217,6 +222,12 @@ const extraProperties = (store: ReduxStore) => {
     : { enabled: false };
   const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
+    : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
+  const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
     : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
@@ -277,10 +288,12 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
+    nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
     ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
   };
 };
 

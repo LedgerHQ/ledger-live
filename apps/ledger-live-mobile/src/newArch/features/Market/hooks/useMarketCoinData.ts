@@ -13,13 +13,7 @@ type HookProps = {
 export const useMarketCoinData = ({ currencyId }: HookProps) => {
   const marketParams = useSelector(marketParamsSelector);
 
-  const { counterCurrency = "usd", range = "24h" } = marketParams;
-
-  const resCurrencyChartData = useCurrencyChartData({
-    counterCurrency,
-    id: currencyId,
-    range,
-  });
+  const { counterCurrency = "usd" } = marketParams;
 
   const {
     data: currency,
@@ -32,11 +26,32 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
 
   return {
     counterCurrency,
+    currency,
+    loading: isFetching,
+    refetch,
+  };
+};
+
+export const useMarketCoinDataWithChart = ({ currencyId }: HookProps) => {
+  const marketParams = useSelector(marketParamsSelector);
+
+  const { counterCurrency = "usd", range = "24h" } = marketParams;
+
+  const { data: dataChart, isFetching: loadingChart } = useCurrencyChartData({
+    counterCurrency,
+    id: currencyId,
+    range,
+  });
+
+  const { currency, loading, refetch } = useMarketCoinData({ currencyId });
+
+  return {
+    counterCurrency,
     range,
     currency,
-    dataChart: resCurrencyChartData.data,
-    loadingChart: resCurrencyChartData.isFetching,
-    loading: isFetching,
+    dataChart,
+    loadingChart,
+    loading,
     marketParams,
     refetch,
   };

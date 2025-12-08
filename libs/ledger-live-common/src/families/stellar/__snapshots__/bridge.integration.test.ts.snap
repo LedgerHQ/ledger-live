@@ -3,20 +3,20 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341065021",
+    "balance": "341065032",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 142,
+    "operationsCount": 153,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064921",
+    "spendableBalance": "311064932",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": true,
     "xpub": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
   },
@@ -31,10 +31,10 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "operationsCount": 43,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "79999760",
+    "spendableBalance": "79999759",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": true,
     "xpub": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
   },
@@ -49,10 +49,10 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "operationsCount": 38,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "44999262",
+    "spendableBalance": "44999261",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": true,
     "xpub": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
   },
@@ -67,10 +67,10 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "operationsCount": 17,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "10145721",
+    "spendableBalance": "10145720",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": true,
     "xpub": "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
   },
@@ -88,7 +88,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "spendableBalance": "0",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": true,
     "xpub": "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
   },
@@ -106,7 +106,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "spendableBalance": "0",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1431ef5f",
     "used": false,
     "xpub": "GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH",
   },
@@ -690,7 +690,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": "251606365385008908",
       "type": "IN",
-      "value": "0",
+      "value": "10000",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
@@ -761,6 +761,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
       "transactionSequenceNumber": "224182342070055682",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0d4b1748aeb13c64f001d9b486054744d5e8521081ce6d21dc9acbb2a1c0a171",
+      "blockHeight": 59792876,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Own VTX & Start Earning XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "277aa9d93c6674951b4cc198a25ee1d5726d686f459d957a9bf4b40b0b66ffb6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-277aa9d93c6674951b4cc198a25ee1d5726d686f459d957a9bf4b40b0b66ffb6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621943059",
       "type": "IN",
       "value": "1",
     },
@@ -1438,6 +1462,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "18ea88d2745b7e1659f8eac060d656f39703f831cf26193d39aee8cd3f1a638a",
+      "blockHeight": 59822977,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Get free miner vortex.solar",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "571f4203e583144ab396dfa36a6a5ba3cb8c096c625fb648c2197179bbafaac6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-571f4203e583144ab396dfa36a6a5ba3cb8c096c625fb648c2197179bbafaac6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621949108",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "250ef44a3f04e815230c83a2fb76c03421e70ea1dcb13d28c9b9d631c1e7178b",
       "blockHeight": 58167129,
       "extra": {
@@ -1558,6 +1606,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d13a85732b44c8c3e49e8eb3246121557d7eb3e5218872cc6b00be321e3a6671",
+      "blockHeight": 59886098,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy VTX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "5d1afb5c11c6982cdf62a77f980ff68b74deea2e5baa9b9cc2e1093b92b81a83",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5d1afb5c11c6982cdf62a77f980ff68b74deea2e5baa9b9cc2e1093b92b81a83-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "257183994599179683",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "38ab63e0dc14a0e2a5b92898a4545723af9aed1d3543f290438e57740909305c",
       "blockHeight": 58970946,
       "extra": {
@@ -1601,6 +1673,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
       ],
       "transactionSequenceNumber": "250863061164884247",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "22008e8644688dd91e5a11b8e05a6356652c6ddf1566e972977f899c2ae71b58",
+      "blockHeight": 59815109,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Get free miner vortex.solar",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6880b487ca8f1010ef67ed1eb09faeb97da424490691e439428726415b3b0df5",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6880b487ca8f1010ef67ed1eb09faeb97da424490691e439428726415b3b0df5-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621947092",
       "type": "IN",
       "value": "1",
     },
@@ -1673,6 +1769,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
       "transactionSequenceNumber": "242646183137262602",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "70caf48d48b190098064b972f0142dfa3549adbc4893021d5d002df3c7a6c9b0",
+      "blockHeight": 59745989,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6db88bc812940527d1387217bd4574cdac5bf3857efe72e0c1aec661b5c4a90f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6db88bc812940527d1387217bd4574cdac5bf3857efe72e0c1aec661b5c4a90f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": "256247545699769514",
       "type": "IN",
       "value": "1",
     },
@@ -2326,6 +2446,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "f4dd20c4115cf12315e6560d00f7a4a70aff85d79d0c4bfebdc243ae72208ee2",
+      "blockHeight": 59868195,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy VTX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9932c1ce8fe9832ea4bdfe3da3116726d06e2cfdbe24f0915f2ebde6700accdf",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9932c1ce8fe9832ea4bdfe3da3116726d06e2cfdbe24f0915f2ebde6700accdf-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621957149",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "91d515574d1e91f90c2aada0f6b5c0e6d821e7b4c1851198b19065a389bae84d",
       "blockHeight": 56850766,
       "extra": {
@@ -2393,6 +2537,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
       ],
       "transactionSequenceNumber": "253311312782702012",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "f48cf4e5a6badc6e53c48bb8c05249cf9b47189857daeb240b789589fb0fff81",
+      "blockHeight": 59830814,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Get free miner vortex.solar",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9c4b24a8dbf51c9c140b400524830055d2426abb448ca9e2b30ee00f6dd98cf3",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9c4b24a8dbf51c9c140b400524830055d2426abb448ca9e2b30ee00f6dd98cf3-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621951125",
       "type": "IN",
       "value": "1",
     },
@@ -2561,6 +2729,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
       ],
       "transactionSequenceNumber": "250653093098686850",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "e085fb806198e8041c01ebe9dd3a5bab192576680ef4143eec1d749f757a0831",
+      "blockHeight": 59806455,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Own VTX & Start Earning XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "a39ff95f098adb64b323405888b54da8ee7412943907131ace0652e2514d1140",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a39ff95f098adb64b323405888b54da8ee7412943907131ace0652e2514d1140-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621945076",
       "type": "IN",
       "value": "1",
     },
@@ -3070,6 +3262,30 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "e70f311ceddcb90dd9853589896e4dedfe9d57dcdc130cf62a1c5e8564b24b7b",
+      "blockHeight": 59761051,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy XRVT Earn fchain.io XRP!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "c911e6f578b4d869a71ea7e8cd139c5a885d996d2f15e63c63b31db10e42f415",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c911e6f578b4d869a71ea7e8cd139c5a885d996d2f15e63c63b31db10e42f415-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GD7NZ4LUIJPEIWM3UY4IW5HMV3WV3PRVM5CPSILLBUIG5YFNNCCTZXJL",
+      ],
+      "transactionSequenceNumber": "256247545699771532",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "6eb78e902ecc290b25216c0afae3a354b9b3bf723510c8aa3162f801635b0f35",
       "blockHeight": 59476584,
       "extra": {
@@ -3089,6 +3305,54 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAVITYOI5M6WGPVYP2KNZ44TVXCODDCDZP3S3N6LHOZQXCAA4J4WLMQX",
       ],
       "transactionSequenceNumber": "255106510328177872",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "bd2092a4591b8a29e11b91d4b254b66927422ccf57bdef259a97345367493c15",
+      "blockHeight": 59839257,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy VTX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "cdde34eef945aa791ecbbd213c6a0acf3a64e480721273db73112f63ead207cf",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-cdde34eef945aa791ecbbd213c6a0acf3a64e480721273db73112f63ead207cf-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621953112",
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "5743abaceb2c6740a76e4441787a11d3f22d66e9ab930384b411218d591a516d",
+      "blockHeight": 59854397,
+      "extra": {
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy VTX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "cf4194e26cc5211b7a5a3c6c654653ad65c46d8a2b4f5ec4f34342129b79109b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-cf4194e26cc5211b7a5a3c6c654653ad65c46d8a2b4f5ec4f34342129b79109b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDM2UBYCTDJ7LBBNLWU5XTNNIR6GIQW7KXJTPBWOTMFECHF5YJAE3JTH",
+      ],
+      "transactionSequenceNumber": "256741054621955129",
       "type": "IN",
       "value": "1",
     },
@@ -5283,7 +5547,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": "119784086674866178",
       "type": "OUT",
-      "value": "200",
+      "value": "100",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -5798,7 +6062,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": "119784086674866178",
       "type": "IN",
-      "value": "0",
+      "value": "100",
     },
     {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",

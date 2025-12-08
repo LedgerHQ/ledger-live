@@ -1,8 +1,7 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
 import { pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
-import { getSpeculosModel } from "../speculosAppVersion";
-import { pressBoth, pressRightButton } from "../deviceInteraction/ButtonDeviceSimulator";
+import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -10,7 +9,7 @@ import {
 } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { isTouchDevice } from "../speculosAppVersion";
+import { withDeviceController } from "../deviceInteraction/DeviceController";
 
 type ActionType = "both" | "right" | "tap" | "swipe" | "confirm" | "hold";
 
@@ -32,32 +31,40 @@ async function sendCardanoTouchDevices(tx: Transaction) {
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
-async function sendCardanoNanoS(_tx: Transaction) {
-  await waitFor(DeviceLabels.NEW_ORDINARY);
-  await pressRightButton();
-  await waitFor(DeviceLabels.SEND_TO_ADDRESS);
-  await pressBoth();
-  await pressUntilTextFound(DeviceLabels.SEND);
-  await pressBoth();
-  await waitFor(DeviceLabels.TRANSACTION_FEE);
-  await pressBoth();
-  await waitFor(DeviceLabels.CONFIRM);
-  await pressRightButton();
-}
+export const sendCardanoNanoS = withDeviceController(
+  ({ getButtonsController }) =>
+    async (_tx: Transaction) => {
+      const buttons = getButtonsController();
+      await waitFor(DeviceLabels.NEW_ORDINARY);
+      await buttons.right();
+      await waitFor(DeviceLabels.SEND_TO_ADDRESS);
+      await buttons.both();
+      await pressUntilTextFound(DeviceLabels.SEND);
+      await buttons.both();
+      await waitFor(DeviceLabels.TRANSACTION_FEE);
+      await buttons.both();
+      await waitFor(DeviceLabels.CONFIRM);
+      await buttons.right();
+    },
+);
 
-async function sendCardanoButtonDevice(tx: Transaction) {
-  await waitFor(DeviceLabels.NEW_ORDINARY);
-  await pressBoth();
-  await pressUntilTextFound(DeviceLabels.SEND_TO_ADDRESS_2);
-  await pressBoth();
-  const events = await pressUntilTextFound(DeviceLabels.SEND);
-  validateTransactionData(tx, events);
-  await pressBoth();
-  await waitFor(DeviceLabels.TRANSACTION_FEE);
-  await pressBoth();
-  await waitFor(DeviceLabels.CONFIRM);
-  await pressBoth();
-}
+export const sendCardanoButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
+      await waitFor(DeviceLabels.NEW_ORDINARY);
+      await buttons.both();
+      await pressUntilTextFound(DeviceLabels.SEND_TO_ADDRESS_2);
+      await buttons.both();
+      const events = await pressUntilTextFound(DeviceLabels.SEND);
+      validateTransactionData(tx, events);
+      await buttons.both();
+      await waitFor(DeviceLabels.TRANSACTION_FEE);
+      await buttons.both();
+      await waitFor(DeviceLabels.CONFIRM);
+      await buttons.both();
+    },
+);
 
 export async function sendCardano(tx: Transaction) {
   const speculosModel = getSpeculosModel();
@@ -127,14 +134,18 @@ async function delegateTouchDevicesAction(label: DeviceLabels) {
   }
 }
 
-async function delegateNanoAction(label: DeviceLabels, action: ActionType) {
-  await waitFor(label);
-  if (action === "both") {
-    await pressBoth();
-  } else {
-    await pressRightButton();
-  }
-}
+export const delegateNanoAction = withDeviceController(
+  ({ getButtonsController }) =>
+    async (label: DeviceLabels, action: ActionType) => {
+      const buttons = getButtonsController();
+      await waitFor(label);
+      if (action === "both") {
+        await buttons.both();
+      } else {
+        await buttons.right();
+      }
+    },
+);
 
 async function executeDelegateStep(label: DeviceLabels, action: ActionType) {
   try {

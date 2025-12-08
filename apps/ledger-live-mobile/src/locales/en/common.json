@@ -1089,6 +1089,10 @@
       "title": "Unable to verify token association",
       "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
     },
+    "HederaRecipientEvmAddressVerificationRequired": {
+      "title": "EVM address verification required",
+      "description": "Please verify the EVM address visible on your Ledger device before confirming."
+    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -1153,6 +1157,11 @@
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
+    },
+    "InvalidGetFirmwareMetadataResponseError": {
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "openSettings": "Go to settings"
     },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
@@ -1224,6 +1233,12 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning": {
+      "title": "Amount reduced to fit UTXO constraints."
+    },
+    "UtxoLimitReachedError": {
+      "title": "Amount too large for UTXO constraints."
     }
   },
   "crash": {
@@ -2730,6 +2745,9 @@
       "REWARD": "Claimed reward",
       "FEES": "Fees",
       "PRE_APPROVAL": "Pre-approval",
+      "TRANSFER_PROPOSAL": "Transfer proposal",
+      "TRANSFER_REJECTED": "Transfer rejected",
+      "TRANSFER_WITHDRAWN": "Transfer withdrawn",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
       "CLOSE_ACCOUNT": "Close account",
@@ -2751,7 +2769,8 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "ASSOCIATE_TOKEN": "Associate token"
+      "ASSOCIATE_TOKEN": "Associate token",
+      "CONTRACT_CALL": "Contract call"
     }
   },
   "operationDetails": {
@@ -3780,7 +3799,9 @@
       },
       "wrongDevice": {
         "title": "Ledger Nano S™ is not compatible with {{provider}}",
-        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live"
+        "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Wallet",
+        "explore_compatible_devices": "Explore compatible devices",
+        "swapWithAnotherProvider": "Swap with another provider"
       },
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
@@ -7229,6 +7250,9 @@
         },
         "unverifiedAssociation": {
           "learnMore": "Learn more"
+        },
+        "evmVerificationRequired": {
+          "text": "You are sending an ERC-20 token. For this type of transaction, your Ledger device will display the sender's EVM address, not their Account ID.\nPlease follow <0>this guide</0> to verify the address is correct before confirming."
         }
       }
     },
@@ -7317,11 +7341,11 @@
         "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
-      "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "titleCompleted": "Subscribed to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
-        "popupLabel": "Successfully subscribed to Ledger Recover"
+      "syncAccounts": {
+        "title": "Sync your crypto accounts",
+        "titleCompleted": "Your accounts are synchronized",
+        "description": "Activate Ledger Sync to sync your crypto accounts",
+        "popupLabel": "Accounts synced"
       }
     }
   },

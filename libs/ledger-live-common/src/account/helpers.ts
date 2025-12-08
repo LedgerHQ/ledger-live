@@ -12,10 +12,11 @@ import {
   type TronAccount,
 } from "@ledgerhq/coin-tron/index";
 import { isAccountEmpty as isVechainAccountEmpty } from "@ledgerhq/coin-vechain/index";
+import { isAccountEmpty as isCantonAccountEmpty } from "@ledgerhq/coin-canton";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { isAccountDelegating } from "../families/tezos/staking";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // TODO: remove this export and prefer import from root file.
 export {
@@ -45,6 +46,9 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
     }
     if (a.currency.family == "vechain") {
       return isVechainAccountEmpty(a);
+    }
+    if (a.currency.family == "canton") {
+      return isCantonAccountEmpty(a);
     }
   }
 

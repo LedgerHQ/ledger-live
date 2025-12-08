@@ -2,8 +2,6 @@ import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "../../wallet-api/types";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
@@ -71,7 +69,6 @@ export type AccountDataItem = {
 
 export type AccountModuleParams = {
   networks: CryptoOrTokenCurrency[];
-  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 export type CreateAccountsCount = (args: { label: string }) => ReactNode;
@@ -80,7 +77,6 @@ export type UseAccountData = (params: AccountModuleParams) => AccountDataItem[];
 
 export type NetworkHookParams = {
   networks: CryptoOrTokenCurrency[];
-  accounts$?: Observable<WalletAPIAccount[]>;
 };
 // Network hook type that returns additional properties to be merged with currencies
 export type NetworkHook = (params: NetworkHookParams) => Array<{
@@ -111,7 +107,6 @@ export type Network = {
 
 export type CreateNetworkConfigurationHookProps = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 type Props = {

@@ -55,6 +55,7 @@ declare global {
   var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
   var countElementsById: typeof NativeElementHelpers.countElementsById;
   var detoxExpect: typeof NativeElementHelpers.expect;
+  var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
@@ -63,7 +64,6 @@ declare global {
   var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
-  var IsTextVisible: typeof NativeElementHelpers.isTextVisible;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
@@ -90,6 +90,7 @@ declare global {
   var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
+  var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }

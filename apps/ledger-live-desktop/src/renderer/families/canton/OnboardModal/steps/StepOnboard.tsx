@@ -17,6 +17,7 @@ import { StepId, StepProps } from "../types";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { isAxiosError } from "axios";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionAccounts = memo(
   ({
@@ -231,6 +232,8 @@ export const StepOnboardFooter = ({
   onRetryOnboardAccount,
   transitionTo,
 }: StepProps) => {
+  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
+
   if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
   }
@@ -239,7 +242,13 @@ export const StepOnboardFooter = ({
     switch (onboardingStatus) {
       case OnboardStatus.SUCCESS:
         return (
-          <Button primary disabled={isProcessing} onClick={() => transitionTo(StepId.AUTHORIZE)}>
+          <Button
+            primary
+            disabled={isProcessing}
+            onClick={() =>
+              transitionTo(skipCantonPreapprovalStep?.enabled ? StepId.FINISH : StepId.AUTHORIZE)
+            }
+          >
             <Trans i18nKey="common.continue" />
           </Button>
         );

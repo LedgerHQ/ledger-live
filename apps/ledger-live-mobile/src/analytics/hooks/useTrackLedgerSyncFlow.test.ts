@@ -68,7 +68,6 @@ describe("useTrackLedgerSyncFlow", () => {
       },
     );
 
-    // @ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: new UserRefusedOnDevice() });
 
     expect(track).toHaveBeenCalledWith(
@@ -90,7 +89,6 @@ describe("useTrackLedgerSyncFlow", () => {
       },
     );
 
-    // @ts-expect-error requestOpenApp is not null
     rerender({ ...defaultArgs, requestOpenApp: null, error: null });
 
     expect(track).toHaveBeenCalledWith(
@@ -138,7 +136,6 @@ describe("useTrackLedgerSyncFlow", () => {
     rerender({
       ...defaultArgs,
       device: wiredDevice,
-      // @ts-expect-error requestOpenApp is not null
       requestOpenApp: null,
       error: new UserRefusedOnDevice(),
     });

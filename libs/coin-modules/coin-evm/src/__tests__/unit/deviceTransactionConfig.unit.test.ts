@@ -2,13 +2,14 @@ import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
 import { Transaction as EvmTransaction } from "../../types";
-import "../fixtures/cryptoAssetsStore.fixtures";
 
 enum NFT_CONTRACTS {
   ERC721 = "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
@@ -16,8 +17,41 @@ enum NFT_CONTRACTS {
 }
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = tokensById["ethereum/erc20/usd__coin"];
-if (!tokenCurrency) throw new Error("USDC token not found");
+
+const tokenCurrency: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd__coin",
+  contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  parentCurrency: currency,
+  tokenType: "erc20",
+  name: "USD Coin",
+  ticker: "USDC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async (id: string) => {
+    if (id === "ethereum/erc20/usd__coin") {
+      return tokenCurrency;
+    }
+    return undefined;
+  },
+  findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+    const normalizedAddress = address.toLowerCase();
+    if (
+      normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
+      currencyId === "ethereum"
+    ) {
+      return tokenCurrency;
+    }
+    return undefined;
+  },
+  getTokensSyncHash: async () => "",
+};
+setCryptoAssetsStore(mockStore);
+
 const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
 const account = makeAccount("0xkvn", currency, [tokenAccount]);
 const accountWithNfts: Account = Object.freeze({

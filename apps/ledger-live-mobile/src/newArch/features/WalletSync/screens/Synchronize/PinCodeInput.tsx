@@ -104,6 +104,7 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
         onChangeText={handleChange}
         keyboardType="numeric"
         maxLength={1}
+        autoFocus={index === 0}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         isFocused={isFocused}

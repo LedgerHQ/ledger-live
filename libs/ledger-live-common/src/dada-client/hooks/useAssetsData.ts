@@ -80,6 +80,7 @@ export function useAssetsData({
   return {
     data: joinedPages,
     isLoading: isInitialLoading,
+    isFetchingNextPage,
     error,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,

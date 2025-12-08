@@ -17,11 +17,7 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { FlatList } from "react-native";
-import {
-  BottomSheetVirtualizedList,
-  useBottomSheetInternal,
-  useBottomSheet,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetVirtualizedList, useBottomSheet } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -32,7 +28,7 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
+import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import Config from "react-native-config";
 
@@ -67,11 +63,15 @@ const AssetSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
-  const { collapse } = useBottomSheet();
+  const { collapse, snapToIndex } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
-  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
+  const expandToFullHeight = () => {
+    snapToIndex(1);
+    listRef.current?.scrollToIndex({ index: 0 });
+  };
+
+  const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
   const assetConfigurationDeps = {
     ApyIndicator,
@@ -121,17 +121,9 @@ const AssetSelection = ({
     ],
   );
 
-  const handleSearchPressIn = () => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
+  const handleSearchFocus = () => {};
 
-  const handleSearchFocus = () => {
-    shouldHandleKeyboardEvents.value = true;
-  };
-
-  const handleSearchBlur = () => {
-    shouldHandleKeyboardEvents.value = false;
-  };
+  const handleSearchBlur = () => {};
 
   const renderItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
@@ -161,6 +153,7 @@ const AssetSelection = ({
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
@@ -190,7 +183,7 @@ const AssetSelection = ({
         flow={flow}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
-        onPressIn={handleSearchPressIn}
+        onPressIn={expandToFullHeight}
       />
       {renderContent()}
     </>

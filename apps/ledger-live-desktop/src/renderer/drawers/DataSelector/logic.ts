@@ -1,14 +1,12 @@
 import { setDrawer } from "../Provider";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import SelectAccountAndCurrencyDrawer from "./SelectAccountAndCurrencyDrawer";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 type SelectAccountAndCurrencyResult = {
   account: AccountLike;
   parentAccount?: Account;
 };
 export function selectAccountAndCurrency(
-  currencies?: string[],
-  includeTokens?: boolean,
+  currencyIds?: string[],
   flow?: string,
   source?: string,
 ): Promise<SelectAccountAndCurrencyResult> {
@@ -16,10 +14,7 @@ export function selectAccountAndCurrency(
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: listAndFilterCurrencies({
-          currencies,
-          includeTokens,
-        }),
+        currencyIds,
         onAccountSelected: (account, parentAccount) => {
           setDrawer();
           resolve({

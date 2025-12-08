@@ -1,8 +1,6 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
 
 export const NAVIGATION_DIRECTION = {
   FORWARD: "FORWARD",
@@ -24,7 +22,6 @@ export type ModularDrawerFlowManagerProps = {
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
-  accounts$?: Observable<WalletAPIAccount[]>;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
 };

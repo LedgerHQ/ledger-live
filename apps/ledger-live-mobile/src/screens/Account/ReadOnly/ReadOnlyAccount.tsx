@@ -22,14 +22,14 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { cryptoAssetsHooks } from "~/config/bridge-setup";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId } = route.params;
 
-  const { currency } = cryptoAssetsHooks.useCurrencyById(currencyId || "");
+  const { currency } = useCurrencyById(currencyId || "");
   const { t } = useTranslation();
 
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);

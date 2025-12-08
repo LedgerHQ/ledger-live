@@ -87,7 +87,13 @@ export function normalizePublicKeyForAddress(
       prefix = PrefixV2.P256PublicKey;
     }
 
-    return b58Encode(compressPublicKey(keyBuf, derivationType), prefix);
+    // uncompressed public key is 65 bytes, compressed is 33 bytes
+    const compressedPubKeyLength = 33;
+    if (keyBuf.length > compressedPubKeyLength) {
+      return b58Encode(compressPublicKey(keyBuf, derivationType), prefix);
+    } else {
+      return b58Encode(keyBuf, prefix);
+    }
   } catch {
     return undefined;
   }

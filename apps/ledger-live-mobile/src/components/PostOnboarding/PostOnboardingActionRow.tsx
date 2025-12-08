@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";
 import { track } from "~/analytics";
 import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -14,7 +14,13 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";
 
 export type Props = PostOnboardingAction &
-  PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
+  PostOnboardingActionState & {
+    deviceModelId: DeviceModelId;
+    productName: string;
+    isLedgerSyncActive: boolean;
+    openActivationDrawer: () => void;
+    accounts: Account[];
+  };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
@@ -25,12 +31,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     description,
     tagLabel,
     completed,
-    getIsAlreadyCompleted,
+    getIsAlreadyCompletedByState,
     disabled,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
     productName,
     shouldCompleteOnStart,
+    openActivationDrawer,
+    isLedgerSyncActive,
+    accounts,
   } = props;
   const { t } = useTranslation();
   const recoverServices = useFeature("protectServicesMobile");
@@ -44,8 +53,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
   const initIsActionCompleted = useCallback(async () => {
-    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
-  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
 
   useEffect(() => {
     initIsActionCompleted();
@@ -53,16 +63,16 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const customActionHandlers = usePostOnboardingActionHandlers();
 
-  const trackAction = () => {
-    buttonLabelForAnalyticsEvent &&
-      track("button_clicked", {
-        button: buttonLabelForAnalyticsEvent,
-        deviceModelId,
-        flow: "post-onboarding",
-      });
-  };
-
   const handlePress = () => {
+    const trackAction = () => {
+      buttonLabelForAnalyticsEvent &&
+        track("button_clicked", {
+          button: buttonLabelForAnalyticsEvent,
+          deviceModelId,
+          flow: "post-onboarding",
+        });
+    };
+
     // Execute custom handler if it exists
     const customHandler = customActionHandlers[id];
     if (customHandler) {
@@ -76,6 +86,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
       });
       navigation.navigate(navigationArgs[0], navigationArgs[1]);
+    } else if ("startAction" in props) {
+      props.startAction({
+        openActivationDrawer,
+      });
     }
 
     trackAction();

@@ -37,6 +37,24 @@ index 65e6cd70a6257138afd8270671f0ef1c555a9bbc..f321f60e621d5a487a5571e0bb807932
        ...unparse({ _: [...passthrough, ...specs] }),
      ].map(String);
    }
+diff --git a/src/client/AsyncWebSocket.js b/src/client/AsyncWebSocket.js
+index 1234567890abcdef1234567890abcdef12345678..abcdef1234567890abcdef1234567890abcdef12 100644
+--- a/src/client/AsyncWebSocket.js
++++ b/src/client/AsyncWebSocket.js
+@@ -250,7 +250,12 @@ class AsyncWebSocket {
+         if (this._abortedMessageIds.has(json.messageId)) {
+           log.debug({ messageId: json.messageId }, `late response`);
+         } else {
+-          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
++          // Handle unexpected invokeResult messages that may come from WebView when Native content is opened
++          if (json.type === 'invokeResult' && json.messageId != null) {
++            log.warn({ messageId: json.messageId, type: json.type }, 'Received unexpected invokeResult, possibly from WebView after context switch. Ignoring.');
++          } else {
++            throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
++          }
+         }
+       }
+     } catch (error) {
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
 index ab269f5ba3cb6ec033594a5e05284b95f01a39a6..f38390723a0bb70af36ef4017353c3f9257afe53 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js

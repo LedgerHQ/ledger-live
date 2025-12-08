@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -36,7 +36,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
-import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
@@ -44,6 +43,7 @@ import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -181,12 +181,16 @@ const StepReceiveFunds = (props: StepProps) => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
-  const completeAction = useCompleteActionCallback();
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const stakePrograms = useVersionedStakePrograms();
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
+  // Check if the received currency has a redirect configured in stakePrograms
+  // If so, the user should use the Earn live app instead of the old staking modal
+  const hasStakeProgramsRedirect =
+    !!receivedCurrencyId && !!stakePrograms?.params?.redirects?.[receivedCurrencyId];
   const isStakingEnabledForAccount =
     !!receivedCurrencyId &&
     receiveStakingFlowConfig?.enabled &&
@@ -238,10 +242,6 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [onChangeAddressVerified, onResetSkip, transitionTo]);
 
   const onFinishReceiveFlow = useCallback(() => {
-    if (!isOnboardingReceiveFlow) {
-      completeAction(PostOnboardingActionId.assetsTransfer);
-    }
-
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
@@ -250,7 +250,8 @@ const StepReceiveFunds = (props: StepProps) => {
       isStakingEnabledForAccount &&
       !isFromPostOnboardingEntryPoint &&
       !isSPLToken &&
-      !isOnboardingReceiveFlow
+      !isOnboardingReceiveFlow &&
+      !hasStakeProgramsRedirect
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -291,9 +292,9 @@ const StepReceiveFunds = (props: StepProps) => {
     mainAccount,
     onClose,
     transitionTo,
-    completeAction,
     isSPLToken,
     isOnboardingReceiveFlow,
+    hasStakeProgramsRedirect,
   ]);
 
   // when address need verification we trigger it on device

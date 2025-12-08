@@ -2,9 +2,9 @@ import { Observable } from "rxjs";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import {
@@ -13,7 +13,7 @@ import {
   getHederaTransactionBodyBytes,
   isTokenAssociateTransaction,
 } from "../logic/utils";
-import type { Transaction, HederaSigner } from "../types";
+import type { Transaction, HederaSigner, HederaTxData } from "../types";
 
 export const buildSignOperation =
   (
@@ -29,10 +29,16 @@ export const buildSignOperation =
 
           let type: Transaction["mode"];
           let asset: AssetInfo;
+          let data: HederaTxData | undefined;
           const accountAddress = account.freshAddress;
           const accountPublicKey = account.seedIdentifier;
           const subAccount = findSubAccountById(account, transaction.subAccountId || "");
-          const isTokenTransaction = isTokenAccount(subAccount);
+          const isHTSTokenTransaction =
+            transaction.mode === HEDERA_TRANSACTION_MODES.Send &&
+            subAccount?.token.tokenType === "hts";
+          const isERC20TokenTransaction =
+            transaction.mode === HEDERA_TRANSACTION_MODES.Send &&
+            subAccount?.token.tokenType === "erc20";
 
           if (isTokenAssociateTransaction(transaction)) {
             type = HEDERA_TRANSACTION_MODES.TokenAssociate;
@@ -40,12 +46,23 @@ export const buildSignOperation =
               type: transaction.properties.token.tokenType,
               assetReference: transaction.properties.token.contractAddress,
             };
-          } else if (isTokenTransaction) {
+          } else if (isHTSTokenTransaction) {
             type = HEDERA_TRANSACTION_MODES.Send;
             asset = {
               type: subAccount.token.tokenType,
               assetReference: subAccount.token.contractAddress,
               assetOwner: accountAddress,
+            };
+          } else if (isERC20TokenTransaction) {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: subAccount.token.tokenType,
+              assetReference: subAccount.token.contractAddress,
+              assetOwner: accountAddress,
+            };
+            data = {
+              type: "erc20",
+              gasLimit: BigInt((transaction.gasLimit ?? DEFAULT_GAS_LIMIT).toString()),
             };
           } else {
             type = HEDERA_TRANSACTION_MODES.Send;
@@ -72,6 +89,7 @@ export const buildSignOperation =
                   type: "string",
                   value: transaction.memo ?? "",
                 },
+                ...(data && { data }),
               },
               customFees,
             );

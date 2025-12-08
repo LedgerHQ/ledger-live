@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";
@@ -15,7 +15,6 @@ import { closeModal } from "~/renderer/actions/modals";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { GlobalModalData } from "../types";
-import { getLLDCoinFamily } from "~/renderer/families";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 type State = {
@@ -27,14 +26,14 @@ type State = {
 function getInitialState(
   isNoahActive: boolean,
   account: AccountLike | null | undefined,
-  parentAccount: Account | null | undefined,
   isOnboardingFlow?: boolean,
+  activeCurrencyIds?: string[],
 ): State {
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const accountCurrency = account ? getAccountCurrency(account) : null;
-  const module =
-    mainAccount && getLLDCoinFamily(mainAccount.currency.family)?.shouldUseReceiveOptions;
-  const isValidAccount = module ? module(accountCurrency?.id) : false;
+  const isValidAccount =
+    activeCurrencyIds && accountCurrency?.id
+      ? activeCurrencyIds.includes(accountCurrency.id)
+      : false;
   const shouldUseReceiveOptions = isNoahActive && (!account || isValidAccount);
   return {
     stepId: !isOnboardingFlow && shouldUseReceiveOptions ? "receiveOptions" : "account",
@@ -44,13 +43,14 @@ function getInitialState(
 }
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
-  const { enabled } = useFeature("noah") || {};
+  const noahFeature = useFeature("noah");
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
   const initialState = getInitialState(
-    enabled === true,
+    isNoahActive,
     props?.account,
-    props?.parentAccount,
     isOnboardingReceiveFlow,
+    noahFeature?.params?.activeCurrencyIds,
   );
   const [state, setState] = useState<State>(() => initialState);
 

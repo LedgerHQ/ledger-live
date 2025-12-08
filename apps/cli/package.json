@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.28.0",
+  "version": "24.29.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -40,11 +40,11 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { track } from "~/renderer/analytics/segment";
@@ -19,6 +19,8 @@ import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId | null;
+    isLedgerSyncActive: boolean;
+    accounts: Account[];
   };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
@@ -34,9 +36,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     tagLabel,
     buttonLabelForAnalyticsEvent,
     completed,
-    getIsAlreadyCompleted,
     deviceModelId,
     shouldCompleteOnStart,
+    getIsAlreadyCompletedByState,
+    isLedgerSyncActive,
+    accounts,
   } = props;
   const { t } = useTranslation();
   const dispatch: Dispatch = useDispatch();
@@ -53,8 +57,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
   const initIsActionCompleted = useCallback(async () => {
-    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
-  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
 
   useEffect(() => {
     initIsActionCompleted();

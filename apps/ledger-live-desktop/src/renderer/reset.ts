@@ -18,9 +18,14 @@ export async function hardReset() {
   clearBridgeCache();
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
-  resetAll();
+  await resetAll();
   resetStore();
+  // Preserve the hard-reset flag across localStorage.clear() so init.tsx can detect it
+  const hardResetFlag = window.localStorage.getItem("hard-reset");
   window.localStorage.clear();
+  if (hardResetFlag === "1") {
+    window.localStorage.setItem("hard-reset", "1");
+  }
 }
 export function useHardReset() {
   return () => {

@@ -49,7 +49,7 @@ export const useMarketCoin = () => {
       includeTestNetworks: false,
     },
     {
-      skip: !currency,
+      skip: !currency?.ledgerIds?.length,
     },
   );
 

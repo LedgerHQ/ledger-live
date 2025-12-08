@@ -1,13 +1,19 @@
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import {
   encodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   APTOS_ASSET_ID,
   OP_TYPE,
@@ -15,7 +21,7 @@ import {
   DEFAULT_GAS_PRICE,
   APTOS_ASSET_FUNGIBLE_ID,
 } from "../constants";
-import type { AptosTransaction, Transaction } from "../types";
+import type { AptosAccount, AptosTransaction, Transaction } from "../types";
 import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
 import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
 import { calculateAmount } from "../logic/calculateAmount";
@@ -23,25 +29,25 @@ import { processRecipients } from "../logic/processRecipients";
 import { getFunctionAddress } from "../logic/getFunctionAddress";
 
 export const getMaxSendBalance = (
-  account: Account,
-  transaction?: Transaction,
+  account: AccountLike<AptosAccount>,
+  parentAccount?: AptosAccount,
   gas?: BigNumber,
   gasPrice?: BigNumber,
 ): BigNumber => {
-  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
-  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
-
   gas = gas ?? BigNumber(DEFAULT_GAS);
   gasPrice = gasPrice ?? BigNumber(DEFAULT_GAS_PRICE);
 
   const totalGas = gas.multipliedBy(gasPrice);
 
-  return fromTokenAccount
-    ? tokenAccount.spendableBalance
-    : account.spendableBalance.gt(totalGas)
-      ? account.spendableBalance.minus(totalGas)
-      : new BigNumber(0);
+  return parentAccount
+    ? account.spendableBalance
+    : getMaxSendBalanceFromAccount(account as Account, totalGas);
 };
+
+const getMaxSendBalanceFromAccount = (account: Account, totalGas: BigNumber) =>
+  account.spendableBalance.gt(totalGas)
+    ? account.spendableBalance.minus(totalGas)
+    : new BigNumber(0);
 
 export const getBlankOperation = (
   tx: AptosTransaction,

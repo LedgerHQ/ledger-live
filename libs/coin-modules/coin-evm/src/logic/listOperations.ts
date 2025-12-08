@@ -1,4 +1,9 @@
-import { AssetInfo, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
+import {
+  AssetInfo,
+  MemoNotSupported,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
@@ -33,6 +38,14 @@ function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
   return BigInt(op.value.toFixed(0));
 }
 
+function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return asset.parents[op.hash].hasFailed ?? false;
+  }
+
+  return op.hasFailed ?? false;
+}
+
 function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
   const assetInfo: AssetInfo = { type: asset.type };
 
@@ -44,6 +57,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
 
   const type = extractType(asset, op);
   const value = computeValue(asset, op);
+  const failed = computeFailed(asset, op);
 
   return {
     id: op.id,
@@ -60,11 +74,10 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
-      failed: op.hasFailed ?? false,
+      failed,
     },
     details: {
       sequence: op.transactionSequenceNumber,
-      status: op.hasFailed ? "failed" : "success",
       ...(asset.type === "token"
         ? {
             ledgerOpType: op.type,
@@ -82,7 +95,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  minHeight: number,
+  pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
   const { lastCoinOperations, lastTokenOperations, lastNftOperations } =
@@ -90,7 +103,7 @@ export async function listOperations(
       currency,
       address,
       `js:2:${currency.id}:${address}:`,
-      minHeight,
+      pagination.minHeight,
     );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
@@ -121,5 +134,14 @@ export async function listOperations(
       "NFT_OUT",
     ].includes(operation.type);
 
-  return [nativeOperations.concat(tokenOperations).filter(hasValidType), ""];
+  const operations = nativeOperations
+    .concat(tokenOperations)
+    .filter(hasValidType)
+    .sort((a, b) =>
+      pagination.order === "asc"
+        ? a.tx.date.getTime() - b.tx.date.getTime()
+        : b.tx.date.getTime() - a.tx.date.getTime(),
+    );
+
+  return [operations, ""];
 }

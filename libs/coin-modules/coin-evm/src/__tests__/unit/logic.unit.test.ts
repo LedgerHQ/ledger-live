@@ -8,8 +8,10 @@ import {
   TokenCurrency,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore, Operation } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
@@ -38,7 +40,6 @@ import {
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 import wethTokenData from "../../__fixtures__/ethereum-erc20-weth.json";
-import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -652,21 +653,39 @@ describe("EVM Family", () => {
 
     describe("attachOperations", () => {
       it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
-        setCryptoAssetsStoreGetter(
-          () =>
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            ({
-              findTokenById: async (_id: string) => undefined,
-              findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
-                if (address === "0xTokenContract" && currencyId === "ethereum")
-                  return { id: "ethereum/erc20/usd__coin" };
-                if (address === "0xOtherTokenContract" && currencyId === "ethereum")
-                  return { id: "ethereum/erc20/usd__coin" };
-                return undefined;
-              },
-              getTokensSyncHash: (_: string) => Promise.resolve("0"),
-            }) as CryptoAssetsStore,
-        );
+        setupMockCryptoAssetsStore({
+          findTokenByAddressInCurrency: async (
+            address: string,
+            currencyId: string,
+          ): Promise<TokenCurrency | undefined> => {
+            if (address === "0xTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
+            if (address === "0xOtherTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xOtherTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
+            return undefined;
+          },
+          getTokensSyncHash: async () => "0",
+        });
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });

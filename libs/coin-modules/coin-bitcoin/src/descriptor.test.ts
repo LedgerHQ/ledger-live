@@ -6,7 +6,7 @@ import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./des
 import bitcoinDatasets from "./datasets/bitcoin";
 import { assignFromAccountRaw } from "./serialization";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({

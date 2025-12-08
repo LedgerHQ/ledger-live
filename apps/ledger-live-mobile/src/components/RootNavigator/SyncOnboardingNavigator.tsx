@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { ScreenName } from "~/const";
 import CompletionScreen from "~/screens/SyncOnboarding/CompletionScreen";
@@ -8,13 +8,16 @@ import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
 import { SyncOnboarding } from "~/screens/SyncOnboarding";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
-import { Button, IconsLegacy } from "@ledgerhq/native-ui";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
-const Stack = createStackNavigator<SyncOnboardingStackParamList>();
+const Stack = createNativeStackNavigator<SyncOnboardingStackParamList>();
 
 export const SyncOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
+  const stackNavigatorConfig = useMemo(
+    () => getStackNavigatorConfig(colors, undefined, undefined, true),
+    [colors],
+  );
 
   return (
     <Stack.Navigator
@@ -32,8 +35,9 @@ export const SyncOnboardingNavigator = () => {
           gestureEnabled: false,
           headerShown: true,
           headerTitle: () => null,
-          headerLeft: () => null,
-          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+          title: "",
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerRight: () => null,
         }}
       />
     </Stack.Navigator>

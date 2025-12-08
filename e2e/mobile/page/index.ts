@@ -12,6 +12,7 @@ import MarketPage from "./market/market.page";
 import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
 import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
+import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
 import PortfolioPage from "./wallet/portfolio.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
@@ -66,6 +67,7 @@ export class Application {
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private receivePageInstance = lazyInit(ReceivePage);
   private sendPageInstance = lazyInit(SendPage);
@@ -153,6 +155,10 @@ export class Application {
 
   public get portfolio() {
     return this.portfolioPageInstance();
+  }
+
+  public get portfolioEmptyState() {
+    return this.portfolioEmptyStatePageInstance();
   }
 
   public get receive() {

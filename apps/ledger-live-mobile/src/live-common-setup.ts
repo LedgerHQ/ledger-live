@@ -1,6 +1,6 @@
 import Config from "react-native-config";
 import { listen } from "@ledgerhq/logs";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -15,6 +15,7 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
+import BigNumber from "bignumber.js";
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {
@@ -143,6 +144,9 @@ setSupportedCurrencies([
   "canton_network_testnet",
   "kaspa",
   "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
@@ -164,3 +168,5 @@ process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 setSecp256k1Instance(require("./logic/secp256k1"));
 
 prepareCurrency(getCryptoCurrencyById("ethereum"));
+
+BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

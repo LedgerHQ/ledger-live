@@ -61,6 +61,8 @@ export const urls = {
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   buyFlex:
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
+  hardwareWallet:
+    "https://shop.ledger.com/pages/hardware-wallet?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
   applestore: "https://apps.apple.com/app/id1361671700",
@@ -243,6 +245,7 @@ export const urls = {
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
+    evmAddressVerification: "https://ledger.com/e14",
   },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",

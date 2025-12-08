@@ -9,6 +9,7 @@ const NEW_UX_SUPPORTED_DEVICES = [
   DeviceModelId.europa,
   DeviceModelId.nanoX,
   DeviceModelId.apex,
+  DeviceModelId.nanoSP,
 ];
 const versionAffected = [
   DeviceModelId.nanoX,

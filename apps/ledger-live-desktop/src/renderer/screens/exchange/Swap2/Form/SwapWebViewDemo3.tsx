@@ -58,6 +58,7 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
+import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -91,6 +92,7 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  isEmbedded?: boolean;
 };
 
 type TokenParams = {
@@ -114,7 +116,7 @@ const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
-const SwapWebView = ({ manifest }: SwapWebProps) => {
+const SwapWebView = ({ manifest, isEmbedded = false }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -153,7 +155,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-
+  const distinctId = useGetMixpanelDistinctId();
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -442,7 +444,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
       ...(isOffline ? { isOffline: "true" } : {}),
       ...(state?.defaultAccount
         ? {
-            fromAccountId: accountToWalletAPIAccount(
+            toAccountId: accountToWalletAPIAccount(
               walletState,
               state?.defaultAccount,
               state?.defaultParentAccount,
@@ -545,6 +547,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
             isModularDrawer: isLldModularDrawer ? "true" : "false",
+            distinctId,
+            isEmbedded: isEmbedded ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

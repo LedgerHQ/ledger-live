@@ -7,43 +7,19 @@ import {
   LandingPagesNavigatorParamList,
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
-import { LargeMoverLandingPage } from "../screens/LargeMoverLandingPage";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import * as navigationModule from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
+import { PanGesture, State as GestureState } from "react-native-gesture-handler";
+import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { MockedLargeMoverLandingPage } from "./shared";
 
-jest.mock("~/newArch/components/Swiper/components/Swiper", () => {
-  type Card = { id: string | number };
-  type Props = {
-    cardContainerStyle?: Record<string, unknown>;
-    currentIndex: number;
-    onIndexChange?: (i: number) => void;
-    initialCards: Card[];
-    renderCard: (card: Card) => unknown;
+jest.mock("@react-navigation/native", () => {
+  const actual = jest.requireActual("@react-navigation/native");
+  return {
+    ...actual,
+    useNavigation: jest.fn(),
   };
-
-  const SwiperComponent = (props: Props) => {
-    const card = props.initialCards?.[props.currentIndex];
-
-    if (typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-      (window as any).__swiperChangeIndex = (newIndex: number) => {
-        if (props.onIndexChange) {
-          props.onIndexChange(newIndex);
-        }
-      };
-    }
-
-    return (card && props.renderCard(card)) || null;
-  };
-
-  return { SwiperComponent };
 });
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useRoute: jest.fn(),
-  useNavigation: jest.fn(),
-}));
 
 const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage> = {
   key: "LargeMoverRouteKey",
@@ -56,33 +32,41 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
 
 describe("LargeMoverLandingPage Integration Tests", () => {
   beforeEach(() => {
+    jest.mocked(navigationModule.useNavigation).mockReturnValue(mockNavigation);
     jest.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (useRoute as jest.Mock).mockReturnValue(mockRoute);
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (useNavigation as jest.Mock).mockReturnValue(mockNavigation);
   });
 
   it("displays the ticker of the first currency", async () => {
-    renderWithReactQuery(<LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          counterValue: "USD",
-        },
-        largeMover: {
-          tutorial: false,
-        },
-      }),
-    });
+    renderWithReactQuery(
+      <MockedLargeMoverLandingPage
+        key={mockRoute.key}
+        name={mockRoute.name}
+        params={mockRoute.params}
+      />,
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            counterValue: "USD",
+          },
+          largeMover: {
+            tutorial: false,
+          },
+        }),
+      },
+    );
 
     expect(await screen.findAllByText(/BTC/i));
   });
 
   it("displays the close button in the header and handles navigation", async () => {
     const { user } = renderWithReactQuery(
-      <LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />,
+      <MockedLargeMoverLandingPage
+        key={mockRoute.key}
+        name={mockRoute.name}
+        params={mockRoute.params}
+      />,
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -118,7 +102,11 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     };
 
     renderWithReactQuery(
-      <LargeMoverLandingPage route={multiCurrencyRoute} navigation={mockNavigation} />,
+      <MockedLargeMoverLandingPage
+        key={multiCurrencyRoute.key}
+        name={multiCurrencyRoute.name}
+        params={multiCurrencyRoute.params}
+      />,
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -135,17 +123,25 @@ describe("LargeMoverLandingPage Integration Tests", () => {
 
     expect(await screen.findByText("BTC")).toBeOnTheScreen();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-    if (typeof window !== "undefined" && (window as any).__swiperChangeIndex) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-      (window as any).__swiperChangeIndex(1);
-      expect(await screen.findByText("ETH")).toBeOnTheScreen();
-    }
+    const panGesture = getByGestureTestId("pan");
+    fireGestureHandler<PanGesture>(panGesture, [
+      { state: GestureState.BEGAN, translationX: 0 },
+      { state: GestureState.ACTIVE, translationX: 10 },
+      { translationX: 100 },
+      { translationX: 200 },
+      { state: GestureState.END, translationX: 300, velocityX: 500 },
+    ]);
+
+    expect(await screen.findByText("ETH")).toBeOnTheScreen();
   });
 
   it("handles time range changes via Card component", async () => {
     const { user } = renderWithReactQuery(
-      <LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />,
+      <MockedLargeMoverLandingPage
+        key={mockRoute.key}
+        name={mockRoute.name}
+        params={mockRoute.params}
+      />,
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -165,7 +161,8 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     const initialVariationElements = screen.getAllByText(/[+-]\d+\.\d+%/);
     const initialVariation = initialVariationElements[0].props.children;
 
-    const weekTab = await screen.findByTestId("tab-selector-7d");
+    const weekTabs = await screen.findAllByTestId("tab-selector-7d");
+    const weekTab = weekTabs[0];
     await user.press(weekTab);
 
     const newVariationElements = screen.getAllByText(/[+-]\d+\.\d+%/);
@@ -186,18 +183,25 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         },
       };
 
-    renderWithReactQuery(<LargeMoverLandingPage route={tokenRoute} navigation={mockNavigation} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          counterValue: "USD",
-        },
-        largeMover: {
-          tutorial: false,
-        },
-      }),
-    });
+    renderWithReactQuery(
+      <MockedLargeMoverLandingPage
+        key={tokenRoute.key}
+        name={tokenRoute.name}
+        params={tokenRoute.params}
+      />,
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            counterValue: "USD",
+          },
+          largeMover: {
+            tutorial: false,
+          },
+        }),
+      },
+    );
 
     expect(await screen.findByText("USDC")).toBeOnTheScreen();
   });
