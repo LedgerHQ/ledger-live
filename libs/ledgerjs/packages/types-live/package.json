@@ -21,6 +21,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@ledgerhq/identities": "workspace:*",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   },

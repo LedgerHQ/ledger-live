@@ -191,6 +191,7 @@
     "@ledgerhq/hw-app-xrp": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/identities": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",

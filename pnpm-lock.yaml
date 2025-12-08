@@ -5611,6 +5611,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/identities':
+        specifier: workspace:^
+        version: link:../identities
       '@ledgerhq/ledger-cal-service':
         specifier: workspace:^
         version: link:../ledger-services/cal
@@ -8084,6 +8087,9 @@ importers:
 
   libs/ledgerjs/packages/types-live:
     dependencies:
+      '@ledgerhq/identities':
+        specifier: workspace:*
+        version: link:../../../identities
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2

@@ -191,6 +191,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const { colors, dark } = useTheme();
   const { colors: colorsFromStyled } = useThemeFromStyledComponents();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

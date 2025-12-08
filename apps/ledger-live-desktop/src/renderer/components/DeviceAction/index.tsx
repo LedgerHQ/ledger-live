@@ -17,6 +17,7 @@ import {
   setLastSeenDeviceInfo,
   setPreferredDeviceModel,
 } from "~/renderer/actions/settings";
+import { identitiesSlice } from "@ledgerhq/identities";
 import {
   preferredDeviceModelSelector,
   settingsStoreSelector as settingsSelector,
@@ -370,6 +371,12 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
+
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   if (displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });

@@ -10,6 +10,7 @@ import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import type { DeviceId } from "@ledgerhq/identities";
 
 type State = {
   isLoading: boolean;
@@ -19,7 +20,7 @@ type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
-  deviceId: string | null | undefined;
+  deviceId: DeviceId | null | undefined;
   result: ListAppsResult | null | undefined;
   error: Error | null | undefined;
   isLocked: boolean;
@@ -66,7 +67,7 @@ type Event =
     }
   | {
       type: "device-id";
-      deviceId: string;
+      deviceId: DeviceId;
     };
 
 const mapResult = ({ deviceInfo, device, result }): Result | null | undefined =>

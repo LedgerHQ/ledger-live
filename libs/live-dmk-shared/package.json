@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/identities": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@noble/hashes": "^1.8.0",

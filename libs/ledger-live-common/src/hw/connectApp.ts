@@ -39,6 +39,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import type { DeviceId } from "@ledgerhq/identities";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -86,7 +87,7 @@ export type ConnectAppEvent =
     }
   | {
       type: "device-id";
-      deviceId: string;
+      deviceId: DeviceId;
     }
   | {
       type: "app-not-installed";

@@ -92,7 +92,7 @@ export const listApps = ({
                 case "device-permission-granted":
                 case "device-permission-requested":
                 case "device-id":
-                  o.next(e);
+                  o.next(e as ListAppsEvent);
                   break;
               }
             },

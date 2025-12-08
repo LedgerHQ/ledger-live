@@ -33,13 +33,14 @@ import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
 import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
+import { DeviceId } from "@ledgerhq/identities";
 
 export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;
   private permissionRequested: boolean = false;
   private lastSeenDeviceSent: boolean = false;
   private installPlan: InstallPlan | null = null;
-  private deviceId: string | undefined = undefined;
+  private deviceId: DeviceId | undefined = undefined;
   private eventSubject = new Subject<ConnectAppEvent>();
 
   constructor(
@@ -163,10 +164,15 @@ export class ConnectAppEventMapper {
           this.handleInstallPlan(intermediateValue.installPlan);
         }
         if (intermediateValue.deviceId) {
-          const deviceIdString = Buffer.from(intermediateValue.deviceId).toString("hex");
-          if (deviceIdString !== this.deviceId) {
-            this.deviceId = deviceIdString;
-            this.eventSubject.next({ type: "device-id", deviceId: deviceIdString });
+          let deviceId: DeviceId;
+          if (intermediateValue.deviceId instanceof DeviceId) {
+            deviceId = intermediateValue.deviceId;
+          } else {
+            deviceId = DeviceId.fromString(Buffer.from(intermediateValue.deviceId).toString("hex"));
+          }
+          if (!this.deviceId || !this.deviceId.equals(deviceId)) {
+            this.deviceId = deviceId;
+            this.eventSubject.next({ type: "device-id", deviceId });
           }
         }
         break;

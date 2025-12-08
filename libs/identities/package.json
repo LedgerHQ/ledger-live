@@ -61,6 +61,10 @@
     }
   },
   "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",

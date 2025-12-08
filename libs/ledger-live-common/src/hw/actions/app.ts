@@ -23,6 +23,7 @@ import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import type { DeviceId } from "@ledgerhq/identities";
 
 export type State = {
   isLoading: boolean;
@@ -44,7 +45,7 @@ export type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
-  deviceId: string | null | undefined;
+  deviceId: DeviceId | null | undefined;
   latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
