@@ -117,10 +117,10 @@ function RecoverBanner() {
           <ProgressLoader
             progress={stepNumber / maxStepNumber}
             radius={20}
-            mainColor={isWarning ? colors.palette.warning.c40 : undefined}
+            mainColor={isWarning ? colors.warning.c40 : undefined}
           >
             {isWarning ? (
-              <Icons.WarningFill color="palette.warning.c40" size="S" />
+              <Icons.WarningFill color="warning.c40" size="S" />
             ) : (
               <Text display="block" flex={1} textAlign="center" fontSize={2}>
                 {`${stepNumber}/${maxStepNumber - 1}`}

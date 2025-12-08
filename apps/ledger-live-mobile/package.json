@@ -137,7 +137,7 @@
     "@segment/analytics-react-native": "2.20.5",
     "@segment/sovran-react-native": "1.1.3",
     "@sentry/react-native": "6.13.0",
-    "@shopify/flash-list": "1.6.4",
+    "@shopify/flash-list": "2.2.0",
     "@tanstack/react-query": "5.28.9",
     "asyncstorage-down": "4.2.0",
     "bignumber.js": "9.1.2",
@@ -216,7 +216,7 @@
     "redux-actions": "2.6.5",
     "reselect": "4.0.0",
     "rn-fetch-blob": "0.12.0",
-    "rxjs": "7.8.1",
+    "rxjs": "catalog:",
     "semver": "7.5.4",
     "styled-components": "5.3.11",
     "styled-system": "5.1.5",
@@ -314,6 +314,6 @@
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "tslib": "2.6.2",
-    "ws": "8.18.3"
+    "ws": "catalog:"
   }
 }

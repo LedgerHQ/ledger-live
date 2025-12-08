@@ -15,6 +15,12 @@ function isValidIntent(intent?: string): intent is "deposit" | "withdraw" {
   return ["deposit", "withdraw"].includes(intent ?? "");
 }
 
+export function isValidEarnManifestId(
+  manifestId?: string,
+): manifestId is "earn" | "earn-stg" | "earn-prd-eks" {
+  return ["earn", "earn-stg", "earn-prd-eks"].includes(manifestId ?? "");
+}
+
 /** TODO Should be a shared constant throughout the app for all events */
 const BUTTON_CLICKED_TRACK_EVENT = "button_clicked";
 
@@ -53,7 +59,7 @@ export function EarnMenuDrawer({ navigation }: { navigation: NavigationProp<Para
                 onPress={async () => {
                   await track(BUTTON_CLICKED_TRACK_EVENT, { live_app, ...tracked });
                   closeDrawer();
-                  if (live_app === "earn" || live_app === "earn-stg") {
+                  if (isValidEarnManifestId(live_app)) {
                     const pathSegments = link.split("?");
                     const earnSearchParams = new URLSearchParams(pathSegments.pop());
                     const intent = earnSearchParams.get("intent") ?? undefined;

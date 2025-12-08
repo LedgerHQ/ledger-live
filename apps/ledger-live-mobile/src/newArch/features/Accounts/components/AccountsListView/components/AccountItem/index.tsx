@@ -45,7 +45,7 @@ const View: React.FC<ViewProps> = ({
         <Text numberOfLines={1} variant="body" color="neutral.c70" flexShrink={1}>
           {formattedAddress}
         </Text>
-        <CurrencyIcon currency={currency} size={20} circle hideNetwork />
+        <CurrencyIcon currency={currency} size={20} hideNetwork />
       </Flex>
     </Flex>
     {!hideBalanceInfo && (

@@ -188,9 +188,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   request?: R;
 }): JSX.Element | null {
   const { colors, dark } = useTheme();
-  const {
-    colors: { palette },
-  } = useThemeFromStyledComponents();
+  const { colors: colorsFromStyled } = useThemeFromStyledComponents();
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -437,7 +435,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           Icon: Icons.InformationFill,
-          iconColor: palette.primary.c80,
+          iconColor: colorsFromStyled.primary.c80,
           device: device ?? undefined,
         });
       }

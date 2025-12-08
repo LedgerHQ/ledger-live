@@ -130,11 +130,11 @@ const DeviceCard = ({
             </Text>
           </Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <Icons.CheckmarkCircleFill size="S" color={"palette.success.c50"} />
+            <Icons.CheckmarkCircleFill size="S" color={"success.c50"} />
             <Text
               variant={"body"}
               fontWeight={"medium"}
-              color={"palette.neutral.c80"}
+              color={"neutral.c80"}
               numberOfLines={1}
               ml={2}
             >

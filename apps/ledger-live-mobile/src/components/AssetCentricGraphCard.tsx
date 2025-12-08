@@ -141,7 +141,7 @@ function AssetCentricGraphCard({
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
-            <CurrencyIcon size={32} currency={currency} circle />
+            <CurrencyIcon size={32} currency={currency} />
             <Flex alignItems="center">
               <Flex>
                 {!balanceHistory ? (

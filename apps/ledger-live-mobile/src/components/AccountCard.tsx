@@ -75,7 +75,7 @@ const AccountCard = ({
         style={style}
         {...props}
       >
-        <CurrencyIcon currency={currency} disabled={disabled} size={iconSize} circle />
+        <CurrencyIcon currency={currency} disabled={disabled} size={iconSize} />
         <Flex flexGrow={1} flexShrink={1} marginLeft={4} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text

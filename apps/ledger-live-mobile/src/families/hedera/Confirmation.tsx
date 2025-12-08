@@ -5,7 +5,6 @@ import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { CompositeScreenProps } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -109,12 +108,7 @@ export default function ReceiveConfirmation({ route }: Props) {
                     bg="constant.white"
                     position="absolute"
                   >
-                    <CurrencyIcon
-                      currency={currency}
-                      bg={getCurrencyColor(currency) || colors.constant.black}
-                      size={48}
-                      circle
-                    />
+                    <CurrencyIcon currency={currency} size={48} />
                   </Flex>
                 </Flex>
                 <Text

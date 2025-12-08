@@ -22,14 +22,14 @@ function SummaryFromSection({ token }: Readonly<Props>) {
     <SummaryRowCustom
       label={t("hedera.associate.summary.from")}
       iconLeft={
-        <Circle bg={colors.palette.opacityDefault.c05} size={34}>
-          <Wallet size="S" color={colors.palette.primary.c80} />
+        <Circle bg={colors.opacityDefault.c05} size={34}>
+          <Wallet size="S" color={colors.primary.c80} />
         </Circle>
       }
       data={
         <View style={styles.container}>
           <View style={styles.currencyIcon}>
-            <CurrencyIcon size={16} currency={token} circle />
+            <CurrencyIcon size={16} currency={token} />
           </View>
           <LText numberOfLines={1} style={styles.text}>
             {token.name}

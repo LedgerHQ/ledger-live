@@ -1,7 +1,7 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
 export type ModularDrawerAddAccountFlowManagerProps = {
   currency: CryptoOrTokenCurrency;
-  onAccountSelected?: (account: Account) => void;
+  onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void;
 };
 
 const Title = styled(Text)`
@@ -73,6 +73,7 @@ const ModularDrawerAddAccountFlowManager = ({
   } = useAddAccountFlowNavigation({
     selectedAccounts,
     onAccountSelected,
+    originalCurrency: currency,
   });
 
   const isAccountSelectionFlow = !!onAccountSelected;

@@ -18,7 +18,7 @@
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
     "invariant": "2.2.4",
-    "rxjs": "7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@jest/reporters": "30.2.0",
@@ -68,6 +68,6 @@
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "ws": "7.5.10"
+    "ws": "catalog:"
   }
 }

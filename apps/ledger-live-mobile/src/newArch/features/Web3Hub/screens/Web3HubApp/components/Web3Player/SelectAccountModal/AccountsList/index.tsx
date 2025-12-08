@@ -61,7 +61,6 @@ export default function AccountsList({
       ListHeaderComponent={<AddAccountItem onPress={onAddAccount} />}
       keyExtractor={accountKeyExtractor}
       renderItem={renderAccountItem}
-      estimatedItemSize={60}
       data={accounts}
       extraData={onPressItem}
     />

@@ -162,7 +162,7 @@ export const TopBar = ({
     shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
-  const isInternalApp = id === "earn";
+  const isInternalProductionApp = ["earn", "earn-prd-eks"].includes(id);
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
@@ -228,7 +228,7 @@ export const TopBar = ({
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
-  if (!enablePlatformDevTools && isInternalApp) {
+  if (!enablePlatformDevTools && isInternalProductionApp) {
     return null;
   }
 
