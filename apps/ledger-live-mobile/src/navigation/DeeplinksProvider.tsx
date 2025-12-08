@@ -501,6 +501,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Track deeplink session when app comes from background
+            track("Start", { isDeeplinkSession: true });
+
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
 
