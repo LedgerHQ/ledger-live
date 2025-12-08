@@ -76,14 +76,18 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CantonResources = {
+  isOnboarded: boolean;
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
-  publicKey: string;
+  publicKey?: string;
+  xpub?: string;
 };
 export type CantonResourcesRaw = {
+  isOnboarded: boolean;
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
-  publicKey: string;
+  publicKey?: string;
+  xpub?: string;
 };
 
 export type CantonAccount = Account & {

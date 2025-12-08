@@ -13,7 +13,7 @@ import {
 import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import resolver from "../signer";
-import { CantonAccount, CantonSigner } from "../types";
+import { CantonAccount, CantonResources, CantonSigner } from "../types";
 import { isAccountOnboarded } from "./onboard";
 import { isCantonAccountEmpty } from "../helpers";
 
@@ -93,12 +93,13 @@ export function makeGetAccountShape(
   return async info => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
 
-    let xpubOrAddress = initialAccount?.xpub || "";
+    let isOnboarded = initialAccount?.cantonResources?.isOnboarded ?? false;
+    let xpubOrAddress = (initialAccount?.xpub || initialAccount?.cantonResources?.xpub) ?? "";
     let publicKey: string | undefined = initialAccount?.cantonResources?.publicKey;
 
-    if (!xpubOrAddress || !publicKey) {
+    if (!xpubOrAddress && !publicKey) {
       const getAddress = resolver(signerContext);
-      const addressResult = await getAddress(info.deviceId || "", {
+      const addressResult = await getAddress(info.deviceId ?? "", {
         path: derivationPath,
         currency: currency,
         derivationMode: derivationMode,
@@ -106,9 +107,11 @@ export function makeGetAccountShape(
       });
       publicKey = addressResult.publicKey;
 
-      const { isOnboarded, partyId } = await isAccountOnboarded(currency, publicKey);
-      if (isOnboarded && partyId) {
-        xpubOrAddress = partyId;
+      const result = await isAccountOnboarded(currency, publicKey);
+      isOnboarded = result.isOnboarded;
+
+      if (isOnboarded && result.partyId) {
+        xpubOrAddress = result.partyId;
       }
     }
 
@@ -163,15 +166,19 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
+    const cantonResources: CantonResources = {
+      isOnboarded,
+      instrumentUtxoCounts,
+      pendingTransferProposals,
+      ...(publicKey && { publicKey }),
+      xpub: xpubOrAddress,
+    };
+
     const used = !isCantonAccountEmpty({
       operationsCount: operations.length,
       balance: totalBalance,
       subAccounts: initialAccount?.subAccounts ?? [],
-      cantonResources: {
-        instrumentUtxoCounts,
-        pendingTransferProposals,
-        publicKey,
-      },
+      cantonResources,
     });
 
     const blockHeight = await getLedgerEnd(currency);
@@ -195,11 +202,7 @@ export function makeGetAccountShape(
       spendableBalance,
       xpub: xpubOrAddress,
       used,
-      cantonResources: {
-        instrumentUtxoCounts,
-        pendingTransferProposals,
-        publicKey,
-      },
+      cantonResources,
     };
 
     return shape;

@@ -1,5 +1,5 @@
 import { makeGetAccountShape } from "./sync";
-import { OperationInfo } from "../network/gateway";
+import { OperationInfo, type InstrumentBalance } from "../network/gateway";
 import * as gateway from "../network/gateway";
 import * as onboard from "./onboard";
 import * as config from "../config";
@@ -7,6 +7,8 @@ import resolver from "../signer";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { CantonAccount } from "../types";
+import { createMockCantonCurrency } from "../test/fixtures";
 
 jest.mock("../network/gateway");
 jest.mock("../signer");
@@ -23,6 +25,79 @@ const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
 
 const sampleCurrency = {
   id: "testcoin",
+};
+
+const createMockInstrumentBalances = (): InstrumentBalance[] => [
+  {
+    instrument_id: "Native",
+    amount: "1000",
+    locked: false,
+    utxo_count: 1,
+    admin_id: "admin1",
+  },
+];
+
+const createMockOperationView = (): OperationInfo =>
+  ({
+    transaction_hash: "tx-test",
+    uid: "uid-test",
+    type: "Send",
+    status: "Success",
+    fee: {
+      value: "5",
+      asset: {
+        type: "native",
+        issuer: null,
+      },
+      details: {
+        type: "fee",
+      },
+    },
+    transfers: [
+      {
+        address: "party123",
+        type: "Send",
+        value: "100",
+        asset: "Native",
+        details: {
+          operationType: "transfer",
+          metadata: {
+            reason: "test transfer",
+          },
+        },
+      },
+    ],
+    transaction_timestamp: new Date().toISOString(),
+    senders: ["party123"],
+    recipients: ["party456"],
+    block: {
+      height: 1,
+      time: new Date().toISOString(),
+      hash: "blockhash1",
+    },
+    asset: {
+      type: "native",
+      issuer: null,
+    },
+    details: {
+      operationType: "transfer",
+    },
+  }) as OperationInfo;
+
+const createMockCantonAccountShapeInfo = (
+  overrides: Partial<AccountShapeInfo<CantonAccount>> = {},
+): AccountShapeInfo<CantonAccount> => {
+  const currency = createMockCantonCurrency();
+  return {
+    address: "addr1",
+    currency,
+    derivationMode: "",
+    derivationPath: "44'/0'/0'/0/0",
+    deviceId: "fakeDevice",
+    index: 0,
+    initialAccount: undefined,
+    ...overrides,
+  };
 };
 
 describe("makeGetAccountShape", () => {
@@ -334,5 +409,85 @@ describe("makeGetAccountShape", () => {
     expect(shape).toBeDefined();
     expect(shape.operations[0].type).toBe("TRANSFER_WITHDRAWN");
     expect(shape.operations[0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
+  });
+
+  it("should sync without device when account has xpub but no publicKey", async () => {
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
+    mockedGetOperations.mockResolvedValue({
+      operations: [createMockOperationView()],
+    });
+
+    const infoWithXpub = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "test-party-id",
+        cantonResources: {
+          publicKey: undefined, // Missing publicKey
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    expect(shape.xpub).toBe("test-party-id");
+    // Should not call getAddress since we have xpub
+    expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should sync without device when account has publicKey but no xpub", async () => {
+    mockedGetBalance.mockResolvedValue([]); // Empty balances since no xpub
+    mockedGetOperations.mockResolvedValue({
+      operations: [],
+    });
+
+    const infoWithPublicKey = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "", // Missing xpub
+        cantonResources: {
+          publicKey: "test-public-key",
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    // Should not call getAddress since we have publicKey (even though xpub is missing)
+    expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("should sync without device when account has both xpub and publicKey", async () => {
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
+    mockedGetOperations.mockResolvedValue({
+      operations: [createMockOperationView()],
+    });
+
+    const infoWithBoth = createMockCantonAccountShapeInfo({
+      deviceId: undefined, // No device
+      initialAccount: {
+        xpub: "test-party-id",
+        cantonResources: {
+          publicKey: "test-public-key",
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
+
+    expect(shape).toHaveProperty("id");
+    expect(shape.xpub).toBe("test-party-id");
+    // Should not call getAddress since we have both values
+    expect(mockedResolver).not.toHaveBeenCalled();
   });
 });

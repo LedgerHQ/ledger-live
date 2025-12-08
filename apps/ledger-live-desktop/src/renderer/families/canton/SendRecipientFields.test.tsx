@@ -53,6 +53,7 @@ describe("SendRecipientFields", () => {
     account: {
       ...createMockAccount({ xpub: "test-address" }),
       cantonResources: {
+        isOnboarded: true,
         pendingTransferProposals: [],
         instrumentUtxoCounts: {
           Amulet: 5, // Below warning threshold
