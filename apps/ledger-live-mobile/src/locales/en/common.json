@@ -7495,7 +7495,7 @@
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Secure your assets, buy crypto, and go further.",
+      "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
     "actions": {
@@ -7503,13 +7503,13 @@
         "titleCompleted": "Setup your Ledger device"
       },
       "assetsTransfer": {
-        "title": "Transfer your assets to Ledger",
+        "title": "Transfer your assets",
         "titleCompleted": "Assets transferred to Ledger",
         "description": "Transfer from any exchange or wallet.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
-        "title": "Buy Crypto",
+        "title": "Buy crypto via Ledger Wallet",
         "titleCompleted": "Crypto bought",
         "description": "Choose from 500+ coins and tokens.",
         "popupLabel": "Crypto bought"
