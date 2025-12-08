@@ -20,7 +20,9 @@
       "~/*": ["src/*"],
       "LLM/*": ["src/newArch/*"],
       "@tests/*": ["__tests__/*"],
-      "@mocks/*": ["__mocks__/*"]
+      "@mocks/*": ["__mocks__/*"],
+      "react-native/Libraries/*": ["node_modules/react-native/Libraries/*"],
+      "react-native": ["node_modules/react-native"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],

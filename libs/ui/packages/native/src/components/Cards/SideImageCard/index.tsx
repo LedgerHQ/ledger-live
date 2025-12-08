@@ -42,7 +42,7 @@ export const CloseContainer = styled(TouchableOpacity)`
   position: absolute;
   right: 8px;
   top: 8px;
-  border-radius: 50;
+  border-radius: 50%;
   height: 24px;
   width: 24px;
   display: flex;

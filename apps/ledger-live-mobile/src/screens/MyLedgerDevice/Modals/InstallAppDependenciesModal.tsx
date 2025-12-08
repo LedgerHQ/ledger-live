@@ -39,7 +39,9 @@ const ModalText = styled(Text).attrs({
   textAlign: "center",
 })``;
 
-const SeparatorText = styled(Text).attrs({
+const SeparatorText = styled(Text).attrs<{
+  marginHorizontal?: number;
+}>({
   marginHorizontal: 6,
 })``;
 

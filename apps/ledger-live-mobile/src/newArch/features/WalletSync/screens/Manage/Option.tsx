@@ -35,6 +35,10 @@ export const Option = ({ label, description, onClick, testId, disabled }: Option
   </TouchableOpacity>
 );
 
-const Container = styled(Flex).attrs((p: { disabled?: boolean }) => ({
+type ContainerProps = {
+  disabled?: boolean;
+};
+
+const Container = styled(Flex).attrs<ContainerProps>(p => ({
   opacity: p.disabled ? 0.3 : 1,
-}))<{ disabled?: boolean }>``;
+}))``;

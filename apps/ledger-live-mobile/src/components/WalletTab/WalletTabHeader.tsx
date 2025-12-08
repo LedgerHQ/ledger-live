@@ -47,7 +47,6 @@ function WalletTabHeader({
           },
           { transform: [{ translateY: y }] },
         ]}
-        mode={"margin"}
       >
         <Box flex={1} px={6} justifyContent={"flex-end"}>
           <PortfolioHeader hidePortfolio={hidePortfolio} />
