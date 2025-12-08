@@ -40,7 +40,7 @@ export const AssetListItem = ({
       }
       trailingContent={rightElement}
       onClick={handleClick}
-      data-testid={`asset-item-${ticker}`}
+      data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
     />
   );
 };
