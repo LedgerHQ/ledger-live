@@ -126,4 +126,5 @@ setSupportedCurrencies([
   "zero_gravity",
   "concordium",
   "concordium_testnet",
+  "aleo",
 ]);

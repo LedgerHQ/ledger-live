@@ -195,6 +195,9 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
     tag: "canton",
   },
+  aleo: {
+    overridesDerivation: "44'/683'/<account>'/0'/0'",
+  },
 });
 
 // WIP
@@ -238,6 +241,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
   canton_network_testnet: ["canton"],
+  aleo: ["aleo"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -356,6 +360,7 @@ export const runAccountDerivationScheme = (
   }).replace(/[_/]+$/, "");
 
 const disableBIP44: Record<string, boolean> = {
+  aleo: true,
   aeternity: true,
   aptos: true,
   tezos: true,

@@ -149,6 +149,7 @@ setSupportedCurrencies([
   "zero_gravity",
   "concordium",
   "concordium_testnet",
+  "aleo",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
