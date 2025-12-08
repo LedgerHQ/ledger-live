@@ -1,92 +1,78 @@
-import React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
-import { Text, Flex, Box } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import CheckCircle from "~/icons/CheckCircle";
 import type { ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
-
-const truncateAddress = (address: string, startLength = 10, endLength = 10): string => {
-  if (address.length <= startLength + endLength) return address;
-  return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
-};
+import { Text } from "@ledgerhq/native-ui";
+import BigNumber from "bignumber.js";
+import React, { useCallback } from "react";
+import { Trans } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import Circle from "~/components/Circle";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import Touchable from "~/components/Touchable";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type Props = Readonly<{
   validator: ValidatorInfo;
-  onSelect: () => void;
-  isSelected: boolean;
+  onPress: (validator: ValidatorInfo) => void;
+  unit: Unit;
 }>;
 
-export default function ValidatorRow({ validator, onSelect, isSelected }: Props) {
-  const { colors } = useTheme();
-  const { t } = useTranslation();
-  const currency = getCryptoCurrencyById("mina");
+export default function ValidatorRow({ validator, onPress, unit }: Props) {
+  const onPressT = useCallback(() => {
+    onPress(validator);
+  }, [validator, onPress]);
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        { backgroundColor: colors.card },
-        isSelected && { borderColor: colors.primary, borderWidth: 2 },
-      ]}
-      onPress={onSelect}
+    <Touchable
+      event="DelegationFlowChosevalidator"
+      eventProperties={{
+        validatorName: validator.name || validator.address,
+      }}
+      onPress={onPressT}
     >
-      <Flex flexDirection="row" alignItems="flex-start" justifyContent="space-between">
-        <Box flex={1}>
-          {/* Validator name - most important */}
-          <Text variant="h5" fontWeight="semiBold" color="neutral.c100" mb={2}>
-            {validator.identityName || validator.name}
+      <View style={styles.validator}>
+        <ValidatorImage name={validator.name ?? validator.address} />
+        <View style={styles.validatorBody}>
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
+            {validator.name || validator.address}
           </Text>
-
-          {/* Fee - second most important */}
-          <Text variant="small" fontWeight="medium" color="neutral.c90" mb={3}>
-            {validator.fee}% {t("common.fee")}
+          <Text fontWeight="semiBold" numberOfLines={1} style={styles.commission}>
+            <Trans i18nKey="mina.delegation.commission" /> {validator.fee}%
           </Text>
-
-          {/* Address - less important, smaller and copiable */}
-          <Box mb={2}>
-            <Text variant="small" color="neutral.c70">
-              {truncateAddress(validator.address)}
-            </Text>
-          </Box>
-
-          {/* Stats - least important, smallest */}
-          <Box>
-            <Text variant="small" color="neutral.c70" mb={1}>
-              {validator.delegations} {t("mina.delegators")}
-            </Text>
-            <Text variant="small" color="neutral.c70">
-              {t("common.stake")}: {validator.stake} {currency.units[0].code}
-            </Text>
-          </Box>
-        </Box>
-
-        {/* Selection indicator */}
-        {isSelected && (
-          <Box style={styles.checkContainer}>
-            <CheckCircle size={24} color={colors.primary} />
-          </Box>
-        )}
-      </Flex>
-    </TouchableOpacity>
+        </View>
+        <Text fontWeight="semiBold" numberOfLines={1} style={styles.validatorYield} color="smoke">
+          <CurrencyUnitValue showCode unit={unit} value={new BigNumber(validator.stake)} />
+        </Text>
+      </View>
+    </Touchable>
   );
 }
 
+const ValidatorImage = ({ name, size = 32 }: { name?: string; size?: number }) => (
+  <Circle crop size={size}>
+    <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
+  </Circle>
+);
+
+export { ValidatorImage };
+
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "transparent",
+  validator: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 56,
   },
-  checkContainer: {
-    paddingTop: 4,
-    paddingLeft: 8,
+  validatorBody: {
+    flex: 1,
+    flexDirection: "column",
+    marginLeft: 12,
   },
-  copyLink: {
-    alignSelf: "flex-start",
-    paddingVertical: 2,
+  validatorName: {
+    fontSize: 14,
+  },
+  commission: {
+    fontSize: 12,
+  },
+  validatorYield: {
+    fontSize: 14,
   },
 });

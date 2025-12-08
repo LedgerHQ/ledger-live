@@ -1,4 +1,8 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/mina/types";
+import {
+  Transaction,
+  TransactionStatus,
+  ValidatorInfo,
+} from "@ledgerhq/live-common/families/mina/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
@@ -10,7 +14,7 @@ export type MinaStakingFlowParamList = {
   };
   [ScreenName.MinaStakingSummary]: {
     accountId: string;
-    transaction: Transaction;
+    validator: ValidatorInfo;
   };
   [ScreenName.MinaStakingSelectDevice]: {
     accountId: string;
