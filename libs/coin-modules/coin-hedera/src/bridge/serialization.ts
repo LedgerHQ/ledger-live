@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type { AccountRaw, Account } from "@ledgerhq/types-live";
 import type {
   HederaAccount,
@@ -8,19 +9,35 @@ import type {
 
 export function toHederaResourcesRaw(resources: HederaResources): HederaResourcesRaw {
   const { maxAutomaticTokenAssociations, isAutoTokenAssociationEnabled } = resources;
+  const delegation = resources.delegation
+    ? {
+        nodeId: resources.delegation.nodeId,
+        delegated: resources.delegation.delegated.toString(),
+        pendingReward: resources.delegation.pendingReward.toString(),
+      }
+    : null;
 
   return {
     maxAutomaticTokenAssociations,
     isAutoTokenAssociationEnabled,
+    delegation,
   };
 }
 
 export function fromHederaResourcesRaw(rawResources: HederaResourcesRaw): HederaResources {
   const { maxAutomaticTokenAssociations, isAutoTokenAssociationEnabled } = rawResources;
+  const delegation = rawResources.delegation
+    ? {
+        nodeId: rawResources.delegation.nodeId,
+        delegated: new BigNumber(rawResources.delegation.delegated),
+        pendingReward: new BigNumber(rawResources.delegation.pendingReward),
+      }
+    : null;
 
   return {
     maxAutomaticTokenAssociations,
     isAutoTokenAssociationEnabled,
+    delegation,
   };
 }
 

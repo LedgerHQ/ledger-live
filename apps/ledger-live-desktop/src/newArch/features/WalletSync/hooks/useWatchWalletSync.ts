@@ -23,6 +23,7 @@ import { cache as bridgeCache } from "~/renderer/bridge/cache";
 import {
   setAccountNames,
   setNonImportedAccounts,
+  updateRecentAddresses,
   walletSyncStateSelector,
   walletSyncUpdate,
   WSState,
@@ -49,6 +50,7 @@ function localStateSelector(state: State): LocalState {
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
+    recentAddresses: state.wallet.recentAddresses,
   };
 }
 
@@ -63,6 +65,7 @@ async function save(
   if (newLocalState) {
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(setAccountNames(newLocalState.accountNames));
+    dispatch(updateRecentAddresses(newLocalState.recentAddresses));
     dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
   }
 }

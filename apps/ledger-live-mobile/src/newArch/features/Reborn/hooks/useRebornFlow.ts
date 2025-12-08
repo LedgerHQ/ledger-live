@@ -38,7 +38,7 @@ export function useRebornFlow(isFromOnboarding = false) {
     refreshDynamicContent();
     try {
       await fetchWithTimeout(fetchData);
-    } catch (error) {
+    } catch {
       canDisplayLP.current = false;
     }
   };

@@ -2526,8 +2526,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
-        address: "https://www.mintscan.io/quicksilver/validators/$address",
+        tx: "https://explorer.quicksilver.zone/transactions/$hash",
+        address: "https://explorer.quicksilver.zone/validators/$address",
       },
     ],
   },
@@ -3624,6 +3624,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.stacks.co/address/$address",
       },
     ],
+    tokenTypes: ["sip010"],
   },
   // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
@@ -4540,7 +4541,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 81457,
     },
-    explorerViews: [blockscoutExplorerView("https://blast.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   blast_sepolia: {
     type: "CryptoCurrency",
@@ -4558,7 +4565,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 168587773,
     },
-    explorerViews: [blockscoutExplorerView("https://blast-testnet.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://sepolia.blastscan.io/tx/$hash",
+        address: "https://sepolia.blastscan.io/address/$address",
+        token: "https://sepolia.blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   scroll: {
     type: "CryptoCurrency",

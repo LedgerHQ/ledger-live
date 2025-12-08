@@ -5,7 +5,7 @@
     "declarationMap": true,
     "noImplicitAny": false,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": ["es2021", "dom"],
     "outDir": "lib",
     "typeRoots": ["./types", "./node_modules/@types"]
   },

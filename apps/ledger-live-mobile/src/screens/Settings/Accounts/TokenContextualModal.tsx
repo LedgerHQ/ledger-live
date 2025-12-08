@@ -16,7 +16,7 @@ import { blacklistToken } from "~/actions/settings";
 import TokenContractAddress from "../../Account/TokenContractAddress";
 import Button from "~/components/Button";
 import { parentAccountSelector } from "~/reducers/accounts";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import BottomModalChoice from "~/components/BottomModalChoice";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
@@ -82,9 +82,10 @@ const TokenContextualModal = ({
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const explorerView = mainAccount ? getDefaultExplorerView(mainAccount.currency) : null;
-  const url = explorerView
-    ? getAccountContractExplorer(explorerView, account, parentAccount!)
-    : null;
+  const url =
+    explorerView && parentAccount
+      ? getAccountContractExplorer(explorerView, account, parentAccount)
+      : null;
 
   return (
     <QueuedDrawer
@@ -92,7 +93,7 @@ const TokenContextualModal = ({
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
-          <ParentCurrencyIcon size={48} currency={getAccountCurrency(account)} />
+          <CurrencyIcon size={48} currency={getAccountCurrency(account)} />
         ) : undefined
       }
       title={showingContextMenu ? account.token.name : undefined}

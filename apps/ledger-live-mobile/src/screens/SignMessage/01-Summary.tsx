@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -137,7 +137,7 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                <ParentCurrencyIcon size={18} currency={mainAccount.currency} />
+                <CurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
                 {maybeAccountName}

@@ -50,11 +50,11 @@ export default function createAppUpdater(opts: Opts): {
   async function verifyHashFileSignature(hash: string, sigContent: Buffer, pubKey: string) {
     try {
       await sslHelper.verify(hash, sigContent, pubKey);
-    } catch (err) {
+    } catch {
       try {
         const nextPubKey = await getNextPubKey(pubKey);
         await verifyHashFileSignature(hash, sigContent, nextPubKey);
-      } catch (err) {
+      } catch {
         throw new UpdateIncorrectSig();
       }
     }

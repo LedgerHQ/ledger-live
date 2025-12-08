@@ -90,6 +90,7 @@ const OnboardingStepUseCaseSelection = () => {
         tracking: {
           category: "Onboarding",
           name: "setup new options",
+          deviceModelId,
         },
       }}
     >
@@ -101,6 +102,8 @@ const OnboardingStepUseCaseSelection = () => {
             event: "button_clicked",
             eventProperties: {
               button: "Create a new wallet",
+              deviceModelId,
+              seedConfiguration: "new_seed",
             },
             testID: `onboarding-useCase-newWallet`,
             onPress: onPressNew,
@@ -112,6 +115,8 @@ const OnboardingStepUseCaseSelection = () => {
             event: "button_clicked",
             eventProperties: {
               button: "Restore with your secret phrase",
+              deviceModelId,
+              seedConfiguration: "restore_seed",
             },
             testID: `onboarding-useCase-recoveryPhrase`,
             onPress: onPressRecoveryPhrase,
@@ -125,6 +130,8 @@ const OnboardingStepUseCaseSelection = () => {
                   event: "button_clicked",
                   eventProperties: {
                     button: "Restore with ledger recover",
+                    deviceModelId,
+                    seedConfiguration: "recover_seed",
                   },
                   testID: `Onboarding UseCase - Selection|Ledger Recover`,
                   onPress: onPressProtect,

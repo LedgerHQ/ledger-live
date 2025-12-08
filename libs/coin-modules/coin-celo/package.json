@@ -124,7 +124,7 @@
     "eip55": "^2.1.1",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",

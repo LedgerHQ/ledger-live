@@ -57,6 +57,7 @@
     "src/deviceWordings.ts",
     "src/domain/getTokensWithFunds.ts",
     "src/e2e/data/assetsDrawer.ts",
+    "src/e2e/data/regexes.ts",
     "src/e2e/index.ts",
     "src/e2e/speculos.ts",
     "src/e2e/speculosAppVersion.ts",
@@ -112,7 +113,6 @@
     "src/families/evm/react.ts",
     "src/families/filecoin/deviceTransactionConfig.ts",
     "src/families/filecoin/types.ts",
-    "src/families/hedera/types.ts",
     "src/families/internet_computer/types.ts",
     "src/families/mina/types.ts",
     "src/families/multiversx/banner.ts",
@@ -397,6 +397,8 @@
     "src/families/cardano/staking.ts",
     "src/families/filecoin/utils.ts",
     "src/families/hedera/constants.ts",
+    "src/families/hedera/react.ts",
+    "src/families/hedera/types.ts",
     "src/families/hedera/utils.ts",
     "src/families/internet_computer/consts.ts",
     "src/families/internet_computer/utils.ts",
@@ -462,7 +464,8 @@
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/walletSync/getEnvironmentParams.ts",
-    "src/utils/addressUtils.ts"
+    "src/utils/addressUtils.ts",
+    "src/hooks/useHtmlLinkSegments.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",

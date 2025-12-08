@@ -94,15 +94,17 @@ export function makeGetAccountShape(
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
 
     let xpubOrAddress = initialAccount?.xpub || "";
+    let publicKey: string | undefined = initialAccount?.cantonResources?.publicKey;
 
-    if (!xpubOrAddress) {
+    if (!xpubOrAddress || !publicKey) {
       const getAddress = resolver(signerContext);
-      const { publicKey } = await getAddress(info.deviceId || "", {
+      const addressResult = await getAddress(info.deviceId || "", {
         path: derivationPath,
         currency: currency,
         derivationMode: derivationMode,
         verify: false,
       });
+      publicKey = addressResult.publicKey;
 
       const { isOnboarded, partyId } = await isAccountOnboarded(currency, publicKey);
       if (isOnboarded && partyId) {
@@ -168,6 +170,7 @@ export function makeGetAccountShape(
       cantonResources: {
         instrumentUtxoCounts,
         pendingTransferProposals,
+        publicKey,
       },
     });
 
@@ -195,6 +198,7 @@ export function makeGetAccountShape(
       cantonResources: {
         instrumentUtxoCounts,
         pendingTransferProposals,
+        publicKey,
       },
     };
 

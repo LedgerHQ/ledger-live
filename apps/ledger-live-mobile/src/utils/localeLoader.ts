@@ -63,7 +63,7 @@ export const loadLocaleData = (language: string): void => {
     }
 
     loadedLanguages.add(language);
-  } catch (error) {
+  } catch {
     if (language !== "en") {
       try {
         require("@formatjs/intl-pluralrules/locale-data/en");

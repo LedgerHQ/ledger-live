@@ -5,12 +5,8 @@ import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import { getStuckAccountAndOperation, isEditableOperation } from "../../operation";
-import { getCoinConfig } from "../../config";
 import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 import lobsterTokenData from "../../__fixtures__/cardano-native-8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552.json";
-
-jest.mock("../../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
 
 const ethereum = getCryptoCurrencyById("ethereum");
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -22,25 +18,6 @@ const cardano = getCryptoCurrencyById("cardano");
 const lobster = lobsterTokenData as TokenCurrency;
 
 describe("EVM Family", () => {
-  beforeEach(() => {
-    mockGetConfig.mockImplementation((currency: { id: string }): any => {
-      switch (currency.id) {
-        case "ethereum": {
-          return {
-            info: {
-              gasTracker: { type: "ledger", explorerId: "eth" },
-            },
-          };
-        }
-        default: {
-          return {
-            info: {},
-          };
-        }
-      }
-    });
-  });
-
   describe("operation.ts", () => {
     describe("isEditableOperation", () => {
       describe("should return false", () => {
@@ -52,7 +29,7 @@ describe("EVM Family", () => {
             value: new BigNumber(0),
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
         });
 
         it("if the operation is not pending", () => {
@@ -64,7 +41,7 @@ describe("EVM Family", () => {
             blockHeight: 1,
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
         });
 
         it("if the operation is the FEES operation associated to a token operation", () => {
@@ -80,7 +57,7 @@ describe("EVM Family", () => {
             blockHeight: 1,
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
         });
 
         it("if the operation is the FEES operation associated to a nft operation", () => {
@@ -96,7 +73,7 @@ describe("EVM Family", () => {
             blockHeight: 1,
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
         });
 
         it("if the transactionRaw is not filled", () => {
@@ -108,14 +85,10 @@ describe("EVM Family", () => {
             blockHeight: null, // pending transaction
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
         });
 
         it("if the gasTracker is not filled", () => {
-          mockGetConfig.mockImplementationOnce((): any => {
-            return { info: {} };
-          });
-
           const evmWithoutGasTracker: CryptoCurrency = {
             ...ethereum,
             ethereumLikeInfo: {
@@ -140,7 +113,7 @@ describe("EVM Family", () => {
             },
           };
 
-          expect(isEditableOperation(account, operation)).toBe(false);
+          expect(isEditableOperation(account, operation, () => false)).toBe(false);
         });
       });
 
@@ -158,7 +131,7 @@ describe("EVM Family", () => {
             },
           };
 
-          expect(isEditableOperation(account, operation)).toBe(true);
+          expect(isEditableOperation(account, operation, () => true)).toBe(true);
         });
       });
     });
@@ -167,7 +140,7 @@ describe("EVM Family", () => {
       it("should return undefined for non evm account", () => {
         const account = genAccount("myAccount", { currency: cardano });
 
-        expect(getStuckAccountAndOperation(account, undefined)).toBe(undefined);
+        expect(getStuckAccountAndOperation(account, undefined, () => true)).toBe(undefined);
       });
 
       it("should return undefined if the pending transaction is not older than 5 minutes", () => {
@@ -186,7 +159,7 @@ describe("EVM Family", () => {
           date: new Date(),
         };
         account.pendingOperations.push(pendingOperation);
-        expect(getStuckAccountAndOperation(account, undefined)).toBe(undefined);
+        expect(getStuckAccountAndOperation(account, undefined, () => true)).toBe(undefined);
       });
 
       describe("pending transaction is a coin transaction", () => {
@@ -208,7 +181,7 @@ describe("EVM Family", () => {
           };
           account.pendingOperations.push(pendingOperation);
 
-          const res = getStuckAccountAndOperation(account, undefined);
+          const res = getStuckAccountAndOperation(account, undefined, () => true);
 
           expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(account.id);
@@ -243,7 +216,7 @@ describe("EVM Family", () => {
 
           expect(account.pendingOperations.length).toBe(3);
 
-          const res = getStuckAccountAndOperation(account, undefined);
+          const res = getStuckAccountAndOperation(account, undefined, () => true);
 
           expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account.id).toBe(account.id);
@@ -272,7 +245,7 @@ describe("EVM Family", () => {
           };
           account.pendingOperations.push(pendingOperation);
 
-          const res = getStuckAccountAndOperation(tokenAccount, account);
+          const res = getStuckAccountAndOperation(tokenAccount, account, () => true);
 
           expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(tokenAccount.id);
@@ -309,7 +282,7 @@ describe("EVM Family", () => {
 
           expect(account.pendingOperations.length).toBe(3);
 
-          const res = getStuckAccountAndOperation(tokenAccount, account);
+          const res = getStuckAccountAndOperation(tokenAccount, account, () => true);
 
           expect(res?.operation.transactionSequenceNumber).toEqual(new BigNumber(0));
           expect(res?.account?.id).toBe(tokenAccount.id);

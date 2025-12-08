@@ -33,6 +33,7 @@ describe("isFormattedAsOldDeviceDefaultBleName", () => {
     ["old format with different model name", "Ledger Nano S Plus 456B"],
     ["old format with lowercase hex", "Ledger Nano X 123a"],
     ["old format with mixed case hex", "Ledger Nano X 46bc"],
+    ["old format with model name, starting with Nano", "Nano X 123A"],
   ])("returns true for %s", (_, name) => {
     expect(isFormattedAsOldDeviceDefaultBleName(name)).toBe(true);
   });
@@ -310,6 +311,17 @@ describe("findMatchingOldDevice", () => {
 
       const result = findMatchingOldDevice(newDevice, oldDevices);
       expect(result).toEqual(oldDevices[1]);
+    });
+
+    test("returns matching device by new-to-old format when found, (device name starting with Nano)", () => {
+      const newDevice = makeDevice({ deviceId: "device-123", deviceName: "ABCD" });
+      const oldDevices: DeviceBaseInfo[] = [
+        makeDevice({ deviceId: "device-789", deviceName: "Nano X ABCD" }),
+        makeDevice({ deviceId: "device-456", deviceName: "Nano X EFGH" }),
+      ];
+
+      const result = findMatchingOldDevice(newDevice, oldDevices);
+      expect(result).toEqual(oldDevices[0]);
     });
 
     test("prioritizes deviceId match over name match", () => {

@@ -11,6 +11,7 @@ import WalletAPISignMessage from "./liveApps/walletAPISignMessage";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
+import PostOnboardingPage from "./postOnboarding/postOnboarding.page";
 import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
 import PortfolioPage from "./wallet/portfolio.page";
@@ -63,6 +64,7 @@ export class Application {
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private postOnboardingPageInstance = lazyInit(PostOnboardingPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
@@ -145,6 +147,10 @@ export class Application {
 
   public get onboarding() {
     return this.onboardingPageInstance();
+  }
+
+  public get postOnboarding() {
+    return this.postOnboardingPageInstance();
   }
 
   public get operationDetails() {

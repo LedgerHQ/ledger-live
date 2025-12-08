@@ -107,7 +107,7 @@ export const GenerateMockAccountSelectScreen = () => {
                 checked={checkedCurrencies[id]}
                 label={
                   <Flex flexDirection="row" alignItems="center" pt={2}>
-                    <CurrencyIcon circle size={32} currency={currency} />
+                    <CurrencyIcon size={32} currency={currency} />
                     <Text style={{ marginLeft: 5 }}>{name}</Text>
                   </Flex>
                 }

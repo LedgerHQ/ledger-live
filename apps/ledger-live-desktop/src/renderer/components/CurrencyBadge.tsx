@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import IconCheckFull from "~/renderer/icons/CheckFull";
@@ -10,6 +9,8 @@ import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
 import Spinner from "./Spinner";
 import { BoxProps } from "./Box/Box";
+import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type CryptoIconWrapperProps = {
   cryptoColor: string;
@@ -61,18 +62,25 @@ export function CurrencyCircleIcon({
   showSpinner?: boolean;
   showCheckmark?: boolean;
 }) {
-  const bgColor = useTheme().colors.palette.background.paper;
+  const theme = useTheme();
+  const bgColor = theme.colors.palette.background.paper;
   const cryptoColor = useMemo(
     () => (currency.type === "CryptoCurrency" ? ensureContrast(currency.color, bgColor) : ""),
     [currency, bgColor],
   );
+
   if (currency.type === "TokenCurrency") {
     return <ParentCryptoCurrencyIcon currency={currency} bigger />;
   }
-  const Icon = getCryptoCurrencyIcon(currency);
+
+  // Calculate icon size based on container size (60% of container size)
+  const iconSize = Math.round(size * 0.6);
+  const validIconSize = getValidCryptoIconSize(iconSize);
+
   return (
     <CryptoIconWrapper size={size} cryptoColor={cryptoColor}>
-      {Icon && <Icon size={size * 0.6} />}
+      <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={validIconSize} />
+
       {showCheckmark && (
         <div>
           <IconCheckFull size={22} />

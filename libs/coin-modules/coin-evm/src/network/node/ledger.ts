@@ -370,7 +370,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
               s: "0xffffffffffffffffffffffffffffffffffffffff",
               v: 27,
             });
-          } catch (e) {
+          } catch {
             return null;
           }
         })();
@@ -439,7 +439,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
               s: "0xffffffffffffffffffffffffffffffffffffffff",
               v: 27,
             });
-          } catch (e) {
+          } catch {
             return null;
           }
         })();

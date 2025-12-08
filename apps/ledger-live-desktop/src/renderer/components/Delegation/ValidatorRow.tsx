@@ -24,12 +24,12 @@ export const IconContainer = styled.div<{
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
 
-const InfoContainer = styled(Box).attrs(() => ({
+export const InfoContainer = styled(Box).attrs(() => ({
   ml: 2,
   flex: 1,
 }))``;
 
-const Title = styled(Box).attrs(() => ({
+export const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
 }))`
@@ -65,7 +65,7 @@ const SubTitle = styled(Box).attrs(() => ({
   font-weight: 500;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
-const SideInfo = styled(Box)``;
+export const SideInfo = styled(Box)``;
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",

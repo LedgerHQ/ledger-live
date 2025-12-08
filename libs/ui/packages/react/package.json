@@ -76,9 +76,7 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@floating-ui/react-dom": "^0.4.0",
-    "@ledgerhq/crypto-icons": "1.1.1",
-    "@ledgerhq/crypto-icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@tanstack/react-virtual": "3.13.6",
@@ -159,9 +157,6 @@
     "webpack": "*"
   },
   "dependenciesMeta": {
-    "@ledgerhq/crypto-icons-ui": {
-      "injected": true
-    },
     "@ledgerhq/icons-ui": {
       "injected": true
     }

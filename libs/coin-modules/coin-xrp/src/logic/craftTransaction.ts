@@ -7,6 +7,7 @@ import { UINT32_MAX, validateTag } from "./utils";
 
 const LEDGER_OFFSET = 20;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { TRANSACTION_TYPES } = XrplDefinitions;
 type Memo = {
   MemoData?: string;

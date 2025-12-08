@@ -84,10 +84,12 @@ const getMarketWidgetAnalytics = (state: State) => {
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 
@@ -304,12 +306,19 @@ function getAnalytics() {
   }
   return analytics;
 }
-export const start = async (store: ReduxStore) => {
+export const startAnalytics = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
+  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
+  // and hence canBeTracked will always be set to true...
   const { id } = await user();
   storeInstance = store;
+
+  const canBeTracked = trackingEnabledSelector(store.getState());
+  if (!canBeTracked) return;
+
   const analytics = getAnalytics();
   if (!analytics) return;
+
   const allProperties = {
     ...extraProperties(store),
     userId: id,

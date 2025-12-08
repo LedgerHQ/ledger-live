@@ -145,7 +145,7 @@ const StepSummary = (props: StepProps) => {
                     marginRight: 7,
                   }}
                 >
-                  <CryptoCurrencyIcon size={16} currency={currency} />
+                  <CryptoCurrencyIcon size={22} currency={currency} />
                 </div>
                 <Text
                   ff="Inter"

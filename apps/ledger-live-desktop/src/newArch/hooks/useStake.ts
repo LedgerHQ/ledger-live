@@ -128,9 +128,9 @@ export function useStake() {
         ...(assetId ? { asset_id: assetId } : {}),
         accountId: accountIdForManifestVersion,
       })?.toString();
-
+      const isEarnManifest = ["earn", "earn-stg", "earn-prd-eks"].includes(manifest.id);
       return {
-        pathname: manifest.id === "earn" ? "/earn" : `/platform/${manifest.id}`,
+        pathname: isEarnManifest ? "/earn" : `/platform/${manifest.id}`,
         state: {
           ...customPartnerParams,
           appId: manifest.id,

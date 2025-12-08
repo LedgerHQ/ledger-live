@@ -58,7 +58,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
           throw new PasswordIncorrectError();
         }
         dispatch(unlock());
-      } catch (error) {
+      } catch {
         setIncorrectPassword(new PasswordIncorrectError());
       } finally {
         setInputValue({
@@ -82,7 +82,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
     try {
       await hardReset();
       window.api?.reloadRenderer();
-    } catch (error) {
+    } catch {
       setIsHardResetting(false);
     }
   }, [hardReset]);

@@ -49,7 +49,7 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {
+  } catch {
     // ignore
   }
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/ldls-ui-react";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "../../SettingsSection";
@@ -22,7 +22,7 @@ const ExchangeTestPartnerMode = () => {
       desc={t("settings.developer.exchangeTestPartnerMode.desc")}
     >
       <Box grow horizontal flow={2} alignItems="center">
-        <Switch isChecked={enableExchangeTestPartnerMode} onChange={handleChangeSwitch} />
+        <Switch selected={enableExchangeTestPartnerMode} onChange={handleChangeSwitch} />
       </Box>
     </SettingsSectionRow>
   );

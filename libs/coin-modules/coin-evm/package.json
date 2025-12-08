@@ -80,7 +80,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "react-native-get-random-values": "^1.8.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

@@ -174,12 +174,18 @@ function OnboardingStepRecoveryPhrase() {
     navigation.navigate(ScreenName.OnboardingPairNew, {
       ...route.params,
       showSeedWarning: false,
+      isRestoreSeed: true,
     });
   }, [navigation, route.params]);
 
   return (
     <>
-      <TrackScreen category="Onboarding" name="RecoveryPhrase" />
+      <TrackScreen
+        category="Onboarding"
+        name="RecoveryPhrase"
+        seedConfiguration="restore_seed"
+        deviceModelId={deviceModelId}
+      />
       <BaseStepperView
         onNext={nextPage}
         steps={scenes}

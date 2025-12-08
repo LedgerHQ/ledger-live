@@ -1,3 +1,4 @@
+// TODO: Remove this file once Celo bridge is removed
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {
@@ -277,7 +278,7 @@ export const getOperationStatus = async (
         date,
       })),
     } as Operation;
-  } catch (e) {
+  } catch {
     return null;
   }
 };

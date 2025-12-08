@@ -16,6 +16,8 @@ import type {
   HederaMirrorContractCallResult,
   HederaMirrorContractCallBalance,
   HederaMirrorContractCallEstimate,
+  HederaMirrorNode,
+  HederaMirrorNodesResponse,
 } from "../types";
 
 const API_URL = getEnv("API_HEDERA_MIRROR");
@@ -267,6 +269,28 @@ async function getTransactionsByTimestampRange(
   return transactions;
 }
 
+async function getNodes(): Promise<HederaMirrorNode[]> {
+  const nodes: HederaMirrorNode[] = [];
+  const params = new URLSearchParams({
+    order: "desc",
+    limit: "100",
+  });
+
+  let nextPath: string | null = `/api/v1/network/nodes?${params.toString()}`;
+
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorNodesResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
+    const newNodes = res.data.nodes;
+    nodes.push(...newNodes);
+    nextPath = res.data.links.next;
+  }
+
+  return nodes;
+}
+
 export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
@@ -279,4 +303,5 @@ export const apiClient = {
   getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,
+  getNodes,
 };

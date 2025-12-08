@@ -14,7 +14,7 @@ const defaultOptionsSelector = createSelector(languageSelector, language =>
   genericFormatter(language),
 );
 
-const hoursAndMinutesOptionsSelector = createSelector(
+export const hoursAndMinutesOptionsSelector = createSelector(
   languageSelector,
   language =>
     new Intl.DateTimeFormat(language, {

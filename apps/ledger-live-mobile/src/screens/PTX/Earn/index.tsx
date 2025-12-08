@@ -1,4 +1,7 @@
-import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  stakeProgramsToEarnParam,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -63,6 +66,10 @@ function Earn({ route }: Props) {
     [stakePrograms],
   );
   const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
+  const ethDepositCohort = useMemo(
+    () => getEthDepositScreenSetting(stakePrograms),
+    [stakePrograms],
+  );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
@@ -88,6 +95,7 @@ function Earn({ route }: Props) {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           OS: Platform.OS,
+          ethDepositCohort,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}

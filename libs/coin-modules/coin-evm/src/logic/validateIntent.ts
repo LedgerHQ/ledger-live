@@ -60,8 +60,11 @@ async function validateAmount(
   balance: Balance,
   amount: bigint,
   totalSpent: bigint,
+  isSmartContractInteraction: boolean,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
-  if (!amount) {
+  // Smart contract transactions crafted outside of Ledger Wallet
+  // (e.g. Magic Eden) can have no amount
+  if (!amount && !isSmartContractInteraction) {
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
@@ -165,7 +168,7 @@ async function validateGas(
   // Gas Price
   if (!(hasLegacyGasPrice || hasEip1559GasPrice)) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (intent.recipient && estimatedFees.value > nativeBalance.value) {
+  } else if (intent.recipient && estimatedFees.value > nativeBalance.value && !intent.sponsored) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
       fees: formatCurrencyUnit(
@@ -243,7 +246,17 @@ function computeAmount(
 ): bigint {
   if (!intent.useAllAmount) return intent.amount;
 
-  return isNative(intent.asset) ? balance.value - estimatedFees.value : balance.value;
+  if (isNative(intent.asset)) {
+    const additionalFees =
+      typeof estimatedFees.parameters?.additionalFees === "bigint"
+        ? estimatedFees.parameters.additionalFees
+        : 0n;
+    const totalFees = estimatedFees.value + additionalFees;
+
+    return balance.value > totalFees ? balance.value - totalFees : 0n;
+  }
+
+  return balance.value;
 }
 
 function refreshEstimationValue(
@@ -276,13 +289,19 @@ export async function validateIntent(
   const balances = await getBalance(currency, intent.sender);
   const balance = findBalance(intent.asset, balances);
   const amount = computeAmount(intent, estimatedFees, balance);
-  const totalSpent = isNative(intent.asset) ? amount + estimatedFees.value : amount;
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
+  const totalSpent = isNative(intent.asset) && !intent.sponsored ? amount + totalFees : amount;
 
   const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
     balance,
     amount,
     totalSpent,
+    !!intent.data?.value?.length,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
     currency,
@@ -309,15 +328,10 @@ export async function validateIntent(
     ...feeRatioWarn,
   };
 
-  const additionalFees =
-    typeof estimatedFees.parameters?.additionalFees === "bigint"
-      ? estimatedFees.parameters.additionalFees
-      : 0n;
-
   return {
     errors,
     warnings,
-    totalFees: estimatedFees.value + additionalFees,
+    totalFees,
     estimatedFees: estimatedFees.value,
     totalSpent,
     amount,

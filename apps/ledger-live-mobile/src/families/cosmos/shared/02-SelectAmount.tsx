@@ -69,7 +69,7 @@ function DelegationAmount({ navigation, route }: Props) {
   const min = useMemo(() => route?.params?.min ?? BigNumber(0), [route]);
   const onNext = useCallback(() => {
     const validators = tx.validators;
-    const validatorAddress = route.params.validator.validatorAddress;
+    const validatorAddress = route.params.validator ? route.params.validator.validatorAddress : "";
     const i = validators.findIndex(({ address }) => address === validatorAddress);
 
     if (i >= 0) {
@@ -97,7 +97,7 @@ function DelegationAmount({ navigation, route }: Props) {
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
-      validatorName: route.params.validator.name,
+      validatorName: route.params.validator ? route.params.validator.name : "",
       transaction,
       fromSelectAmount: true,
     });

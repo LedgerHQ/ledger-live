@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -52,6 +52,7 @@ on:
           - nanoX
           - stax
           - flex
+          - nanoGen5
         default: nanoSP
       firmware_version:
         description: "Firmware version to use for selected device"
@@ -71,7 +72,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       invert_filter:
@@ -120,10 +121,15 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || '0.25.9' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
       SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
     runs-on: [ledger-live-4xlarge-e2e]
+    outputs:
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+      status_4: ${{ steps.set-output.outputs.status_4 }}
     strategy:
       fail-fast: false
       matrix:
@@ -180,18 +186,25 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "${{ inputs.test_filter }}" ]; then
-              echo "filter=@smoke ${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            if [ -n "$BASE_FILTER" ]; then
+              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
             else
               echo "filter=@smoke" >> $GITHUB_OUTPUT
             fi
           else
-            echo "filter=${{ inputs.test_filter }}" >> $GITHUB_OUTPUT
+            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
           fi
         shell: bash
 
       - name: Run Playwright Tests
+        id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
@@ -221,6 +234,12 @@ jobs:
           name: xray-reports-${{ matrix.shardIndex }}
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
+      - name: Set job output based on test result
+        id: set-output
+        if: ${{ !cancelled() }}
+        run: |
+          echo "status_${{ matrix.shardIndex }}=${{ steps.run-playwright.outcome }}" >> $GITHUB_OUTPUT
+
   report-to-allure:
     name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]
@@ -230,6 +249,7 @@ jobs:
       status_color: ${{ steps.summary.outputs.status_color }}
       status_emoji: ${{ steps.summary.outputs.status_emoji }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
     if: ${{ !cancelled() }}
     env:
       ALLURE_RESULTS: "allure-results"
@@ -257,6 +277,16 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux
+
+      - name: Aggregate test results
+        id: aggregate
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: 4
+          status_1: ${{ needs.e2e-tests-linux.outputs.status_1 }}
+          status_2: ${{ needs.e2e-tests-linux.outputs.status_2 }}
+          status_3: ${{ needs.e2e-tests-linux.outputs.status_3 }}
+          status_4: ${{ needs.e2e-tests-linux.outputs.status_4 }}
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -313,6 +343,8 @@ jobs:
     runs-on: [ledger-live-medium]
     needs: report-to-allure
     if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+    env:
+      MISSING_SHARDS: ${{ needs.report-to-allure.outputs.missingShards }}
     steps:
       - uses: actions/github-script@v7
         name: prepare status
@@ -324,128 +356,59 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const path = require("path");
-
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
-
-            const keys = {
-              linux: {
-                symbol: "🐧",
-                name: "Linux",
-                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
-              },
-            };
-
-            const report = {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              }
-            };
             const statusEmoji = process.env.STATUS_EMOJI;
 
-            let summary = `### Playwright Tests
-            `
+            const blocks = [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                }
+              }
+            ];
 
-            summary += `|`
-
-            const reportKeys = Object.keys(report);
-            const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
-
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
-
-            summary += `
-            |`;
-
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
+            if (process.env.MISSING_SHARDS) {
+              blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `⚠️ Warning: Missing results for shard(s): ${process.env.MISSING_SHARDS}.`
+                }
+              });
             }
 
-            summary += `
-            |`;
-
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? statusEmoji : "❌"} (${values.status}) |`;
+            blocks.push({
+              "type": "divider"
             });
 
-            summary += `
-            ${{ steps.comment.outputs.body }}
-            `
-
-            const output = {
-              summary,
-              actions: [{
-                // 20 chars max
-                label: "Regen. Screenshots",
-                // 20 chars max
-                identifier: "regen_screenshots",
-                // 40 chars max
-                description: "Will regenerate playwright screenshots",
-              }, {
-                // 20 chars max
-                label: "Run full LLD suite",
-                // 20 chars max
-                identifier: "lld_full_suite",
-                // 40 chars max
-                description: "Run the full e2e test suite for LLD",
-              }],
-            };
-
-            const slackPayload = {
-              "attachments": [
+            blocks.push({
+              "type": "section",
+              "fields": [
                 {
-                  "color": "${{ needs.report-to-allure.outputs.status_color }}",
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
-                        "emoji": true
-                      }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
-                      }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "fields": [
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
-                        }
-                      ]
-                    }
-                  ]
+                  "type": "mrkdwn",
+                  "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
                 }
               ]
-            };
+            });
 
             if (process.env.EXPORT_TO_XRAY === 'true') {
-              slackPayload.attachments[0].blocks.push({
+              blocks.push({
                 "type": "section",
                 "fields": [
                   {
@@ -455,6 +418,15 @@ jobs:
                 ]
               });
             }
+
+            const slackPayload = {
+              "attachments": [
+                {
+                  "color": "${{ needs.report-to-allure.outputs.status_color }}",
+                  blocks
+                }
+              ]
+            };
 
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
 

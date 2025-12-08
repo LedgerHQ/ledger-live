@@ -1,7 +1,6 @@
 import {
   AmountRequired,
   FeeNotLoaded,
-  FeeRequired,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalanceBecauseDestinationNotCreated,
@@ -21,6 +20,8 @@ import {
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { isTopologyChangeRequiredCached } from "../network/gateway";
+import { TopologyChangeError } from "../types/errors";
 
 export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
 export const TO_MANY_UTXOS_WARNING_COUNT = 10;
@@ -81,7 +82,15 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  validateUtxoCount(account, transaction, warnings);
+  const utxoWarning = validateUtxoCount(account, transaction);
+  if (utxoWarning) {
+    warnings.tooManyUtxos = utxoWarning;
+  }
+
+  const topologyError = await validateTopology(account);
+  if (topologyError) {
+    errors.topologyChange = topologyError;
+  }
 
   return {
     errors,
@@ -92,29 +101,57 @@ export const getTransactionStatus: AccountBridge<
   };
 };
 
-function validateUtxoCount(
-  account: CantonAccount,
-  transaction: Transaction,
-  warnings: Record<string, Error>,
-): void {
-  const abandonSeedAddress = getAbandonSeedAddress(account.currency.id);
-  const isAbandonSeedAddress = transaction.recipient?.includes(abandonSeedAddress);
+function validateUtxoCount(account: CantonAccount, transaction: Transaction): Error | null {
+  if (!account.cantonResources?.instrumentUtxoCounts) {
+    return null;
+  }
 
-  // UTXO count validation - only validate if recipient is valid and not equal to sender
-  // Skip validation for abandon seed addresses
-  if (
-    account?.cantonResources?.instrumentUtxoCounts &&
-    transaction.recipient &&
-    isRecipientValid(transaction.recipient) &&
-    account.xpub !== transaction.recipient &&
-    !isAbandonSeedAddress
-  ) {
-    const { instrumentUtxoCounts } = account.cantonResources;
-    const instrumentUtxoCount = instrumentUtxoCounts[transaction.tokenId] || 0;
-    if (instrumentUtxoCount > TO_MANY_UTXOS_CRITICAL_COUNT) {
-      warnings.tooManyUtxos = new TooManyUtxosCritical();
-    } else if (instrumentUtxoCount > TO_MANY_UTXOS_WARNING_COUNT) {
-      warnings.tooManyUtxos = new TooManyUtxosWarning("families.canton.tooManyUtxos.warning");
+  if (!transaction.recipient) {
+    return null;
+  }
+
+  if (!isRecipientValid(transaction.recipient) || account.xpub === transaction.recipient) {
+    return null;
+  }
+
+  const abandonSeedAddress = getAbandonSeedAddress(account.currency.id);
+  if (transaction.recipient.includes(abandonSeedAddress)) {
+    return null;
+  }
+
+  const { instrumentUtxoCounts } = account.cantonResources;
+  const instrumentUtxoCount = instrumentUtxoCounts[transaction.tokenId] || 0;
+
+  if (instrumentUtxoCount > TO_MANY_UTXOS_CRITICAL_COUNT) {
+    return new TooManyUtxosCritical();
+  }
+
+  if (instrumentUtxoCount > TO_MANY_UTXOS_WARNING_COUNT) {
+    return new TooManyUtxosWarning("families.canton.tooManyUtxos.warning");
+  }
+
+  return null;
+}
+
+export async function validateTopology(account: CantonAccount): Promise<Error | null> {
+  const publicKey = account.cantonResources?.publicKey;
+  if (!publicKey) {
+    return null;
+  }
+
+  try {
+    const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
+      account.currency,
+      publicKey,
+    );
+
+    if (!isTopologyChangeRequired) {
+      return null;
     }
+
+    return new TopologyChangeError("Topology change detected. Re-onboarding required.");
+  } catch {
+    // If topology check fails, don't block the transaction
+    return null;
   }
 }

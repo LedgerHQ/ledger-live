@@ -34,7 +34,7 @@ import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
@@ -55,6 +55,7 @@ import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -790,21 +791,28 @@ export function renderDeviceNotOnboarded({
   );
 }
 
-export function renderConnectYourDevice({
-  t,
-  unresponsive,
-  isLocked = false,
-  device,
-  theme,
-  onSelectDeviceLink,
-  fullScreen = true,
-}: RawProps & {
-  unresponsive?: boolean | null;
-  isLocked?: boolean;
-  device: Device;
-  fullScreen?: boolean;
-  onSelectDeviceLink?: () => void;
-}) {
+function useGetRawProps(): Omit<RawProps, "colors"> {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "light" | "dark";
+
+  return {
+    t,
+    theme,
+  };
+}
+
+export const ConnectYourDevice: React.FC<
+  Readonly<{
+    unresponsive?: boolean | null;
+    isLocked?: boolean;
+    device: Device;
+    fullScreen?: boolean;
+    onSelectDeviceLink?: () => void;
+  }>
+> = ({ unresponsive, isLocked = false, device, onSelectDeviceLink, fullScreen = true }) => {
+  const { t, theme } = useGetRawProps();
+
   return (
     <Flex
       flexDirection="column"
@@ -845,7 +853,7 @@ export function renderConnectYourDevice({
       ) : null}
     </Flex>
   );
-}
+};
 
 export function renderLoading({
   t,

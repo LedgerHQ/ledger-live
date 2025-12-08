@@ -107,6 +107,14 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const operations = shouldSyncFromScratch
     ? enrichedNewOperations
     : mergeOps(oldOperations, enrichedNewOperations);
+  const delegation =
+    typeof mirrorAccount.staked_node_id === "number"
+      ? {
+          nodeId: mirrorAccount.staked_node_id,
+          delegated: accountBalance,
+          pendingReward: new BigNumber(mirrorAccount.pending_reward),
+        }
+      : null;
 
   // how ERC20 operations are handled:
   // - mirror node doesn't include "IN" erc20 token transactions
@@ -159,6 +167,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     hederaResources: {
       maxAutomaticTokenAssociations: mirrorAccount.max_automatic_token_associations,
       isAutoTokenAssociationEnabled: mirrorAccount.max_automatic_token_associations === -1,
+      delegation,
     },
   };
 };

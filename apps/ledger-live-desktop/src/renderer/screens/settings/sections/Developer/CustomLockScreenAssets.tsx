@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
 import { Flex, Theme, Text, Icons } from "@ledgerhq/react-ui";
@@ -30,8 +30,12 @@ const CustomLockScreenAssets = () => {
   return (
     <Box grow shrink p={3}>
       <Flex justifyContent="space-between" alignItems="center" margin={4}>
-        <Button color="palette.text.shade100" fontSize={12} onClick={onBack} variant="tertiary">
-          <Icons.ArrowLeft size="S" style={{ marginRight: 8 }} />
+        <Button
+          size="sm"
+          appearance="no-background"
+          onClick={onBack}
+          icon={() => <Icons.ArrowLeft size="S" />}
+        >
           {"Back"}
         </Button>
         <Text

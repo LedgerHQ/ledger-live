@@ -53,6 +53,8 @@ import { getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { padHexString } from "@ledgerhq/hw-app-eth";
 
 export { ExchangeType };
 
@@ -388,11 +390,13 @@ export const handlers = ({
         customFeeConfig,
         swapAppVersion,
         sponsored,
+        isEmbedded,
       } = params;
 
       const trackingParams = {
         provider: params.provider,
         exchangeType: params.exchangeType,
+        isEmbeddedSwap: isEmbedded,
       };
 
       tracking.startExchangeRequested(trackingParams);
@@ -470,6 +474,7 @@ export const handlers = ({
       const trackingCompleteParams = {
         provider: params.provider,
         exchangeType: params.exchangeType,
+        isEmbeddedSwap: isEmbedded,
       };
       tracking.completeExchangeRequested(trackingCompleteParams);
 
@@ -599,6 +604,9 @@ export const handlers = ({
               fromAmount,
               seedIdFrom: mainFromAccount.seedIdentifier,
               seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
+              data: (transaction as EvmTransaction).data
+                ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
+                : "0x",
             });
 
             reject(error);

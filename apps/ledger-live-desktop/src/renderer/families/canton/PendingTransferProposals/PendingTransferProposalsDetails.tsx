@@ -20,8 +20,9 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import { useTimeRemaining } from "./utils";
+import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import type { TransferProposalAction } from "./types";
 
 type PendingProposal = {
   contract_id: string;
@@ -33,14 +34,14 @@ type PendingProposal = {
   isExpired: boolean;
 };
 
-type Props = {
+export type PendingTransferProposalsDetailsProps = {
   onClose?: () => void;
   account: Account;
   contractId: string;
-  onOpenModal: (contractId: string, action: "accept" | "reject" | "withdraw") => void;
+  onOpenModal: (contractId: string, action: TransferProposalAction) => void;
 };
 
-const PendingTransferProposalsDetails: React.FC<Props> = ({
+const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsProps> = ({
   account,
   contractId,
   onClose,

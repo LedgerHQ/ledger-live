@@ -11,6 +11,7 @@ import { setupEnv } from "tests/utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
   {
@@ -68,10 +69,21 @@ for (const asset of assets) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(crypto.currency.id);
+
     test(
       `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${crypto.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -92,7 +104,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Market page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -113,7 +125,16 @@ for (const asset of assets) {
     test(
       `Entry Point - Account page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${crypto.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -151,6 +172,9 @@ for (const asset of assets) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
+          `@${crypto.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -214,10 +238,21 @@ test.describe("Sell flow - ", () => {
     ],
   });
 
+  const family = getFamilyByCurrencyId(crypto.currency.id);
+
   test(
     `Sell [${crypto.currency.name}] asset`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${crypto.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: sellAsset.xrayTicket,

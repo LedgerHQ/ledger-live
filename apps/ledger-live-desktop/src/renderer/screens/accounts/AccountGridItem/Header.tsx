@@ -70,7 +70,7 @@ const Header = ({
   return (
     <Box flow={4}>
       <Box horizontal ff="Inter|SemiBold" flow={3} alignItems="center">
-        <ParentCryptoCurrencyIcon currency={currency} />
+        <ParentCryptoCurrencyIcon currency={currency} bigger />
         <HeadText account={account} name={name} title={title} />
         <AccountSyncStatusIndicator
           accountId={(parentAccount && parentAccount.id) || account.id}

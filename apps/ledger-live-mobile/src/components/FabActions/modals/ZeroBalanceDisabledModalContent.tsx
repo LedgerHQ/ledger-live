@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
-import ParentCurrencyIcon from "../../ParentCurrencyIcon";
+import CurrencyIcon from "../../CurrencyIcon";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "../../wrappedUi/Button";
 import {
@@ -106,7 +106,7 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />}
+      Icon={<CurrencyIcon size={48} currency={actionCurrency as Currency} />}
     >
       <Flex mx={16} flexDirection={"row"}>
         <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>

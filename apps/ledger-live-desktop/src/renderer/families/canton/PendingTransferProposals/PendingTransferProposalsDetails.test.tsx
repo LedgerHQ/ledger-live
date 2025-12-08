@@ -1,7 +1,16 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "tests/testSetup";
-import PendingTransactionDetails from "./PendingTransferProposalsDetails";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
+import React from "react";
+import { act, fireEvent, render, screen, waitFor } from "tests/testSetup";
+import PendingTransactionDetails from "./PendingTransferProposalsDetails";
+
+jest.mock("react-i18next", () => ({
+  ...jest.requireActual("react-i18next"),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
+}));
 
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: jest.fn(() => ({
@@ -93,9 +102,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/amount/i)).toBeInTheDocument();
-      expect(screen.getByText(/from/i)).toBeInTheDocument();
-      expect(screen.getByText(/to/i)).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.amount")).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.from")).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.to")).toBeInTheDocument();
       expect(screen.getByTestId("address-sender-address")).toBeInTheDocument();
       expect(screen.getByTestId("address-receiver-address")).toBeInTheDocument();
     });
@@ -112,7 +121,7 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/amount/i)).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.amount")).toBeInTheDocument();
       expect(screen.getByTestId("address-other-sender")).toBeInTheDocument();
       expect(screen.getByTestId("address-receiver-address")).toBeInTheDocument();
     });
@@ -130,8 +139,7 @@ describe("PendingTransactionDetails", () => {
       );
 
       // Check for memo title and value separately
-      const memoElements = screen.getAllByText(/memo/i);
-      expect(memoElements.length).toBeGreaterThan(0);
+      expect(screen.getByText("families.canton.pendingTransactions.memo")).toBeInTheDocument();
       expect(screen.getByText("Test memo")).toBeInTheDocument();
     });
 
@@ -147,8 +155,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const memoElements = screen.queryAllByText(/memo/i);
-      expect(memoElements.length).toBe(0);
+      expect(
+        screen.queryByText("families.canton.pendingTransactions.memo"),
+      ).not.toBeInTheDocument();
     });
 
     it("should display contract ID", () => {
@@ -179,7 +188,7 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/expired/i)).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.expired")).toBeInTheDocument();
     });
 
     it("should update time remaining every second", async () => {
@@ -257,8 +266,8 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/accept/i)).toBeInTheDocument();
-      expect(screen.getByText(/reject/i)).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.accept")).toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.reject")).toBeInTheDocument();
     });
 
     it("should disable accept button for expired incoming transaction", () => {
@@ -273,7 +282,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const acceptButton = screen.getByText(/accept/i).closest("button");
+      const acceptButton = screen
+        .getByText("families.canton.pendingTransactions.accept")
+        .closest("button");
       expect(acceptButton).toBeDisabled();
     });
 
@@ -289,7 +300,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const acceptButton = screen.getByText(/accept/i).closest("button");
+      const acceptButton = screen
+        .getByText("families.canton.pendingTransactions.accept")
+        .closest("button");
       fireEvent.click(acceptButton!);
 
       await waitFor(() => {
@@ -309,7 +322,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const rejectButton = screen.getByText(/reject/i).closest("button");
+      const rejectButton = screen
+        .getByText("families.canton.pendingTransactions.reject")
+        .closest("button");
       fireEvent.click(rejectButton!);
 
       await waitFor(() => {
@@ -329,7 +344,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const acceptButton = screen.getByText(/accept/i).closest("button");
+      const acceptButton = screen
+        .getByText("families.canton.pendingTransactions.accept")
+        .closest("button");
       fireEvent.click(acceptButton!);
 
       await waitFor(() => {
@@ -351,9 +368,13 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/withdraw/i)).toBeInTheDocument();
-      expect(screen.queryByText(/accept/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/reject/i)).not.toBeInTheDocument();
+      expect(screen.getByText("families.canton.pendingTransactions.withdraw")).toBeInTheDocument();
+      expect(
+        screen.queryByText("families.canton.pendingTransactions.accept"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("families.canton.pendingTransactions.reject"),
+      ).not.toBeInTheDocument();
     });
 
     it("should call onOpenModal with withdraw action when withdraw button is clicked", async () => {
@@ -368,7 +389,9 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const withdrawButton = screen.getByText(/withdraw/i).closest("button");
+      const withdrawButton = screen
+        .getByText("families.canton.pendingTransactions.withdraw")
+        .closest("button");
       fireEvent.click(withdrawButton!);
 
       await waitFor(() => {
@@ -390,7 +413,7 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText(/notFound/i)).toBeInTheDocument();
+      expect(screen.getByText("common.notFound")).toBeInTheDocument();
     });
   });
 });

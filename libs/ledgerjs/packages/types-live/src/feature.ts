@@ -185,6 +185,7 @@ export type Features = CurrencyFeatures & {
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
+  recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
@@ -231,6 +232,8 @@ export type Features = CurrencyFeatures & {
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lwmLedgerSyncOptimisation: DefaultFeature;
+  lwdLedgerSyncOptimisation: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -240,8 +243,8 @@ export type Features = CurrencyFeatures & {
   lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
-  ldmkConnectApp: DefaultFeature;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -278,6 +281,8 @@ export type Features = CurrencyFeatures & {
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
+  llmNanoOnboardingFundWallet: DefaultFeature;
+  lldRebornABtest: DefaultFeature;
 };
 
 /**
@@ -482,6 +487,10 @@ export type Feature_ProtectServicesDesktop = Feature<{
     homeURI: string;
   };
   protectId: string;
+}>;
+
+export type Feature_RecoverUpsellPostOnboarding = Feature<{
+  deviceIds: DeviceModelId[];
 }>;
 
 export type Feature_DeviceInitialApps = Feature<{

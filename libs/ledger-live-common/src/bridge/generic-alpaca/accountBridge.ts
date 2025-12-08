@@ -1,4 +1,4 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { makeSync } from "../jsHelpers";
 import { genericGetAccountShape } from "./getAccountShape";
 import {
@@ -16,6 +16,7 @@ import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import type { AlpacaSigner } from "./signer/types";
+import { postSync } from "./postSync";
 
 export function getAlpacaAccountBridge(
   network: string,
@@ -24,7 +25,7 @@ export function getAlpacaAccountBridge(
 ): AccountBridge<any> {
   const signer = customSigner ?? getSigner(network);
   return {
-    sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind) }),
+    sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
     createTransaction: createTransaction,
     updateTransaction: updateTransaction<any>,

@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback } from "react";
-import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { Text, Input, Flex, Switch } from "@ledgerhq/react-ui";
+import { Text, Input, Flex } from "@ledgerhq/react-ui";
+import { Switch, Button } from "@ledgerhq/ldls-ui-react";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { InputRenderRightContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
 import Alert from "~/renderer/components/Alert";
@@ -61,7 +61,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     if (!inputValueDefaulted) return false;
     try {
       return JSON.parse(inputValueDefaulted)?.enabled;
-    } catch (e) {
+    } catch {
       return false;
     }
   }, [inputValueDefaulted]);
@@ -84,15 +84,15 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
             onChange={handleInputChange}
             renderRight={() => (
               <InputRenderRightContainer>
-                <Switch name="toggle" checked={isChecked} onChange={handleSwitchChange} />
+                <Switch name="toggle" selected={isChecked} onChange={handleSwitchChange} />
               </InputRenderRightContainer>
             )}
           />
         </Flex>
-        <Button variant="main" outline onClick={handleRestoreFeature}>
+        <Button appearance="transparent" onClick={handleRestoreFeature}>
           {t("settings.developer.featureFlagsRestore")}
         </Button>
-        <Button disabled={!inputValue} variant="main" onClick={handleOverrideFeature}>
+        <Button disabled={!inputValue} appearance="base" onClick={handleOverrideFeature}>
           {t("settings.developer.featureFlagsOverride")}
         </Button>
       </Flex>

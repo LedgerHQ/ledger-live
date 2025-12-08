@@ -6,7 +6,7 @@ import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 import Config from "react-native-config";
 
 const Wrapper = styled(Flex).attrs({
-  bg: "palette.background.default",
+  bg: "background.default",
   p: 4,
   mt: 4,
   borderWidth: 1,

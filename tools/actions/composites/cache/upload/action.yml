@@ -41,10 +41,22 @@ runs:
       shell: bash
       run: |
         touch /tmp/cache-path.txt
+        WORKSPACE="${{ github.workspace }}"
 
         echo "${{ inputs.path }}" | while IFS= read -r filePath; do
           if [ -d "$filePath" ] || [ -f "$filePath" ]; then
-              find $filePath -type f >> ${{ steps.create_tempfile.outputs.file-list }}
+              find "$filePath" -type f | while IFS= read -r foundPath; do
+                # Convert absolute paths to relative paths from workspace
+                # This preserves the directory hierarchy after the workspace
+                if [[ "$foundPath" == "$WORKSPACE"/* ]]; then
+                  # Strip workspace prefix, preserving subdirectory structure
+                  echo "${foundPath#$WORKSPACE/}" >> ${{ steps.create_tempfile.outputs.file-list }}
+                elif [[ "$foundPath" == "$WORKSPACE" ]]; then
+                  echo "." >> ${{ steps.create_tempfile.outputs.file-list }}
+                else
+                  echo "$foundPath" >> ${{ steps.create_tempfile.outputs.file-list }}
+                fi
+              done
           else
             echo "Warning: Path $filePath not found, skipping."
           fi
@@ -54,13 +66,13 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program zstdmt
+        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
 
     - name: Uploading to S3
       shell: bash

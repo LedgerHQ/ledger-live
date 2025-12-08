@@ -13,12 +13,53 @@ import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { isRemoteIos } from "../helpers/commonHelpers";
 import { addKnownSpeculos, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { promises as fs } from "fs";
+import path from "path";
+
 import { CLI } from "./cliUtils";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
 const proxyAddress = "localhost";
+
+type SpeculosId = { deviceId: string };
+export const SPECULOS_TRACKING_FILE = path.resolve("artifacts/speculos-instances.json");
+
+// Register in tracking file for cross-process cleanup
+async function writeSpeculosInFile(deviceId: string) {
+  try {
+    const instances = await readInstances();
+    instances.push({ deviceId });
+    await writeInstances(instances);
+  } catch (error) {
+    log.warn("E2E", `⚠️ Failed to register Speculos instance ${deviceId}:`, error);
+  }
+}
+
+async function removeSpeculosFromFile(deviceId: string) {
+  try {
+    const instances = await readInstances();
+    const filtered = instances.filter(inst => inst.deviceId !== deviceId);
+    if (filtered.length !== instances.length) await writeInstances(filtered);
+  } catch (error) {
+    log.warn("E2E", `⚠️ Failed to unregister Speculos instance ${deviceId}:`, error);
+  }
+}
+
+async function readInstances(): Promise<SpeculosId[]> {
+  try {
+    const content = await fs.readFile(SPECULOS_TRACKING_FILE, "utf-8");
+    return JSON.parse(content);
+  } catch {
+    return [];
+  }
+}
+
+async function writeInstances(instances: SpeculosId[]) {
+  await fs.mkdir(path.dirname(SPECULOS_TRACKING_FILE), { recursive: true });
+  await fs.writeFile(SPECULOS_TRACKING_FILE, JSON.stringify(instances, null, 2));
+}
 
 export async function launchSpeculos(appName: string) {
   // Ensure the portCounter stays within the valid port range
@@ -37,6 +78,8 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_API_PORT", device.port);
   speculosDevices.set(device.id, device.port);
   invariant(device.port, "[E2E Setup] Speculos port not null");
+
+  await writeSpeculosInFile(device.id);
   log.info("E2E Setup", "Device info before map set:", {
     port: device.port,
     deviceId: device.id,
@@ -115,6 +158,8 @@ export async function deleteSpeculos(deviceId?: string) {
 
   await stopSpeculos(deviceId);
   speculosDevices.delete(deviceId);
+  await removeSpeculosFromFile(deviceId);
+
   log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
   setEnv("SPECULOS_API_PORT", 0);
 

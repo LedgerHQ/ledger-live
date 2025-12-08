@@ -48,7 +48,7 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
       );
       const n = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
       if (n) n.goBack();
-    } catch (err) {
+    } catch {
       // eslint-disable-next-line no-console
       if (__DEV__) console.log("could not save credentials");
     }

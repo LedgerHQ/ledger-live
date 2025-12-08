@@ -9,7 +9,7 @@ import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live"
 import { getExplorerApi } from "../network/explorer";
 
 type AssetConfig =
-  | { type: "native" }
+  | { type: "native"; internal?: boolean }
   | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
 
 function extractStandard(op: LiveOperation): string {
@@ -59,6 +59,20 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   const value = computeValue(asset, op);
   const failed = computeFailed(asset, op);
 
+  const internalOpDetail =
+    asset.type === "native" && asset.internal ? { internal: asset.internal } : {};
+  const tokenOpDetail =
+    asset.type === "token"
+      ? {
+          ledgerOpType: op.type,
+          assetAmount: op.value.toFixed(0),
+          assetSenders: op.senders,
+          assetRecipients: op.recipients,
+          parentSenders: asset.parents[op.hash]?.senders ?? [],
+          parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+        }
+      : {};
+
   return {
     id: op.id,
     type,
@@ -78,16 +92,8 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
     },
     details: {
       sequence: op.transactionSequenceNumber,
-      ...(asset.type === "token"
-        ? {
-            ledgerOpType: op.type,
-            assetAmount: op.value.toFixed(0),
-            assetSenders: op.senders,
-            assetRecipients: op.recipients,
-            parentSenders: asset.parents[op.hash]?.senders ?? [],
-            parentRecipients: asset.parents[op.hash]?.recipients ?? [],
-          }
-        : {}),
+      ...internalOpDetail,
+      ...tokenOpDetail,
     },
   };
 }
@@ -98,7 +104,7 @@ export async function listOperations(
   pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } =
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
     await explorerApi.getLastOperations(
       currency,
       address,
@@ -107,11 +113,15 @@ export async function listOperations(
     );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
-    ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
-  const isTokenOperation = (coinOperation: LiveOperation): boolean =>
-    [...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
+    ![...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
+      .map(op => op.hash)
+      .includes(coinOperation.hash);
+  const isTokenOrInternalOperation = (coinOperation: LiveOperation): boolean =>
+    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
+      .map(op => op.hash)
+      .includes(coinOperation.hash);
   const parents = Object.fromEntries(
-    lastCoinOperations.filter(isTokenOperation).map(op => [op.hash, op]),
+    lastCoinOperations.filter(isTokenOrInternalOperation).map(op => [op.hash, op]),
   );
 
   const nativeOperations = lastCoinOperations
@@ -120,6 +130,16 @@ export async function listOperations(
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
   >(op => toOperation({ type: "token", owner: address, parents }, op));
+  const internalOperations = lastInternalOperations
+    .filter(op => op.hash in parents)
+    .map<Operation<MemoNotSupported>>(op =>
+      toOperation(
+        { type: "native", internal: true },
+        // Explorers don't provide block hash and fees for internal operations.
+        // We take this values from their parent.
+        { ...op, fee: parents[op.hash].fee, blockHash: parents[op.hash].blockHash },
+      ),
+    );
 
   const hasValidType = (operation: Operation): boolean =>
     [
@@ -136,6 +156,7 @@ export async function listOperations(
 
   const operations = nativeOperations
     .concat(tokenOperations)
+    .concat(internalOperations)
     .filter(hasValidType)
     .sort((a, b) =>
       pagination.order === "asc"

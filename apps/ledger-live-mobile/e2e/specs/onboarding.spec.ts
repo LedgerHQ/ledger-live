@@ -31,6 +31,7 @@ describe("Onboarding", () => {
     await app.onboarding.goesThroughRestorePhrase();
     await app.common.selectAddDevice();
     await app.common.addDeviceViaBluetooth();
+    await app.postOnboarding.passThroughPostOnboarding();
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.portfolio.expectPortfolioEmpty();
   });
@@ -48,6 +49,7 @@ describe("Onboarding", () => {
     } else {
       await app.onboarding.goesThroughRestorePhrase();
       await app.common.addDeviceViaUSB("nanoSP");
+      await app.postOnboarding.passThroughPostOnboarding();
       await app.portfolio.waitForPortfolioPageToLoad();
     }
   });
@@ -60,6 +62,7 @@ describe("Onboarding", () => {
     await app.onboarding.goesThroughCreateWallet();
     await app.common.selectAddDevice();
     await app.common.addDeviceViaBluetooth();
+    await app.postOnboarding.passThroughPostOnboarding();
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 });

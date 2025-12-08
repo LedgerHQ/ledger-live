@@ -45,6 +45,7 @@ setSupportedCurrencies([
   "cosmos",
   "algorand",
   "polkadot",
+  "assethub_polkadot",
   "bitcoin_testnet",
   "bitcoin_regtest",
   "ethereum_sepolia",

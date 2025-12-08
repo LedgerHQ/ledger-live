@@ -1,228 +1,325 @@
-import React, { useCallback, useMemo, useState, useEffect, useLayoutEffect } from "react";
-import { Flex, Text, Button, Checkbox, IconBox, Alert } from "@ledgerhq/native-ui";
-import LedgerIcon from "~/icons/Ledger";
-import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { CantonOnboardAccountParamList } from "../types";
-import { take, filter } from "rxjs/operators";
-import { ScreenName, NavigatorName } from "~/const";
-import SelectableAccountsList from "~/components/SelectableAccountsList";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type {
-  CantonCurrencyBridge,
-  CantonOnboardResult,
-  CantonOnboardProgress,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
+  CantonCurrencyBridge,
+  CantonOnboardProgress,
+  CantonOnboardResult,
 } from "@ledgerhq/coin-canton/types";
-import { urls } from "~/utils/urls";
-import { Subscription } from "rxjs";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { Alert, Button, Checkbox, Flex, IconBox, Text } from "@ledgerhq/native-ui";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { Linking, TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { Observable, Subscription } from "rxjs";
+import { filter, take } from "rxjs/operators";
 import styled from "styled-components/native";
-import { TouchableOpacity, Linking } from "react-native";
 import DeviceActionModal from "~/components/DeviceActionModal";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SelectableAccountsList from "~/components/SelectableAccountsList";
+import { NavigatorName, ScreenName } from "~/const";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
+import LedgerIcon from "~/icons/Ledger";
 import { accountsSelector } from "~/reducers/accounts";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { urls } from "~/utils/urls";
+import { restoreNavigationSnapshot } from "../../utils/navigationSnapshot";
+import { CantonOnboardAccountParamList } from "../types";
 
-const LinkTouchable = styled(TouchableOpacity).attrs({
-  activeOpacity: 0.5,
-})`
-  flex-direction: row;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const LearnMore = (): JSX.Element => {
-  const link = useLocalizedUrl(urls.canton.learnMore);
-  return (
-    <LinkTouchable onPress={() => Linking.openURL(link)}>
-      <Alert.UnderlinedText mr="5px">
-        <Trans i18nKey="common.learnMore" />
-      </Alert.UnderlinedText>
-    </LinkTouchable>
-  );
-};
-
-// Type guard function to distinguish between CantonOnboardProgress and CantonOnboardResult
 function isCantonOnboardResult(
   value: CantonOnboardProgress | CantonOnboardResult,
 ): value is CantonOnboardResult {
   return "partyId" in value;
 }
 
-// Type guard function to distinguish between CantonAuthorizeProgress and CantonAuthorizeResult
 function isCantonAuthorizeResult(
   value: CantonAuthorizeProgress | CantonAuthorizeResult,
 ): value is CantonAuthorizeResult {
   return "isApproved" in value;
 }
 
+const isCompleteOnboardResult = (value: CantonOnboardProgress | CantonOnboardResult): boolean =>
+  isCantonOnboardResult(value) && !!value.partyId;
+
+const isApprovedAuthorizeResult = (
+  value: CantonAuthorizeProgress | CantonAuthorizeResult,
+): boolean => isCantonAuthorizeResult(value) && value.isApproved;
+
 type Props = StackNavigatorProps<CantonOnboardAccountParamList, ScreenName.CantonOnboardAccount>;
 
 export default function Accept({ navigation, route }: Props) {
-  const accs = useMemo(() => route.params?.accountsToAdd ?? [], [route.params?.accountsToAdd]);
-  const currency = route.params?.currency;
+  const {
+    accountsToAdd: routeAccountsToAdd,
+    currency,
+    isReonboarding = false,
+    accountToReonboard,
+    restoreState,
+  } = route.params ?? {};
+
+  const accountsToAdd = useMemo(() => routeAccountsToAdd ?? [], [routeAccountsToAdd]);
+
   const device = useSelector(lastConnectedDeviceSelector);
+  const existingAccounts = useSelector(accountsSelector);
+  const dispatch = useDispatch();
+  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
+  const subscriptionRef = useRef<Subscription | null>(null);
+
   const [disabled, setDisabled] = useState(false);
   const [result, setResult] = useState<CantonOnboardResult | null>(null);
-  const existingAccounts = useSelector(accountsSelector);
   const [updated, setUpdated] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
 
-  // Get the bridge for the currency
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-  const bridge = getCurrencyBridge(cryptoCurrency) as CantonCurrencyBridge;
+  const bridge = useMemo(() => {
+    const currencyBridge = getCurrencyBridge(cryptoCurrency);
+    if (!currencyBridge) {
+      throw new Error(`Currency bridge not found for ${cryptoCurrency.id}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return currencyBridge as CantonCurrencyBridge;
+  }, [cryptoCurrency]);
+
+  const accountsToDisplay = useMemo(() => {
+    if (isReonboarding && accountToReonboard) {
+      return [accountToReonboard];
+    }
+    return accountsToAdd;
+  }, [isReonboarding, accountToReonboard, accountsToAdd]);
+
+  const accountToOnboard = useMemo(() => {
+    if (isReonboarding && accountToReonboard) {
+      return accountToReonboard;
+    }
+    return accountsToAdd.find(account => !account.used);
+  }, [isReonboarding, accountToReonboard, accountsToAdd]);
+
+  const selectedIds = useMemo(
+    () => accountsToDisplay.map(account => account.id),
+    [accountsToDisplay],
+  );
+
+  const deviceActionRequest = useMemo(() => ({ currency: cryptoCurrency }), [cryptoCurrency]);
+
+  const cleanupSubscription = useCallback(() => {
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe();
+      subscriptionRef.current = null;
+    }
+  }, []);
+
+  const handleSubscriptionError = useCallback((e: Error) => {
+    setError(e);
+    setDisabled(false);
+  }, []);
+
+  const dispatchAddAccounts = useCallback(
+    (scannedAccounts: typeof accountsToAdd, selectedIds: string[]) => {
+      dispatch(
+        addAccountsAction({
+          existingAccounts,
+          scannedAccounts,
+          selectedIds,
+          renamings: {},
+        }),
+      );
+    },
+    [dispatch, existingAccounts],
+  );
+
+  const navigateToSuccess = useCallback(() => {
+    navigation.getParent()?.navigate(NavigatorName.AddAccounts, {
+      screen: ScreenName.AddAccountsSuccess,
+      params: {
+        accountsToAdd,
+        currency: cryptoCurrency,
+      },
+    });
+  }, [navigation, accountsToAdd, cryptoCurrency]);
+
+  const createSubscription = useCallback(
+    <T,>(
+      observable: Observable<T>,
+      onSuccess: (value: T) => void,
+      onError?: (error: Error) => void,
+    ) => {
+      cleanupSubscription();
+      const errorHandler = onError || handleSubscriptionError;
+      const subscription = observable.subscribe({
+        next: onSuccess,
+        error: (error: Error) => {
+          errorHandler(error);
+        },
+      });
+      subscriptionRef.current = subscription;
+    },
+    [cleanupSubscription, handleSubscriptionError],
+  );
+
+  const handleReonboardingComplete = useCallback(
+    (onboardResult: CantonOnboardResult) => {
+      if (!accountToReonboard) return;
+
+      const updatedAccount = {
+        ...accountToReonboard,
+        ...onboardResult.account,
+        id: accountToReonboard.id,
+      };
+
+      setError(null);
+      dispatchAddAccounts([updatedAccount], [updatedAccount.id]);
+
+      if (restoreState) {
+        restoreNavigationSnapshot(navigation, restoreState);
+      } else {
+        navigation.goBack();
+      }
+    },
+    [accountToReonboard, dispatchAddAccounts, navigation, restoreState],
+  );
+
+  const handleOnboardingComplete = useCallback(
+    (onboardResult: CantonOnboardResult) => {
+      const newAccount = accountsToAdd.find(
+        a => a.freshAddressPath === onboardResult.account.freshAddressPath,
+      );
+      if (newAccount) {
+        newAccount.id = onboardResult.account.id;
+        newAccount.xpub = onboardResult.account.xpub;
+      }
+
+      setError(null);
+      dispatchAddAccounts(
+        accountsToAdd,
+        accountsToAdd.map(account => account.id),
+      );
+      navigateToSuccess();
+    },
+    [accountsToAdd, dispatchAddAccounts, navigateToSuccess],
+  );
+
+  const finishOnboarding = useCallback(
+    (onboardResult: CantonOnboardResult) => {
+      if (isReonboarding && accountToReonboard) {
+        handleReonboardingComplete(onboardResult);
+      } else {
+        handleOnboardingComplete(onboardResult);
+      }
+    },
+    [isReonboarding, accountToReonboard, handleReonboardingComplete, handleOnboardingComplete],
+  );
 
   const retryOnboard = useCallback(() => {
-    if (!device) return;
+    if (!device || !accountToOnboard) return;
 
     setError(null);
     setDisabled(true);
 
-    const notUsedAccount = accs.find(account => !account.used);
-    if (!notUsedAccount) return;
-    if (subscription) {
-      subscription.unsubscribe();
-    }
+    try {
+      const onboardObservable = bridge
+        .onboardAccount(cryptoCurrency, device.deviceId, accountToOnboard)
+        .pipe(filter(isCompleteOnboardResult), take(1));
 
-    const sub = bridge
-      .onboardAccount(cryptoCurrency, device.deviceId, notUsedAccount)
-      .pipe(
-        filter(value => isCantonOnboardResult(value) && !!value.partyId),
-        take(1),
-      )
-      .subscribe(
-        result => {
+      createSubscription(
+        onboardObservable,
+        (value: CantonOnboardProgress | CantonOnboardResult) => {
+          if (!isCantonOnboardResult(value)) return;
+
           setError(null);
           setDisabled(false);
-          if (isCantonOnboardResult(result)) {
-            setResult(result);
+          setResult(value);
+          if (skipCantonPreapprovalStep?.enabled) {
+            finishOnboarding(value);
           }
         },
-        (e: Error) => {
-          setError(e);
-          setDisabled(false);
-        },
       );
-    setSubscription(sub);
-  }, [cryptoCurrency, device, accs, bridge, subscription]);
-
-  const onPress = useCallback(() => {
-    if (!device || !result) return;
-
-    setDisabled(true);
-    if (subscription) {
-      subscription.unsubscribe();
+    } catch (error) {
+      handleSubscriptionError(error instanceof Error ? error : new Error(String(error)));
     }
-    const sub = bridge
-      .authorizePreapproval(cryptoCurrency, device.deviceId, result.account, result.partyId)
-      .pipe(
-        filter(value => isCantonAuthorizeResult(value) && value.isApproved),
-        take(1),
-      )
-      .subscribe(() => {
-        const newAccount = accs.find(a => a.freshAddressPath === result.account.freshAddressPath);
-        if (newAccount) {
-          newAccount.id = result.account.id;
-          newAccount.xpub = result.account.xpub;
-        }
-        setError(null);
-        dispatch(
-          addAccountsAction({
-            existingAccounts,
-            scannedAccounts: accs,
-            selectedIds: accs.map(account => account.id),
-            renamings: {},
-          }),
-        );
-        navigation.getParent()?.navigate(NavigatorName.AddAccounts, {
-          screen: ScreenName.AddAccountsSuccess,
-          params: {
-            accountsToAdd: accs,
-            currency: cryptoCurrency,
-          },
-        });
-      });
-    setSubscription(sub);
   }, [
     cryptoCurrency,
     device,
+    accountToOnboard,
     bridge,
+    skipCantonPreapprovalStep?.enabled,
+    finishOnboarding,
+    createSubscription,
+    handleSubscriptionError,
+  ]);
+
+  const handleConfirm = useCallback(() => {
+    // During reonboarding, if we don't have a result yet, start onboarding first
+    if (isReonboarding && !result) {
+      if (!device || !accountToOnboard) return;
+      retryOnboard();
+      return;
+    }
+
+    // Normal flow: authorize preapproval if we have a result
+    if (!device || !result) return;
+
+    setDisabled(true);
+
+    const authorizeObservable = bridge
+      .authorizePreapproval(cryptoCurrency, device.deviceId, result.account, result.partyId)
+      .pipe(filter(isApprovedAuthorizeResult), take(1));
+
+    createSubscription(authorizeObservable, () => {
+      finishOnboarding(result);
+    });
+  }, [
+    isReonboarding,
     result,
-    navigation,
-    dispatch,
-    existingAccounts,
-    accs,
-    subscription,
+    device,
+    accountToOnboard,
+    cryptoCurrency,
+    bridge,
+    finishOnboarding,
+    createSubscription,
+    retryOnboard,
   ]);
 
   const action = useAppDeviceAction();
 
   useEffect(() => {
-    if (!device) return;
-    const notUsedAccount = accs.find(account => !account.used);
-    if (!notUsedAccount) return;
+    if (!device || !accountToOnboard) {
+      return;
+    }
 
-    setDisabled(true);
-    const sub = bridge
-      .onboardAccount(cryptoCurrency, device.deviceId, notUsedAccount)
-      .pipe(
-        filter(value => isCantonOnboardResult(value) && !!value.partyId),
-        take(1),
-      )
-      .subscribe(
-        result => {
-          setError(null);
-          setDisabled(false);
-          if (isCantonOnboardResult(result)) {
-            setResult(result);
-          }
-        },
-        (e: Error) => {
-          setError(e);
-          setDisabled(false);
-        },
-      );
-    setSubscription(sub);
-    return () => sub.unsubscribe();
-  }, [cryptoCurrency, device, accs, bridge, currency, navigation]);
+    // During reonboarding, don't auto-start onboarding if device isn't ready
+    // Wait for user to connect device manually
+    if (isReonboarding) {
+      return cleanupSubscription;
+    }
+
+    retryOnboard();
+    return cleanupSubscription;
+  }, [device, accountToOnboard, retryOnboard, cleanupSubscription, isReonboarding]);
 
   useLayoutEffect(() => {
-    const notUsedAccounts = accs.filter(account => !account.used);
-    if (notUsedAccounts.length === 0 && !updated) {
+    // Skip this effect during reonboarding - reonboarding flow is handled in finishOnboarding
+    if (isReonboarding) return;
+
+    const unusedAccounts = accountsToAdd.filter(account => !account.used);
+    if (unusedAccounts.length === 0 && !updated) {
       setUpdated(true);
-      dispatch(
-        addAccountsAction({
-          existingAccounts,
-          scannedAccounts: accs,
-          selectedIds: accs.map(account => account.id),
-          renamings: {},
-        }),
+      dispatchAddAccounts(
+        accountsToAdd,
+        accountsToAdd.map(account => account.id),
       );
-      navigation.getParent()?.navigate(NavigatorName.AddAccounts, {
-        screen: ScreenName.AddAccountsSuccess,
-        params: {
-          accountsToAdd: accs,
-          currency: cryptoCurrency,
-        },
-      });
+      navigateToSuccess();
     }
-  }, [accs, navigation, cryptoCurrency, dispatch, existingAccounts, updated]);
+  }, [accountsToAdd, dispatchAddAccounts, updated, isReonboarding, navigateToSuccess]);
 
   if (disabled && device && cryptoCurrency) {
     return (
       <DeviceActionModal
         device={device}
         action={action}
-        request={{ currency: cryptoCurrency }}
+        request={deviceActionRequest}
         preventBackdropClick
         noCloseButton
       />
@@ -245,7 +342,9 @@ export default function Accept({ navigation, route }: Props) {
           color="neutral.c100"
           px={6}
         >
-          <Trans i18nKey="canton.onboard.title" />
+          <Trans
+            i18nKey={isReonboarding ? "canton.onboard.reonboard.title" : "canton.onboard.title"}
+          />
         </Text>
         <Text
           fontWeight="semiBold"
@@ -255,11 +354,13 @@ export default function Accept({ navigation, route }: Props) {
           px={6}
           mt={4}
         >
-          <Trans i18nKey="canton.onboard.account" />
+          <Trans
+            i18nKey={isReonboarding ? "canton.onboard.reonboard.account" : "canton.onboard.account"}
+          />
         </Text>
         <SelectableAccountsList
-          accounts={accs}
-          selectedIds={accs.map(account => account.id)}
+          accounts={accountsToDisplay}
+          selectedIds={selectedIds}
           isDisabled={false}
           header={null}
           index={0}
@@ -267,43 +368,100 @@ export default function Accept({ navigation, route }: Props) {
         />
 
         <Text fontWeight="semiBold" flexShrink={1} color="neutral.c70" numberOfLines={1} px={6}>
-          <Trans i18nKey="canton.onboard.authorize" />
+          <Trans
+            i18nKey={
+              isReonboarding ? "canton.onboard.reonboard.authorize" : "canton.onboard.authorize"
+            }
+          />
         </Text>
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={4}
-          py={4}
-          mx={6}
-          px={4}
-          backgroundColor="neutral.c30"
-          borderRadius={2}
-        >
-          <Flex flexDirection="row" alignItems="center">
-            <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
-            <Text>
-              <Trans i18nKey="canton.onboard.validator" />
-            </Text>
-          </Flex>
-          <Checkbox checked={true} />
-        </Flex>
-        {error && (
-          <Flex flexDirection="column" alignItems="stretch" mt={4} mx={6}>
-            <Alert title={t("canton.onboard.error429")} type="error">
-              <LearnMore />
-            </Alert>
-            <Button type="main" onPress={retryOnboard} disabled={disabled} mt={4}>
-              <Trans i18nKey="common.retry" />
-            </Button>
-          </Flex>
-        )}
+        <ValidatorSection />
+        {isReonboarding && <ReonboardingWarning />}
+        {error && <ErrorSection disabled={disabled} onRetry={retryOnboard} />}
       </Flex>
       <Flex px={6}>
-        <Button type={"main"} onPress={onPress} disabled={disabled || !result}>
+        <Button
+          type={"main"}
+          onPress={handleConfirm}
+          disabled={disabled || (!isReonboarding && !result)}
+        >
           <Trans i18nKey="common.confirm" />
         </Button>
       </Flex>
     </Flex>
   );
 }
+
+const ValidatorSection = () => (
+  <Flex
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="space-between"
+    mt={4}
+    py={4}
+    mx={6}
+    px={4}
+    backgroundColor="neutral.c30"
+    borderRadius={2}
+  >
+    <Flex flexDirection="row" alignItems="center">
+      <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
+      <Text ml={3}>
+        <Trans i18nKey="canton.onboard.validator" />
+      </Text>
+    </Flex>
+    <Checkbox checked={true} />
+  </Flex>
+);
+
+const ReonboardingWarning = () => {
+  const { t } = useTranslation();
+  return (
+    <Flex mx={6} mt={8}>
+      <Alert type="warning">
+        <Flex flexDirection="column" rowGap={4} flex={1} flexShrink={1}>
+          <Text variant="bodyLineHeight" fontWeight="semiBold" color="neutral.c100" flexShrink={1}>
+            {t("canton.onboard.reonboard.warning.title")}
+          </Text>
+          <Text variant="body" color="neutral.c100" flexShrink={1}>
+            {t("canton.onboard.reonboard.warning.description")}
+          </Text>
+        </Flex>
+      </Alert>
+    </Flex>
+  );
+};
+
+const ErrorSection = ({ disabled, onRetry }: { disabled: boolean; onRetry: () => void }) => {
+  const { t } = useTranslation();
+  return (
+    <Flex flexDirection="column" alignItems="stretch" mt={4} mx={6}>
+      <Alert title={t("canton.onboard.error429")} type="error">
+        <LearnMore />
+      </Alert>
+      <Button type="main" onPress={onRetry} disabled={disabled} mt={4}>
+        <Trans i18nKey="common.retry" />
+      </Button>
+    </Flex>
+  );
+};
+
+export const LearnMore = (): JSX.Element => {
+  const link = useLocalizedUrl(urls.canton.learnMore);
+
+  return (
+    <LinkTouchable onPress={() => Linking.openURL(link)}>
+      <Alert.UnderlinedText mr="5px">
+        <Trans i18nKey="common.learnMore" />
+      </Alert.UnderlinedText>
+    </LinkTouchable>
+  );
+};
+
+const LinkTouchable = styled(TouchableOpacity).attrs({
+  activeOpacity: 0.5,
+})`
+  flex-direction: row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+`;

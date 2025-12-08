@@ -13,6 +13,7 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { receive } from "./receive";
+import { getPreloadStrategy, hydrate, preload } from "../preload";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, buildIterateResult, postSync } from "./synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
@@ -29,8 +30,9 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
+    preload,
+    hydrate,
+    getPreloadStrategy,
     scanAccounts,
   };
 }

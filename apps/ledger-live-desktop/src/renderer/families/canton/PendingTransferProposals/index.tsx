@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
+import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Box from "~/renderer/components/Box";
@@ -22,10 +23,266 @@ import IconSend from "~/renderer/icons/Send";
 import IconCross from "~/renderer/icons/Cross";
 import DeviceAppModal from "./DeviceAppModal";
 import Tooltip from "~/renderer/components/Tooltip";
-import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
+import {
+  useCantonAcceptOrRejectOffer,
+  useTimeRemaining,
+  type TransferInstructionType,
+} from "@ledgerhq/live-common/families/canton/react";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useTimeRemaining } from "./utils";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { handleTopologyChangeError, TopologyChangeError } from "../hooks/topologyChangeError";
+import type { TransferProposalAction } from "./types";
 
+type Props = {
+  account: Account;
+};
+
+type Modal = {
+  isOpen: boolean;
+  action: TransferProposalAction;
+  contractId: string;
+};
+
+const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstructionType> = {
+  accept: "accept-transfer-instruction",
+  reject: "reject-transfer-instruction",
+  withdraw: "withdraw-transfer-instruction",
+};
+
+const PendingTransferProposals: React.FC<Props> = ({ account }) => {
+  const dispatch = useDispatch();
+  const device = useSelector(getCurrentDevice);
+  const unit = useAccountUnit(account);
+  const sync = useBridgeSync();
+  const [modal, setModal] = useState<Modal>({ isOpen: false, action: "accept", contractId: "" });
+
+  const cantonAccount = isCantonAccount(account) ? account : null;
+  const accountXpub = account.xpub ?? "";
+
+  const performTransferInstruction = useCantonAcceptOrRejectOffer({
+    currency: account.currency,
+    account,
+    partyId: accountXpub,
+  });
+
+  const { groupedIncoming, groupedOutgoing, incomingCount, outgoingCount } = useMemo(() => {
+    const pendingTransferProposals = cantonAccount?.cantonResources?.pendingTransferProposals;
+    if (!pendingTransferProposals || pendingTransferProposals.length === 0) {
+      return {
+        groupedIncoming: [],
+        groupedOutgoing: [],
+        incomingCount: 0,
+        outgoingCount: 0,
+      };
+    }
+
+    const { incoming, outgoing } = processTransferProposals(pendingTransferProposals, accountXpub);
+
+    return {
+      groupedIncoming: groupByDay(incoming),
+      groupedOutgoing: groupByDay(outgoing),
+      incomingCount: incoming.length,
+      outgoingCount: outgoing.length,
+    };
+  }, [cantonAccount, accountXpub]);
+
+  const handleOpenModal = useCallback((contractId: string, action: TransferProposalAction) => {
+    setModal({ isOpen: true, action, contractId });
+  }, []);
+
+  const handleModalConfirm = useCallback(
+    async (contractId: string, action: TransferProposalAction, deviceId: string) => {
+      try {
+        const instructionType = INSTRUCTION_TYPE_MAP[action];
+        await performTransferInstruction({ contractId, deviceId, reason: "" }, instructionType);
+
+        // Request account sync after action completes
+        sync({
+          type: "SYNC_ONE_ACCOUNT",
+          accountId: account.id,
+          priority: 10,
+          reason: "canton-pending-transaction-action",
+        });
+      } catch (error) {
+        if (error instanceof TopologyChangeError) {
+          // Topology changed - need to reonboard before continuing
+          setModal(prev => ({ ...prev, isOpen: false }));
+          handleTopologyChangeError(dispatch, {
+            currency: account.currency,
+            device,
+            accounts: [],
+            mainAccount: account,
+            navigationSnapshot: {
+              type: "transfer-proposal",
+              handler: handleOpenModal,
+              props: { action, contractId },
+            },
+          });
+          return;
+        }
+        throw error;
+      }
+    },
+    [performTransferInstruction, sync, account, dispatch, device, handleOpenModal],
+  );
+
+  const handleDeviceConfirm = useCallback(
+    async (deviceId: string) => {
+      await handleModalConfirm(modal.contractId, modal.action, deviceId);
+    },
+    [handleModalConfirm, modal.contractId, modal.action],
+  );
+
+  const handleRowClick = useCallback(
+    (contractId: string) => {
+      setDrawer(PendingTransferProposalsDetails, {
+        account,
+        contractId,
+        onOpenModal: handleOpenModal,
+      });
+    },
+    [account, handleOpenModal],
+  );
+
+  if (incomingCount === 0 && outgoingCount === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <DeviceAppModal
+        isOpen={modal.isOpen}
+        onConfirm={handleDeviceConfirm}
+        action={modal.action}
+        onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+        appName={cantonAccount?.currency.managerAppName ?? account.currency.managerAppName}
+      />
+      <ProposalsTable
+        proposals={groupedIncoming}
+        count={incomingCount}
+        titleKey="families.canton.pendingTransactions.incoming.title"
+        isIncomingTable={true}
+        unit={unit}
+        onRowClick={handleRowClick}
+        onOpenModal={handleOpenModal}
+      />
+      <ProposalsTable
+        proposals={groupedOutgoing}
+        count={outgoingCount}
+        titleKey="families.canton.pendingTransactions.outgoing.title"
+        isIncomingTable={false}
+        unit={unit}
+        onRowClick={handleRowClick}
+        onOpenModal={handleOpenModal}
+      />
+    </>
+  );
+};
+
+export default PendingTransferProposals;
+
+type RawTransferProposal = {
+  contract_id: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+  instrument_id: string;
+  memo: string;
+  expires_at_micros: number;
+};
+
+type ProcessedProposal = {
+  contract_id: string;
+  sender: string;
+  receiver: string;
+  amount: BigNumber;
+  instrument_id: string;
+  memo: string;
+  expires_at_micros: number;
+  expiresAtMicros: number;
+  isExpired: boolean;
+  isIncoming: boolean;
+  expiresAt: Date;
+  day: Date;
+};
+
+type GroupedProposals = Array<{
+  day: Date;
+  proposals: ProcessedProposal[];
+}>;
+
+const startOfDay = (date: Date): Date => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const processTransferProposals = (
+  proposals: RawTransferProposal[],
+  accountXpub: string,
+): { incoming: ProcessedProposal[]; outgoing: ProcessedProposal[] } => {
+  const currentTime = Date.now();
+  const incoming: ProcessedProposal[] = [];
+  const outgoing: ProcessedProposal[] = [];
+
+  for (let i = proposals.length - 1; i >= 0; i--) {
+    const proposal = proposals[i];
+    const expiresAtTimestamp = proposal.expires_at_micros / 1000;
+    const expiresAt = new Date(expiresAtTimestamp);
+    const isExpired = currentTime > expiresAtTimestamp;
+    const isIncoming = proposal.sender !== accountXpub;
+
+    const processed: ProcessedProposal = {
+      contract_id: proposal.contract_id,
+      sender: proposal.sender,
+      receiver: proposal.receiver,
+      amount: new BigNumber(proposal.amount),
+      instrument_id: proposal.instrument_id,
+      memo: proposal.memo,
+      expires_at_micros: proposal.expires_at_micros,
+      expiresAtMicros: proposal.expires_at_micros,
+      isExpired,
+      isIncoming,
+      expiresAt,
+      day: startOfDay(expiresAt),
+    };
+
+    if (isIncoming) {
+      incoming.push(processed);
+    } else {
+      outgoing.push(processed);
+    }
+  }
+
+  return { incoming, outgoing };
+};
+
+const groupByDay = (proposals: ProcessedProposal[]): GroupedProposals => {
+  if (proposals.length === 0) {
+    return [];
+  }
+
+  const grouped = new Map<number, ProcessedProposal[]>();
+
+  for (const proposal of proposals) {
+    const dayTimestamp = proposal.day.getTime();
+    const existing = grouped.get(dayTimestamp);
+    if (existing) {
+      existing.push(proposal);
+    } else {
+      grouped.set(dayTimestamp, [proposal]);
+    }
+  }
+
+  return Array.from(grouped.entries())
+    .sort(([timestampA], [timestampB]) => timestampB - timestampA)
+    .map(([dayTimestamp, proposals]) => ({
+      day: new Date(dayTimestamp),
+      proposals,
+    }));
+};
+
+// Child components
 const TableRow = styled(BaseTableRow)`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
 `;
@@ -49,13 +306,13 @@ const CountdownDisplay: React.FC<CountdownProps> = ({ expiresAt }) => {
 };
 
 type ExpiresInDisplayProps = {
-  expiresAt: Date;
+  expiresAtMicros: number;
   isExpired: boolean;
   t: (key: string) => string;
 };
 
-const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAt, isExpired, t }) => {
-  const timeRemaining = useTimeRemaining(expiresAt.getTime() * 1000, isExpired);
+const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAtMicros, isExpired, t }) => {
+  const timeRemaining = useTimeRemaining(expiresAtMicros, isExpired);
 
   if (isExpired) {
     return (
@@ -72,399 +329,283 @@ const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAt, isExpire
   );
 };
 
-type Props = {
-  account: Account;
+type ProposalRowProps = {
+  proposal: ProcessedProposal;
+  unit: ReturnType<typeof useAccountUnit>;
+  onRowClick: (contractId: string) => void;
+  onOpenModal: (contractId: string, action: TransferProposalAction) => void;
+  t: (key: string) => string;
 };
 
-type Action = "accept" | "reject" | "withdraw";
+const ProposalRow: React.FC<ProposalRowProps> = ({
+  proposal,
+  unit,
+  onRowClick,
+  onOpenModal,
+  t,
+}) => {
+  const {
+    isIncoming,
+    isExpired,
+    contract_id,
+    sender,
+    receiver,
+    amount,
+    expiresAt,
+    expiresAtMicros,
+  } = proposal;
 
-const PendingTransferProposals: React.FC<Props> = ({ account }) => {
-  const { t } = useTranslation();
-  const unit = useAccountUnit(account);
-  const sync = useBridgeSync();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<Action>("accept");
-  const [modalContractId, setModalContractId] = useState<string>("");
+  const addressToShow = isIncoming ? sender : receiver;
+  const amountValue = isIncoming ? amount : amount.negated();
 
-  const performTransferInstruction = useCantonAcceptOrRejectOffer({
-    currency: account.currency,
-    account,
-    partyId: account.xpub || "",
-  });
-
-  const cantonAccount = account as CantonAccount;
-  const pendingTransferProposals = useMemo(() => {
-    return cantonAccount?.cantonResources?.pendingTransferProposals || [];
-  }, [cantonAccount]);
-
-  const startOfDay = useCallback((date: Date) => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
-
-  const { groupedIncoming, groupedOutgoing } = useMemo(() => {
-    const now = Date.now();
-    const processed = pendingTransferProposals
-      .map(proposal => {
-        const isExpired = now > proposal.expires_at_micros / 1000;
-        const expiresAt = new Date(proposal.expires_at_micros / 1000);
-        const isIncoming = proposal.sender !== account.xpub;
-        return {
-          ...proposal,
-          isExpired,
-          isIncoming,
-          amount: new BigNumber(proposal.amount),
-          expiresAt,
-          day: startOfDay(expiresAt),
-        };
-      })
-      .reverse();
-
-    // Separate into incoming and outgoing
-    const incoming = processed.filter(p => p.isIncoming);
-    const outgoing = processed.filter(p => !p.isIncoming);
-
-    // Group by day helper function
-    const groupByDay = (proposals: typeof processed) => {
-      const grouped = new Map<string, typeof processed>();
-      proposals.forEach(proposal => {
-        const dayKey = proposal.day.toISOString();
-        if (!grouped.has(dayKey)) {
-          grouped.set(dayKey, []);
-        }
-        grouped.get(dayKey)!.push(proposal);
-      });
-
-      return Array.from(grouped.entries())
-        .map(([dayKey, proposals]) => ({
-          day: new Date(dayKey),
-          proposals,
-        }))
-        .sort((a, b) => b.day.getTime() - a.day.getTime());
-    };
-
-    return {
-      groupedIncoming: groupByDay(incoming),
-      groupedOutgoing: groupByDay(outgoing),
-    };
-  }, [pendingTransferProposals, startOfDay, account.xpub]);
-
-  const handleModalConfirm = useCallback(
-    async (contractId: string, action: "accept" | "reject" | "withdraw", deviceId: string) => {
-      if (action === "accept") {
-        await performTransferInstruction(
-          { contractId, deviceId, reason: "" },
-          "accept-transfer-instruction",
-        );
-      } else if (action === "reject") {
-        await performTransferInstruction(
-          { contractId, deviceId, reason: "" },
-          "reject-transfer-instruction",
-        );
-      } else if (action === "withdraw") {
-        await performTransferInstruction(
-          { contractId, deviceId, reason: "" },
-          "withdraw-transfer-instruction",
-        );
+  const handleAcceptClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (!isExpired) {
+        onOpenModal(contract_id, "accept");
       }
-      // Request account sync after action completes
-      sync({
-        type: "SYNC_ONE_ACCOUNT",
-        accountId: account.id,
-        priority: 10,
-        reason: "canton-pending-transaction-action",
-      });
     },
-    [performTransferInstruction, sync, account.id],
+    [contract_id, isExpired, onOpenModal],
   );
 
-  const handleOpenModal = useCallback(
-    (contractId: string, action: "accept" | "reject" | "withdraw") => {
-      setIsModalOpen(true);
-      setModalAction(action);
-      setModalContractId(contractId);
+  const handleRejectClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onOpenModal(contract_id, "reject");
     },
-    [],
+    [contract_id, onOpenModal],
   );
 
-  const handleRowClick = useCallback(
-    (contractId: string) => {
-      setDrawer(PendingTransferProposalsDetails, {
-        account,
-        contractId,
-        onOpenModal: handleOpenModal,
-      });
+  const handleWithdrawClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onOpenModal(contract_id, "withdraw");
     },
-    [account, handleOpenModal],
+    [contract_id, onOpenModal],
   );
-
-  const incomingCount = useMemo(
-    () => groupedIncoming.reduce((sum, group) => sum + group.proposals.length, 0),
-    [groupedIncoming],
-  );
-
-  const outgoingCount = useMemo(
-    () => groupedOutgoing.reduce((sum, group) => sum + group.proposals.length, 0),
-    [groupedOutgoing],
-  );
-
-  const renderTable = (
-    proposals: typeof groupedIncoming,
-    count: number,
-    titleKey: string,
-    isIncomingTable: boolean,
-  ) => {
-    if (count === 0) return null;
-
-    return (
-      <TableContainer mb={7}>
-        <TableHeader
-          title={t(titleKey, { count })}
-          titleProps={{
-            "data-e2e": `canton_PendingTransactions_${isIncomingTable ? "incoming" : "outgoing"}`,
-          }}
-        />
-        <TableHeaderRow>
-          <Box horizontal alignItems="center" flex={1} style={{ height: "28px" }} px={4}>
-            <Box px={3} horizontal={true} alignItems="center" style={{ minWidth: "120px" }}>
-              <Box horizontal={false}>
-                <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
-                  {t("families.canton.pendingTransactions.date")}
-                </Text>
-              </Box>
-            </Box>
-            <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
-              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
-                {isIncomingTable
-                  ? t("families.canton.pendingTransactions.from")
-                  : t("families.canton.pendingTransactions.to")}
-              </Text>
-            </Box>
-            <Box
-              px={4}
-              horizontal={false}
-              style={{
-                flex: "0 0 auto",
-                minWidth: "120px",
-              }}
-            >
-              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
-                {t("families.canton.pendingTransactions.expiresIn")}
-              </Text>
-            </Box>
-            <Box
-              px={4}
-              horizontal={false}
-              style={{
-                flex: "0 0 auto",
-                textAlign: "right",
-                justifyContent: "center",
-                minWidth: "150px",
-              }}
-            >
-              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
-                {t("families.canton.pendingTransactions.amount")}
-              </Text>
-            </Box>
-            <Box
-              px={3}
-              horizontal={true}
-              alignItems="center"
-              style={{
-                flex: "0 0 auto",
-                gap: "4px",
-                minWidth: "150px",
-              }}
-            >
-              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
-                {t("families.canton.pendingTransactions.action")}
-              </Text>
-            </Box>
-          </Box>
-        </TableHeaderRow>
-        {proposals.map(group => (
-          <Box key={group.day.toISOString()}>
-            <SectionTitle date={group.day} />
-            <Box p={0}>
-              {group.proposals.map(proposal => {
-                const isIncoming = proposal.isIncoming;
-                return (
-                  <TableRow
-                    key={proposal.contract_id}
-                    onClick={() => handleRowClick(proposal.contract_id)}
-                  >
-                    <Box horizontal alignItems="center" flex={1} style={{ height: "28px" }}>
-                      {/* Date Cell - similar to DateCell */}
-                      <Box
-                        px={3}
-                        horizontal={true}
-                        alignItems="center"
-                        style={{ minWidth: "120px" }}
-                      >
-                        <Box mr={2} alignItems="center" justifyContent="center">
-                          {proposal.isExpired ? (
-                            <Tooltip
-                              content={t("families.canton.pendingTransactions.status.expired")}
-                            >
-                              <Box color="alertRed">
-                                <IconCross size={16} />
-                              </Box>
-                            </Tooltip>
-                          ) : isIncoming ? (
-                            <Tooltip
-                              content={t("families.canton.pendingTransactions.status.incoming")}
-                            >
-                              <IconReceive size={16} />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip
-                              content={t("families.canton.pendingTransactions.status.outgoing")}
-                            >
-                              <IconSend size={16} />
-                            </Tooltip>
-                          )}
-                        </Box>
-                        <Box horizontal={false}>
-                          <CountdownDisplay expiresAt={proposal.expiresAt} />
-                        </Box>
-                      </Box>
-
-                      <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
-                        <Text fontSize={3} color="palette.text.shade80" ff="Inter">
-                          {isIncoming ? proposal.sender : proposal.receiver}
-                        </Text>
-                      </Box>
-
-                      <Box
-                        px={4}
-                        horizontal={true}
-                        alignItems="center"
-                        style={{
-                          flex: "0 0 auto",
-                          minWidth: "120px",
-                          height: "32px",
-                        }}
-                      >
-                        <ExpiresInDisplay
-                          expiresAt={proposal.expiresAt}
-                          isExpired={proposal.isExpired}
-                          t={t}
-                        />
-                      </Box>
-
-                      <Box
-                        px={4}
-                        horizontal={false}
-                        alignItems="flex-end"
-                        style={{
-                          flex: "0 0 auto",
-                          textAlign: "right",
-                          justifyContent: "center",
-                          height: "32px",
-                          minWidth: "150px",
-                        }}
-                      >
-                        <FormattedVal
-                          val={isIncoming ? proposal.amount : proposal.amount.negated()}
-                          unit={unit}
-                          showCode
-                          fontSize={4}
-                          alwaysShowSign
-                          color={isIncoming ? undefined : "palette.text.shade80"}
-                        />
-                      </Box>
-
-                      <Box
-                        px={3}
-                        horizontal={true}
-                        alignItems="center"
-                        style={{
-                          flex: "0 0 auto",
-                          gap: "4px",
-                          minWidth: "150px",
-                        }}
-                      >
-                        {isIncoming ? (
-                          <>
-                            <Button
-                              small
-                              primary
-                              disabled={proposal.isExpired}
-                              onClick={(e: React.MouseEvent) => {
-                                e.stopPropagation();
-                                if (!proposal.isExpired) {
-                                  handleOpenModal(proposal.contract_id, "accept");
-                                }
-                              }}
-                              style={{ minWidth: "auto", padding: "4px 8px" }}
-                            >
-                              {t("families.canton.pendingTransactions.accept")}
-                            </Button>
-                            <Button
-                              small
-                              outline
-                              onClick={(e: React.MouseEvent) => {
-                                e.stopPropagation();
-                                handleOpenModal(proposal.contract_id, "reject");
-                              }}
-                              style={{ minWidth: "auto", padding: "4px 8px" }}
-                            >
-                              {t("families.canton.pendingTransactions.reject")}
-                            </Button>
-                          </>
-                        ) : (
-                          <Button
-                            small
-                            outline
-                            onClick={(e: React.MouseEvent) => {
-                              e.stopPropagation();
-                              handleOpenModal(proposal.contract_id, "withdraw");
-                            }}
-                            style={{ minWidth: "auto", padding: "4px 8px" }}
-                          >
-                            {t("families.canton.pendingTransactions.withdraw")}
-                          </Button>
-                        )}
-                      </Box>
-                    </Box>
-                  </TableRow>
-                );
-              })}
-            </Box>
-          </Box>
-        ))}
-      </TableContainer>
-    );
-  };
-
-  if (incomingCount === 0 && outgoingCount === 0) {
-    return null;
-  }
 
   return (
-    <>
-      <DeviceAppModal
-        isOpen={isModalOpen}
-        onConfirm={async deviceId => handleModalConfirm(modalContractId, modalAction, deviceId)}
-        action={modalAction}
-        onClose={() => setIsModalOpen(false)}
-        appName={cantonAccount.currency.managerAppName}
-      />
-      {renderTable(
-        groupedIncoming,
-        incomingCount,
-        "families.canton.pendingTransactions.incoming.title",
-        true,
-      )}
-      {renderTable(
-        groupedOutgoing,
-        outgoingCount,
-        "families.canton.pendingTransactions.outgoing.title",
-        false,
-      )}
-    </>
+    <TableRow key={contract_id} onClick={() => onRowClick(contract_id)}>
+      <Box horizontal alignItems="center" flex={1} style={{ height: "28px" }}>
+        {/* Date Cell */}
+        <Box px={3} horizontal={true} alignItems="center" style={{ minWidth: "120px" }}>
+          <Box mr={2} alignItems="center" justifyContent="center">
+            {isExpired ? (
+              <Tooltip content={t("families.canton.pendingTransactions.status.expired")}>
+                <Box color="alertRed">
+                  <IconCross size={16} />
+                </Box>
+              </Tooltip>
+            ) : isIncoming ? (
+              <Tooltip content={t("families.canton.pendingTransactions.status.incoming")}>
+                <IconReceive size={16} />
+              </Tooltip>
+            ) : (
+              <Tooltip content={t("families.canton.pendingTransactions.status.outgoing")}>
+                <IconSend size={16} />
+              </Tooltip>
+            )}
+          </Box>
+          <Box horizontal={false}>
+            <CountdownDisplay expiresAt={expiresAt} />
+          </Box>
+        </Box>
+
+        <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
+          <Text fontSize={3} color="palette.text.shade80" ff="Inter">
+            {addressToShow}
+          </Text>
+        </Box>
+
+        <Box
+          px={4}
+          horizontal={true}
+          alignItems="center"
+          style={{
+            flex: "0 0 auto",
+            minWidth: "120px",
+            height: "32px",
+          }}
+        >
+          <ExpiresInDisplay expiresAtMicros={expiresAtMicros} isExpired={isExpired} t={t} />
+        </Box>
+
+        <Box
+          px={4}
+          horizontal={false}
+          alignItems="flex-end"
+          style={{
+            flex: "0 0 auto",
+            textAlign: "right",
+            justifyContent: "center",
+            height: "32px",
+            minWidth: "150px",
+          }}
+        >
+          <FormattedVal
+            val={amountValue}
+            unit={unit}
+            showCode
+            fontSize={4}
+            alwaysShowSign
+            color={isIncoming ? undefined : "palette.text.shade80"}
+          />
+        </Box>
+
+        <Box
+          px={3}
+          horizontal={true}
+          alignItems="center"
+          style={{
+            flex: "0 0 auto",
+            gap: "4px",
+            minWidth: "150px",
+          }}
+        >
+          {isIncoming ? (
+            <>
+              <Button
+                small
+                primary
+                disabled={isExpired}
+                onClick={handleAcceptClick}
+                style={{ minWidth: "auto", padding: "4px 8px" }}
+              >
+                {t("families.canton.pendingTransactions.accept")}
+              </Button>
+              <Button
+                small
+                outline
+                onClick={handleRejectClick}
+                style={{ minWidth: "auto", padding: "4px 8px" }}
+              >
+                {t("families.canton.pendingTransactions.reject")}
+              </Button>
+            </>
+          ) : (
+            <Button
+              small
+              outline
+              onClick={handleWithdrawClick}
+              style={{ minWidth: "auto", padding: "4px 8px" }}
+            >
+              {t("families.canton.pendingTransactions.withdraw")}
+            </Button>
+          )}
+        </Box>
+      </Box>
+    </TableRow>
   );
 };
 
-export default PendingTransferProposals;
+const ProposalRowMemo = memo(ProposalRow);
+
+type ProposalsTableProps = {
+  proposals: GroupedProposals;
+  count: number;
+  titleKey: string;
+  isIncomingTable: boolean;
+  unit: ReturnType<typeof useAccountUnit>;
+  onRowClick: (contractId: string) => void;
+  onOpenModal: (contractId: string, action: TransferProposalAction) => void;
+};
+
+const ProposalsTable: React.FC<ProposalsTableProps> = ({
+  proposals,
+  count,
+  titleKey,
+  isIncomingTable,
+  unit,
+  onRowClick,
+  onOpenModal,
+}) => {
+  const { t } = useTranslation();
+
+  if (count === 0) return null;
+
+  return (
+    <TableContainer mb={7}>
+      <TableHeader
+        title={t(titleKey, { count })}
+        titleProps={{
+          "data-e2e": `canton_PendingTransactions_${isIncomingTable ? "incoming" : "outgoing"}`,
+        }}
+      />
+      <TableHeaderRow>
+        <Box horizontal alignItems="center" flex={1} style={{ height: "28px" }} px={4}>
+          <Box px={3} horizontal={true} alignItems="center" style={{ minWidth: "120px" }}>
+            <Box horizontal={false}>
+              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+                {t("families.canton.pendingTransactions.date")}
+              </Text>
+            </Box>
+          </Box>
+          <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
+            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+              {isIncomingTable
+                ? t("families.canton.pendingTransactions.from")
+                : t("families.canton.pendingTransactions.to")}
+            </Text>
+          </Box>
+          <Box
+            px={4}
+            horizontal={false}
+            style={{
+              flex: "0 0 auto",
+              minWidth: "120px",
+            }}
+          >
+            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+              {t("families.canton.pendingTransactions.expiresIn")}
+            </Text>
+          </Box>
+          <Box
+            px={4}
+            horizontal={false}
+            style={{
+              flex: "0 0 auto",
+              textAlign: "right",
+              justifyContent: "center",
+              minWidth: "150px",
+            }}
+          >
+            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+              {t("families.canton.pendingTransactions.amount")}
+            </Text>
+          </Box>
+          <Box
+            px={3}
+            horizontal={true}
+            alignItems="center"
+            style={{
+              flex: "0 0 auto",
+              gap: "4px",
+              minWidth: "150px",
+            }}
+          >
+            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+              {t("families.canton.pendingTransactions.action")}
+            </Text>
+          </Box>
+        </Box>
+      </TableHeaderRow>
+      {proposals.map(group => (
+        <Box key={group.day.getTime()}>
+          <SectionTitle date={group.day} />
+          <Box p={0}>
+            {group.proposals.map(proposal => (
+              <ProposalRowMemo
+                key={proposal.contract_id}
+                proposal={proposal}
+                unit={unit}
+                onRowClick={onRowClick}
+                onOpenModal={onOpenModal}
+                t={t}
+              />
+            ))}
+          </Box>
+        </Box>
+      ))}
+    </TableContainer>
+  );
+};
