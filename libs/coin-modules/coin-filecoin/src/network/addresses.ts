@@ -29,14 +29,14 @@ export const validateAddress = (input: string): ValidateAddressResult => {
   try {
     const parsedAddress = fromString(input);
     return { isValid: true, parsedAddress };
-  } catch (error) {
+  } catch {
     log("debug", `[validateAddress] fromString invalid address`);
   }
 
   try {
     const parsedAddress = fromEthAddress(input, "mainnet");
     return { isValid: true, parsedAddress };
-  } catch (error) {
+  } catch {
     log("debug", `[validateAddress] fromEthAddress invalid address`);
   }
 

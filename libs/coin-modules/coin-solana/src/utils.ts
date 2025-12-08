@@ -178,7 +178,7 @@ export function swap(arr: any[], i: number, j: number) {
 }
 
 export type Functions<T> = keyof {
-  /* eslint-disable-next-line @typescript-eslint/ban-types*/
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
 

@@ -49,6 +49,7 @@ module.exports = {
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   plugins: ["react", "react-hooks"],
   extends: [
     "plugin:react/recommended",
@@ -84,9 +85,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
     "react/jsx-filename-extension": "off",
     "space-before-function-paren": "off",
-    "@typescript-eslint/ban-types": "off", // FIXME make an error later
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-use-before-define": "off", // FIXME make an error later
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
 
     // Ignore live-common for the moment because this rule does not work with subpath exports

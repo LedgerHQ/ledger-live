@@ -45,7 +45,7 @@ const Wrapper: React.ComponentType<React.PropsWithChildren<unknown>> = forwardRe
       } else {
         return <span ref={ref}>{props.children}</span>;
       }
-    } catch (e) {
+    } catch {
       return childrenCount < 1 ? null : <span ref={ref}>{props.children}</span>;
     }
   },

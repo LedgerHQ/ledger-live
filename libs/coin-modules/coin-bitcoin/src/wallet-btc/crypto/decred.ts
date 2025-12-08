@@ -56,7 +56,7 @@ class Decred extends Base {
     }
     try {
       Decred.bs58check.decode(address, Decred._blake256x2);
-    } catch (error) {
+    } catch {
       return false;
     }
     return true;

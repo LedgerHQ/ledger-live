@@ -361,7 +361,7 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   try {
     const data = await fetch(`/v1/accounts/${addr}`);
     return data.data;
-  } catch (e) {
+  } catch {
     return [];
   }
 }
@@ -629,7 +629,7 @@ export const fetchTronContract = async (addr: string): Promise<Record<string, an
       value: decode58Check(addr),
     });
     return Object.keys(data).length !== 0 ? data : undefined;
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };
@@ -783,7 +783,7 @@ export const getUnwithdrawnReward = async (addr: string): Promise<BigNumber> => 
       `/wallet/getReward?address=${encodeURIComponent(decode58Check(addr))}`,
     );
     return new BigNumber(reward);
-  } catch (e) {
+  } catch {
     return Promise.resolve(new BigNumber(0));
   }
 };

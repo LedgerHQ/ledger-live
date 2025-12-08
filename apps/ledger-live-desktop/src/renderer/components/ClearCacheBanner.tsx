@@ -18,7 +18,7 @@ export default function ClearCacheBanner() {
       setIsLoading(true);
       softReset();
       dispatch(setShowClearCacheBanner(false));
-    } catch (err) {
+    } catch {
       setIsLoading(false);
     }
   }, [dispatch, softReset]);

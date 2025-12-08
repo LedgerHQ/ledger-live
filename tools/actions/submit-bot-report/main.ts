@@ -53,7 +53,7 @@ async function main() {
       })
         .then(handleErrors)
         .then(r => r.json());
-    } catch (e) {
+    } catch {
       console.error("Couldn't send the full report. fallbacking on the lighter version");
 
       const reportBodyP = fs.promises.readFile(

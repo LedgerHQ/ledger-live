@@ -84,7 +84,7 @@ export const FirebaseRemoteConfigProvider = ({
           storageBucket = envVars["FIREBASE_STORAGE_BUCKET"];
           messagingSenderId = envVars["FIREBASE_MESSAGING_SENDER_ID"];
           appId = envVars["FIREBASE_APP_ID"];
-        } catch (error) {
+        } catch {
           apiKey = undefined;
         }
 
@@ -126,7 +126,7 @@ export const FirebaseRemoteConfigProvider = ({
     const fetchAndActivateConfig = async () => {
       try {
         await warnOnConfigMismatch();
-      } catch (error) {
+      } catch {
         // ignore the config check if any error occurs because it's not critical
       }
       try {

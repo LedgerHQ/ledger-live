@@ -161,7 +161,7 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
         return false;
       }
     }
-  } catch (error) {
+  } catch {
     return false;
   }
   return true;
@@ -303,7 +303,7 @@ export function getMemoFromTx(tx: APITransaction): string | undefined {
         memo = parsedValue.msg.join(", ");
       }
       // eslint-disable-next-line no-empty
-    } catch (e) {}
+    } catch {}
   }
   return memo;
 }

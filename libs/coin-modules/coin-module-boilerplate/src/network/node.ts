@@ -35,7 +35,7 @@ export const getNextSequence = async (address: string): Promise<number> => {
       method: "GET",
     });
     return data.sequence;
-  } catch (e) {
+  } catch {
     return 0;
   }
 };

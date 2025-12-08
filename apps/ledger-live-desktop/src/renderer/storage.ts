@@ -219,7 +219,7 @@ export const loadLSS = async (): Promise<SatStackConfig | undefined | null> => {
     const config = parseSatStackConfig(satStackConfigRaw);
     setEnvOnAllThreads("SATSTACK", true);
     return config;
-  } catch (e) {
+  } catch {
     // For instance file no longer exists
     setEnvOnAllThreads("SATSTACK", false);
   }

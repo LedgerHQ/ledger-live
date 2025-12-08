@@ -22,7 +22,7 @@ type Props = {
 };
 
 type ErrorListProps = {
-  translation: Object;
+  translation: object;
 };
 
 function ErrorList({ translation }: ErrorListProps) {

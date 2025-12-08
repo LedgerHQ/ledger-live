@@ -50,7 +50,7 @@ async function startServer() {
 
         console.log(`Artifact ${artifactId} streamed successfully`);
         return (item?.Body as Readable)?.pipe(res);
-      } catch (err) {
+      } catch {
         console.log(`Artifact ${artifactId} not found.`);
         return res.status(404).send("Not found");
       }
@@ -84,7 +84,7 @@ async function startServer() {
         });
         await upload.done();
         return res.end();
-      } catch (error) {
+      } catch {
         return res.status(500).end();
       }
     }),

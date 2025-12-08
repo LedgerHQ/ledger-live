@@ -28,7 +28,7 @@ function serialize(value?: number) {
 function deserialize(value: string) {
   try {
     return parseFloat(value);
-  } catch (error) {
+  } catch {
     return undefined;
   }
 }
