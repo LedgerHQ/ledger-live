@@ -74,6 +74,7 @@ export type CantonResources = {
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
   publicKey?: string;
+  xpub?: string;
 };
 export type CantonResourcesRaw = {
   instrumentUtxoCounts: Record<string, number>;

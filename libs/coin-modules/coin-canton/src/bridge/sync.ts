@@ -114,17 +114,12 @@ export function makeGetAccountShape(
   return async info => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
 
-    let xpubOrAddress = initialAccount?.xpub || "";
+    let xpubOrAddress = (initialAccount?.xpub || initialAccount?.cantonResources?.xpub) ?? "";
     let publicKey: string | undefined = initialAccount?.cantonResources?.publicKey;
 
     if (!xpubOrAddress && !publicKey) {
-      if (!info.deviceId) {
-        throw new Error(
-          "Cannot sync: deviceId required when account data (xpub/publicKey) is missing",
-        );
-      }
       const getAddress = resolver(signerContext);
-      const addressResult = await getAddress(info.deviceId, {
+      const addressResult = await getAddress(info.deviceId ?? "", {
         path: derivationPath,
         currency: currency,
         derivationMode: derivationMode,
@@ -187,6 +182,7 @@ export function makeGetAccountShape(
       instrumentUtxoCounts,
       pendingTransferProposals,
       ...(publicKey && { publicKey }),
+      xpub: xpubOrAddress,
     };
 
     const used = !isCantonAccountEmpty({
