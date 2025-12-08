@@ -1,18 +1,31 @@
 import React, { useCallback } from "react";
 import { VirtualList } from "@ledgerhq/react-ui/pre-ldls";
-import { Network, NetworkListItem } from "../NetworkListItem";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { NetworkListItem } from "../NetworkListItem";
+
+type NetworkWithUI = CryptoOrTokenCurrency & {
+  description?: string;
+  rightElement?: React.ReactNode;
+};
 
 type NetworkVirtualListProps = {
-  networks: Network[];
+  networks: NetworkWithUI[];
   onClick: (networkId: string) => void;
 };
 
 export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProps) => {
   const renderNetworkItem = useCallback(
-    (network: Network) => {
+    (network: NetworkWithUI) => {
       const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrency.id;
 
-      return <NetworkListItem {...network} onClick={() => onClick(networkId)} />;
+      return (
+        <NetworkListItem
+          currency={network}
+          description={network.description}
+          rightElement={network.rightElement}
+          onClick={() => onClick(networkId)}
+        />
+      );
     },
     [onClick],
   );
