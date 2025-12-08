@@ -3,7 +3,7 @@ import "crypto";
 import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
-import { Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
@@ -369,6 +369,9 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
+  const initialUrl = await Linking.getInitialURL();
+  const isDeeplinkSession = !!initialUrl;
+
   if (created && ANALYTICS_LOGS) {
     console.log("analytics:identify", user.id);
   }
@@ -391,7 +394,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     }
     await updateIdentify();
   }
-  await track("Start");
+  await track("Start", { isDeeplinkSession });
 
   return segmentClient;
 };
