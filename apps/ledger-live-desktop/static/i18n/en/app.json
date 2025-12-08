@@ -7255,6 +7255,10 @@
       "error": {
         "title": "An error occurred while broadcasting the transaction"
       }
+    },
+    "delegation": {
+      "totalStake": "Total Stake",
+      "commission": "Commission"
     }
   },
   "hedera": {
