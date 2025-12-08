@@ -928,6 +928,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
   },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "http://localhost:8888", // FIXME TODO we don't know yet the actual endpoint
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,

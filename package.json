@@ -130,6 +130,7 @@
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
+    "identities": "pnpm --filter identities",
     "lkrp": "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",

@@ -1,0 +1,16 @@
+{
+  "libs/identities/src/ids/DeviceId.ts": {
+    "exportDeviceIdForPushDevicesService": ["libs/identities/src/api/api.ts"],
+    "exportDeviceIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+  },
+  "libs/identities/src/ids/UserId.ts": {
+    "exportUserIdForPushDevicesService": ["libs/identities/src/api/api.ts"],
+    "exportUserIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+  },
+  "libs/identities/src/ids/DatadogId.ts": {
+    "exportDatadogIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+  },
+  "libs/identities/src/store/persistence.ts": {
+    "exportIdentitiesForPersistence": []
+  }
+}
