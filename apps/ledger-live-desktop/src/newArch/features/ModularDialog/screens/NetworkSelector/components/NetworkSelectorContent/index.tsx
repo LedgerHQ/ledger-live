@@ -11,6 +11,7 @@ import { balanceItem } from "../../../../components/Balance";
 import { useAccountData } from "../../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { NetworkVirtualList } from "../NetworkVirtualList";
+import { accountsApy } from "../../../../components/AccountApy";
 
 type NetworkSelectorContentProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -35,6 +36,7 @@ export const NetworkSelectorContent = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
+    accountsApy,
     useBalanceDeps,
     balanceItem,
   };

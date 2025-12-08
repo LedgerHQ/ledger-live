@@ -59,6 +59,7 @@ export type CreateAccountsCountAndApy = (args: {
 export type NetworkWithCount = {
   leftElement?: ReactNode;
   description?: string;
+  apy?: ReactNode;
   count: number;
 };
 
@@ -86,19 +87,20 @@ export type NetworkHook = (params: NetworkHookParams) => Array<{
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
   description?: string;
+  apy?: React.ReactNode;
 }>;
 
 export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
   accountsCount: CreateAccountsCount;
   accountsCountAndApy: CreateAccountsCountAndApy;
+  accountsApy: CreateAccountsCountAndApy;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: CreateBalanceItem;
 };
 
 export type NetworkLeftElementKind =
   | "numberOfAccounts"
-  | "numberOfAccountsText"
   | "numberOfAccountsAndApy"
   | "undefined";
 export type NetworkRightElementKind = "balance" | "undefined";
@@ -110,6 +112,7 @@ export type Network = {
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
   description?: string;
+  apy?: React.ReactNode;
 };
 
 export type CreateNetworkConfigurationHookProps = {

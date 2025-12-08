@@ -46,7 +46,6 @@ export const DRAWER_CONFIG_OPTIONS = {
     left: [
       { value: "undefined", label: "Undefined" },
       { value: "numberOfAccounts", label: "Number Of Accounts" },
-      { value: "numberOfAccountsText", label: "Number Of Accounts Text" },
       { value: "numberOfAccountsAndApy", label: "Number Of Accounts And APY" },
     ],
     right: [

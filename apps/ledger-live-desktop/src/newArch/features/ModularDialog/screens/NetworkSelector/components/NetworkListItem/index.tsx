@@ -7,6 +7,7 @@ export type NetworkListItemData = {
   currency: CryptoOrTokenCurrency;
   description?: string;
   rightElement?: React.ReactNode;
+  apy?: React.ReactNode;
 };
 
 type NetworkListItemProps = NetworkListItemData & {
@@ -17,6 +18,7 @@ export const NetworkListItem = ({
   currency,
   description,
   rightElement,
+  apy,
   onClick,
 }: NetworkListItemProps) => {
   return (
@@ -24,6 +26,7 @@ export const NetworkListItem = ({
       title={currency.name}
       leadingContent={<CryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />}
       description={description}
+      descriptionTag={apy ? <>{apy}</> : undefined}
       trailingContent={rightElement}
       onClick={onClick}
       data-testid={`network-item-name-${currency.name}`}

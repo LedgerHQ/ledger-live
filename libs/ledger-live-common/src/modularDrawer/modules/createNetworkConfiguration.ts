@@ -1,6 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
-import { createUseLeftAccountsTextModule } from "../hooks/useLeftAccountsText";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
 import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
 import {
@@ -27,11 +26,8 @@ const getLeftElement =
             params,
             NetworkConfigurationDeps.useAccountData,
             NetworkConfigurationDeps.accountsCountAndApy,
+            NetworkConfigurationDeps.accountsApy,
           );
-      case "numberOfAccountsText":
-        return createUseLeftAccountsTextModule({
-          useAccountData: NetworkConfigurationDeps.useAccountData,
-        });
       case "numberOfAccounts":
       default:
         return createUseLeftAccountsModule({
@@ -58,7 +54,12 @@ const getRightElement =
   };
 
 type NetworksWithComponents = CryptoOrTokenCurrency &
-  Network & { balanceData?: BalanceUI; count?: number };
+  Network & {
+    balanceData?: BalanceUI;
+    count?: number;
+    apy?: React.ReactNode;
+    description?: string;
+  };
 
 const sortNetworks = (
   result: NetworksWithComponents[],
@@ -67,7 +68,6 @@ const sortNetworks = (
 ) => {
   if (
     leftElement === "numberOfAccounts" ||
-    leftElement === "numberOfAccountsText" ||
     leftElement === "numberOfAccountsAndApy" ||
     leftElement === undefined // default
   ) {
@@ -93,7 +93,15 @@ export const createNetworkConfigurationHook =
 
     return (
       networks: CryptoOrTokenCurrency[],
-    ): Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }> => {
+    ): Array<
+      CryptoOrTokenCurrency &
+        Network & {
+          balanceData?: BalanceUI;
+          count?: number;
+          apy?: React.ReactNode;
+          description?: string;
+        }
+    > => {
       const hookResults = hooks.map(hook =>
         hook({
           networks,
