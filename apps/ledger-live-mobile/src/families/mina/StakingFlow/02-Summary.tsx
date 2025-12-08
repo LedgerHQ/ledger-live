@@ -1,26 +1,35 @@
-import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
+import { AccountLike } from "@ledgerhq/types-live";
+import { Text } from "@ledgerhq/native-ui";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import invariant from "invariant";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
-import { CompositeScreenProps } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import { Box, Text, Flex } from "@ledgerhq/native-ui";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { TrackScreen } from "~/analytics";
+import { rgba } from "../../../colors";
+import Button from "~/components/Button";
+import Circle from "~/components/Circle";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
-import Button from "~/components/Button";
-import SummaryRow from "~/screens/SendFunds/SummaryRow";
-import AccountCard from "~/components/AccountCard";
-import CopyLink from "../components/CopyLink";
-
-import { MinaStakingFlowParamList } from "./types";
+import DelegatingContainer from "../../tezos/DelegatingContainer";
+import { ValidatorImage } from "./ValidatorRow";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-
-const truncateAddress = (address: string, startLength = 10, endLength = 8): string => {
-  if (address.length <= startLength + endLength) return address;
-  return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
-};
+import { MinaStakingFlowParamList } from "./types";
+import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
+import Config from "react-native-config";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<MinaStakingFlowParamList, ScreenName.MinaStakingSummary>,
@@ -28,68 +37,155 @@ type Props = CompositeScreenProps<
 >;
 
 function StakingSummary({ navigation, route }: Props) {
-  const { t } = useTranslation();
-  const { account } = useSelector(accountScreenSelector(route));
-  const { transaction } = route.params;
+  const { validator } = route.params;
+  const { colors } = useTheme();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-  const onContinue = useCallback(() => {
-    if (!account) return;
+  invariant(validator, "validator must be defined");
+  invariant(account, "account must be defined");
+  invariant(account.type === "Account", "account type must be Account");
 
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
+      const bridge = getAccountBridge(account);
+      const tx = bridge.createTransaction(account);
+      return {
+        account,
+        parentAccount,
+        transaction: bridge.updateTransaction(tx, {
+          txType: "stake",
+          recipient: validator.address,
+        }),
+      };
+    },
+  );
+
+  useEffect(() => {
+    if (!transaction) return;
+    const bridge = getAccountBridge(account);
+    setTransaction(
+      bridge.updateTransaction(transaction, {
+        recipient: validator.address,
+      }),
+    );
+  }, [validator, account, setTransaction]);
+
+  invariant(transaction, "transaction must be defined");
+  invariant(transaction.family === "mina", "transaction mina");
+
+  const [rotateAnim] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    if (!Config.DETOX) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: -1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.delay(1000),
+        ]),
+      ).start();
+    }
+    return () => {
+      rotateAnim.setValue(0);
+    };
+  }, [rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "30deg"],
+  });
+
+  const onChangeDelegator = useCallback(() => {
+    rotateAnim.setValue(0);
+    navigation.navigate(ScreenName.MinaStakingValidator, route.params);
+  }, [rotateAnim, navigation, route.params]);
+
+  const currency = getAccountCurrency(account);
+  const color = getCurrencyColor(currency);
+
+  const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.MinaStakingSelectDevice, {
+      ...route.params,
       accountId: account.id,
-      parentId: account.type === "TokenAccount" ? account.parentId : undefined,
-      transaction,
+      parentId: parentAccount?.id,
+      transaction: transaction as MinaTransaction,
+      status,
     });
-  }, [account, transaction, navigation]);
+  }, [route.params, navigation, account.id, parentAccount?.id, transaction, status]);
 
-  if (!account || !transaction) return null;
-  const currency = getCryptoCurrencyById("mina");
-
-  const { fees } = transaction;
+  const hasErrors = Object.keys(status.errors).length > 0;
+  const error = Object.values(status.errors)[0];
 
   return (
-    <SafeAreaView style={styles.root} edges={["bottom"]}>
-      <Flex flex={1}>
-        <Box mb={6}>
-          <AccountCard account={account} />
-        </Box>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegation"
+        currency="mina"
+      />
 
-        <Box mb={4}>
-          <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mb={4}>
-            {t("delegation.summaryTitle")}
-          </Text>
+      <View style={styles.body}>
+        <DelegatingContainer
+          left={
+            <View style={styles.delegatingAccount}>
+              <Circle size={64} bg={rgba(color, 0.2)}>
+                <CurrencyIcon size={32} currency={currency} />
+              </Circle>
+              <AccountBalanceTag account={account} />
+            </View>
+          }
+          right={
+            <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
+              <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
+                <Animated.View
+                  style={{
+                    transform: [{ rotate }],
+                  }}
+                >
+                  <ValidatorImage name={validator?.name ?? validator?.address} size={64} />
+                </Animated.View>
+                <ChangeDelegator />
+              </Circle>
+            </Touchable>
+          }
+        />
 
-          <SummaryRow title={t("delegation.validatorAddress")}>
-            <CopyLink
-              string={transaction.recipient || ""}
-              replacement={t("mina.copyLinkCopied")}
-              style={styles.addressCopy}
-            >
-              <Text variant="body" color="primary.c80" fontWeight="medium">
-                {truncateAddress(transaction.recipient || "")}
-              </Text>
-            </CopyLink>
-          </SummaryRow>
-
-          <SummaryRow title={t("send.summary.fees")}>
-            <Text variant="body" color="neutral.c100">
-              {fees
-                ? `${formatCurrencyUnit(currency.units[0], fees.fee, { showCode: true })}`
-                : "0 MINA"}
-            </Text>
-          </SummaryRow>
-
-          <SummaryRow title={t("send.summary.amount")}>
-            <Text variant="body" color="neutral.c100">
-              {formatCurrencyUnit(currency.units[0], account.spendableBalance, { showCode: true })}
-            </Text>
-          </SummaryRow>
-        </Box>
-      </Flex>
-
-      <Box>
-        <Button type="primary" title={t("common.continue")} onPress={onContinue} />
-      </Box>
+        <View style={styles.summary}>
+          <SummaryWords
+            onChangeValidator={onChangeDelegator}
+            validatorName={validator?.name ?? validator?.address}
+            account={account}
+          />
+        </View>
+      </View>
+      <View style={styles.footer}>
+        <TranslatedError error={error} />
+        <Button
+          event="SummaryContinue"
+          type="primary"
+          title={<Trans i18nKey="common.continue" />}
+          containerStyle={styles.continueButton}
+          onPress={onContinue}
+          disabled={bridgePending || !!bridgeError || hasErrors}
+          pending={bridgePending}
+          testID="mina-summary-continue-button"
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -97,11 +193,192 @@ function StakingSummary({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
+    flexDirection: "column",
   },
-  addressCopy: {
-    alignSelf: "flex-start",
+  body: {
+    flex: 1,
+    paddingHorizontal: 16,
+    justifyContent: "space-around",
+  },
+  validatorCircle: {
+    borderWidth: 1,
+    borderStyle: "dashed",
+  },
+  changeDelegator: {
+    position: "absolute",
+    right: -4,
+    top: -4,
+  },
+  delegatingAccount: {
+    paddingTop: 26,
+  },
+  accountBalanceTag: {
+    marginTop: 8,
+    borderRadius: 4,
+    padding: 4,
+    alignItems: "center",
+  },
+  accountBalanceTagText: {
+    fontSize: 11,
+  },
+  summary: {
+    alignItems: "center",
+    marginVertical: 30,
+  },
+  summaryLine: {
+    marginVertical: 10,
+    flexDirection: "row",
+    height: 40,
+    alignItems: "center",
+  },
+  summaryWords: {
+    marginRight: 6,
+    fontSize: 18,
+  },
+  validatorSelection: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 4,
+    height: 40,
+  },
+  validatorSelectionText: {
+    paddingHorizontal: 8,
+    fontSize: 18,
+    maxWidth: 240,
+  },
+  validatorSelectionIcon: {
+    borderTopRightRadius: 4,
+    borderBottomRightRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 32,
+    height: 40,
+  },
+  footer: {
+    flexDirection: "column",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 16,
+  },
+  continueButton: {
+    alignSelf: "stretch",
+    marginTop: 12,
   },
 });
+
+function SummaryWords({
+  validatorName,
+  account,
+  onChangeValidator,
+}: {
+  validatorName: string;
+  account: AccountLike;
+  onChangeValidator: () => void;
+}) {
+  const unit = useAccountUnit(account);
+  const formattedAmount = formatCurrencyUnit(unit, account.spendableBalance, {
+    disableRounding: true,
+    alwaysShowSign: false,
+    showCode: true,
+  });
+  return (
+    <>
+      <Line>
+        <Words>
+          <Trans i18nKey="mina.delegation.iDelegate" />
+        </Words>
+        <Selectable readOnly name={formattedAmount} />
+      </Line>
+      <Line>
+        <Words>
+          <Trans i18nKey="delegation.to" />
+        </Words>
+        <Touchable onPress={onChangeValidator}>
+          <Selectable name={validatorName} testID="mina-delegation-summary-validator" />
+        </Touchable>
+      </Line>
+    </>
+  );
+}
+
+const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
+  const unit = useAccountUnit(account);
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.card }]}>
+      <Text
+        fontWeight="semiBold"
+        numberOfLines={1}
+        style={styles.accountBalanceTagText}
+        color="smoke"
+      >
+        <CurrencyUnitValue showCode unit={unit} value={account.balance} />
+      </Text>
+    </View>
+  );
+};
+
+const ChangeDelegator = () => {
+  const { colors } = useTheme();
+  return (
+    <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
+      <Icon size={13} name="edit-2" color={colors.background} />
+    </Circle>
+  );
+};
+
+const Line = ({ children }: { children: ReactNode }) => (
+  <View style={styles.summaryLine}>{children}</View>
+);
+
+const Words = ({
+  children,
+  highlighted,
+  style,
+}: {
+  children: ReactNode;
+  highlighted?: boolean;
+  style?: StyleProp<TextStyle>;
+}) => (
+  <Text
+    numberOfLines={1}
+    fontWeight={highlighted ? "bold" : "semiBold"}
+    style={[styles.summaryWords, style]}
+    color={highlighted ? "live" : "smoke"}
+  >
+    {children}
+  </Text>
+);
+
+const Selectable = ({
+  name,
+  readOnly,
+  testID,
+}: {
+  name: string;
+  readOnly?: boolean;
+  testID?: string;
+}) => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
+      <Text
+        fontWeight="bold"
+        numberOfLines={1}
+        style={styles.validatorSelectionText}
+        color="live"
+        testID={testID}
+      >
+        {name}
+      </Text>
+      {readOnly ? null : (
+        <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
+          <Icon size={16} name="edit-2" color={colors.background} />
+        </View>
+      )}
+    </View>
+  );
+};
 
 export default StakingSummary;
