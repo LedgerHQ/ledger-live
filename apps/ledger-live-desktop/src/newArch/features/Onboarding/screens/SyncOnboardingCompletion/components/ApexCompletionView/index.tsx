@@ -1,10 +1,10 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import onboardingSuccess from "../assets/apex/onboardingSuccess.mp4";
+import onboardingSuccess from "../../assets/apex/onboardingSuccess.mp4";
 
 export default function ApexCompletionView() {
   return (
-    <Flex height={"100vh"}>
+    <Flex height={"100vh"} data-testid="apex-completion-view">
       <video autoPlay loop height="100%">
         <source src={onboardingSuccess} type="video/mp4" />
       </video>
