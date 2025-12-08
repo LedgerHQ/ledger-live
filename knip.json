@@ -74,12 +74,14 @@
         "expo-modules-autolinking",
         "expo-modules-core",
         "prop-types",
+        "react-is",
         "react-native-fast-pbkdf2",
         "react-native-level-fs",
         "react-native-navigation-bar-color",
         "react-native-randombytes",
         "react-native-tcp-socket",
-        "react-native-udp"
+        "react-native-udp",
+        "stylis"
       ]
     },
     "./libs/env": {
@@ -134,7 +136,21 @@
         "src/pre-ldls/components/index.ts",
         "index.js"
       ],
+      "ignoreDependencies": ["stylis"],
       "ignore": [".storybook*/*", "storybook/constants/*"]
+    },
+    "./libs/ui/packages/icons": {
+      "entry": [
+        "src/react/index.ts",
+        "src/native/index.ts",
+        "src/reactLegacy/index.ts",
+        "src/nativeLegacy/index.ts"
+      ],
+      "ignoreDependencies": ["stylis"],
+      "ignore": ["scripts/**", "index.js"]
+    },
+    "./libs/ledgerjs/packages/react-native-hid": {
+      "entry": ["src/index.ts"]
     }
   }
 }

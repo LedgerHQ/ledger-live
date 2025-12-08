@@ -41,7 +41,7 @@ const IconContainer = styled.View<{
   iconButton?: boolean;
 }>`
   ${(p) =>
-    p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
+    p.iconButton ? null : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
 export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
@@ -78,7 +78,7 @@ export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
   position: relative;
   ${(p) => buttonSizeStyle[p.sizeVariant || "medium"]}
 
-  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : "")}
+  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : null)}
 `;
 
 const Container = styled.View<{

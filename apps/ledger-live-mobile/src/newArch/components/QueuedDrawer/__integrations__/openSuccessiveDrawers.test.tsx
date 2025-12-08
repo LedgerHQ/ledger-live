@@ -12,6 +12,25 @@ const maybeWaitForRemovalByTestId = async (testId: string) => {
 };
 
 describe("QueuedDrawer", () => {
+  // Warm-up: React Navigation's native stack + styled-components require initialization
+  // that can take 50+ seconds in CI on first render
+  beforeAll(async () => {
+    const { unmount } = render(<TestPages />);
+    await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button);
+    unmount();
+    jest.runAllTimers();
+  }, 120000);
+
+  beforeEach(() => {
+    jest.clearAllTimers();
+  });
+
+  afterEach(async () => {
+    await act(async () => {
+      jest.runAllTimers();
+    });
+  });
+
   test("open one drawer, then close it with close button", async () => {
     const { user } = render(<TestPages />);
     // open drawer
