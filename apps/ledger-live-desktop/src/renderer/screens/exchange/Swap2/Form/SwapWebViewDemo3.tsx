@@ -120,7 +120,6 @@ function simplifyFromPath(path: string): string {
   return path.replace(/^\/account.*/, "/account/{id}");
 }
 
-const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
@@ -130,6 +129,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
       palette: { type: themeType },
     },
   } = useTheme();
+  const SWAP_API_BASE = manifest.backendUrl ?? getEnv("SWAP_API_BASE");
   const walletState = useSelector(walletSelector);
   const dispatch = useDispatch();
   const redirectToHistory = useRedirectToSwapHistory();

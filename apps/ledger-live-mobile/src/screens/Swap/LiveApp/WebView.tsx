@@ -52,7 +52,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const { language } = useSettings();
     const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
     const countryLocale = getCountryLocale();
-    const SWAP_API_BASE = useEnv("SWAP_API_BASE");
+    const SWAP_API_BASE = manifest.backendUrl ?? useEnv("SWAP_API_BASE");
     const SWAP_USER_IP = useEnv("SWAP_USER_IP");
     const exportSettings = useSelector(exportSettingsSelector);
 

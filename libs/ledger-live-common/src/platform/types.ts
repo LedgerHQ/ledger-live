@@ -113,6 +113,7 @@ export type LiveAppManifest = {
   cacheBustingId?: number;
   nocache?: boolean;
   name: string;
+  backendUrl?: string;
   url: string | URL;
   params?: LiveAppManifestParams;
   dapp?: LiveAppManifestDapp;
