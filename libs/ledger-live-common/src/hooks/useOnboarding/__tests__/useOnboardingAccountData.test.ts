@@ -10,18 +10,13 @@ import {
 
 describe("useOnboardingAccountData", () => {
   const mockCurrency = {
-    id: "canton",
-    name: "Canton",
+    id: "canton_network",
+    name: "Canton Network",
     family: "canton",
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    units: [],
-    type: "CryptoCurrency",
   } as unknown as CryptoCurrency;
 
   const mockAccount1 = {
-    id: "account1",
+    id: "account-1",
     used: true,
     currency: mockCurrency,
     index: 0,
@@ -29,7 +24,7 @@ describe("useOnboardingAccountData", () => {
   } as unknown as Account;
 
   const mockAccount2 = {
-    id: "account2",
+    id: "account-2",
     used: false,
     currency: mockCurrency,
     index: 1,
@@ -88,7 +83,7 @@ describe("useOnboardingAccountData", () => {
 
   describe("resolveCreatableAccountName", () => {
     it("should return edited name when available", () => {
-      const editedNames = { account2: "My Custom Name" };
+      const editedNames = { "account-2": "My Custom Name" };
       const result = resolveCreatableAccountName(
         mockCurrency as CryptoCurrency,
         mockAccount2 as Account,
@@ -122,7 +117,7 @@ describe("useOnboardingAccountData", () => {
 
   describe("prepareAccountsForAdding", () => {
     const completedAccount = {
-      id: "completed1",
+      id: "account-completed",
       used: false,
       currency: mockCurrency,
       index: 2,
@@ -133,7 +128,7 @@ describe("useOnboardingAccountData", () => {
       const config = {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
-        editedNames: { account1: "Renamed Account" },
+        editedNames: { "account-1": "Renamed Account" },
         accountToReonboard: mockAccount1,
         isReonboarding: true,
         onboardingResult: {
@@ -151,7 +146,7 @@ describe("useOnboardingAccountData", () => {
       const config = {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
-        editedNames: { account1: "Renamed Account" },
+        editedNames: { "account-1": "Renamed Account" },
         accountToReonboard: mockAccount1,
         isReonboarding: true,
       };
@@ -159,7 +154,7 @@ describe("useOnboardingAccountData", () => {
       const result = prepareAccountsForAdding(config);
       // Should fall back to new onboarding flow
       expect(result.accounts).toEqual([mockAccount1]);
-      expect(result.renamings.account1).toBe("Renamed Account");
+      expect(result.renamings["account-1"]).toBe("Renamed Account");
     });
 
     it("should prepare accounts for new onboarding with completed account", () => {
@@ -167,7 +162,7 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1, mockAccount2],
         existingAccounts: [],
         editedNames: {
-          account1: "Importable Account",
+          "account-1": "Importable Account",
           tempId: "New Account Name",
         },
         accountToReonboard: undefined,
@@ -181,7 +176,7 @@ describe("useOnboardingAccountData", () => {
       expect(result.accounts).toHaveLength(2);
       expect(result.accounts).toContainEqual(mockAccount1);
       expect(result.accounts).toContainEqual(completedAccount);
-      expect(result.renamings.account1).toBe("Importable Account");
+      expect(result.renamings["account-1"]).toBe("Importable Account");
     });
 
     it("should handle temporary account ID names correctly", () => {
@@ -191,7 +186,7 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
         editedNames: {
-          account1: "Importable",
+          "account-1": "Importable",
           [tempId]: "Temporary Name",
         },
         accountToReonboard: undefined,
@@ -206,21 +201,21 @@ describe("useOnboardingAccountData", () => {
 
       const result = prepareAccountsForAdding(config);
       expect(result.renamings[finalAccountId]).toBe("Temporary Name");
-      expect(result.renamings.account1).toBe("Importable");
+      expect(result.renamings["account-1"]).toBe("Importable");
     });
 
     it("should prepare accounts without completed account", () => {
       const config = {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
-        editedNames: { account1: "Renamed" },
+        editedNames: { "account-1": "Renamed" },
         accountToReonboard: undefined,
         isReonboarding: false,
       };
 
       const result = prepareAccountsForAdding(config);
       expect(result.accounts).toEqual([mockAccount1]);
-      expect(result.renamings.account1).toBe("Renamed");
+      expect(result.renamings["account-1"]).toBe("Renamed");
     });
 
     it("should use default account names when editedNames is empty", () => {
@@ -234,7 +229,7 @@ describe("useOnboardingAccountData", () => {
 
       const result = prepareAccountsForAdding(config);
       expect(result.accounts).toEqual([mockAccount1]);
-      // Should use getDefaultAccountName which generates "Canton 1" (index 0 + 1)
+      // Should use getDefaultAccountName which generates "Canton Network 1" (index 0 + 1)
       expect(result.renamings[mockAccount1.id]).toBe(`${mockCurrency.name} 1`);
     });
   });

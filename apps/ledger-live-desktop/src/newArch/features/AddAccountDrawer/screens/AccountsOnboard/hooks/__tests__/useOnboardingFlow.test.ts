@@ -25,35 +25,23 @@ jest.mock("~/renderer/logger", () => ({
 
 describe("useOnboardingFlow", () => {
   const mockCurrency = {
-    id: "canton",
-    name: "Canton",
+    id: "canton_network",
     family: "canton",
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    units: [],
-    type: "CryptoCurrency",
   } as unknown as CryptoCurrency;
 
   const mockDevice: Device = {
-    deviceId: "test-device-id",
-    modelId: "nanoS" as Device["modelId"],
-    wired: false,
-  };
+    deviceId: "device-1",
+  } as unknown as Device;
 
   const mockCreatableAccount = {
-    id: "account1",
-    used: false,
+    id: "account-1",
     currency: mockCurrency,
-    index: 0,
     type: "Account" as const,
   } as unknown as Account;
 
   const mockCompletedAccount = {
-    id: "completed1",
-    used: false,
+    id: "account-completed",
     currency: mockCurrency,
-    index: 1,
     type: "Account" as const,
   } as unknown as Account;
 

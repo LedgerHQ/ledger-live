@@ -16,31 +16,21 @@ const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
 describe("useOnboardingFlow", () => {
   const mockCurrency = {
-    id: "canton",
-    name: "Canton",
+    id: "canton_network",
     family: "canton",
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    units: [],
-    type: "CryptoCurrency",
   } as unknown as CryptoCurrency;
 
-  const mockDeviceId = "test-device-id";
+  const mockDeviceId = "device-1";
 
   const mockCreatableAccount = {
-    id: "account1",
-    used: false,
+    id: "account-1",
     currency: mockCurrency,
-    index: 0,
     type: "Account" as const,
   } as unknown as Account;
 
   const mockCompletedAccount = {
-    id: "completed1",
-    used: false,
+    id: "account-completed",
     currency: mockCurrency,
-    index: 1,
     type: "Account" as const,
   } as unknown as Account;
 

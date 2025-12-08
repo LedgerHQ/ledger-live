@@ -32,7 +32,7 @@ const StepFinish = ({
           ? t("families.canton.addAccount.reonboard.successDescription", {
               count: accounts.length,
             })
-          : t("families.canton.addAccount.reonboard.successDescription", {
+          : t("addAccounts.successDescription", {
               count: accounts.length,
             })}
       </Text>

@@ -212,6 +212,8 @@ export function useScanAccounts({
     selectedOnboardingAccounts,
     filteredSelectedIds,
     scannedAccounts,
+    navigateToAccountsOnboard,
+    dispatch,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);

@@ -31,41 +31,13 @@ jest.mock("~/icons/Ledger", () => ({
 }));
 
 const mockCurrency = {
-  type: "CryptoCurrency",
   id: "canton_network",
-  ticker: "CANTON",
-  name: "Canton Network",
   family: "canton",
-  units: [],
-  signatureScheme: "ed25519",
-  color: "#000000",
-  managerAppName: "Canton",
-  coinType: 60,
-  scheme: "canton",
-  explorerViews: [],
 } as unknown as CryptoCurrency;
 
 const mockAccount = {
-  type: "Account",
+  type: "Account" as const,
   id: "account-1",
-  name: "Test Account",
-  seedIdentifier: "seed-1",
-  derivationMode: "",
-  index: 0,
-  freshAddress: "0x123",
-  freshAddressPath: "44'/0'/0'",
-  used: false,
-  balance: { toString: () => "0" } as any,
-  spendableBalance: { toString: () => "0" } as any,
-  operationsCount: 0,
-  operations: [],
-  pendingOperations: [],
-  balanceHistoryCache: {},
-  swapHistory: [],
-  lastSyncDate: new Date(),
-  creationDate: new Date(),
-  blockHeight: 0,
-  currency: mockCurrency,
 } as unknown as Account;
 
 describe("StepFinish", () => {
