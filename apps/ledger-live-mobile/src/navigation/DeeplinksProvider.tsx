@@ -734,7 +734,7 @@ export const DeeplinksProvider = ({
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate); // Is it the point DD considers the app loaded?
         logStartupEvent("Splash screen faded");
-        resolveStartupEvents();
+        resolveStartupEvents(true);
       }}
     >
       <NavigationContainer
