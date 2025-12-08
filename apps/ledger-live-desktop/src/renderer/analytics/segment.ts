@@ -314,7 +314,6 @@ export const startAnalytics = async (store: ReduxStore) => {
   storeInstance = store;
 
   const canBeTracked = trackingEnabledSelector(store.getState());
-  console.log("canBeTracked", canBeTracked);
   if (!canBeTracked) return;
 
   const analytics = getAnalytics();
