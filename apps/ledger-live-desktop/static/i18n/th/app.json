@@ -86,6 +86,7 @@
     "continue" : "ดำเนินการต่อ",
     "previous" : "ก่อนหน้านี้",
     "learnMore" : "เรียนรู้เพิ่มเติม",
+    "learnMoreWithEllipsis" : "เรียนรู้เพิ่มเติม...",
     "help" : "ช่วยเหลือ",
     "needHelp" : "ต้องการความช่วยเหลือหรือไม่?",
     "areYouSure" : "คุณแน่ใจหรือไม่?",
@@ -106,6 +107,7 @@
     "reset" : "รีเซ็ต",
     "retry" : "ลองอีกครั้ง",
     "range" : "ช่วง",
+    "start" : "เริ่ม",
     "stop" : "หยุด",
     "updateNow" : "อัปเดตตอนนี้",
     "close" : "ปิด",
@@ -122,9 +124,15 @@
     "featureFlags" : "Feature Flags",
     "ldmkEnabled" : "LDMK transport",
     "information" : "ข้อมูล",
+    "increase" : "เพิ่ม",
+    "max" : "สูงสุด",
+    "min" : "นาที",
+    "set" : "ตั้งค่า",
+    "follow" : "ติดตาม",
     "search" : "ค้นหา...",
     "searchWithoutEllipsis" : "ค้นหา",
     "manage" : "จัดการ",
+    "none" : "ไม่มี",
     "tryAgain" : "ลองอีกครั้ง",
     "lockScreen" : {
       "title" : "Welcome Back",
@@ -173,6 +181,9 @@
       "UNDELEGATE" : "Undelegate แล้ว",
       "APPROVE" : "อนุมัติแล้ว",
       "PRE_APPROVAL" : "การอนุมัติเบื้องต้น",
+      "TRANSFER_PROPOSAL" : "ข้อเสนอการโอน",
+      "TRANSFER_REJECTED" : "การโอนที่ปฏิเสธ",
+      "TRANSFER_WITHDRAWN" : "การโอนที่ยกเลิก",
       "VOTE" : "โหวตแล้ว",
       "FREEZE" : "ถูกระงับ",
       "UNFREEZE" : "ไม่ได้ถูกระงับ",
@@ -203,7 +214,10 @@
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
       "SENDING" : "กำลังส่ง",
       "BURN" : "เบิร์น",
-      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
+      "STAKE_NEURON" : "ทำการสเตคแล้ว",
+      "TOP_UP_NEURON" : "เติมแล้ว",
+      "CONTRACT_CALL" : "การเรียกใช้สัญญา"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -618,9 +632,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "ทดสอบ"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "ทดสอบ"
   },
   "postOnboardingDebugger" : {
@@ -5168,7 +5179,8 @@
           "pinCode" : "PIN",
           "recoveryPhrase" : "Recovery Phrase",
           "hideRecoveryPhrase" : "ซ่อน Recovery Phrase",
-          "pairNano" : "เชื่อมต่อ Nano"
+          "pairNano" : "เชื่อมต่อ Nano",
+          "secureYourCrypto" : "ปกป้องคริปโตของคุณ"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5472,29 @@
             "help" : {
               "help" : "ต้องการความช่วยเหลือ",
               "descr" : "ไม่แน่ใจว่าจะต้องทำอะไรบ้าง? รับความช่วยเหลือเพื่อดำเนินการขั้นตอนนี้ให้เสร็จสิ้น"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "ปกป้องคริปโตของคุณ",
+            "description" : "โอนคริปโตตัวแรกของคุณจาก Exchange หรือวอลเล็ตไปยังแอป Ledger Wallet ของคุณเพื่อความปลอดภัยสูงสุด",
+            "buttons" : {
+              "next" : "ปกป้องคริปโตของฉัน",
+              "nextSecondary" : "ไว้ทีหลัง",
+              "prev" : "ขั้นตอนก่อนหน้า"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "รวมทุกสิ่งไว้ในที่เดียว",
+            "description" : "อุปกรณ์ Ledger ของคุณพร้อมแล้ว หากคุณส่งคริปโตไปยังแอป Ledger Wallet คุณจะได้รับในอีกไม่กี่นาที",
+            "buttons" : {
+              "next" : "ดำเนินการต่อ"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "รวมทุกสิ่งไว้ในที่เดียว",
+            "description" : "อุปกรณ์ Ledger ของคุณพร้อมแล้ว!  จากนี้คุณสามารถรักษาความปลอดภัยสินทรัพย์ได้แล้ว",
+            "buttons" : {
+              "next" : "ดำเนินการต่อ"
             }
           }
         }
@@ -5826,6 +5861,62 @@
         "quickFix" : "การแก้ไขด่วน: ส่งเงินทุนบางส่วนให้กับตัวเองเพื่อรวมเข้าด้วยกัน",
         "warning" : "บัญชีของคุณมี UTXO ขนาดเล็กมากเกินไป ส่งเงินทุนบางส่วนให้กับตัวเอง เพื่อรวม UTXO ที่เหลือเข้าด้วยกัน",
         "consolidate" : "รวมเข้าด้วยกัน"
+      },
+      "pendingTransactions" : {
+        "title" : "{{count}} ธุรกรรมที่ค้างอยู่",
+        "incoming" : {
+          "title" : "{{count}} ข้อเสนอใหม่ที่เข้ามา"
+        },
+        "outgoing" : {
+          "title" : "{{count}} ข้อเสนอที่ส่งออก"
+        },
+        "pending" : "รอดำเนินการ",
+        "expired" : "หมดอายุแล้ว",
+        "status" : {
+          "label" : "สถานะ",
+          "expired" : "หมดอายุแล้ว",
+          "incoming" : "ขาเข้า",
+          "outgoing" : "ขาออก"
+        },
+        "from" : "จาก",
+        "to" : "ไปยัง",
+        "memo" : "Memo",
+        "noMemo" : "ไม่มี Memo",
+        "date" : "วันที่",
+        "expiresAt" : "หมดอายุเมื่อ",
+        "expiresIn" : "หมดอายุเมื่อ",
+        "amount" : "จำนวน",
+        "transaction" : "ธุรกรรม",
+        "viewTransaction" : "ดูธุรกรรม",
+        "action" : "การดำเนินการ",
+        "accept" : "ยอมรับ",
+        "withdraw" : "ถอน",
+        "reject" : "ปฏิเสธ",
+        "deviceAppModal" : {
+          "title" : "{{action}} ข้อเสนอ",
+          "description" : "โปรดเปิดแอป Canton บนอุปกรณ์ Ledger ของคุณเพื่อ{{action}}ข้อเสนอนี้",
+          "contractId" : "ID สัญญา",
+          "cancel" : "ยกเลิก",
+          "openApp" : "เปิดแอป Canton",
+          "opening" : "กำลังเปิด...",
+          "noDevice" : "ระบบไม่พบอุปกรณ์ที่กำลังเชื่อมต่อ",
+          "appOpenError" : "ไม่สามารถเปิดแอป Canton ได้ โปรดลองอีกครั้ง",
+          "processing" : "กำลัง{{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "ข้อเสนอได้รับการอนุมัติแล้ว",
+              "description" : "ผู้รับได้ยอมรับข้อเสนอการโอนเรียบร้อย"
+            },
+            "reject" : {
+              "title" : "ข้อเสนอถูกปฏิเสธแล้ว",
+              "description" : "ข้อเสนอการโอนถูกผู้รับปฏิเสธ"
+            },
+            "withdraw" : {
+              "title" : "ได้ถอนข้อเสนอแล้ว",
+              "description" : "ได้ถอนข้อเสนอการโอนเรียบร้อยแล้ว"
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6785,6 +6876,10 @@
       "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
       "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "จำเป็นต้องมีการตรวจสอบ EVM Address",
+      "description" : "โปรดตรวจสอบ EVM Address ที่ปรากฏบนอุปกรณ์ Ledger ของคุณก่อนยืนยัน"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพ"
@@ -7062,6 +7157,42 @@
     "UnknownDeviceExchangeError" : {
       "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
       "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "จำนวนขั้นต่ำสำหรับ {{purpose}} คือ {{amount}}"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "กรุณาตั้งค่า Dissolve Delay อย่างน้อย {{min}}"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "กรุณาตั้งค่า Dissolve Delay ไม่เกิน {{max}}"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "กรุณาตั้งค่า Dissolve Delay ให้มากกว่าค่า Dissolve Delay ในปัจจุบัน"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "ไม่พบ Neuron"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "ID ของผู้ใช้ไม่ถูกต้อง"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "มีปุ่มลัดอยู่แล้ว"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "จำนวนที่แบ่งเกินกว่าจำนวนสูงสุดที่อนุญาต"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "การดำเนินการนี้จะโอนสินทรัพย์จำนวนนี้เพื่อเพิ่มสเตคของ Neuron ที่มีอยู่"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "การดำเนินการนี้จะโอนสินทรัพย์จำนวนนี้เไปยัง Neuron ใหม่ เมื่อทำการยืนยันเรียบร้อยแล้ว จะสามารถใช้ Neuron จำนวนนี้สำหรับการดำเนินการต่อไปได้"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "ปรับลดจำนวนคริปโตตามเงื่อนไข UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7249,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "evmVerificationRequired" : {
+          "text" : "คุณกำลังส่งโทเคน ERC-20 สำหรับธุรกรรมประเภทนี้ อุปกรณ์ Ledger ของคุณจะแสดง EVM Address ของผู้ส่ง ไม่ใช่ ID บัญชีของผู้รับ\nโปรดทำตาม<0>คู่มือนี้</0>เพื่อยืนยันว่า Address ถูกต้องก่อนยืนยัน"
         }
       }
     },
@@ -7527,7 +7661,7 @@
     "connectYourDevice" : {
       "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
     },
-    "searchPlaceholder" : "ค้นหาตามชื่อหรือ Address",
+    "searchPlaceholder" : "ค้นหา",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
@@ -7569,5 +7703,312 @@
     "restart" : "รีสตาร์ท",
     "downloadOnLedger" : "ดาวน์โหลดได้ที่ Ledger.com",
     "downloadProgress" : "กำลังดาวน์โหลด... {{ progress }}%"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "ธุรกรรมนี้จะเพิ่มสเตคของ Neuron ที่มีอยู่ ให้ป้อนจำนวนที่ต้องการจะสเตค (Stake) ในช่องจำนวนข้างต้น",
+      "createNeuron" : "ธุรกรรมนี้จะสร้าง Neuron ที่มี ICP สเตคอยู่ ดังนั้นให้ป้อนจำนวนสินทรัพย์ที่จะสเตคในช่องจำนวนข้างต้น",
+      "tooltip" : "Internet Computer (ICP) ใช้สิ่งนี้ในการตรวจสอบธุรกรรมการสร้าง Neuron"
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "ยืนยันการติดตามของคุณ",
+        "description" : "คุณต้องยืนยันการติดตาม Neuron ภายใน {{days}} วัน {{hours}} ชั่วโมง",
+        "altDescription" : "คุณกำลังสูญเสีย Reward โปรดยืนยันการติดตามเพื่อรับ Reward ต่อเนื่อง",
+        "cta" : "ยืนยันการติดตาม"
+      },
+      "syncNeurons" : {
+        "title" : "ซิงค์ ICP ที่ทำการสเตคของคุณ",
+        "description" : "ICP ที่คุณสเตคไว้มีการซิงค์ล่าสุดเมื่อ {{days}} วัน {{hours}} ชั่วโมงก่อน หากคุณต้องการดูรายละเอียดล่าสุด กรุณาทำการซิงค์สม่ำเสมอ",
+        "altDescription" : "เราขอแนะนำให้ซิงค์ Neuron ของคุณเพื่อดูรายละเอียดล่าสุด",
+        "cta" : "ซิงค์ Neuron"
+      },
+      "lockNeurons" : {
+        "title" : "ล็อก Neuron",
+        "description" : "มี Neuron ของคุณอย่างน้อยหนึ่งรายการที่ไม่ได้ทำการล็อก คุณจะไม่ได้รับ Reward ไม่ได้หากคุณไม่ล็อกไว้ เนื่องจาก Neuron ได้รับ Reward จากการเข้าร่วมในการกำกับดูแล ICP และมีเพียง Neuron ที่ล็อกไว้เกินหกเดือนเท่านั้นที่มีสิทธิ์โหวต",
+        "cta" : "จัดการ Neuron"
+      },
+      "addFollowees" : {
+        "title" : "เพิ่มผู้ที่ต้องการติดตาม",
+        "description" : "Neuron ของคุณอย่างน้อยหนึ่งรายการไม่มีผู้ติดตาม คุณอาจไม่ได้รับ Reward หากไม่มีผู้ติดตาม เพื่อรับ Reward จาก Neuron คุณจะต้องทำการโหวตโดยตรง (เช่น ด้วย NNS Dapp) หรือติดตาม Neuron ที่ทำเช่นนั้น",
+        "cta" : "จัดการ Neuron"
+      },
+      "stakeICP" : {
+        "title" : "สเตค ICP",
+        "description" : "สเตค (Stake) และรับ Reward ด้วยการเข้าร่วมในการกำกับดูแลที่มี",
+        "cta" : "สเตค ICP"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "สเตค ICP",
+        "tooltip" : "สร้าง Neuron เพื่อสเตค ICP"
+      },
+      "manageNeurons" : {
+        "title" : "จัดการ Neuron",
+        "tooltip" : "จัดการ Neuron ที่กำลังทำงานอยู่"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "จำนวนโทเคน ICP ทั้งหมดที่สเตคไว้ใน Neuron ในปัจจุบัน ICP ที่สเตคแล้วจะได้รับ Reward จากการโหวต และสามารถใช้สำหรับการกำกับดูแลได้",
+      "totalMaturityTooltip" : "Reward ที่สะสมทั้งหมดจากสเตคกิ้ง ซึ่งรวมทั้งผลตอบแทนจากการสเตค และผลตอบแทนจาก Liquid Maturity สามารถสเตค Reward เหล่านี้อีกครั้ง หรือจะเคลมเป็น Liquid ICP ก็ได้",
+      "totalMaturity" : "Reward ทั้งหมดที่ได้รับ",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "stakedMaturity" : "Reward ทั้งหมดจากการสเตค",
+      "stakedMaturityTooltip" : "ส่วนของ Reward ที่ถูกนำไปสเตคซ้ำโดยอัตโนมัติ เพื่อสร้างผลตอบแทนต่อเนื่อง",
+      "liquidMaturity" : "Liquid Maturity",
+      "liquidMaturityTooltip" : "สัดส่วนของ Reward ที่สามารถเคลมได้ โดย Liquid ICP Token สามารถทำการสเตคเป็น Neuron ได้"
+    },
+    "confirmation" : {
+      "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง",
+      "success" : "ทำการ {{action}} เสร็จเรียบร้อยแล้ว",
+      "syncAccounts" : "กรุณาซิงก์บัญชีของคุณเพื่อดูการเปลี่ยนแปลงล่าสุด"
+    },
+    "sync" : "ซิงค์",
+    "lastSynced" : "ซิงค์ครั้งล่าสุด",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "เวลาที่เหลือก่อนสูญเสีย Reward",
+      "warnbox" : "ไม่พบ Neuron โปรดลองซิงค์ Neuron ซึ่งสร้างผ่าน NNS DApp ที่มีอยู่ หรือที่ทำการสเตคเพื่อสร้าง Neuron ใหม่"
+    },
+    "common" : {
+      "confirmation" : "การยืนยัน",
+      "connectDevice" : {
+        "title" : "อุปกรณ์"
+      },
+      "neuronId" : "Neuron ID",
+      "neuronIds" : "Neuron ID",
+      "state" : "State",
+      "action" : "การดำเนินการ",
+      "balance" : "ยอดคงเหลือในบัญชี",
+      "maturity" : "Reward",
+      "currentBalance" : "ยอดคงเหลือในบัญชีปัจจุบัน",
+      "amount" : "จำนวน",
+      "stake" : "สเตค",
+      "followees" : "ผู้ที่ติดตาม",
+      "votingPower" : "สิทธิ์อำนาจในการโหวต",
+      "hotkey" : "ปุ่มลัด",
+      "neuron" : "Neuron",
+      "neurons" : "Neuron",
+      "disburse" : "จ่าย",
+      "startDissolving" : "เริ่มการยกเลิก",
+      "stopDissolving" : "หยุดการยกเลิก",
+      "dissolveDelay" : "Dissolve Delay",
+      "dissolveState" : "สถานะการยกเลิก",
+      "dissolveStateUnlocked" : "ปลดล็อกแล้ว",
+      "dissolveStateLocked" : "ถูกล็อก",
+      "dissolveStateDissolving" : "กำลังยกเลิก",
+      "dissolveStateDissolved" : "ยกเลิกแล้ว",
+      "inactiveNeuron" : "Neuron ที่ไม่ได้ใช้งาน",
+      "activeNeuron" : "Neuron ที่กำลังใช้งานอยู่",
+      "confirmFollowing" : "ยืนยันการติดตาม"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "อัปเดตสิทธิ์การโหวตของคุณ"
+    },
+    "manageNeuronFlow" : {
+      "title" : "จัดการ Neuron",
+      "manageAction" : {
+        "title" : "จัดการการดำเนินการเกี่ยวกับ Neuron"
+      },
+      "stakeMaturity" : {
+        "title" : "ผลตอบแทนการสเตค (Stake)",
+        "description" : "เลือกจำนวน Reward ที่ใช้ได้เพื่อทำการสเตคไปเป็น Neuron",
+        "confirmStake" : "ยืนยันทำการสเตค",
+        "maturityAvailable" : "Reward ที่ใช้ได้"
+      },
+      "splitNeuron" : {
+        "title" : "แยก Neuron",
+        "transactionFee" : "ค่าธรรมเนียมธุรกรรม",
+        "confirmSplit" : "ยืนยันการแยก"
+      },
+      "setDissolveDelay" : {
+        "title" : "ตั้งค่า Dissolve Delay",
+        "balance" : "ยอดคงเหลือในบัญชี",
+        "dissolveDelay" : "Dissolve Delay",
+        "dissolveDelayTooltip" : "Dissolve Delay คือ จำนวนเวลาขั้นต่ำที่คุณต้องรอเพื่อให้ Neuron สามารถทำการปลดล็อก ให้สามารถใช้ ICP ให้พร้อมใช้งานอีกครั้ง หมายเหตุ Dissolve Delay จะลดลงเมื่อ Neuron กำลังดำเนินการยกเลิกเท่านั้น",
+        "votingPowerDescription" : "โดยจะมอบสิทธิ์อำนาจในการโหวตให้กับ Neuron ที่มีค่า Dissolve Delay ไม่เกิน 6 เดือน",
+        "dissolveDelayInput" : "Dissolve Delay (จำนวนวัน)",
+        "inputPlaceholder" : "ป้อน Dissolve Delay",
+        "updateDelay" : "อัปเดต Dissolve Delay"
+      },
+      "selectFollowees" : {
+        "title" : "Neuron ID ของผู้ติดตาม",
+        "altTitle" : "เลือกผู้ติดตาม",
+        "placeholder" : "ป้อน Neuron ID",
+        "options" : "ตัวเลือกสำหรับการติดตาม"
+      },
+      "selectTopics" : {
+        "title" : "เลือกหัวข้อ",
+        "warnbox" : "ติดตาม Neuron เพื่อทำให้การโหวตของคุณเป็นระบบอัตโนมัติและรับ Reward การโหวตสูงสุด คุณสามารถติดตาม Neuron ในหัวข้อเฉพาะหรือทุกหัวข้อก็ได้",
+        "listOfTopics" : "รายการหัวข้อที่สามารถติดตามได้",
+        "addAction" : "เพิ่มผู้ติดตาม"
+      },
+      "addHotKey" : {
+        "title" : "เพิ่มปุ่มลัด"
+      },
+      "manage" : {
+        "title" : "จัดการ Neuron",
+        "header" : {
+          "hotkeyControlDescription" : "Neuron นี้ควบคุมด้วยปุ่มลัดและมีการควบคุมแบบจำกัดจากอินเทอร์เฟซของแอป Ledger Live",
+          "hotkeyControl" : "การควบคุมด้วยปุ่มลัด",
+          "votingPower" : "สิทธิ์การโหวต",
+          "noVotingPower" : "ไม่มีสิทธิ์ในการโหวต"
+        },
+        "votingPower" : {
+          "title" : "สิทธิ์การโหวต",
+          "titleTooltip" : "Dissolve Delay จะต้องมากกว่า 6 เดือนเพื่อให้ Neuron มีสิทธิ์ในการโหวต",
+          "value" : "มูลค่า",
+          "staked" : "ICP ที่ทำการสเตค",
+          "increaseStake" : "เพิ่มจำนวนที่จะสเตค",
+          "ageBonus" : "โบนัสระยะเวลา (Age Bonus)",
+          "ageBonusTooltip" : "Neuron ของคุณอาจถูกล็อก ปลดล็อก หรือกำลังทำการยกเลิก โดยจะได้รับโบนัสระยะเวลาเมื่ออยู่ในสถานะล็อก ในขณะที่ Dissolve Delay จะยังคงที่ ทั้งนี้จะมีการตั้งโบนัสระยะเวลาเป็น 0 หาก Neuron ยังอยู่ในสถานะ Dissolve Delay ก่อนการยกเลิก ในขณะที่ Dissolve Delay ก่อนการยกเลิกจะลดลงตามระยะเวลา หลังจาก Dissolve Delay สิ้นสุด Neuron จะปลดล็อกและสามารถโอน ICP ได้ทันที่",
+          "dissolveDelayBonus" : "Dissolve Delay Bonus",
+          "dissolveDelayBonusTooltip" : "Dissolve Delay Bonus คือ โบนัสที่เพิ่มให้กับสิทธิ์ในการโหวต Neuron ตามระยะเวลาของ Dissolve Delay ยิ่ง Dissolve Delay มีระยะเวลา จำนวนโบนัสก็จะยิ่งสูงขึ้นตามไปด้วย",
+          "confirmFollowing" : "ยืนยันการติดตาม",
+          "confirmFollowingTooltip" : "Neuron ของ ICP ที่ไม่ได้เป็นเวลา 6 เดือนจะเริ่มไม่ได้รับ Reward จากการโหวต เพื่อหลีกเลี่ยงการพลาด Reward โปรดโหวต แก้ไข หรือยืนยันการติดตามของคุณด้วยตนเอง"
+        },
+        "maturity" : {
+          "title" : "Reward",
+          "description" : "รับ Reward ด้วยการโหวตข้อเสนอ และ/หรือ ทำการติดตาม Neuron ที่กำลังใช้งานอยู่",
+          "staked" : "ทำการสเตคแล้ว",
+          "stakedTooltip" : "ผลตอบแทนที่สเตค (Stake) ช่วยเพิ่มอำนาจในการโหวตของ Neuron แต่ไม่สามารถสร้างเป็น Neuron ใหม่ได้",
+          "available" : "สามารถใช้ได้",
+          "availableTooltip" : "สามารถนำ Reward ไปสเตคหรือเบิร์นเพื่อสร้าง Neuron ที่มี ICP ได้ โดยเรียกว่าการปรับระดับ Reward (Maturity Modulation)",
+          "stakeAction" : "สเตค",
+          "spawnNeuronAction" : "สร้าง Neuron"
+        },
+        "hotKeys" : {
+          "title" : "ปุ่มลัด",
+          "description" : "ปุ่มลัดเป็นวิธีหนึ่งในการควบคุม Neuron ของคุณบนอินเทอร์เฟซของ Ledger Live",
+          "addHotKey" : "เพิ่มปุ่มลัด",
+          "removeAction" : "นำออก",
+          "noHotKeys" : "ไม่พบปุ่มลัด"
+        },
+        "advancedDetails" : {
+          "title" : "รายละเอียดและการตั้งค่าขั้นสูง",
+          "dateCreated" : "วันที่สร้าง",
+          "dissolveDate" : "วันที่ยกเลิก",
+          "neuronAccount" : "บัญชี Neuron",
+          "splitNeuronAction" : "แยก Neuron",
+          "autoStakeMaturityAction" : "ผลตอบแทนการสเตคแบบอัตโนมัติ"
+        },
+        "following" : {
+          "title" : "การติดตาม",
+          "description" : "การติดตามช่วยให้คุณสามารถ Delegate การโหวตไปยังผู้ถือครอง Neuron อื่น ๆ ได้ คุณยังคงได้รับ Reward หากคุณ Delegate สิทธิ์ในการโหวตของคุณ คุณสามารถเปลี่ยนแปลงการติดตามของคุณได้ทุกเมื่อ",
+          "warnbox" : "คุณอาจไม่ได้รับ Reward หากไม่มีผู้ติดตาม เพื่อรับ Reward จาก Neuron คุณจะต้องทำการโหวตโดยตรง (เช่น ด้วย NNS Dapp) หรือติดตาม Neuron ที่ทำเช่นนั้น",
+          "followNeuronsAction" : "ติดตาม Neuron"
+        }
+      },
+      "listNeuron" : {
+        "title" : "เลือก Neuron",
+        "warnbox" : "เลือก Neuron จากรายการข้างล่างเพื่อจัดการการสเตค, ผลตอบแทน (Maturity) และการตั้งค่า Dissolve Delay"
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "กำลังเพิ่มการสเตค",
+        "create_neuron" : "กำลังสร้าง Neuron",
+        "start_dissolving" : "กำลังเริ่มการยกเลิก",
+        "stop_dissolving" : "กำลังหยุดการยกเลิก",
+        "list_neurons" : "กำลังแสดงรายการ Neuron",
+        "disburse" : "Neuron ที่พร้อม Unstake",
+        "spawn_neuron" : "กำลังสร้าง Neuron",
+        "add_hot_key" : "กำลังเพิ่มปุ่มลัด",
+        "stake_maturity" : "ผลตอบแทนจากการสเตค (Staking Maturity)",
+        "refresh_voting_power" : "กำลังอัพเดตสิทธิ์ในการโหวต",
+        "increase_dissolve_delay" : "กำลังทำการเพิ่ม Dissolve Delay",
+        "auto_stake_maturity" : "ผลตอบแทนการสเตคกิ้ง (Staking) แบบอัตโนมัติ",
+        "spawn_neuron_from_maturity" : "กำลังสร้าง Neuron จากผลตอบแทน",
+        "set_auto_stake_maturity" : "กำลังตั้งค่าผลตอบแทนการสเตคแบบอัตโนมัติ",
+        "set_dissolve_delay" : "กำลังตั้งค่า Dissolve Delay",
+        "remove_hot_key" : "กำลังนำปุ่มลัดออก",
+        "follow" : "กำลังติดตาม Neuron",
+        "split_neuron" : "กำลังแยก Neuron"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "ทั้งหมด ยกเว้นการกำกับดูแลและเงินทุนสำหรับ SNS และ Neurons",
+          "description" : "ติดตาม Neuron ในหัวข้อที่มีทั้งหมด ยกเว้นหัวข้อการกำกับดูแล เงินทุน SNS และ Neuron"
+        },
+        "1" : {
+          "title" : "การจัดการ Neuron",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "อัตราแลกเปลี่ยน",
+          "description" : "ข้อเสนอทั้งหมดที่ให้ข้อมูลมูลค่า ICP แบบเรียลไทม์ โดยอิงจาก SDR ของ IMF เพื่อให้การแปลง ICP เป็น Cycle ที่มีต้นทุนคงที่ตามมูลค่าในโลกจริง"
+        },
+        "3" : {
+          "title" : "เศรษฐศาสตร์เครือข่าย",
+          "description" : "ข้อเสนอบริหารจัดการด้านเศรษฐศาสตร์เครือข่าย เช่น การกำหนดลักษณะ Reward ที่ควรจ่ายให้กับผู้ดำเนินการโหนด"
+        },
+        "4" : {
+          "title" : "การกำกับดูแล",
+          "description" : "ข้อเสนอด้านการกำกับดูแลทั้งหมด เช่น การหยุดการทำงานของสัญญาอัจฉริยะของ ICP (Canister) ที่เป็นอันตราย"
+        },
+        "5" : {
+          "title" : "ผู้ดูแลระบบโหนด",
+          "description" : "ข้อเสนอทั้งหมดที่ใช้บริหารจัดการโหนด รวมถึงแต่ไม่จำกัดเพียงการอัปเกรดหรือกำหนดค่า OS, การอัปเกรดหรือกำหนดค่ากรอบการทำงานของ Virtual machine ตลอดจนการอัปเกรดหรือการกำหนดค่าซอฟต์แวร์ในการจำลองโหนด (์Node Replica Software)"
+        },
+        "6" : {
+          "title" : "การจัดการผู้เข้าร่วม",
+          "description" : "ข้อเสนอทั้งหมดที่บริหารจัดการผู้เข้าร่วมเครือข่าย เช่น การให้และการยกเลิก DCID (ข้อมูลประจำตัวของศูนย์ข้อมูล) หรือ NOID (ข้อมูลประจำตัวของผู้ดำเนินการโหนด)"
+        },
+        "7" : {
+          "title" : "การจัดการเครือข่ายย่อย (Subnet)",
+          "description" : "ข้อเสนอทั้งหมดที่ใช้บริหารจัดการเครือข่ายย่อยของเครือข่าย (Subnet) เช่น การสร้างเครือข่ายย่อยใหม่ การเพิ่มและการนำโหนดของเครือข่ายย่อยออก ตลอดจนการแยกเครือข่ายย่อย"
+        },
+        "8" : {
+          "title" : "การจัดการสัญญาอัจฉริยะของ ICP (Canister) ของโพรโทคอล",
+          "description" : "ข้อเสนอเพื่อบริหารจัดการสัญญาอัจฉริยะของ ICP (Canister) ของโปรโตคอล ICP ที่จำเป็นต่อการทำงานของระบบ"
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "ข้อเสนอที่อัปเดตข้อมูล KYC เพื่อวัตถุประสงค์ด้านกฎระเบียบ เช่น ในช่วงแจกจ่าย ICP Neuron (Initial Genesis Distribution of ICP)"
+        },
+        "10" : {
+          "title" : "Reward สำหรับผู้ให้บริการโหนด",
+          "description" : "ข้อเสนอที่ให้ Reward แก่ผู้ให้บริการโหนด"
+        },
+        "12" : {
+          "title" : "การปรับใช้รุ่นของ IC OS",
+          "description" : "ข้อเสนอการจัดการการอัปเดตรุ่นจำลองของเครือข่ายย่อย (Subnet's Replica)"
+        },
+        "13" : {
+          "title" : "การเลือกรุ่นของ IC OS",
+          "description" : "ข้อเสนอในการจัดการเกี่ยวกับการเห็นพ้องและการเลิกใช้รุ่นจำลอง"
+        },
+        "14" : {
+          "title" : "เงินทุนของ SNS และ Neuron",
+          "description" : "ข้อเสนอที่เกี่ยวข้องกับเงินทุนของ SNS และ Neuron"
+        },
+        "15" : {
+          "title" : "การจัดการ API Boundary Node",
+          "description" : "ข้อเสนอที่เกี่ยวข้องกับการจัดการ API Boundary Node"
+        },
+        "16" : {
+          "title" : "การเช่าเครือข่ายย่อย (Subnet Rental)",
+          "description" : "ข้อเสนอทั้งหมดที่เกี่ยวข้องกับการเช่าเครือข่ายย่อย เช่น คำขอเช่าเครือข่ายย่อย"
+        },
+        "17" : {
+          "title" : "การจัดการสัญญาอัจฉริยะของ ICP (Canister) ของโพรโทคอล",
+          "description" : "ข้อเสนอเพื่อบริหารจัดการสัญญาอัจฉริยะของ ICP (Canister) ของโปรโตคอล ICP ที่จำเป็นต่อการทำงานของระบบ"
+        },
+        "18" : {
+          "title" : "การจัดการ Service Nervous System",
+          "description" : "ข้อเสนอทั้งหมดในการจัดการสัญญาอัจฉริยะ ICP (Canisters) ของ Service Nervous System (SNS) รวมถึงการอัปเกรด Canister ที่เกี่ยวข้องและการจัดการ SNS framework Canister ผ่าน SNS-W"
+        }
+      }
+    }
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
+      "availableBalanceTooltip" : "ยอดคงเหลือในบัญชีในที่สามารถโอนได้",
+      "transparentBalance" : "ยอดคงเหลือในบัญชีที่โปร่งใส",
+      "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
+      "privateBalance" : "ยอดคงเหลือในบัญชีส่วนบุคคล",
+      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+    }
   }
 }
