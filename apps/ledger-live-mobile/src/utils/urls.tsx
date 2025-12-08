@@ -28,6 +28,8 @@ export const urls = {
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     pt: "https://www.ledger.com/pt-br/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  reborn:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-mobile?utm_source=ledger_wallet_mobile&utm_medium=self_referral&utm_content=onboarding-2",
   trackingPolicy: {
     en: "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     fr: "https://shop.ledger.com/fr/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
