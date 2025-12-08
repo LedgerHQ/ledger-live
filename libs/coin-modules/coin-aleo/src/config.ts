@@ -3,7 +3,7 @@ import buildCoinConfig from "@ledgerhq/coin-framework/config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // TODO: replace with proper config
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type AleoConfig = {};
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;

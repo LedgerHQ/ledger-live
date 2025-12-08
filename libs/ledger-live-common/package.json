@@ -204,6 +204,7 @@
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
