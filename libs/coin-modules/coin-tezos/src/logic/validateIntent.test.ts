@@ -1,7 +1,3 @@
-import { validateIntent } from "./validateIntent";
-import * as estimateFeesModule from "./estimateFees";
-import tzktApi from "../network/tzkt";
-import coinConfig from "../config";
 import {
   RecipientRequired,
   InvalidAddress,
@@ -9,6 +5,10 @@ import {
   AmountRequired,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import tzktApi from "../network/tzkt";
+import coinConfig from "../config";
+import { validateIntent } from "./validateIntent";
+import * as estimateFeesModule from "./estimateFees";
 
 describe("validateIntent", () => {
   const senderAddress = "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8";

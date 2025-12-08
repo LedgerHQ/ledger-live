@@ -1,5 +1,5 @@
-import { createApi } from ".";
 import type { TezosApi } from "./types";
+import { createApi } from ".";
 
 /**
  * Mainnet-specific integration tests
@@ -45,7 +45,6 @@ describe("Tezos Api - Mainnet", () => {
       });
 
       expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
-      expect(result.parameters).toBeDefined();
       expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
       expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
@@ -67,7 +66,7 @@ describe("Tezos Api - Mainnet", () => {
         { value: BigInt(832) },
       );
 
-      expect(result.transaction).toBeDefined();
+      expect(result).toEqual({ transaction: expect.stringMatching(/^([A-Fa-f0-9]{2})+$/) });
     });
   });
 });

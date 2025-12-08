@@ -1,5 +1,5 @@
-import { cachedRecipientIsNew, sortSignersByNumericAddress } from "./utils";
 import { SignerEntry } from "../types";
+import { cachedRecipientIsNew, sortSignersByNumericAddress } from "./utils";
 
 // We'll mock ripple-address-codec so that we control numeric ordering via decodeAccountID
 // without re-implementing the util's logic inside the tests.
@@ -40,7 +40,7 @@ describe("cachedRecipientIsNew", () => {
 
     // Then
     expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
-    expect(result).toBeTruthy();
+    expect(result).toBe(true);
   });
 
   it("returns false when network a valid AccountInfo", async () => {
@@ -57,7 +57,7 @@ describe("cachedRecipientIsNew", () => {
 
     // Then
     expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
-    expect(result).toBeFalsy();
+    expect(result).toBe(false);
   });
 
   it("throws an error when network throws an error", async () => {

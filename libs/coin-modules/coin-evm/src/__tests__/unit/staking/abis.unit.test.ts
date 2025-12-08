@@ -3,15 +3,13 @@ import { getStakingABI, isPayable } from "../../../staking/abis";
 describe("getStakingABI", () => {
   it("should return SEI ABI for sei_network_evm", () => {
     const abi = getStakingABI("sei_network_evm");
-    expect(abi).toBeDefined();
-    expect(Array.isArray(abi)).toBe(true);
+    expect(abi).toBeInstanceOf(Array);
     expect(abi?.length).toBeGreaterThan(0);
   });
 
   it("should return CELO ABI for celo", () => {
     const abi = getStakingABI("celo");
-    expect(abi).toBeDefined();
-    expect(Array.isArray(abi)).toBe(true);
+    expect(abi).toBeInstanceOf(Array);
     expect(abi?.length).toBeGreaterThan(0);
   });
 

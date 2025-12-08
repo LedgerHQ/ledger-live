@@ -1,5 +1,6 @@
-import { tzkt } from "../network";
 import { log } from "@ledgerhq/logs";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { tzkt } from "../network";
 import {
   type APIDelegationType,
   type APIRevealType,
@@ -9,7 +10,6 @@ import {
   isAPIRevealType,
   isAPITransactionType,
 } from "../network/types";
-import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.

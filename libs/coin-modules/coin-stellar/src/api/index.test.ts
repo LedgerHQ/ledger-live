@@ -1,7 +1,7 @@
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
-import expect from "expect";
 
 const mockGetOperations = jest.fn();
 

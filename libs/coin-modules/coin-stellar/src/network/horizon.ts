@@ -26,8 +26,8 @@ import {
   NetworkCongestionLevel,
   StellarOperation,
 } from "../types";
-import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
+import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
