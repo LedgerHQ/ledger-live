@@ -68,6 +68,10 @@ export function hasOnboarding(currency: CryptoCurrency): boolean {
   return currency.family in onboardingConfigs;
 }
 
+export function hasCreatableAccounts(accounts: { used?: boolean }[]): boolean {
+  return accounts.some(account => !account.used);
+}
+
 export function getOnboardingBridge(currency: CryptoCurrency): OnboardingBridge | null {
   const factory = onboardingBridgeFactories[currency.family];
   if (!factory) {

@@ -33,8 +33,8 @@ interface AccountsOnboardProps {
   selectedAccounts: Account[];
   existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
-  isReonboarding?: boolean;
   accountToReonboard?: Account;
+  isReonboarding?: boolean;
   onComplete: (accounts: Account[]) => void;
 }
 
@@ -44,8 +44,8 @@ export default function AccountsOnboard({
   selectedAccounts,
   existingAccounts,
   editedNames,
-  isReonboarding = false,
   accountToReonboard,
+  isReonboarding = false,
   onComplete,
 }: AccountsOnboardProps) {
   const { t } = useTranslation();
@@ -56,11 +56,11 @@ export default function AccountsOnboard({
   const onboardingBridge = useOnboardingBridge(currency);
 
   const { importableAccounts, creatableAccount, accountName } = useOnboardingAccountData({
-    selectedAccounts,
     currency,
+    selectedAccounts,
     editedNames,
-    isReonboarding,
     accountToReonboard,
+    isReonboarding,
   });
 
   invariant(device, "device is required");
@@ -68,20 +68,20 @@ export default function AccountsOnboard({
   invariant(creatableAccount, "creatableAccount is required");
 
   const {
-    stepId,
     error,
-    onboardingStatus,
     isProcessing,
     onboardingResult,
+    onboardingStatus,
+    stepId,
+    transitionTo,
     handleOnboardAccount,
     handleRetryOnboardAccount,
-    transitionTo,
   } = useOnboardingFlow({
     currency,
     device,
     creatableAccount,
-    onboardingBridge,
     onboardingConfig,
+    onboardingBridge,
   });
 
   const prepareAndAddAccounts = useCallback(
@@ -90,17 +90,17 @@ export default function AccountsOnboard({
         selectedAccounts,
         existingAccounts,
         editedNames,
-        isReonboarding,
         accountToReonboard,
+        isReonboarding,
         onboardingResult,
       });
 
       dispatch(
         addAccountsAction({
-          scannedAccounts: accounts,
           existingAccounts,
-          selectedIds: accounts.map(account => account.id),
           renamings,
+          scannedAccounts: accounts,
+          selectedIds: accounts.map(account => account.id),
         }),
       );
 
@@ -113,8 +113,8 @@ export default function AccountsOnboard({
       selectedAccounts,
       existingAccounts,
       editedNames,
-      isReonboarding,
       accountToReonboard,
+      isReonboarding,
       onboardingResult,
       dispatch,
     ],
@@ -126,30 +126,30 @@ export default function AccountsOnboard({
 
   const stableProps = useMemo<StableStepProps>(
     () => ({
-      t,
-      device,
       currency,
+      device,
+      t,
       accountName,
       editedNames,
       creatableAccount,
       importableAccounts,
-      isReonboarding,
       onboardingConfig,
+      isReonboarding,
       onAddAccounts: handleAddAccounts,
       onOnboardAccount: handleOnboardAccount,
       onRetryOnboardAccount: handleRetryOnboardAccount,
       transitionTo,
     }),
     [
-      t,
-      device,
       currency,
+      device,
+      t,
       accountName,
       editedNames,
       creatableAccount,
       importableAccounts,
-      isReonboarding,
       onboardingConfig,
+      isReonboarding,
       handleAddAccounts,
       handleOnboardAccount,
       handleRetryOnboardAccount,
@@ -159,12 +159,12 @@ export default function AccountsOnboard({
 
   const dynamicProps = useMemo<DynamicStepProps>(
     () => ({
-      isProcessing,
       onboardingStatus,
       onboardingResult,
+      isProcessing,
       error,
     }),
-    [isProcessing, onboardingStatus, onboardingResult, error],
+    [onboardingStatus, onboardingResult, isProcessing, error],
   );
 
   return (

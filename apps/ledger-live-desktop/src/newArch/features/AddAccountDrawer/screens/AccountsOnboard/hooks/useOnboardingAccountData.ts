@@ -5,8 +5,8 @@ import { useMemo } from "react";
 
 export function getCreatableAccount(
   selectedAccounts: Account[],
-  isReonboarding?: boolean,
   accountToReonboard?: Account,
+  isReonboarding?: boolean,
 ): Account | undefined {
   if (isReonboarding) {
     return accountToReonboard;
@@ -26,8 +26,8 @@ function resolveAccountName(
 }
 
 export function resolveCreatableAccountName(
-  creatableAccount: Account | undefined,
   currency: CryptoCurrency,
+  creatableAccount: Account | undefined,
   editedNames: { [accountId: string]: string },
   importableAccountsCount: number,
 ): string {
@@ -41,8 +41,8 @@ type AddAccountsConfig = {
   selectedAccounts: Account[];
   existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
-  isReonboarding?: boolean;
   accountToReonboard?: Account;
+  isReonboarding?: boolean;
   onboardingResult?: {
     completedAccount: Account;
   };
@@ -121,13 +121,13 @@ export function prepareAccountsForAdding(config: AddAccountsConfig): {
   accounts: Account[];
   renamings: { [accountId: string]: string };
 } {
-  const { selectedAccounts, editedNames, isReonboarding, accountToReonboard, onboardingResult } =
+  const { selectedAccounts, editedNames, accountToReonboard, isReonboarding, onboardingResult } =
     config;
 
   const importableAccounts = getImportableAccounts(selectedAccounts);
   const completedAccount = onboardingResult?.completedAccount;
 
-  if (isReonboarding && completedAccount && accountToReonboard) {
+  if (isReonboarding && accountToReonboard && completedAccount) {
     return prepareAccountsForReonboarding(accountToReonboard, completedAccount, editedNames);
   }
 
@@ -135,17 +135,17 @@ export function prepareAccountsForAdding(config: AddAccountsConfig): {
 }
 
 export function useOnboardingAccountData({
-  selectedAccounts,
   currency,
+  selectedAccounts,
   editedNames,
-  isReonboarding,
   accountToReonboard,
+  isReonboarding,
 }: {
-  selectedAccounts: Account[];
   currency: CryptoCurrency;
+  selectedAccounts: Account[];
   editedNames: { [accountId: string]: string };
-  isReonboarding?: boolean;
   accountToReonboard?: Account;
+  isReonboarding?: boolean;
 }) {
   const importableAccounts = useMemo(
     () => getImportableAccounts(selectedAccounts),
@@ -153,19 +153,19 @@ export function useOnboardingAccountData({
   );
 
   const creatableAccount = useMemo(
-    () => getCreatableAccount(selectedAccounts, isReonboarding, accountToReonboard),
-    [selectedAccounts, isReonboarding, accountToReonboard],
+    () => getCreatableAccount(selectedAccounts, accountToReonboard, isReonboarding),
+    [selectedAccounts, accountToReonboard, isReonboarding],
   );
 
   const accountName = useMemo(
     () =>
       resolveCreatableAccountName(
-        creatableAccount,
         currency,
+        creatableAccount,
         editedNames,
         importableAccounts.length,
       ),
-    [creatableAccount, currency, editedNames, importableAccounts.length],
+    [currency, creatableAccount, editedNames, importableAccounts.length],
   );
 
   return {

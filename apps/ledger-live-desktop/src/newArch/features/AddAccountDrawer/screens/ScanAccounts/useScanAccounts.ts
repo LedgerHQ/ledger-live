@@ -1,13 +1,11 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Subscription } from "rxjs";
-import { openModal } from "~/renderer/actions/modals";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -25,8 +23,7 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
-import { hasOnboarding } from "../AccountsOnboard/registry";
+import { useOnboardingAccounts } from "../AccountsOnboard/hooks/useOnboardingAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -64,7 +61,6 @@ export function useScanAccounts({
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const lldModularDrawer = useFeature("lldModularDrawer");
 
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [scanning, setScanning] = useState(true);
@@ -169,11 +165,11 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
-  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
-    useCantonCreatableAccounts({
-      scannedAccounts,
-      selectedIds: filteredSelectedIds,
-    });
+  const { hasOnboardingCreatableAccounts, selectedOnboardingAccounts } = useOnboardingAccounts({
+    currency,
+    scannedAccounts,
+    selectedIds: filteredSelectedIds,
+  });
 
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -182,27 +178,12 @@ export function useScanAccounts({
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
 
-    // Check if currency supports onboarding (generic check)
-    const supportsOnboarding = hasOnboarding(currency);
-    if (hasCantonCreatableAccounts && supportsOnboarding) {
-      // Check if modular drawer is enabled
-      if (lldModularDrawer?.enabled && navigateToAccountsOnboard) {
-        // Use new ACCOUNTS_ONBOARD step in drawer flow
+    if (hasOnboardingCreatableAccounts) {
+      if (navigateToAccountsOnboard) {
         navigateToAccountsOnboard({
-          selectedAccounts: selectedCantonCreatableAccounts,
+          selectedAccounts: selectedOnboardingAccounts,
           editedNames: {},
         });
-      } else {
-        // Fallback to old MODAL_CANTON_ONBOARD_ACCOUNT modal
-        dispatch(
-          openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
-            currency,
-            device,
-            selectedAccounts: selectedCantonCreatableAccounts,
-            existingAccounts: existingAccounts,
-            editedNames: {},
-          }),
-        );
       }
 
       return;
@@ -223,17 +204,14 @@ export function useScanAccounts({
   }, [
     trackAddAccountEvent,
     accountsToImport,
-    dispatch,
     existingAccounts,
     onComplete,
     currency,
     device,
-    hasCantonCreatableAccounts,
-    selectedCantonCreatableAccounts,
+    hasOnboardingCreatableAccounts,
+    selectedOnboardingAccounts,
     filteredSelectedIds,
     scannedAccounts,
-    navigateToAccountsOnboard,
-    lldModularDrawer,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);

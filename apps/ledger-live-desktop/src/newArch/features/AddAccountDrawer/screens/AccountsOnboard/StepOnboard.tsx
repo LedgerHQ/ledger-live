@@ -33,8 +33,8 @@ const SectionAccounts = ({
   editedNames,
   creatableAccount,
   importableAccounts,
-  isReonboarding,
   onboardingConfig,
+  isReonboarding,
 }: Pick<
   StableStepProps,
   | "currency"
@@ -116,8 +116,8 @@ const SectionAccounts = ({
 };
 
 const getStatusMessage = (
-  status: AccountOnboardStatus | undefined,
   translationKeys: TranslationKeys,
+  status: AccountOnboardStatus | undefined,
 ): string => {
   switch (status) {
     case AccountOnboardStatus.PREPARE:
@@ -131,8 +131,8 @@ const getStatusMessage = (
 
 const getErrorMessage = (
   error: Error | null,
-  errorKey?: string,
   defaultErrorKey?: string,
+  errorKey?: string,
 ): React.ReactNode => {
   if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
     return <Trans i18nKey={error.message} />;
@@ -143,30 +143,30 @@ const getErrorMessage = (
 };
 
 interface OnboardContentProps {
-  device: Device;
   currency: CryptoCurrency;
+  device: Device;
   accountName: string;
   editedNames: { [accountId: string]: string };
   creatableAccount: Account;
   importableAccounts: Account[];
-  isReonboarding?: boolean;
   onboardingConfig?: OnboardingConfig;
   onboardingStatus: AccountOnboardStatus;
+  isReonboarding?: boolean;
   error: Error | null;
   learnMoreUrl: string;
   onClick: (() => void) | undefined;
 }
 
 const OnboardContent = ({
-  device,
   currency,
+  device,
   accountName,
   editedNames,
   creatableAccount,
   importableAccounts,
-  isReonboarding,
   onboardingConfig,
   onboardingStatus,
+  isReonboarding,
   error,
   learnMoreUrl,
   onClick,
@@ -185,8 +185,8 @@ const OnboardContent = ({
             editedNames={editedNames}
             creatableAccount={creatableAccount}
             importableAccounts={importableAccounts}
-            isReonboarding={isReonboarding}
             onboardingConfig={onboardingConfig}
+            isReonboarding={isReonboarding}
           />
 
           <Box mt={2}>
@@ -236,8 +236,8 @@ const OnboardContent = ({
             editedNames={editedNames}
             creatableAccount={creatableAccount}
             importableAccounts={importableAccounts}
-            isReonboarding={isReonboarding}
             onboardingConfig={onboardingConfig}
+            isReonboarding={isReonboarding}
           />
 
           <Box mt={2}>
@@ -314,8 +314,8 @@ const OnboardContent = ({
             editedNames={editedNames}
             creatableAccount={creatableAccount}
             importableAccounts={importableAccounts}
-            isReonboarding={isReonboarding}
             onboardingConfig={onboardingConfig}
+            isReonboarding={isReonboarding}
           />
 
           <Box mt={2}>
@@ -345,8 +345,8 @@ const OnboardContent = ({
             editedNames={editedNames}
             creatableAccount={creatableAccount}
             importableAccounts={importableAccounts}
-            isReonboarding={isReonboarding}
             onboardingConfig={onboardingConfig}
+            isReonboarding={isReonboarding}
           />
 
           <Flex
@@ -364,7 +364,7 @@ const OnboardContent = ({
           >
             <Text ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
               <Trans
-                i18nKey={getStatusMessage(onboardingStatus, onboardingConfig.translationKeys)}
+                i18nKey={getStatusMessage(onboardingConfig.translationKeys, onboardingStatus)}
               />
             </Text>
           </Flex>
@@ -374,16 +374,16 @@ const OnboardContent = ({
 };
 
 export default function StepOnboard({
-  device,
   currency,
+  device,
   accountName,
   editedNames,
   creatableAccount,
   importableAccounts,
-  onboardingStatus,
-  error,
-  isReonboarding,
   onboardingConfig,
+  onboardingStatus,
+  isReonboarding,
+  error,
 }: StableStepProps & DynamicStepProps) {
   const learnMoreUrl = onboardingConfig?.urls.learnMore || "";
   const link = useLocalizedUrl(learnMoreUrl);
@@ -391,15 +391,15 @@ export default function StepOnboard({
 
   return (
     <OnboardContent
-      device={device}
       currency={currency}
+      device={device}
       accountName={accountName}
       editedNames={editedNames}
       creatableAccount={creatableAccount}
       importableAccounts={importableAccounts}
-      isReonboarding={isReonboarding}
       onboardingConfig={onboardingConfig}
       onboardingStatus={onboardingStatus}
+      isReonboarding={isReonboarding}
       error={error}
       learnMoreUrl={learnMoreUrl}
       onClick={onClick}

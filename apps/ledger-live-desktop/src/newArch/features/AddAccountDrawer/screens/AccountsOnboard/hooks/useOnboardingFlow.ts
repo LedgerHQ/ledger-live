@@ -15,15 +15,15 @@ import {
 } from "../types";
 
 export function useOnboardingFlow({
+  creatableAccount,
   currency,
   device,
-  creatableAccount,
   onboardingBridge,
   onboardingConfig,
 }: {
+  creatableAccount: Account;
   currency: CryptoCurrency;
   device: Device;
-  creatableAccount: Account;
   onboardingBridge: OnboardingBridge;
   onboardingConfig: OnboardingConfig;
 }) {
@@ -115,13 +115,13 @@ export function useOnboardingFlow({
   }, [creatableAccount, device, currency, onboardingBridge]);
 
   return {
-    stepId,
     error,
-    onboardingStatus,
     isProcessing,
     onboardingResult,
+    onboardingStatus,
+    stepId,
+    transitionTo,
     handleOnboardAccount,
     handleRetryOnboardAccount,
-    transitionTo,
   };
 }

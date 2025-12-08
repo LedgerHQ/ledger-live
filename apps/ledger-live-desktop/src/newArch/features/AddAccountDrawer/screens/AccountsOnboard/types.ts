@@ -69,6 +69,7 @@ export type TranslationKeys = {
   error: string;
   error429?: string;
   onboarded?: string;
+  existingAccounts?: string;
   account?: string;
   newAccount?: string;
   statusPrepare?: string;

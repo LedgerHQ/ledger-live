@@ -4,8 +4,8 @@ import { Trans } from "react-i18next";
 import { AccountOnboardStatus, DynamicStepProps, StableStepProps, StepId } from "./types";
 
 export const StepOnboardFooter = ({
-  isProcessing,
   onboardingStatus,
+  isProcessing,
   onOnboardAccount,
   onRetryOnboardAccount,
   transitionTo,
@@ -69,11 +69,11 @@ export const StepOnboardFooter = ({
 
 export const StepFinishFooter = ({
   t,
-  onAddAccounts,
-  isReonboarding,
-  importableAccounts,
   creatableAccount,
+  importableAccounts,
+  onAddAccounts,
   onboardingResult,
+  isReonboarding,
 }: Pick<
   StableStepProps,
   "t" | "onAddAccounts" | "isReonboarding" | "importableAccounts" | "creatableAccount"

@@ -4,8 +4,8 @@ import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StableStepProps } from "./types";
 
 export default function StepFinish({
-  t,
   currency,
+  t,
   creatableAccount,
   importableAccounts,
   isReonboarding,

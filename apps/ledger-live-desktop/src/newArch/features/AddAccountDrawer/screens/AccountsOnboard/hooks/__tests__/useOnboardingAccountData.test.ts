@@ -58,30 +58,30 @@ describe("useOnboardingAccountData", () => {
   describe("getCreatableAccount", () => {
     it("should return accountToReonboard when isReonboarding is true", () => {
       const accounts = [mockAccount1, mockAccount2];
-      const result = getCreatableAccount(accounts, true, mockAccount1);
+      const result = getCreatableAccount(accounts, mockAccount1, true);
       expect(result).toBe(mockAccount1);
     });
 
     it("should return unused account when not reonboarding", () => {
       const accounts = [mockAccount1, mockAccount2];
-      const result = getCreatableAccount(accounts, false);
+      const result = getCreatableAccount(accounts, undefined, false);
       expect(result).toBe(mockAccount2);
     });
 
     it("should return undefined when isReonboarding is true but accountToReonboard is undefined", () => {
       const accounts = [mockAccount1, mockAccount2];
-      const result = getCreatableAccount(accounts, true, undefined);
+      const result = getCreatableAccount(accounts, undefined, true);
       expect(result).toBeUndefined();
     });
 
     it("should return undefined when no unused account exists", () => {
       const accounts = [mockAccount1];
-      const result = getCreatableAccount(accounts, false);
+      const result = getCreatableAccount(accounts, undefined, false);
       expect(result).toBeUndefined();
     });
 
     it("should return undefined for empty accounts array", () => {
-      const result = getCreatableAccount([], false);
+      const result = getCreatableAccount([], undefined, false);
       expect(result).toBeUndefined();
     });
   });
@@ -90,8 +90,8 @@ describe("useOnboardingAccountData", () => {
     it("should return edited name when available", () => {
       const editedNames = { account2: "My Custom Name" };
       const result = resolveCreatableAccountName(
-        mockAccount2 as Account,
         mockCurrency as CryptoCurrency,
+        mockAccount2 as Account,
         editedNames,
         0,
       );
@@ -100,8 +100,8 @@ describe("useOnboardingAccountData", () => {
 
     it("should return default name when no edited name", () => {
       const result = resolveCreatableAccountName(
-        mockAccount2 as Account,
         mockCurrency as CryptoCurrency,
+        mockAccount2 as Account,
         {},
         0,
       );
@@ -110,12 +110,12 @@ describe("useOnboardingAccountData", () => {
     });
 
     it("should return currency name with index when creatableAccount is undefined", () => {
-      const result = resolveCreatableAccountName(undefined, mockCurrency as CryptoCurrency, {}, 2);
+      const result = resolveCreatableAccountName(mockCurrency as CryptoCurrency, undefined, {}, 2);
       expect(result).toBe(`${mockCurrency.name} 3`);
     });
 
     it("should calculate index correctly based on importableAccountsCount", () => {
-      const result = resolveCreatableAccountName(undefined, mockCurrency as CryptoCurrency, {}, 5);
+      const result = resolveCreatableAccountName(mockCurrency as CryptoCurrency, undefined, {}, 5);
       expect(result).toBe(`${mockCurrency.name} 6`);
     });
   });
@@ -134,8 +134,8 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
         editedNames: { account1: "Renamed Account" },
-        isReonboarding: true,
         accountToReonboard: mockAccount1,
+        isReonboarding: true,
         onboardingResult: {
           completedAccount,
         },
@@ -152,8 +152,8 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
         editedNames: { account1: "Renamed Account" },
-        isReonboarding: true,
         accountToReonboard: mockAccount1,
+        isReonboarding: true,
       };
 
       const result = prepareAccountsForAdding(config);
@@ -170,6 +170,7 @@ describe("useOnboardingAccountData", () => {
           account1: "Importable Account",
           tempId: "New Account Name",
         },
+        accountToReonboard: undefined,
         isReonboarding: false,
         onboardingResult: {
           completedAccount,
@@ -193,6 +194,7 @@ describe("useOnboardingAccountData", () => {
           account1: "Importable",
           [tempId]: "Temporary Name",
         },
+        accountToReonboard: undefined,
         isReonboarding: false,
         onboardingResult: {
           completedAccount: {
@@ -212,6 +214,7 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
         editedNames: { account1: "Renamed" },
+        accountToReonboard: undefined,
         isReonboarding: false,
       };
 
@@ -225,6 +228,7 @@ describe("useOnboardingAccountData", () => {
         selectedAccounts: [mockAccount1],
         existingAccounts: [],
         editedNames: {},
+        accountToReonboard: undefined,
         isReonboarding: false,
       };
 
