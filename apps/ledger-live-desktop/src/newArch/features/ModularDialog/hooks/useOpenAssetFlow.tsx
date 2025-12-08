@@ -60,7 +60,7 @@ export function useOpenAssetFlow(
   const { openAssetFlow: openAssetFlowDrawer, openAddAccountFlow: openAddAccountFlowDrawer } =
     useOpenAssetFlowDrawer(modularDrawerVisibleParams, source, modalNameToReopen);
 
-  if (featureModularDrawer?.params?.enableDialog) {
+  if (featureModularDrawer?.params?.enableDialogDesktop) {
     return {
       openAssetFlow: openAssetFlowDialog,
       openAddAccountFlow,

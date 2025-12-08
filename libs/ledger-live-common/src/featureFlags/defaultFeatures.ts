@@ -660,7 +660,7 @@ export const DEFAULT_FEATURES: Features = {
       enableModularization: false,
       searchDebounceTime: 500,
       backendEnvironment: "PROD",
-      enableDialog: false,
+      enableDialogDesktop: false,
     },
   },
   llmModularDrawer: {

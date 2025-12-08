@@ -81,7 +81,7 @@ export const useOpenAssetAndAccount = (overrideFf = false) => {
 
   const { openDialog, closeDialog } = useDialog();
 
-  if (featureModularDrawer?.params?.enableDialog || overrideFf) {
+  if (featureModularDrawer?.params?.enableDialogDesktop || overrideFf) {
     return {
       openAssetAndAccount: (params: Omit<DrawerParams, "openDialog" | "closeDialog">) =>
         openAssetAndAccountDialog({ ...params, openDialog, closeDialog }),

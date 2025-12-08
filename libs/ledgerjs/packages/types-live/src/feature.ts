@@ -242,7 +242,7 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
-  lldModularDrawer: Feature_ModularDrawer & { params: { enableDialog: boolean } };
+  lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
@@ -687,6 +687,7 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+  enableDialogDesktop?: boolean;
 }>;
 
 export type Feature_Noah = Feature<{
