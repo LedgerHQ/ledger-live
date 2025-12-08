@@ -7799,7 +7799,10 @@
         "description": "This automatically syncs your crypto accounts across all your phones and computers, even when transitioning to a new device.",
         "mainCta": "Turn on Ledger Sync",
         "secondCta": "I already turned it on",
-        "learnMore": "How does Ledger Sync work?"
+        "learnMore": "How does Ledger Sync work?",
+        "titleModal": "Sync your wallet",
+        "descriptionModal": "Keep your portfolio up to date when switching phones or use a computer — all secured by your Ledger device.",
+        "cta": "Continue"
       }
     },
     "deviceSelection": {
@@ -7887,7 +7890,8 @@
         },
         "connectDevice": {
           "title": "Use my Ledger device"
-        }
+        },
+        "description": "Choose if you have Ledger Wallet synced on another phone or computer"
       },
       "qrCode": {
         "title": "Sync Ledger Wallet apps",

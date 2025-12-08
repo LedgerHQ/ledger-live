@@ -7608,7 +7608,10 @@
       "description": "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
       "cta": "Turn on Ledger Sync",
       "alreadySync": "I already turned it on",
-      "learnMore": "How does Ledger Sync work?"
+      "learnMore": "How does Ledger Sync work?",
+      "titleModal": "Sync your wallet",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "ctaModal": "Continue"
     },
     "entryPoints": {
       "accounts": {
@@ -7714,7 +7717,8 @@
         "connectDevice": {
           "title": "Use your Ledger",
           "description": "Synchronize by signing with your Ledger"
-        }
+        },
+        "descriptionModal": "Choose if you have Ledger Wallet synced on another phone"
       },
       "qrCode": {
         "title": "Sync your Ledger Wallet apps",

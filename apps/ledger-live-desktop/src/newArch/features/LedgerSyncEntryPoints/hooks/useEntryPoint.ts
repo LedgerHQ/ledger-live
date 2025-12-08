@@ -13,7 +13,6 @@ import SettingsEntryPoint from "../components/SettingsEntryPoint";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
 import { LedgerSyncBanner } from "../components/LedgerSyncBanner/LedgerSyncBanner";
-import LedgerSyncBannerSetting from "../components/LedgerSyncBanner/LedgerSyncBannerSetting";
 
 export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
   const { push } = useHistory();
@@ -66,7 +65,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       onClick: () => {
         track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Settings });
       },
-      component: isOptimisationEnabled?.enabled ? LedgerSyncBannerSetting : SettingsEntryPoint,
+      component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : SettingsEntryPoint,
     },
     [EntryPoint.postOnboarding]: {
       enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,

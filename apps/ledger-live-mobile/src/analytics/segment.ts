@@ -146,10 +146,12 @@ runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFla
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const ledgerSync = analyticsFeatureFlagMethod("llmWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwmLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!ledgerSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 

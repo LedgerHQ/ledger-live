@@ -46,7 +46,7 @@ export function useEntryPoint(entryPoint: EntryPoint) {
   const entryPointsData: EntryPointsData = {
     [EntryPoint.manager]: {
       enabled: featureLedgerSyncEntryPoints?.params?.manager ?? false,
-      ...cardEntryPoint,
+      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : cardEntryPoint),
     },
     [EntryPoint.accounts]: {
       enabled: featureLedgerSyncEntryPoints?.params?.accounts ?? false,
@@ -58,7 +58,7 @@ export function useEntryPoint(entryPoint: EntryPoint) {
     },
     [EntryPoint.postOnboarding]: {
       enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
-      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : cardEntryPoint),
+      ...cardEntryPoint,
     },
   };
   const entryPointData = entryPointsData[entryPoint];

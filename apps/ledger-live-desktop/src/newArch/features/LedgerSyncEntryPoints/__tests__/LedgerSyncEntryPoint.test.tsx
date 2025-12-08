@@ -262,12 +262,12 @@ describe("LedgerSyncEntryPoint", () => {
       });
     });
 
-    it("should display Settings entry point with LedgerSyncBanner (neutralIcon variant) when optimisation is enabled", async () => {
+    it("should display Settings entry point with LedgerSyncBanner when optimisation is enabled", async () => {
       const { user } = render(<LedgerSyncEntryPointShared entryPoint={EntryPoint.settings} />, {
         initialState: OPTIMISATION_ENABLED_STATE,
       });
 
-      const bannerTitle = screen.getByText(/Ledger Sync/);
+      const bannerTitle = screen.getByText(/Your wallet isn't synced/);
       expect(bannerTitle).toBeVisible();
 
       const bannerDescription = screen.getByText(
