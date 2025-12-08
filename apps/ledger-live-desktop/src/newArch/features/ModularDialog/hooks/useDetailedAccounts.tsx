@@ -15,14 +15,14 @@ import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytic
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import { useOpenAssetFlowDialog } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
-  onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void,
+  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const counterValuesState = useCountervaluesState();
