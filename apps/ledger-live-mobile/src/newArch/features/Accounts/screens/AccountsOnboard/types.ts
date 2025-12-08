@@ -1,15 +1,89 @@
-import { ScreenName } from "~/const";
+import {
+  AccountOnboardStatus,
+  OnboardingConfig as BaseConfig,
+  OnboardProgress,
+  OnboardResult,
+  OnboardingBridge,
+  OnboardingResult,
+  StepId,
+} from "@ledgerhq/live-common/hooks/useOnboarding/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import React from "react";
 import type { NavigationSnapshot } from "~/families/canton/utils/navigationSnapshot";
 
-export type AccountsOnboardParamList = {
-  [ScreenName.AccountsOnboard]: {
-    accountsToAdd: Account[];
-    currency: CryptoOrTokenCurrency;
-    isReonboarding?: boolean;
-    accountToReonboard?: Account;
-    restoreState?: NavigationSnapshot;
-    editedNames?: { [accountId: string]: string };
+export { AccountOnboardStatus, StepId };
+
+export type { OnboardProgress, OnboardResult, OnboardingBridge, OnboardingResult };
+
+export type StepComponent = React.ComponentType<StableStepProps & DynamicStepProps>;
+export type FooterComponent = React.ComponentType<StableStepProps & DynamicStepProps>;
+
+export type StableStepProps = {
+  currency: CryptoCurrency;
+  device: { deviceId: string };
+  accountName: string;
+  editedNames: { [accountId: string]: string };
+  creatableAccount: Account;
+  importableAccounts: Account[];
+  isReonboarding?: boolean;
+  onboardingConfig?: OnboardingConfig;
+  onAddAccounts: (accounts: Account[]) => void;
+  onOnboardAccount: () => void;
+  onRetryOnboardAccount: () => void;
+  transitionTo: (stepId: StepId) => void;
+};
+
+export type DynamicStepProps = {
+  isProcessing: boolean;
+  onboardingStatus: AccountOnboardStatus;
+  onboardingResult: OnboardingResult | undefined;
+  error: Error | null;
+};
+
+export type TranslationKeys = {
+  title: string;
+  reonboardTitle: string;
+  init: string;
+  reonboardInit: string;
+  success: string;
+  reonboardSuccess: string;
+  error: string;
+  error429?: string;
+  onboarded?: string;
+  account?: string;
+  newAccount?: string;
+  statusPrepare?: string;
+  statusSubmit?: string;
+  statusDefault?: string;
+  [key: string]: string | undefined;
+};
+
+export type UrlConfig = {
+  learnMore?: string;
+  [key: string]: string | undefined;
+};
+
+export interface OnboardingConfig extends BaseConfig {
+  stepFlow: StepId[];
+  stepComponents: {
+    [StepId.ONBOARD]: StepComponent;
+    [StepId.FINISH]: StepComponent;
   };
+  footerComponents: {
+    [StepId.ONBOARD]: FooterComponent;
+    [StepId.FINISH]: FooterComponent;
+  };
+  translationKeys: TranslationKeys;
+  urls: UrlConfig;
+}
+
+// Navigation types
+export type AccountsOnboardParams = {
+  accountsToAdd: Account[];
+  currency: CryptoCurrency;
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+  restoreState?: NavigationSnapshot;
+  editedNames?: { [accountId: string]: string };
 };
