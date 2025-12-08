@@ -17,6 +17,7 @@ export const assetsLeftElementOptions = ["apy", "marketTrend", "undefined"] as c
 export const assetsRightElementOptions = ["balance", "marketTrend", "undefined"] as const;
 export const networksLeftElementOptions = [
   "numberOfAccounts",
+  "numberOfAccountsText",
   "numberOfAccountsAndApy",
   "undefined",
 ] as const;

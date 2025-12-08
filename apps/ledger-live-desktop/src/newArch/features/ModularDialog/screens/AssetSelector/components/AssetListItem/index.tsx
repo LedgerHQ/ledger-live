@@ -21,29 +21,23 @@ export const AssetListItem = ({
     onClick({ name, ticker, id });
   };
 
-  const leadingContent = <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />;
-
-  const customDescription = (
-    <div className="flex items-center gap-8">
-      <span className="text-muted body-3" data-testid={`asset-item-ticker-${ticker}`}>
-        {ticker}
-      </span>
-      {leftElement}
-      {shouldDisplayId && assetId && (
-        <div className="bg-muted inline-flex rounded-sm px-8 py-2">
-          <span className="body-4 text-muted">{`${assetId} (${numberOfNetworks} networks)`}</span>
-        </div>
-      )}
-    </div>
-  );
-
-  const hasCustomDescription = leftElement || shouldDisplayId;
-
   return (
     <ListItem
       title={name}
-      leadingContent={leadingContent}
-      description={hasCustomDescription ? customDescription : ticker}
+      leadingContent={<CryptoIcon size="48px" ledgerId={id} ticker={ticker} />}
+      description={ticker}
+      descriptionTag={
+        leftElement || shouldDisplayId ? (
+          <div className="flex items-center gap-8">
+            {leftElement}
+            {shouldDisplayId && assetId && numberOfNetworks && (
+              <div className="bg-muted inline-flex rounded-sm px-8 py-2">
+                <span className="body-4 text-muted">{`${assetId} (${numberOfNetworks} networks)`}</span>
+              </div>
+            )}
+          </div>
+        ) : undefined
+      }
       trailingContent={rightElement}
       onClick={handleClick}
       data-testid={`asset-item-${ticker}`}

@@ -4,8 +4,8 @@ import { ListItem } from "@ledgerhq/ldls-ui-react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Network = CryptoOrTokenCurrency & {
-  leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
+  description?: string;
 };
 
 type NetworkListItemProps = Network & {
@@ -17,29 +17,15 @@ export const NetworkListItem = ({
   ticker,
   id,
   onClick,
-  leftElement,
   rightElement,
+  description,
 }: NetworkListItemProps) => {
-  const leadingContent = <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />;
-
-  const getTrailingContent = () => {
-    if (!leftElement && !rightElement) {
-      return undefined;
-    }
-
-    return (
-      <>
-        {leftElement}
-        {rightElement}
-      </>
-    );
-  };
-
   return (
     <ListItem
       title={name}
-      leadingContent={leadingContent}
-      trailingContent={getTrailingContent()}
+      leadingContent={<CryptoIcon size="48px" ledgerId={id} ticker={ticker} />}
+      description={description}
+      trailingContent={rightElement}
       onClick={onClick}
       data-testid={`network-item-name-${name}`}
     />

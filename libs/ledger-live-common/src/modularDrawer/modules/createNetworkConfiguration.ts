@@ -1,5 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
+import { createUseLeftAccountsTextModule } from "../hooks/useLeftAccountsText";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
 import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
 import {
@@ -27,6 +28,10 @@ const getLeftElement =
             NetworkConfigurationDeps.useAccountData,
             NetworkConfigurationDeps.accountsCountAndApy,
           );
+      case "numberOfAccountsText":
+        return createUseLeftAccountsTextModule({
+          useAccountData: NetworkConfigurationDeps.useAccountData,
+        });
       case "numberOfAccounts":
       default:
         return createUseLeftAccountsModule({
@@ -62,6 +67,7 @@ const sortNetworks = (
 ) => {
   if (
     leftElement === "numberOfAccounts" ||
+    leftElement === "numberOfAccountsText" ||
     leftElement === "numberOfAccountsAndApy" ||
     leftElement === undefined // default
   ) {
