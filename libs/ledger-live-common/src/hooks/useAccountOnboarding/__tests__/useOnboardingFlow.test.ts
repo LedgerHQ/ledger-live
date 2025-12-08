@@ -53,9 +53,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -75,9 +75,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: customConfig,
       }),
@@ -93,9 +93,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: customConfig,
       }),
@@ -108,9 +108,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -129,9 +129,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -156,9 +156,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of(successResult));
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -185,9 +185,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of(progress, successResult));
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -206,9 +206,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(throwError(() => testError));
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -243,9 +243,9 @@ describe("useOnboardingFlow", () => {
 
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -270,9 +270,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of(successResult));
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -305,9 +305,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: customConfig,
       }),
@@ -337,9 +337,9 @@ describe("useOnboardingFlow", () => {
 
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -360,9 +360,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),
@@ -382,9 +382,9 @@ describe("useOnboardingFlow", () => {
     const mockBridge = createMockBridge(of());
     const { result } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: customConfig,
       }),
@@ -415,9 +415,9 @@ describe("useOnboardingFlow", () => {
 
     const { result, unmount } = renderHook(() =>
       useOnboardingFlow({
+        creatableAccount: mockCreatableAccount,
         currency: mockCurrency,
         deviceId: mockDeviceId,
-        creatableAccount: mockCreatableAccount,
         onboardingBridge: mockBridge,
         onboardingConfig: mockOnboardingConfig,
       }),

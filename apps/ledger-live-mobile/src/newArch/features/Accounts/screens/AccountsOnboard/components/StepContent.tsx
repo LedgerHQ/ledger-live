@@ -1,5 +1,5 @@
 import React from "react";
-import { StepId, StableStepProps, DynamicStepProps, OnboardingConfig } from "../types";
+import { DynamicStepProps, OnboardingConfig, StableStepProps, StepId } from "../types";
 
 interface StepContentProps {
   stepId: StepId;

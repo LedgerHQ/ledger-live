@@ -4,11 +4,11 @@ import { Trans } from "react-i18next";
 import { AccountOnboardStatus, DynamicStepProps, StableStepProps, StepId } from "./types";
 
 export const StepOnboardFooter = ({
-  onboardingStatus,
-  isProcessing,
   onOnboardAccount,
   onRetryOnboardAccount,
   transitionTo,
+  onboardingStatus,
+  isProcessing,
 }: Pick<StableStepProps, "onOnboardAccount" | "onRetryOnboardAccount" | "transitionTo"> &
   Pick<DynamicStepProps, "isProcessing" | "onboardingStatus">) => {
   // During SIGN status, the device action modal handles UI
@@ -42,8 +42,8 @@ export const StepOnboardFooter = ({
 export const StepFinishFooter = ({
   onAddAccounts,
   importableAccounts,
-  onboardingResult,
   isReonboarding,
+  onboardingResult,
   isProcessing,
 }: Pick<StableStepProps, "onAddAccounts" | "isReonboarding" | "importableAccounts"> &
   Pick<DynamicStepProps, "onboardingResult" | "isProcessing">) => {

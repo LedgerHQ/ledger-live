@@ -5,4 +5,4 @@ export {
   getCreatableAccount,
   getImportableAccounts,
   resolveCreatableAccountName,
-} from "@ledgerhq/live-common/hooks/useOnboarding";
+} from "@ledgerhq/live-common/hooks/useAccountOnboarding";

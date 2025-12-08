@@ -6,8 +6,8 @@ import { DynamicStepProps, StableStepProps } from "../types";
 
 export default function StepFinish({
   importableAccounts,
-  onboardingResult,
   isReonboarding,
+  onboardingResult,
 }: StableStepProps & DynamicStepProps) {
   const { t } = useTranslation();
 

@@ -15,7 +15,7 @@ const mockUseOnboardingFlow = jest.fn();
 const mockUseOnboardingAccountData = jest.fn();
 const mockPrepareAccountsForAdding = jest.fn();
 
-jest.mock("@ledgerhq/live-common/hooks/useOnboarding", () => ({
+jest.mock("@ledgerhq/live-common/hooks/useAccountOnboarding", () => ({
   useOnboardingFlow: mockUseOnboardingFlow,
   useOnboardingAccountData: mockUseOnboardingAccountData,
   prepareAccountsForAdding: mockPrepareAccountsForAdding,

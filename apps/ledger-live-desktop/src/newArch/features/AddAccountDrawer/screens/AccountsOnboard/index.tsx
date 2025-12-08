@@ -77,11 +77,11 @@ export default function AccountsOnboard({
     handleOnboardAccount,
     handleRetryOnboardAccount,
   } = useOnboardingFlow({
+    creatableAccount,
     currency,
     device,
-    creatableAccount,
-    onboardingConfig,
     onboardingBridge,
+    onboardingConfig,
   });
 
   const prepareAndAddAccounts = useCallback(

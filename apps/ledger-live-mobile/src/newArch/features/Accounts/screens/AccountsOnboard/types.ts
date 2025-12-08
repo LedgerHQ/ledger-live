@@ -8,7 +8,7 @@ import {
   OnboardingBridge,
   OnboardingResult,
   StepId,
-} from "@ledgerhq/live-common/hooks/useOnboarding/index";
+} from "@ledgerhq/live-common/hooks/useAccountOnboarding";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";

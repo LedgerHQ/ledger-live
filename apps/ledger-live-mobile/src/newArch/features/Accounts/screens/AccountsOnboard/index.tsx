@@ -3,7 +3,7 @@ import {
   prepareAccountsForAdding,
   useOnboardingAccountData,
   useOnboardingFlow,
-} from "@ledgerhq/live-common/hooks/useOnboarding/index";
+} from "@ledgerhq/live-common/hooks/useAccountOnboarding";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -22,7 +22,6 @@ type Props = BaseComposite<
 >;
 
 export default function AccountsOnboard({ navigation, route }: Props) {
-  // Extract route params
   const {
     accountsToAdd: routeAccountsToAdd = [],
     currency,
@@ -35,7 +34,6 @@ export default function AccountsOnboard({ navigation, route }: Props) {
   const accountsToAdd = useMemo(() => routeAccountsToAdd, [routeAccountsToAdd]);
   const editedNames = useMemo(() => routeEditedNames, [routeEditedNames]);
 
-  // Extract common params from parent navigator
   const commonParams = useMemo(
     () =>
       route.params as typeof route.params & {
@@ -46,15 +44,12 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     [route],
   );
 
-  // Selectors
   const device = useSelector(lastConnectedDeviceSelector);
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 
-  // Local loading state for account addition
   const [isAddingAccounts, setIsAddingAccounts] = useState(false);
 
-  // Get onboarding config and bridge from registry
   const onboardingConfig = getOnboardingConfig(currency);
   const onboardingBridge = getOnboardingBridge(currency);
 
@@ -62,7 +57,6 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     throw new Error(`No onboarding support for currency family: ${currency.family}`);
   }
 
-  // Use shared hooks for account data
   const { importableAccounts, creatableAccount, accountName } = useOnboardingAccountData({
     currency,
     selectedAccounts: accountsToAdd,
@@ -71,7 +65,6 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     isReonboarding,
   });
 
-  // Use shared hook for onboarding flow
   const {
     error,
     isProcessing,
@@ -82,26 +75,31 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     handleOnboardAccount,
     handleRetryOnboardAccount,
   } = useOnboardingFlow({
+    // Non-null assertion is safe here because:
+    // 1. React hooks must be called unconditionally
+    // 2. When creatableAccount is null and importableAccounts.length > 0, useEffect handles it and navigates away
+    // 3. When creatableAccount is null and importableAccounts.length === 0, we return early after hooks
+    // 4. The hook's methods (handleOnboardAccount) are only called when creatableAccount exists (checked in useEffect at line 158)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    creatableAccount: creatableAccount!,
     currency,
     deviceId: device?.deviceId || "",
-    creatableAccount: creatableAccount!,
     onboardingBridge,
     onboardingConfig,
   });
 
-  // Handle account addition and navigation to success
-  const handleAddAccounts = useCallback(() => {
-    setIsAddingAccounts(true);
-    try {
+  const handleAddAccountsDirectly = useCallback(
+    (includeOnboardingResult: boolean = false) => {
       const { accounts, renamings } = prepareAccountsForAdding({
         selectedAccounts: accountsToAdd,
         existingAccounts,
         editedNames,
         accountToReonboard,
         isReonboarding,
-        onboardingResult: onboardingResult
-          ? { completedAccount: onboardingResult.completedAccount }
-          : undefined,
+        onboardingResult:
+          includeOnboardingResult && onboardingResult
+            ? { completedAccount: onboardingResult.completedAccount }
+            : undefined,
       });
 
       dispatch(
@@ -113,7 +111,6 @@ export default function AccountsOnboard({ navigation, route }: Props) {
         }),
       );
 
-      // Navigate to success screen
       if (commonParams.context) {
         navigation.replace(ScreenName.AddAccountsSuccess, {
           ...commonParams,
@@ -126,25 +123,31 @@ export default function AccountsOnboard({ navigation, route }: Props) {
           accountsToAdd: accounts,
         });
       }
+    },
+    [
+      accountsToAdd,
+      existingAccounts,
+      editedNames,
+      accountToReonboard,
+      isReonboarding,
+      onboardingResult,
+      dispatch,
+      navigation,
+      currency,
+      commonParams,
+    ],
+  );
+
+  const handleAddAccounts = useCallback(() => {
+    setIsAddingAccounts(true);
+    try {
+      handleAddAccountsDirectly(true);
     } catch (error) {
-      // Reset loading state on error
       setIsAddingAccounts(false);
       throw error;
     }
-  }, [
-    accountsToAdd,
-    existingAccounts,
-    editedNames,
-    accountToReonboard,
-    isReonboarding,
-    onboardingResult,
-    dispatch,
-    navigation,
-    currency,
-    commonParams,
-  ]);
+  }, [handleAddAccountsDirectly]);
 
-  // Auto-start onboarding when component mounts
   useEffect(() => {
     if (creatableAccount && onboardingStatus === AccountOnboardStatus.INIT) {
       handleOnboardAccount();
@@ -155,58 +158,21 @@ export default function AccountsOnboard({ navigation, route }: Props) {
   useEffect(() => {
     if (!creatableAccount && importableAccounts.length > 0) {
       // All accounts are already used, navigate directly to success
-      const { accounts, renamings } = prepareAccountsForAdding({
-        selectedAccounts: accountsToAdd,
-        existingAccounts,
-        editedNames,
-        accountToReonboard,
-        isReonboarding,
-      });
-
-      dispatch(
-        addAccountsAction({
-          scannedAccounts: accounts,
-          existingAccounts,
-          selectedIds: accounts.map(a => a.id),
-          renamings,
-        }),
-      );
-
-      if (commonParams.context) {
-        navigation.replace(ScreenName.AddAccountsSuccess, {
-          ...commonParams,
-          currency,
-          accountsToAdd: accounts,
-        });
-      } else {
-        navigation.replace(ScreenName.AddAccountsSuccess, {
-          currency,
-          accountsToAdd: accounts,
-        });
-      }
+      handleAddAccountsDirectly(false);
     }
-  }, [
-    creatableAccount,
-    importableAccounts,
-    accountsToAdd,
-    existingAccounts,
-    editedNames,
-    accountToReonboard,
-    isReonboarding,
-    dispatch,
-    navigation,
-    currency,
-    commonParams,
-  ]);
+  }, [creatableAccount, importableAccounts.length, handleAddAccountsDirectly]);
 
-  // Prepare stable and dynamic props for components
-  const stableProps = useMemo<StableStepProps>(
-    () => ({
+  const stableProps = useMemo<StableStepProps>(() => {
+    // At this point, creatableAccount is should not to be null :
+    if (!creatableAccount) {
+      throw new Error("creatableAccount is required but was null");
+    }
+    return {
       currency,
       device: device || { deviceId: "" },
       accountName,
       editedNames,
-      creatableAccount: creatableAccount!,
+      creatableAccount,
       importableAccounts,
       onboardingConfig,
       isReonboarding,
@@ -214,22 +180,21 @@ export default function AccountsOnboard({ navigation, route }: Props) {
       onOnboardAccount: handleOnboardAccount,
       onRetryOnboardAccount: handleRetryOnboardAccount,
       transitionTo,
-    }),
-    [
-      currency,
-      device,
-      accountName,
-      editedNames,
-      creatableAccount,
-      importableAccounts,
-      onboardingConfig,
-      isReonboarding,
-      handleAddAccounts,
-      handleOnboardAccount,
-      handleRetryOnboardAccount,
-      transitionTo,
-    ],
-  );
+    };
+  }, [
+    currency,
+    device,
+    accountName,
+    editedNames,
+    creatableAccount,
+    importableAccounts,
+    onboardingConfig,
+    isReonboarding,
+    handleAddAccounts,
+    handleOnboardAccount,
+    handleRetryOnboardAccount,
+    transitionTo,
+  ]);
 
   const dynamicProps = useMemo<DynamicStepProps>(
     () => ({
@@ -241,10 +206,8 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     [onboardingStatus, onboardingResult, isProcessing, isAddingAccounts, error],
   );
 
-  // Get footer component for current step
   const FooterComponent = onboardingConfig.footerComponents[stepId];
 
-  // Show loading state when waiting for initial data
   if (!creatableAccount && importableAccounts.length === 0) {
     return (
       <Flex flex={1} alignItems="center" justifyContent="center">

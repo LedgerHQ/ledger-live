@@ -8,7 +8,7 @@ import {
   OnboardResult,
   OnboardingBridge,
   StepId,
-} from "@ledgerhq/live-common/hooks/useOnboarding/index";
+} from "@ledgerhq/live-common/hooks/useAccountOnboarding/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { TFunction } from "i18next";
 import React from "react";

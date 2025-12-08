@@ -10,8 +10,8 @@ export default function StepOnboard({
   creatableAccount,
   importableAccounts,
   onboardingConfig,
-  onboardingStatus,
   isReonboarding,
+  onboardingStatus,
   error,
   isProcessing,
 }: StableStepProps & DynamicStepProps) {
