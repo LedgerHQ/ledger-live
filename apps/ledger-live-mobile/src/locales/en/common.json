@@ -7488,14 +7488,14 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to...",
+      "title": "What’s next?",
       "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
       "viewWallet": "Explore my portfolio"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "description": "Secure your assets, buy crypto, and go further.",
       "buttonLabel": "See what's next"
     },
     "actions": {
@@ -7505,19 +7505,19 @@
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "From any exchange or wallet, directly to your Ledger.",
+        "description": "Transfer from any exchange or wallet.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
         "titleCompleted": "Crypto bought",
-        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
+        "description": "Choose from 500+ coins and tokens.",
         "popupLabel": "Crypto bought"
       },
       "customImage": {
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
-        "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "description": "Display your favorite digital art or photo as your {{productName}}'s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
       "syncAccounts": {
