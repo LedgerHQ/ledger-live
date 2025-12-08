@@ -535,6 +535,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
+      '@ledgerhq/identities':
+        specifier: workspace:^
+        version: link:../../libs/identities
       '@ledgerhq/ldls-design-core':
         specifier: 'catalog:'
         version: 0.0.32(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))

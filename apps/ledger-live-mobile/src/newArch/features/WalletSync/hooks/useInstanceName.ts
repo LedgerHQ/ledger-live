@@ -10,6 +10,7 @@ const platformMap: Record<string, string | undefined> = {
 let deviceName: string;
 
 export function useInstanceName(): string {
+  // FIXME migrate to userIdSelector + exportUserIdForDisplay() (equipment_id for UI display, need to add this method)
   const hash = getEnv("USER_ID").slice(0, 5);
   const os = platformMap[Platform.OS] ?? Platform.OS;
   if (!deviceName) deviceName = getDeviceNameSync() ?? `${os} ${Platform.Version}`;

@@ -1,9 +1,21 @@
 import { v4 as uuid } from "uuid";
 import { setKey, getKey } from "~/renderer/storage";
 
-// a user is an anonymous way to identify a same instance of the app
-
-// only used by analytics. DEPRECATED (will will later switch to localStorage)
+/**
+ * @deprecated Use userIdSelector from reducers/identities instead.
+ * This function is kept for backward compatibility during migration.
+ * All usages should be migrated to use the new identities system with userIdSelector.
+ *
+ * Migration example:
+ * ```typescript
+ * import { userIdSelector } from "~/renderer/reducers/identities";
+ * const userId = userIdSelector(state);
+ * if (userId) {
+ *   const userIdString = userId.exportUserIdFor__PURPOSE__();
+ *   // use userIdString
+ * }
+ * ```
+ */
 export default async () => {
   let user = await getKey("app", "user");
   if (!user) {
@@ -14,6 +26,11 @@ export default async () => {
   }
   return user;
 };
+/**
+ * @deprecated Use userIdSelector from reducers/identities instead.
+ * This function is kept only for migration purposes in initIdentities.
+ * All other usages should be migrated to use the new identities system.
+ */
 export const getUserId = () => {
   if (typeof window === "object") {
     const { localStorage } = window;

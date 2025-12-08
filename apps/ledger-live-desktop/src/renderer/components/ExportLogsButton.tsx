@@ -60,6 +60,7 @@ const ExportLogsBtn = ({
   const getDateTxt = useTechnicalDateTimeFn();
   const exportLogs = useCallback(async () => {
     const resourceUsage = webFrame.getResourceUsage();
+    // FIXME migrate to userIdSelector + exportUserIdForExportedLogs() (equipment_id for logs, need to add this method)
     const user = await getUser();
     logger.log("exportLogsMeta", {
       resourceUsage,

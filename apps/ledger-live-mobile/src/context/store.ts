@@ -6,15 +6,26 @@ import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "./rtkQueryApi";
 import { setupCryptoAssetsStore } from "../config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
+import { createIdentitiesSyncMiddleware } from "@ledgerhq/identities";
+import { analyticsEnabledSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
   reducer: reducers,
   devTools: !!Config.DEBUG_RNDEBUGGER,
-  middleware: getDefaultMiddleware =>
-    applyLlmRTKApiMiddlewares(
+  middleware: getDefaultMiddleware => {
+    const identitiesSyncMiddleware = createIdentitiesSyncMiddleware({
+      getState: () => store.getState(),
+      dispatch: action => store.dispatch(action),
+      getIdentitiesState: (state: State) => state.identities,
+      getAnalyticsConsent: (state: State) => analyticsEnabledSelector(state),
+    });
+
+    return applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-    ).concat(rebootMiddleware),
+    ).concat(identitiesSyncMiddleware, rebootMiddleware);
+  },
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();

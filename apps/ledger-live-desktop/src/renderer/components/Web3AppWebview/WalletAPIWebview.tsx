@@ -312,6 +312,7 @@ const useGetUserId = () => {
 
   useEffect(() => {
     let mounted = true;
+    // FIXME migrate to userIdSelector + exportUserIdForWalletAPI() (equipment_id for Wallet API, need to add this method)
     getUser().then(({ id }) => {
       if (mounted) setUserId(id);
     });

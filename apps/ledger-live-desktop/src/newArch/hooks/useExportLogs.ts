@@ -16,6 +16,7 @@ export function useExportLogs() {
   const exportLogs = useCallback(async () => {
     try {
       const resourceUsage = webFrame.getResourceUsage();
+      // FIXME migrate to userIdSelector + exportUserIdForExportedLogs() (equipment_id for logs, need to add this method)
       const user = await getUser();
       logger.log("exportLogsMeta", {
         resourceUsage,

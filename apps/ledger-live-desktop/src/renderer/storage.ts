@@ -47,6 +47,8 @@ export type Market = ReturnType<typeof marketStoreSelector>;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
+import type { PersistedIdentities } from "@ledgerhq/identities";
+
 // The types seen from the user side.
 type DatabaseValues = {
   accounts: Account[];
@@ -63,6 +65,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   cryptoAssets: PersistedCAL;
+  identities: PersistedIdentities;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

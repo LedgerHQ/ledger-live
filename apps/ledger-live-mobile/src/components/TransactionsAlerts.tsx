@@ -37,6 +37,7 @@ const TransactionsAlerts = () => {
       (!featureTransactionsAlerts?.enabled && refFeatureEnabled.current) ||
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
+      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
       getOrCreateUser().then(({ user }) => {
         deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
       });
@@ -58,6 +59,7 @@ const TransactionsAlerts = () => {
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
     if (newAccounts.length > 0 || removedAccounts.length > 0) {
+      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
       getOrCreateUser().then(({ user }) => {
         updateTransactionsAlertsAddresses(
           user.id,

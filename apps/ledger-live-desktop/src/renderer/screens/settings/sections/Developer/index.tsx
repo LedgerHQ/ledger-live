@@ -37,6 +37,7 @@ const Default = () => {
   const [segmentId, setSegmentID] = useState("loading...");
 
   useEffect(() => {
+    // FIXME migrate to userIdSelector + exportUserIdForDisplay() (equipment_id for UI display, need to add this method)
     user().then(u => {
       setSegmentID(u.id);
     });

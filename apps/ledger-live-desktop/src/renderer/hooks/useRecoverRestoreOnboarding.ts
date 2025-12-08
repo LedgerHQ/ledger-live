@@ -20,6 +20,7 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
   const [onboardedViaRecoverRestore, setOnboardedViaRecoverRestore] = useState<boolean>();
 
   const confirmRecoverOnboardingStatus = useCallback(async () => {
+    // FIXME migrate to userIdSelector + exportUserIdForRecoverRestoreStorageKey() (equipment_id for storage key, need to add this method)
     const { id } = await getUser();
     const status = getStoreValue(
       `${ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX}${id}`,

@@ -37,6 +37,7 @@ export default function DebugTransactionsAlerts() {
 
   useEffect(() => {
     if (chainwatchBaseUrl) {
+      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
       getOrCreateUser().then(({ user }) => {
         getSupportedChainsAccounts(user.id, chainwatchBaseUrl, supportedChains).then(
           (results: (ChainwatchAccount | undefined)[]) => {

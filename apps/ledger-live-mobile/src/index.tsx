@@ -208,6 +208,7 @@ function App() {
   useEffect(() => {
     if (!datadogFF?.enabled) return;
     const setUserEquipmentId = async () => {
+      // FIXME migrate to datadogIdSelector + exportDatadogIdForDatadog() (datadog ID for Datadog, need to add this method)
       const { user } = await getOrCreateUser();
       if (!user) return;
       const { datadogId } = user;

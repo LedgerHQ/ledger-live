@@ -307,6 +307,20 @@ export async function saveLargeMoverState(state: LargeMoverState): Promise<void>
 export function getCryptoAssetsCacheState(): Promise<PersistedCAL | null> {
   return storage.get("cryptoAssetsCache") as Promise<PersistedCAL | null>;
 }
+
+export async function getIdentities(): Promise<
+  import("@ledgerhq/identities").PersistedIdentities | null
+> {
+  return storage.get("identities") as Promise<
+    import("@ledgerhq/identities").PersistedIdentities | null
+  >;
+}
+
+export async function saveIdentities(
+  obj: import("@ledgerhq/identities").PersistedIdentities,
+): Promise<void> {
+  await storage.save("identities", obj);
+}
 export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): Promise<void> {
   if (persistedData.tokens.length > 0) {
     await storage.save("cryptoAssetsCache", persistedData);

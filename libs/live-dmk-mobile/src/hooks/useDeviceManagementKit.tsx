@@ -16,6 +16,7 @@ let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
+    // FIXME migrate to userIdSelector + exportUserIdForFirmwareSalt() (for DeviceManagementKit firmwareDistributionSalt, need to add this method)
     const userId = getEnv("USER_ID");
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     tracer.trace("Initialize DeviceManagementKit", {

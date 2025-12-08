@@ -17,6 +17,7 @@ import {
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
+  getIdentities,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -34,6 +35,9 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { initIdentities } from "~/helpers/identities";
+import { identitiesSlice } from "@ledgerhq/identities";
+import { setEnv } from "@ledgerhq/live-env";
 
 interface Props {
   onInitFinished: () => void;
@@ -82,6 +86,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         initialCountervalues,
         largeMoverState,
         cryptoAssetsCache,
+        persistedIdentities,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -94,6 +99,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
+        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -148,6 +154,22 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeMoverState) {
         store.dispatch(importLargeMoverState(largeMoverState));
+      }
+
+      // Initialize identities (migrate from legacy or init from scratch)
+      if (persistedIdentities) {
+        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+      } else {
+        await initIdentities(store);
+      }
+
+      // FIXME the usage of such USER_ID is to replace by a generic way to address in identities.
+      const identitiesState = store.getState().identities;
+      if (identitiesState.userId) {
+        // FIXME this is not actually ForPushDevicesService. we must kill the USER_ID env entirely and also:
+        // - for the firmware salt usecase: we will expose the hash in identities directly and actually drop the live-common abstraction (exportUserIdAsFirmwareSalt())
+        // - for the swap usecase: we will introduce an exportUserIdForSwapService()
+        setEnv("USER_ID", identitiesState.userId.exportUserIdForPushDevicesService());
       }
 
       setInitialCountervalues(initialCountervalues);

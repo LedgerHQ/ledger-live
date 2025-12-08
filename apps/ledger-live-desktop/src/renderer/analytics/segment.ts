@@ -327,6 +327,7 @@ export const startAnalytics = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
   // calling user() first is essential because otherwise the store data will not reflect the user's preferences
   // and hence canBeTracked will always be set to true...
+  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
   const { id } = await user();
   storeInstance = store;
 
@@ -388,6 +389,7 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 export const updateIdentify = async () => {
   if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
+  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
   const { id } = await user();
 
   const allProperties = {

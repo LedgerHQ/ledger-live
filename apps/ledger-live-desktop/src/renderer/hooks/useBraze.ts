@@ -102,6 +102,7 @@ export async function useBraze() {
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
   const initBraze = useCallback(async () => {
+    // FIXME migrate to userIdSelector + exportUserIdForBraze() (equipment_id for Braze analytics, need to add this method)
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");

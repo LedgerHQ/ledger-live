@@ -19,6 +19,7 @@ import {
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { exportIdentitiesForPersistence } from "@ledgerhq/identities";
 
 import { marketStoreSelector } from "../reducers/market";
 
@@ -85,6 +86,15 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     const state = store.getState();
     saveCryptoAssetsCache(state);
     return res;
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("identities/")) {
+    next(action);
+    const state = store.getState();
+    try {
+      const persisted = exportIdentitiesForPersistence(state.identities);
+      setKey("app", "identities", persisted);
+    } catch (error) {
+      console.error("Failed to persist identities:", error);
+    }
   } else {
     const oldState = store.getState();
     const res = next(action);

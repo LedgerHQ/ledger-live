@@ -8,6 +8,7 @@ const EquipmentIdRow = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    // FIXME migrate to userIdSelector + exportUserIdForDisplay() (equipment_id for UI display, need to add this method)
     getOrCreateUser().then(({ user }) => {
       setSegmentID(user.id);
     });

@@ -10,6 +10,7 @@ const available = init(Sentry, {
 export default async (shouldSendCallback: () => boolean) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
+  // FIXME migrate to use identities's DatadogId + exportDatadogIdForSentry()
   const u = await user();
   Sentry.setUser({
     id: u.id,

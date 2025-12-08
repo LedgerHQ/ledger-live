@@ -3,6 +3,7 @@ import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
+import { pushDevicesApi } from "@ledgerhq/identities";
 
 // Add new RTK Query API here:
 const APIs = {
@@ -10,6 +11,7 @@ const APIs = {
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
   [firebaseRemoteConfigApi.reducerPath]: firebaseRemoteConfigApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
+  [pushDevicesApi.reducerPath]: pushDevicesApi,
 };
 
 /*

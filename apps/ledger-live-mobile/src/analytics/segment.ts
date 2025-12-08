@@ -180,6 +180,7 @@ const getMEVAttributes = (state: State) => {
 
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
+  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
   const { user } = await getOrCreateUser();
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
@@ -383,6 +384,7 @@ const extraProperties = async (store: AppStore) => {
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
+  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 

@@ -30,6 +30,8 @@ import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { exportIdentitiesForPersistence } from "@ledgerhq/identities";
+import { saveIdentities } from "~/db";
 
 type MaybeState = Maybe<State>;
 
@@ -134,6 +136,10 @@ const cryptoAssetsNotEquals = (a: State, b: State) => {
   return a.cryptoAssetsApi !== b.cryptoAssetsApi;
 };
 
+const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
+
+const identitiesSelector = (state: State) => exportIdentitiesForPersistence(state.identities);
+
 export const ConfigureDBSaveEffects = () => {
   const getPostOnboardingStateChanged = useCallback(
     (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
@@ -216,6 +222,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
     lense: extractPersistedCALFromState,
+  });
+
+  useDBSaveEffect({
+    save: saveIdentities,
+    throttle: 500,
+    getChangesStats: identitiesNotEquals,
+    lense: identitiesSelector,
   });
 
   return null;
