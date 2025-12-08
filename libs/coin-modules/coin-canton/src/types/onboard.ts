@@ -1,7 +1,6 @@
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import type { TransferStep } from "./gateway";
 
-// Re-export AccountOnboardStatus for backward compatibility
 export { AccountOnboardStatus };
 
 export enum AuthorizeStatus {

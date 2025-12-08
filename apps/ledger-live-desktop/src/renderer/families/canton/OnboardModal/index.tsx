@@ -9,7 +9,6 @@ import { Subscription } from "rxjs";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import {
   AuthorizeStatus,
-  OnboardStatus,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
   CantonOnboardResult,
@@ -19,7 +18,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import type { NavigationSnapshot } from "../hooks/topologyChangeError";
@@ -67,7 +66,7 @@ type State = {
   stepId: StepId;
   error: AxiosError | null;
   authorizeStatus: AuthorizeStatus;
-  onboardingStatus: OnboardStatus;
+  onboardingStatus: AccountOnboardStatus;
   isProcessing: boolean;
   onboardingResult: OnboardingResult | undefined;
   isReonboarding: boolean;
@@ -77,7 +76,7 @@ const INITIAL_STATE: State = {
   stepId: StepId.ONBOARD,
   error: null,
   authorizeStatus: AuthorizeStatus.INIT,
-  onboardingStatus: OnboardStatus.INIT,
+  onboardingStatus: AccountOnboardStatus.INIT,
   isProcessing: false,
   onboardingResult: undefined,
   isReonboarding: false,
@@ -335,7 +334,7 @@ class OnboardModal extends PureComponent<Props, State> {
 
     this.setState({
       isProcessing: true,
-      onboardingStatus: OnboardStatus.PREPARE,
+      onboardingStatus: AccountOnboardStatus.PREPARE,
       error: null,
       isReonboarding: isReonboarding || false,
     });
@@ -358,7 +357,7 @@ class OnboardModal extends PureComponent<Props, State> {
                 partyId: data.partyId,
                 completedAccount: data.account,
               },
-              onboardingStatus: OnboardStatus.SUCCESS,
+              onboardingStatus: AccountOnboardStatus.SUCCESS,
               isProcessing: false,
             });
           }
@@ -367,7 +366,7 @@ class OnboardModal extends PureComponent<Props, State> {
         error: (error: AxiosError) => {
           logger.error("[handleOnboardAccount] failed", error);
           this.setState({
-            onboardingStatus: OnboardStatus.ERROR,
+            onboardingStatus: AccountOnboardStatus.ERROR,
             isProcessing: false,
             error,
           });

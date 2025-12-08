@@ -1,8 +1,8 @@
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
+import { AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
 export type OnboardingResult = {
   partyId: string;
@@ -25,7 +25,7 @@ export type StepProps = {
   importableAccounts: Account[];
   isProcessing: boolean;
   onboardingResult: OnboardingResult | undefined;
-  onboardingStatus: OnboardStatus;
+  onboardingStatus: AccountOnboardStatus;
   authorizeStatus: AuthorizeStatus;
   error: Error | null;
   isReonboarding?: boolean;
