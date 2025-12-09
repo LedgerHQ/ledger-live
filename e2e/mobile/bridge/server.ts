@@ -186,11 +186,10 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
-  const deviceModel = getSpeculosModel();
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address: proxyAddress, model: deviceModel }),
+    payload: JSON.stringify({ address: proxyAddress, model: getSpeculosModel() }),
   });
 }
 
