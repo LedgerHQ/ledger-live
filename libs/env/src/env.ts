@@ -928,6 +928,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
   },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "", // FIXME LIVE-23878: need to set the final endpoint
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,

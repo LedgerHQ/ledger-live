@@ -28,6 +28,7 @@ import {
   LatestFirmwareVersionRequired,
   UnsupportedFeatureError,
 } from "@ledgerhq/errors";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
@@ -167,7 +168,10 @@ export class ConnectAppEventMapper {
           const deviceIdString = Buffer.from(intermediateValue.deviceId).toString("hex");
           if (deviceIdString !== this.deviceId) {
             this.deviceId = deviceIdString;
-            this.eventSubject.next({ type: "device-id", deviceId: deviceIdString });
+            this.eventSubject.next({
+              type: "device-id",
+              deviceId: DeviceId.fromString(deviceIdString),
+            });
           }
         }
         break;

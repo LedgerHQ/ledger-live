@@ -91,6 +91,8 @@ import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -112,7 +114,7 @@ type States = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
-  deviceId: string | null | undefined;
+  deviceId: DeviceId | null | undefined;
   latestFirmware: unknown;
   onRepairModal: (open: boolean) => void;
   requestOpenApp: string;
@@ -215,7 +217,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     deviceId,
     latestFirmware,
     repairModalOpened,
@@ -370,6 +371,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
+
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   if (displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
@@ -643,7 +651,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLoading();
   }
 
-  if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
+  if (deviceInfo?.isBootloader && onAutoRepair) {
     return renderBootloaderStep({ onAutoRepair });
   }
 

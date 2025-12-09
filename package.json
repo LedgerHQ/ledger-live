@@ -122,6 +122,7 @@
     "common": "pnpm --filter live-common",
     "device-core": "pnpm --filter device-core",
     "device-react": "pnpm --filter device-react",
+    "client-ids": "pnpm --filter client-ids",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     "wallet": "pnpm --filter live-wallet",

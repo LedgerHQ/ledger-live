@@ -20,6 +20,7 @@ import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import perFamilyAccount from "../../generated/account";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -44,7 +45,7 @@ export type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
-  deviceId: string | null | undefined;
+  deviceId: DeviceId | null | undefined;
   latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
@@ -468,9 +469,9 @@ export const createAction = (
       () => inferCommandParams(appRequest), // for now i don't have better
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [
-        appRequest.appName, // eslint-disable-next-line react-hooks/exhaustive-deps
-        appRequest.account && appRequest.account.id, // eslint-disable-next-line react-hooks/exhaustive-deps
-        appRequest.currency && appRequest.currency.id,
+        appRequest.appName,
+        appRequest.account?.id,
+        appRequest.currency?.id,
         appRequest.dependencies,
       ],
     );

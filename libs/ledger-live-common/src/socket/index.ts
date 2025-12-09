@@ -15,6 +15,7 @@ import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { sha3_256 } from "@noble/hashes/sha3";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 const LOG_TYPE = "socket";
 const ALLOW_SECURE_CHANNEL_DELAY = 500;
@@ -191,7 +192,8 @@ export function createDeviceSocket(
 
                 // Compute device ID as SHA3-256 hash of the public key
                 const deviceIdHash = sha3_256(publicKey);
-                const deviceId = Buffer.from(deviceIdHash).toString("hex");
+                const deviceIdString = Buffer.from(deviceIdHash).toString("hex");
+                const deviceId = DeviceId.fromString(deviceIdString);
                 deviceIdCaptured = true;
 
                 o.next({

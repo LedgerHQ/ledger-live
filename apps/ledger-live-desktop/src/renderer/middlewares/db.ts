@@ -21,6 +21,7 @@ import {
 import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 import { marketStoreSelector } from "../reducers/market";
+import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -98,6 +99,12 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
     if (walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
       setKey("app", "wallet", exportWalletState(newState.wallet));
+    }
+
+    // Save identities if state changed
+    if (oldState.identities !== newState.identities) {
+      const persisted = exportIdentitiesForPersistence(newState.identities);
+      setKey("app", "identities", persisted);
     }
     return res;
   }

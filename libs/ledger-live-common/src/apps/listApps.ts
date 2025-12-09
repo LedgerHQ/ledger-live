@@ -16,6 +16,7 @@ import { getProviderIdUseCase } from "../device/use-cases/getProviderIdUseCase";
 import { calculateDependencies, mapApplicationV2ToApp } from "./polyfill";
 import { ManagerApiRepository } from "../device/factories/HttpManagerApiRepositoryFactory";
 import { isCustomLockScreenSupported } from "../device/use-cases/isCustomLockScreenSupported";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -91,9 +92,18 @@ export const listApps = ({
                   break;
                 case "device-permission-granted":
                 case "device-permission-requested":
-                case "device-id":
                   o.next(e);
                   break;
+                case "device-id": {
+                  // Normalize deviceId to DeviceId object (SocketEvent may have string or DeviceId)
+                  const deviceIdValue =
+                    typeof e.deviceId === "string" ? DeviceId.fromString(e.deviceId) : e.deviceId;
+                  o.next({
+                    type: "device-id",
+                    deviceId: deviceIdValue,
+                  });
+                  break;
+                }
               }
             },
             error: reject,

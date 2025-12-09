@@ -99,6 +99,7 @@
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
+    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

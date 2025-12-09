@@ -25,6 +25,7 @@ import { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 export type AppStore = Store<State>;
 
@@ -36,6 +37,7 @@ const appReducer = combineReducers({
   countervalues,
   dynamicContent,
   earn,
+  identities: identitiesSlice.reducer,
   inView,
   largeMover,
   market,
