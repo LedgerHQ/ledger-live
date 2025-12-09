@@ -52,4 +52,26 @@ module.exports = {
     "@typescript-eslint/no-empty-object-type": "warn",
     "@typescript-eslint/no-unsafe-function-type": "warn",
   },
+  overrides: [
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["**/*.ts", "**/*.tsx"],
+      excludedFiles: [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "spec.ts",
+        "spec.tsx",
+        "**/__tests__/**",
+        "**/tests/**",
+        "**/__mocks__/**",
+        "**/mocks/**",
+      ],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "warn",
+      },
+    },
+  ],
 };
