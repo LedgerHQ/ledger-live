@@ -1,7 +1,7 @@
 import bippath from "bip32-path";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, Observer, from } from "rxjs";
+import { Observable, Observer, from, map, of } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import {
@@ -318,7 +318,7 @@ export const makeScanAccounts =
     getAddressFn,
     postSync = (_, a) => a,
   }: {
-    getAccountShape: GetAccountShape<A>;
+    getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
@@ -337,108 +337,99 @@ export const makeScanAccounts =
 
       const derivationsCache: Record<string, Result> = {};
 
-      async function stepAccount(
+      function stepAccount(
         index: number,
         res: Result,
         derivationMode: DerivationMode,
         seedIdentifier: string,
-      ): Promise<Account | null | undefined> {
-        if (finished) return;
+      ): Observable<Account | null | undefined> {
+        if (finished) return of(null);
 
         const { address, path: freshAddressPath, ...rest } = res;
 
-        const accountShape: Partial<Account> = await getAccountShape(
-          {
-            currency,
-            index,
-            address,
-            derivationPath: freshAddressPath,
-            derivationMode,
-            rest,
-            deviceId,
-          },
-          syncConfig,
+        const accountShape$: Observable<Partial<Account>> = from(
+          getAccountShape(
+            {
+              currency,
+              index,
+              address,
+              derivationPath: freshAddressPath,
+              derivationMode,
+              rest,
+              deviceId,
+            },
+            syncConfig,
+          ),
         );
-        if (finished) return;
+        if (finished) return of(null);
 
-        const freshAddress = address;
-        const operations = accountShape.operations || [];
-        const operationsCount = accountShape.operationsCount || operations.length;
-        const creationDate =
-          operations.length > 0 ? operations[operations.length - 1].date : new Date();
-        const balance = accountShape.balance || new BigNumber(0);
-        const spendableBalance = accountShape.spendableBalance || new BigNumber(0);
-        if (!accountShape.id) throw new Error("account ID must be provided");
-        if (balance.isNaN()) throw new Error("invalid balance NaN");
-        const initialAccount: Account = {
-          type: "Account",
-          id: accountShape.id,
-          seedIdentifier,
-          freshAddress,
-          freshAddressPath,
-          derivationMode,
-          used: false,
-          index,
-          currency,
-          operationsCount,
-          operations: [],
-          swapHistory: [],
-          pendingOperations: [],
-          lastSyncDate: new Date(),
-          creationDate,
-          // overrides
-          balance,
-          spendableBalance,
-          blockHeight: 0,
-          balanceHistoryCache: emptyHistoryCache,
-        };
-        let account = { ...initialAccount, ...accountShape };
+        return accountShape$.pipe(
+          map(accountShape => {
+            const freshAddress = address;
+            const operations = accountShape.operations || [];
+            const operationsCount = accountShape.operationsCount || operations.length;
+            const creationDate =
+              operations.length > 0 ? operations[operations.length - 1].date : new Date();
+            const balance = accountShape.balance || new BigNumber(0);
+            const spendableBalance = accountShape.spendableBalance || new BigNumber(0);
+            if (!accountShape.id) throw new Error("account ID must be provided");
+            if (balance.isNaN()) throw new Error("invalid balance NaN");
+            const initialAccount: Account = {
+              type: "Account",
+              id: accountShape.id,
+              seedIdentifier,
+              freshAddress,
+              freshAddressPath,
+              derivationMode,
+              used: false,
+              index,
+              currency,
+              operationsCount,
+              operations: [],
+              swapHistory: [],
+              pendingOperations: [],
+              lastSyncDate: new Date(),
+              creationDate,
+              // overrides
+              balance,
+              spendableBalance,
+              blockHeight: 0,
+              balanceHistoryCache: emptyHistoryCache,
+            };
+            let account = { ...initialAccount, ...accountShape };
 
-        if (account.balanceHistoryCache === emptyHistoryCache) {
-          account.balanceHistoryCache = generateHistoryFromOperations(account);
-        }
+            if (account.balanceHistoryCache === emptyHistoryCache) {
+              account.balanceHistoryCache = generateHistoryFromOperations(account);
+            }
 
-        if (accountShape.used === undefined) {
-          account.used = !isAccountEmpty(account);
-        }
+            if (accountShape.used === undefined) {
+              account.used = !isAccountEmpty(account);
+            }
 
-        // Bitcoin needs to compute the freshAddressPath itself,
-        // so we update it afterwards
-        if (account?.freshAddressPath) {
-          res.address = account.freshAddress;
-          derivationsCache[account.freshAddressPath] = res;
-        }
+            // Bitcoin needs to compute the freshAddressPath itself,
+            // so we update it afterwards
+            if (account?.freshAddressPath) {
+              res.address = account.freshAddress;
+              derivationsCache[account.freshAddressPath] = res;
+            }
 
-        // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
-        // Using the generic doesn't resolve correctly
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        account = postSync(initialAccount as unknown as A, account as unknown as A);
+            // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
+            // Using the generic doesn't resolve correctly
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            account = postSync(initialAccount as unknown as A, account as unknown as A);
 
-        log("scanAccounts", "derivationsCache", res);
+            log("scanAccounts", "derivationsCache", res);
 
-        log(
-          "scanAccounts",
-          `scanning ${currency.id} at ${freshAddressPath}: ${res.address} resulted of ${
-            account ? `Account with ${account.operations.length} txs` : "no account"
-          }`,
+            log(
+              "scanAccounts",
+              `scanning ${currency.id} at ${freshAddressPath}: ${res.address} resulted of ${
+                account ? `Account with ${account.operations.length} txs` : "no account"
+              }`,
+            );
+
+            return account;
+          }),
         );
-
-        if (!account) return;
-
-        const showNewAccount = shouldShowNewAccount(currency, derivationMode);
-
-        if (account.used || showNewAccount) {
-          log(
-            "debug",
-            `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`,
-          );
-          o.next({
-            type: "discovered",
-            account,
-          });
-        }
-
-        return account;
       }
 
       async function main() {
@@ -519,12 +510,38 @@ export const makeScanAccounts =
 
               if (!res) break;
 
-              const account = await stepAccount(index, res, derivationMode, seedIdentifier);
+              const account$ = stepAccount(index, res, derivationMode, seedIdentifier);
 
-              if (account && !account.used) {
-                if (emptyCount >= mandatoryEmptyAccountSkip) break;
-                emptyCount++;
-              }
+              account$.subscribe({
+                next: account => {
+                  if (account) {
+                    const showNewAccount = shouldShowNewAccount(currency, derivationMode);
+
+                    if (account.used || showNewAccount) {
+                      log(
+                        "debug",
+                        `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`,
+                      );
+                      o.next({
+                        type: "discovered",
+                        account,
+                      });
+                    }
+
+                    if (!account.used) {
+                      if (emptyCount >= mandatoryEmptyAccountSkip) o.complete();
+                      emptyCount++;
+                    }
+
+                    o.next({
+                      type: "discovered",
+                      account,
+                    });
+                  }
+                },
+                complete: () => o.complete(),
+                error: e => o.error(e),
+              });
             }
           }
 
