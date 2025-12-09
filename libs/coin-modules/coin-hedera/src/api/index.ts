@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import type {
   Api,
   CraftedTransaction,
@@ -6,7 +8,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -23,11 +25,12 @@ import {
   getStakes,
   getRewards,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue, toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import { getERC20BalancesForAccount } from "../network/utils";
+import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo> {
+export function createApi(config: Record<string, never>): Api<HederaMemo, HederaTxData> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById("hedera");
 
@@ -53,14 +56,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async transactionIntent => {
-      const operationType = mapIntentToSDKOperation(transactionIntent);
+    estimateFees: async txIntent => {
+      let estimateFeesParams: EstimateFeesParams;
+      const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimateFeesParams = { operationType, txIntent };
+      } else {
+        estimateFeesParams = { currency, operationType };
       }
 
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
+      const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
@@ -71,12 +77,20 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
     listOperations: async (address, pagination) => {
-      const mirrorTokens = await apiClient.getAccountTokens(address);
+      const evmAddress = await toEVMAddress(address);
+      invariant(evmAddress, "hedera: evm address is missing");
+      const [mirrorTokens, erc20TokenBalances] = await Promise.all([
+        apiClient.getAccountTokens(address),
+        getERC20BalancesForAccount(address),
+      ]);
+
       const latestAccountOperations = await logicListOperations({
         currency,
         address,
+        evmAddress,
         pagination,
         mirrorTokens,
+        erc20Tokens: erc20TokenBalances,
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
         useEncodedHash: false,
@@ -89,9 +103,22 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
       ];
 
       const sortedLiveOperations = [...liveOperations].sort((a, b) => {
+        const aConsensusTime = a.extra.consensusTimestamp;
+        const bConsensusTime = b.extra.consensusTimestamp;
         const aTime = a.date.getTime();
         const bTime = b.date.getTime();
-        return pagination.order === "desc" ? bTime - aTime : aTime - bTime;
+        const dateDiff = pagination.order === "desc" ? bTime - aTime : aTime - bTime;
+
+        if (aConsensusTime && bConsensusTime) {
+          const aTime = new BigNumber(aConsensusTime);
+          const bTime = new BigNumber(bConsensusTime);
+          const timeDiff = pagination.order === "desc" ? bTime.minus(aTime) : aTime.minus(bTime);
+
+          // REWARD operations have the same consensus time as operation that triggered them
+          return timeDiff.isZero() ? dateDiff : timeDiff.toNumber();
+        }
+
+        return dateDiff;
       });
 
       const alpacaOperations = sortedLiveOperations.map(liveOp => {
@@ -123,7 +150,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             fees: BigInt(liveOp.fee.toFixed(0)),
             date: liveOp.date,
             block: {
-              height: liveOp.blockHeight ?? 10,
+              height: liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT,
             },
             failed: liveOp.hasFailed ?? false,
           },

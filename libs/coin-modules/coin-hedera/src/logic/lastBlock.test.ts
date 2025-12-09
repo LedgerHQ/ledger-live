@@ -1,9 +1,12 @@
+import BigNumber from "bignumber.js";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { lastBlock } from "./lastBlock";
 import { apiClient } from "../network/api";
+import { hgraphClient } from "../network/hgraph";
 import { getSyntheticBlock } from "./utils";
 
 jest.mock("../network/api");
+jest.mock("../network/hgraph");
 
 const BLOCK_WINDOW_MS = SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000;
 
@@ -12,17 +15,22 @@ describe("lastBlock", () => {
     jest.clearAllMocks();
   });
 
-  it("should return the last block info", async () => {
+  it("should return the last block info using the smaller timestamp", async () => {
     const mockTransaction = {
       consensus_timestamp: "1625097600.000000000",
     };
+    const mockHgraphTimestamp = "1625097500.000000000";
 
     (apiClient.getLatestTransaction as jest.Mock).mockResolvedValue(mockTransaction);
+    (hgraphClient.getLastestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
+      new BigNumber(mockHgraphTimestamp),
+    );
 
     const result = await lastBlock();
-    const expectedSyntheticBlock = getSyntheticBlock(mockTransaction.consensus_timestamp);
+    const expectedSyntheticBlock = getSyntheticBlock(mockHgraphTimestamp);
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
+    expect(hgraphClient.getLastestIndexedConsensusTimestamp).toHaveBeenCalledTimes(1);
     expect(result.height).toEqual(expectedSyntheticBlock.blockHeight);
     expect(result.hash).toEqual(expectedSyntheticBlock.blockHash);
     expect(result.time).toEqual(expectedSyntheticBlock.blockTime);

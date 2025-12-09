@@ -3,16 +3,16 @@ import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { apiClient } from "./api";
+import { SUPPORTED_ERC20_TOKENS } from "../constants";
+import { hgraphClient } from "./hgraph";
+import { toEntityId } from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
-  HederaThirdwebTransaction,
-  HederaThirdwebDecodedTransferParams,
-  OperationERC20,
   HederaERC20TokenBalance,
+  EnrichedERC20Transfer,
+  ERC20TokenTransfer,
 } from "../types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SUPPORTED_ERC20_TOKENS } from "../constants";
 
 function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
   if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
@@ -33,6 +33,7 @@ function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
 export function parseTransfers(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
   address: string,
+  stakingReward = new BigNumber(0),
 ): Pick<Operation, "type" | "value" | "senders" | "recipients"> {
   let value = new BigNumber(0);
   let type: OperationType = "NONE";
@@ -44,9 +45,11 @@ export function parseTransfers(
     const amount = new BigNumber(transfer.amount);
     const accountId = AccountId.fromString(transfer.account);
 
+    // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
     if (transfer.account === address) {
-      value = amount.abs();
-      type = amount.isNegative() ? "OUT" : "IN";
+      const amountWithoutReward = amount.minus(stakingReward);
+      value = amountWithoutReward.abs();
+      type = amountWithoutReward.isNegative() ? "OUT" : "IN";
     }
 
     if (amount.isNegative()) {
@@ -69,72 +72,75 @@ export function parseTransfers(
 }
 
 export async function getERC20BalancesForAccount(
-  evmAccountId: string,
-  supportedTokenIds = SUPPORTED_ERC20_TOKENS.map(token => token.id),
+  address: string,
 ): Promise<HederaERC20TokenBalance[]> {
-  const availableTokens: TokenCurrency[] = [];
+  const balances: HederaERC20TokenBalance[] = [];
 
-  for (const erc20TokenId of supportedTokenIds) {
-    const calToken = await getCryptoAssetsStore().findTokenById(erc20TokenId);
+  const rawBalances = await hgraphClient.getERC20Balances({ address });
 
-    if (calToken) {
-      availableTokens.push(calToken);
+  for (const rawBalance of rawBalances) {
+    const rawBalanceTokenId = toEntityId({ num: rawBalance.token_id });
+
+    const supportedToken = SUPPORTED_ERC20_TOKENS.find(token => {
+      return token.tokenId === rawBalanceTokenId;
+    });
+
+    if (!supportedToken) {
+      continue;
     }
+
+    const calToken = await getCryptoAssetsStore().findTokenById(supportedToken.id);
+
+    if (!calToken) {
+      continue;
+    }
+
+    balances.push({
+      token: calToken,
+      balance: new BigNumber(rawBalance.balance),
+    });
   }
-
-  const promises = availableTokens.map(async erc20token => {
-    const balance = await apiClient.getERC20Balance(evmAccountId, erc20token.contractAddress);
-
-    return {
-      balance,
-      token: erc20token,
-    };
-  });
-
-  const balances = await Promise.all(promises);
 
   return balances;
 }
 
-export const getERC20Operations = async (
-  latestERC20Transactions: HederaThirdwebTransaction[],
-): Promise<OperationERC20[]> => {
-  const latestERC20Operations: OperationERC20[] = [];
+/**
+ * Enriches raw ERC20 transfers from Hgraph with additional data needed for operations:
+ * - fetches contract call result containing gas metrics and block hash
+ * - finds the corresponding Mirror Node transaction by consensus timestamp
+ * - filters to only supported ERC20 tokens registered in CAL
+ *
+ * @param erc20Transfers - Raw ERC20 transfers from Hgraph API
+ * @returns Array of enriched transfers with complete operation data, filtered to supported tokens only
+ */
+export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[]) => {
+  const enrichedTransfers: EnrichedERC20Transfer[] = [];
 
-  for (const thirdwebTransaction of latestERC20Transactions) {
-    const tokenId = thirdwebTransaction.address;
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, "hedera");
+  for (const rawTransfer of erc20Transfers) {
+    const payerAddress = toEntityId({ num: rawTransfer.payer_account_id });
+    const hash = rawTransfer.transaction_hash;
+    const inaccurateConsensusTimestamp = new BigNumber(rawTransfer.consensus_timestamp)
+      .dividedBy(10 ** 9)
+      .toFixed(9);
 
-    if (!token) continue;
+    const [contractCallResult, mirrorTransaction] = await Promise.all([
+      apiClient.getContractCallResult(hash),
+      apiClient.findTransactionByContractCall({
+        payerAddress,
+        timestamp: inaccurateConsensusTimestamp,
+      }),
+    ]);
 
-    const hash = thirdwebTransaction.transactionHash;
-    const contractCallResult = await apiClient.getContractCallResult(hash);
-    const mirrorTransaction = await apiClient.findTransactionByContractCall(
-      contractCallResult.timestamp,
-      contractCallResult.contract_id,
-    );
+    if (!mirrorTransaction) {
+      continue;
+    }
 
-    if (!mirrorTransaction) continue;
-
-    latestERC20Operations.push({
-      thirdwebTransaction,
-      mirrorTransaction,
+    enrichedTransfers.push({
+      transfer: rawTransfer,
       contractCallResult,
-      token,
+      mirrorTransaction,
     });
   }
 
-  return latestERC20Operations;
+  return enrichedTransfers;
 };
-
-export function parseThirdwebTransactionParams(
-  transaction: HederaThirdwebTransaction,
-): HederaThirdwebDecodedTransferParams | null {
-  const { from, to, value } = transaction.decoded.params;
-
-  if (typeof from !== "string" || typeof to !== "string" || typeof value !== "string") {
-    return null;
-  }
-
-  return { from, to, value };
-}

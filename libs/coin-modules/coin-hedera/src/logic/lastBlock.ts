@@ -1,5 +1,7 @@
+import BigNumber from "bignumber.js";
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
 import { apiClient } from "../network/api";
+import { hgraphClient } from "../network/hgraph";
 import { getSyntheticBlock } from "./utils";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 
@@ -16,8 +18,17 @@ export async function lastBlock(): Promise<BlockInfo> {
   // see getBlock implementation, block data should be immutable: we do not allow querying blocks on non-finalized time range.
   // => we search the most recent transaction, but only in finalized time range (ending 10 seconds ago).
   const before = new Date(Date.now() - FINALITY_MS - SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000);
-  const latestTransaction = await apiClient.getLatestTransaction(before);
-  const syntheticBlock = getSyntheticBlock(latestTransaction.consensus_timestamp);
+  const [latestTransaction, latestHgraphTimestamp] = await Promise.all([
+    apiClient.getLatestTransaction(before),
+    hgraphClient.getLastestIndexedConsensusTimestamp(),
+  ]);
+
+  const consensusTimestamp = BigNumber.minimum(
+    latestTransaction.consensus_timestamp,
+    latestHgraphTimestamp,
+  ).toFixed(9);
+
+  const syntheticBlock = getSyntheticBlock(consensusTimestamp);
 
   return {
     height: syntheticBlock.blockHeight,

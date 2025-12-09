@@ -148,3 +148,6 @@ export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
   "UPDATE_ACCOUNT",
   "CONTRACT_CALL",
 ];
+
+// at some point it may be worth migrating to getSyntheticBlock
+export const HARDCODED_BLOCK_HEIGHT = 10;
