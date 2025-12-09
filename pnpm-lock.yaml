@@ -1506,8 +1506,8 @@ importers:
         specifier: 7.5.4
         version: 7.5.4
       styled-components:
-        specifier: 5.3.11
-        version: 5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1)
+        specifier: 6.1.13
+        version: 6.1.13(react@18.3.1)
       styled-system:
         specifier: 5.1.5
         version: 5.1.5
@@ -1671,12 +1671,6 @@ importers:
       '@types/semver':
         specifier: 7.5.8
         version: 7.5.8
-      '@types/styled-components':
-        specifier: 5.1.34
-        version: 5.1.34(@types/react@18.2.73)
-      '@types/styled-components-react-native':
-        specifier: 5.2.5
-        version: 5.2.5(@types/react@18.2.73)
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
@@ -9064,7 +9058,7 @@ importers:
     dependencies:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))
+        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../icons
@@ -9240,12 +9234,6 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
-      '@types/styled-components':
-        specifier: ^5.1.3
-        version: 5.1.34(@types/react@18.2.73)
-      '@types/styled-components-react-native':
-        specifier: ^5.1.3
-        version: 5.2.5(@types/react@18.2.73)
       '@types/styled-system':
         specifier: ^5.1.13
         version: 5.1.22
@@ -9385,8 +9373,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components:
-        specifier: ^5.3.3
-        version: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
+        specifier: ^6.1.13
+        version: 6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       stylelint:
         specifier: ^14.9.1
         version: 14.16.1
@@ -21133,14 +21121,6 @@ packages:
 
   '@types/stream-json@1.7.7':
     resolution: {integrity: sha512-hHG7cLQ09H/m9i0jzL6UJAeLLxIWej90ECn0svO4T8J0nGcl89xZDQ2ujT4WKlvg0GWkcxJbjIDzW/v7BYUM6Q==}
-
-  '@types/styled-components-react-native@5.2.5':
-    resolution: {integrity: sha512-hDYioy4gAusO9NJI0n1e0Dwne4zofRVjou8i+FdNNz4vOG/iEBS99Rl87ybytjx/WD3NXqZQJ5g98AA+ZW7JKA==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   '@types/styled-components@5.1.34':
     resolution: {integrity: sha512-mmiVvwpYklFIv9E8qfxuPyIt/OuyIrn6gMOAMOFUO3WJfSrSE+sGUoa4PiZj77Ut7bKZpaa6o1fBKS/4TOEvnA==}
@@ -46860,14 +46840,14 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))':
+  '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@ledgerhq/ui-shared': 0.2.2
       react: 18.3.1
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
       react-native: 0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
-      styled-components: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
+      styled-components: 6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
     dependencies:
@@ -55833,13 +55813,6 @@ snapshots:
       '@types/node': 20.12.12
       '@types/stream-chain': 2.0.4
 
-  '@types/styled-components-react-native@5.2.5(@types/react@18.2.73)':
-    dependencies:
-      '@types/react-native': 0.70.19(@types/react@18.2.73)
-      '@types/styled-components': 5.1.34(@types/react@18.2.73)
-    optionalDependencies:
-      '@types/react': 18.2.73
-
   '@types/styled-components@5.1.34(@types/react@18.2.73)':
     dependencies:
       '@types/hoist-non-react-statics': 3.3.5(@types/react@18.2.73)
@@ -58308,17 +58281,6 @@ snapshots:
       lodash: 4.17.21
       picomatch: 2.3.1
       styled-components: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@babel/core'
-
-  babel-plugin-styled-components@2.1.4(@babel/core@7.27.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1)):
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.27.1)
-      lodash: 4.17.21
-      picomatch: 2.3.1
-      styled-components: 5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1)
     transitivePeerDependencies:
       - '@babel/core'
 
@@ -77044,23 +77006,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
 
-  styled-components@5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1):
-    dependencies:
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/traverse': 7.24.1(supports-color@5.5.0)
-      '@emotion/is-prop-valid': 1.2.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(@babel/core@7.27.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1))
-      css-to-react-native: 3.2.0
-      hoist-non-react-statics: 3.3.2
-      react: 18.3.1
-      react-is: 18.3.1
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
-
   styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1):
     dependencies:
       '@babel/helper-module-imports': 7.24.3
@@ -77096,6 +77041,20 @@ snapshots:
       supports-color: 5.5.0
     transitivePeerDependencies:
       - '@babel/core'
+
+  styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@emotion/is-prop-valid': 1.2.2
+      '@emotion/unitless': 0.8.1
+      '@types/stylis': 4.2.5
+      css-to-react-native: 3.2.0
+      csstype: 3.1.3
+      postcss: 8.4.38
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      shallowequal: 1.1.0
+      stylis: 4.3.2
+      tslib: 2.6.2
 
   styled-components@6.1.13(react@18.3.1):
     dependencies:
