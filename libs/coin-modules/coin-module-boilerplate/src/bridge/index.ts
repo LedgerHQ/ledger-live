@@ -12,6 +12,7 @@ import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
 import type { Transaction } from "../types";
+import { validateAddress } from "../common-logic/validateAddress";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -20,7 +21,6 @@ import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
-import { validateAddress } from "../common-logic/validateAddress";
 
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
