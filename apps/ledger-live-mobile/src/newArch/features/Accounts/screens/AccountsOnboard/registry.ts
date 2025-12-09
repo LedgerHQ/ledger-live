@@ -1,9 +1,6 @@
+import { createCantonOnboardingBridge } from "@ledgerhq/coin-canton";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  cantonOnboardingConfig,
-  createCantonOnboardingBridge,
-  getCantonBridge,
-} from "./adapters/canton";
+import { cantonOnboardingConfig, getCantonBridge } from "./adapters/canton";
 import { OnboardingBridge, OnboardingConfig, StepId } from "./types";
 
 export const onboardingConfigs: Record<string, OnboardingConfig> = {

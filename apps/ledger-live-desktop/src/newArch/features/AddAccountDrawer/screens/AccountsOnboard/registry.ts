@@ -1,10 +1,6 @@
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import { createCantonOnboardingBridge } from "@ledgerhq/coin-canton";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  cantonOnboardingConfig,
-  createCantonOnboardingBridge,
-  getCantonBridge,
-} from "./adapters/canton";
+import { cantonOnboardingConfig, getCantonBridge } from "./adapters/canton";
 import { OnboardingBridge, OnboardingConfig, StepId } from "./types";
 
 /** @internal - Exported for testing purposes only */
@@ -22,8 +18,7 @@ export const onboardingBridgeResolvers: Record<
     if (!cantonBridge) {
       return null;
     }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return createCantonOnboardingBridge(cantonBridge as CantonCurrencyBridge);
+    return createCantonOnboardingBridge(cantonBridge);
   },
 };
 

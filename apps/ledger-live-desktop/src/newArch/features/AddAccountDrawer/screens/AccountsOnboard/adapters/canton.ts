@@ -1,36 +1,12 @@
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { CantonOnboardProgress, CantonOnboardResult } from "@ledgerhq/coin-canton/types";
+import { isCantonCurrencyBridge, type CantonCurrencyBridge } from "@ledgerhq/coin-canton";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { map } from "rxjs/operators";
 import { urls } from "~/config/urls";
 import { StepFinishFooter, StepOnboardFooter } from "../footers";
 import StepFinish from "../StepFinish";
 import StepOnboard from "../StepOnboard";
 import TransactionConfirm from "../TransactionConfirm";
-import {
-  OnboardingBridge,
-  OnboardingConfig,
-  OnboardProgress,
-  OnboardResult,
-  StepId,
-  TranslationKeys,
-  UrlConfig,
-} from "../types";
-
-function isCantonCurrencyBridge(bridge: unknown): bridge is CantonCurrencyBridge {
-  if (!bridge || typeof bridge !== "object") {
-    return false;
-  }
-
-  if (!("onboardAccount" in bridge)) {
-    return false;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const bridgeWithProperty = bridge as { onboardAccount: unknown };
-  return typeof bridgeWithProperty.onboardAccount === "function";
-}
+import { OnboardingConfig, StepId, TranslationKeys, UrlConfig } from "../types";
 
 export function getCantonBridge(currency: CryptoCurrency): CantonCurrencyBridge | null {
   const bridge = getCurrencyBridge(currency);
@@ -42,29 +18,6 @@ export function getCantonBridge(currency: CryptoCurrency): CantonCurrencyBridge 
     return bridge;
   }
   return null;
-}
-
-export function createCantonOnboardingBridge(cantonBridge: CantonCurrencyBridge): OnboardingBridge {
-  return {
-    onboardAccount: (currency, deviceId, creatableAccount) => {
-      return cantonBridge.onboardAccount(currency, deviceId, creatableAccount).pipe(
-        map(
-          (data: CantonOnboardProgress | CantonOnboardResult): OnboardProgress | OnboardResult => {
-            if ("status" in data) {
-              return { status: data.status };
-            }
-            if ("account" in data && "partyId" in data) {
-              return {
-                account: data.account,
-                metadata: { partyId: data.partyId },
-              };
-            }
-            throw new Error("Invalid Canton onboarding result");
-          },
-        ),
-      );
-    },
-  };
 }
 
 const cantonTranslationKeys: TranslationKeys = {

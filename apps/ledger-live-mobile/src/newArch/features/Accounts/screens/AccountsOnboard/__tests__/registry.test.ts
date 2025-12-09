@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getOnboardingConfig, getOnboardingBridge, hasOnboarding } from "../registry";
 import { getCantonBridge } from "../adapters/canton";
+import { getOnboardingBridge, getOnboardingConfig, hasOnboarding } from "../registry";
 
-jest.mock("../adapters/canton", () => ({
-  getCantonBridge: jest.fn(),
+jest.mock("@ledgerhq/coin-canton", () => ({
   createCantonOnboardingBridge: jest.fn(_bridge => ({
     onboardAccount: jest.fn(),
   })),
+  isCantonCurrencyBridge: jest.fn(),
+}));
+
+jest.mock("../adapters/canton", () => ({
+  getCantonBridge: jest.fn(),
   cantonOnboardingConfig: {
     stepComponents: {
       ONBOARD: jest.fn(),
