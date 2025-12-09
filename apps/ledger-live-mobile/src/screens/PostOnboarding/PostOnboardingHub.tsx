@@ -87,7 +87,7 @@ const PostOnboardingHub = () => {
           <Text variant="h1Inter" fontWeight="semiBold">
             {areAllPostOnboardingActionsCompleted
               ? t("postOnboarding.hub.areAllPostOnboardingActionsCompletedTitle")
-              : t("postOnboarding.hub.title", { productName })}
+              : t("postOnboarding.hub.title")}
           </Text>
         </Flex>
         <ScrollContainer
