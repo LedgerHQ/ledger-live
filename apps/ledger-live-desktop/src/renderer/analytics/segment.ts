@@ -40,6 +40,7 @@ import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import mixpanel from "mixpanel-browser";
+import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -252,6 +253,19 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
+    accounts,
+    Array.isArray(ptxAttributes.stakingCurrenciesEnabled)
+      ? ptxAttributes.stakingCurrenciesEnabled
+      : [],
+    Array.isArray(ptxAttributes.partnerStakingCurrenciesEnabled)
+      ? ptxAttributes.partnerStakingCurrenciesEnabled
+      : [],
+  );
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
+
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -261,6 +275,7 @@ const extraProperties = (store: ReduxStore) => {
         ),
       ]
     : [];
+
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
@@ -296,6 +311,8 @@ const extraProperties = (store: ReduxStore) => {
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
   };
 };
 

@@ -36,6 +36,8 @@ import {
   getAssetFromToken,
   computeIntentType,
   refreshOperations,
+  getBlock,
+  getBlockInfo,
 } from "../logic/index";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
@@ -83,12 +85,8 @@ export function createApi(
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
       listOperations(currency, address, pagination),
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock: (height: number): Promise<Block> => getBlock(currency, height),
+    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },

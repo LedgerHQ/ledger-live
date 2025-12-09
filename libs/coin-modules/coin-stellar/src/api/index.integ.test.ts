@@ -1,7 +1,7 @@
 import type { AlpacaApi, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
-import { createApi, envelopeFromAnyXDR } from ".";
 import { StellarMemo } from "../types";
+import { createApi, envelopeFromAnyXDR } from ".";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
@@ -51,7 +51,13 @@ describe("Stellar Api", () => {
       txs.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(ADDRESS) || operation.recipients.includes(ADDRESS);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -73,8 +79,8 @@ describe("Stellar Api", () => {
       const result = await module.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });

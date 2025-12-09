@@ -283,6 +283,7 @@ export type Features = CurrencyFeatures & {
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
+  llmRebornABtest: DefaultFeature;
 };
 
 /**

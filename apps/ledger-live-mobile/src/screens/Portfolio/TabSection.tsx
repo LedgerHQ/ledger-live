@@ -84,6 +84,7 @@ export default function TabSection({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAssets]); // IMPORTANT: Only on tab change, not on height changes
+
   return (
     <>
       <Box height={40} mb={16}>
@@ -100,10 +101,10 @@ export default function TabSection({
       <Box testID="portfolio-assets-layout" minHeight={displayHeight}>
         {showAssets ? (
           <Animated.View
-            key="assets-view"
             entering={hasAnimated ? SlideInLeft.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutLeft.duration(ANIMATION_DURATION_MS) : undefined}
             style={{ height: assetsFullHeight }}
+            collapsable={false}
           >
             <AssetsListView
               sourceScreenName={ScreenName.Portfolio}
@@ -123,10 +124,10 @@ export default function TabSection({
           </Animated.View>
         ) : (
           <Animated.View
-            key="accounts-view"
             entering={hasAnimated ? SlideInRight.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutRight.duration(ANIMATION_DURATION_MS) : undefined}
             style={{ height: accountsFullHeight }}
+            collapsable={false}
           >
             <AccountsListView
               sourceScreenName={ScreenName.Portfolio}

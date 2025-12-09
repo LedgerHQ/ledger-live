@@ -238,9 +238,6 @@
     "zx": "8.4.1"
   },
   "pnpm": {
-    "neverBuiltDependencies": [
-      "blake2"
-    ],
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
@@ -291,7 +288,38 @@
           "expect": "*"
         }
       }
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@apollo/protobufjs",
+      "@datadog/mobile-react-native",
+      "@sentry/cli",
+      "@swc/core",
+      "@taquito/taquito",
+      "bigint-buffer",
+      "bufferutil",
+      "core-js",
+      "core-js-pure",
+      "cpu-features",
+      "detox",
+      "dtrace-provider",
+      "electron",
+      "es5-ext",
+      "esbuild",
+      "keccak",
+      "msw",
+      "node-hid",
+      "protobufjs",
+      "secp256k1",
+      "sqlite3",
+      "ssh2",
+      "tiny-secp256k1",
+      "unrs-resolver",
+      "usb",
+      "utf-8-validate",
+      "web3",
+      "web3-bzz",
+      "web3-shh"
+    ]
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@10.24.0"
 }

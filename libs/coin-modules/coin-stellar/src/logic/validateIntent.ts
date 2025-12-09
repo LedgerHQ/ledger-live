@@ -13,7 +13,7 @@ import {
   TransactionIntent,
   FeeEstimation,
 } from "@ledgerhq/coin-framework/api/types";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
+import BigNumber from "bignumber.js";
 import { fetchAccountNetworkInfo, getRecipientAccount } from "../network";
 import {
   StellarWrongMemoFormat,
@@ -28,10 +28,10 @@ import {
   StellarSourceHasMultiSign,
   StellarMemo,
 } from "../types";
-import BigNumber from "bignumber.js";
-import { getBalance } from "./getBalance";
 import { fetchAccount } from "../network/horizon";
 import { BASE_RESERVE, MIN_BALANCE } from "../network/serialization";
+import { getBalance } from "./getBalance";
+import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,

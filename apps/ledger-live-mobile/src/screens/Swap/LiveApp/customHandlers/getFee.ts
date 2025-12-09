@@ -30,6 +30,8 @@ export interface FeeParams {
   customFeeConfig: Record<string, unknown>;
   SWAP_VERSION: string;
   gasLimit?: string;
+  data?: string;
+  recipient?: string;
 }
 
 export interface FeeData {
@@ -145,11 +147,12 @@ export const getFee =
     const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
       ...transaction,
       subAccountId,
-      recipient: getRecipientAddress(mainAccount.currency.id),
+      recipient: params.recipient || getRecipientAddress(mainAccount.currency.id),
       amount: convertToAtomicUnit({
         amount: new BigNumber(params.fromAmount),
         account: fromAccount,
       }),
+      data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
       feesStrategy: params.feeStrategy || "medium",
       customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
       ...transformToBigNumbers(params.customFeeConfig),

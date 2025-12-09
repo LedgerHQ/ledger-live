@@ -19,8 +19,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -36,8 +34,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -54,8 +50,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
   });
@@ -76,8 +70,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -93,8 +85,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
   });
@@ -195,7 +185,7 @@ describe("decodeStakingResult", () => {
         encodedResult,
       );
 
-      expect(decoded).toBeDefined();
+      expect(decoded).toBeInstanceOf(Array);
       expect(decoded.length).toBeGreaterThan(0);
     });
   });

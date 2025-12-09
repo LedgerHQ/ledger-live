@@ -20,6 +20,16 @@ module.exports = {
         "jest/globals": true,
       },
       plugins: ["jest"],
+      rules: {
+        "jest/no-restricted-matchers": [
+          "error",
+          {
+            toBeFalsy: null,
+            toBeTruthy: null,
+            toBeDefined: null,
+          },
+        ],
+      },
     },
     {
       // allow, as warning, only any in tests

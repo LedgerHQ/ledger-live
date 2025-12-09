@@ -5,8 +5,8 @@ import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
+import { acceptTransaction } from "./bot-deviceActions";
 
 const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
