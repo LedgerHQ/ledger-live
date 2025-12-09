@@ -121,7 +121,9 @@ const Loader = styled(Svg).attrs<SizeProps>((props) => ({
   ...strokeSystem(props),
   width: props.size,
   height: props.size,
-}))<SizeProps>`
+}))<SizeProps & {
+  xmlns?: string;
+}>`
   ${size}
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;

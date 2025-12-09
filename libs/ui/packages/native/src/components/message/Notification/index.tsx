@@ -90,8 +90,12 @@ const variantProps: Record<
   },
 };
 
-const NotificationContainer = styled(FlexBox).attrs(
-  (p: FlexBoxProps & { variant: NotificationVariant }) => ({
+type NotificationContainerProps = FlexBoxProps & {
+  variant: NotificationVariant;
+};
+
+const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>(
+  (p) => ({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
@@ -99,9 +103,12 @@ const NotificationContainer = styled(FlexBox).attrs(
     p: variantProps[p.variant]?.padding,
     borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
   }),
-)<FlexBoxProps & { variant: NotificationVariant }>``;
+)<NotificationContainerProps>``;
 
-const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
+const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs<{
+  p?: number;
+  m?: number;
+}>({
   p: 5,
   m: -5,
 })`
