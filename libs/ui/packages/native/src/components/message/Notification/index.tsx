@@ -99,7 +99,7 @@ const NotificationContainer = styled(FlexBox).attrs(
     p: variantProps[p.variant]?.padding,
     borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
   }),
-)``;
+)<FlexBoxProps & { variant: NotificationVariant }>``;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
   p: 5,
