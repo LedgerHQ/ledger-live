@@ -7,11 +7,12 @@ on:
 
 permissions:
   id-token: write
+  attestations: write
 
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ledger-live-4xlarge-ha
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
