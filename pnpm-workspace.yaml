@@ -61,3 +61,5 @@ overrides:
   node-abi: ^4.9.0
 
 minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@ledgerhq/*'
