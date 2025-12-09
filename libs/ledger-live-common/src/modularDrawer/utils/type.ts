@@ -99,10 +99,7 @@ export type NetworkConfigurationDeps = {
   balanceItem: CreateBalanceItem;
 };
 
-export type NetworkLeftElementKind =
-  | "numberOfAccounts"
-  | "numberOfAccountsAndApy"
-  | "undefined";
+export type NetworkLeftElementKind = "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
 export type NetworkRightElementKind = "balance" | "undefined";
 
 export type Network = {
