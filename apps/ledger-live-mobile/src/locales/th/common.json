@@ -1089,6 +1089,19 @@
       "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
       "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "จำเป็นต้องมีการตรวจสอบ EVM Address",
+      "description" : "โปรดตรวจสอบ EVM Address ที่ปรากฏบนอุปกรณ์ Ledger ของคุณก่อนยืนยัน"
+    },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "คุณ Delegate โหนดนี้เรียบร้อยแล้ว"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "โหนดที่เลือกไม่ถูกต้อง"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "ไม่มี Reward ให้เคลม"
+    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -1153,6 +1166,11 @@
     "FirmwareNotRecognized" : {
       "title" : "ผู้ให้บริการไม่ถูกต้อง",
       "description" : "คุณต้องเปลี่ยนการตั้งค่า \"ผู้ให้บริการ My Ledger ของฉัน\" หากต้องการเปลี่ยนแปลง ให้เปิดแอป Ledger Wallet “การตั้งค่า” เลือก “Experimental Features” จากนั้นเลือกผู้ให้บริการรายอื่น"
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "ระบบไม่รองรับผู้ให้บริการนี้",
+      "description" : "คุณต้องเปลี่ยน \"ผู้ให้บริการ\" ใน \"Ledger ของฉัน\" หากต้องการเปลี่ยนแปลง ให้เปิดแอป Ledger Wallet ไปที่ “การตั้งค่า” แล้วเลือก “Experimental Features” จากนั้นเลือกผู้ให้บริการรายอื่น",
+      "openSettings" : "ไปที่การตั้งค่า"
     },
     "GasLessThanEstimate" : {
       "title" : "ค่าอาจน้อยเกินไป โปรดเพิ่ม"
@@ -1224,6 +1242,12 @@
     "AddressesSanctionedError" : {
       "title" : "ปกป้องคุณให้ปลอดภัย",
       "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "ปรับลดจำนวนคริปโตตามเงื่อนไข UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
     }
   },
   "crash" : {
@@ -2263,6 +2287,18 @@
     },
     "completionScreen" : {
       "title" : "ทุกการควบคุมอยู่ในมือคุณแล้วตอนนี้"
+    },
+    "secureYourCrypto" : {
+      "title" : "ปกป้องคริปโตของคุณ",
+      "subtitle" : "โอนคริปโตแรกของคุณจาก Exchange หรือวอลเล็ตไปยังอุปกรณ์ Ledger ของคุณเพื่อความปลอดภัยสูงสุด",
+      "secureCryptoButton" : "ปกป้องคริปโตของฉัน",
+      "maybeLater" : "ไว้ทีหลัง"
+    },
+    "fundSuccess" : {
+      "title" : "ยินดีต้อนรับสู่แอป Ledger Wallet",
+      "receiveSuccess" : "อุปกรณ์ Ledger ของคุณพร้อมแล้ว หากคุณส่งคริปโตไปยังแอป Ledger Wallet คุณจะได้รับในอีกไม่กี่นาที",
+      "maybeLater" : "เริ่มต้นด้วยการฝากคริปโตตัวแรกของคุณ",
+      "exploreLedger" : "สำรวจแอป Ledger Wallet"
     }
   },
   "blePairingFlow" : {
@@ -2730,6 +2766,9 @@
       "REWARD" : "Reward ที่เคลมแล้ว",
       "FEES" : "ค่าธรรมเนียม",
       "PRE_APPROVAL" : "การอนุมัติเบื้องต้น",
+      "TRANSFER_PROPOSAL" : "ข้อเสนอการโอน",
+      "TRANSFER_REJECTED" : "การโอนที่ปฏิเสธ",
+      "TRANSFER_WITHDRAWN" : "การโอนที่ยกเลิก",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
@@ -2751,7 +2790,9 @@
       "STAKE" : "Stake แล้ว",
       "UNSTAKE" : "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
-      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
+      "CONTRACT_CALL" : "การเรียกใช้สัญญา",
+      "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต"
     }
   },
   "operationDetails" : {
@@ -2819,7 +2860,12 @@
       "id" : "Id",
       "autoClaimedRewards" : "Reward ที่เคลมโดยอัตโนมัติ",
       "stakedAmount" : "จำนวนที่ Stake แล้ว",
-      "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี"
+      "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี",
+      "associatedTokenId" : "ID โทเคนที่เชื่อมโยง",
+      "targetStakingNodeId" : "ID โหนดเป้าหมาย",
+      "previousStakingNodeId" : "ID โหนดก่อนหน้า",
+      "gasConsumed" : "ค่าแก๊สที่ใช้หมดไป",
+      "gasUsed" : "ค่าแก๊สที่ใช้ไป"
     },
     "multipleAddresses" : "ทำไมต้องหลาย Address?"
   },
@@ -2979,6 +3025,8 @@
     "delegation" : {
       "sectionLabel" : "การ Delegate",
       "addDelegation" : "เพิ่มการ Delegate",
+      "delegationEarn" : "คุณสามารถรับ Reward จากการ Staking {{name}} ได้แล้วในตอนนี้ด้วยการ Delegate บัญชีของคุณ",
+      "howItWorks" : "วิธีใช้งานการ Delegate",
       "info" : {
         "title" : "รับ Reward",
         "cta" : "รับ Reward"
@@ -3780,7 +3828,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้",
-        "description" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้ คุณสามารถใช้ Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ หรือ Ledger Flex™ เพื่อสัมผัสประสบการณ์ Swap แบบ Cross-Chain บน {{provider}} ผ่าน Ledger Live"
+        "description" : "Ledger Nano S™ ไม่สามารถใช้กับ {{provider}} ได้ คุณสามารถใช้ Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ หรือ Ledger Flex™ เพื่อสัมผัสประสบการณ์สวอปแบบข้ามเชนบน {{provider}} ผ่านแอป Ledger Wallet",
+        "explore_compatible_devices" : "ดูอุปกรณ์ที่เข้ากันได้",
+        "swapWithAnotherProvider" : "สวอปกับผู้ให้บริการรายอื่น"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "สำรวจอุปกรณ์ที่เข้ากันได้",
@@ -4430,7 +4480,7 @@
     "allowSecureConnection" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "loading" : "กำลังโหลด...",
     "turnOnAndUnlockDevice" : "เปิดเครื่องและปลดล็อกอุปกรณ์ของคุณ",
-    "powerOnDevice" : "Power on and unlock your {{deviceName}}",
+    "powerOnDevice" : "เปิดและปลดล็อก {{deviceName}} ของคุณ",
     "connectAndUnlockDevice" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ",
     "connectAnotherDevice" : "เชื่อมต่อกับ Ledger เครื่องอื่น",
     "unlockDevice" : "ปลดล็อกอุปกรณ์ของคุณ",
@@ -4498,9 +4548,9 @@
       "label" : "ตรวจสอบ Nano ของคุณโดยอัตโนมัติ"
     },
     "bleDeviceNotAvailableDrawer" : {
-      "bannerHintTitle" : "Can't see your Ledger device?",
-      "scanSignersCta" : "Scan devices",
-      "helpCenterCta" : "Get support"
+      "bannerHintTitle" : "ไม่เห็นอุปกรณ์ Ledger ของคุณ?",
+      "scanSignersCta" : "สแกนอุปกรณ์",
+      "helpCenterCta" : "ติดต่อทีมสนับสนุน"
     },
     "deviceNotFoundPairNewDevice" : "จับคู่กับบลูทูธ",
     "headerDescription" : "โปรดตรวจสอบให้แน่ใจว่ามีการปลดล็อก {{productName}} แล้วโดยมีการเปิดใช้งานบลูทูธ",
@@ -5041,16 +5091,11 @@
             "warning" : "คุณจะได้รับแจ้งให้สร้างธุรกรรมเปล่าในบัญชีของคุณ ซึ่งจะเพิ่ม Reward ปัจจุบันของคุณไปยังยอดคงเหลือโดยมีค่าธรรมเนียมธุรกรรมเพียงเล็กน้อย",
             "cta" : "ดำเนินการต่อ"
           },
-          "verification" : {
+          "confirmation" : {
             "success" : {
               "title" : "เคลม Reward เรียบร้อยแล้ว!",
-              "text" : "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือในบัญชีที่คุณใช้ได้แล้ว",
-              "cta" : "ไปที่บัญชี"
-            },
-            "pending" : {
-              "title" : "กำลังประกาศธุรกรรม..."
-            },
-            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่สำเร็จ ก่อนที่จะลองอีกครั้ง"
+              "text" : "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือในบัญชีที่คุณใช้ได้แล้ว"
+            }
           }
         }
       }
@@ -7223,6 +7268,161 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "evmVerificationRequired" : {
+          "text" : "คุณกำลังส่งโทเคน ERC-20 สำหรับธุรกรรมประเภทนี้ อุปกรณ์ Ledger ของคุณจะแสดง EVM Address ของผู้ส่ง ไม่ใช่ ID บัญชีของผู้รับ\nโปรดทำตาม<0>คู่มือนี้</0>เพื่อยืนยันว่า Address ถูกต้องก่อนยืนยัน"
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "HBAR พร้อมเสตคแล้ว",
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
+      },
+      "delegated" : {
+        "title" : "สินทรัพย์ที่ Delegate",
+        "description" : "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูก Delegate และยังคงสภาพคล่องไว้"
+      },
+      "claimable" : {
+        "title" : "Reward ที่สามารถขอรับได้",
+        "description" : "จะมีการเคลม Reward โดยอัตโนมัติหลังจากเสร็จสิ้นแต่ละธุรกรรม คุณยังสามารถเคลมได้ด้วยตัวเองอีกด้วย"
+      }
+    },
+    "delegatedPositions" : {
+      "rewards" : {
+        "title" : "Reward",
+        "cta" : "เคลม"
+      },
+      "details" : {
+        "validatorAddress" : "Address ผู้ตรวจสอบ",
+        "delegatedAccount" : "บัญชีที่ได้รับการ Delegate",
+        "status" : {
+          "title" : "สถานะ",
+          "active" : "ใช้งานอยู่",
+          "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
+          "inactive" : "ไม่ได้เปิดใช้งาน",
+          "inactiveTooltip" : "ไม่พบผู้ตรวจสอบ",
+          "overstaked" : "สเตคมากเกินไป",
+          "overstakedTooltip" : "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม"
+        },
+        "rewards" : "Reward",
+        "actions" : {
+          "redelegate" : "Redelegate",
+          "claim-rewards" : "เก็บ Reward",
+          "undelegate" : "Undelegate"
+        }
+      }
+    },
+    "delegation" : {
+      "nodeName" : "โหนด {{index}}: {{name}}",
+      "alreadyDelegatedModal" : {
+        "title" : "Delegate แล้ว",
+        "description" : "มีการ Delegate ยอดคงเหลือในบัญชีทั้งหมดเรียบร้อยแล้ว"
+      },
+      "stepperHeader" : {
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps" : {
+        "summary" : {
+          "delegate" : "ฉันได้ Delegate",
+          "to" : "จาก",
+          "alert" : "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "validator" : {
+          "title" : "ผู้ตรวจสอบ",
+          "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+          "rowSubtitlePercentage" : "สเตคแล้ว {{percentage}}% ของจำนวนสูงสุด",
+          "rowSubtitleOverstaked" : "โหนดมีการสเตกมากเกินไป",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice" : {
+          "title" : "อุปกรณ์"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
+            "description" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amount" : "จำนวนที่จะ Undelegate",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "เมื่อ Undelegate แล้ว ยอดและ Reward ที่ค้างอยู่ของคุณจะถูกแปลงเป็นเงินในทันที ทั้งนี้ คุณไม่สามารถ Undelegate ยอดสเตคเพียงบางส่วนได้",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice" : {
+          "title" : "อุปกรณ์"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+            "description" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "redelegation" : {
+      "stepperHeader" : {
+        "selectValidator" : "เลือกผู้ตรวจสอบใหม่",
+        "amountTitle" : "{{from}} → {{to}}",
+        "amountSubtitle" : "จำนวนที่จะ Redelegate",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice" : {
+          "title" : "อุปกรณ์"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "คุณได้ Redelegate สินทรัพย์ของคุณใหม่เรียบร้อยแล้ว",
+            "description" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "selectReward" : "เลือก Reward ที่จะเก็บ",
+        "claim" : "เคลม Reward",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps" : {
+        "claim" : {
+          "earned" : "คุณได้รับ",
+          "delegatingTo" : "โดยการ Delegate สินทรัพย์ให้กับ",
+          "description" : "ระบบจะรับให้ตอนนี้และเพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณ"
+        },
+        "connectDevice" : {
+          "title" : "อุปกรณ์"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "คุณได้รับรางวัลเรียบร้อยแล้ว ระบบได้เพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
+            "description" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
         }
       }
     },
@@ -7293,6 +7493,9 @@
       "buttonLabel" : "ดูว่ามีอะไรอีกบ้าง"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "ตั้งค่าอุปกรณ์ Ledger ของคุณ"
+      },
       "assetsTransfer" : {
         "title" : "โอนสินทรัพย์ของคุณไปยัง Ledger",
         "titleCompleted" : "สินทรัพย์ที่โอนไปยัง Ledger",
@@ -7311,11 +7514,11 @@
         "description" : "เลือกศิลปะดิจิทัลหรือภาพเพื่อตั้งค่าเป็นหน้าจอล็อคของ {{productName}} ของคุณ",
         "popupLabel" : "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
-      "recover" : {
-        "title" : "สมัครใช้งาน Ledger Recover",
-        "titleCompleted" : "สมัครใช้งาน Ledger Recover",
-        "description" : "กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase",
-        "popupLabel" : "สมัครใช้งาน Ledger Recover สำเร็จแล้ว"
+      "syncAccounts" : {
+        "title" : "ซิงค์บัญชีคริปโตของคุณ",
+        "titleCompleted" : "ซิงค์บัญชีของคุณแล้ว",
+        "description" : "เปิดใช้งาน Ledger Sync เพื่อซิงค์บัญชีคริปโตของคุณ",
+        "popupLabel" : "ซิงค์บัญชีแล้ว"
       }
     }
   },
@@ -7570,6 +7773,10 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "banner" : {
+      "title" : "วอลเล็ตของคุณยังไม่ซิงค์",
+      "description" : "อัปเดตพอร์ตโฟลิโอของคุณอยู่เสมอ"
+    },
     "entryPoints" : {
       "simpleCta" : {
         "title" : "เปิด Ledger Sync"
@@ -7586,7 +7793,10 @@
         "description" : "เป็นการซิงค์บัญชีคริปโตของคุณโดยอัตโนมัติในโทรศัพท์และคอมพิวเตอร์ทั้งหมดของคุณ แม้ว่าจะเปลี่ยนไปใช้อุปกรณ์ใหม่ก็ตาม",
         "mainCta" : "เปิด Ledger Sync",
         "secondCta" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
-        "learnMore" : "Ledger Sync ทำงานอย่างไร?"
+        "learnMore" : "Ledger Sync ทำงานอย่างไร?",
+        "titleModal" : "Sync your wallet",
+        "descriptionModal" : "Keep your portfolio up to date when switching phones or use a computer — all secured by your Ledger device.",
+        "cta" : "ดำเนินการต่อ"
       }
     },
     "deviceSelection" : {
@@ -7674,7 +7884,8 @@
         },
         "connectDevice" : {
           "title" : "ใช้อุปกรณ์ Ledger ของฉัน"
-        }
+        },
+        "description" : "Choose if you have Ledger Wallet synced on another phone or computer"
       },
       "qrCode" : {
         "title" : "ซิงค์กับแอป Ledger Wallet",
@@ -7992,6 +8203,15 @@
       "preapprove" : "เพิ่มบัญชีสำเร็จ",
       "validator" : "ผู้ตรวจสอบ Ledger",
       "title" : "รับเงินทุนโดยอัตโนมัติ",
+      "reonboard" : {
+        "title" : "จำเป็นต้องอัปเดตบัญชี",
+        "account" : "บัญชี",
+        "authorize" : "อนุญาตผู้ตรวจสอบใหม่",
+        "warning" : {
+          "title" : "ตรวจพบการเปลี่ยนแปลง Topology",
+          "description" : "ตรวจพบการเปลี่ยนแปลง Topology ในเครือข่าย Canton โปรดออนบอร์ดบัญชีของคุณใหม่เพื่อใช้งานต่อไป"
+        }
+      },
       "error429" : "ปัจจุบัน Canton Network รองรับการสร้างบัญชีจำนวนจำกัดต่อวัน โปรดลองอีกครั้งในภายหลัง"
     },
     "tooManyUtxos" : {
@@ -8000,6 +8220,50 @@
       "quickFix" : "การแก้ไขด่วน: ส่งเงินทุนบางส่วนให้กับตัวเองเพื่อรวมเข้าด้วยกัน",
       "warning" : "บัญชีของคุณมี UTXO ขนาดเล็กมากเกินไป ส่งเงินทุนบางส่วนให้กับตัวเอง เพื่อรวม UTXO ที่เหลือเข้าด้วยกัน",
       "consolidate" : "รวมเข้าด้วยกัน"
+    },
+    "pendingTransactions" : {
+      "expired" : "หมดอายุแล้ว",
+      "accept" : "ยอมรับ",
+      "reject" : "ปฏิเสธ",
+      "review" : "ตรวจสอบ",
+      "withdraw" : "ยกเลิกการโอน",
+      "incoming" : {
+        "title" : "การโอนเข้าที่รอตรวจสอบ"
+      },
+      "outgoing" : {
+        "title" : "การโอนออก"
+      },
+      "details" : {
+        "incomingTitle" : "รายละเอียดการโอนเข้า",
+        "outgoingTitle" : "รายละเอียดการโอนออก"
+      },
+      "amount" : "จำนวน",
+      "from" : "จาก",
+      "to" : "ไปยัง",
+      "memo" : "Memo",
+      "expiresAt" : "หมดอายุเมื่อ",
+      "expiresIn" : "หมดอายุเมื่อ",
+      "status" : {
+        "label" : "สถานะ"
+      },
+      "deviceAppModal" : {
+        "contractId" : "ID สัญญา",
+        "processing" : "กำลังประมวลผล...",
+        "success" : {
+          "accept" : {
+            "title" : "การโอนที่ยอมรับ",
+            "description" : "ได้รับข้อเสนอการโอนเข้าเรียบร้อยแล้ว"
+          },
+          "reject" : {
+            "title" : "การโอนที่ปฏิเสธ",
+            "description" : "ได้ปฏิเสธการโอนเข้าเรียบร้อยแล้ว"
+          },
+          "withdraw" : {
+            "title" : "การโอนที่ปฏิเสธ",
+            "description" : "ปฏิเสธการโอนออกสำเร็จ"
+          }
+        }
+      }
     }
   }
 }
