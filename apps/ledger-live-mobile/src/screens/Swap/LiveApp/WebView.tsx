@@ -52,7 +52,8 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const { language } = useSettings();
     const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
     const countryLocale = getCountryLocale();
-    const SWAP_API_BASE = manifest.backendUrl ?? useEnv("SWAP_API_BASE");
+    const MANIFEST_SWAP_API_BASE = manifest.backendUrl;
+    const SWAP_API_BASE = useEnv("SWAP_API_BASE");
     const SWAP_USER_IP = useEnv("SWAP_USER_IP");
     const exportSettings = useSelector(exportSettingsSelector);
 
@@ -84,7 +85,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
             onStateChange={setWebviewState}
             inputs={{
               source: initialSource,
-              swapApiBase: SWAP_API_BASE,
+              swapApiBase: MANIFEST_SWAP_API_BASE ?? SWAP_API_BASE,
               swapUserIp: SWAP_USER_IP,
               devMode,
               theme,
