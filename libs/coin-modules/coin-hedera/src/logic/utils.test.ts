@@ -64,6 +64,8 @@ import {
   getOperationDetailsExtraFields,
   calculateAPY,
   analyzeStakingOperation,
+  createCompositeCursor,
+  parseCompositeCursor,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -682,30 +684,48 @@ describe("logic utils", () => {
   });
 
   describe("getTimestampRangeFromBlockHeight", () => {
-    it("calculates consensus timestamp for block height 0 with default window", () => {
+    it("calculates timestamp ranges for block height 0 with default window", () => {
       const result = getTimestampRangeFromBlockHeight(0);
 
       expect(result).toEqual({
-        start: "0.000000000",
-        end: "10.000000000",
+        mirror: {
+          start: "0.000000000",
+          end: "10.000000000",
+        },
+        thirdweb: {
+          from: "0",
+          to: "9",
+        },
       });
     });
 
-    it("calculates consensus timestamp for block height 1 with default window", () => {
+    it("calculates timestamp ranges for block height 1 with default window", () => {
       const result = getTimestampRangeFromBlockHeight(1);
 
       expect(result).toEqual({
-        start: "10.000000000",
-        end: "20.000000000",
+        mirror: {
+          start: "10.000000000",
+          end: "20.000000000",
+        },
+        thirdweb: {
+          from: "10",
+          to: "19",
+        },
       });
     });
 
-    it("calculates consensus timestamp with custom block window of 1 second", () => {
+    it("calculates timestamp ranges with custom block window of 1 second", () => {
       const result = getTimestampRangeFromBlockHeight(42, 1);
 
       expect(result).toEqual({
-        start: "42.000000000",
-        end: "43.000000000",
+        mirror: {
+          start: "42.000000000",
+          end: "43.000000000",
+        },
+        thirdweb: {
+          from: "42",
+          to: "42",
+        },
       });
     });
 
@@ -713,27 +733,44 @@ describe("logic utils", () => {
       const result = getTimestampRangeFromBlockHeight(1000000);
 
       expect(result).toEqual({
-        start: "10000000.000000000",
-        end: "10000010.000000000",
+        mirror: {
+          start: "10000000.000000000",
+          end: "10000010.000000000",
+        },
+        thirdweb: {
+          from: "10000000",
+          to: "10000009",
+        },
       });
     });
 
-    it("ensures start and end timestamps are within the same block window", () => {
+    it("ensures mirror timestamps span the full block window", () => {
       const blockHeight = 50;
       const blockWindowSeconds = 10;
       const result = getTimestampRangeFromBlockHeight(blockHeight, blockWindowSeconds);
 
-      const startSeconds = parseInt(result.start.split(".")[0]);
-      const endSeconds = parseInt(result.end.split(".")[0]);
+      const startSeconds = parseInt(result.mirror.start.split(".")[0]);
+      const endSeconds = parseInt(result.mirror.end.split(".")[0]);
 
       expect(endSeconds - startSeconds).toBe(blockWindowSeconds);
     });
 
-    it("maintains correct nanosecond precision format", () => {
+    it("ensures thirdweb timestamps exclude the end boundary", () => {
+      const blockHeight = 100;
+      const blockWindowSeconds = 10;
+      const result = getTimestampRangeFromBlockHeight(blockHeight, blockWindowSeconds);
+
+      const startSeconds = parseInt(result.thirdweb.from);
+      const endSeconds = parseInt(result.thirdweb.to);
+
+      expect(endSeconds - startSeconds).toBe(blockWindowSeconds - 1);
+    });
+
+    it("maintains correct nanosecond precision format for mirror timestamps", () => {
       const result = getTimestampRangeFromBlockHeight(123);
 
-      expect(result.start).toMatch(/^\d+\.000000000$/);
-      expect(result.end).toMatch(/^\d+\.000000000$/);
+      expect(result.mirror.start).toMatch(/^\d+\.000000000$/);
+      expect(result.mirror.end).toMatch(/^\d+\.000000000$/);
     });
   });
 
@@ -1076,6 +1113,103 @@ describe("logic utils", () => {
       const result = await analyzeStakingOperation(mockAddress, mockTx);
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("createCompositeCursor", () => {
+    it("should create cursor with both values", () => {
+      const result = createCompositeCursor({
+        mirrorCursor: "1733140920.123456",
+        erc20Cursor: "1733140860.789012",
+      });
+
+      expect(result).toBe("1733140920.123456:1733140860.789012");
+    });
+
+    it("should handle null mirror cursor", () => {
+      const result = createCompositeCursor({
+        mirrorCursor: null,
+        erc20Cursor: "1733140860.789012",
+      });
+
+      expect(result).toBe(":1733140860.789012");
+    });
+
+    it("should handle null erc20 cursor", () => {
+      const result = createCompositeCursor({
+        mirrorCursor: "1733140920.123456",
+        erc20Cursor: null,
+      });
+
+      expect(result).toBe("1733140920.123456:");
+    });
+
+    it("should return null when both cursors are null", () => {
+      const result = createCompositeCursor({ mirrorCursor: null, erc20Cursor: null });
+
+      expect(result).toBeNull();
+    });
+
+    it("should handle empty strings as null", () => {
+      expect(createCompositeCursor({ mirrorCursor: "", erc20Cursor: "" })).toBeNull();
+      expect(createCompositeCursor({ mirrorCursor: "", erc20Cursor: "123" })).toBe(":123");
+      expect(createCompositeCursor({ mirrorCursor: "456", erc20Cursor: "" })).toBe("456:");
+    });
+  });
+
+  describe("parseCompositeCursor", () => {
+    it("should parse cursor with both values", () => {
+      const result = parseCompositeCursor("1733140920.123456:1733140860.789012");
+
+      expect(result).toEqual({
+        mirrorCursor: "1733140920.123456",
+        erc20Cursor: "1733140860.789012",
+      });
+    });
+
+    it("should parse cursor with only mirror value", () => {
+      const result = parseCompositeCursor("1733140920.123456:");
+
+      expect(result).toEqual({
+        mirrorCursor: "1733140920.123456",
+        erc20Cursor: null,
+      });
+    });
+
+    it("should parse cursor with only erc20 value", () => {
+      const result = parseCompositeCursor(":1733140860.789012");
+
+      expect(result).toEqual({
+        mirrorCursor: null,
+        erc20Cursor: "1733140860.789012",
+      });
+    });
+
+    it("should handle null cursor", () => {
+      const result = parseCompositeCursor(null);
+
+      expect(result).toEqual({
+        mirrorCursor: null,
+        erc20Cursor: null,
+      });
+    });
+
+    it("should handle empty string cursor", () => {
+      const result = parseCompositeCursor("");
+
+      expect(result).toEqual({
+        mirrorCursor: null,
+        erc20Cursor: null,
+      });
+    });
+
+    it("should handle cursor with colon only", () => {
+      const result = parseCompositeCursor(":");
+
+      expect(result).toEqual({
+        mirrorCursor: null,
+        erc20Cursor: null,
+      });
     });
   });
 });

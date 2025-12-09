@@ -2,11 +2,17 @@ import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
-import type { StakingAnalysis } from "../types";
-import { analyzeStakingOperation, getTimestampRangeFromBlockHeight } from "./utils";
+import { thirdwebClient } from "../network/thirdweb";
+import * as networkUtils from "../network/utils";
+import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedMirrorTransaction } from "../test/fixtures/mirror.fixture";
+import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
+import type { OperationERC20, StakingAnalysis } from "../types";
+import { analyzeStakingOperation, getTimestampRangeFromBlockHeight, fromEVMAddress } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
+jest.mock("../network/thirdweb");
 jest.mock("./utils");
 
 describe("getBlock", () => {
@@ -17,18 +23,34 @@ describe("getBlock", () => {
   };
 
   const mockTimestampRange = {
-    start: "1704067200.000000000",
-    end: "1704067260.000000000",
+    mirror: {
+      start: "170406720.000000000",
+      end: "170406730.000000000",
+    },
+    thirdweb: {
+      start: "170406720",
+      end: "170406729",
+    },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
+
     (getBlockInfo as jest.Mock).mockResolvedValue(mockBlockInfo);
     (getTimestampRangeFromBlockHeight as jest.Mock).mockReturnValue(mockTimestampRange);
     (analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
+    (fromEVMAddress as jest.Mock).mockImplementation((evmAddress: string) => {
+      const addressMap: Record<string, string> = {
+        "0x0000000000000000000000000000000000000999": "0.0.999",
+        "0x0000000000000000000000000000000000001001": "0.0.1001",
+      };
+      return addressMap[evmAddress] || null;
+    });
   });
 
   it("should return empty block when no transactions exist", async () => {
+    (thirdwebClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
 
     const result = await getBlock(100);
@@ -40,6 +62,7 @@ describe("getBlock", () => {
   });
 
   it("should call dependencies with correct parameters", async () => {
+    (thirdwebClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
 
     await getBlock(42);
@@ -48,8 +71,8 @@ describe("getBlock", () => {
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith(
-      mockTimestampRange.start,
-      mockTimestampRange.end,
+      mockTimestampRange.mirror.start,
+      mockTimestampRange.mirror.end,
     );
   });
 
@@ -65,6 +88,7 @@ describe("getBlock", () => {
       token_transfers: [],
     };
 
+    (thirdwebClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
 
     const result = await getBlock(100);
@@ -93,6 +117,7 @@ describe("getBlock", () => {
       token_transfers: [],
     };
 
+    (thirdwebClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
 
     const result = await getBlock(100);
@@ -377,6 +402,83 @@ describe("getBlock", () => {
         address: "0.0.1000",
         asset: { type: "native" },
         amount: BigInt(1000),
+      },
+    ]);
+  });
+
+  it("should handle ERC20 token transfers", async () => {
+    const mockERC20Token = getMockedERC20TokenCurrency({
+      contractAddress: "0x0000000000000000000000000000000000012345",
+    });
+    const mockMirrorTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1704067200-000000000",
+      charged_tx_fee: 50000,
+      name: "CONTRACTCALL",
+      result: "SUCCESS",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        {
+          account: "0.0.999",
+          amount: -50000,
+        },
+      ],
+    });
+    const mockThirdwebTx = getMockedThirdwebTransaction({
+      transactionHash: "hash_erc20",
+      blockTimestamp: 1704067200,
+      data: "0x00000000000000000000000000000000000000000000000000000000000003e8",
+      topics: [
+        "0xa9059cbb",
+        "0x0000000000000000000000000000000000000000000000000000000000000999",
+        "0x0000000000000000000000000000000000000000000000000000000000001001",
+      ],
+    });
+    const mockERC20Operation: OperationERC20 = {
+      thirdwebTransaction: mockThirdwebTx,
+      mirrorTransaction: mockMirrorTx,
+      token: mockERC20Token,
+      contractCallResult: {} as any,
+    };
+
+    (thirdwebClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([
+      mockThirdwebTx,
+    ]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockMirrorTx]);
+    jest.spyOn(networkUtils, "getERC20Operations").mockResolvedValue([mockERC20Operation]);
+    jest.spyOn(networkUtils, "parseThirdwebTransactionParams").mockReturnValue({
+      from: "0x0000000000000000000000000000000000000999",
+      to: "0x0000000000000000000000000000000000001001",
+      value: "1000",
+    });
+
+    const result = await getBlock(100);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: "0.0.999",
+        amount: BigInt(0), // -50000 + 50000 (fee excluded)
+        asset: { type: "native" },
+      },
+      {
+        type: "transfer",
+        address: "0.0.999",
+        amount: BigInt(-1000),
+        asset: {
+          type: "erc20",
+          assetReference: mockERC20Token.contractAddress,
+        },
+      },
+      {
+        type: "transfer",
+        address: "0.0.1001",
+        amount: BigInt(1000),
+        asset: {
+          type: "erc20",
+          assetReference: mockERC20Token.contractAddress,
+        },
       },
     ]);
   });

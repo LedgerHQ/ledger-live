@@ -337,22 +337,33 @@ export function getSyntheticBlock(
 }
 
 /**
- * Calculates the timestamp range based on a synthetic block height.
+ * Calculates timestamp ranges for a synthetic block height.
+ *
+ * Returns two sets of boundaries:
+ * - Mirror Node format: start (inclusive) and end (exclusive) with nanosecond precision
+ * - Thirdweb format: from (inclusive) and to (inclusive) as integer seconds
  *
  * @param blockHeight - The synthetic block height
  * @param blockWindowSeconds - Duration of one synthetic block in seconds (default: 10)
- * @returns Hedera timestamp range as a string
  */
 export function getTimestampRangeFromBlockHeight(
   blockHeight: number,
   blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
 ) {
-  const startTimestamp = blockHeight * blockWindowSeconds;
-  const endTimestamp = (blockHeight + 1) * blockWindowSeconds;
+  const startSeconds = blockHeight * blockWindowSeconds;
+  const endSeconds = (blockHeight + 1) * blockWindowSeconds;
 
   return {
-    start: `${startTimestamp}.000000000`,
-    end: `${endTimestamp}.000000000`,
+    // Mirror Node: uses nanosecond precision, end is exclusive (GTE start, LT end)
+    mirror: {
+      start: `${startSeconds}.000000000`,
+      end: `${endSeconds}.000000000`,
+    },
+    // Thirdweb: uses integer seconds, both boundaries inclusive (GTE from, LTE to)
+    thirdweb: {
+      from: startSeconds.toString(),
+      to: (endSeconds - 1).toString(),
+    },
   };
 }
 
@@ -561,3 +572,39 @@ export const analyzeStakingOperation = async (
     amount: BigInt(accountAfter.balance.balance),
   };
 };
+
+/**
+ * Returns null if both cursors are null
+ */
+export function createCompositeCursor({
+  mirrorCursor,
+  erc20Cursor,
+}: {
+  mirrorCursor: string | null;
+  erc20Cursor: string | null;
+}): string | null {
+  if (!mirrorCursor && !erc20Cursor) {
+    return null;
+  }
+
+  const mirrorPart = mirrorCursor ?? "";
+  const erc20Part = erc20Cursor ?? "";
+
+  return `${mirrorPart}:${erc20Part}`;
+}
+
+/**
+ * Parses a composite cursor string into its components
+ * Returns { mirrorCursor: null, erc20Cursor: null } if cursor is null/undefined
+ */
+export function parseCompositeCursor(cursor: string | null): {
+  mirrorCursor: string | null;
+  erc20Cursor: string | null;
+} {
+  const [mirrorPart, erc20Part] = cursor?.split(":") ?? [];
+
+  return {
+    mirrorCursor: mirrorPart || null,
+    erc20Cursor: erc20Part || null,
+  };
+}

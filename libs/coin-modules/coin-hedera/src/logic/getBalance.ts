@@ -1,16 +1,25 @@
+import invariant from "invariant";
 import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { apiClient } from "../network/api";
+import { getERC20BalancesForAccount } from "../network/utils";
+import { toEVMAddress } from "./utils";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
-  const [mirrorAccount, mirrorTokens, mirrorNodes] = await Promise.all([
+  const evmAddress = await toEVMAddress(address);
+  invariant(evmAddress, "hedera: evm address is missing");
+
+  const [mirrorAccount, mirrorTokens, mirrorNodes, erc20TokenBalances] = await Promise.all([
     apiClient.getAccount(address),
     apiClient.getAccountTokens(address),
     apiClient.getNodes({ fetchAllPages: true }),
+    getERC20BalancesForAccount(evmAddress),
   ]);
 
+  const mixedTokens = [...mirrorTokens, ...erc20TokenBalances];
   const validator = mirrorNodes.nodes.find(v => v.node_id === mirrorAccount.staked_node_id);
+
   const balances: Balance[] = [
     {
       asset: { type: "native" },
@@ -33,9 +42,10 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     },
   ];
 
-  for (const mirrorToken of mirrorTokens) {
+  for (const item of mixedTokens) {
+    const tokenAddress = "token_id" in item ? item.token_id : item.token.contractAddress;
     const calToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      mirrorToken.token_id,
+      tokenAddress,
       currency.id,
     );
 
@@ -44,7 +54,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     }
 
     balances.push({
-      value: BigInt(mirrorToken.balance),
+      value: BigInt(item.balance.toString()),
       asset: {
         type: calToken.tokenType,
         assetReference: calToken.contractAddress,

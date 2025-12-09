@@ -5,6 +5,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { apiClient } from "../network/api";
+import { getERC20Operations } from "../network/utils";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedHTSTokenCurrency,
@@ -326,7 +327,7 @@ describe("utils", () => {
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
-        latestERC20Transactions: [incomingERC20Transaction],
+        latestERC20Operations: await getERC20Operations([incomingERC20Transaction]),
         pendingOperationHashes: new Set(),
         erc20OperationHashes: new Set(),
       });
@@ -404,7 +405,7 @@ describe("utils", () => {
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
-        latestERC20Transactions: [allowanceERC20Transaction],
+        latestERC20Operations: await getERC20Operations([allowanceERC20Transaction]),
         pendingOperationHashes: new Set(),
         erc20OperationHashes: new Set(),
       });
@@ -499,7 +500,7 @@ describe("utils", () => {
         ledgerAccountId,
         address,
         allOperations: operationsWithDuplicate,
-        latestERC20Transactions: [duplicateERC20Transaction],
+        latestERC20Operations: await getERC20Operations([duplicateERC20Transaction]),
         pendingOperationHashes: new Set(),
         erc20OperationHashes: new Set([duplicateTxHash]),
       });
@@ -537,7 +538,7 @@ describe("utils", () => {
         ledgerAccountId,
         address,
         allOperations: operationsWithPending,
-        latestERC20Transactions: [],
+        latestERC20Operations: [],
         pendingOperationHashes: new Set([pendingTxHash]),
         erc20OperationHashes: new Set(),
       });
@@ -643,7 +644,7 @@ describe("utils", () => {
         ledgerAccountId,
         address,
         allOperations: fridaySyncOperations,
-        latestERC20Transactions: [lateERC20Transaction],
+        latestERC20Operations: await getERC20Operations([lateERC20Transaction]),
         pendingOperationHashes: new Set(),
         erc20OperationHashes: new Set(["wednesday_erc20"]),
       });

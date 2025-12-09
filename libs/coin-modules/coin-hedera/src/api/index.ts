@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import type {
   Api,
   CraftedTransaction,
@@ -24,11 +25,12 @@ import {
   lastBlock,
   getValidators,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue, toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import { getERC20BalancesForAccount } from "../network/utils";
+import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo> {
+export function createApi(config: Record<string, never>): Api<HederaMemo, HederaTxData> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById("hedera");
 
@@ -54,14 +56,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async transactionIntent => {
-      const operationType = mapIntentToSDKOperation(transactionIntent);
+    estimateFees: async txIntent => {
+      let estimateFeesParams: EstimateFeesParams;
+      const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimateFeesParams = { operationType, txIntent };
+      } else {
+        estimateFeesParams = { currency, operationType };
       }
 
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
+      const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
@@ -72,7 +77,14 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
     listOperations: async (address, pagination) => {
-      const mirrorTokens = await apiClient.getAccountTokens(address);
+      const evmAddress = await toEVMAddress(address);
+      invariant(evmAddress, "hedera: evm address is missing");
+
+      const [mirrorTokens, erc20TokenBalances] = await Promise.all([
+        apiClient.getAccountTokens(address),
+        getERC20BalancesForAccount(evmAddress),
+      ]);
+
       const latestAccountOperations = await logicListOperations({
         currency,
         address,
@@ -82,6 +94,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
         skipFeesForTokenOperations: true,
         useEncodedHash: false,
         useSyntheticBlocks: true,
+        erc20TokenBalances,
       });
 
       const liveOperations = [

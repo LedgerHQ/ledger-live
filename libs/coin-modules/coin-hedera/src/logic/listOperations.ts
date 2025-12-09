@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -6,27 +7,46 @@ import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { buildERC20OperationFields } from "../bridge/utils";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
-import { parseTransfers } from "../network/utils";
+import { getERC20Operations, parseTransfers } from "../network/utils";
+import { thirdwebClient } from "../network/thirdweb";
 import type {
+  HederaERC20TokenBalance,
   HederaMirrorToken,
   HederaMirrorTransaction,
   HederaOperationExtra,
+  OperationERC20,
   StakingAnalysis,
 } from "../types";
 import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
+  createCompositeCursor,
   getMemoFromBase64,
   getSyntheticBlock,
+  parseCompositeCursor,
+  toEVMAddress,
 } from "./utils";
+
+// =============================================================================
+// CONSTANTS / TYPES
+// =============================================================================
+
+type MergedTransaction =
+  | { type: "mirror"; data: HederaMirrorTransaction }
+  | { type: "erc20"; data: OperationERC20 };
 
 const txNameToCustomOperationType: Record<string, OperationType> = {
   TOKENASSOCIATE: "ASSOCIATE_TOKEN",
   CONTRACTCALL: "CONTRACT_CALL",
   CRYPTOUPDATEACCOUNT: "UPDATE_ACCOUNT",
 };
+
+// =============================================================================
+// HELPER FUNCTIONS - Transaction Processing
+// =============================================================================
 
 function getCommonOperationData(
   rawTx: HederaMirrorTransaction,
@@ -161,24 +181,6 @@ function processTransfers({
   const extra = { ...commonData.extra };
   let operationType = txNameToCustomOperationType[rawTx.name] ?? type;
 
-  // update operation type and extra fields if staking analysis is available
-  if (stakingAnalysis) {
-    operationType = stakingAnalysis.operationType;
-    extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
-    extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
-  }
-
-  // each transfer may trigger staking reward claim
-  const stakingReward = rawTx.staking_reward_transfers.reduce((acc, transfer) => {
-    const transferAmount = new BigNumber(transfer.amount);
-
-    if (transfer.account === address) {
-      acc = acc.plus(transferAmount);
-    }
-
-    return acc;
-  }, new BigNumber(0));
-
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
   // this value is used by custom OperationDetails components in Hedera family
   // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail
@@ -191,6 +193,21 @@ function processTransfers({
       extra.associatedTokenId = relatedMirrorToken.token_id;
     }
   }
+
+  // update operation type and extra fields if staking analysis is available
+  if (stakingAnalysis) {
+    operationType = stakingAnalysis.operationType;
+    extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
+    extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
+  }
+
+  // each transfer may trigger staking reward claim
+  const stakingReward = rawTx.staking_reward_transfers.reduce((acc, transfer) => {
+    if (transfer.account === address) {
+      return acc.plus(new BigNumber(transfer.amount));
+    }
+    return acc;
+  }, new BigNumber(0));
 
   // add REWARD operation representing staking reward transfers
   if (stakingReward.gt(0)) {
@@ -234,6 +251,86 @@ function processTransfers({
   return coinOperations;
 }
 
+// =============================================================================
+// HELPER FUNCTIONS - Merging & Pagination for data from different sources
+// =============================================================================
+
+function mergeAndPaginate({
+  mirrorTransactions,
+  thirdwebTransactions,
+  order,
+  limit,
+}: {
+  mirrorTransactions: HederaMirrorTransaction[];
+  thirdwebTransactions: OperationERC20[];
+  order: "asc" | "desc";
+  limit: number;
+}): {
+  mergedTransactions: MergedTransaction[];
+  mirrorCursor: string | null;
+  erc20Cursor: string | null;
+} {
+  const merged: MergedTransaction[] = [];
+  const mirrorTxHashes = new Set(mirrorTransactions.map(tx => tx.transaction_hash));
+  const erc20TxByHash = new Map(
+    thirdwebTransactions.map(tx => [tx.mirrorTransaction.transaction_hash, tx]),
+  );
+
+  // add mirror transactions, preferring ERC20 version than mirror CONTRACT_CALL if available
+  for (const mirrorTx of mirrorTransactions) {
+    const erc20Tx = erc20TxByHash.get(mirrorTx.transaction_hash);
+    merged.push(erc20Tx ? { type: "erc20", data: erc20Tx } : { type: "mirror", data: mirrorTx });
+  }
+
+  // add erc20 transactions missing from mirror response (incoming transfers, allowance-based)
+  for (const erc20Tx of thirdwebTransactions) {
+    if (!mirrorTxHashes.has(erc20Tx.mirrorTransaction.transaction_hash)) {
+      merged.push({ type: "erc20", data: erc20Tx });
+    }
+  }
+
+  // sort by consensus timestamp
+  merged.sort((a, b) => {
+    const aMirrorTx = a.type === "mirror" ? a.data : a.data.mirrorTransaction;
+    const bMirrorTx = b.type === "mirror" ? b.data : b.data.mirrorTransaction;
+    const aTime = Number.parseFloat(aMirrorTx.consensus_timestamp);
+    const bTime = Number.parseFloat(bMirrorTx.consensus_timestamp);
+    return order === "desc" ? bTime - aTime : aTime - bTime;
+  });
+
+  // respect limit after merging
+  const limited = merged.slice(0, limit);
+
+  // calculate cursors from limited result
+  let lastMirrorTimestamp: string | null = null;
+  let lastErc20Timestamp: string | null = null;
+
+  for (const item of limited) {
+    if (item.type === "mirror") {
+      lastMirrorTimestamp = item.data.consensus_timestamp;
+    } else {
+      lastErc20Timestamp = item.data.mirrorTransaction.consensus_timestamp.split(".")[0];
+    }
+  }
+
+  return {
+    mergedTransactions: limited,
+    mirrorCursor: lastMirrorTimestamp,
+    erc20Cursor: lastErc20Timestamp,
+  };
+}
+
+// =============================================================================
+// MAIN FUNCTION
+// =============================================================================
+
+/**
+ * Lists operations for a Hedera account.
+ *
+ * Two main modes, depending on presence of erc20TokenBalances parameter:
+ * - Bridge: Returns only Mirror operations (erc20TokenBalances = undefined)
+ * - Alpaca: Returns merged Mirror + ERC20 operations (erc20TokenBalances !== undefined)
+ */
 export async function listOperations({
   currency,
   address,
@@ -243,6 +340,7 @@ export async function listOperations({
   skipFeesForTokenOperations,
   useEncodedHash,
   useSyntheticBlocks,
+  erc20TokenBalances,
 }: {
   currency: CryptoCurrency;
   address: string;
@@ -253,20 +351,34 @@ export async function listOperations({
   skipFeesForTokenOperations: boolean;
   useEncodedHash: boolean;
   useSyntheticBlocks: boolean;
+  erc20TokenBalances?: HederaERC20TokenBalance[];
 }): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
   tokenOperations: Operation<HederaOperationExtra>[];
   nextCursor: string | null;
 }> {
-  const coinOperations: Operation<HederaOperationExtra>[] = [];
-  const tokenOperations: Operation<HederaOperationExtra>[] = [];
-  const mirrorResult = await apiClient.getAccountTransactions({
-    address,
-    pagingToken: pagination.lastPagingToken ?? null,
-    order: pagination.order,
-    limit: pagination.limit,
-    fetchAllPages,
-  });
+  const evmAddress = await toEVMAddress(address);
+  invariant(evmAddress, "hedera: evm address is missing");
+
+  const order = pagination.order ?? "desc";
+  const limit = pagination.limit ?? 100;
+
+  // parse cursor based on mode
+  // - alpaca mode: composite "mirror:thirdweb" cursor
+  // - bridge mode: only mirror cursor
+  let mirrorCursor: string | null;
+  let erc20Cursor: string | null;
+
+  if (erc20TokenBalances) {
+    const compositeCursor = parseCompositeCursor(pagination.lastPagingToken ?? null);
+    const mirrorCursorInSeconds = compositeCursor.mirrorCursor?.split(".")[0] ?? null;
+    mirrorCursor = compositeCursor.mirrorCursor;
+    erc20Cursor = compositeCursor.erc20Cursor ?? mirrorCursorInSeconds;
+  } else {
+    mirrorCursor = pagination.lastPagingToken ?? null;
+    erc20Cursor = null;
+  }
+
   const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -275,46 +387,130 @@ export async function listOperations({
     derivationMode: "hederaBip44",
   });
 
-  for (const rawTx of mirrorResult.transactions) {
-    const commonData = getCommonOperationData(rawTx, useEncodedHash, useSyntheticBlocks);
-
-    // try to distinguish staking operations for CRYPTOUPDATEACCOUNT transactions
-    const stakingAnalysis =
-      rawTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
-        ? await analyzeStakingOperation(address, rawTx)
-        : null;
-
-    // process token transfers
-    const tokenResult = await processTokenTransfers({
-      rawTx,
+  const [mirrorResult, thirdwebResult] = await Promise.all([
+    apiClient.getAccountTransactions({
       address,
-      currency,
-      ledgerAccountId,
-      commonData,
-      skipFeesForTokenOperations,
-    });
+      pagingToken: mirrorCursor,
+      order,
+      limit,
+      fetchAllPages,
+    }),
+    erc20TokenBalances
+      ? thirdwebClient.getERC20TransactionsForAccount({
+          address,
+          contractAddresses: erc20TokenBalances.map(token => token.token.contractAddress),
+          order,
+          limit,
+          fetchAllPages: false,
+          ...(order === "desc" && { to: erc20Cursor }),
+          ...(order === "asc" && { from: erc20Cursor }),
+        })
+      : Promise.resolve(null),
+  ]);
 
-    if (tokenResult?.coinOperation) coinOperations.push(tokenResult.coinOperation);
-    if (tokenResult?.tokenOperation) tokenOperations.push(tokenResult.tokenOperation);
+  // enrich raw thirdweb result with mirror data in Alpaca mode
+  const enrichedThirdwebResult = thirdwebResult ? await getERC20Operations(thirdwebResult) : [];
 
-    // process regular transfers only if there were no token transfers
-    if (!tokenResult) {
-      const newCoinOperations = processTransfers({
-        rawTx,
+  const {
+    mergedTransactions,
+    mirrorCursor: newMirrorCursor,
+    erc20Cursor: newErc20Cursor,
+  } = thirdwebResult
+    ? mergeAndPaginate({
+        mirrorTransactions: mirrorResult.transactions,
+        thirdwebTransactions: enrichedThirdwebResult,
+        order,
+        limit,
+      })
+    : {
+        mergedTransactions: mirrorResult.transactions.map(tx => ({
+          type: "mirror" as const,
+          data: tx,
+        })),
+        mirrorCursor: mirrorResult.nextCursor,
+        erc20Cursor: null,
+      };
+
+  // process transactions
+  const coinOperations: Operation<HederaOperationExtra>[] = [];
+  const tokenOperations: Operation<HederaOperationExtra>[] = [];
+
+  for (const rawTx of mergedTransactions) {
+    if (rawTx.type === "mirror") {
+      const commonData = getCommonOperationData(rawTx.data, useEncodedHash, useSyntheticBlocks);
+      const stakingAnalysis =
+        rawTx.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
+          ? await analyzeStakingOperation(address, rawTx.data)
+          : null;
+
+      // process token transfers
+      const tokenResult = await processTokenTransfers({
+        rawTx: rawTx.data,
         address,
+        currency,
         ledgerAccountId,
         commonData,
-        mirrorTokens,
-        stakingAnalysis,
+        skipFeesForTokenOperations,
       });
 
-      coinOperations.push(...newCoinOperations);
+      if (tokenResult?.coinOperation) coinOperations.push(tokenResult.coinOperation);
+      if (tokenResult?.tokenOperation) tokenOperations.push(tokenResult.tokenOperation);
+
+      // process regular transfers only if there were no token transfers
+      if (!tokenResult) {
+        const newCoinOperations = processTransfers({
+          rawTx: rawTx.data,
+          address,
+          ledgerAccountId,
+          commonData,
+          mirrorTokens,
+          stakingAnalysis,
+        });
+
+        coinOperations.push(...newCoinOperations);
+      }
+    } else {
+      const hash = rawTx.data.mirrorTransaction.transaction_hash;
+      const fields = buildERC20OperationFields({
+        erc20Operation: rawTx.data,
+        evmAddress,
+        variant: "add",
+      });
+
+      if (!fields) continue;
+
+      const encodedTokenAccountId = encodeTokenAccountId(ledgerAccountId, rawTx.data.token);
+      const encodedOperationId = encodeOperationId(encodedTokenAccountId, hash, fields.type);
+
+      tokenOperations.push({
+        ...fields,
+        id: encodedOperationId,
+        accountId: encodedTokenAccountId,
+        hash,
+      });
+
+      if (fields.type === "OUT") {
+        coinOperations.push({
+          ...fields,
+          id: encodeOperationId(ledgerAccountId, hash, "FEES"),
+          accountId: ledgerAccountId,
+          type: "FEES",
+          value: fields.fee,
+          hash,
+        });
+      }
     }
   }
+
+  const nextMirrorCursor = newMirrorCursor ?? mirrorResult.nextCursor;
+  const nextErc20Cursor = newErc20Cursor ?? erc20Cursor;
+  const nextCursor = thirdwebResult
+    ? createCompositeCursor({ mirrorCursor: nextMirrorCursor, erc20Cursor: nextErc20Cursor })
+    : mirrorResult.nextCursor;
 
   return {
     coinOperations,
     tokenOperations,
-    nextCursor: mirrorResult.nextCursor,
+    nextCursor,
   };
 }

@@ -139,6 +139,7 @@ export const MAINNET_TEST_ACCOUNTS = {
     associatedTokenWithBalance: "0.0.456858",
     associatedTokenWithoutBalance: "0.0.7243470",
     notAssociatedToken: "0.0.3176721",
+    erc20Token: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
   },
   activeStaking: {
     accountId: "0.0.8835924",

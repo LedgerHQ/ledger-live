@@ -22,14 +22,13 @@ import {
   isValidExtra,
   base64ToUrlSafeBase64,
 } from "../logic/utils";
-import { getERC20Operations, parseThirdwebTransactionParams } from "../network/utils";
+import { parseThirdwebTransactionParams } from "../network/utils";
 import type {
   HederaOperationExtra,
   Transaction,
   OperationERC20,
   HederaMirrorToken,
   HederaERC20TokenBalance,
-  HederaThirdwebTransaction,
   ERC20OperationFields,
 } from "../types";
 
@@ -445,7 +444,7 @@ export const classifyERC20Operations = ({
 };
 
 // extracts common fields from an ERC20 operation
-const buildERC20OperationFields = ({
+export const buildERC20OperationFields = ({
   erc20Operation,
   relatedExistingOperation,
   variant,
@@ -463,8 +462,8 @@ const buildERC20OperationFields = ({
   }
 
   let type: OperationType = "OUT";
-  const standard = "erc20";
-  const blockHeight = 5;
+  const standard = "erc20" as const;
+  const blockHeight = 5; // blockHeight is lower than account's blockHeight set in synchronisation.ts, so the operation won't get stuck as pending
   const blockHash = erc20Operation.thirdwebTransaction.blockHash;
   const consensusTimestamp = erc20Operation.mirrorTransaction.consensus_timestamp;
   const timestamp = new Date(Number.parseInt(consensusTimestamp.split(".")[0], 10) * 1000);
@@ -529,14 +528,14 @@ export const integrateERC20Operations = async ({
   ledgerAccountId,
   address,
   allOperations,
-  latestERC20Transactions,
+  latestERC20Operations,
   pendingOperationHashes,
   erc20OperationHashes,
 }: {
   ledgerAccountId: string;
   address: string;
   allOperations: Operation[];
-  latestERC20Transactions: HederaThirdwebTransaction[];
+  latestERC20Operations: OperationERC20[];
   pendingOperationHashes: Set<string>;
   erc20OperationHashes: Set<string>;
 }): Promise<{
@@ -544,10 +543,7 @@ export const integrateERC20Operations = async ({
   newERC20TokenOperations: Operation[];
 }> => {
   const newERC20TokenOperations: Operation[] = [];
-  const [latestERC20Operations, evmAddress] = await Promise.all([
-    getERC20Operations(latestERC20Transactions),
-    toEVMAddress(address),
-  ]);
+  const evmAddress = await toEVMAddress(address);
 
   // avoid duplicated CONTRACT_CALL operations if ERC20 operations are already present
   const uniqueOperations = removeDuplicatedContractCallOperations(

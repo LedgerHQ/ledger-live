@@ -13,7 +13,7 @@ import { toEVMAddress } from "../logic/utils";
 import { listOperations } from "../logic";
 import { apiClient } from "../network/api";
 import { thirdwebClient } from "../network/thirdweb";
-import { getERC20BalancesForAccount } from "../network/utils";
+import { getERC20BalancesForAccount, getERC20Operations } from "../network/utils";
 import type { HederaAccount } from "../types";
 import {
   getSubAccounts,
@@ -78,7 +78,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     erc20LatestOperationTimestamp = new BigNumber(timestamp).toString();
   }
 
-  const [latestAccountOperations, erc20Transactions] = await Promise.all([
+  const [latestAccountOperations, latestThirdwebTransactions] = await Promise.all([
     listOperations({
       currency,
       address,
@@ -92,12 +92,14 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
       useEncodedHash: true,
       useSyntheticBlocks: false,
     }),
+    // ERC20 operations are handled separately on bridge level to solve sync delay issues between mirror node and thirdweb
     thirdwebClient.getERC20TransactionsForAccount({
       address,
       contractAddresses: erc20TokenBalances.map(token => token.token.contractAddress),
-      since: erc20LatestOperationTimestamp,
+      from: erc20LatestOperationTimestamp,
     }),
   ]);
+  const latestERC20Operations = await getERC20Operations(latestThirdwebTransactions);
 
   const newOperations = await prepareOperations(
     latestAccountOperations.coinOperations,
@@ -122,7 +124,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   // - mirror node doesn't return "CONTRACT_CALL" (OUT) erc20 token transactions made from 3rd party with allowance
   //
   // 1. mirror node transactions are already transformed into operations at this point + we have raw erc20 transactions fetched from thirdweb
-  // 2. related mirror node transaction must be fetched for each erc20 transaction (to get fee and consensus timestamp)
+  // 2. each erc20 transaction has access to related mirror node transaction (to get fee and consensus timestamp)
   // 3. CONTRACTCALL operations must be removed if existing operations already include erc20 operation with the same tx.hash
   // 4. ERC20 transactions must be classified into two groups: patchList and addList
   //    - patchList: transactions which are already present in mirror operations (we can have CONTRACT_CALL from mirror node that we can transform into "FEES")
@@ -134,7 +136,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     ledgerAccountId: liveAccountId,
     address,
     allOperations: operations,
-    latestERC20Transactions: erc20Transactions,
+    latestERC20Operations,
     pendingOperationHashes,
     erc20OperationHashes,
   });

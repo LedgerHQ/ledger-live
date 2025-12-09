@@ -14,11 +14,13 @@ export const getMockERC20Operation = ({
   from,
   to,
   token,
+  overrides,
 }: {
   hash: string;
   from: string;
   to: string;
   token: TokenCurrency;
+  overrides?: Partial<OperationERC20>;
 }): OperationERC20 => ({
   thirdwebTransaction: getMockedThirdwebTransaction({
     transactionHash: hash,
@@ -48,6 +50,7 @@ export const getMockERC20Operation = ({
     gas_used: 50000,
   } as any,
   token,
+  ...overrides,
 });
 
 export const getMockERC20Fields = (
