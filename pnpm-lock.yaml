@@ -1349,9 +1349,6 @@ importers:
       lottie-react-native:
         specifier: 7.2.2
         version: 7.2.2(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      moment:
-        specifier: 2.30.1
-        version: 2.30.1
       node-libs-react-native:
         specifier: 1.2.1
         version: 1.2.1
@@ -4770,7 +4767,7 @@ importers:
         version: link:../live-dmk-speculos
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.0
+        version: 0.2.0(rxjs@7.8.2)
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -5685,7 +5682,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@0.11.2(rxjs@7.8.2))
+        version: 0.2.0(rxjs@7.8.2)
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -8498,7 +8495,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@0.11.2(rxjs@7.8.2))
+        version: 0.2.0(rxjs@7.8.2)
     devDependencies:
       '@testing-library/dom':
         specifier: ^9.3.4
@@ -11988,10 +11985,6 @@ packages:
     resolution: {integrity: sha512-oNcu2QbHqts9BtOWJosOVJapWjBDSxGCpFvikNR5TGDYDQf3JwpIoMzIKrvfoti93cLfPJEG4tH9SPVeyCGgdA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/traverse@7.28.4':
-    resolution: {integrity: sha512-YEzuboP2qvQavAcjgQNVgsvHIDv6ZpwXvcvjmyySP2DIMuByS/6ioU5G9pYrWHM6T2YDfc7xga9iNzYOs12CFQ==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/traverse@7.28.5':
     resolution: {integrity: sha512-TCCj4t55U90khlYkVV/0TfkJkAkUg3jZFA3Neb7unZT8CPok7iiRfaX0F+WnqWqt7OxhOn0uBKXCw4lbL8W0aQ==}
     engines: {node: '>=6.9.0'}
@@ -15193,8 +15186,6 @@ packages:
 
   '@ledgerhq/speculos-device-controller@0.2.0':
     resolution: {integrity: sha512-GQw1ZrHJnnf2LpFv4cstgnRrPZ1VIQ4KJj4z1EA26tzZv/cIZte+1Y1e16WPizQBRzpcOd3IFfXbeGjCbvtIog==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.11.2
 
   '@ledgerhq/types-devices@6.27.0':
     resolution: {integrity: sha512-FQZdCoYxxMjY7PWFWM8gflSl4++T3Ems2koMiVZhbH4ji3PzafLvK+y422bRdt78zIP3UURbOhuzrpZ2ASv3gw==}
@@ -19471,7 +19462,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -20226,7 +20217,6 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
-
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -22244,7 +22234,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -25826,7 +25816,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -26430,9 +26420,6 @@ packages:
       react-native-webview:
         optional: true
 
-  exponential-backoff@3.1.1:
-    resolution: {integrity: sha512-dX7e/LHVJ6W3DE1MHWi9S1EYzDESENfLrYohG2G++ovZrYOkm4Knwa0mc1cn84xJOR4KEU0WSchhLbd0UklbHw==}
-
   exponential-backoff@3.1.2:
     resolution: {integrity: sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==}
 
@@ -26590,14 +26577,6 @@ packages:
 
   fd-slicer@1.1.0:
     resolution: {integrity: sha512-cE1qsB/VwyQozZ+q1dGxR8LBYNZeofhEdUNGSMbQD3Gw2lAzX9Zb3uIU6Ebc/Fmyjo9AWWfnn0AUCHqtevs/8g==}
-
-  fdir@6.4.6:
-    resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -31949,10 +31928,6 @@ packages:
     resolution: {integrity: sha512-c5CgUJq6H2k6MJz72Ak1F5sN9n9wlSlJyEnwvpm9/y3WB4E3pHBDT2c6PEiS1vyJvq2bUxUAIu0EGf8Cx4Ic7Q==}
     engines: {node: '>= 4'}
 
-  pirates@4.0.6:
-    resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
-    engines: {node: '>= 6'}
-
   pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
@@ -32822,7 +32797,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33081,7 +33055,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -40093,7 +40067,7 @@ snapshots:
   '@babel/helper-module-imports@7.25.9':
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -40265,7 +40239,7 @@ snapshots:
 
   '@babel/parser@7.27.0':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/parser@7.27.5':
     dependencies:
@@ -40283,7 +40257,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.27.4
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -40310,7 +40284,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.27.4
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -41029,7 +41003,7 @@ snapshots:
       '@babel/helper-module-transforms': 7.27.3(@babel/core@7.27.1)
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
-      '@babel/traverse': 7.27.4
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -41281,7 +41255,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -41570,7 +41544,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/types': 7.27.6
+      '@babel/types': 7.28.5
       esutils: 2.0.3
 
   '@babel/preset-react@7.27.1(@babel/core@7.27.1)':
@@ -41628,7 +41602,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/parser': 7.28.5
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/template@7.27.2':
     dependencies:
@@ -41672,7 +41646,7 @@ snapshots:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
@@ -41687,18 +41661,6 @@ snapshots:
       '@babel/types': 7.27.6
       debug: 4.3.4
       globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/traverse@7.28.4':
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/generator': 7.28.5
-      '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.28.5
-      '@babel/template': 7.27.2
-      '@babel/types': 7.28.5
-      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -44413,7 +44375,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/generator': 7.27.1
       '@babel/parser': 7.28.5
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@expo/config': 11.0.10
       '@expo/env': 1.0.5
       '@expo/json-file': 9.1.4
@@ -46691,7 +46653,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       micromatch: 4.0.8
-      pirates: 4.0.6
+      pirates: 4.0.7
       slash: 3.0.0
       write-file-atomic: 4.0.2
     transitivePeerDependencies:
@@ -46712,7 +46674,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       micromatch: 4.0.8
-      pirates: 4.0.6
+      pirates: 4.0.7
       slash: 3.0.0
       write-file-atomic: 4.0.2
     transitivePeerDependencies:
@@ -47174,16 +47136,15 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 0.11.2(rxjs@7.8.2)
 
-  '@ledgerhq/speculos-device-controller@0.2.0':
-    dependencies:
-      '@sentry/minimal': 6.19.7
-      axios: 1.8.2
-
-  '@ledgerhq/speculos-device-controller@0.2.0(@ledgerhq/device-management-kit@0.11.2(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.2.0(rxjs@7.8.2)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.11.2(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
+    transitivePeerDependencies:
+      - bufferutil
+      - rxjs
+      - utf-8-validate
 
   '@ledgerhq/types-devices@6.27.0': {}
 
@@ -55065,7 +55026,7 @@ snapshots:
   '@types/babel__core@7.20.5':
     dependencies:
       '@babel/parser': 7.28.5
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.20.5
@@ -56324,7 +56285,7 @@ snapshots:
 
   '@typescript-eslint/utils@8.30.1(eslint@8.57.0)(typescript@5.4.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
       '@typescript-eslint/scope-manager': 8.30.1
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/typescript-estree': 8.30.1(typescript@5.4.3)
@@ -63564,8 +63525,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  exponential-backoff@3.1.1: {}
-
   exponential-backoff@3.1.2: {}
 
   express@4.19.2:
@@ -63821,10 +63780,6 @@ snapshots:
   fd-slicer@1.1.0:
     dependencies:
       pend: 1.2.0
-
-  fdir@6.4.6(picomatch@4.0.3):
-    optionalDependencies:
-      picomatch: 4.0.3
 
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
@@ -68379,7 +68334,7 @@ snapshots:
       '@babel/generator': 7.28.3
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@jest/expect-utils': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
@@ -69520,7 +69475,7 @@ snapshots:
   konan@2.1.1:
     dependencies:
       '@babel/parser': 7.28.5
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -70533,7 +70488,7 @@ snapshots:
 
   metro-cache@0.81.5:
     dependencies:
-      exponential-backoff: 3.1.1
+      exponential-backoff: 3.1.2
       flow-enums-runtime: 0.0.6
       metro-core: 0.81.5
 
@@ -72660,8 +72615,6 @@ snapshots:
   pirates@3.0.2:
     dependencies:
       node-modules-regexp: 1.0.0
-
-  pirates@4.0.6: {}
 
   pirates@4.0.7: {}
 
@@ -77262,7 +77215,7 @@ snapshots:
       glob: 10.4.5
       lines-and-columns: 1.2.4
       mz: 2.7.0
-      pirates: 4.0.6
+      pirates: 4.0.7
       ts-interface-checker: 0.1.13
 
   sudo-prompt@8.2.5: {}
@@ -77794,7 +77747,7 @@ snapshots:
 
   tinyglobby@0.2.14:
     dependencies:
-      fdir: 6.4.6(picomatch@4.0.3)
+      fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
 
   tinyglobby@0.2.15:
