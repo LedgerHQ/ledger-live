@@ -1,5 +1,5 @@
 import React from "react";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { ListItem } from "@ledgerhq/ldls-ui-react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -24,7 +24,14 @@ export const NetworkListItem = ({
   return (
     <ListItem
       title={currency.name}
-      leadingContent={<CryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />}
+      leadingContent={
+        <CryptoIcon
+          size="48px"
+          ledgerId={currency.id}
+          ticker={currency.ticker}
+          overridesRadius="12px"
+        />
+      }
       description={description}
       descriptionTag={apy ? <>{apy}</> : undefined}
       trailingContent={rightElement}
