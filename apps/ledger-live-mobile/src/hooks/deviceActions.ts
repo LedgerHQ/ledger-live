@@ -24,6 +24,9 @@ import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
+import type { UserId } from "@ledgerhq/identities";
+import type { InitSwapInput, SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
+import { Observable } from "rxjs";
 import {
   connectAppExecMock,
   initSwapExecMock,
@@ -74,16 +77,16 @@ export function useRawTransactionDeviceAction() {
   );
 }
 
-export function useInitSwapDeviceAction() {
+export function useInitSwapDeviceAction(userId: UserId) {
   const mock = useEnv("MOCK");
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  return useMemo(
-    () =>
-      mock
-        ? initSwapCreateAction(connectAppExecMock, initSwapExecMock)
-        : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwap),
-    [isLdmkConnectAppEnabled, mock],
-  );
+  return useMemo(() => {
+    const initSwapWithUserId = (input: InitSwapInput): Observable<SwapRequestEvent> =>
+      initSwap(input, userId);
+    return mock
+      ? initSwapCreateAction(connectAppExecMock, initSwapExecMock)
+      : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwapWithUserId);
+  }, [isLdmkConnectAppEnabled, mock, userId]);
 }
 
 export function useManagerDeviceAction() {

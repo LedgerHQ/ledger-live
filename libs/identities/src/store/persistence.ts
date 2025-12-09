@@ -1,4 +1,4 @@
-import { IdentitiesState } from "./types";
+import { IdentitiesState, isDummyUserId, isDummyDatadogId } from "./types";
 
 /**
  * Serialized format for persistence
@@ -12,7 +12,7 @@ export interface PersistedIdentities {
 }
 
 export function exportIdentitiesForPersistence(state: IdentitiesState): PersistedIdentities {
-  if (!state.userId || !state.datadogId) {
+  if (isDummyUserId(state.userId) || isDummyDatadogId(state.datadogId)) {
     throw new Error("Cannot export identities: userId or datadogId is not initialized");
   }
 

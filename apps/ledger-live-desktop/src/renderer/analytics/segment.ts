@@ -16,7 +16,7 @@ import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import user from "~/helpers/user";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -324,16 +324,14 @@ function getAnalytics() {
   return analytics;
 }
 export const startAnalytics = async (store: ReduxStore) => {
-  if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
-  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
-  // and hence canBeTracked will always be set to true...
-  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
-  const { id } = await user();
+  if (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN"))) return;
   storeInstance = store;
 
   const canBeTracked = trackingEnabledSelector(store.getState());
   if (!canBeTracked) return;
 
+  const userId = userIdSelector(store.getState());
+  const id = userId.exportUserIdForSegment();
   const analytics = getAnalytics();
   if (!analytics) return;
 
@@ -389,8 +387,10 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 export const updateIdentify = async () => {
   if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
-  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
-  const { id } = await user();
+  if (!analytics) return;
+
+  const userId = userIdSelector(storeInstance.getState());
+  const id = userId.exportUserIdForSegment();
 
   const allProperties = {
     ...extraProperties(storeInstance),

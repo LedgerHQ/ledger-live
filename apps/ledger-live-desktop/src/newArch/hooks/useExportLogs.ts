@@ -1,4 +1,3 @@
-import getUser from "~/helpers/user";
 import { getAllEnvs } from "@ledgerhq/live-env";
 import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";
@@ -6,25 +5,26 @@ import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
 import logger from "~/renderer/logger";
 import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { saveLogs } from "~/helpers/saveLogs";
 
 export function useExportLogs() {
   const getDateTxt = useTechnicalDateTimeFn();
   const accounts = useSelector(accountsSelector);
+  const userId = useSelector(userIdSelector);
   const [exporting, setExporting] = useState(false);
 
   const exportLogs = useCallback(async () => {
     try {
       const resourceUsage = webFrame.getResourceUsage();
-      // FIXME migrate to userIdSelector + exportUserIdForExportedLogs() (equipment_id for logs, need to add this method)
-      const user = await getUser();
+      const userAnonymousId = userId.exportUserIdForExportedLogs();
       logger.log("exportLogsMeta", {
         resourceUsage,
         release: __APP_VERSION__,
         git_commit: __GIT_REVISION__,
         environment: __DEV__ ? "development" : "production",
         userAgent: window.navigator.userAgent,
-        userAnonymousId: user.id,
+        userAnonymousId,
         env: getAllEnvs(),
         accountsIds: accounts.map(a => a.id),
       });
@@ -41,7 +41,7 @@ export function useExportLogs() {
     } catch (error) {
       logger.critical(error as Error);
     }
-  }, [accounts, getDateTxt]);
+  }, [accounts, getDateTxt, userId]);
 
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;

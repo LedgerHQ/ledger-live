@@ -6,9 +6,9 @@ import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger from "~/renderer/logger";
-import getUser from "~/helpers/user";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { useTechnicalDateTimeFn } from "../hooks/useDateFormatter";
 import { saveLogs } from "~/helpers/saveLogs";
 
@@ -58,17 +58,17 @@ const ExportLogsBtn = ({
   const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
   const getDateTxt = useTechnicalDateTimeFn();
+  const userId = useSelector(userIdSelector);
   const exportLogs = useCallback(async () => {
     const resourceUsage = webFrame.getResourceUsage();
-    // FIXME migrate to userIdSelector + exportUserIdForExportedLogs() (equipment_id for logs, need to add this method)
-    const user = await getUser();
+    const userAnonymousId = userId.exportUserIdForExportedLogs();
     logger.log("exportLogsMeta", {
       resourceUsage,
       release: __APP_VERSION__,
       git_commit: __GIT_REVISION__,
       environment: __DEV__ ? "development" : "production",
       userAgent: window.navigator.userAgent,
-      userAnonymousId: user.id,
+      userAnonymousId,
       env: {
         ...getAllEnvs(),
       },
@@ -97,7 +97,7 @@ const ExportLogsBtn = ({
     if (path) {
       await saveLogs(path);
     }
-  }, [accounts, getDateTxt]);
+  }, [accounts, getDateTxt, userId]);
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;
     setExporting(true);

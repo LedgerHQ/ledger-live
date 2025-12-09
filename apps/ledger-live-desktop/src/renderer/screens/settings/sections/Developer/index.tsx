@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route } from "react-router-dom";
-import user from "~/helpers/user";
+import { useSelector } from "react-redux";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -34,14 +35,12 @@ import CustomLockScreenTester from "./CustomLockScreenTester";
 
 const Default = () => {
   const { t } = useTranslation();
+  const userId = useSelector(userIdSelector);
   const [segmentId, setSegmentID] = useState("loading...");
 
   useEffect(() => {
-    // FIXME migrate to userIdSelector + exportUserIdForDisplay() (equipment_id for UI display, need to add this method)
-    user().then(u => {
-      setSegmentID(u.id);
-    });
-  }, []);
+    setSegmentID(userId.exportUserIdForDisplay());
+  }, [userId]);
 
   return (
     <Body>

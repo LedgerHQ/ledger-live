@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { useSelector } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
-import getOrCreateUser from "../../../../user";
+import { userIdSelector } from "~/reducers/identities";
 
 const EquipmentIdRow = () => {
+  const userId = useSelector(userIdSelector);
   const [segmentId, setSegmentID] = useState("loading...");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // FIXME migrate to userIdSelector + exportUserIdForDisplay() (equipment_id for UI display, need to add this method)
-    getOrCreateUser().then(({ user }) => {
-      setSegmentID(user.id);
-    });
-  });
+      setSegmentID(userId.exportUserIdForDisplay());
+  }, [userId]);
 
   const copyEquipmentIdToClipboard = useCallback(() => {
     Clipboard.setString(segmentId);

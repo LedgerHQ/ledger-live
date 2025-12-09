@@ -1,16 +1,16 @@
 import { Plugin, PluginType, SegmentEvent } from "@segment/analytics-react-native";
-import getOrCreateUser from "../user";
+import { getState } from "../context/store";
 
 export class UserIdPlugin extends Plugin {
   type = PluginType.enrichment;
 
   async execute(event: SegmentEvent) {
-    // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
-    const { user } = await getOrCreateUser();
+    const state = getState();
+    const userId = state.identities.userId;
 
-    if (user && event) {
+    if (event) {
       // eslint-disable-next-line no-param-reassign
-      event.userId = user.id;
+      event.userId = userId.exportUserIdForSegment();
     }
     return event;
   }

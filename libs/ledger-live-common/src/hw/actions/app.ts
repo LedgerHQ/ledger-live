@@ -477,15 +477,15 @@ export const createAction = (
     );
 
     const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
-      ({ deviceId, deviceName, request }: ConnectAppInput) => {
+      ({ deviceId, deviceName, request: req }: ConnectAppInput) => {
         //To avoid redundant checks, we remove passed checks from the request.
-        const { dependencies, requireLatestFirmware } = request;
+        const { dependencies, requireLatestFirmware } = req;
 
         return connectAppExec({
           deviceId,
           deviceName,
           request: {
-            ...request,
+            ...req,
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
             requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
@@ -514,9 +514,20 @@ export const createAction = (
     useEffect(() => {
       if (state.opened) return;
 
+      const wrappedTask = ({
+        deviceId,
+        deviceName,
+        request: req,
+      }: {
+        deviceId: string;
+        deviceName: string | null;
+        request: ConnectAppRequest;
+      }) => {
+        return task({ deviceId, deviceName, request: req });
+      };
       const impl = getImplementation(currentMode)<ConnectAppEvent, ConnectAppRequest>({
         deviceSubject,
-        task,
+        task: wrappedTask,
         request,
       });
 

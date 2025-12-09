@@ -1,11 +1,13 @@
 import Braze from "@braze/react-native-sdk";
-import getOrCreateUser from "../user";
 import { NotificationsSettings } from "../reducers/types";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { getState } from "../context/store";
+import { userIdSelector } from "../reducers/identities";
 
 export const start = async (isTrackedUser: boolean) => {
-  const { user } = await getOrCreateUser();
-  if (user) Braze.changeUser(isTrackedUser ? user.id : generateAnonymousId());
+  const state = getState();
+  const userId = userIdSelector(state);
+  Braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : generateAnonymousId());
 };
 
 export const updateUserPreferences = (notificationsPreferences: NotificationsSettings) => {

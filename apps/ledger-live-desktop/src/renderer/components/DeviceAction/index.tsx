@@ -17,7 +17,7 @@ import {
   setLastSeenDeviceInfo,
   setPreferredDeviceModel,
 } from "~/renderer/actions/settings";
-import { identitiesSlice } from "@ledgerhq/identities";
+import { identitiesSlice, DeviceId } from "@ledgerhq/identities";
 import {
   preferredDeviceModelSelector,
   settingsStoreSelector as settingsSelector,
@@ -373,8 +373,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
   useEffect(() => {
-    if (deviceId) {
-      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    if (deviceId && typeof deviceId === "string") {
+      dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString(deviceId)));
     }
   }, [dispatch, deviceId]);
 

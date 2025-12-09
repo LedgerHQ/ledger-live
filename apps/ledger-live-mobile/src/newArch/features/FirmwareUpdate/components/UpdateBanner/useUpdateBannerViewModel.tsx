@@ -11,6 +11,7 @@ import {
   lastConnectedDeviceSelector,
 } from "~/reducers/settings";
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
+import { userIdSelector } from "~/reducers/identities";
 import { FirmwareUpdateBannerProps } from ".";
 import type { ViewProps } from "./ViewProps";
 import {
@@ -31,7 +32,8 @@ export function useUpdateBannerViewModel({
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
-  const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
+  const userId = useSelector(userIdSelector);
+  const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo, userId);
 
   const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
   const version = latestFirmware?.final?.name ?? "";

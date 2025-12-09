@@ -1,7 +1,19 @@
 import storage from "LLM/storage";
 import { identitiesSlice, PersistedIdentities } from "@ledgerhq/identities";
-import { getUser } from "../db";
 import type { AppStore } from "../reducers";
+import type { User } from "../types/store";
+
+/**
+ * Private function to load legacy user from storage
+ * This is only used during migration and should not be called elsewhere
+ */
+async function loadLegacyUserFromStorage(): Promise<User | null> {
+  try {
+    return (await storage.get("user")) as User | null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Initialize identities from storage or migrate from legacy system
@@ -18,28 +30,20 @@ export async function initIdentities(store: AppStore) {
     }
 
     // No persisted data, try to migrate from legacy system
-    try {
-      // FIXME this is the only legitimate usage of getUser() - for migration from legacy storage
-      // Once migration period is over, this can be removed
-      const legacyUser = await getUser();
-      if (legacyUser?.id) {
-        // Migrate from legacy format
-        store.dispatch(
-          identitiesSlice.actions.importFromLegacy({
-            userId: legacyUser.id,
-            datadogId: legacyUser.datadogId,
-          }),
-        );
-        // Persistence will be handled by db middleware
-        return;
-      }
-    } catch {
-      // Legacy system not available, continue to init from scratch
+    const legacyUser = await loadLegacyUserFromStorage();
+    if (legacyUser?.id) {
+      // Migrate from legacy format
+      store.dispatch(
+        identitiesSlice.actions.importFromLegacy({
+          userId: legacyUser.id,
+          datadogId: legacyUser.datadogId,
+        }),
+      );
+      return;
     }
 
     // No legacy data, initialize from scratch
     store.dispatch(identitiesSlice.actions.initFromScratch());
-    // Persistence will be handled by db middleware
   } catch {
     // If anything fails, initialize from scratch
     store.dispatch(identitiesSlice.actions.initFromScratch());

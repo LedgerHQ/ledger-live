@@ -781,7 +781,12 @@ const envDefinitions = {
   USER_ID: {
     def: "",
     parser: stringParser,
-    desc: "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
+    desc: "[DEPRECATED] unique identifier of app instance. This env var is deprecated and should not be used. Use identities system instead.",
+  },
+  FIRMWARE_SALT: {
+    def: "",
+    parser: stringParser,
+    desc: "Firmware distribution salt (6 hex characters). If not set, firmware update checks will be skipped.",
   },
   WALLETCONNECT: {
     def: false,

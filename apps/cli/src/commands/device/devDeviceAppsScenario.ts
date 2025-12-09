@@ -8,6 +8,7 @@ import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listApps
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { UserId } from "@ledgerhq/identities";
 import { Application, DeviceInfo, ApplicationVersion } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
 type Scenario = number[];
@@ -70,7 +71,7 @@ export default {
       // $FlowFixMe
       return from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
-          listAppsUseCase(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo, new UserId("00000000-0000-0000-0000-000000000000")).pipe(
             filter<any>(e => e.type === "result"),
             map<{ type: "result"; result: ListAppsResult }, ListAppsResult>(e => e.result),
             mergeMap<ListAppsResult, Observable<Application[]>>(listAppsResult => {

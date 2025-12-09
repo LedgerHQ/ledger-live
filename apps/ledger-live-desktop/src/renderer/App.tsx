@@ -27,6 +27,7 @@ import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -63,6 +64,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
+  const userId = useSelector(userIdSelector);
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>

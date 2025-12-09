@@ -32,6 +32,7 @@ import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CEXProviderConfig } from "../providers/swap";
+import type { UserId } from "@ledgerhq/identities";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -39,7 +40,7 @@ const withDevicePromise = (deviceId, fn) =>
 // init a swap with the Exchange app
 // throw if TransactionStatus have errors
 // you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
-const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
+const initSwap = (input: InitSwapInput, userId: UserId): Observable<SwapRequestEvent> => {
   let swapId;
   let { transaction } = input;
   const { exchange, exchangeRate, deviceId } = input;
@@ -77,7 +78,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
-          EquipmentId: getEnv("USER_ID"),
+          EquipmentId: userId.exportUserIdForSwapService(),
 
           ...(getSwapUserIP() !== undefined ? getSwapUserIP() : {}),
         };

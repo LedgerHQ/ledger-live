@@ -1,5 +1,5 @@
 import { Middleware } from "@reduxjs/toolkit";
-import { IdentitiesState } from "./types";
+import { IdentitiesState, isDummyUserId } from "./types";
 import { identitiesSlice } from "./slice";
 import { pushDevicesApi, createPushDevicesRequest } from "../api/api";
 
@@ -63,7 +63,12 @@ async function attemptSync<State>(
   const identitiesState = config.getIdentitiesState(state);
   const analyticsConsent = config.getAnalyticsConsent(state);
 
-  if (!identitiesState.userId || !analyticsConsent || identitiesState.deviceIds.length === 0) {
+  // Skip sync if identities are not initialized (still using dummy IDs) or no consent
+  if (
+    isDummyUserId(identitiesState.userId) ||
+    !analyticsConsent ||
+    identitiesState.deviceIds.length === 0
+  ) {
     return;
   }
 

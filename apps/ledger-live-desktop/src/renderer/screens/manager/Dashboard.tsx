@@ -18,6 +18,7 @@ import { useLocation } from "react-router";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
+import { userIdSelector } from "~/renderer/reducers/identities";
 
 type Props = {
   device: Device;
@@ -42,6 +43,7 @@ const Dashboard = ({
 
   const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
+  const userId = useSelector(userIdSelector);
   const [preventResetOnDeviceChange, setPreventResetOnDeviceChange] = useState(false);
   const deviceChangedWhenResetPrevented = useRef(false);
   const [firmware, setFirmware] = useState<FirmwareUpdateContext | null>(null);
@@ -49,8 +51,8 @@ const Dashboard = ({
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
   useEffect(() => {
-    getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
-  }, [deviceInfo]);
+    getLatestFirmwareForDeviceUseCase(deviceInfo, userId).then(setFirmware, setFirmwareError);
+  }, [deviceInfo, userId]);
 
   // on disconnect, go back to connect
   useEffect(() => {

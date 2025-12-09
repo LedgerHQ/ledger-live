@@ -46,6 +46,7 @@ import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
+import { initialIdentitiesState } from "@ledgerhq/identities";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -54,6 +55,7 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,

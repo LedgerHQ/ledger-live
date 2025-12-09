@@ -30,6 +30,46 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
+  exportUserIdForSegment(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForDisplay(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForWalletAPI(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForBraze(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForSentry(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForExportedLogs(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForRecoverRestoreStorageKey(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForChainwatch(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForFirmwareSalt(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  exportUserIdForSwapService(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
   equals(other: UserId): boolean {
     return this[USER_ID_SYMBOL] === other[USER_ID_SYMBOL];
   }

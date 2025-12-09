@@ -7,8 +7,8 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { notificationsSelector } from "~/reducers/settings";
+import { userIdSelector } from "~/reducers/identities";
 import { getSupportedChainsAccounts } from "@ledgerhq/live-common/transactionsAlerts/index";
-import getOrCreateUser from "../../../../user";
 
 export const TagEnabled = styled(Tag).attrs({
   bg: "success.c50",
@@ -35,11 +35,11 @@ export default function DebugTransactionsAlerts() {
 
   const [chainsData, setChainsData] = useState<Record<string, ChainwatchAccount | undefined>>({});
 
+  const userId = useSelector(userIdSelector);
+
   useEffect(() => {
-    if (chainwatchBaseUrl) {
-      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
-      getOrCreateUser().then(({ user }) => {
-        getSupportedChainsAccounts(user.id, chainwatchBaseUrl, supportedChains).then(
+    if (chainwatchBaseUrl && userId) {
+      getSupportedChainsAccounts(userId.exportUserIdForChainwatch(), chainwatchBaseUrl, supportedChains).then(
           (results: (ChainwatchAccount | undefined)[]) => {
             const data: Record<string, ChainwatchAccount | undefined> = {};
             for (let i = 0; i < results.length; i++) {
@@ -49,9 +49,8 @@ export default function DebugTransactionsAlerts() {
             setChainsData(data);
           },
         );
-      });
     }
-  }, [chainwatchBaseUrl, supportedChains]);
+  }, [chainwatchBaseUrl, supportedChains, userId]);
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>

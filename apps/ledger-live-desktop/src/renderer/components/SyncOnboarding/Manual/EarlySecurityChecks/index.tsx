@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
+import { useSelector } from "react-redux";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import Body from "./Body";
 import TroubleshootingDrawer from "../TroubleshootingDrawer";
 import SoftwareCheckAllowSecureChannelDrawer from "./SoftwareCheckAllowSecureChannelDrawer";
@@ -102,6 +104,7 @@ const EarlySecurityChecks = ({
   });
 
   const { networkStatus } = useNetworkStatus();
+  const userId = useSelector(userIdSelector);
 
   const {
     state: {
@@ -115,6 +118,7 @@ const EarlySecurityChecks = ({
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
     deviceName: device.deviceName ?? null,
+    userId,
   });
 
   const [completionLoading, setCompletionLoading] = useState(false);

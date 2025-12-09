@@ -8,6 +8,7 @@ import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listApps
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import type { AppOp } from "@ledgerhq/live-common/apps/types";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { UserId } from "@ledgerhq/identities";
 
 const prettyActionPlan = (ops: AppOp[]) =>
   ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
@@ -34,7 +35,7 @@ export default {
         // FIXME: mergeMap deprecated, using map inside pipe should do the work
         map(
           deviceInfo =>
-            listAppsUseCase(t, deviceInfo).pipe(
+            listAppsUseCase(t, deviceInfo, new UserId("00000000-0000-0000-0000-000000000000")).pipe(
               filter(e => e.type === "result"),
               map((e: any) => e.result),
               mergeMap(listAppsResult => {

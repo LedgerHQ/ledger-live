@@ -1,16 +1,94 @@
 {
   "libs/identities/src/ids/DeviceId.ts": {
     "exportDeviceIdForPushDevicesService": ["libs/identities/src/api/api.ts"],
-    "exportDeviceIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+    "exportDeviceIdForPersistence": [
+      "libs/identities/src/store/persistence.ts",
+      "libs/identities/src/ids/DeviceId.ts"
+    ]
   },
   "libs/identities/src/ids/UserId.ts": {
-    "exportUserIdForPushDevicesService": ["libs/identities/src/api/api.ts"],
-    "exportUserIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+    "exportUserIdForPushDevicesService": [
+      "libs/identities/src/api/api.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForPersistence": [
+      "libs/identities/src/store/persistence.ts",
+      "libs/identities/src/ids/UserId.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForSegment": [
+      "apps/ledger-live-desktop/src/renderer/analytics/segment.ts",
+      "apps/ledger-live-mobile/src/analytics/segment.ts",
+      "apps/ledger-live-mobile/src/analytics/UserIdPlugin.tsx",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForDisplay": [
+      "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx",
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Information/EquipmentIdRow.tsx",
+      "apps/ledger-live-mobile/src/newArch/features/WalletSync/hooks/useInstanceName.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForWalletAPI": [
+      "apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/WalletAPIWebview.tsx",
+      "apps/ledger-live-mobile/src/components/Web3AppWebview/helpers.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForBraze": [
+      "apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts",
+      "apps/ledger-live-mobile/src/notifications/braze.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForSentry": [],
+    "exportUserIdForExportedLogs": [
+      "apps/ledger-live-desktop/src/renderer/components/ExportLogsButton.tsx",
+      "apps/ledger-live-desktop/src/newArch/hooks/useExportLogs.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForRecoverRestoreStorageKey": [
+      "apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForChainwatch": [
+      "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx",
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForFirmwareSalt": [
+      "libs/live-dmk-desktop/src/hooks/useDeviceManagementKit.tsx",
+      "libs/live-dmk-mobile/src/hooks/useDeviceManagementKit.tsx",
+      "libs/ledger-live-common/src/device/use-cases/getLatestFirmwareForDeviceUseCase.ts",
+      "libs/ledger-live-common/src/device/hooks/useLatestFirmware.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ],
+    "exportUserIdForSwapService": [
+      "libs/ledger-live-common/src/exchange/swap/initSwap.ts",
+      "apps/ledger-live-desktop/src/renderer/reducers/identities.ts",
+      "apps/ledger-live-mobile/src/reducers/identities.ts"
+    ]
   },
   "libs/identities/src/ids/DatadogId.ts": {
-    "exportDatadogIdForPersistence": ["libs/identities/src/store/persistence.ts"]
+    "exportDatadogIdForPersistence": [
+      "libs/identities/src/store/persistence.ts",
+      "libs/identities/src/ids/DatadogId.ts"
+    ],
+    "exportDatadogIdForDatadog": [
+      "apps/ledger-live-mobile/src/index.tsx"
+    ]
   },
   "libs/identities/src/store/persistence.ts": {
-    "exportIdentitiesForPersistence": []
+    "exportIdentitiesForPersistence": [
+      "apps/ledger-live-desktop/src/renderer/middlewares/db.ts",
+      "apps/ledger-live-mobile/src/components/DBSave.ts"
+    ]
   }
 }

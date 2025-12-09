@@ -26,6 +26,10 @@ export class DatadogId {
     return this[DATADOG_ID_SYMBOL];
   }
 
+  exportDatadogIdForDatadog(): string {
+    return this[DATADOG_ID_SYMBOL];
+  }
+
   equals(other: DatadogId): boolean {
     return this[DATADOG_ID_SYMBOL] === other[DATADOG_ID_SYMBOL];
   }

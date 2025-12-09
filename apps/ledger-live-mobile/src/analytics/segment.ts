@@ -28,7 +28,8 @@ import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFu
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { getIsNotifEnabled } from "../logic/getNotifPermissions";
-import getOrCreateUser from "../user";
+import { userIdSelector } from "~/reducers/identities";
+import { isDummyUserId } from "@ledgerhq/identities";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -180,16 +181,17 @@ const getMEVAttributes = (state: State) => {
 
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
-  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
-  const { user } = await getOrCreateUser();
+  const userId = userIdSelector(state);
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
 
+  const userIdString = userId.exportUserIdForSegment();
+
   return {
-    userId: user?.id,
-    braze_external_id: user?.id, // Needed for braze with this exact name
+    userId: userIdString,
+    braze_external_id: userIdString, // Needed for braze with this exact name
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
@@ -384,15 +386,20 @@ const extraProperties = async (store: AppStore) => {
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
-  // FIXME migrate to userIdSelector + exportUserIdForSegment() (equipment_id = segment ID, need to add this method)
-  const { user, created } = await getOrCreateUser();
   storeInstance = store;
+  const state = store.getState();
+  const userId = userIdSelector(state);
+
+  // Skip if using dummy ID (not yet initialized)
+  if (isDummyUserId(userId)) {
+    return undefined;
+  }
 
   const initialUrl = await Linking.getInitialURL();
   const isDeeplinkSession = !!initialUrl;
 
-  if (created && ANALYTICS_LOGS) {
-    console.log("analytics:identify", user.id);
+  if (ANALYTICS_LOGS) {
+    console.log("analytics:identify", userId.exportUserIdForSegment());
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
@@ -408,9 +415,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     // This allows us to debounce identify events for Braze and save data points
     segmentClient.add({ plugin: new BrazePlugin() });
 
-    if (created) {
-      segmentClient.reset();
-    }
     await updateIdentify();
   }
   await track("Start", { isDeeplinkSession });

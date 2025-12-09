@@ -145,8 +145,8 @@ export type ConnectAppEvent =
 export const openAppFromDashboard = (
   transport: Transport,
   appName: string,
-): Observable<ConnectAppEvent> =>
-  from(getDeviceInfo(transport)).pipe(
+): Observable<ConnectAppEvent> => {
+  return from(getDeviceInfo(transport)).pipe(
     mergeMap(deviceInfo =>
       merge(
         // Nb Allows LLD/LLM to update lastSeenDevice, this can run in parallel
@@ -199,6 +199,7 @@ export const openAppFromDashboard = (
       ),
     ),
   );
+};
 
 const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<ConnectAppEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)

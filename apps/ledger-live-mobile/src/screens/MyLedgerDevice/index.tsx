@@ -27,6 +27,7 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { userIdSelector } from "~/reducers/identities";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
   AppWithDependencies,
@@ -78,7 +79,8 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
-  const latestFirmware = useLatestFirmware(deviceInfo);
+  const userId = useSelector(userIdSelector);
+  const latestFirmware = useLatestFirmware(deviceInfo, userId);
   const [quitManagerAction, setQuitManagerAction] = useState<{
     type: string;
     payload?: object;

@@ -5,6 +5,8 @@ import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck"
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useSelector } from "react-redux";
+import { userIdSelector } from "~/reducers/identities";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
@@ -138,6 +140,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     );
   }, [ignoredOSUpdatesConfig, deviceModelId]);
 
+  const userId = useSelector(userIdSelector);
   const {
     state: {
       firmwareUpdateContext: latestFirmware,
@@ -150,6 +153,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
     deviceName: device.deviceName ?? null,
+    userId,
     ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 

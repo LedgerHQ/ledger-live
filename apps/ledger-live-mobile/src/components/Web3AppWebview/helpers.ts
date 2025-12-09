@@ -31,7 +31,6 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
 import { track } from "../../analytics";
-import getOrCreateUser from "../../user";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
@@ -41,6 +40,8 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useSelector } from "react-redux";
+import { userIdSelector } from "~/reducers/identities";
 export function useWebView(
   {
     manifest,
@@ -586,20 +587,8 @@ const wallet = {
 };
 
 function useGetUserId() {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    // FIXME migrate to userIdSelector + exportUserIdForWalletAPI() (equipment_id for Wallet API, need to add this method)
-    getOrCreateUser().then(({ user }) => {
-      if (mounted) setUserId(user.id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 }
 
 export function useSelectAccount({

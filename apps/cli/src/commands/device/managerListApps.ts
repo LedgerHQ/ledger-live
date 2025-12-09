@@ -5,6 +5,7 @@ import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
+import { UserId } from "@ledgerhq/identities";
 
 export type ManagerListAppsJobOpts = DeviceCommonOpts &
   Partial<{
@@ -33,10 +34,12 @@ export default {
   job: ({ device, format, benchmark }: ManagerListAppsJobOpts) => {
     if (benchmark) console.log("Running the whole thing 5 times to have cache and averages.");
 
+    // CLI doesn't have access to store, use dummy userId
+    const dummyUserId = new UserId("00000000-0000-0000-0000-000000000000");
     return withDevice(device || "")(t =>
       from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
-          listAppsUseCase(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo, dummyUserId).pipe(
             filter(e => e.type === "result"),
             // @ts-expect-error we need better typings and safe guard to infer types
             map(e => e.result),

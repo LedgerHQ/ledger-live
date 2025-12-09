@@ -37,5 +37,7 @@ export const store = configureStore({
 
 export type StoreType = typeof store;
 
+export const getState = (): State => store.getState();
+
 setupRecentAddressesStore(store);
 setupCryptoAssetsStore(store);

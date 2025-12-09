@@ -196,9 +196,20 @@ export const createAction = (
     useEffect(() => {
       if (request?.cancelExecution) return;
 
+      const wrappedTask = ({
+        deviceId,
+        deviceName,
+        request: req,
+      }: {
+        deviceId: string;
+        deviceName: string | null;
+        request: ManagerRequest;
+      }) => {
+        return task({ deviceId, deviceName, request: req });
+      };
       const impl = getImplementation(currentMode)<ConnectManagerEvent, ManagerRequest>({
         deviceSubject,
-        task,
+        task: wrappedTask,
         request,
         retryableWithDelayDisconnectedErrors: [],
       });
@@ -220,8 +231,10 @@ export const createAction = (
     useEffect(() => {
       if (!deviceInfo) return;
       // Preload latest firmware in parallel
-      getLatestFirmwareForDeviceUseCase(deviceInfo).catch((e: Error) => {
-        log("warn", e.message);
+      getLatestFirmwareForDeviceUseCase(deviceInfo).then(latestFirmware => {
+        if (latestFirmware) {
+          setState(prev => ({ ...prev, latestFirmware }));
+        }
       });
     }, [deviceInfo]);
 

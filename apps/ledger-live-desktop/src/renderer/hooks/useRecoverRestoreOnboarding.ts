@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import getUser from "~/helpers/user";
+import { useDispatch, useSelector } from "react-redux";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { getStoreValue } from "~/renderer/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { saveSettings } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -19,9 +19,9 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const [onboardedViaRecoverRestore, setOnboardedViaRecoverRestore] = useState<boolean>();
 
+  const userId = useSelector(userIdSelector);
   const confirmRecoverOnboardingStatus = useCallback(async () => {
-    // FIXME migrate to userIdSelector + exportUserIdForRecoverRestoreStorageKey() (equipment_id for storage key, need to add this method)
-    const { id } = await getUser();
+    const id = userId.exportUserIdForRecoverRestoreStorageKey();
     const status = getStoreValue(
       `${ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX}${id}`,
       recoverStoreId,
@@ -36,7 +36,7 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
         }),
       );
     }
-  }, [dispatch, isLocked, onboardedViaRecoverRestore, recoverStoreId]);
+  }, [dispatch, isLocked, onboardedViaRecoverRestore, recoverStoreId, userId]);
 
   useEffect(() => {
     const userIsOnboardingOrSettingUp =

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import { accountsSelector } from "~/reducers/accounts";
-import getOrCreateUser from "../user";
+import { userIdSelector } from "~/reducers/identities";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   updateTransactionsAlertsAddresses,
@@ -21,6 +21,7 @@ const TransactionsAlerts = () => {
 
   const notifications = useSelector(notificationsSelector);
   const accounts = useSelector(accountsSelector);
+  const userId = useSelector(userIdSelector);
   const accountsFilteredBySupportedChains = useMemo(
     () => accounts.filter(account => supportedChainsIds.includes(account?.currency?.id)),
     [accounts, supportedChainsIds],
@@ -37,10 +38,11 @@ const TransactionsAlerts = () => {
       (!featureTransactionsAlerts?.enabled && refFeatureEnabled.current) ||
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
-      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
-      getOrCreateUser().then(({ user }) => {
-        deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
-      });
+      deleteUserChainwatchAccounts(
+        userId.exportUserIdForChainwatch(),
+        chainwatchBaseUrl,
+        supportedChains,
+      );
     }
     const newAccounts =
       notifications.transactionsAlertsCategory && !refNotifSettings.current
@@ -58,17 +60,14 @@ const TransactionsAlerts = () => {
 
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
-    if (newAccounts.length > 0 || removedAccounts.length > 0) {
-      // FIXME migrate to userIdSelector + exportUserIdForChainwatch() (equipment_id for Chainwatch service, need to add this method)
-      getOrCreateUser().then(({ user }) => {
-        updateTransactionsAlertsAddresses(
-          user.id,
-          chainwatchBaseUrl,
-          supportedChains,
-          newAccounts,
-          removedAccounts,
-        );
-      });
+    if (newAccounts.length > 0 || (removedAccounts.length > 0 && userId)) {
+      updateTransactionsAlertsAddresses(
+        userId.exportUserIdForChainwatch(),
+        chainwatchBaseUrl,
+        supportedChains,
+        newAccounts,
+        removedAccounts,
+      );
     }
     refAccounts.current = accountsFilteredBySupportedChains;
     refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
@@ -79,6 +78,7 @@ const TransactionsAlerts = () => {
     accountsFilteredBySupportedChains,
     notifications.transactionsAlertsCategory,
     supportedChains,
+    userId,
   ]);
 
   return null;

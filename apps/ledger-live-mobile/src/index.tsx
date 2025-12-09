@@ -97,7 +97,6 @@ import {
   initializeDatadogProvider,
 } from "./datadog";
 import { initSentry } from "./sentry";
-import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
@@ -208,13 +207,13 @@ function App() {
   useEffect(() => {
     if (!datadogFF?.enabled) return;
     const setUserEquipmentId = async () => {
-      // FIXME migrate to datadogIdSelector + exportDatadogIdForDatadog() (datadog ID for Datadog, need to add this method)
-      const { user } = await getOrCreateUser();
-      if (!user) return;
-      const { datadogId } = user;
-      DdSdkReactNative.setUserInfo({
-        id: datadogId,
-      });
+      const state = store.getState();
+      const datadogId = state.identities.datadogId;
+      if (datadogId) {
+        DdSdkReactNative.setUserInfo({
+          id: datadogId.exportDatadogIdForDatadog(),
+        });
+      }
     };
     initializeDatadogProvider(
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

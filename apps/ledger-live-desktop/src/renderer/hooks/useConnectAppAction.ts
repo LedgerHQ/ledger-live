@@ -32,43 +32,40 @@ import { Action } from "@ledgerhq/live-common/hw/actions/types";
  */
 export default function useConnectAppAction(): Action<AppRequest, AppState, AppResult> {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = useMemo(
+  return useMemo(
     () =>
       createAppAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],
   );
-  return action;
 }
 
 export function useTransactionAction() {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = useMemo(
+  return useMemo(
     () =>
       createTransactionAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],
   );
-  return action;
 }
 
 export function useRawTransactionAction() {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = useMemo(
+  return useMemo(
     () =>
       createRawTransactionAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],
   );
-  return action;
 }
 
 export function useStartExchangeAction() {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = useMemo(
+  return useMemo(
     () =>
       createStartExchangeAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
@@ -76,17 +73,15 @@ export function useStartExchangeAction() {
       ),
     [isLdmkConnectAppEnabled],
   );
-  return action;
 }
 
 export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const action = useMemo(
+  return useMemo(
     () =>
       createManagerAction(
         getEnv("MOCK") ? mockedEventEmitter : connectManager({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],
   );
-  return action;
 }

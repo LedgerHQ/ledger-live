@@ -17,6 +17,7 @@ import { GENUINE_CHECK_TIMEOUT } from "~/utils/constants";
 import { addKnownDevice } from "~/actions/ble";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo, setReadOnlyMode } from "~/actions/settings";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { userIdSelector } from "~/reducers/identities";
 import RequiresBLE from "~/components/RequiresBLE";
 import PendingPairing from "./PendingPairing";
 import PendingGenuineCheck from "./PendingGenuineCheck";
@@ -76,6 +77,7 @@ const initialState: State = {
 function PairDevicesInner({ navigation, route }: NavigationProps) {
   const [tracer] = useState(() => new LocalTracer("ble-ui", { component: "PairDevicesInner" }));
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const userId = useSelector(userIdSelector);
   const dispatchRedux = useDispatch();
   const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
 
@@ -151,7 +153,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
 
           // Waits until listApps completes or emits and error
           await lastValueFrom(
-            listAppsUseCase(transport, deviceInfo).pipe(
+            listAppsUseCase(transport, deviceInfo, userId).pipe(
               timeout(GENUINE_CHECK_TIMEOUT),
               tap(e => {
                 tracer.trace("Event from listApps", { eventType: e.type });

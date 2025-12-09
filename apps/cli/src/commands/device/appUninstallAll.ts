@@ -8,6 +8,7 @@ import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listApps
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { command as uninstallAllApps } from "@ledgerhq/live-common/hw/uninstallAllApps";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { UserId } from "@ledgerhq/identities";
 
 export type AppsUninstallAllJobOpts = DeviceCommonOpts;
 
@@ -24,7 +25,7 @@ export default {
           } else {
             return from(getDeviceInfo(t)).pipe(
               mergeMap(deviceInfo =>
-                listAppsUseCase(t, deviceInfo).pipe(
+                listAppsUseCase(t, deviceInfo, new UserId("00000000-0000-0000-0000-000000000000")).pipe(
                   filter(e => e.type === "result"),
                   map((e: any) =>
                     reducer(e.result, {

@@ -26,6 +26,7 @@ import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
+import { userIdSelector } from "~/reducers/identities";
 import { ManagerTab } from "~/const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
@@ -167,7 +168,8 @@ const AppsScreen = ({
   );
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
+  const userId = useSelector(userIdSelector);
+  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo, userId);
   const showFwUpdateBanner = Boolean(latestFirmware);
 
   const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;

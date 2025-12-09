@@ -14,6 +14,7 @@ import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listApps
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { delay } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
+import { UserId } from "@ledgerhq/identities";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import type { Application, ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
@@ -282,7 +283,7 @@ const checkInstalled = (installed: any, candidate: Candidate) => {
 };
 
 const wipeAll = (t: Transport, deviceInfo: DeviceInfo) =>
-  listAppsUseCase(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo, new UserId("00000000-0000-0000-0000-000000000000")).pipe(
     filter(e => e.type === "result"),
     map((e: any) => e.result),
     mergeMap(listAppsResult => {

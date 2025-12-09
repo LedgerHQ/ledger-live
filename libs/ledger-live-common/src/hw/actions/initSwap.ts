@@ -16,6 +16,7 @@ import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type { Action, Device } from "./types";
 import type { TransactionStatus } from "../../generated/types";
+import type { UserId } from "@ledgerhq/identities";
 
 type State = {
   initSwapResult: InitSwapResult | null | undefined;
@@ -36,6 +37,7 @@ type InitSwapRequest = {
   requireLatestFirmware?: boolean;
   status?: TransactionStatus;
   device?: React.RefObject<Device | null | undefined>;
+  userId: UserId;
 };
 
 type Result =
@@ -117,7 +119,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
-  initSwapExec: (arg0: InitSwapInput) => Observable<SwapRequestEvent>,
+  initSwapExec: (arg0: InitSwapInput, userId: UserId) => Observable<SwapRequestEvent>,
 ): InitSwapAction => {
   const useHook = (
     reduxDevice: Device | null | undefined,
@@ -126,7 +128,7 @@ export const createAction = (
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
-    const { exchange, exchangeRate, transaction, requireLatestFirmware } = initSwapRequest;
+    const { exchange, exchangeRate, transaction, requireLatestFirmware, userId } = initSwapRequest;
 
     const { fromAccount, fromParentAccount, toAccount, toParentAccount } = exchange;
     const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
@@ -159,12 +161,15 @@ export const createAction = (
         of(<SwapRequestEvent>{
           type: "init-swap",
         }),
-        initSwapExec({
+        initSwapExec(
+          {
           exchange,
           exchangeRate,
           transaction,
           deviceId: device.deviceId,
-        }),
+          },
+          userId,
+        ),
       )
         .pipe(
           tap(e => {

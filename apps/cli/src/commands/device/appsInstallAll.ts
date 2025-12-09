@@ -7,6 +7,7 @@ import { initState, reducer, runAll, State } from "@ledgerhq/live-common/apps/in
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { UserId } from "@ledgerhq/identities";
 
 export type AppsInstallAllJobOpts = DeviceCommonOpts;
 
@@ -18,7 +19,7 @@ export default {
       const exec = execWithTransport(t);
       return from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
-          listAppsUseCase(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo, new UserId("00000000-0000-0000-0000-000000000000")).pipe(
             filter(e => e.type === "result"),
             map((e: any) =>
               e.result.appsListNames.reduce(

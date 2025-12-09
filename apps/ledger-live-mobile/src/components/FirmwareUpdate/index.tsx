@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/errors";
 import { nextBackgroundEventSelector } from "~/reducers/appstate";
 import { clearBackgroundEvents, dequeueBackgroundEvent } from "~/actions/appstate";
+import { userIdSelector } from "~/reducers/identities";
 import QueuedDrawer from "../QueuedDrawer";
 import GenericErrorView from "../GenericErrorView";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
@@ -66,7 +67,8 @@ export default function FirmwareUpdate({
 }: Props) {
   const nextBackgroundEvent = useSelector(nextBackgroundEventSelector);
   const dispatch = useDispatch();
-  const latestFirmware = useLatestFirmware(deviceInfo);
+  const userId = useSelector(userIdSelector);
+  const latestFirmware = useLatestFirmware(deviceInfo, userId);
 
   const { t } = useTranslation();
 

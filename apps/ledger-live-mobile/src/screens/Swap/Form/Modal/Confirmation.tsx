@@ -42,6 +42,7 @@ import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/Sw
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { BigNumber } from "bignumber.js";
 import { mevProtectionSelector } from "~/reducers/settings";
+import { userIdSelector } from "~/reducers/identities";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -217,7 +218,8 @@ export function Confirmation({
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
 
   const silentSigningAction = useTransactionDeviceAction();
-  const swapAction = useInitSwapDeviceAction();
+  const userId = useSelector(userIdSelector);
+  const swapAction = useInitSwapDeviceAction(userId);
 
   const { t } = useTranslation();
 

@@ -13,18 +13,10 @@ import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/t
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
 import { ipcRenderer } from "electron";
-import React, {
-  RefObject,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import getUser from "~/helpers/user";
+import { userIdSelector } from "~/renderer/reducers/identities";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
@@ -308,20 +300,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 }
 
 const useGetUserId = () => {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    // FIXME migrate to userIdSelector + exportUserIdForWalletAPI() (equipment_id for Wallet API, need to add this method)
-    getUser().then(({ id }) => {
-      if (mounted) setUserId(id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 };
 
 function useWebView(

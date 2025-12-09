@@ -8256,6 +8256,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/identities':
+        specifier: workspace:^
+        version: link:../identities
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
@@ -8396,6 +8399,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/identities':
+        specifier: workspace:*
+        version: link:../identities
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
