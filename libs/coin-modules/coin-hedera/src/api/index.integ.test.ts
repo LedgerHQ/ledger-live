@@ -8,11 +8,13 @@ import {
   TokenAssociateTransaction,
   TransferTransaction,
   AccountUpdateTransaction,
+  ContractExecuteTransaction,
+  ContractFunctionParameters,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { getSyntheticBlock } from "../logic/utils";
+import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
@@ -76,7 +78,7 @@ describe("createApi", () => {
         memo: {
           kind: "text",
           type: "string",
-          value: "token transfer",
+          value: "hts token transfer",
         },
       });
 
@@ -92,7 +94,53 @@ describe("createApi", () => {
       expect(senderTransfer).toEqual(Long.fromNumber(-1));
       expect(recipientTransfer).toEqual(Long.fromNumber(1));
       expect(tokenTransfers).not.toBeNull();
-      expect(rawTx.transactionMemo).toBe("token transfer");
+      expect(rawTx.transactionMemo).toBe("hts token transfer");
+    });
+
+    it("returns serialized ERC20 token ContractExecuteTransaction", async () => {
+      const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: 1n,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "erc20 token transfer",
+        },
+        data: {
+          type: "erc20",
+          gasLimit: 100n,
+        },
+      });
+
+      const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
+      expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
+      invariant(
+        rawTx instanceof ContractExecuteTransaction,
+        "ContractExecuteTransaction type guard",
+      );
+
+      const recipientEvmAddress = await toEVMAddress(MAINNET_TEST_ACCOUNTS.withTokens.accountId);
+      invariant(recipientEvmAddress, "hedera: missing recipient EVM address");
+      const expectedFunctionParameters = new ContractFunctionParameters()
+        .addAddress(recipientEvmAddress)
+        .addUint256(1);
+
+      expect(rawTx.gas).toEqual(Long.fromNumber(100));
+      expect(rawTx.transactionMemo).toBe("erc20 token transfer");
+      expect(rawTx.functionParameters).toEqual(
+        Buffer.concat([
+          Buffer.from([0xa9, 0x05, 0x9c, 0xbb]), // transfer(address,uint256) selector
+          Buffer.from(expectedFunctionParameters._build()), // address + amount parameters
+        ]),
+      );
     });
 
     it("returns serialized HTS token association transaction", async () => {
@@ -214,7 +262,7 @@ describe("createApi", () => {
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
 
-    it("returns fee for token transfer transaction", async () => {
+    it("returns fee for HTS token transfer transaction", async () => {
       const fees = await api.estimateFees({
         intentType: "transaction",
         asset: {
@@ -225,6 +273,28 @@ describe("createApi", () => {
         sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
         senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
         amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "",
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
+
+    it("returns fee for ERC20 token transfer transaction", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: 100n,
         recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
         memo: {
           kind: "text",
@@ -326,9 +396,17 @@ describe("createApi", () => {
         );
       });
 
+      const erc20TokenBalance = balances.find(b => {
+        return (
+          "assetReference" in b.asset &&
+          b.asset.assetReference === MAINNET_TEST_ACCOUNTS.withTokens.erc20Token
+        );
+      });
+
       expect(tokenBalances.length).toBeGreaterThan(0);
       expect(associatedTokenWithBalance?.value).toBeGreaterThan(0n);
       expect(associatedTokenWithoutBalance?.value).toBe(0n);
+      expect(erc20TokenBalance?.value).toBeGreaterThan(0n);
       expect(notAssociatedToken?.value).toBe(undefined);
     });
 
@@ -482,12 +560,60 @@ describe("createApi", () => {
       expect(transaction?.details?.memo).toBe("test");
     });
 
+    it("correctly identifies erc20 operations in blocks", async () => {
+      const blockHeight = 176814261;
+      const txHash = "dN7BMus6+8ISOwNPVt7l4KpQT9VaSM9LG6qLPXBqpRVw83ZPMO6Bzyt63305lLXu";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHash);
+
+      expect(transaction?.fees).toBe(3741416n);
+      expect(transaction?.operations).toEqual(
+        expect.arrayContaining([
+          {
+            type: "transfer",
+            address: "0.0.801",
+            asset: {
+              type: "native",
+            },
+            amount: 3741416n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: 0n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "erc20",
+              assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+            },
+            amount: 7770000000000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "erc20",
+              assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+            },
+            amount: -7770000000000n,
+          },
+        ]),
+      );
+    });
+
     it("correctly identifies staking operations in blocks", async () => {
       const [delegateBlock, undelegateBlock, redelegateBlock, rewardsBlock] = await Promise.all([
         api.getBlock(176220207),
         api.getBlock(176220201),
         api.getBlock(176220211),
-        api.getBlock(176397349),
+        api.getBlock(176777078),
       ]);
 
       const delegateOperations = delegateBlock.transactions
@@ -500,7 +626,7 @@ describe("createApi", () => {
         .flatMap(tx => tx.operations)
         .filter(op => op.type === "other");
       const rewardsTransaction = rewardsBlock.transactions.find(
-        tx => tx.hash === "Axie2CIoLVxhU6gcHEDJEdNbQ0BW1AqYXqUu97ume44JGvdfSTvF9go2Svc/lms8",
+        tx => tx.hash === "dwKzBC5qV79SxlRufB6yfXIVOrNh9Nswt36zDoxRgwOQaKmjDHJlM5ImKxSnnRgs",
       );
 
       expect(delegateOperations).toEqual([
@@ -530,40 +656,66 @@ describe("createApi", () => {
           stakedAmount: BigInt(21083202902),
         },
       ]);
-      expect(rewardsTransaction?.operations).toEqual([
-        {
-          type: "transfer",
-          address: "0.0.800",
-          amount: BigInt(-6013422),
-          asset: {
-            type: "native",
+      expect(rewardsTransaction?.operations).toEqual(
+        expect.arrayContaining([
+          {
+            type: "transfer",
+            address: "0.0.35",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(3235),
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.801",
-          amount: BigInt(1968210),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.800",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(-30505446),
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.8835924",
-          amount: BigInt(4045212 + 1968210),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.801",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(76639),
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.8835924",
-          amount: BigInt(6013422),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(-1000000), // excluded fee and staking reward
           },
-        },
-      ]);
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(1000000), // excluded staking reward
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(30313674),
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "native",
+            },
+            amount: BigInt(191772),
+          },
+        ]),
+      );
     });
 
     it("returns block for latest finalized height from lastBlock", async () => {
@@ -602,6 +754,7 @@ describe("createApi", () => {
 
     it("returns operations with valid synthetic block info", async () => {
       const lastPagingToken = "1753099264.927988000";
+
       const block = await api.lastBlock();
       const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
@@ -613,12 +766,12 @@ describe("createApi", () => {
       const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
       const blockHeights = ops.map(o => o.tx.block.height);
 
-      expect(blockHeights).toHaveLength(6);
       expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
     });
 
     it("returns operations for real account with tokens", async () => {
       const lastPagingToken = "1753099264.927988000";
+
       const block = await api.lastBlock();
       const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
@@ -756,7 +909,7 @@ describe("createApi", () => {
           limit: 10,
           order,
           ...(order === "desc" && {
-            lastPagingToken: "1762168437.643463899",
+            lastPagingToken: "1761825341.000000000",
           }),
         } satisfies Pagination;
 

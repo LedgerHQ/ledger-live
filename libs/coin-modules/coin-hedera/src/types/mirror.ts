@@ -43,10 +43,11 @@ export interface HederaMirrorToken {
 
 export interface HederaMirrorAccount {
   account: string;
+  evm_address: string;
   max_automatic_token_associations: number;
+  created_timestamp: string;
   staked_node_id: number | null;
   pending_reward: number;
-  evm_address: string;
   balance: {
     balance: number;
     timestamp: string;
@@ -88,6 +89,7 @@ export interface HederaMirrorNetworkFees {
 
 export interface HederaMirrorContractCallResult {
   contract_id: string;
+  block_hash: string;
   block_gas_used: number;
   gas_consumed: number;
   gas_limit: number;
@@ -101,10 +103,6 @@ export interface HederaERC20TokenBalance {
 }
 
 export interface HederaMirrorContractCallEstimate {
-  result: string;
-}
-
-export interface HederaMirrorContractCallBalance {
   result: string;
 }
 

@@ -1,11 +1,11 @@
 import type BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { HederaOperationExtra } from "./bridge";
 import type { HEDERA_OPERATION_TYPES } from "../constants";
+import type { ERC20TokenTransfer } from "./hgraph";
 import type { HederaMirrorContractCallResult, HederaMirrorTransaction } from "./mirror";
-import type { HederaThirdwebTransaction } from "./thirdweb";
 
 export type EstimateFeesParams =
   | {
@@ -22,11 +22,10 @@ export interface EstimateFeesResult {
   gas?: BigNumber;
 }
 
-export interface OperationERC20 {
-  thirdwebTransaction: HederaThirdwebTransaction;
-  mirrorTransaction: HederaMirrorTransaction;
+export interface EnrichedERC20Transfer {
+  transfer: ERC20TokenTransfer;
   contractCallResult: HederaMirrorContractCallResult;
-  token: TokenCurrency;
+  mirrorTransaction: HederaMirrorTransaction;
 }
 
 export interface ERC20OperationFields {
@@ -39,6 +38,7 @@ export interface ERC20OperationFields {
   blockHeight: number;
   blockHash: string;
   extra: HederaOperationExtra;
+  contract: string;
   standard: "erc20";
   hasFailed: false;
 }
@@ -53,4 +53,14 @@ export interface StakingAnalysis {
   targetStakingNodeId: number | null;
   previousStakingNodeId: number | null;
   stakedAmount: bigint;
+}
+
+export type MergedTransaction =
+  | { type: "mirror"; data: HederaMirrorTransaction }
+  | { type: "erc20"; data: EnrichedERC20Transfer };
+
+export interface SyntheticBlock {
+  blockHeight: number;
+  blockHash: string;
+  blockTime: Date;
 }
