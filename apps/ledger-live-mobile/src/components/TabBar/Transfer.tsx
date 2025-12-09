@@ -29,7 +29,15 @@ import lightAnimSource from "~/animations/mainButton/light.json";
 import darkAnimSource from "~/animations/mainButton/dark.json";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
-const MainButton = proxyStyled(Touchable).attrs({
+type MainButtonProps = {
+  backgroundColor?: string;
+  height?: number;
+  width?: number;
+  borderRadius?: number;
+  overflow?: string;
+};
+
+const MainButton = proxyStyled(Touchable).attrs<MainButtonProps>({
   backgroundColor: "primary.c80",
   height: MAIN_BUTTON_SIZE,
   width: MAIN_BUTTON_SIZE,

@@ -27,7 +27,9 @@ type Props = {
 const LIST_HEIGHT = height - 420;
 const LINE_HEIGHT = 46;
 
-const ImageContainer = styled(Flex).attrs({
+const ImageContainer = styled(Flex).attrs<{
+  marginVertical?: number;
+}>({
   width: "100%",
   flexDirection: "row",
   alignItems: "center",
@@ -60,7 +62,7 @@ const UninstallAppDependenciesModal = ({
   uninstallAppsWithDependents,
   onClose,
 }: Props) => {
-  const { colors } = useTheme() as DefaultTheme & Theme;
+  const { colors } = useTheme();
   const { app, dependents = [] } = appWithDependentsToUninstall || {};
   const { name } = app || {};
 

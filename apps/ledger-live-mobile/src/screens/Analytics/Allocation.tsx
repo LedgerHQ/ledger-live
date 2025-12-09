@@ -11,7 +11,10 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import SafeAreaView from "~/components/SafeAreaView";
 
-const Container = styled(SafeAreaView).attrs({
+const Container = styled(SafeAreaView).attrs<{
+  flex?: number;
+  alignItems?: string;
+}>({
   flex: 1,
   alignItems: "center",
 })``;

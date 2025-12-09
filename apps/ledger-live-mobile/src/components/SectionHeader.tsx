@@ -9,13 +9,17 @@ type Props = {
   withoutMarginBottom?: boolean;
 };
 
-const Container = styled(Flex).attrs((p: { withoutMarginBottom?: boolean }) => ({
+type ContainerProps = {
+  withoutMarginBottom?: boolean;
+}
+
+const Container = styled(Flex).attrs<ContainerProps>((p) => ({
   backgroundColor: "neutral.c30",
   padding: 5,
   borderRadius: 2,
   marginTop: 7,
-  marginBottom: !p.withoutMarginBottom && 3,
-}))<{ withoutMarginBottom?: boolean }>``;
+  marginBottom: !p.withoutMarginBottom ? 3 : 0,
+}))<ContainerProps>``;
 
 function SectionHeader({ day, withoutMarginBottom = false }: Props) {
   return (

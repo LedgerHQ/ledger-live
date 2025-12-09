@@ -134,7 +134,11 @@ function PerformanceConsoleSwitch() {
   );
 }
 
-const Bullet = styled(Flex).attrs((p: { backgroundColor: string }) => ({
+type BulletProps = {
+  backgroundColor: string;
+};
+
+const Bullet = styled(Flex).attrs<BulletProps>((p) => ({
   backgroundColor: p.backgroundColor,
 }))`
   width: 8px;

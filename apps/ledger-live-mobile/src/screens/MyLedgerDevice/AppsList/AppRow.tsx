@@ -19,7 +19,9 @@ type Props = {
   optimisticState: State;
 };
 
-const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
+const RowContainer = styled(Flex).attrs<{
+  disabled?: boolean;
+}>((p) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
@@ -28,7 +30,9 @@ const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
   opacity: p.disabled ? 0.2 : 1,
 }))<{ disabled?: boolean }>``;
 
-const LabelContainer = styled(Flex).attrs({
+const LabelContainer = styled(Flex).attrs<{
+  paddingHorizontal?: number;
+}>({
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: "50%",

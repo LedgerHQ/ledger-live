@@ -10,7 +10,11 @@ import { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 export const MIN_MODAL_HEIGHT = 30;
 
-const ScreenContainer = styled(Flex).attrs<{ p?: string }>(p => ({
+type ScreenContainerProps = {
+  edges?: Array<"top" | "bottom" | "left" | "right">;
+}
+
+const ScreenContainer = styled(Flex).attrs<ScreenContainerProps>(p => ({
   edges: ["bottom"],
   flex: 2,
   p: p.p ?? 6,

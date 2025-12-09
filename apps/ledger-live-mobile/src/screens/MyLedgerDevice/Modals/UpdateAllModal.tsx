@@ -69,11 +69,15 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const FlatListContainer = styled(FlatList).attrs({
+const FlatListContainer = styled(FlatList).attrs<{
+  width?: string;
+  maxHeight?: number;
+  marginBottom?: number;
+}>({
   width: "100%",
   maxHeight: 250,
   marginBottom: 20,
-})`` as unknown as typeof FlatList;
+})<FlatList>`` as unknown as typeof FlatList;
 
 export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) {
   const { deviceInfo } = state;
