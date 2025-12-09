@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require("path");
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -123,6 +126,9 @@ module.exports = {
   settings: {
     react: {
       version: "detect",
+    },
+    tailwindcss: {
+      config: path.join(__dirname, "./tailwind.config.ts"),
     },
   },
 };
