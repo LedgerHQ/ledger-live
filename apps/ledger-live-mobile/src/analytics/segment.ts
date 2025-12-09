@@ -59,11 +59,11 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
-import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 
 const sessionId = uuid();
@@ -325,6 +325,11 @@ const extraProperties = async (store: AppStore) => {
   const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
   const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
 
+  const startupEvents = await resolveStartupEvents();
+  const legacyStartupTime = startupEvents.find(
+    ({ event }) => event === STARTUP_EVENTS.LEGACY_STARTED,
+  )?.time;
+
   return {
     ...mandatoryProperties,
     appVersion,
@@ -356,7 +361,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
-    appTimeToInteractiveMilliseconds: appStartupTime,
+    appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still bliocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
