@@ -83,6 +83,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const monadTestnet = useFeature("currencyMonadTestnet");
   const somnia = useFeature("currencySomnia");
   const zeroGravity = useFeature("currencyZeroGravity");
+  const concordium = useFeature("currencyConcordium");
+  const concordiumTestnet = useFeature("currencyConcordiumTestnet");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -162,6 +164,8 @@ export function useCurrenciesUnderFeatureFlag() {
       monad_testnet: monadTestnet,
       somnia,
       zero_gravity: zeroGravity,
+      concordium,
+      concordium_testnet: concordiumTestnet,
     }),
     [
       aptos,
@@ -240,6 +244,8 @@ export function useCurrenciesUnderFeatureFlag() {
       monadTestnet,
       somnia,
       zeroGravity,
+      concordium,
+      concordiumTestnet,
     ],
   );
 

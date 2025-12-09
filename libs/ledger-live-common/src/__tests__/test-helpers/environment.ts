@@ -128,6 +128,8 @@ setSupportedCurrencies([
   "monad_testnet",
   "somnia",
   "zero_gravity",
+  "concordium",
+  "concordium_testnet",
 ]);
 LiveConfig.setConfig(liveConfig);
 

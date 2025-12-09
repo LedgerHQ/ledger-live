@@ -152,6 +152,8 @@ export type CurrencyFeatures = {
   currencyMonadTestnet: DefaultFeature;
   currencySomnia: DefaultFeature;
   currencyZeroGravity: DefaultFeature;
+  currencyConcordium: DefaultFeature;
+  currencyConcordiumTestnet: DefaultFeature;
 };
 
 /**
