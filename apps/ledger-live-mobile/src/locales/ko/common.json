@@ -1089,6 +1089,19 @@
       "title" : "토큰 연동 확인 불가능",
       "description" : "수령 계정에서 이 토큰을 수령할 수 있는지 확인할 수 없습니다. 주소가 잘못되었거나 네트워크 또는 서비스에 문제가 있을 수 있습니다."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM 주소 인증 필요",
+      "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
+    },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "You are already delegating to this node"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "Selected node is not valid"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "No rewards to claim"
+    },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
     },
@@ -1153,6 +1166,11 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "유효하지 않은 제공 업체",
+      "description" : "\"My Ledger 서비스 제공 업체\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "openSettings" : "설정으로 이동"
     },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
@@ -1224,6 +1242,12 @@
     "AddressesSanctionedError" : {
       "title" : "사용자 보호 조치 실행 중",
       "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "UTXO 제한에 맞추기 위해 수량을 조정했습니다."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "UTXO 제한을 초과하는 수량입니다."
     }
   },
   "crash" : {
@@ -2263,6 +2287,18 @@
     },
     "completionScreen" : {
       "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
+    },
+    "secureYourCrypto" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "subtitle" : "첫 암호화폐를 거래소나 지갑에서 Ledger 장치로 옮기고 최고 수준을 보안을 누려보세요.",
+      "secureCryptoButton" : "자산 보호 시작하기",
+      "maybeLater" : "다음에 결정하기"
+    },
+    "fundSuccess" : {
+      "title" : "Ledger Wallet 연결 완료",
+      "receiveSuccess" : "Ledger 장치의 준비가 완료되었습니다. Ledger Wallet에 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+      "maybeLater" : "먼저 Ledger Wallet에 첫 암호화폐를 예치하세요",
+      "exploreLedger" : "Ledger Wallet 살펴보기"
     }
   },
   "blePairingFlow" : {
@@ -2608,7 +2644,7 @@
       "title" : "고객 맞춤 정보"
     },
     "recommended" : {
-      "title" : "제품 추천"
+      "title" : "추천"
     },
     "topGainers" : {
       "title" : "최고 상승 목록 (24시간)",
@@ -2730,6 +2766,9 @@
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
       "PRE_APPROVAL" : "사전 승인",
+      "TRANSFER_PROPOSAL" : "이체 요청",
+      "TRANSFER_REJECTED" : "이체 거부됨",
+      "TRANSFER_WITHDRAWN" : "이체 철회됨",
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
       "CLOSE_ACCOUNT" : "계정 닫기",
@@ -2751,7 +2790,9 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "ASSOCIATE_TOKEN" : "토큰 연동"
+      "ASSOCIATE_TOKEN" : "토큰 연동",
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)",
+      "UPDATE_ACCOUNT" : "Updated account"
     }
   },
   "operationDetails" : {
@@ -2819,7 +2860,12 @@
       "id" : "Id",
       "autoClaimedRewards" : "자동으로 청구된 보상",
       "stakedAmount" : "스테이킹 금액",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "associatedTokenId" : "Associated token ID",
+      "targetStakingNodeId" : "Target node ID",
+      "previousStakingNodeId" : "Previous node ID",
+      "gasConsumed" : "Gas consumed",
+      "gasUsed" : "Gas used"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?"
   },
@@ -2979,6 +3025,8 @@
     "delegation" : {
       "sectionLabel" : "위임",
       "addDelegation" : "위임 추가",
+      "delegationEarn" : "You can now earn {{name}} staking rewards by delegating your account.",
+      "howItWorks" : "How delegation works",
       "info" : {
         "title" : "보상 받기",
         "cta" : "보상 받기"
@@ -3780,7 +3828,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-        "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다"
+        "description" : "Ledger Nano S™는 {{provider}} 사용을 지원하지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
+        "explore_compatible_devices" : "지원 장치 살펴보기",
+        "swapWithAnotherProvider" : "다른 업체로 스왑"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
@@ -5041,16 +5091,11 @@
             "warning" : "계정에 빈 트랜잭션을 생성하라는 안내가 표시됩니다. 그렇게 할 경우, 최소 트랜잭션 수수료로 계정 잔금에 현재 보상이 추가됩니다.",
             "cta" : "계속"
           },
-          "verification" : {
+          "confirmation" : {
             "success" : {
               "title" : "보상을 성공적으로 수령했습니다!",
-              "text" : "보상이 이용 가능 잔액에 추가됩니다.",
-              "cta" : "계정으로 이동"
-            },
-            "pending" : {
-              "title" : "트랜잭션 브로드캐스팅 중..."
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 트랜잭션이 전송되지 않았는지 몇 분 후 다시 확인하고 재시도하세요."
+              "text" : "Your rewards were added to your available balance."
+            }
           }
         }
       }
@@ -7223,6 +7268,161 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "자세히 알아보기"
+        },
+        "evmVerificationRequired" : {
+          "text" : "ERC-20 토큰 전송 중. 이러한 유형의 트랜잭션의 경우 Ledger 장치에 보내는 사람의 계정 ID가 아닌 EVM 주소가 표시됩니다.\n승인 전 <0>이 가이드</0>를 따라 정확한 주소가 맞는지 확인하세요."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "HBAR available",
+        "description" : "This amount is disposable."
+      },
+      "delegated" : {
+        "title" : "Delegated assets",
+        "description" : "When staking on Hedera, your full balance is delegated and remains liquid"
+      },
+      "claimable" : {
+        "title" : "Claimable rewards",
+        "description" : "Rewards will be claimed automatically after each transaction. You can also claim them manually."
+      }
+    },
+    "delegatedPositions" : {
+      "rewards" : {
+        "title" : "Rewards",
+        "cta" : "Claim"
+      },
+      "details" : {
+        "validatorAddress" : "Validator address",
+        "delegatedAccount" : "Delegated account",
+        "status" : {
+          "title" : "Status",
+          "active" : "Active",
+          "activeTooltip" : "Delegated amount generates rewards",
+          "inactive" : "Inactive",
+          "inactiveTooltip" : "Validator not found",
+          "overstaked" : "Overstaked",
+          "overstakedTooltip" : "This node is overstaked, APY is lower than optimal"
+        },
+        "rewards" : "Rewards",
+        "actions" : {
+          "redelegate" : "Redelegate",
+          "claim-rewards" : "Collect rewards",
+          "undelegate" : "Undelegate"
+        }
+      }
+    },
+    "delegation" : {
+      "nodeName" : "Node {{index}}: {{name}}",
+      "alreadyDelegatedModal" : {
+        "title" : "Already Delegated",
+        "description" : "Your entire balance is already delegated"
+      },
+      "stepperHeader" : {
+        "selectDevice" : "Select device",
+        "connectDevice" : "Connect device",
+        "stepRange" : "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps" : {
+        "summary" : {
+          "delegate" : "I delegate",
+          "to" : "to",
+          "alert" : "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+          "learnMore" : "Learn more"
+        },
+        "validator" : {
+          "title" : "Validators",
+          "totalStake" : "Total Stake",
+          "rowSubtitlePercentage" : "Staked {{percentage}}% of max",
+          "rowSubtitleOverstaked" : "Node is overstaked",
+          "learnMore" : "Learn more"
+        },
+        "connectDevice" : {
+          "title" : "Device"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "You have successfully delegated your assets",
+            "description" : "Your account balance will be updated when the blockchain confirms the transaction."
+          },
+          "broadcastError" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amount" : "Amount to undelegate",
+        "selectDevice" : "Select device",
+        "connectDevice" : "Connect device",
+        "stepRange" : "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake.",
+          "learnMore" : "Learn more"
+        },
+        "connectDevice" : {
+          "title" : "Device"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "You have successfully undelegated your assets",
+            "description" : "Your account balance will be updated when the blockchain confirms the transaction."
+          },
+          "broadcastError" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "redelegation" : {
+      "stepperHeader" : {
+        "selectValidator" : "Choose new validator",
+        "amountTitle" : "{{from}} → {{to}}",
+        "amountSubtitle" : "Amount to redelegate",
+        "selectDevice" : "Select device",
+        "connectDevice" : "Connect device",
+        "stepRange" : "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+          "learnMore" : "Learn more"
+        },
+        "connectDevice" : {
+          "title" : "Device"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "You have successfully redelegated your assets",
+            "description" : "Your account balance will be updated when the blockchain confirms the transaction."
+          },
+          "broadcastError" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "selectReward" : "Select reward to collect",
+        "claim" : "Claim rewards",
+        "selectDevice" : "Select device",
+        "connectDevice" : "Connect device",
+        "stepRange" : "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps" : {
+        "claim" : {
+          "earned" : "You earned",
+          "delegatingTo" : "by delegating assets to",
+          "description" : "They will be claimed now and added to your available balance."
+        },
+        "connectDevice" : {
+          "title" : "Device"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "You have successfully claimed your rewards. They were added to your available balance.",
+            "description" : "Your account balance will be updated when the blockchain confirms the transaction."
+          },
+          "broadcastError" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
       }
     },
@@ -7293,6 +7493,9 @@
       "buttonLabel" : "다음 단계를 확인하세요"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Ledger 장치 설정하기"
+      },
       "assetsTransfer" : {
         "title" : "자산을 Ledger로 이체하세요",
         "titleCompleted" : "Ledger로 자산 이체 완료",
@@ -7311,11 +7514,11 @@
         "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
-      "recover" : {
-        "title" : "Ledger Recover 구독하기",
-        "titleCompleted" : "Ledger Recover를 구독했습니다",
-        "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
-        "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+      "syncAccounts" : {
+        "title" : "암호화폐 계정 동기화",
+        "titleCompleted" : "사용자 계정이 동기화되었습니다",
+        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
+        "popupLabel" : "계정 동기화 완료"
       }
     }
   },
@@ -7570,6 +7773,10 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "banner" : {
+      "title" : "지갑이 동기화되지 않았습니다",
+      "description" : "포트폴리오를 항상 업데이트된 상태로 관리하세요"
+    },
     "entryPoints" : {
       "simpleCta" : {
         "title" : "Ledger 동기화 활성화"
@@ -7586,7 +7793,10 @@
         "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
         "mainCta" : "Ledger 동기화 켜기",
         "secondCta" : "이미 켜진 상태입니다",
-        "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+        "learnMore" : "Ledger 동기화는 어떤 원리인가요?",
+        "titleModal" : "Sync your wallet",
+        "descriptionModal" : "Keep your portfolio up to date when switching phones or use a computer — all secured by your Ledger device.",
+        "cta" : "계속"
       }
     },
     "deviceSelection" : {
@@ -7674,7 +7884,8 @@
         },
         "connectDevice" : {
           "title" : "내 Ledger 장치 사용"
-        }
+        },
+        "description" : "Choose if you have Ledger Wallet synced on another phone or computer"
       },
       "qrCode" : {
         "title" : "Ledger Wallet 앱 동기화",
@@ -7992,6 +8203,15 @@
       "preapprove" : "성공적으로 추가된 계정",
       "validator" : "Ledger 검증인",
       "title" : "받은 자금을 자동으로 승인합니다",
+      "reonboard" : {
+        "title" : "계정 업데이트 필요",
+        "account" : "계정",
+        "authorize" : "검증인 재승인",
+        "warning" : {
+          "title" : "토폴로지 변경 감지",
+          "description" : "캔톤(Canton) 네트워크에서 토폴로지 변경이 감지되었습니다 계속해서 사용하려면 계정을 다시 등록하세요."
+        }
+      },
       "error429" : "현재 캔톤(Canton) 네트워크에서는 하루에 생성할 수 있는 계정 수가 제한됩니다. 나중에 다시 시도해 주세요."
     },
     "tooManyUtxos" : {
@@ -8000,6 +8220,50 @@
       "quickFix" : "빠른 해결책: 본인 주소로 자산을 추가로 송금하여 UTXO를 병합하세요.",
       "warning" : "현재 계정에 작은 단위의 UTXO가 너무 많습니다. 자산 일부를 본인 주소로 송금하여 병합하세요.",
       "consolidate" : "병합"
+    },
+    "pendingTransactions" : {
+      "expired" : "만료됨",
+      "accept" : "수락",
+      "reject" : "거부",
+      "review" : "검토",
+      "withdraw" : "이체 취소",
+      "incoming" : {
+        "title" : "수신 이체 검토"
+      },
+      "outgoing" : {
+        "title" : "발신 이체"
+      },
+      "details" : {
+        "incomingTitle" : "수신 이체 세부 내역",
+        "outgoingTitle" : "발신 이체 세부 내역"
+      },
+      "amount" : "수량",
+      "from" : "출금 주소",
+      "to" : "입금 주소",
+      "memo" : "메모",
+      "expiresAt" : "만료 날짜",
+      "expiresIn" : "만료까지 남은 시간",
+      "status" : {
+        "label" : "상태"
+      },
+      "deviceAppModal" : {
+        "contractId" : "컨트랙트 ID",
+        "processing" : "처리 중...",
+        "success" : {
+          "accept" : {
+            "title" : "이체 수락",
+            "description" : "수신 이체가 수락되었습니다."
+          },
+          "reject" : {
+            "title" : "이체 거부됨",
+            "description" : "수신 이체가 거부되었습니다."
+          },
+          "withdraw" : {
+            "title" : "이체 거부됨",
+            "description" : "발신 이체가 거부되었습니다."
+          }
+        }
+      }
     }
   }
 }
