@@ -1,14 +1,14 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 import type { ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import Circle from "~/components/Circle";
-import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import Touchable from "~/components/Touchable";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type Props = Readonly<{
   validator: ValidatorInfo;
@@ -17,6 +17,8 @@ type Props = Readonly<{
 }>;
 
 export default function ValidatorRow({ validator, onPress, unit }: Props) {
+  const currency = getCryptoCurrencyById("mina");
+
   const onPressT = useCallback(() => {
     onPress(validator);
   }, [validator, onPress]);
@@ -40,7 +42,7 @@ export default function ValidatorRow({ validator, onPress, unit }: Props) {
           </Text>
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={styles.validatorYield} color="smoke">
-          <CurrencyUnitValue showCode unit={unit} value={new BigNumber(validator.stake)} />
+          {new BigNumber(validator.stake).toFormat(0)} {unit.code}
         </Text>
       </View>
     </Touchable>
