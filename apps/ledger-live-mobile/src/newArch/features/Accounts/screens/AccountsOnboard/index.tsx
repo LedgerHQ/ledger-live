@@ -76,10 +76,7 @@ export default function AccountsOnboard({ navigation, route }: Props) {
     handleRetryOnboardAccount,
   } = useOnboardingFlow({
     // Non-null assertion is safe here because:
-    // 1. React hooks must be called unconditionally
-    // 2. When creatableAccount is null and importableAccounts.length > 0, useEffect handles it and navigates away
-    // 3. When creatableAccount is null and importableAccounts.length === 0, we return early after hooks
-    // 4. The hook's methods (handleOnboardAccount) are only called when creatableAccount exists (checked in useEffect at line 158)
+    // The hook's methods (handleOnboardAccount) are only called when creatableAccount exists
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     creatableAccount: creatableAccount!,
     currency,

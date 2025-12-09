@@ -13,7 +13,7 @@ export const onboardingConfigs: Record<string, OnboardingConfig> = {
 };
 
 /** @internal - Exported for testing purposes only */
-export const onboardingBridgeFactories: Record<
+export const onboardingBridgeResolvers: Record<
   string,
   (currency: CryptoCurrency) => OnboardingBridge | null
 > = {
@@ -73,9 +73,9 @@ export function hasCreatableAccounts(accounts: { used?: boolean }[]): boolean {
 }
 
 export function getOnboardingBridge(currency: CryptoCurrency): OnboardingBridge | null {
-  const factory = onboardingBridgeFactories[currency.family];
-  if (!factory) {
+  const resolver = onboardingBridgeResolvers[currency.family];
+  if (!resolver) {
     return null;
   }
-  return factory(currency);
+  return resolver(currency);
 }

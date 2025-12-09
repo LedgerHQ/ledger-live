@@ -5,17 +5,14 @@ Create a new file `adapters/[currency-family].ts` and implement the following:
 ## Bridge Adapter
 
 ```typescript
-import type { YourCurrencyBridge } from "@ledgerhq/coin-yourcurrency/types";
-import {
-  YourCurrencyOnboardProgress,
-  YourCurrencyOnboardResult,
-} from "@ledgerhq/coin-yourcurrency/types";
+import type { CurrencyBridge } from "@ledgerhq/coin-new/types";
+import { currencyOnboardProgress, currencyOnboardResult } from "@ledgerhq/coin-new/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { map } from "rxjs/operators";
 import { OnboardingBridge, OnboardProgress, OnboardResult } from "../types";
 
-function isYourCurrencyBridge(bridge: unknown): bridge is YourCurrencyBridge {
+function isCurrencyBridge(bridge: unknown): bridge is CurrencyBridge {
   if (!bridge || typeof bridge !== "object") {
     return false;
   }
@@ -29,27 +26,25 @@ function isYourCurrencyBridge(bridge: unknown): bridge is YourCurrencyBridge {
   return typeof bridgeWithProperty.onboardAccount === "function";
 }
 
-export function getYourCurrencyBridge(currency: CryptoCurrency): YourCurrencyBridge | null {
+export function getCurrencyBridge(currency: CryptoCurrency): CurrencyBridge | null {
   const bridge = getCurrencyBridge(currency);
   if (!bridge) {
     return null;
   }
 
-  if (isYourCurrencyBridge(bridge)) {
+  if (isCurrencyBridge(bridge)) {
     return bridge;
   }
   return null;
 }
 
-export function createYourCurrencyOnboardingBridge(
-  yourCurrencyBridge: YourCurrencyBridge,
-): OnboardingBridge {
+export function createCurrencyOnboardingBridge(currencyBridge: CurrencyBridge): OnboardingBridge {
   return {
     onboardAccount: (currency, deviceId, creatableAccount) => {
-      return yourCurrencyBridge.onboardAccount(currency, deviceId, creatableAccount).pipe(
+      return currencyBridge.onboardAccount(currency, deviceId, creatableAccount).pipe(
         map(
           (
-            data: YourCurrencyOnboardProgress | YourCurrencyOnboardResult,
+            data: currencyOnboardProgress | currencyOnboardResult,
           ): OnboardProgress | OnboardResult => {
             if ("status" in data) {
               return { status: data.status };
@@ -79,30 +74,31 @@ export function createYourCurrencyOnboardingBridge(
 import { StepOnboardFooter, StepFinishFooter } from "../footers";
 import StepOnboard from "../StepOnboard";
 import StepFinish from "../StepFinish";
+import TransactionConfirm from "../TransactionConfirm";
 import { StepId, TranslationKeys, UrlConfig, OnboardingConfig } from "../types";
 
-const yourCurrencyTranslationKeys: TranslationKeys = {
-  title: "families.yourcurrency.addAccount.onboard.title",
-  reonboardTitle: "families.yourcurrency.addAccount.reonboard.title",
-  init: "families.yourcurrency.addAccount.onboard.init",
-  reonboardInit: "families.yourcurrency.addAccount.reonboard.init",
-  success: "families.yourcurrency.addAccount.onboard.success",
-  reonboardSuccess: "families.yourcurrency.addAccount.reonboard.success",
-  error: "families.yourcurrency.addAccount.onboard.error",
-  error429: "families.yourcurrency.addAccount.onboard.error429",
-  onboarded: "families.yourcurrency.addAccount.onboard.onboarded",
-  account: "families.yourcurrency.addAccount.onboard.account",
-  newAccount: "families.yourcurrency.addAccount.onboard.newAccount",
-  statusPrepare: "families.yourcurrency.addAccount.onboard.status.prepare",
-  statusSubmit: "families.yourcurrency.addAccount.onboard.status.submit",
-  statusDefault: "families.yourcurrency.addAccount.onboard.status.default",
+const currencyTranslationKeys: TranslationKeys = {
+  title: "families.new.addAccount.onboard.title",
+  reonboardTitle: "families.new.addAccount.reonboard.title",
+  init: "families.new.addAccount.onboard.init",
+  reonboardInit: "families.new.addAccount.reonboard.init",
+  success: "families.new.addAccount.onboard.success",
+  reonboardSuccess: "families.new.addAccount.reonboard.success",
+  error: "families.new.addAccount.onboard.error",
+  error429: "families.new.addAccount.onboard.error429",
+  onboarded: "families.new.addAccount.onboard.onboarded",
+  account: "families.new.addAccount.onboard.account",
+  newAccount: "families.new.addAccount.onboard.newAccount",
+  statusPrepare: "families.new.addAccount.onboard.status.prepare",
+  statusSubmit: "families.new.addAccount.onboard.status.submit",
+  statusDefault: "families.new.addAccount.onboard.status.default",
 };
 
-const yourCurrencyUrls: UrlConfig = {
-  learnMore: urls.yourcurrency.learnMore,
+const currencyUrls: UrlConfig = {
+  learnMore: urls.new.learnMore,
 };
 
-export const yourCurrencyOnboardingConfig: OnboardingConfig = {
+export const currencyOnboardingConfig: OnboardingConfig = {
   stepComponents: {
     [StepId.ONBOARD]: StepOnboard,
     [StepId.FINISH]: StepFinish,
@@ -111,10 +107,10 @@ export const yourCurrencyOnboardingConfig: OnboardingConfig = {
     [StepId.ONBOARD]: StepOnboardFooter,
     [StepId.FINISH]: StepFinishFooter,
   },
-  translationKeys: yourCurrencyTranslationKeys,
-  urls: yourCurrencyUrls,
+  translationKeys: currencyTranslationKeys,
+  urls: currencyUrls,
   stepFlow: [StepId.ONBOARD, StepId.FINISH],
-  transactionConfirmComponent: YourTransactionConfirm,
+  transactionConfirmComponent: TransactionConfirm,
 };
 ```
 
@@ -124,26 +120,31 @@ In `registry.ts`, add to the maps:
 
 ```typescript
 import {
-  yourCurrencyOnboardingConfig,
-  getYourCurrencyBridge,
-  createYourCurrencyOnboardingBridge,
-} from "./adapters/yourcurrency";
+  currencyOnboardingConfig,
+  getCurrencyBridge,
+  createCurrencyOnboardingBridge,
+} from "./adapters/new";
+import type { CurrencyBridge } from "@ledgerhq/coin-new/types";
 
 const onboardingConfigs: Record<string, OnboardingConfig> = {
   canton: cantonOnboardingConfig,
-  yourcurrency: yourCurrencyOnboardingConfig,
+  new: currencyOnboardingConfig,
 };
 
-const onboardingBridgeFactories: Record<
+const onboardingBridgeResolvers: Record<
   string,
   (currency: CryptoCurrency) => OnboardingBridge | null
 > = {
   canton: (currency: CryptoCurrency) => {
     /* ... */
   },
-  yourcurrency: (currency: CryptoCurrency) => {
-    const bridge = getYourCurrencyBridge(currency);
-    return bridge ? createYourCurrencyOnboardingBridge(bridge) : null;
+  new: (currency: CryptoCurrency) => {
+    const bridge = getCurrencyBridge(currency);
+    if (!bridge) {
+      return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return createCurrencyOnboardingBridge(bridge as CurrencyBridge);
   },
 };
 ```

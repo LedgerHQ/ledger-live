@@ -6,16 +6,10 @@ import {
 } from "./adapters/canton";
 import { OnboardingBridge, OnboardingConfig, StepId } from "./types";
 
-/**
- * Registry of onboarding configurations by currency family
- */
 export const onboardingConfigs: Record<string, OnboardingConfig> = {
   canton: cantonOnboardingConfig,
 };
 
-/**
- * Registry of onboarding bridge factories by currency family
- */
 export const onboardingBridgeFactories: Record<
   string,
   (currency: CryptoCurrency) => OnboardingBridge | null
@@ -29,9 +23,6 @@ export const onboardingBridgeFactories: Record<
   },
 };
 
-/**
- * Validates that an onboarding config has all required components
- */
 export function validateOnboardingConfig(config: OnboardingConfig, family: string): void {
   const { stepFlow, stepComponents, footerComponents } = config;
 
@@ -56,28 +47,18 @@ export function validateOnboardingConfig(config: OnboardingConfig, family: strin
   }
 }
 
-// Validate all registered configs at module load time
 for (const [family, config] of Object.entries(onboardingConfigs)) {
   validateOnboardingConfig(config, family);
 }
 
-/**
- * Gets the onboarding configuration for a currency
- */
 export function getOnboardingConfig(currency: CryptoCurrency): OnboardingConfig | null {
   return onboardingConfigs[currency.family] ?? null;
 }
 
-/**
- * Checks if a currency supports onboarding
- */
 export function hasOnboarding(currency: CryptoCurrency): boolean {
   return currency.family in onboardingConfigs;
 }
 
-/**
- * Gets the onboarding bridge for a currency
- */
 export function getOnboardingBridge(currency: CryptoCurrency): OnboardingBridge | null {
   const factory = onboardingBridgeFactories[currency.family];
   if (!factory) {

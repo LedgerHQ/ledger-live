@@ -4,7 +4,7 @@ import {
   getOnboardingBridge,
   getOnboardingConfig,
   hasOnboarding,
-  onboardingBridgeFactories,
+  onboardingBridgeResolvers,
   onboardingConfigs,
   validateOnboardingConfig,
 } from "../registry";
@@ -53,7 +53,7 @@ describe("Onboarding Registry", () => {
 
   beforeEach(() => {
     delete onboardingConfigs.test;
-    delete onboardingBridgeFactories.test;
+    delete onboardingBridgeResolvers.test;
   });
 
   describe("validateOnboardingConfig", () => {
@@ -134,7 +134,7 @@ describe("Onboarding Registry", () => {
   describe("getOnboardingBridge", () => {
     it("should return bridge for registered currency family", () => {
       onboardingConfigs.test = mockConfig;
-      onboardingBridgeFactories.test = () => mockBridge;
+      onboardingBridgeResolvers.test = () => mockBridge;
       const bridge = getOnboardingBridge(mockCurrency);
       expect(bridge).toBe(mockBridge);
     });
@@ -148,17 +148,17 @@ describe("Onboarding Registry", () => {
       expect(bridge).toBeNull();
     });
 
-    it("should call factory function with currency", () => {
-      const factorySpy = jest.fn(() => mockBridge);
+    it("should call resolver function with currency", () => {
+      const resolverSpy = jest.fn(() => mockBridge);
       onboardingConfigs.test = mockConfig;
-      onboardingBridgeFactories.test = factorySpy;
+      onboardingBridgeResolvers.test = resolverSpy;
       getOnboardingBridge(mockCurrency);
-      expect(factorySpy).toHaveBeenCalledWith(mockCurrency);
+      expect(resolverSpy).toHaveBeenCalledWith(mockCurrency);
     });
 
-    it("should return null when factory returns null", () => {
+    it("should return null when resolver returns null", () => {
       onboardingConfigs.test = mockConfig;
-      onboardingBridgeFactories.test = () => null;
+      onboardingBridgeResolvers.test = () => null;
       const bridge = getOnboardingBridge(mockCurrency);
       expect(bridge).toBeNull();
     });
