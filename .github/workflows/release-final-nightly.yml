@@ -84,6 +84,9 @@ jobs:
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
         run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
 
+      - name: Pack for signing
+        run: pnpm -r pack --pack-destination ./packed
+
       #NPM publishing - to be removed when all is migrated
 
       - name: authenticate with npm
