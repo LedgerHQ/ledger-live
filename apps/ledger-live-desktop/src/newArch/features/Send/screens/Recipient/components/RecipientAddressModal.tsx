@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,8 @@ import { useAddressValidation } from "../../../hooks/useAddressValidation";
 import { recentlyInteractedCache } from "../utils/recentlyInteractedCache";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { RecipientAddressModalProps, RecentAddress } from "../../../types";
+import { useMemoTag } from "../../../hooks/useMemoTag";
+import MemoTagFactory from "./memo/MemoTagFactory";
 
 export function RecipientAddressModal({
   isOpen,
@@ -38,6 +40,7 @@ export function RecipientAddressModal({
   const { mode } = useTheme();
   const [searchValue, setSearchValue] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const addressInputRef = useRef<HTMLInputElement>(null);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const accountCurrency = getAccountCurrency(account);
@@ -51,6 +54,7 @@ export function RecipientAddressModal({
     parentAccount,
     currentAccountId: mainAccount.id,
   });
+  const { showMemoTagInput } = useMemoTag(mainAccount.currency.id);
 
   const recentAddresses = useMemo(() => {
     void refreshKey;
@@ -79,11 +83,13 @@ export function RecipientAddressModal({
 
   const handleClearSearch = useCallback(() => {
     setSearchValue("");
-  }, []);
+    onAddressSelected("");
+  }, [onAddressSelected]);
 
   const handleRecentAddressSelect = useCallback(
     (address: RecentAddress) => {
       onAddressSelected(address.address, address.ensName);
+      setSearchValue(address.ensName ?? address.address);
     },
     [onAddressSelected],
   );
@@ -91,6 +97,7 @@ export function RecipientAddressModal({
   const handleAccountSelect = useCallback(
     (selectedAccount: Account) => {
       onAddressSelected(selectedAccount.freshAddress);
+      setSearchValue(selectedAccount.freshAddress);
     },
     [onAddressSelected],
   );
@@ -98,6 +105,7 @@ export function RecipientAddressModal({
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
       onAddressSelected(address, ensName);
+      setSearchValue(ensName ?? address);
     },
     [onAddressSelected],
   );
@@ -181,22 +189,6 @@ export function RecipientAddressModal({
     !showInvalidBanner &&
     !showBridgeRecipientError;
 
-  const renderSelectedRecipientWIP = () => {
-    if (!selectedRecipient) return null;
-
-    return (
-      <div className="flex flex-col gap-16 p-16">
-        <div className="body-2 text-base">
-          <p>Recipient selected:</p>
-          <p className="body-3 text-muted mt-4">{selectedRecipient.address}</p>
-          {selectedRecipient.ensName && (
-            <p className="body-3 text-muted mt-2">ENS: {selectedRecipient.ensName}</p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
@@ -206,10 +198,12 @@ export function RecipientAddressModal({
     [onClose],
   );
 
+  const handleOnMemoChange = useCallback((newMemoTagValue: string) => {}, []);
+
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent
-        className={`w-[400px] h-[612px] flex flex-col ${mode} px-0`}
+        className={`flex h-[612px] w-[400px] flex-col ${mode} px-0`}
         data-testid="recipient-address-modal-content"
         style={{
           color: "var(--color-text-base)",
@@ -225,13 +219,11 @@ export function RecipientAddressModal({
           />
         </div>
 
-        {/* Content Layout */}
-        {selectedRecipient ? (
-          <>{renderSelectedRecipientWIP()}</>
-        ) : (
-          <>
-            {/* Fixed Address Input Section */}
+        <>
+          {/* Fixed Address Input Section */}
+          <div className="flex flex-col gap-12">
             <AddressInput
+              ref={addressInputRef}
               value={searchValue}
               onChange={handleSearchChange}
               onClear={handleClearSearch}
@@ -241,66 +233,74 @@ export function RecipientAddressModal({
               className="w-full px-24"
             />
 
-            {/* Scrollable Results & Sections */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden pb-24 [scrollbar-gutter:stable] [scrollbar-width:none] [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:bg-transparent mt-24">
-              {isLoading && <LoadingState />}
+            {selectedRecipient && showMemoTagInput && (
+              <MemoTagFactory
+                network={mainAccount.currency.id}
+                onChange={function RN() {}}
+                onSkip={function RN() {}}
+              />
+            )}
+          </div>
 
-              {/* Initial State: Recent & My Accounts */}
-              {showInitialState && (
-                <>
-                  <RecentAddressesSection
-                    recentAddresses={recentAddresses}
-                    onSelect={handleRecentAddressSelect}
-                    onRemove={handleRemoveAddress}
-                  />
-                  <MyAccountsSection
-                    currency={currency}
-                    currentAccountId={mainAccount.id}
-                    onSelect={handleAccountSelect}
-                  />
-                </>
+          {/* Scrollable Results & Sections */}
+          <div className="mt-24 flex-1 overflow-y-auto overflow-x-hidden pb-24 [scrollbar-gutter:stable] [scrollbar-width:none] [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:bg-transparent">
+            {isLoading && !selectedRecipient && <LoadingState />}
+
+            {/* Initial State: Recent & My Accounts */}
+            {showInitialState && (
+              <>
+                <RecentAddressesSection
+                  recentAddresses={recentAddresses}
+                  onSelect={handleRecentAddressSelect}
+                  onRemove={handleRemoveAddress}
+                />
+                <MyAccountsSection
+                  currency={currency}
+                  currentAccountId={mainAccount.id}
+                  onSelect={handleAccountSelect}
+                />
+              </>
+            )}
+
+            {/* Search Results State */}
+            {showMatchedAddress && (
+              <AddressMatchedSection
+                searchResult={result}
+                searchValue={searchValue}
+                onSelect={handleAddressSelect}
+                isSanctioned={isSanctioned}
+                isAddressComplete={isAddressComplete}
+              />
+            )}
+
+            {/* Error/Warning Banners */}
+            <div className="flex flex-col gap-16 px-24 pt-16">
+              {showBridgeSenderError && (
+                <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
               )}
-
-              {/* Search Results State */}
-              {showMatchedAddress && (
-                <AddressMatchedSection
-                  searchResult={result}
-                  searchValue={searchValue}
-                  onSelect={handleAddressSelect}
-                  isSanctioned={isSanctioned}
-                  isAddressComplete={isAddressComplete}
+              {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
+              {showInvalidBanner && <InvalidAddressBanner error={result.error} />}
+              {showBridgeRecipientError && (
+                <ValidationBanner
+                  type="error"
+                  error={bridgeRecipientError}
+                  variant="recipient"
+                  excludeRecipientRequired
                 />
               )}
-
-              {/* Error/Warning Banners */}
-              <div className="flex flex-col gap-16 pt-16 px-24">
-                {showBridgeSenderError && (
-                  <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
-                )}
-                {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
-                {showInvalidBanner && <InvalidAddressBanner error={result.error} />}
-                {showBridgeRecipientError && (
-                  <ValidationBanner
-                    type="error"
-                    error={bridgeRecipientError}
-                    variant="recipient"
-                    excludeRecipientRequired
-                  />
-                )}
-                {showBridgeRecipientWarning && (
-                  <ValidationBanner
-                    type="warning"
-                    warning={bridgeRecipientWarning}
-                    variant="recipient"
-                  />
-                )}
-                {(showEmptyState || showInitialEmptyState) && (
-                  <EmptyList translationKey="newSendFlow.recentSendWillAppear" />
-                )}
-              </div>
+              {showBridgeRecipientWarning && (
+                <ValidationBanner
+                  type="warning"
+                  warning={bridgeRecipientWarning}
+                  variant="recipient"
+                />
+              )}
+              {(showEmptyState || showInitialEmptyState) && (
+                <EmptyList translationKey="newSendFlow.recentSendWillAppear" />
+              )}
             </div>
-          </>
-        )}
+          </div>
+        </>
       </DialogContent>
     </Dialog>
   );

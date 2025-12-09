@@ -4577,7 +4577,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -5867,7 +5866,16 @@
     "label": "Tag / Memo",
     "placeholder": "Enter Tag / Memo",
     "information": "To ensure your transaction is deposited correctly to your account, centralized exchanges and sometimes custodial wallets require a Tag/Memo.",
-    "instruction": "Copy and paste the Tag/Memo provided by the exchange or custodial wallet."
+    "instruction": "Copy and paste the Tag/Memo provided by the exchange or custodial wallet.",
+    "askNotRequiredMemo": "{{memoType}} not required by recipient?",
+    "skip": "Skip",
+    "tooltip": "A {{memoType}} is required when sending {{network}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoType}} may result in a loss of funds",
+    "skipWarningBanner": {
+      "title": "Skip adding {{memoType}}?",
+      "description": "Your asset may be lost if a {{memoType}} is required by your recipient",
+      "confirm": "Yes skip",
+      "forbid": "Don't ask me again"
+    }
   },
   "families": {
     "casper": {
@@ -7856,7 +7864,9 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": { "title": "Connect and unlock your device" },
+    "connectYourDevice": {
+      "title": "Connect and unlock your device"
+    },
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
