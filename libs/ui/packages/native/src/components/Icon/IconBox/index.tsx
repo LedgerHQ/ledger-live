@@ -22,11 +22,10 @@ const IconContainer = styled(Flex).attrs<{ boxSize: number }>(({ boxSize = DEFAU
   justifyContent: "center",
   alignItems: "center",
   borderWidth: "1px",
-
   borderColor: "neutral.c40",
   width: `${boxSize}px`,
   height: `${boxSize}px`,
-}))`
+}))<{ boxSize: number }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
