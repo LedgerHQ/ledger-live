@@ -12,7 +12,7 @@ permissions:
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ledger-live-4xlarge-ha
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -73,11 +73,16 @@ jobs:
 
         #Jfrog publishing - if statements to be removed when all is migrated
 
+      - name: Login to JFrog Ledger
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        id: jfrog-login-publish
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
       - name: Configure npmrc
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
         uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
         with:
-          token: ${{ steps.jfrog-login.outputs.oidc-token }}
+          token: ${{ steps.jfrog-login-publish.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
           npmrc-location: "$HOME/.npmrc"
 
