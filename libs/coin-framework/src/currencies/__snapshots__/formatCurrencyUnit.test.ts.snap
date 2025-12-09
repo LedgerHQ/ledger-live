@@ -4064,7 +4064,7 @@ exports[`formatCurrencyUnit with default options should correctly format Injecti
 
 exports[`formatCurrencyUnit with default options should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000"`;
+exports[`formatCurrencyUnit with default options should correctly format KASPA unit (KAS) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Kin unit (KIN) 1`] = `"123,456,789,000"`;
 
