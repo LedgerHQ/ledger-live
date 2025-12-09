@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/electron/renderer";
-import user from "./../helpers/user";
 import { init, setShouldSendCallback } from "./install";
 import { Primitive } from "@sentry/types";
 // @ts-expect-error The right type would be SentryMainModule from "@sentry/electron/main"…
@@ -10,10 +9,7 @@ const available = init(Sentry, {
 export default async (shouldSendCallback: () => boolean) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
-  // FIXME migrate to use identities's DatadogId + exportDatadogIdForSentry()
-  const u = await user();
   Sentry.setUser({
-    id: u.id,
     ip_address: undefined,
   });
 };
