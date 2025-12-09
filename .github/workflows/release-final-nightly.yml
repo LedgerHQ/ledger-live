@@ -12,7 +12,7 @@ permissions:
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ledger-live-linux-8CPU-32RAM
+    runs-on: ledger-live-4xlarge-ha
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
