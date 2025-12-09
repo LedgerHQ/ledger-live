@@ -45,7 +45,7 @@ const SideDrawerHeader = ({
 
   const hasOnlyCloseButton = !onRequestBack && !title && onRequestClose;
 
-  const CloseButton = () => {
+  const renderCloseButton = () => {
     if (closeButtonComponent && onRequestClose && !blocked) {
       return React.createElement(closeButtonComponent, {
         onRequestClose,
@@ -95,7 +95,7 @@ const SideDrawerHeader = ({
               {title}
             </Text>
           )}
-          <CloseButton />
+          {renderCloseButton()}
         </Box>
       ) : null}
     </>
