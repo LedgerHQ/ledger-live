@@ -1,14 +1,13 @@
 import { getTimeSinceStartup } from "react-native-startup-time";
-import { track } from "~/analytics";
-import {
-  startupEventsResolvers,
-  startupFirstImportTime,
-  type StartupEvent,
-} from "./logStartupTime";
+import { startupEvents, startupFirstImportTime, type StartupEvent } from "./logStartupTime";
 
 export type GroupedStartupEvent = StartupEvent & { count: number };
 
-const resolved = new Map<string, GroupedStartupEvent>();
+export const STARTUP_EVENTS = {
+  LEGACY_STARTED: "App started",
+  STARTED: "Splash screen faded",
+} as const;
+
 const startupTsp = new Promise<number>(resolve => {
   // On dev it does't make sense to compare to the app starting time due to metro start time
   // And also because react-native-startup-time does not reset on reload (so it keeps on increasing).
@@ -17,23 +16,18 @@ const startupTsp = new Promise<number>(resolve => {
   getTimeSinceStartup().then(t => resolve(now - t));
 });
 
-export async function resolveStartupEvents(sendEvents = false): Promise<GroupedStartupEvent[]> {
+export async function resolveStartupEvents() {
   const awaitedTsp = await startupTsp;
-  startupEventsResolvers.splice(0).forEach(resolver => {
-    const { event, time } = resolver(awaitedTsp);
+  const resolved = new Map<string, GroupedStartupEvent>();
+  startupEvents.forEach(({ event, time }) => {
     const existing = resolved.get(event);
-    resolved.set(event, {
+    resolved.set(
       event,
-      time: existing?.time ?? time,
-      count: 1 + (existing?.count ?? 0),
-    });
+      existing
+        ? { event, time: existing.time, count: existing.count + 1 }
+        : { event, time: time - awaitedTsp, count: 1 },
+    );
   });
 
-  const events = Array.from(resolved.values());
-
-  if (sendEvents) {
-    track("app_startup_events", { events });
-  }
-
-  return events;
+  return Array.from(resolved.values());
 }

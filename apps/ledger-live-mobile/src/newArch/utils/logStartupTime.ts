@@ -5,16 +5,9 @@ if (__DEV__) console.time("LogStartupTime");
 export const startupFirstImportTime = Date.now();
 
 export type StartupEvent = { event: string; time: number };
-export const startupEventsResolvers: ((start: number) => StartupEvent)[] = [];
+export const startupEvents: StartupEvent[] = [];
 
 export function logStartupEvent(eventName: string) {
   if (__DEV__) console.timeLog("LogStartupTime", eventName);
-  const now = Date.now();
-  return new Promise<StartupEvent>(res => {
-    startupEventsResolvers.push(start => {
-      const event = { event: eventName, time: now - start };
-      res(event);
-      return event;
-    });
-  });
+  startupEvents.push({ event: eventName, time: Date.now() });
 }

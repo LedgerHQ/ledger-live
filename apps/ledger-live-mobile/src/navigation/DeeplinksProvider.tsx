@@ -31,7 +31,7 @@ import { blockPasswordLock } from "../actions/appstate";
 import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
+import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
@@ -727,11 +727,14 @@ export const DeeplinksProvider = ({
   return (
     <AppLoadingManager
       isNavigationReady={isReady}
-      onAppReady={() => {
+      onAppReady={async () => {
         navigationIntegration.registerNavigationContainer(navigationRef);
-        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate); // Is it the point DD considers the app loaded?
-        logStartupEvent("Splash screen faded");
-        resolveStartupEvents(true);
+        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
+
+        logStartupEvent(STARTUP_EVENTS.STARTED);
+        const events = await resolveStartupEvents();
+        const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
+        track("app_startup_events", { appStartupTime, events });
       }}
     >
       <NavigationContainer
