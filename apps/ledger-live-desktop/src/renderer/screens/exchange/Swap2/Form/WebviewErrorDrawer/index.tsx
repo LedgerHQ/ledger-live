@@ -5,9 +5,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
-import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
-import { track } from "~/renderer/analytics/segment";
+import times from "lodash/times";
+import random from "lodash/random";
+import get from "lodash/get";
 
 const ContentBox = styled(Box)`
   display: flex;
@@ -45,56 +46,59 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-export default function WebviewErrorDrawer(error?: SwapLiveError) {
+const generateRandomString = (numberOfChars: number = 4): string => {
+  return times(numberOfChars, () => random(35).toString(36))
+    .join("")
+    .toUpperCase();
+};
+
+export default function WebviewErrorDrawer(error?: Error) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
   let descriptionKey = "swap2.webviewErrorDrawer.description";
   let errorCodeSection = null;
   const { t } = useTranslation();
 
-  if (error?.cause?.swapCode) {
-    switch (error.cause.swapCode) {
-      case "swap010":
-        errorCodeSection = <Trans i18nKey="errors.PayinExtraIdError.message" />;
-        break;
-      default:
-        errorCodeSection = (
-          <Trans
-            mr={2}
-            i18nKey="swap2.webviewErrorDrawer.code"
-            values={{
-              errorCode: error.cause.swapCode,
-            }}
-          />
-        );
-        break;
+  const swapCode = get(error, "cause.swapCode");
+  const messageKey =
+    get(error, "cause.response.data.error.messageKey") || get(error, "cause.messageKey");
+
+  if (swapCode) {
+    if (swapCode === "swap010") {
+      errorCodeSection = <Trans i18nKey="errors.PayinExtraIdError.message" />;
+    } else {
+      errorCodeSection = (
+        <Trans
+          mr={2}
+          i18nKey="swap2.webviewErrorDrawer.code"
+          values={{
+            errorCode: swapCode,
+          }}
+        />
+      );
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase();
-  const errorCodeMatch = errorMessage && errorMessage.match(/Error code (\w+)/i);
-  const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
-
-  if (errorMessage?.includes("transaction cannot be created")) {
-    track("error_message", {
-      ...swapDefaultTrack,
-      message: "partner_unavailable",
-      error_code: dynamicErrorCode,
-    });
-    titleKey = "errors.TransactionCannotBeCreated.title";
-    descriptionKey = t("errors.TransactionCannotBeCreated.description", {
-      errorCode: dynamicErrorCode,
-    });
-    errorCodeSection = null;
-  }
-
-  switch (error?.cause?.response?.data?.error?.messageKey) {
-    case "WRONG_OR_EXPIRED_RATE_ID":
-      titleKey = "errors.SwapRateExpiredError.title";
-      descriptionKey = "errors.SwapRateExpiredError.description";
-      errorCodeSection = null;
-      break;
+  if (messageKey) {
+    switch (messageKey) {
+      case "WRONG_OR_EXPIRED_RATE_ID":
+        titleKey = "errors.SwapRateExpiredError.title";
+        descriptionKey = "errors.SwapRateExpiredError.description";
+        errorCodeSection = null;
+        break;
+      case "TRANSACTION_CANNOT_BE_CREATED":
+        titleKey = "errors.TransactionCannotBeCreated.title";
+        descriptionKey = t("errors.TransactionCannotBeCreated.description", {
+          randomCode: generateRandomString(),
+        });
+        errorCodeSection = null;
+        break;
+      case "SWAP_QUOTE_LOW_LIQUIDITY":
+        titleKey = "errors.SwapQuoteLowLiquidity.title";
+        descriptionKey = "errors.SwapQuoteLowLiquidity.description";
+        errorCodeSection = null;
+        break;
+    }
   }
 
   return (
