@@ -164,7 +164,6 @@ class MenuList<
 
     return (
       <List
-        className={"select-options-list"}
         ref={this.list}
         width="100%"
         style={{
@@ -178,7 +177,7 @@ class MenuList<
         onScroll={handleScroll}
       >
         {({ index, style }) => (
-          <Row className={"option"} style={style}>
+          <Row style={style}>
             {/* @ts-expect-error I have no idea what's up here */}
             {children[index]}
           </Row>

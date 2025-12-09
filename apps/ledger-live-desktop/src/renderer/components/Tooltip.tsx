@@ -68,7 +68,6 @@ const ToolTip = ({
       disabled={!(!!content && enabled)}
       placement={placement}
       hideOnClick={hideOnClick}
-      className={`bg-${tooltipBg ? tooltipBg.replace(/\./g, "-") : "default"}`}
     >
       <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
     </Tippy>

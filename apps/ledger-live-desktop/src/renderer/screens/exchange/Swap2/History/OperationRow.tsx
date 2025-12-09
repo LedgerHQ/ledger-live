@@ -110,7 +110,6 @@ const OperationRow = ({
 
   return (
     <Row
-      className={"swap-history-row"}
       toExists={toExists}
       horizontal
       key={swapId}

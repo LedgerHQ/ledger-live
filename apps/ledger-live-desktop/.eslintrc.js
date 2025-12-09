@@ -90,6 +90,7 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "tailwindcss/no-custom-classname": "error",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -139,6 +140,7 @@ module.exports = {
     },
     tailwindcss: {
       config: path.join(__dirname, "./tailwind.config.ts"),
+      callees: ["cn"],
     },
   },
 };
