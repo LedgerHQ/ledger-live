@@ -1751,7 +1751,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         name: "KAS",
         code: "KAS",
         magnitude: 8,
-        showAllDigits: true,
       },
       {
         name: "Sompis",
