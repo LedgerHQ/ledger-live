@@ -9,14 +9,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -35,6 +33,7 @@ import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/Freez
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountUnit, useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 const infoModalData = [
   {
@@ -59,7 +58,7 @@ type NavigatorProps = CompositeScreenProps<
 
 export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const { t } = useTranslation();
 
   invariant(account && account.type === "Account", "account is required");

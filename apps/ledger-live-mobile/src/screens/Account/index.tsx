@@ -19,7 +19,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "~/reducers/settings";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import { track, TrackScreen } from "~/analytics";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";
@@ -53,7 +53,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 /** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 

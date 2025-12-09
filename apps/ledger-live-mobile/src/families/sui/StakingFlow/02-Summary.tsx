@@ -12,7 +12,6 @@ import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -22,7 +21,6 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
@@ -31,6 +29,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { SuiStakingFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import Config from "react-native-config";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidator>
@@ -39,7 +38,7 @@ type Props = BaseComposite<
 export default function StakingSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
 

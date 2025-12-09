@@ -110,7 +110,7 @@ export default function Store() {
     debugger;
     if (__DEV__ && override) {
       dispatch({
-        action: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
+        type: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
         payload: appState,
       });
     }

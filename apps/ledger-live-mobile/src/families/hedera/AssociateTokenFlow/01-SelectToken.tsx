@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -16,7 +15,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSelectToken>
@@ -36,7 +35,7 @@ const renderEmptyList = () => (
 
 export default function SelectToken({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const { data, loadNext } = useTokensData({
     networkFamily: "hedera",

@@ -1,6 +1,5 @@
 import React, { useCallback, useRef } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -10,7 +9,6 @@ import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/
 import { useTheme } from "@react-navigation/native";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -18,6 +16,7 @@ import ValidateSuccess from "~/components/ValidateSuccess";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { BaseNavigation, RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = {
   navigation: BaseNavigation;
@@ -33,7 +32,7 @@ type RouteParams = {
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const wasFirstBond = useRef(isFirstBond(mainAccount));

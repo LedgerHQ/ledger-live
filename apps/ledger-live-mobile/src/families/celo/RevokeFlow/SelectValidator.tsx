@@ -2,7 +2,6 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
-import { useSelector } from "react-redux";
 import {
   CeloAccount,
   CeloValidatorGroup,
@@ -12,17 +11,17 @@ import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { fallbackValidatorGroup, revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloRevokeFlowFlowParamList } from "./types";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");

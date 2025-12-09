@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
 import i18next from "i18next";
-import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
 import Evm1559CustomFees from "./Evm1559CustomFees";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -28,7 +27,7 @@ export default function EvmCustomFees({ route }: Props) {
     transaction: baseTransaction,
     gasOptions,
   } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const navigation = useNavigation();
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);

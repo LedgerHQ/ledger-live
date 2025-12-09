@@ -36,6 +36,7 @@ import { latestDistantStateSelector, latestDistantVersionSelector } from "~/redu
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import type { AppStore } from "~/reducers";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -209,6 +210,6 @@ function useSaveUpdate() {
 }
 
 function useGetState() {
-  const store = useStore();
+  const store = useStore() as AppStore;
   return useCallback(() => store.getState(), [store]);
 }

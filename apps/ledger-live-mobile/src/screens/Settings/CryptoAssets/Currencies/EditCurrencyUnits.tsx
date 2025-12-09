@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "~/components/SettingsRow";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -8,8 +8,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { updateCurrencySettings } from "~/actions/settings";
-import { State } from "~/reducers/types";
-import { currencySettingsSelector } from "~/reducers/settings";
+import { useCurrencySettings } from "~/hooks/useCurrencySettings";
 
 type NavigationProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,
@@ -20,11 +19,7 @@ export default function EditCurrencyUnits({ navigation, route }: NavigationProps
   const dispatch = useDispatch();
   const { currency } = route.params;
 
-  const currencySettings = useSelector((s: State) =>
-    currencySettingsSelector(s.settings, {
-      currency,
-    }),
-  );
+  const currencySettings = useCurrencySettings(currency);
 
   const onPressItem = (item: Unit) => {
     dispatch(

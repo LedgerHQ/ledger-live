@@ -13,7 +13,6 @@ import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -23,7 +22,6 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
@@ -34,13 +32,14 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 
 export default function VoteSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
 

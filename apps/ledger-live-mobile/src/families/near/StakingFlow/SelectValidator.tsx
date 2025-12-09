@@ -4,21 +4,20 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "./types";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");

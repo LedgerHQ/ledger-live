@@ -19,7 +19,6 @@ import React, { Component, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
@@ -34,7 +33,7 @@ import TranslatedError from "~/components/TranslatedError";
 import { NavigatorName, ScreenName } from "~/const";
 import AlertTriangle from "~/icons/AlertTriangle";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import SummaryAmountSection from "~/screens/SendFunds/SummaryAmountSection";
 import SummaryFromSection from "~/screens/SendFunds/SummaryFromSection";
 import SummaryToSection from "~/screens/SendFunds/SummaryToSection";
@@ -52,7 +51,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, transactionRaw, editType } = route.params;
 
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account is missing");
   invariant(transactionRaw, "transactionRaw is missing");

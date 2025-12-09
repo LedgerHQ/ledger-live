@@ -1,9 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -14,6 +12,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { ClaimRewardsNavigatorParamList } from "~/components/RootNavigator/types/ClaimRewardsNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsValidationSuccess>,
@@ -22,7 +21,7 @@ type Props = CompositeScreenProps<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);

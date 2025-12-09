@@ -14,7 +14,6 @@ import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -24,7 +23,6 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
@@ -33,6 +31,7 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import TranslatedError from "~/components/TranslatedError";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -42,7 +41,7 @@ type Props = StackNavigatorProps<
 export default function DelegationSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
 
   invariant(account, "account must be defined");

@@ -7,11 +7,9 @@ import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-nati
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "react-redux";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyInput from "~/components/CurrencyInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -20,6 +18,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { popToScreen } from "~/helpers/navigationHelpers";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 const options = {
   title: i18next.t("send.summary.fees"),
@@ -36,7 +35,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { transaction } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(transaction.family === "stellar", "not stellar family");
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);

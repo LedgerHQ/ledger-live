@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -11,13 +10,13 @@ import { i18n } from "~/context/Locale";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   NativeStackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>
@@ -31,7 +30,7 @@ const options = {
 
 function XrpEditTag({ route, navigation }: NavigationProps) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const { t } = useTranslation();
   const transaction = route.params?.transaction;
   const [tag, setTag] = useState<BigNumber | null | undefined>(() => {

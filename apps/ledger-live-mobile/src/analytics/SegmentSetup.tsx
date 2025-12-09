@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useStore } from "react-redux";
+import type { AppStore } from "~/reducers";
 import { start } from "./segment";
 import useFlushInBackground from "./useFlushInBackground";
 
 const SegmentSetup = (): null => {
-  const store = useStore();
+  const store = useStore() as AppStore;
 
   useEffect(() => {
     start(store).catch(error => console.error(`Failed to initialize Segment with error: ${error}`));

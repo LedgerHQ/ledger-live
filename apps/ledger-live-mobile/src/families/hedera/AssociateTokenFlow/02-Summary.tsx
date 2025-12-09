@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -10,7 +9,6 @@ import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-
 import SummaryToSection from "./SummaryToSection";
 import SummaryFromSection from "./SummaryFromSection";
 import type { HederaAssociateTokenFlowParamList } from "./types";
@@ -23,8 +21,8 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import AssociationInsufficientFundsError from "~/families/hedera/AssociateTokenFlow/AssociationInsufficientFundsError";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { urls } from "~/utils/urls";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSummary>
@@ -32,7 +30,7 @@ type Props = BaseComposite<
 
 export default function Summary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const { tokenAddress } = route.params;
   const { token } = useTokenByAddressInCurrency(tokenAddress || "", "hedera");

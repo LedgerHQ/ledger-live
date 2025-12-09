@@ -8,13 +8,13 @@ import {
   mmddyyyyFormatter,
 } from "~/components/DateFormat/formatter.util";
 
-jest.mock("react-redux", () => {
-  const actual = jest.requireActual("react-redux");
-  return {
-    ...actual,
-    useSelector: jest.fn(),
-  };
-});
+jest.mock("react-redux", () => ({
+  ...jest.requireActual("react-redux"),
+  useSelector: jest.fn(),
+}));
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 
 jest.mock("~/components/DateFormat/formatter.util", () => ({
   ddmmyyyyFormatter: { format: jest.fn() },
@@ -44,7 +44,7 @@ describe("useFormatDate", () => {
     ({ dateFormat, mockLanguage, expectedValue }) => {
       const mockDate = new Date("2025-06-25");
 
-      (useSelector as jest.Mock).mockReturnValueOnce(mockLanguage).mockReturnValueOnce(dateFormat);
+      mockedUseSelector.mockReturnValueOnce(mockLanguage).mockReturnValueOnce(dateFormat);
 
       if (dateFormat === Format.default) {
         const mockGenericFormatter = { format: jest.fn(() => expectedValue) };

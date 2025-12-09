@@ -13,7 +13,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { track, TrackScreen } from "~/analytics";
-import { accountScreenSelector } from "~/reducers/accounts";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";
@@ -31,6 +30,7 @@ import { e2eBridgeClient } from "../../../e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { getFreshAccountAddress } from "~/utils/address";
 
@@ -55,7 +55,7 @@ const AnimationContainer = styled(Flex).attrs({
 
 export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { theme: themeKind } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
   const [error, setError] = useState<Error | null>(null);
 

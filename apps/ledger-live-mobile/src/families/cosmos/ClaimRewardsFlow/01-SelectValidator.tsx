@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList, ListRenderItem } from "react-native";
-import { useSelector } from "react-redux";
 import type {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -13,13 +12,13 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import Item from "../shared/Item";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
 import BigNumber from "bignumber.js";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosClaimRewardsFlowParamList,
@@ -28,7 +27,7 @@ type Props = StackNavigatorProps<
 
 function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);

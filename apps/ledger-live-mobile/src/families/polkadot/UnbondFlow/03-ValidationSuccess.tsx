@@ -1,17 +1,16 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   NativeStackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationSuccess>
@@ -19,7 +18,7 @@ type NavigationProps = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account is required");
   const onClose = useCallback(() => {
     navigation.getParent<BaseNavigation>().pop();

@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTronPowerLoading, getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { TronAccount, Transaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -20,6 +18,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type NavigatorProps = CompositeScreenProps<
   StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeValidationSuccess>,
@@ -28,7 +27,7 @@ type NavigatorProps = CompositeScreenProps<
 
 export default function ValidationSuccess({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route)).account as TronAccount;
+  const account = useAccountScreen(route).account as TronAccount;
   invariant(account && account.type === "Account", "account is required");
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);

@@ -10,7 +10,6 @@ import {
 import BigNumber from "bignumber.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import type {
   CosmosAccount,
   CosmosValidatorItem,
@@ -24,11 +23,11 @@ import { useTheme } from "@react-navigation/native";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosRedelegationFlowParamList } from "./types";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosRedelegationFlowParamList,
@@ -37,7 +36,7 @@ type Props = StackNavigatorProps<
 
 function RedelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);

@@ -2,7 +2,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -10,9 +9,8 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
-
 import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
@@ -53,7 +51,7 @@ function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
 
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account is missing");
 

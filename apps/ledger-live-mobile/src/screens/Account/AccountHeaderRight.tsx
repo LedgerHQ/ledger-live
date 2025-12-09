@@ -6,11 +6,11 @@ import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "~/const";
 import Touchable from "~/components/Touchable";
-import { accountScreenSelector, accountsSelector } from "~/reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-
 import { Flex } from "@ledgerhq/native-ui";
 import { WalletConnectAction } from "../WalletCentricAsset/WalletConnectHeader";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
@@ -24,7 +24,7 @@ export default function AccountHeaderRight() {
     useRoute<
       RouteProp<AccountsNavigatorParamList & BaseNavigatorStackParamList, ScreenName.Account>
     >();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const accounts = useSelector(accountsSelector);
 
   const [isOpened, setOpened] = useState(false);

@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
@@ -13,7 +12,6 @@ import type {
   TronAccount,
   Transaction as TronTransaction,
 } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -35,11 +33,12 @@ import {
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeAmount>;
 
 export default function UnfreezeAmount({ route }: Props) {
-  const { account: accountLike, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account: accountLike, parentAccount } = useAccountScreen(route);
 
   if (!accountLike) {
     return null;

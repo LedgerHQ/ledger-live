@@ -16,7 +16,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -28,7 +27,6 @@ import RetryButton from "~/components/RetryButton";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import InfoIcon from "~/icons/Info";
-import { accountScreenSelector } from "~/reducers/accounts";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
@@ -37,12 +35,13 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { urls } from "~/utils/urls";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 
 export default function DelegationSelectAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const { t } = useTranslation();
 
   invariant(account?.type === "Account", "must be account");

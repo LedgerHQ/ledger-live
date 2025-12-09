@@ -4,7 +4,6 @@ import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -21,7 +20,6 @@ import Circle from "~/components/Circle";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
@@ -34,6 +32,7 @@ import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -42,7 +41,7 @@ type Props = StackNavigatorProps<
 
 export default function UndelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account must be defined");
 
   const { cardanoResources } = account as CardanoAccount;

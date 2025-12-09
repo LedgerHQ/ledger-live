@@ -110,7 +110,7 @@
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-redux": "catalog:",
+    "react-redux": "^7.2.9 || ^9.0.0",
     "redux-actions": "2.6.5"
   },
   "peerDependenciesMeta": {
@@ -258,7 +258,6 @@
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
     "qs": "^6.10.1",
-    "react-redux": "catalog:",
     "reselect": "^4.1.5",
     "rlp": "^3.0.0",
     "rxjs": "catalog:",
@@ -290,7 +289,6 @@
     "@types/lodash": "^4.14.179",
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
-    "@types/react-redux": "^7.1.33",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "6.0.3",
@@ -313,6 +311,7 @@
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
+    "react-redux": "catalog:",
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
     "ts-jest": "^29.1.1",

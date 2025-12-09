@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
 import invariant from "invariant";
-import { useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 import { Loading } from "~/components/Loading";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<
@@ -25,7 +24,7 @@ type Props =
     >;
 
 export default function CosmosBridgeTransaction({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
 
   const mainAccount = getMainAccount(account) as CosmosAccount;

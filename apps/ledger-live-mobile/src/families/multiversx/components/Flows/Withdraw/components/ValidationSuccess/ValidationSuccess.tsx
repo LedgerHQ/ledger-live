@@ -1,20 +1,16 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
-
 import type { ValidationSuccessPropsType } from "./types";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-
 import styles from "./styles";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 /*
  * Handle the component declaration.
@@ -26,7 +22,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
   const { result } = params;
 
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const parent = useMemo<StackNavigatorNavigation<BaseNavigatorStackParamList>>(
     () => navigation.getParent(),

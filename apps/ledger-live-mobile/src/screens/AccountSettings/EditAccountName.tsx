@@ -16,7 +16,7 @@ import {
   setAccountName as setAccountNameStore,
 } from "@ledgerhq/live-wallet/store";
 import { walletSelector } from "~/reducers/wallet";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
@@ -31,7 +31,7 @@ type NavigationProps =
   | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
 const EditAccountName = ({ navigation, route }: NavigationProps) => {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const { colors } = useTheme();
   const { t } = useTranslation();

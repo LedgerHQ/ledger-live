@@ -1,24 +1,23 @@
 import invariant from "invariant";
 import React from "react";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearWithdrawingFlowParamList } from "./types";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingAmount>
 >;
 
 function WithdrawingAmount({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);

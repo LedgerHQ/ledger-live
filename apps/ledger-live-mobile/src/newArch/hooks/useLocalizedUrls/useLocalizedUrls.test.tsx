@@ -1,11 +1,19 @@
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import React from "react";
-import * as redux from "react-redux";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { useLocalizedUrl } from ".";
 import { renderHook } from "@testing-library/react-native";
 import settings from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+
+jest.mock("react-redux", () => ({
+  ...jest.requireActual("react-redux"),
+  useSelector: jest.fn(),
+}));
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
 const store = createStore(
   combineReducers({
     settings,
@@ -18,18 +26,19 @@ describe("useLocalizedUrl", () => {
     <Provider store={store}>{children}</Provider>
   );
 
-  // prepare mocking useSelector
-  const spy = jest.spyOn(redux, "useSelector");
-
   let localizedUrl: ReturnType<typeof useLocalizedUrl>;
 
   const setLocaleMockWithURL = (locale: string, url: string) => {
-    spy.mockReturnValue(locale);
+    mockedUseSelector.mockReturnValue(locale);
     const { result } = renderHook(() => useLocalizedUrl(url), {
       wrapper: HookWrapper,
     });
     localizedUrl = result.current;
   };
+
+  beforeEach(() => {
+    mockedUseSelector.mockReset();
+  });
 
   test("LEDGER", () => {
     setLocaleMockWithURL("fr", urls.resources.ledgerAcademy);

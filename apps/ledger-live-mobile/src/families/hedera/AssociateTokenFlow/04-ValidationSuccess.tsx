@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
 import type { HederaAssociateTokenFlowParamList } from "./types";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
@@ -15,7 +14,7 @@ import type {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -26,7 +25,7 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();

@@ -9,13 +9,11 @@ import {
   Keyboard,
   SafeAreaView,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -31,6 +29,7 @@ import { CeloRevokeFlowFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import { useAccountScreen } from "~/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
@@ -38,7 +37,7 @@ type Props = BaseComposite<
 
 export default function VoteAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   invariant(account?.type === "Account", "must be account");
 
