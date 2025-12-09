@@ -6,15 +6,15 @@ import {
   MarketPriceIndicator,
 } from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
-import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
-import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
+import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
+import { ListWrapper } from "../../../../components/ListWrapper";
+import SkeletonList from "../../../../components/SkeletonList";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import GenericEmptyList from "LLD/components/GenericEmptyList";
-import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
-import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
+import { balanceItem } from "../../../../components/Balance";
+import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
