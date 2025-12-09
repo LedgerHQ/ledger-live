@@ -1,12 +1,11 @@
 import { Flex, Icons, Text, Button as SystemButton } from "@ledgerhq/native-ui";
 import React, { PropsWithChildren } from "react";
-import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Pressable, StyleProp, View, ViewStyle, Image as NativeImage } from "react-native";
 import Video from "react-native-video";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 import { Size } from "~/contentCards/cards/vertical/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
-import FastImage from "react-native-fast-image";
 
 export const MediaStyles: {
   [key in Size]: object;
@@ -82,7 +81,7 @@ export const Media = ({ uri, size, filledImage, isMediaOnly, mediaType }: MediaP
     );
   } else {
     return (
-      <FastImage
+      <NativeImage
         source={{ uri }}
         style={{ ...MediaStyles[size], ...extraStylesCard, ...mediaOnlyStyle }}
         resizeMode={isBigOrMediumCardAndFilled ? "cover" : "contain"}

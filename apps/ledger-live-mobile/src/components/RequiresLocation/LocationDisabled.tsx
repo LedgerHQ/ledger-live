@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
+import { Linking, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
@@ -27,17 +27,12 @@ const LocationDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false 
   const { t } = useTranslation();
   const { isInDrawer } = useContext(IsInDrawerContext);
 
-  // Only handles android
   const openNativeLocationServicesSetting = () => {
-    LocationServicesDialogBox.checkLocationServicesIsEnabled({
-      enableHighAccuracy: false,
-      showDialog: false,
-      openLocationServices: true,
-    })
-      .then()
-      .catch(() => {
-        // Nothing to do: location is still disabled
-      });
+    if (Platform.OS === "android") {
+      Linking.sendIntent("android.settings.LOCATION_SOURCE_SETTINGS").catch(() =>
+        Linking.openSettings(),
+      );
+    }
   };
 
   let onButtonPress;
