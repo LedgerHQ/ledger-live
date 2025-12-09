@@ -13,7 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -117,7 +117,7 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
 
 const ModalIcon = () => {
   const { colors } = useTheme();
-  return <Icon name="user-plus" size={24} color={colors.live} />;
+  return <Icons.UserAdd size="M" color={colors.live} />;
 };
 
 type Props = StackNavigatorProps<

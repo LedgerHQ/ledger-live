@@ -16,7 +16,6 @@ const transformIncludePatterns = [
   "uuid",
   "react-native-ble-plx",
   "react-native-android-location-services-dialog-box",
-  "react-native-vector-icons",
   "react-native-qrcode-svg",
   "react-native-video",
   "ky",

@@ -7,14 +7,13 @@ import { NearValidatorItem, NearAccount } from "@ledgerhq/live-common/families/n
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
@@ -401,7 +400,7 @@ const ChangeValidator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeValidator} bg={colors.primary} size={26}>
-      <Icon size={13} name="edit-2" />
+      <Icons.PenEdit size="XS" />
     </Circle>
   );
 };
@@ -444,7 +443,7 @@ const Selectable = ({ name, testID }: { name: string; readOnly?: boolean; testID
       </Text>
 
       <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-        <Icon size={16} name="edit-2" color={colors.text} />
+        <Icons.PenEdit size="XS" color={colors.text} />
       </View>
     </View>
   );
