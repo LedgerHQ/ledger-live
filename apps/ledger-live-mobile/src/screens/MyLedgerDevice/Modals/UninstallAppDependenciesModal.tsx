@@ -2,16 +2,13 @@ import React, { memo, useCallback } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 import { App } from "@ledgerhq/types-live";
-
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import AppTree from "~/icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
-
 import QueuedDrawer from "~/components/QueuedDrawer";
 import CollapsibleList from "~/components/CollapsibleList";
 import ListTreeLine from "~/icons/ListTreeLine";
-
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Theme } from "../../../colors";
 import { AppWithDependents } from "../AppsInstallUninstallWithDependenciesContext";
@@ -62,7 +59,7 @@ const UninstallAppDependenciesModal = ({
   uninstallAppsWithDependents,
   onClose,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme() as DefaultTheme & Theme;
   const { app, dependents = [] } = appWithDependentsToUninstall || {};
   const { name } = app || {};
 
