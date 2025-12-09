@@ -93,7 +93,7 @@ jobs:
 
       - name: Pack for signing / Attestation
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: pnpm -r pack --pack-destination ./packed
+        run: pnpm -F "!./apps" -r pack --pack-destination ./packed
 
       - name: Attest
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
