@@ -33,7 +33,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 import { ThemeProvider } from "@ledgerhq/ldls-ui-react";
-import { DialogProvider } from "LLD/components/Dialog";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -89,12 +88,10 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                               <PostOnboardingProviderWrapped>
                                 <PlatformAppProviderWrapper>
                                   <DrawerProvider>
-                                    <DialogProvider>
-                                      <QueryClientProvider client={queryClient}>
-                                        <Default />
-                                        <ReactQueryDevtoolsProvider />
-                                      </QueryClientProvider>
-                                    </DialogProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                      <ReactQueryDevtoolsProvider />
+                                    </QueryClientProvider>
                                   </DrawerProvider>
                                 </PlatformAppProviderWrapper>
                               </PostOnboardingProviderWrapped>
