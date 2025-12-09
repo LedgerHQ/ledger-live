@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import {
@@ -7,22 +7,23 @@ import {
 } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
+
 const ShareAnalyticsButton = () => {
   const shareAnalytics = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
-  const onChangeShareAnalytics = useCallback(
-    (value: boolean) => {
-      dispatch(setShareAnalytics(value));
-      dispatch(setSharePersonalizedRecommendations(value));
-    },
-    [dispatch],
-  );
+
+  const toggleShareAnalytics = (value: boolean) => {
+    dispatch(setShareAnalytics(value));
+    dispatch(setSharePersonalizedRecommendations(value));
+    updateIdentify();
+  };
+
   return (
     <>
       <Track mandatory onUpdate event={shareAnalytics ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
       <Switch
         isChecked={shareAnalytics}
-        onChange={onChangeShareAnalytics}
+        onChange={toggleShareAnalytics}
         data-e2e="shareAnalytics_button"
       />
     </>
