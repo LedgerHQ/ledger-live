@@ -3,7 +3,7 @@ run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{
 
 on:
   schedule:
-    - cron: "0 5 * * 1-5"
+    - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
       test_filter:
@@ -121,7 +121,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || '0.25.9' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
       SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.5.0' }}
     runs-on: [ledger-live-4xlarge-e2e]
