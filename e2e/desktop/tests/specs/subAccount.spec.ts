@@ -247,7 +247,14 @@ for (const transaction of transactionE2E) {
         await app.speculos.signSendTransaction(transaction.tx);
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
-        await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
+        if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
+          await app.sendDrawer.addressValueIsVisible(
+            transaction.tx.accountToCredit.parentAccount?.address ||
+              transaction.tx.accountToCredit.address,
+          );
+        } else {
+          await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
+        }
       },
     );
   });
