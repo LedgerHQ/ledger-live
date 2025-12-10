@@ -10,7 +10,7 @@ import {
   ethereumCurrency,
   mockAssetsConfiguration,
 } from "../../../__mocks__/useSelectAssetFlow.mock";
-import AssetSelection from "../AssetSelection";
+import AssetSelector from ".";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
@@ -47,9 +47,9 @@ const defaultStore = {
 
 const store = createStore(() => defaultStore);
 
-const meta: Meta<typeof AssetSelection> = {
+const meta: Meta<typeof AssetSelector> = {
   title: "ModularDrawer/AssetSelection",
-  component: AssetSelection,
+  component: AssetSelector,
   args: {
     assetsToDisplay,
     assetsConfiguration: {},
@@ -69,7 +69,7 @@ const meta: Meta<typeof AssetSelection> = {
 
 export default meta;
 
-type Story = StoryObj<typeof AssetSelection>;
+type Story = StoryObj<typeof AssetSelector>;
 
 export const Default: Story = {};
 
