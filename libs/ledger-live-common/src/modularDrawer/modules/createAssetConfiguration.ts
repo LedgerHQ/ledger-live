@@ -57,6 +57,8 @@ const createAssetConfigurationHook: CreateAssetConfigurationHook =
     >;
 
     return (assets: CryptoOrTokenCurrency[]) => {
+      if (!assets || assets.length === 0) return [];
+
       const composedHook = composeHooks<CryptoOrTokenCurrency, AssetType>(...hooks);
       return composedHook(assets);
     };

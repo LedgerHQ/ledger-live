@@ -247,4 +247,16 @@ describe("createAssetConfiguration", () => {
       percent: 5.25,
     });
   });
+
+  it("should return an empty array when assets is an empty array", () => {
+    const {
+      result: { current },
+    } = renderHook(() =>
+      createAssetConfigurationHook(assetConfigurationDeps)({
+        assetsConfiguration: { rightElement: "balance" },
+      })([]),
+    );
+
+    expect(current).toEqual([]);
+  });
 });

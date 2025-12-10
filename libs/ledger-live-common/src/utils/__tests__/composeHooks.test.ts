@@ -43,4 +43,15 @@ describe("composeHooks", () => {
 
     expect(result).toEqual(input);
   });
+
+  it("should return an empty array when items is an empty array", () => {
+    const hook1 = (items: Array<{ id: number }>) =>
+      items.map(item => ({ id: item.id, extra: item.id * 2 }));
+
+    const composed = composeHooks(hook1);
+
+    const result = composed([]);
+
+    expect(result).toEqual([]);
+  });
 });

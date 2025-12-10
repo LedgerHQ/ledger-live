@@ -12,6 +12,8 @@ export function composeHooks<T, U>(
   ...hooks: Array<(items: T[]) => U[] | undefined>
 ): (items: T[]) => (T & U)[] {
   return (items: T[]): (T & U)[] => {
+    if (!items || items.length === 0) return [];
+
     return hooks.reduce<(T & U)[]>(
       (acc, hook) => {
         const result = hook?.(acc as T[]) ?? [];
