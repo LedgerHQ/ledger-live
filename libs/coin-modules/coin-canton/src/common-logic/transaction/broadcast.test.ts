@@ -1,20 +1,22 @@
-import { submit } from "../../network/gateway";
 import * as coinConfigModule from "../../config";
+import { submit } from "../../network/gateway";
+import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
 import { broadcast } from "./broadcast";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("../../network/gateway", () => ({
-  submit: jest.fn(),
-}));
+jest.mock("../../network/gateway", () => ({ submit: jest.fn() }));
 
-const mockSerialized = JSON.stringify({
-  serialized: "serialized-tx",
-  signature: "signature__PARTY__alice:123",
+const mockedSubmit = jest.mocked(submit);
+const mockCurrency = createMockCantonCurrency();
+const createMockConfig = (useGateway: boolean): coinConfigModule.CantonCoinConfig => ({
+  ...createMockCoinConfigValue(),
+  useGateway,
 });
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockSerialized = JSON.stringify({
+  serialized: "serialized-data",
+  signature:
+    "signature__PARTY__alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+});
 
 describe("broadcast", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");
@@ -24,24 +26,25 @@ describe("broadcast", () => {
   });
 
   it("should broadcast", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      useGateway: true,
-    } as any);
+    mockGetCoinConfig.mockReturnValue(createMockConfig(true));
 
-    (submit as jest.Mock).mockResolvedValue({ update_id: "my-update-id" });
+    mockedSubmit.mockResolvedValue({ submission_id: "test-id", update_id: "test-update-id" });
 
     const result = await broadcast(mockCurrency, mockSerialized);
 
-    expect(submit).toHaveBeenCalledWith(mockCurrency, "alice:123", "serialized-tx", "signature");
-    expect(result).toEqual("my-update-id");
+    expect(mockedSubmit).toHaveBeenCalledWith(
+      mockCurrency,
+      "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+      "serialized-data",
+      "signature",
+    );
+    expect(result).toEqual("test-update-id");
   });
 
   it("should throw an error when useGateway is false (not implemented with node)", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      useGateway: false,
-    } as any);
+    mockGetCoinConfig.mockReturnValue(createMockConfig(false));
 
     await expect(broadcast(mockCurrency, mockSerialized)).rejects.toThrow("Not implemented");
-    expect(submit).not.toHaveBeenCalled();
+    expect(mockedSubmit).not.toHaveBeenCalled();
   });
 });

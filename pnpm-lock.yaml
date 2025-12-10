@@ -2729,6 +2729,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-canton':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-canton
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -6490,6 +6493,9 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
+      protobufjs:
+        specifier: 7.5.4
+        version: 7.5.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -6509,6 +6515,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      protobufjs-cli:
+        specifier: 1.1.2
+        version: 1.1.2(protobufjs@7.5.4)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -11987,10 +11996,6 @@ packages:
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/template@7.24.0':
-    resolution: {integrity: sha512-Bkf2q8lMB0AFpX0NFEqSbx1OkTHf0f+0j82mkw+ZpzBnkk7e9Ql0891vlfgi+kHwOk8tQjiQHpqh4LaSa0fKEA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.0':
@@ -39920,9 +39925,9 @@ snapshots:
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.3)
       '@babel/helpers': 7.24.1
-      '@babel/parser': 7.24.1
-      '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.1
+      '@babel/parser': 7.28.5
+      '@babel/template': 7.27.2
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.24.0
       convert-source-map: 2.0.0
       debug: 4.3.4
@@ -41629,12 +41634,6 @@ snapshots:
   '@babel/runtime@7.27.1': {}
 
   '@babel/runtime@7.28.4': {}
-
-  '@babel/template@7.24.0':
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
 
   '@babel/template@7.27.0':
     dependencies:
@@ -59061,7 +59060,7 @@ snapshots:
     dependencies:
       clone-response: 1.0.3
       get-stream: 5.2.0
-      http-cache-semantics: 4.1.1
+      http-cache-semantics: 4.2.0
       keyv: 4.5.4
       lowercase-keys: 2.0.0
       normalize-url: 6.1.0
@@ -73687,7 +73686,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 20.12.12
-      long: 5.2.3
+      long: 5.3.1
 
   protocols@2.0.1: {}
 

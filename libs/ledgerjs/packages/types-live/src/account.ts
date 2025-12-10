@@ -234,3 +234,12 @@ export function getCurrencyForAccount(account: AccountLike): CryptoOrTokenCurren
       return account.token;
   }
 }
+
+export enum AccountOnboardStatus {
+  INIT = "INIT",
+  PREPARE = "PREPARE",
+  SIGN = "SIGN",
+  SUBMIT = "SUBMIT",
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR",
+}

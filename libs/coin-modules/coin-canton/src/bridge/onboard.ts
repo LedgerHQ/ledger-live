@@ -1,34 +1,33 @@
-import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { log } from "@ledgerhq/logs";
-import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-
-import {
-  getNetworkType,
-  prepareOnboarding,
-  submitOnboarding,
-  getPartyByPubKey,
-  prepareTapRequest,
-  submitTapRequest,
-  preparePreApprovalTransaction,
-  submitPreApprovalTransaction,
-  getTransferPreApproval,
-  clearIsTopologyChangeRequiredCache,
-} from "../network/gateway";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { signTransaction } from "../common-logic/transaction/sign";
 import {
-  OnboardStatus,
-  AuthorizeStatus,
-  CantonOnboardProgress,
-  CantonOnboardResult,
-  CantonAuthorizeProgress,
-  CantonAuthorizeResult,
-} from "../types/onboard";
+  clearIsTopologyChangeRequiredCache,
+  getNetworkType,
+  getPartyByPubKey,
+  getTransferPreApproval,
+  prepareOnboarding,
+  preparePreApprovalTransaction,
+  prepareTapRequest,
+  submitOnboarding,
+  submitPreApprovalTransaction,
+  submitTapRequest,
+} from "../network/gateway";
 import resolver from "../signer";
 import type { CantonSigner } from "../types";
+import {
+  AuthorizeStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
+  CantonOnboardProgress,
+  CantonOnboardResult,
+  AccountOnboardStatus,
+} from "../types/onboard";
 
 export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: string) => {
   try {
@@ -78,7 +77,7 @@ export const buildOnboardAccount =
   ): Observable<CantonOnboardProgress | CantonOnboardResult> =>
     new Observable(o => {
       async function main() {
-        o.next({ status: OnboardStatus.INIT });
+        o.next({ status: AccountOnboardStatus.INIT });
 
         const getAddress = resolver(signerContext);
         const { publicKey } = await getAddress(deviceId, {
@@ -87,7 +86,7 @@ export const buildOnboardAccount =
           derivationMode: account.derivationMode,
         });
 
-        o.next({ status: OnboardStatus.PREPARE });
+        o.next({ status: AccountOnboardStatus.PREPARE });
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
 
@@ -102,13 +101,13 @@ export const buildOnboardAccount =
         const preparedTransaction = await prepareOnboarding(currency, publicKey);
         partyId = preparedTransaction.party_id;
 
-        o.next({ status: OnboardStatus.SIGN });
+        o.next({ status: AccountOnboardStatus.SIGN });
 
         const signature = await signerContext(deviceId, async signer => {
           return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
         });
 
-        o.next({ status: OnboardStatus.SUBMIT });
+        o.next({ status: AccountOnboardStatus.SUBMIT });
 
         await submitOnboarding(currency, publicKey, preparedTransaction, signature);
 

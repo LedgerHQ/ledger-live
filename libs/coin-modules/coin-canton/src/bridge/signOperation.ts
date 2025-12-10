@@ -1,13 +1,13 @@
-import { Observable } from "rxjs";
-import BigNumber from "bignumber.js";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
 import { combine, craftTransaction } from "../common-logic";
 import { signTransaction } from "../common-logic/transaction/sign";
-import { Transaction, CantonSigner } from "../types";
+import { CantonSigner, Transaction } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -23,6 +23,7 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
+          let transactionHash = "";
           const signature = await signerContext(deviceId, async signer => {
             const { id, freshAddressPath: derivationPath, xpub } = account;
             const address = xpub ?? decodeAccountId(id).xpubOrAddress;
@@ -54,13 +55,18 @@ export const buildSignOperation =
               params,
             );
 
-            const { signature } = await signTransaction(signer, derivationPath, {
-              json: nativeTransaction,
-              serialized: serializedTransaction,
-              hash: hash,
-            });
+            transactionHash = hash || "";
 
-            return combine(serializedTransaction, `${signature}__PARTY__${address}`);
+            const signatureResult = await signTransaction(
+              signer,
+              derivationPath,
+              nativeTransaction,
+            );
+
+            return combine(
+              serializedTransaction,
+              `${signatureResult.signature}__PARTY__${address}`,
+            );
           });
 
           o.next({
@@ -68,7 +74,7 @@ export const buildSignOperation =
           });
 
           // We create an optimistic operation here, the framework will then replace this transaction with the one returned by the indexer
-          const hash = "";
+          const hash = transactionHash;
           const operation: Operation = {
             id: encodeOperationId(account.id, hash, "OUT"),
             hash,

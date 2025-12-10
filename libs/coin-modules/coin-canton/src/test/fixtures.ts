@@ -1,8 +1,48 @@
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { createEmptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
+import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import coinConfig, { type CantonCoinConfig } from "../config";
+import type { CantonAccount, Transaction } from "../types";
+import type {
+  InstrumentBalance,
+  OnboardingPrepareResponse,
+  PrepareTransferResponse,
+  TransferProposal,
+} from "../types/gateway";
+import type {
+  CantonPreparedTransaction,
+  CantonSignature,
+  CantonSigner,
+  CantonUntypedVersionedMessage,
+} from "../types/signer";
+import {
+  type CantonTestKeyPair,
+  createMockSigner as createCantonMockSigner,
+  generateMockKeyPair,
+} from "./cantonTestUtils";
+
+const DEFAULT_VALUES = {
+  INSTRUMENT: {
+    ADMIN_ID: "AmuletAdmin",
+    ID: "Amulet",
+  },
+  CONFIG: {
+    GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
+    NETWORK_TYPE: "devnet",
+  },
+} as const;
+
+export function createFactory<T>(defaults: T) {
+  return (overrides: Partial<T> = {}): T => ({
+    ...defaults,
+    ...overrides,
+  });
+}
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {
@@ -21,20 +61,38 @@ export const createMockCantonCurrency = (): CryptoCurrency => {
   return mockCurrency;
 };
 
-export const createMockAccount = (overrides: Partial<Account> = {}): Account => {
+export const createMockCantonAccount = (
+  overrides: Partial<Account | CantonAccount> = {},
+  partialCantonResources?: Partial<CantonAccount["cantonResources"]>,
+) => {
   const currency = createMockCantonCurrency();
   const derivationMode = "canton" as const;
-  const scheme = getDerivationScheme({ derivationMode, currency });
-  const freshAddressPath = runDerivationScheme(scheme, currency, { account: 0 });
+  const freshAddressPath = "44'/6767'/0'/0'/0'";
+  const freshAddress =
+    "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000";
 
-  return {
-    id: "js:2:canton_network:test-address:canton",
+  const cantonResources = {
+    publicKey: "",
+    instrumentUtxoCounts: {},
+    pendingTransferProposals: [],
+  };
+
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: freshAddress,
+    derivationMode,
+  });
+
+  const baseAccount = {
+    id: accountId,
     type: "Account",
     used: true,
     currency,
     derivationMode,
     index: 0,
-    freshAddress: "test_address",
+    freshAddress,
     freshAddressPath,
     creationDate: new Date(),
     lastSyncDate: new Date(),
@@ -48,6 +106,189 @@ export const createMockAccount = (overrides: Partial<Account> = {}): Account => 
     balanceHistoryCache: createEmptyHistoryCache(),
     swapHistory: [],
     subAccounts: [],
+    cantonResources,
     ...overrides,
   };
+
+  const cantonResourcesFromOverrides = (overrides as Partial<CantonAccount>).cantonResources;
+  if (cantonResourcesFromOverrides || partialCantonResources) {
+    return {
+      ...baseAccount,
+      cantonResources: {
+        ...cantonResourcesFromOverrides,
+        ...partialCantonResources,
+      },
+    } as CantonAccount;
+  }
+
+  return baseAccount as CantonAccount;
 };
+
+class MockCantonSigner implements CantonSigner {
+  private keyPair: CantonTestKeyPair;
+  private mockSigner: ReturnType<typeof createCantonMockSigner>;
+
+  constructor(keyPair?: CantonTestKeyPair) {
+    this.keyPair = keyPair || generateMockKeyPair();
+    this.mockSigner = createCantonMockSigner(this.keyPair);
+  }
+
+  async getAddress(path: string, _display?: boolean) {
+    const address = await this.mockSigner.getAddress(path);
+    return {
+      ...address,
+      path,
+    };
+  }
+
+  async signTransaction(
+    path: string,
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
+  ): Promise<CantonSignature> {
+    const signatureResult = await this.mockSigner.signTransaction(path, data);
+
+    if (typeof data === "object" && "transactions" in data && typeof data.challenge === "string") {
+      const challengeHash = data.challenge.replace(/^0x/, "");
+      return {
+        signature: signatureResult.signature,
+        applicationSignature: this.keyPair.sign(challengeHash),
+      };
+    }
+
+    return { signature: signatureResult.signature };
+  }
+
+  getKeyPair(): CantonTestKeyPair {
+    return this.keyPair;
+  }
+}
+
+export const createMockCantonSigner = (keyPair?: CantonTestKeyPair): MockCantonSigner => {
+  return new MockCantonSigner(keyPair);
+};
+
+export const createMockSignerContext = (
+  signer?: CantonSigner,
+  keyPair?: CantonTestKeyPair,
+): SignerContext<CantonSigner> => {
+  const mockSigner = signer || createMockCantonSigner(keyPair);
+  const mockFn = jest.fn(
+    async (_deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
+      return callback(mockSigner);
+    },
+  );
+  return mockFn as SignerContext<CantonSigner>;
+};
+
+export const createMockCantonSignature = createFactory<CantonSignature>({
+  signature: "test-signature",
+});
+
+export const createMockTransaction = createFactory<Transaction>({
+  family: "canton",
+  amount: new BigNumber(100),
+  recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+  fee: new BigNumber(10),
+  tokenId: "",
+  memo: "",
+});
+
+export const createMockPrepareTransferResponse = createFactory<PrepareTransferResponse>({
+  hash: "test-hash",
+  json: prepareTransferMock.json,
+  serialized: "serialized-transaction",
+  step: { type: "single-step" },
+});
+
+const createMockOnboardingTransactions = (
+  overrides?: Partial<OnboardingPrepareResponse["transactions"]>,
+): OnboardingPrepareResponse["transactions"] => ({
+  namespace_transaction: {
+    serialized: "namespace-transaction-data",
+    transaction: {},
+    hash: "namespace-hash",
+  },
+  party_to_key_transaction: {
+    serialized: "party-to-key-transaction-data",
+    transaction: {},
+    hash: "party-to-key-hash",
+  },
+  party_to_participant_transaction: {
+    serialized: "party-to-participant-transaction-data",
+    transaction: {},
+    hash: "party-to-participant-hash",
+  },
+  combined_hash: "combined-hash",
+  ...overrides,
+});
+
+export const createMockOnboardingPrepareResponse = createFactory<OnboardingPrepareResponse>({
+  party_id: "test-party-id",
+  party_name: "test-party-name",
+  public_key_fingerprint: "test-fingerprint",
+  transactions: createMockOnboardingTransactions(),
+  challenge_nonce: "1234567890abcdef",
+  challenge_deadline: 1735689599,
+});
+
+const createMockInstrumentBalance = createFactory<InstrumentBalance>({
+  admin_id: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+  instrument_id: DEFAULT_VALUES.INSTRUMENT.ID,
+  amount: "1000",
+  locked: false,
+  utxo_count: 1,
+});
+
+export const createMockInstrumentBalances = (
+  count: number = 1,
+  overrides: Partial<InstrumentBalance> | Partial<InstrumentBalance>[] = {},
+): InstrumentBalance[] => {
+  const overridesArray = Array.isArray(overrides) ? overrides : [overrides];
+  return Array.from({ length: count }, (_, index) =>
+    createMockInstrumentBalance(overridesArray[index] || overridesArray[0] || {}),
+  );
+};
+
+export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> = {}): void => {
+  coinConfig.setCoinConfig(
+    () =>
+      ({
+        gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
+        useGateway: true,
+        networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
+        nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+        status: {
+          type: "active",
+        },
+        ...overrides,
+      }) as unknown as ReturnType<Parameters<typeof coinConfig.setCoinConfig>[0]>,
+  );
+};
+
+export const createMockCoinConfigValue = createFactory({
+  gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
+  useGateway: true,
+  networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
+  nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+  minReserve: 100,
+  status: { type: "active" as const },
+});
+
+export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
+  const configValue = createMockCoinConfigValue();
+  return jest.fn(() => configValue);
+};
+
+export const createMockPendingTransferProposal = createFactory<TransferProposal>({
+  contract_id: "test-contract-id",
+  sender: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+  receiver: "bob::122014d3f17b82700d15bef451bcb1d112136eb82bb3f4fd2a4649f95a9c4632b000",
+  instrument_admin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+  instrument_id: DEFAULT_VALUES.INSTRUMENT.ID,
+  amount: "100",
+  memo: "test memo",
+  expires_at_micros: Date.now() * 1000 + 86400000000, // 1 day from now
+  update_id: "test-update-id",
+});
+
+export { generateMockKeyPair, type CantonTestKeyPair };

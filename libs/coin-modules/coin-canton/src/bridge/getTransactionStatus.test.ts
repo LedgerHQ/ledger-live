@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -10,8 +11,12 @@ import {
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
-import { createMockAccount } from "../test/fixtures";
-import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
+import {
+  createMockCantonAccount,
+  createMockCoinConfigValue,
+  createMockTransaction,
+} from "../test/fixtures";
+import { TooManyUtxosCritical, TooManyUtxosWarning } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import {
   getTransactionStatus,
@@ -25,42 +30,26 @@ const mockCoinConfig = jest.mocked(coinConfig);
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
 describe("getTransactionStatus", () => {
-  const mockAccount: CantonAccount = {
-    ...createMockAccount({
+  const mockAccount = createMockCantonAccount(
+    {
       balance: new BigNumber(1000),
       spendableBalance: new BigNumber(1000),
-      freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",
-      xpub: "test-party-id",
-    }),
-    cantonResources: {
-      pendingTransferProposals: [],
-      publicKey: "test-public-key",
+    },
+    {
       instrumentUtxoCounts: {
         Amulet: 5,
       },
     },
-  };
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCoinConfig.getCoinConfig.mockReturnValue({
-      minReserve: 100,
-      networkType: "mainnet",
-      status: { type: "active" },
-      nativeInstrumentId: "Amulet",
-    });
-    mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
+    mockCoinConfig.getCoinConfig.mockReturnValue(createMockCoinConfigValue());
   });
 
   describe("fee validation", () => {
     it("should return FeeNotLoaded error when fee is null", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: null,
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ fee: null });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -69,13 +58,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should return FeeNotLoaded error when fee is undefined", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: undefined,
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ fee: undefined });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -84,13 +67,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should add FeeTooHigh warning when fee is more than 10 times the amount", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(1500),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ fee: new BigNumber(1500) });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -99,13 +76,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should not add FeeTooHigh warning when fee is reasonable", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -116,15 +87,11 @@ describe("getTransactionStatus", () => {
 
   describe("balance validation", () => {
     it("should return NotEnoughSpendableBalance error when total spent exceeds balance minus reserve", async () => {
-      const transaction: Transaction = {
-        family: "canton",
+      const transaction = createMockTransaction({
         amount: mockAccount.balance
-          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve))
+          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve ?? 100))
           .plus(1),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -132,13 +99,9 @@ describe("getTransactionStatus", () => {
     });
 
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve).minus(1),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({
+        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve ?? 100).minus(1),
+      });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -146,13 +109,9 @@ describe("getTransactionStatus", () => {
     });
 
     it("should pass balance validation when transaction is within limits", async () => {
-      const transaction: Transaction = {
-        family: "canton",
+      const transaction = createMockTransaction({
         amount: mockAccount.balance.multipliedBy(0.5),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -162,13 +121,7 @@ describe("getTransactionStatus", () => {
 
   describe("recipient validation", () => {
     it("should return RecipientRequired error when recipient is missing", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ recipient: "" });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -176,13 +129,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should not return error when sending to self", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: mockAccount.freshAddress,
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ recipient: mockAccount.freshAddress });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -190,13 +137,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should return InvalidAddress error when recipient is invalid", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "invalid-address",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({ recipient: "invalid-address" });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -204,13 +145,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should pass recipient validation when recipient is valid", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::22222222222222222222222222222222222222222222222222222222222222222222",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({});
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -220,20 +155,12 @@ describe("getTransactionStatus", () => {
 
   describe("amount validation", () => {
     it("should return AmountRequired error when amount is zero", async () => {
-      mockCoinConfig.getCoinConfig.mockReturnValue({
-        minReserve: 0,
-        networkType: "mainnet",
-        status: { type: "active" },
-        nativeInstrumentId: "Amulet",
-      });
+      mockCoinConfig.getCoinConfig.mockReturnValue(createMockCoinConfigValue({ minReserve: 0 }));
 
-      const transaction: Transaction = {
-        family: "canton",
+      const transaction = createMockTransaction({
         amount: new BigNumber(0),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+      });
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -241,13 +168,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should not return AmountRequired error when amount is positive", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -257,13 +178,7 @@ describe("getTransactionStatus", () => {
 
   describe("return values", () => {
     it("should return correct estimatedFees, amount, and totalSpent", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -273,13 +188,7 @@ describe("getTransactionStatus", () => {
     });
 
     it("should return empty errors and warnings when transaction is valid", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
@@ -299,14 +208,7 @@ describe("getTransactionStatus", () => {
           },
         },
       };
-
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(50),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "Amulet",
-      };
+      const transaction = createMockTransaction({ tokenId: "Amulet" });
 
       const result = await getTransactionStatus(accountWithTooManyUtxos, transaction);
 
@@ -325,13 +227,7 @@ describe("getTransactionStatus", () => {
         },
       };
 
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(50),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "Amulet",
-      };
+      const transaction = createMockTransaction({ tokenId: "Amulet" });
 
       const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
@@ -353,13 +249,7 @@ describe("getTransactionStatus", () => {
         },
       };
 
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(50),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "Amulet", // Use the same tokenId as in cantonResources
-      };
+      const transaction = createMockTransaction({ tokenId: "Amulet" });
 
       const result = await getTransactionStatus(accountWithFewUtxos, transaction);
 
@@ -377,13 +267,10 @@ describe("getTransactionStatus", () => {
         },
       };
 
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(50),
+      const transaction = createMockTransaction({
         recipient: "abandon::ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-        fee: new BigNumber(10),
         tokenId: "Amulet",
-      };
+      });
 
       const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
@@ -395,81 +282,57 @@ describe("getTransactionStatus", () => {
   describe("topology validation", () => {
     it("should return TopologyChangeError when isTopologyChangeRequiredCached returns true", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(true);
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+      });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached returns false", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction({
+        recipient: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+      });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached throws an error", async () => {
       // GIVEN
-      const accountWithPartyId: CantonAccount = {
-        ...mockAccount,
-        xpub: "test-party-id",
-      };
       mockedGateway.isTopologyChangeRequiredCached.mockRejectedValue(new Error("Network error"));
-
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(100),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10),
-        tokenId: "",
-      };
+      const transaction = createMockTransaction();
+      const account = createMockCantonAccount({}, { publicKey: "test-public-key" });
 
       // WHEN
-      const result = await getTransactionStatus(accountWithPartyId, transaction);
+      const result = await getTransactionStatus(account, transaction);
 
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        account.currency,
         "test-public-key",
       );
     });

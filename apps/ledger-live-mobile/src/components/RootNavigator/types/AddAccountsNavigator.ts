@@ -2,6 +2,7 @@ import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-crypt
 import type { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
+import { AccountsOnboardParamList } from "LLM/features/Accounts/screens/AccountsOnboard/types";
 
 export type AddAccountsNavigatorParamList = {
   [ScreenName.AddAccountsSelectDevice]: {
@@ -33,4 +34,5 @@ export type AddAccountsNavigatorParamList = {
     token: TokenCurrency;
     analyticsPropertyFlow?: string;
   };
+  [ScreenName.AccountsOnboard]: AccountsOnboardParamList[ScreenName.AccountsOnboard];
 };

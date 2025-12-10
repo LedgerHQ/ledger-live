@@ -162,7 +162,7 @@
                                   "type": "string",
                                   "id": 5
                                 },
-                                "submissionTime": {
+                                "preparationTime": {
                                   "type": "uint64",
                                   "id": 6
                                 },
@@ -504,6 +504,71 @@
                                             }
                                           }
                                         },
+                                        "ExerciseDisplay": {
+                                          "fields": {
+                                            "lfVersion": {
+                                              "type": "string",
+                                              "id": 1
+                                            },
+                                            "contractId": {
+                                              "type": "string",
+                                              "id": 2
+                                            },
+                                            "packageName": {
+                                              "type": "string",
+                                              "id": 3
+                                            },
+                                            "templateId": {
+                                              "type": "com.daml.ledger.api.v2.cb.Identifier",
+                                              "id": 4
+                                            },
+                                            "signatories": {
+                                              "rule": "repeated",
+                                              "type": "string",
+                                              "id": 5
+                                            },
+                                            "stakeholders": {
+                                              "rule": "repeated",
+                                              "type": "string",
+                                              "id": 6
+                                            },
+                                            "actingParties": {
+                                              "rule": "repeated",
+                                              "type": "string",
+                                              "id": 7
+                                            },
+                                            "interfaceId": {
+                                              "type": "com.daml.ledger.api.v2.cb.Identifier",
+                                              "id": 8
+                                            },
+                                            "choiceId": {
+                                              "type": "string",
+                                              "id": 9
+                                            },
+                                            "chosenValue": {
+                                              "type": "com.daml.ledger.api.v2.cb.Value",
+                                              "id": 10
+                                            },
+                                            "consuming": {
+                                              "type": "bool",
+                                              "id": 11
+                                            },
+                                            "children": {
+                                              "rule": "repeated",
+                                              "type": "string",
+                                              "id": 12
+                                            },
+                                            "exerciseResult": {
+                                              "type": "com.daml.ledger.api.v2.cb.Value",
+                                              "id": 13
+                                            },
+                                            "choiceObservers": {
+                                              "rule": "repeated",
+                                              "type": "string",
+                                              "id": 14
+                                            }
+                                          }
+                                        },
                                         "Exercise": {
                                           "fields": {
                                             "lfVersion": {
@@ -637,40 +702,6 @@
                                             }
                                           }
                                         },
-                                        "CreateNoArg": {
-                                          "fields": {
-                                            "lfVersion": {
-                                              "type": "string",
-                                              "id": 1
-                                            },
-                                            "contractId": {
-                                              "type": "string",
-                                              "id": 2
-                                            },
-                                            "packageName": {
-                                              "type": "string",
-                                              "id": 3
-                                            },
-                                            "templateId": {
-                                              "type": "com.daml.ledger.api.v2.cb.Identifier",
-                                              "id": 4
-                                            },
-                                            "argument": {
-                                              "type": "com.daml.ledger.api.v2.cb.Value",
-                                              "id": 5
-                                            },
-                                            "signatories": {
-                                              "rule": "repeated",
-                                              "type": "string",
-                                              "id": 6
-                                            },
-                                            "stakeholders": {
-                                              "rule": "repeated",
-                                              "type": "string",
-                                              "id": 7
-                                            }
-                                          }
-                                        },
                                         "Rollback": {
                                           "fields": {
                                             "children": {
@@ -731,7 +762,7 @@
                                               "id": 2
                                             },
                                             "exercise": {
-                                              "type": "Exercise",
+                                              "type": "ExerciseDisplay",
                                               "id": 3
                                             },
                                             "rollback": {

@@ -1,30 +1,18 @@
-import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import {
-  getDerivationModesForCurrency,
-  getDerivationScheme,
-  runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Account, Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
-import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
+import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
 import { CantonAccount } from "../types";
 import { makeGetAccountShape } from "./sync";
 
-const TEST_ADDRESS =
-  "b6400f93ea1c74aea86be39b0ccc846fc5de01f12b2ad0d7c31848d6fb6eb6d9::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
+const TEST_ADDRESS = "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000";
 const currency = getCryptoCurrencyById("canton_network");
 const derivationMode = getDerivationModesForCurrency(currency)[0];
-const derivationPath = runDerivationScheme(
-  getDerivationScheme({ derivationMode, currency }),
-  currency,
-  {
-    account: 0,
-  },
-);
-const xpub = TEST_ADDRESS;
+const derivationPath = "44'/6767'/0'/0'/0'";
 const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
   address: TEST_ADDRESS,
   currency,
@@ -32,12 +20,11 @@ const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
   derivationPath,
   index: 0,
   initialAccount: {
-    xpub,
+    xpub: TEST_ADDRESS,
   } as CantonAccount,
 };
 const TIMEOUT = 30000;
 
-// Mock signer context for testing
 const keyPair = generateMockKeyPair();
 const mockSigner = createMockSigner(keyPair);
 const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
@@ -123,7 +110,7 @@ describe.skip("sync (devnet)", () => {
           {
             ...ACCOUNT_SHAPE_INFO,
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialAccount: { xpub, operations } as Account,
+            initialAccount: { xpub: TEST_ADDRESS, operations } as Account,
           },
           { paginationConfig: {} },
         );
@@ -185,14 +172,12 @@ describe.skip("sync (devnet)", () => {
           extra: { uid: "uid-1" },
         };
 
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const initialAccount = { xpub, operations: [operation] } as Account;
-
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(
           {
             ...ACCOUNT_SHAPE_INFO,
-            initialAccount,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            initialAccountL: { xpub: TEST_ADDRESS, operations: [operation] } as Account,
           },
           { paginationConfig: {} },
         );

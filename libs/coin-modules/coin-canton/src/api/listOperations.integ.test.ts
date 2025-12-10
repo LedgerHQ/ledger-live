@@ -1,28 +1,21 @@
 import { AlpacaApi } from "@ledgerhq/coin-framework/lib/api/types";
+import { createMockCoinConfigValue } from "../test/fixtures";
 import { createApi } from ".";
 
 let api: AlpacaApi;
 
 describe.skip("devnet", () => {
   beforeAll(() => {
-    api = createApi({
-      nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",
-      networkType: "devnet",
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-    });
+    api = createApi(createMockCoinConfigValue());
   });
 
   describe("listOperations", () => {
-    it("should return ops", async () => {
-      const ops = await api.listOperations(
-        "party-4f2e1485107adf5f::122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
-        {
-          minHeight: 0,
-        },
+    it("should return operations", async () => {
+      const operations = await api.listOperations(
+        "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
+        { minHeight: 0 },
       );
-      expect(ops.length).toBeGreaterThan(0);
+      expect(operations.length).toBeGreaterThan(0);
     });
   });
 });

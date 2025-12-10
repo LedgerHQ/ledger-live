@@ -15,6 +15,7 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
 import AddAccountsWarning from "./screens/AddAccountWarning";
 import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
+import AccountsOnboard from "./screens/AccountsOnboard";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import {
   BaseComposite,
@@ -145,6 +146,14 @@ export default function Navigator() {
         }}
         initialParams={{
           onCloseNavigation: onClose,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AccountsOnboard}
+        component={AccountsOnboard}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
         }}
       />
     </Stack.Navigator>
