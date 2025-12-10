@@ -12,7 +12,7 @@ permissions:
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ledger-live-4xlarge-ha
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -93,7 +93,7 @@ jobs:
 
       - name: Pack for signing / Attestation
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: pnpm -F "!./apps" -r pack --pack-destination ./packed
+        run: pnpm -F "./libs" -r pack --pack-destination ./packed
 
       - name: Attest
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
