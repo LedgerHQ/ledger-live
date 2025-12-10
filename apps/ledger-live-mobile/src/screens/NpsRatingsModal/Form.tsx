@@ -147,7 +147,6 @@ const Form = ({ setStep, equipmentId }: Props) => {
           injectedJavaScript={injectedJavascript}
           onMessage={onMessage}
         />
-        <Text>{formUrl}</Text>
       </Flex>
     </Flex>
   );
