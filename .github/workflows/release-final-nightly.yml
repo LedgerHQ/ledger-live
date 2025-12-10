@@ -86,6 +86,13 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
           npmrc-location: "$HOME/.npmrc"
 
+      - name: publish nightly
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        continue-on-error: true
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+
       - name: Pack for signing / Attestation
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
         run: pnpm -F "./libs/**" -r pack --pack-destination ./packed
@@ -95,11 +102,6 @@ jobs:
         uses: LedgerHQ/actions-security/actions/attest@actions/attest-1
         with:
           subject-path: ./packed
-
-      - name: publish nightly
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        continue-on-error: true
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
 
       #NPM publishing - to be removed when all is migrated
 
