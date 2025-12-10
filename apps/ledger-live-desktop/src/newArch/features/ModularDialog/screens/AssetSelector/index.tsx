@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SelectAssetList as AssetsList } from "./components/List";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
@@ -10,8 +9,9 @@ import { GenericError } from "../../components/GenericError";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { AssetSelectorContent } from "./components/AssetSelectorContent";
 
-export type AssetSelectionStepProps = {
+export type AssetSelectorProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   providersLoadingStatus: LoadingStatus;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -22,7 +22,7 @@ export type AssetSelectionStepProps = {
   assetsSorted?: AssetData[];
 };
 
-const AssetSelection = ({
+const AssetSelector = ({
   assetsToDisplay,
   providersLoadingStatus,
   assetsConfiguration,
@@ -31,7 +31,7 @@ const AssetSelection = ({
   error,
   refetch,
   assetsSorted,
-}: Readonly<AssetSelectionStepProps>) => {
+}: Readonly<AssetSelectorProps>) => {
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
@@ -61,7 +61,7 @@ const AssetSelection = ({
       {error && refetch ? (
         <GenericError onClick={refetch} />
       ) : (
-        <AssetsList
+        <AssetSelectorContent
           assetsToDisplay={assetsToDisplay}
           providersLoadingStatus={providersLoadingStatus}
           assetsConfiguration={assetsConfiguration}
@@ -76,4 +76,4 @@ const AssetSelection = ({
   );
 };
 
-export default React.memo(AssetSelection);
+export default React.memo(AssetSelector);
