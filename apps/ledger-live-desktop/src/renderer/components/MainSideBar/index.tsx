@@ -245,7 +245,7 @@ const MainSideBar = () => {
   const collapsed = useSelector(sidebarCollapsedSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const noAccounts = useSelector(accountsSelector).length === 0;
-  const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
+  const totalStarredAccounts = useSelector(starredAccountsSelector).length;
   const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
@@ -359,6 +359,21 @@ const MainSideBar = () => {
       referralProgramConfig?.params?.path, // Refer-a-friend
     ].filter((path): path is string => !!path), // Filter undefined values,
   );
+
+  const getMinHeightForStarredAccountsList = () => {
+    if (totalStarredAccounts === 0) {
+      return "max-content"; // this is the height of the placeholder
+    }
+
+    const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
+    const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
+
+    const minHeight =
+      Math.min(totalStarredAccounts, MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN) *
+      STARRED_ACCOUNT_ITEM_HEIGHT;
+
+    return minHeight + "px";
+  };
 
   return (
     <Transition
@@ -532,11 +547,14 @@ const MainSideBar = () => {
               </SideBarList>
 
               <Space grow of={30} />
-              <Hide visible={secondAnim && hasStarredAccounts} mb={"-8px"}>
+              <Hide visible={secondAnim && totalStarredAccounts === 0} mb={"-8px"}>
                 <Separator />
               </Hide>
               <SideBarList
-                style={{ maxHeight: "max-content" }}
+                style={{
+                  maxHeight: "max-content",
+                  minHeight: getMinHeightForStarredAccountsList(),
+                }}
                 scroll
                 title={t("sidebar.stars")}
                 collapsed={secondAnim}
