@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Alert } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { analyticsFlowName } from "../shared";
+import { analyticsFlowName } from "../../utils/constants/analytics";
 
 type Props = {
   isOpen: boolean;
@@ -17,9 +17,10 @@ export const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setShowContent(true);
       }, delay);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, delay]);
 
@@ -43,6 +44,7 @@ export const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
       width="100%"
       flexDirection="column"
       backgroundColor="constant.overlay"
+      data-testid="onboarding-desync-overlay"
     >
       <TrackPage
         category="device connection lost"
