@@ -53,9 +53,10 @@ const StyledWebview = styled(WebView)`
 
 type Props = {
   setStep: (t: string) => void;
+  equipmentId: string | null;
 };
 
-const DisappointedForm = ({ setStep }: Props) => {
+const DisappointedForm = ({ setStep, equipmentId }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
   const { language } = useSettings();
   const devices = useSelector(bleDevicesSelector);
@@ -94,6 +95,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     },
     [ratingsFeatureParams, ratingsHappyMoment?.route_name, setStep],
   );
+
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
   const formUrl =
     formUrlSplitted?.[0] +
@@ -105,7 +107,8 @@ const DisappointedForm = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted?.[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}
+    ${equipmentId ? `&equipment_id=${equipmentId}` : ""}`;
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>
