@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
-import { Platform } from "react-native";
+import { Platform, Text } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
@@ -67,9 +67,10 @@ const StyledWebview = styled(WebView)`
 
 type Props = {
   setStep: (t: string) => void;
+  equipmentId: string | null;
 };
 
-const Form = ({ setStep }: Props) => {
+const Form = ({ setStep, equipmentId }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams, updateNpsRating } = useNpsRatings();
   const { language } = useSettings();
   const devices = useSelector(bleDevicesSelector);
@@ -127,7 +128,8 @@ const Form = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted?.[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}
+    ${equipmentId ? `&equipment_id=${equipmentId}` : ""}`;
 
   return (
     <Flex flex={1} height={height * (1 / 2)}>
@@ -145,6 +147,7 @@ const Form = ({ setStep }: Props) => {
           injectedJavaScript={injectedJavascript}
           onMessage={onMessage}
         />
+        <Text>{formUrl}</Text>
       </Flex>
     </Flex>
   );
