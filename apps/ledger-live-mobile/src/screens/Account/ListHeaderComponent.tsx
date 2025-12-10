@@ -229,10 +229,10 @@ export function useListHeaderComponents({
             </SectionContainer>,
           ]
         : []),
-      ...(account.type === "Account" && PendingTransferProposals
+      ...(PendingTransferProposals
         ? [
             <SectionContainer px={2} key="PendingTransferProposals">
-              <PendingTransferProposals account={account} />
+              <PendingTransferProposals account={account} parentAccount={mainAccount} />
             </SectionContainer>,
           ]
         : []),
