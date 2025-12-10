@@ -11,7 +11,7 @@ import {
   ValidatorsAppValidator,
 } from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -20,7 +20,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans } from "react-i18next";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
@@ -532,7 +531,7 @@ const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
-      <Icon size={13} name="edit-2" color={colors.white} />
+      <Icons.PenEdit size="XS" color={colors.white} />
     </Circle>
   );
 };
@@ -583,7 +582,7 @@ const Selectable = ({
       </Text>
       {readOnly ? null : (
         <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.live }]}>
-          <Icon size={16} name="edit-2" color={colors.white} />
+          <Icons.PenEdit size="XS" color={colors.white} />
         </View>
       )}
     </View>

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
@@ -39,7 +39,7 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   return (
     <SafeAreaView style={styles.root}>
       <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
-        <Icon name="file-text" size={24} color={colors.live} />
+        <Icons.Note size="M" color={colors.live} />
       </View>
       <View style={styles.textWrapper}>
         <LText secondary bold style={styles.textTitle}>

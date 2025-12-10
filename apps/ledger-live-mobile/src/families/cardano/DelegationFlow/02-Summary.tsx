@@ -5,7 +5,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import Icon from "react-native-vector-icons/Feather";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -22,7 +21,7 @@ import type {
   TransactionStatus,
   Transaction,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { Box, Text } from "@ledgerhq/native-ui";
+import { Box, Text, Icons } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
 import Button from "~/components/Button";
 import Skeleton from "~/components/Skeleton";
@@ -527,7 +526,7 @@ function SummaryWords({
                     )}
                   </Animated.View>
                   <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-                    <Icon size={13} name="edit-2" />
+                    <Icons.PenEdit size="XS" />
                   </Circle>
                 </Circle>
                 <Text

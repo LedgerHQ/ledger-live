@@ -1475,9 +1475,6 @@ importers:
       react-native-url-polyfill:
         specifier: 1.3.0
         version: 1.3.0(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
-      react-native-vector-icons:
-        specifier: 10.2.0
-        version: 10.2.0
       react-native-version-number:
         specifier: 0.3.6
         version: 0.3.6
@@ -1659,9 +1656,6 @@ importers:
       '@types/react-native-extra-dimensions-android':
         specifier: 1.2.3
         version: 1.2.3
-      '@types/react-native-vector-icons':
-        specifier: 6.4.18
-        version: 6.4.18(@types/react@18.2.73)
       '@types/react-native-video':
         specifier: 5.0.20
         version: 5.0.20(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
@@ -20957,14 +20951,6 @@ packages:
   '@types/react-native-extra-dimensions-android@1.2.3':
     resolution: {integrity: sha512-g+Jkc+idhsqzUMWQZlcj132CUKdw/KG+NuGEoRAsWUwQDRVCnY/H4n0xdGxwf7GSdlSuoyjqb8ps7/quHihmRA==}
 
-  '@types/react-native-vector-icons@6.4.18':
-    resolution: {integrity: sha512-YGlNWb+k5laTBHd7+uZowB9DpIK3SXUneZqAiKQaj1jnJCZM0x71GDim5JCTMi4IFkhc9m8H/Gm28T5BjyivUw==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
   '@types/react-native-video@5.0.20':
     resolution: {integrity: sha512-CdD4T43uEKzTNJ/RylTDViNuGuyOPWQUEuA1Y9GY8T+HiE9cwYw1zQNqk8a7zz9GHamlPfJQ+bYoEE9OWjZ/6g==}
     peerDependencies:
@@ -33345,11 +33331,6 @@ packages:
     peerDependencies:
       react-native: '*'
 
-  react-native-vector-icons@10.2.0:
-    resolution: {integrity: sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==}
-    deprecated: react-native-vector-icons package has moved to a new model of per-icon-family packages. See the https://github.com/oblador/react-native-vector-icons/blob/master/MIGRATION.md on how to migrate
-    hasBin: true
-
   react-native-version-number@0.3.6:
     resolution: {integrity: sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==}
 
@@ -40235,7 +40216,7 @@ snapshots:
 
   '@babel/parser@7.24.1':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
 
   '@babel/parser@7.27.0':
     dependencies:
@@ -55651,12 +55632,6 @@ snapshots:
       '@types/react': 18.2.73
 
   '@types/react-native-extra-dimensions-android@1.2.3': {}
-
-  '@types/react-native-vector-icons@6.4.18(@types/react@18.2.73)':
-    dependencies:
-      '@types/react-native': 0.70.19(@types/react@18.2.73)
-    optionalDependencies:
-      '@types/react': 18.2.73
 
   '@types/react-native-video@5.0.20(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)':
     dependencies:
@@ -74501,11 +74476,6 @@ snapshots:
     dependencies:
       react-native: 0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       whatwg-url-without-unicode: 8.0.0-3
-
-  react-native-vector-icons@10.2.0:
-    dependencies:
-      prop-types: 15.8.1
-      yargs: 16.2.0
 
   react-native-version-number@0.3.6: {}
 

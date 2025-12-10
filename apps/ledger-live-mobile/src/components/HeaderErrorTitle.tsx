@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
@@ -16,7 +16,7 @@ function HeaderErrorTitle({ error, withDescription }: Props) {
     <View style={styles.root}>
       <View style={styles.titleContainer}>
         <LText style={styles.icon}>
-          <Icon name="x-circle" size={16} color={colors.alert} />
+          <Icons.DeleteCircle size="XS" color={colors.alert} />
         </LText>
         <LText numberOfLines={2} secondary style={styles.title} semiBold color="alert">
           <TranslatedError error={error} />

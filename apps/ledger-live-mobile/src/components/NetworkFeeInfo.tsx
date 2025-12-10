@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 
@@ -18,7 +18,7 @@ const NetworkFeeInfo = () => {
           },
         ]}
       >
-        <Icon name="info" size={32} color={colors.live} />
+        <Icons.Information size="L" color={colors.live} />
       </View>
       <View style={styles.textWrapper}>
         <LText secondary bold style={styles.textTitle}>
