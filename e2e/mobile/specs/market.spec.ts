@@ -1,4 +1,4 @@
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 describe("Market page for user with no device", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const ticker = "ETH";

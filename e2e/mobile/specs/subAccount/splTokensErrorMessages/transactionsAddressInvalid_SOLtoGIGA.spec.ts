@@ -5,7 +5,7 @@ const transactionE2E = {
   recipient: TokenAccount.SOL_GIGA_2.address,
   expectedErrorMessage: "This is a token account. Input a regular wallet address",
   xrayTicket: ["B2CQA-3084"],
-  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
+  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSendSPLAddressInvalid(

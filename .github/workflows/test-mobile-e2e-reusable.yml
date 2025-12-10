@@ -33,6 +33,7 @@ on:
           - nanoX
           - stax
           - flex
+          - nanoGen5
         default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
