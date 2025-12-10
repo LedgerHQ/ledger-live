@@ -58,12 +58,12 @@ const RatingsModal = () => {
   const trackingEnabled = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
-    if (!trackingEnabled) {
-      setEquipmentId(null);
-    } else {
+    if (trackingEnabled) {
       getOrCreateUser().then(({ user }) => {
         setEquipmentId(user.id);
       });
+    } else {
+      setEquipmentId(null);
     }
   }, [trackingEnabled]);
 
