@@ -1,12 +1,14 @@
+import "../logStartup/beforeJSImports";
 import { logStartupEvent, startupEvents } from "../logStartupTime";
 import { resolveStartupEvents } from "../resolveStartupEvents";
 
 describe("logStartupTime", () => {
-  beforeEach(() => {
-    startupEvents.splice(0); // Clear the array before each test
+  it("should log events from the first import", () => {
+    expect(startupEvents).toEqual([{ event: "Before js imports", time: expect.any(Number) }]);
   });
 
   it("should log startup events and resolve them correctly", async () => {
+    startupEvents.splice(0);
     jest.useRealTimers();
     logStartupEvent("Step 1");
     const p = new Promise(r => setTimeout(() => r(logStartupEvent("Step 3"))));
@@ -24,6 +26,7 @@ describe("logStartupTime", () => {
   });
 
   it("should group identical events", async () => {
+    startupEvents.splice(0);
     logStartupEvent("Step 1");
     logStartupEvent("Step 2");
     logStartupEvent("Step 1");
@@ -34,6 +37,7 @@ describe("logStartupTime", () => {
   });
 
   it("should keep logging events regardless of resolve calls", async () => {
+    startupEvents.splice(0);
     logStartupEvent("Step 1");
     expect(await resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 1 },

@@ -346,7 +346,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
-    appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still bliocking the user at this point
+    appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
