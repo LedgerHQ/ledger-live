@@ -25,11 +25,7 @@ const { useLatestFirmware } = jest.requireMock(
 jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
   navigateToNewUpdateFlow: jest.fn(),
 }));
-jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
-  navigateToOldUpdateFlow: jest.fn(),
-}));
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
-const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
 const NANO_S_DATA = {
   deviceModelId: DeviceModelId.nanoS,
@@ -51,6 +47,10 @@ const EUROPA_DATA = {
   deviceModelId: DeviceModelId.europa,
   productName: getDeviceModel(DeviceModelId.europa).productName,
 };
+const APEX_DATA = {
+  deviceModelId: DeviceModelId.apex,
+  productName: getDeviceModel(DeviceModelId.apex).productName,
+};
 
 const OUTDATED_NANOX_BLE_UPDATE = {
   deviceModelId: DeviceModelId.nanoX,
@@ -62,7 +62,7 @@ const OUTDATED_NANOX_BLE_UPDATE = {
   hasConnectedDevice: true,
 };
 
-const oldUpdateFlowNotSupportedDataSet: Array<{
+const updateFlowNotSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
   fwVersion: string;
@@ -72,23 +72,23 @@ const oldUpdateFlowNotSupportedDataSet: Array<{
   { ...NANO_X_DATA, version: "1.2.9", fwVersion: "1.3.0" },
 ];
 
-const oldUpdateFlowSupportedDataSet: Array<{
-  deviceModelId: DeviceModelId;
-  version: string;
-  fwVersion: string;
-  productName: string;
-}> = [{ ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2" }];
-
 const newUpdateFlowSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
   fwVersion: string;
   productName: string;
+  wired: boolean;
 }> = [
-  { ...STAX_DATA, version: "1.0.0", fwVersion: "1.1.0" },
-  { ...EUROPA_DATA, version: "1.0.0", fwVersion: "1.1.0" },
-  { ...NANO_X_DATA, version: "2.4.0", fwVersion: "2.4.1" },
-  { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0" },
+  { ...STAX_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: false },
+  { ...STAX_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: true },
+  { ...EUROPA_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: false },
+  { ...EUROPA_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: true },
+  { ...APEX_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: false },
+  { ...APEX_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: true },
+  { ...NANO_X_DATA, version: "2.4.0", fwVersion: "2.4.1", wired: true },
+  { ...NANO_X_DATA, version: "2.4.0", fwVersion: "2.4.1", wired: false },
+  { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0", wired: true },
+  { ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2", wired: true },
 ];
 
 describe("<UpdateBanner />", () => {
@@ -96,7 +96,6 @@ describe("<UpdateBanner />", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
     //Can't reset all mocks https://github.com/facebook/react-native/issues/42904
-    navigateToOldUpdateFlow.mockClear();
     navigateToNewUpdateFlow.mockClear();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
   });
@@ -171,7 +170,7 @@ describe("<UpdateBanner />", () => {
     expect(await screen.queryByTestId("OS update available")).toBeNull();
   });
 
-  it("should open the unsupported drawer if there is an update but it's iOS", async () => {
+  it("should open the unsupported drawer if there is an update but it's iOS on Nano X with version < 2.4.0", async () => {
     PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "ios" });
     useLatestFirmware.mockReturnValue({
       final: {
@@ -180,14 +179,14 @@ describe("<UpdateBanner />", () => {
       },
     });
 
-    const mockDeviceModelId = DeviceModelId.nanoS;
+    const mockDeviceModelId = DeviceModelId.nanoX;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
       overrideInitialState: makeOverrideInitialState({
         deviceModelId: mockDeviceModelId,
         version: mockDeviceVersion,
         hasCompletedOnboarding: true,
-        wired: true,
+        wired: false,
         hasConnectedDevice: true,
       }),
     });
@@ -195,7 +194,7 @@ describe("<UpdateBanner />", () => {
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
     expect(
-      await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
+      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
     ).toBeOnTheScreen();
 
     // Press the banner
@@ -210,7 +209,6 @@ describe("<UpdateBanner />", () => {
     ).toBeOnTheScreen();
 
     // Check that the entrypoints to the update flows are not called
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
@@ -248,7 +246,6 @@ describe("<UpdateBanner />", () => {
     ).toBeOnTheScreen();
 
     // Check that the entrypoints to the update flows are not called
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
@@ -286,7 +283,6 @@ describe("<UpdateBanner />", () => {
     ).toBeOnTheScreen();
 
     // Check that the entrypoints to the update flows are not called
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
@@ -328,11 +324,10 @@ describe("<UpdateBanner />", () => {
     ).toBeOnTheScreen();
 
     // Check that the entrypoints to the update flows are not called
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
-  oldUpdateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
+  updateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should open the unsupported drawer if there is an update and it's Android but the update is not supported for this device version (${version} ${deviceModelId})`, async () => {
       PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
       useLatestFirmware.mockReturnValue({
@@ -370,74 +365,41 @@ describe("<UpdateBanner />", () => {
       ).toBeOnTheScreen();
 
       // Check that the entrypoints to the update flows are not called
-      expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
       expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
     });
   });
 
-  oldUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
-    it(`should redirect to the OLD firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
-      PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
-      useLatestFirmware.mockReturnValue({
-        final: {
-          name: "mockVersion",
-          version: fwVersion,
-        },
+  newUpdateFlowSupportedDataSet.forEach(
+    ({ deviceModelId, version, productName, fwVersion, wired }) => {
+      it(`should redirect to the NEW firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
+        PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
+        useLatestFirmware.mockReturnValue({
+          final: {
+            name: "mockVersion",
+            version: fwVersion,
+          },
+        });
+
+        const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
+          overrideInitialState: makeOverrideInitialState({
+            deviceModelId,
+            version,
+            hasCompletedOnboarding: true,
+            wired,
+            hasConnectedDevice: true,
+          }),
+        });
+
+        // Check that the banner is displayed with the correct wording
+        expect(await screen.findByText("OS update available")).toBeOnTheScreen();
+        expect(
+          await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
+        ).toBeOnTheScreen();
+
+        // Press the banner and check that the entrypoint to the new update flow is called
+        await user.press(screen.getByTestId("fw-update-banner"));
+        expect(navigateToNewUpdateFlow).toHaveBeenCalled();
       });
-
-      const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: makeOverrideInitialState({
-          deviceModelId,
-          version,
-          hasCompletedOnboarding: true,
-          wired: true, // Device is wired
-          hasConnectedDevice: true,
-        }),
-      });
-
-      // Check that the banner is displayed with the correct wording
-      expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-      expect(
-        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
-      ).toBeOnTheScreen();
-
-      // Press the banner and check that the entrypoint to the old update flow is called
-      await user.press(screen.getByTestId("fw-update-banner"));
-      expect(navigateToOldUpdateFlow).toHaveBeenCalled();
-      expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
-    });
-  });
-
-  newUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
-    it(`should redirect to the NEW firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
-      PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
-      useLatestFirmware.mockReturnValue({
-        final: {
-          name: "mockVersion",
-          version: fwVersion,
-        },
-      });
-
-      const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: makeOverrideInitialState({
-          deviceModelId,
-          version,
-          hasCompletedOnboarding: true,
-          wired: false, // Device is not wired
-          hasConnectedDevice: true,
-        }),
-      });
-
-      // Check that the banner is displayed with the correct wording
-      expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-      expect(
-        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
-      ).toBeOnTheScreen();
-
-      // Press the banner and check that the entrypoint to the new update flow is called
-      await user.press(screen.getByTestId("fw-update-banner"));
-      expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-      expect(navigateToNewUpdateFlow).toHaveBeenCalled();
-    });
-  });
+    },
+  );
 });
