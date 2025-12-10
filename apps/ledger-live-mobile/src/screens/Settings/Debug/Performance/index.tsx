@@ -22,7 +22,7 @@ export default function Performance() {
     <SettingsNavigationScrollView>
       <SettingsRow
         title="App startup time"
-        desc="Time from app startup to first react render (flawed if app was reloaded in dev mode)"
+        desc="Time from app startup to the beeing interactive to the user (does not include pre-js initialization time in dev mode)"
       >
         <Text variant="body" fontWeight="medium" color="primary.c80">
           {startupTime} ms

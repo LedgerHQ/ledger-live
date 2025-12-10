@@ -732,12 +732,17 @@ export const DeeplinksProvider = ({
       isNavigationReady={isReady}
       onAppReady={async () => {
         navigationIntegration.registerNavigationContainer(navigationRef);
-        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
 
-        logStartupEvent(STARTUP_EVENTS.STARTED);
-        const events = await resolveStartupEvents();
-        const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
-        track("app_startup_events", { appStartupTime, events });
+        try {
+          DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
+
+          logStartupEvent(STARTUP_EVENTS.STARTED);
+          const events = await resolveStartupEvents();
+          const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
+          await track("app_startup_events", { appStartupTime, events });
+        } catch (error) {
+          console.error("Error during app startup tracking:", error);
+        }
       }}
     >
       <NavigationContainer

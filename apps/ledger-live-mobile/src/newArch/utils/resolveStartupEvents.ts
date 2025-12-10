@@ -9,7 +9,7 @@ export const STARTUP_EVENTS = {
 } as const;
 
 const startupTsp = new Promise<number>(resolve => {
-  // On dev it does't make sense to compare to the app starting time due to metro start time
+  // On dev it doesn't make sense to compare to the app starting time due to metro start time
   // And also because react-native-startup-time does not reset on reload (so it keeps on increasing).
   if (__DEV__) return resolve(startupFirstImportTime);
   const now = Date.now();
