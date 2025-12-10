@@ -117,4 +117,66 @@ describe("buildSubAccounts", () => {
     expect(sub.cantonResources.pendingTransferProposals).toHaveLength(1);
     expect(sub.cantonResources.pendingTransferProposals[0].contract_id).toBe("token-proposal");
   });
+
+  it("preserves existing sub-account order", () => {
+    const tokenA = makeTokenCurrency({
+      id: "canton_network/cip56/TOKEN_A",
+      name: "Token A",
+      ticker: "TOKA",
+    });
+    const tokenB = makeTokenCurrency({
+      id: "canton_network/cip56/TOKEN_B",
+      name: "Token B",
+      ticker: "TOKB",
+    });
+    const tokenC = makeTokenCurrency({
+      id: "canton_network/cip56/TOKEN_C",
+      name: "Token C",
+      ticker: "TOKC",
+    });
+
+    const tokenBalances = [
+      {
+        adminId: "admin-TOKEN_A",
+        totalBalance: BigInt(100),
+        spendableBalance: BigInt(100),
+        token: tokenA,
+      },
+      {
+        adminId: "admin-TOKEN_B",
+        totalBalance: BigInt(200),
+        spendableBalance: BigInt(200),
+        token: tokenB,
+      },
+      {
+        adminId: "admin-TOKEN_C",
+        totalBalance: BigInt(300),
+        spendableBalance: BigInt(300),
+        token: tokenC,
+      },
+    ];
+
+    const existingSubAccounts = [
+      { type: "TokenAccount", token: { ticker: "TOKB" }, operations: [] },
+      { type: "TokenAccount", token: { ticker: "TOKC" }, operations: [] },
+      { type: "TokenAccount", token: { ticker: "TOKA" }, operations: [] },
+    ] as TokenAccount[];
+
+    const calTokens = new Map<string, string>([
+      [tokenA.id, "TOKEN_A"],
+      [tokenB.id, "TOKEN_B"],
+      [tokenC.id, "TOKEN_C"],
+    ]);
+
+    const subAccounts = buildSubAccounts({
+      accountId,
+      tokenBalances,
+      existingSubAccounts,
+      allOperations: [],
+      pendingTransferProposals: [],
+      calTokens,
+    });
+
+    expect(subAccounts.map(a => a.token.ticker)).toEqual(["TOKB", "TOKC", "TOKA"]);
+  });
 });
