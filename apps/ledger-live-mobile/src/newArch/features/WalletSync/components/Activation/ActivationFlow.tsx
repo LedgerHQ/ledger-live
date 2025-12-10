@@ -82,7 +82,7 @@ const ActivationFlow = ({
           <>
             <TrackScreen category={AnalyticsPage.ActivateLedgerSync} />
             {lwmLedgerSyncOptimisation?.enabled ? (
-              <ActivationModal onSyncMethodPress={onCreateKey} />
+              <ActivationModal onSyncMethodPress={navigateToChooseSyncMethod} />
             ) : (
               <Activation
                 onSyncMethodPress={onCreateKey}

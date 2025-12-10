@@ -3165,6 +3165,7 @@
       "dateFormatDesc": "Set the date format for Ledger Wallet",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -7823,13 +7824,18 @@
       "sync": "Sync successful",
       "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers.",
       "activation": "Ledger Sync turned on for this phone",
+      "complete" : {
+        "title": "Sync complete",
+        "description": "From now on, your portfolio will automatically stay sync across all your devices."
+      },
       "syncAnother": "Sync with another Ledger Wallet app",
       "close": "Close"
     },
     "walletSyncActivated": {
       "synchronize": {
         "title": "Sync with another Ledger Wallet app",
-        "description": "Sync your Ledger Wallet crypto accounts across different phones and computers."
+        "description": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
+        "desc": "Keep your portfolio up to date when switching computers or use a phone"
       },
       "unauthorizeMember": {
         "error": {
@@ -7841,7 +7847,7 @@
       "manageKey": {
         "title": "Delete Sync",
         "description": "Your crypto accounts across different phones and computers will stop synching.",
-        "success": "Your Ledger Wallet apps are no longer synched",
+        "success": "Your Ledger Wallet apps are no longer synced",
         "successHint": "You can turn on sync again anytime.",
         "confirm": {
           "delete": "Yes, delete",
