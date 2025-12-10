@@ -1,16 +1,24 @@
-import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
 import * as coinConfigModule from "../../config";
+import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
+import {
+  createMockCantonCurrency,
+  createMockCoinConfigValue,
+  createMockInstrumentBalances,
+} from "../../test/fixtures";
 import { getBalance } from "./getBalance";
-import { Balance } from "@ledgerhq/coin-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+jest.mock("../../network/gateway", () => ({ getBalance: jest.fn() }));
 
-jest.mock("../../network/gateway", () => ({
-  getBalance: jest.fn(),
-}));
+const mockedGetBalanceFromNetwork = jest.mocked(getBalanceFromNetwork);
+const mockCurrency = createMockCantonCurrency();
+const createMockConfig = (
+  useGateway: boolean,
+  nativeInstrumentId?: string,
+): coinConfigModule.CantonCoinConfig => ({
+  ...createMockCoinConfigValue(),
+  useGateway,
+  ...(nativeInstrumentId && { nativeInstrumentId }),
+});
 
 describe("getBalance", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");
@@ -20,12 +28,8 @@ describe("getBalance", () => {
   });
 
   it("should return adapted balances when useGateway is true", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      useGateway: true,
-      nativeInstrumentId: "native-id",
-    } as any);
-
-    const mockInstruments = [
+    mockGetCoinConfig.mockReturnValue(createMockConfig(true, "native-id"));
+    const mockInstruments = createMockInstrumentBalances(2, [
       {
         instrument_id: "native-id",
         amount: "1000",
@@ -38,13 +42,13 @@ describe("getBalance", () => {
         utxo_count: 1,
         locked: true,
       },
-    ];
+    ]);
 
-    (getBalanceFromNetwork as jest.Mock).mockResolvedValue(mockInstruments);
+    mockedGetBalanceFromNetwork.mockResolvedValue(mockInstruments);
 
-    const result = await getBalance(mockCurrency, "party-id");
+    const result = await getBalance(mockCurrency, "test-party-id");
 
-    expect(getBalanceFromNetwork).toHaveBeenCalledWith(mockCurrency, "party-id");
+    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(mockCurrency, "test-party-id");
     expect(result).toEqual([
       {
         value: BigInt(1000),
@@ -64,11 +68,9 @@ describe("getBalance", () => {
   });
 
   it("should throw an error when useGateway is false (not implemented with node)", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      useGateway: false,
-    } as any);
+    mockGetCoinConfig.mockReturnValue(createMockConfig(false));
 
-    await expect(getBalance(mockCurrency, "party-id")).rejects.toThrow("Not implemented");
-    expect(getBalanceFromNetwork).not.toHaveBeenCalled();
+    await expect(getBalance(mockCurrency, "test-party-id")).rejects.toThrow("Not implemented");
+    expect(mockedGetBalanceFromNetwork).not.toHaveBeenCalled();
   });
 });

@@ -1,82 +1,117 @@
-import BigNumber from "bignumber.js";
-import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import {
-  getLedgerEnd,
-  getOperations,
-  type OperationInfo,
-  getPendingTransferProposals,
-  getEnabledInstrumentsCached,
-  getCalTokensCached,
-  getKey,
-  SEPARATOR,
-} from "../network/gateway";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { default as BigNumber } from "bignumber.js";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
+import { isCantonAccountEmpty } from "../helpers";
+import {
+  getCalTokensCached,
+  getEnabledInstrumentsCached,
+  getKey,
+  getLedgerEnd,
+  getOperations,
+  getPendingTransferProposals,
+  SEPARATOR,
+} from "../network/gateway";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
-import { isAccountOnboarded } from "./onboard";
-import { isCantonAccountEmpty } from "../helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { OperationView } from "../types/gateway";
 import { buildSubAccounts } from "./buildSubAccounts";
+import { isAccountOnboarded } from "./onboard";
+
+function determineOperationType(
+  details: unknown,
+  partyId: string,
+  senders: string[],
+  transferValue: string,
+  txType: string,
+): OperationType {
+  const operationType =
+    details && typeof details === "object" && "operationType" in details
+      ? details.operationType
+      : undefined;
+  if (operationType === "transfer-proposal") return "TRANSFER_PROPOSAL";
+  if (operationType === "transfer-rejected") return "TRANSFER_REJECTED";
+  if (operationType === "transfer-withdrawn") return "TRANSFER_WITHDRAWN";
+
+  switch (txType) {
+    case "Send":
+      // Zero-value sends are fee-only transactions
+      if (transferValue === "0") return "FEES";
+      // Otherwise, determine if it's outgoing or incoming based on sender
+      return senders.includes(partyId) ? "OUT" : "IN";
+
+    case "Receive":
+      return "IN";
+
+    case "Initialize":
+      return "PRE_APPROVAL";
+
+    default:
+      return "UNKNOWN";
+  }
+}
+
+function extractMemo(details: unknown) {
+  if (!details || typeof details !== "object") return undefined;
+
+  const metadata = "metadata" in details ? details.metadata : undefined;
+  if (!metadata || typeof metadata !== "object") return undefined;
+
+  const reason = "reason" in metadata ? metadata.reason : undefined;
+  return reason !== undefined ? String(reason) : undefined;
+}
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
-  (txInfo: OperationInfo): Operation => {
+  (txInfo: OperationView): Operation => {
     const {
-      asset: { instrumentId, instrumentAdmin },
-      transaction_hash,
+      asset,
       uid,
-      block: { height, hash },
-      senders,
-      recipients,
-      transaction_timestamp,
       fee: { value: fee },
-      transfers: [{ value: transferValue, details }],
+      block: { height, hash },
+      senders = [],
+      recipients = [],
+      transfers = [],
+      transaction_timestamp,
+      transaction_hash,
     } = txInfo;
 
-    let type: OperationType = "UNKNOWN";
-    if (details.operationType === "transfer-proposal") {
-      type = "TRANSFER_PROPOSAL";
-    } else if (details.operationType === "transfer-rejected") {
-      type = "TRANSFER_REJECTED";
-    } else if (details.operationType === "transfer-withdrawn") {
-      type = "TRANSFER_WITHDRAWN";
-    } else if (txInfo.type === "Send" && transferValue === "0") {
-      type = "FEES";
-    } else if (txInfo.type === "Send") {
-      type = senders.includes(partyId) ? "OUT" : "IN";
-    } else if (txInfo.type === "Receive") {
-      type = "IN";
-    } else if (txInfo.type === "Initialize") {
-      type = "PRE_APPROVAL";
-    }
+    const instrumentId =
+      asset && (asset.type === "native" || asset.type === "token") ? asset.instrumentId : undefined;
+    const instrumentAdmin =
+      asset && (asset.type === "native" || asset.type === "token")
+        ? asset.instrumentAdmin
+        : undefined;
+
+    const transferValue = transfers[0]?.value ?? "0";
+    const details = transfers[0]?.details ?? {};
+    const memo = extractMemo(details);
+    const type = determineOperationType(details, partyId, senders, transferValue, txInfo.type);
+    const feeValue = new BigNumber(fee);
     let value = new BigNumber(transferValue);
 
     if (type === "OUT" || type === "FEES") {
-      // We add fees when it's an outgoing transaction or a fees-only transaction
-      value = value.plus(fee);
+      value = value.plus(feeValue);
     }
-
-    const feeValue = new BigNumber(fee);
-    const memo = details.metadata.reason;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
-      hash: transaction_hash,
       accountId,
+      date: new Date(transaction_timestamp),
+      hash: transaction_hash,
       type,
       value,
       fee: feeValue,
-      blockHash: hash,
-      blockHeight: height,
       senders,
       recipients,
-      date: new Date(transaction_timestamp),
+      blockHeight: height,
+      blockHash: hash,
       transactionSequenceNumber: new BigNumber(height),
       extra: {
         uid,
@@ -90,7 +125,7 @@ const txInfoToOperationAdapter =
   };
 
 const filterOperations = (
-  transactions: OperationInfo[],
+  transactions: OperationView[],
   accountId: string,
   partyId: string,
 ): Operation[] => {
@@ -310,12 +345,12 @@ export function makeGetAccountShape(
     const shape = {
       id: accountId,
       type: "Account" as const,
+      freshAddress: address,
+      seedIdentifier: address,
       balance: totalBalance,
       blockHeight,
       creationDate,
       lastSyncDate: new Date(),
-      freshAddress: address,
-      seedIdentifier: address,
       operations: mainAccountOperations,
       operationsCount: mainAccountOperations.length,
       spendableBalance,

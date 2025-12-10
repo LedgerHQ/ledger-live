@@ -2809,6 +2809,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-canton':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-canton
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -6708,6 +6711,9 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
+      protobufjs:
+        specifier: 7.5.4
+        version: 7.5.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -6733,6 +6739,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      protobufjs-cli:
+        specifier: 1.1.2
+        version: 1.1.2(protobufjs@7.5.4)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -32016,7 +32025,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -56613,7 +56621,7 @@ snapshots:
     dependencies:
       clone-response: 1.0.3
       get-stream: 5.2.0
-      http-cache-semantics: 4.1.1
+      http-cache-semantics: 4.2.0
       keyv: 4.5.4
       lowercase-keys: 2.0.0
       normalize-url: 6.1.0
@@ -69135,7 +69143,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 20.12.12
-      long: 5.2.3
+      long: 5.3.1
 
   protocols@2.0.1: {}
 

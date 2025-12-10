@@ -1,15 +1,18 @@
 import { firstValueFrom, toArray } from "rxjs";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import coinConfig from "../config";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
-import { createMockAccount, createMockCantonCurrency } from "../test/fixtures";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  setupMockCoinConfig,
+} from "../test/fixtures";
 import {
   AuthorizeStatus,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
-  OnboardStatus,
+  AccountOnboardStatus,
 } from "../types/onboard";
 import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } from "./onboard";
 import {
@@ -18,9 +21,9 @@ import {
 } from "../network/gateway";
 
 describe("onboard (devnet)", () => {
-  const mockDeviceId = "test-device-id";
+  const mockAccount = createMockCantonAccount();
   const mockCurrency = createMockCantonCurrency();
-  const mockAccount = createMockAccount();
+  const mockDeviceId = "test-device-id";
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -30,15 +33,7 @@ describe("onboard (devnet)", () => {
   } | null = null;
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-    }));
+    setupMockCoinConfig();
   });
 
   const getOnboardedAccount = () => {
@@ -154,10 +149,10 @@ describe("onboard (devnet)", () => {
 
       // THEN
       // Check expected status progression
-      expect(progressValues.some(p => p.status === OnboardStatus.INIT)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.INIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SUBMIT)).toBe(true);
 
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);
@@ -228,7 +223,7 @@ describe("onboard (devnet)", () => {
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
       const keyPair = generateMockKeyPair();
-      const mockAccount = createMockAccount({ xpub: keyPair.publicKeyHex });
+      const mockAccount = createMockCantonAccount({ xpub: keyPair.publicKeyHex });
       const mockSigner = createMockSigner(keyPair);
       const mockSignerContext = jest.fn().mockImplementation((_, callback) => {
         return callback(mockSigner);
@@ -280,10 +275,10 @@ describe("onboard (devnet)", () => {
       );
 
       // Check expected status progression
-      expect(progressValues.some(p => p.status === OnboardStatus.INIT)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === OnboardStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.INIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AccountOnboardStatus.SUBMIT)).toBe(true);
 
       // Check final result
       expect(resultValues.length).toBeGreaterThan(0);

@@ -1,16 +1,32 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { validateTopology } from "./getTransactionStatus";
-import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
+import type { Account } from "@ledgerhq/types-live";
 import { signTransaction } from "../common-logic/transaction/sign";
-import { isCantonAccount } from "./serialization";
+import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
+import type { PrepareTransferInstructionRequest } from "../types/gateway";
 import type { CantonSigner } from "../types";
+import { validateTopology } from "./getTransactionStatus";
+import { isCantonAccount } from "./serialization";
 
-type TransferInstructionType =
-  | "accept-transfer-instruction"
-  | "reject-transfer-instruction"
-  | "withdraw-transfer-instruction";
+export function createTransferInstruction(
+  type:
+    | "accept-transfer-instruction"
+    | "reject-transfer-instruction"
+    | "withdraw-transfer-instruction",
+  contractId: string,
+  reason?: string,
+): PrepareTransferInstructionRequest {
+  const base = {
+    type,
+    contract_id: contractId,
+  };
+
+  if (reason) {
+    return { ...base, reason };
+  }
+
+  return base;
+}
 
 export const buildTransferInstruction =
   (signerContext: SignerContext<CantonSigner>) =>
@@ -19,9 +35,7 @@ export const buildTransferInstruction =
     deviceId: string,
     account: Account,
     partyId: string,
-    contractId: string,
-    type: TransferInstructionType,
-    reason?: string,
+    instruction: PrepareTransferInstructionRequest,
   ) => {
     if (isCantonAccount(account)) {
       const topologyError = await validateTopology(account);
@@ -30,11 +44,7 @@ export const buildTransferInstruction =
       }
     }
 
-    const preparedTransaction = await prepareTransferInstruction(currency, partyId, {
-      type,
-      contract_id: contractId,
-      ...(reason && { reason }),
-    });
+    const preparedTransaction = await prepareTransferInstruction(currency, partyId, instruction);
 
     const { signature } = await signerContext(deviceId, async signer => {
       return await signTransaction(signer, account.freshAddressPath, preparedTransaction);

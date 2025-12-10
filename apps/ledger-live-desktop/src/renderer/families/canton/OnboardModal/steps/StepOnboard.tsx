@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import styled from "styled-components";
-import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
@@ -105,11 +105,11 @@ const SectionAccounts = memo(
 
 SectionAccounts.displayName = "SectionAccounts";
 
-const getStatusMessage = (status?: OnboardStatus): string => {
+const getStatusMessage = (status?: AccountOnboardStatus): string => {
   switch (status) {
-    case OnboardStatus.PREPARE:
+    case AccountOnboardStatus.PREPARE:
       return "families.canton.addAccount.onboard.status.prepare";
-    case OnboardStatus.SUBMIT:
+    case AccountOnboardStatus.SUBMIT:
       return "families.canton.addAccount.onboard.status.submit";
     default:
       return "families.canton.addAccount.onboard.status.default";
@@ -136,9 +136,9 @@ export default function StepOnboard({
 }: StepProps) {
   const link = useLocalizedUrl(urls.canton.learnMore);
   const onClick = () => openURL(link);
-  const renderContent = (onboardingStatus?: OnboardStatus) => {
+  const renderContent = (onboardingStatus?: AccountOnboardStatus) => {
     switch (onboardingStatus) {
-      case OnboardStatus.INIT:
+      case AccountOnboardStatus.INIT:
         return (
           <Box>
             <SectionAccounts
@@ -164,10 +164,10 @@ export default function StepOnboard({
           </Box>
         );
 
-      case OnboardStatus.SIGN:
+      case AccountOnboardStatus.SIGN:
         return <TransactionConfirm device={device} />;
 
-      case OnboardStatus.SUCCESS:
+      case AccountOnboardStatus.SUCCESS:
         return (
           <Box>
             <SectionAccounts
@@ -193,7 +193,7 @@ export default function StepOnboard({
           </Box>
         );
 
-      case OnboardStatus.ERROR:
+      case AccountOnboardStatus.ERROR:
         if (isAxiosError(error) && error.status === 429) {
           return (
             <Box>
@@ -263,13 +263,13 @@ export const StepOnboardFooter = ({
 }: StepProps) => {
   const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
 
-  if (onboardingStatus === OnboardStatus.SIGN) {
+  if (onboardingStatus === AccountOnboardStatus.SIGN) {
     return <></>;
   }
 
-  const renderContent = (onboardingStatus: OnboardStatus) => {
+  const renderContent = (onboardingStatus: AccountOnboardStatus) => {
     switch (onboardingStatus) {
-      case OnboardStatus.SUCCESS:
+      case AccountOnboardStatus.SUCCESS:
         return (
           <Button
             primary
@@ -281,7 +281,7 @@ export const StepOnboardFooter = ({
             <Trans i18nKey="common.continue" />
           </Button>
         );
-      case OnboardStatus.ERROR:
+      case AccountOnboardStatus.ERROR:
         return (
           <Button primary disabled={isProcessing} onClick={onRetryOnboardAccount}>
             <Trans i18nKey="common.tryAgain" />

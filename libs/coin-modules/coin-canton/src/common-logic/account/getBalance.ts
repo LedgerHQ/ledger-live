@@ -1,7 +1,8 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
-import { getBalance as gatewayGetBalance, type InstrumentBalance } from "../../network/gateway";
-import coinConfig from "../../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../../config";
+import { getBalance as gatewayGetBalance } from "../../network/gateway";
+import type { InstrumentBalance } from "../../types/gateway";
 
 export type CantonBalance = Balance & {
   utxoCount: number;
@@ -32,9 +33,8 @@ export async function getBalance(
   currency: CryptoCurrency,
   partyId: string,
 ): Promise<CantonBalance[]> {
-  if (useGateway(currency))
-    return (await gatewayGetBalance(currency, partyId)).map(instrument =>
-      adaptInstrument(currency, instrument),
-    );
-  else throw new Error("Not implemented");
+  if (useGateway(currency)) {
+    const balances = await gatewayGetBalance(currency, partyId);
+    return (balances ?? []).map(instrument => adaptInstrument(currency, instrument));
+  } else throw new Error("Not implemented");
 }

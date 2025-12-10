@@ -1,13 +1,17 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import * as signTransactionModule from "../common-logic/transaction/sign";
-import type { PrepareTransferResponse } from "../network/gateway";
 import * as gateway from "../network/gateway";
-import type { CantonAccount } from "../types";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  createMockCantonSignature,
+  createMockCantonSigner,
+  createMockPrepareTransferResponse,
+  createMockSignerContext,
+} from "../test/fixtures";
 import { TopologyChangeError } from "../types/errors";
-import type { CantonSignature, CantonSigner } from "../types/signer";
-import { buildTransferInstruction } from "./acceptOffer";
+import { buildTransferInstruction, createTransferInstruction } from "./acceptOffer";
 import * as getTransactionStatusModule from "./getTransactionStatus";
 
 jest.mock("../network/gateway");
@@ -21,104 +25,48 @@ const mockedGetTransactionStatus = getTransactionStatusModule as jest.Mocked<
 >;
 
 describe("acceptOffer", () => {
-  const mockCurrency = {
-    id: "canton_network",
-  } as unknown as CryptoCurrency;
-
-  const mockAccount = {
-    id: "test-account-id",
-    freshAddressPath: "44'/6767'/0'/0'/0'",
-  } as unknown as Account;
-
-  const mockPartyId = "test-party-id";
+  const mockAccount = createMockCantonAccount();
+  const mockCurrency = createMockCantonCurrency();
   const mockContractId = "test-contract-id";
   const mockDeviceId = "test-device-id";
+  const mockPartyId = "test-party-id";
 
-  const mockPreparedTransaction: PrepareTransferResponse = {
-    hash: "test-hash",
+  const mockPreparedTransaction = createMockPrepareTransferResponse({
     json: {
-      transaction: {
-        version: "2.1",
-        roots: ["0"],
-        nodes: [
-          {
-            nodeId: "0",
-            v1: {
-              create: {
-                lfVersion: "2.1",
-                contractId: mockContractId,
-                packageName: "test-package",
-                templateId: {
-                  packageId: "test-package-id",
-                  moduleName: "TestModule",
-                  entityName: "TestEntity",
-                },
-                argument: {
-                  record: {
-                    recordId: {
-                      packageId: "test-package-id",
-                      moduleName: "TestModule",
-                      entityName: "TestEntity",
-                    },
-                    fields: [],
-                  },
-                },
-              },
-            },
-          },
-        ],
-      },
+      ...prepareTransferMock.json,
       metadata: {
+        ...prepareTransferMock.json.metadata,
         submitterInfo: {
+          ...prepareTransferMock.json.metadata.submitterInfo,
           actAs: [mockPartyId],
-          commandId: "test-command-id",
         },
-        synchronizerId: "test-synchronizer-id",
-        transactionUuid: "test-transaction-uuid",
-        submissionTime: "1234567890",
-        inputContracts: [],
       },
     },
-    serialized: "serialized-transaction",
-  };
+  });
 
-  const mockSignature: CantonSignature = {
-    signature: "test-signature",
-  };
-
-  const mockSigner: CantonSigner = {
-    getAddress: jest.fn(),
-    signTransaction: jest.fn(),
-  } as unknown as CantonSigner;
-
-  const mockSignerContext: SignerContext<CantonSigner> = jest.fn(
-    async (deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
-      return callback(mockSigner);
-    },
-  ) as unknown as SignerContext<CantonSigner>;
+  const mockSignature = createMockCantonSignature();
+  const mockSigner = createMockCantonSigner();
+  const mockSignerContext = createMockSignerContext(mockSigner);
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGateway.prepareTransferInstruction.mockResolvedValue(mockPreparedTransaction);
-    mockedSignTransaction.signTransaction.mockResolvedValue(mockSignature);
-    mockedGateway.submitTransferInstruction.mockResolvedValue({ update_id: "test-update-id" });
+    mockedGateway.submitTransferInstruction.mockResolvedValue({
+      update_id: "test-update-id",
+      submission_id: "test-submission-id",
+    });
     mockedGetTransactionStatus.validateTopology.mockResolvedValue(null);
+    mockedSignTransaction.signTransaction.mockResolvedValue(mockSignature);
   });
 
   describe("buildTransferInstruction", () => {
     it("should accept transfer instruction without reason", async () => {
       // GIVEN
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("accept-transfer-instruction", mockContractId);
 
       // WHEN
-      await transferInstruction(
-        mockCurrency,
-        mockDeviceId,
-        mockAccount,
-        mockPartyId,
-        mockContractId,
-        "accept-transfer-instruction",
-      );
+      await transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction);
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
@@ -147,17 +95,14 @@ describe("acceptOffer", () => {
       // GIVEN
       const reason = "test-reason";
       const transferInstruction = buildTransferInstruction(mockSignerContext);
-
-      // WHEN
-      await transferInstruction(
-        mockCurrency,
-        mockDeviceId,
-        mockAccount,
-        mockPartyId,
-        mockContractId,
+      const instruction = createTransferInstruction(
         "accept-transfer-instruction",
+        mockContractId,
         reason,
       );
+
+      // WHEN
+      await transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction);
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
@@ -185,16 +130,10 @@ describe("acceptOffer", () => {
     it("should reject transfer instruction", async () => {
       // GIVEN
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("reject-transfer-instruction", mockContractId);
 
       // WHEN
-      await transferInstruction(
-        mockCurrency,
-        mockDeviceId,
-        mockAccount,
-        mockPartyId,
-        mockContractId,
-        "reject-transfer-instruction",
-      );
+      await transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction);
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
@@ -212,16 +151,13 @@ describe("acceptOffer", () => {
     it("should withdraw transfer instruction", async () => {
       // GIVEN
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction(
+        "withdraw-transfer-instruction",
+        mockContractId,
+      );
 
       // WHEN
-      await transferInstruction(
-        mockCurrency,
-        mockDeviceId,
-        mockAccount,
-        mockPartyId,
-        mockContractId,
-        "withdraw-transfer-instruction",
-      );
+      await transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction);
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
@@ -241,17 +177,11 @@ describe("acceptOffer", () => {
       const error = new Error("Prepare failed");
       mockedGateway.prepareTransferInstruction.mockRejectedValue(error);
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("accept-transfer-instruction", mockContractId);
 
       // WHEN & THEN
       await expect(
-        transferInstruction(
-          mockCurrency,
-          mockDeviceId,
-          mockAccount,
-          mockPartyId,
-          mockContractId,
-          "accept-transfer-instruction",
-        ),
+        transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction),
       ).rejects.toThrow("Prepare failed");
 
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalled();
@@ -264,17 +194,11 @@ describe("acceptOffer", () => {
       const error = new Error("Sign failed");
       mockedSignTransaction.signTransaction.mockRejectedValue(error);
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("accept-transfer-instruction", mockContractId);
 
       // WHEN & THEN
       await expect(
-        transferInstruction(
-          mockCurrency,
-          mockDeviceId,
-          mockAccount,
-          mockPartyId,
-          mockContractId,
-          "accept-transfer-instruction",
-        ),
+        transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction),
       ).rejects.toThrow("Sign failed");
 
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalled();
@@ -287,17 +211,11 @@ describe("acceptOffer", () => {
       const error = new Error("Submit failed");
       mockedGateway.submitTransferInstruction.mockRejectedValue(error);
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("accept-transfer-instruction", mockContractId);
 
       // WHEN & THEN
       await expect(
-        transferInstruction(
-          mockCurrency,
-          mockDeviceId,
-          mockAccount,
-          mockPartyId,
-          mockContractId,
-          "accept-transfer-instruction",
-        ),
+        transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction),
       ).rejects.toThrow("Submit failed");
 
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalled();
@@ -308,29 +226,16 @@ describe("acceptOffer", () => {
     it("should throw TopologyChangeError when validateTopology returns topology error", async () => {
       // GIVEN
       const topologyError = new TopologyChangeError("Topology change detected");
-      const cantonAccount = {
-        ...mockAccount,
-        cantonResources: {
-          publicKey: "test-public-key",
-          instrumentUtxoCounts: {},
-        },
-      } as unknown as CantonAccount;
       mockedGetTransactionStatus.validateTopology.mockResolvedValue(topologyError);
       const transferInstruction = buildTransferInstruction(mockSignerContext);
+      const instruction = createTransferInstruction("accept-transfer-instruction", mockContractId);
 
       // WHEN & THEN
       await expect(
-        transferInstruction(
-          mockCurrency,
-          mockDeviceId,
-          cantonAccount,
-          mockPartyId,
-          mockContractId,
-          "accept-transfer-instruction",
-        ),
+        transferInstruction(mockCurrency, mockDeviceId, mockAccount, mockPartyId, instruction),
       ).rejects.toThrow(TopologyChangeError);
 
-      expect(mockedGetTransactionStatus.validateTopology).toHaveBeenCalledWith(cantonAccount);
+      expect(mockedGetTransactionStatus.validateTopology).toHaveBeenCalledWith(mockAccount);
       expect(mockedGateway.prepareTransferInstruction).not.toHaveBeenCalled();
       expect(mockedSignTransaction.signTransaction).not.toHaveBeenCalled();
       expect(mockedGateway.submitTransferInstruction).not.toHaveBeenCalled();

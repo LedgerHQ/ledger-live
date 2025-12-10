@@ -1,5 +1,5 @@
-import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { broadcast as broadcastLogic } from "../common-logic";
 import { Transaction } from "../types";
 

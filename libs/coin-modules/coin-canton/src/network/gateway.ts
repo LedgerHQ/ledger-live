@@ -1,333 +1,37 @@
-import network from "@ledgerhq/live-network";
-import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
-import {
-  PrepareTransactionRequest,
-  PrepareTransactionResponse,
+import { TopologyChangeError } from "../types/errors";
+import type {
+  GetBalanceResponse,
+  GetTransferPreApprovalResponse,
+  OnboardingPrepareRequest,
+  OnboardingPrepareResponse,
+  OnboardingSubmitRequest,
+  OnboardingSubmitResponse,
+  OperationView,
+  Party,
+  PrepareTapResponse,
+  PrepareTransferInstructionRequest,
+  PrepareTransferRequest,
+  PrepareTransferResponse,
+  SubmitTapRequestRequest,
+  SubmitTapRequestResponse,
   SubmitTransactionRequest,
   SubmitTransactionResponse,
+  TapRequest,
+  TransferProposal,
+} from "../types/gateway";
+import { TransactionType } from "../types/gateway";
+import {
   PreApprovalResult,
+  PrepareTransactionRequest,
+  PrepareTransactionResponse,
 } from "../types/onboard";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CantonSignature } from "../types/signer";
-import { TopologyChangeError } from "../types/errors";
-
-export type OnboardingPrepareResponse = {
-  party_id: string;
-  party_name: string;
-  public_key_fingerprint: string;
-  transactions: {
-    namespace_transaction: {
-      serialized: string;
-      transaction: {
-        operation: string;
-        serial: number;
-        mapping: Record<string, unknown>;
-      };
-      hash: string;
-    };
-    party_to_key_transaction: {
-      serialized: string;
-      transaction: {
-        operation: string;
-        serial: number;
-        mapping: Record<string, unknown>;
-      };
-      hash: string;
-    };
-    party_to_participant_transaction: {
-      serialized: string;
-      transaction: {
-        operation: string;
-        serial: number;
-        mapping: Record<string, unknown>;
-      };
-      hash: string;
-    };
-    combined_hash: string;
-  };
-  challenge_nonce?: string;
-  challenge_deadline?: number;
-};
-
-type OnboardingPrepareRequest = {
-  public_key: string;
-  public_key_type: string;
-};
-
-export type PrepareTransferResponse = {
-  hash: string;
-  json: any; // The actual structure is complex, using any for now
-  serialized: string;
-};
-
-type BaseTransferRequest = {
-  type: "token-transfer-request";
-  amount: string;
-  recipient: string;
-  instrument_id: string;
-  instrument_admin?: string;
-  reason?: string;
-};
-
-export type PrepareTransferRequest = BaseTransferRequest &
-  ({ execute_before_secs: number } | { execute_before: string });
-
-export type PrepareTransferInstructionRequest = {
-  type:
-    | "accept-transfer-instruction"
-    | "reject-transfer-instruction"
-    | "withdraw-transfer-instruction";
-  contract_id: string;
-  reason?: string;
-};
-
-export type TransferProposal = {
-  contract_id: string;
-  sender: string;
-  receiver: string;
-  amount: string;
-  instrument_id: string;
-  instrument_admin: string;
-  memo: string;
-  expires_at_micros: number;
-};
-
-type OnboardingSubmitRequest = {
-  prepare_request: OnboardingPrepareRequest;
-  prepare_response: OnboardingPrepareResponse;
-  signature: string;
-  application_signature?: string;
-};
-
-type OnboardingSubmitResponse = {
-  party: {
-    party_id: string;
-    public_key: string;
-  };
-};
-
-type TransactionSubmitRequest = {
-  serialized: string;
-  signature: string;
-};
-
-type TransactionSubmitResponse = { update_id: string };
-
-type Asset = {
-  instrumentAdmin: string;
-  instrumentId: string;
-  issuer: string | null;
-  type: "token" | "native";
-};
-
-export type GetBalanceResponse =
-  | {
-      at_round: number;
-      balances: InstrumentBalance[];
-    }
-  // temporary backwards compatibility
-  | InstrumentBalance[];
-
-export type InstrumentBalance = {
-  instrument_id: string;
-  amount: string;
-  admin_id: string;
-  locked: boolean;
-  utxo_count: number;
-};
-
-type PartyInfo = {
-  party_id: string;
-  public_key: string;
-};
-
-type Timestamp = {
-  seconds: number;
-  nanos: number;
-};
-
-type BaseEvent = {
-  type: string;
-  contract_id: string;
-  details: string;
-};
-
-export type CreatedEvent = BaseEvent & {
-  template_id: {
-    package_id: string;
-    module_name: string;
-    entity_name: string;
-  };
-  signatories: string[];
-  observers: string[];
-  details: {
-    createArguments: { fields: unknown[] };
-  };
-};
-
-type ExercisedEvent = BaseEvent & {
-  template_id: {
-    packageId: string;
-    moduleName: string;
-    entityName: string;
-  };
-  choice: string;
-  consuming: boolean;
-  acting_parties: string[];
-};
-
-type Event = BaseEvent | CreatedEvent | ExercisedEvent;
-
-export type TxInfo = {
-  update_id: string;
-  command_id: string;
-  workflow_id: string;
-  effective_at: Timestamp;
-  offset: number;
-  synchronizer_id: string;
-  record_time: Timestamp;
-  events: Record<string, Event>[];
-  trace_context: string;
-};
-
-type OperationType =
-  | "pre-approval"
-  | "tap"
-  | "transfer"
-  | "transfer-proposal"
-  | "transfer-rejected"
-  | "transfer-withdrawn";
-
-export type OperationInfo =
-  | {
-      uid: string;
-      transaction_hash: string;
-      transaction_timestamp: string;
-      status: "Success";
-      type: "Initialize";
-      senders: string[];
-      recipients: string[];
-      transfers: [
-        {
-          address: string;
-          type: "Initialize";
-          value: string;
-          asset: string;
-          details: {
-            operationType: OperationType;
-            metadata: {
-              reason?: string;
-            };
-          };
-        },
-      ];
-      block: {
-        height: number;
-        time: string;
-        hash: string;
-      };
-      fee: {
-        value: string;
-        asset: {
-          type: "native";
-          issuer: null;
-        };
-        details: {
-          type: string;
-        };
-      };
-      asset: Asset;
-      details: {
-        operationType: OperationType;
-      };
-    }
-  | {
-      uid: string;
-      transaction_hash: string;
-      transaction_timestamp: string;
-      status: "Success";
-      type: "Receive";
-      senders: string[];
-      recipients: string[];
-      transfers: [
-        {
-          address: string;
-          type: "Receive";
-          value: string;
-          asset: string;
-          details: {
-            operationType: OperationType;
-            metadata: {
-              reason?: string;
-            };
-          };
-        },
-      ];
-      block: {
-        height: number;
-        time: string;
-        hash: string;
-      };
-      fee: {
-        value: string;
-        asset: {
-          type: "native";
-          issuer: null;
-        };
-        details: {
-          type: string;
-        };
-      };
-      asset: Asset;
-      details: {
-        operationType: OperationType;
-      };
-    }
-  | {
-      uid: string;
-      transaction_hash: string;
-      transaction_timestamp: string;
-      status: "Success";
-      type: "Send";
-      senders: string[];
-      recipients: string[];
-      transfers: [
-        {
-          address: string;
-          type: "Send";
-          value: string;
-          asset: string;
-          details: {
-            operationType: OperationType;
-            metadata: {
-              reason?: string;
-            };
-          };
-        },
-      ];
-      block: {
-        height: number;
-        time: string;
-        hash: string;
-      };
-      fee: {
-        value: string;
-        asset: {
-          type: "native";
-          issuer: null;
-        };
-        details: {
-          type: string;
-        };
-      };
-      asset: Asset;
-      details: {
-        operationType: OperationType;
-      };
-    };
 
 export const SEPARATOR = "____";
 
@@ -379,6 +83,31 @@ const gatewayNetwork = async <T, U = unknown>(
     throw error;
   }
 };
+
+/*
+ * Parties
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Parties
+ */
+
+export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<Party> {
+  return await getParty(currency, partyId, "party-id");
+}
+
+export async function getPartyByPubKey(currency: CryptoCurrency, pubKey: string): Promise<Party> {
+  return await getParty(currency, pubKey, "public-key");
+}
+
+async function getParty(
+  currency: CryptoCurrency,
+  identifier: string,
+  by: "party-id" | "public-key",
+): Promise<Party> {
+  const { data } = await gatewayNetwork<Party>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${identifier}?by=${by}`,
+  });
+  return data;
+}
 
 export async function prepareOnboarding(
   currency: CryptoCurrency,
@@ -506,38 +235,10 @@ export async function submitOnboarding(
   }
 }
 
-export async function submit(
-  currency: CryptoCurrency,
-  partyId: string,
-  serialized: string,
-  signature: string,
-) {
-  const { data } = await gatewayNetwork<TransactionSubmitResponse, TransactionSubmitRequest>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
-    data: {
-      serialized,
-      signature,
-    },
-  });
-  return data;
-}
-
-export async function prepare(
-  currency: CryptoCurrency,
-  partyId: string,
-  params: PrepareTransferRequest | PrepareTransferInstructionRequest,
-) {
-  const { data } = await gatewayNetwork<
-    PrepareTransferResponse,
-    PrepareTransferRequest | PrepareTransferInstructionRequest
-  >({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
-    data: params,
-  });
-  return data;
-}
+/*
+ * State
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/State
+ */
 
 export async function getBalance(currency: CryptoCurrency, partyId: string) {
   const { data } = await gatewayNetwork<GetBalanceResponse>({
@@ -545,29 +246,6 @@ export async function getBalance(currency: CryptoCurrency, partyId: string) {
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
   });
   return Array.isArray(data) ? data : data.balances;
-}
-
-export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<PartyInfo> {
-  return await getParty(currency, partyId, "party-id");
-}
-
-export async function getPartyByPubKey(
-  currency: CryptoCurrency,
-  pubKey: string,
-): Promise<PartyInfo> {
-  return await getParty(currency, pubKey, "public-key");
-}
-
-async function getParty(
-  currency: CryptoCurrency,
-  identifier: string,
-  by: "party-id" | "public-key",
-): Promise<PartyInfo> {
-  const { data } = await gatewayNetwork<PartyInfo>({
-    method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${identifier}?by=${by}`,
-  });
-  return data;
 }
 
 export async function getOperations(
@@ -581,11 +259,11 @@ export async function getOperations(
   },
 ): Promise<{
   next: number;
-  operations: OperationInfo[];
+  operations: OperationView[];
 }> {
   const { data } = await gatewayNetwork<{
     next: number;
-    operations: OperationInfo[];
+    operations: OperationView[];
   }>({
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/operations`,
@@ -594,64 +272,47 @@ export async function getOperations(
   return data;
 }
 
-type PrepareTapRequest = {
-  partyId: string;
-  amount?: number;
-};
-
-type PrepareTapResponse = {
-  serialized: string;
-  json: null;
-  hash: string;
-};
-
-enum TransactionType {
-  TAP_REQUEST = "tap-request",
-  TRANSFER_PRE_APPROVAL_PROPOSAL = "transfer-pre-approval-proposal",
-}
-
-export async function prepareTapRequest(
-  currency: CryptoCurrency,
-  { partyId, amount = 1000000 }: PrepareTapRequest,
-) {
-  const fixedPointAmount = BigInt(amount) * BigInt(10) ** BigInt(38);
-
-  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
-    data: {
-      amount: fixedPointAmount.toString(),
-      type: TransactionType.TAP_REQUEST,
-    },
+export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<TransferProposal[]>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
   });
   return data;
 }
 
-type SubmitTapRequestRequest = {
-  partyId: string;
-  serialized: string;
-  signature: string;
-};
+export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
+}
 
-type SubmitTapRequestResponse = {
-  submission_id: string;
-  update_id: string;
-};
+export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
+  const { data } = await gatewayNetwork<number>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/ledger-end`,
+  });
+  return data;
+}
 
-export async function submitTapRequest(
+/*
+ * Transaction
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Transaction
+ */
+
+export async function prepare(
   currency: CryptoCurrency,
-  { partyId, serialized, signature }: SubmitTapRequestRequest,
+  partyId: string,
+  params: PrepareTransferRequest | PrepareTransferInstructionRequest,
 ) {
   const { data } = await gatewayNetwork<
-    SubmitTapRequestResponse,
-    Omit<SubmitTapRequestRequest, "partyId">
+    PrepareTransferResponse,
+    PrepareTransferRequest | PrepareTransferInstructionRequest
   >({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
-    data: {
-      serialized,
-      signature,
-    },
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: params,
   });
   return data;
 }
@@ -672,14 +333,6 @@ export async function prepareTransferInstruction(
   return prepare(currency, partyId, params);
 }
 
-export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
-  const { data } = await gatewayNetwork<number>({
-    method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/ledger-end`,
-  });
-  return data;
-}
-
 export async function preparePreApprovalTransaction(currency: CryptoCurrency, partyId: string) {
   const { data } = await gatewayNetwork<PrepareTransactionResponse, PrepareTransactionRequest>({
     method: "POST",
@@ -690,6 +343,47 @@ export async function preparePreApprovalTransaction(currency: CryptoCurrency, pa
     },
   });
   return data;
+}
+
+export async function prepareTapRequest(currency: CryptoCurrency, { partyId, amount }: TapRequest) {
+  // Default to 1.0 in fixed-point representation (1 * 10^38)
+  const fixedPointAmount = amount || "1000000000000000000000000000000000000000";
+
+  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: {
+      amount: fixedPointAmount.toString(),
+      type: TransactionType.TAP_REQUEST,
+    },
+  });
+  return data;
+}
+
+export async function submit(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    data: {
+      serialized,
+      signature,
+    },
+  });
+  return data;
+}
+
+export async function submitTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  return submit(currency, partyId, serialized, signature);
 }
 
 export async function submitPreApprovalTransaction(
@@ -714,36 +408,20 @@ export async function submitPreApprovalTransaction(
   } satisfies PreApprovalResult;
 }
 
-export async function submitTransferInstruction(
+export async function submitTapRequest(
   currency: CryptoCurrency,
-  partyId: string,
-  serialized: string,
-  signature: string,
+  { partyId, serialized, signature }: SubmitTapRequestRequest,
 ) {
-  return submit(currency, partyId, serialized, signature);
-}
-
-type GetTransferPreApprovalResponse = {
-  contract_id: string;
-  receiver: string;
-  provider: string;
-  valid_from: string; // ISO 8601 date string
-  last_renewed_at: string; // ISO 8601 date
-  expires_at: string; // ISO 8601 date string
-};
-
-export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
-  const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
-    method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
-  });
-  return data;
-}
-
-export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
-  const { data } = await gatewayNetwork<TransferProposal[]>({
-    method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
+  const { data } = await gatewayNetwork<
+    SubmitTapRequestResponse,
+    Omit<SubmitTapRequestRequest, "partyId">
+  >({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    data: {
+      serialized,
+      signature,
+    },
   });
   return data;
 }
