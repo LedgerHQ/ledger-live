@@ -62,7 +62,7 @@ import {
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 

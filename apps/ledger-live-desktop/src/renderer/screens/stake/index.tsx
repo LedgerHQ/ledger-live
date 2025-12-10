@@ -10,13 +10,10 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-  useModularDrawerVisibility,
-} from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const DRAWER_FLOW = "stake";
 
@@ -119,6 +116,8 @@ const useStakeFlow = () => {
     });
   }, [history.location.pathname]);
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   return useCallback(
     ({
       currencies,
@@ -156,7 +155,7 @@ const useStakeFlow = () => {
         const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
           ? earnDrawerConfigurationFlag.params
           : {};
-        openAssetAndAccountDrawer({
+        openAssetAndAccount({
           currencies: cryptoCurrencies,
           useCase: "earn",
           onSuccess,
@@ -196,6 +195,7 @@ const useStakeFlow = () => {
       history.location.pathname,
       list,
       modularDrawerVisible,
+      openAssetAndAccount,
     ],
   );
 };
