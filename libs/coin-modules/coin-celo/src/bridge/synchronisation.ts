@@ -96,6 +96,7 @@ const getOperationsList = async ({
       const token = await getTokenFromAsset(currency, item.asset);
       const type = getTypeFromString(item.type);
       const tokenAccountId = token ? encodeTokenAccountId(accountId, token) : accountId;
+      const isSubAccount = token?.ticker !== "CELO" && item.asset.type !== "native";
 
       const operation = {
         id: item.id,
@@ -113,14 +114,14 @@ const getOperationsList = async ({
         recipients: item.recipients,
         blockHeight: item.tx.block.height,
         blockHash: item.tx.block.hash,
-        accountId: tokenAccountId,
+        accountId: isSubAccount ? tokenAccountId : accountId,
         date: item.tx.date,
         hasFailed: item.tx.failed,
         fee: new BigNumber(item.tx.fees.toString()),
         transactionSequenceNumber: new BigNumber(0),
         extra: {},
         ...(token ? { token } : undefined),
-        isSubAccount: token?.ticker !== "CELO" && item.asset.type !== "native",
+        isSubAccount,
       };
 
       return operation;
@@ -251,13 +252,23 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
   const operations = shouldSyncFromScratch
-    ? nativeOperations
+    ? mergeOps([], nativeOperations)
     : mergeOps(oldOperations, nativeOperations);
+
+  const initialSubAccounts = initialAccount?.subAccounts?.filter(item => {
+    return item.token.ticker !== "CELO";
+  });
 
   const subAccounts =
     shouldSyncFromScratch && initialAccount?.subAccounts
       ? subAccountsList
-      : (mergeSubAccounts(initialAccount, subAccountsList) as TokenAccount[]);
+      : (mergeSubAccounts(
+          {
+            ...initialAccount,
+            subAccounts: initialSubAccounts || [],
+          } as CeloAccount,
+          subAccountsList,
+        ) as TokenAccount[]);
 
   const shape: Partial<CeloAccount> = {
     id: accountId,
