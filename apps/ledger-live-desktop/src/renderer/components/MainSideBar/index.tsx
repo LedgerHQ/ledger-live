@@ -530,21 +530,21 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
               </SideBarList>
-              <Box>
-                <Space grow of={30} />
-                <Hide visible={secondAnim && hasStarredAccounts} mb={"-8px"}>
-                  <Separator />
-                </Hide>
-                <SideBarList
-                  scroll
-                  flex="1 1 40%"
-                  title={t("sidebar.stars")}
-                  collapsed={secondAnim}
-                >
-                  <Stars pathname={location.pathname} collapsed={secondAnim} />
-                </SideBarList>
-              </Box>
+
+              <Space grow of={30} />
+              <Hide visible={secondAnim && hasStarredAccounts} mb={"-8px"}>
+                <Separator />
+              </Hide>
+              <SideBarList
+                style={{ maxHeight: "max-content" }}
+                scroll
+                title={t("sidebar.stars")}
+                collapsed={secondAnim}
+              >
+                <Stars pathname={location.pathname} collapsed={secondAnim} />
+              </SideBarList>
             </SideBarScrollContainer>
+
             <Box pt={4}>
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
