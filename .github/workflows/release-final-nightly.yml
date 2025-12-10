@@ -61,7 +61,7 @@ jobs:
           skip-turbo-cache: "false"
 
       - name: install dependencies
-        run: pnpm i -F "./libs" -F "@ledgerhq/ledger-live" -D
+        run: pnpm i -F "./libs/**" -F "@ledgerhq/ledger-live"
 
       - name: build libs
         run: pnpm run build:libs
@@ -93,7 +93,7 @@ jobs:
 
       - name: Pack for signing / Attestation
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: pnpm -F "./libs" -r pack --pack-destination ./packed
+        run: pnpm -F "./libs/**" -r pack --pack-destination ./packed
 
       - name: Attest
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
