@@ -27,7 +27,8 @@ jest.mock("~/renderer/components/CopyWithFeedback", () => ({
   ),
 }));
 
-jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+jest.mock("~/renderer/components/OperationsList/Address", () => ({
+  __esModule: true,
   SplitAddress: ({ value }: { value: string }) => (
     <span data-testid={`address-${value}`}>{value}</span>
   ),
@@ -115,15 +116,15 @@ describe("PendingTransactionDetails", () => {
       render(
         <PendingTransactionDetails
           account={account}
-          contractId="contract-456"
+          contractId="contract-789"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
         />,
       );
 
       expect(screen.getByText("families.canton.pendingTransactions.amount")).toBeInTheDocument();
-      expect(screen.getByTestId("address-other-sender")).toBeInTheDocument();
       expect(screen.getByTestId("address-receiver-address")).toBeInTheDocument();
+      expect(screen.getByTestId("address-other-receiver")).toBeInTheDocument();
     });
 
     it("should display memo when present", () => {
