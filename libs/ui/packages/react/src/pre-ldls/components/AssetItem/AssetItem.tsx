@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
-import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 const copyToClipboard = async (text: string) => {
   try {

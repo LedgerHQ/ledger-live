@@ -6,7 +6,7 @@ import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIcon
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 const size = 40;
 const ManagerAppIconContainer = styled.div`
