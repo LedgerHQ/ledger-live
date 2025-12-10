@@ -4810,7 +4810,7 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
-    dependencies:
+    devDependencies:
       vitest:
         specifier: 2.1.9
         version: 2.1.9

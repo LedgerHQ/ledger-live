@@ -17,8 +17,8 @@
     "access": "public"
   },
   "main": "lib/ZCash.js",
-  "module": "lib-es/Cosmos.js",
-  "types": "lib/Cosmos.d.ts",
+  "module": "lib-es/ZCash.js",
+  "types": "lib/ZCash.d.ts",
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -33,7 +33,7 @@
     "test": "vitest",
     "unimported": "unimported"
   },
-  "dependencies": {
+  "devDependencies": {
     "vitest": "2.1.9"
   }
 }
