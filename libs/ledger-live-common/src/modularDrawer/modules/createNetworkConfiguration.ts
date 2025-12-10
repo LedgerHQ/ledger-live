@@ -57,7 +57,7 @@ type NetworksWithComponents = CryptoOrTokenCurrency &
   Network & {
     balanceData?: BalanceUI;
     count?: number;
-    apy?: React.ReactElement | undefined;
+    apy: React.ReactElement | undefined;
     description?: string;
   };
 
@@ -98,7 +98,7 @@ export const createNetworkConfigurationHook =
         Network & {
           balanceData?: BalanceUI;
           count?: number;
-          apy?: React.ReactElement | undefined;
+          apy: React.ReactElement | undefined;
           description?: string;
         }
     > => {
@@ -111,7 +111,7 @@ export const createNetworkConfigurationHook =
       const networksWithComponents = networks.map((network, index) => {
         const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
 
-        const merged: NetworksWithComponents = { ...asset };
+        const merged: NetworksWithComponents = { ...asset, apy: undefined };
 
         for (const hookResult of hookResults) {
           if (hookResult[index]) {

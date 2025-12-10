@@ -1349,6 +1349,9 @@ importers:
       lottie-react-native:
         specifier: 7.2.2
         version: 7.2.2(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      moment:
+        specifier: 2.30.1
+        version: 2.30.1
       node-libs-react-native:
         specifier: 1.2.1
         version: 1.2.1
