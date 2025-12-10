@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
-import { Platform, Text } from "react-native";
+import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
