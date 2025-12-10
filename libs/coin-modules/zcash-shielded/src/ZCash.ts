@@ -3,7 +3,7 @@
  */
 
 export default class ZCash {
-  static AVERAGE_BLOCK_SYNC_TIME_SECONDS = 5;
+  static AVERAGE_BLOCK_SYNC_TIME_MS = 5;
 
   /**
    * Estimates sync time given a start and an end block.
@@ -13,7 +13,7 @@ export default class ZCash {
    * @return the estimated sync time
    */
   async estimateSyncTime(startBlock: number, endBlock: number) {
-    return (endBlock - startBlock) * ZCash.AVERAGE_BLOCK_SYNC_TIME_SECONDS;
+    return (endBlock - startBlock) * ZCash.AVERAGE_BLOCK_SYNC_TIME_MS;
   }
 
   /**
