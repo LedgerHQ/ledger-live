@@ -97,7 +97,8 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
   );
 
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
-  const formUrl =
+
+  let formUrl =
     formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
     `&app_language=${language}` +
@@ -107,8 +108,11 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted?.[1] || ""}
-    ${equipmentId ? `&equipment_id=${equipmentId}` : ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}`;
+
+  if (equipmentId) {
+    formUrl += `&equipment_id=${equipmentId}`;
+  }
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>
