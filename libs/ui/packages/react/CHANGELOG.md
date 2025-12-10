@@ -1,5 +1,21 @@
 # @ledgerhq/react-ui
 
+## 0.41.2
+
+### Patch Changes
+
+- Updated dependencies [[`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd), [`a3425cf`](https://github.com/LedgerHQ/ledger-live/commit/a3425cf0563667ac933765625e155f22db870ae1), [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5), [`1416051`](https://github.com/LedgerHQ/ledger-live/commit/141605179eeffc4d475150a3cfdeee431c21c7ee), [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856)]:
+  - @ledgerhq/crypto-icons-ui@1.24.0
+  - @ledgerhq/icons-ui@0.17.0
+
+## 0.41.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd), [`a3425cf`](https://github.com/LedgerHQ/ledger-live/commit/a3425cf0563667ac933765625e155f22db870ae1), [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5), [`1416051`](https://github.com/LedgerHQ/ledger-live/commit/141605179eeffc4d475150a3cfdeee431c21c7ee), [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856)]:
+  - @ledgerhq/crypto-icons-ui@1.24.0-next.0
+  - @ledgerhq/icons-ui@0.17.0-next.0
+
 ## 0.41.1
 
 ### Patch Changes
