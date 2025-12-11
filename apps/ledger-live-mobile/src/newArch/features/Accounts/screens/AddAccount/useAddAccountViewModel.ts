@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { useQRCodeHost } from "LLM/features/WalletSync/hooks/useQRCodeHost";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
@@ -8,7 +8,9 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import { blockPasswordLock } from "~/actions/appstate";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
@@ -19,11 +21,19 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
-const startingStep = Steps.AddAccountMethod;
-
 const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) => {
   const dispatch = useDispatch();
   const { currentStep, setCurrentStep } = useCurrentStep();
+  const trustchain = useSelector(trustchainSelector);
+  const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
+
+  const startingStep = useMemo(
+    () =>
+      ledgerSyncOptimisationFlag?.enabled && trustchain?.rootId
+        ? Steps.ChooseSyncMethod
+        : Steps.AddAccountMethod,
+    [ledgerSyncOptimisationFlag?.enabled, trustchain?.rootId],
+  );
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigateToChooseSyncMethod = () => {
     dispatch(blockPasswordLock(true)); // Avoid Background on Android
@@ -38,7 +48,7 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
 
   useEffect(() => {
     setCurrentStep(startingStep);
-  }, [isOpened, setCurrentStep]);
+  }, [isOpened, setCurrentStep, startingStep]);
 
   const reset = () => {
     dispatch(blockPasswordLock(false));
@@ -46,16 +56,19 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
     setCurrentOption(Options.SCAN);
   };
 
-  const getPreviousStep = useCallback((step: Steps): Steps => {
-    switch (step) {
-      case Steps.QrCodeMethod:
-        return Steps.ChooseSyncMethod;
-      case Steps.ChooseSyncMethod:
-        return Steps.AddAccountMethod;
-      default:
-        return startingStep;
-    }
-  }, []);
+  const getPreviousStep = useCallback(
+    (step: Steps): Steps => {
+      switch (step) {
+        case Steps.QrCodeMethod:
+          return Steps.ChooseSyncMethod;
+        case Steps.ChooseSyncMethod:
+          return startingStep;
+        default:
+          return startingStep;
+      }
+    },
+    [startingStep],
+  );
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
