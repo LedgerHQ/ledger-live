@@ -3,7 +3,7 @@
  *
  * @param address - The address to format
  * @param options - Configuration options
- * @param options.prefixLength - Number of characters to show at the start (default: 5)
+ * @param options.prefixLength - Number of characters to show at the start (default: 4)
  * @param options.suffixLength - Number of characters to show at the end (default: 5)
  * @param options.separator - String to use as separator (default: "...")
  * @param options.threshold - Minimum length before truncating (default: calculated from other params)

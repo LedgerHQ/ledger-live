@@ -28,7 +28,7 @@ describe("formatAddress", () => {
     expect(formattedAddress).toBe("");
   });
 
-  it("should return all the address if threshold is greater to address lenght", () => {
+  it("should return all the address if threshold is greater to address length", () => {
     const address = "123456789";
     const formattedAddress = formatAddress(address, {
       threshold: 10,
