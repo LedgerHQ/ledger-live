@@ -8,7 +8,12 @@ import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCur
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useSelector } from "react-redux";
-import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import {
+  localeSelector,
+  discreetModeSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
+import BigNumber from "bignumber.js";
 
 type AccountSelectorContentProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -29,6 +34,7 @@ export const AccountSelectorContent = ({
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const formattedAccounts = useMemo(() => {
     return detailedAccounts.map(account => ({
@@ -41,9 +47,16 @@ export const AccountSelectorContent = ({
               locale,
             })
           : "",
-      fiatValue: "",
+      fiatValue:
+        account.fiatValue !== undefined && account.fiatValue !== null
+          ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(account.fiatValue), {
+              showCode: true,
+              discreet,
+              locale,
+            })
+          : "",
     }));
-  }, [detailedAccounts, locale, discreet]);
+  }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
   const trackAccountClick = (name: string) => {
     trackModularDrawerEvent("account_clicked", {

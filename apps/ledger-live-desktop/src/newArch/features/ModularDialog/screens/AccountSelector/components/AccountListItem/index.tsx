@@ -27,8 +27,8 @@ const renderTrailingContent = (balance?: string, fiatValue?: string) => {
 
   return (
     <div className="flex flex-col items-end">
-      {fiatValue && <span className="body-3">{fiatValue}</span>}
-      {balance && <span className="text-muted body-4">{balance}</span>}
+      {fiatValue && <span className="body-2-semi-bold">{fiatValue}</span>}
+      {balance && <span className="text-muted body-3">{balance}</span>}
     </div>
   );
 };
