@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -9,6 +10,7 @@ import {
   getOperations,
   type OperationInfo,
   getPendingTransferProposals,
+  getEnabledInstrumentsCached,
 } from "../network/gateway";
 import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -86,6 +88,35 @@ const filterOperations = (
 ): Operation[] => {
   return transactions.map(txInfoToOperationAdapter(accountId, partyId));
 };
+
+export async function filterDisabledTokenAccounts(
+  currency: CryptoCurrency,
+  subAccounts: TokenAccount[] | undefined,
+): Promise<TokenAccount[]> {
+  if (!subAccounts || subAccounts.length === 0) {
+    return [];
+  }
+
+  let enabledInstruments: Set<string>;
+
+  try {
+    const enabledList = await getEnabledInstrumentsCached(currency);
+    enabledInstruments = new Set(enabledList);
+  } catch (error) {
+    // If API fails, hide all token accounts
+    return [];
+  }
+
+  return subAccounts.filter(subAccount => {
+    const instrumentId = subAccount.token.contractAddress;
+
+    if (!instrumentId) {
+      return false;
+    }
+
+    return enabledInstruments.has(instrumentId);
+  });
+}
 
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
@@ -174,10 +205,15 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
     };
 
+    const filteredSubAccounts = await filterDisabledTokenAccounts(
+      currency,
+      initialAccount?.subAccounts,
+    );
+
     const used = !isCantonAccountEmpty({
       operationsCount: operations.length,
       balance: totalBalance,
-      subAccounts: initialAccount?.subAccounts ?? [],
+      subAccounts: filteredSubAccounts,
       cantonResources,
     });
 
@@ -203,6 +239,7 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
       used,
       cantonResources,
+      subAccounts: filteredSubAccounts,
     };
 
     return shape;

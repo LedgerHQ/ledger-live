@@ -1,14 +1,15 @@
-import { makeGetAccountShape } from "./sync";
+import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 import { OperationInfo, type InstrumentBalance } from "../network/gateway";
 import * as gateway from "../network/gateway";
 import * as onboard from "./onboard";
 import * as config from "../config";
 import resolver from "../signer";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CantonAccount } from "../types";
 import { createMockCantonCurrency } from "../test/fixtures";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("../network/gateway");
 jest.mock("../signer");
@@ -18,6 +19,7 @@ jest.mock("./onboard");
 const mockedGetBalance = gateway.getBalance as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
+const mockedGetEnabledInstrumentsCached = gateway.getEnabledInstrumentsCached as jest.Mock;
 const mockedResolver = resolver as jest.Mock;
 const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
@@ -489,5 +491,136 @@ describe("makeGetAccountShape", () => {
     expect(shape.xpub).toBe("test-party-id");
     // Should not call getAddress since we have both values
     expect(mockedResolver).not.toHaveBeenCalled();
+  });
+});
+
+describe("filterDisabledTokenAccounts", () => {
+  const currency = createMockCantonCurrency();
+
+  const createMockTokenAccount = (contractAddress: string): TokenAccount => ({
+    type: "TokenAccount",
+    id: `token-account-${contractAddress}`,
+    parentId: "parent-account-id",
+    token: {
+      type: "TokenCurrency",
+      id: `token-id-${contractAddress}`,
+      contractAddress,
+      name: "Test Token",
+      ticker: "TEST",
+      decimals: 18,
+      parentCurrency: currency,
+    } as any,
+    balance: new BigNumber(100),
+    spendableBalance: new BigNumber(100),
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    balanceHistoryCache: {
+      HOUR: { latestDate: null, balances: [] },
+      DAY: { latestDate: null, balances: [] },
+      WEEK: { latestDate: null, balances: [] },
+    },
+    swapHistory: [],
+    creationDate: new Date(),
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return empty array when subAccounts is undefined", async () => {
+    const result = await filterDisabledTokenAccounts(currency, undefined);
+    expect(result).toEqual([]);
+    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
+  });
+
+  it("should return empty array when subAccounts is empty", async () => {
+    const result = await filterDisabledTokenAccounts(currency, []);
+    expect(result).toEqual([]);
+    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
+  });
+
+  it("should filter out disabled token accounts", async () => {
+    const enabledTokenId = "0xenabled";
+    const disabledTokenId = "0xdisabled";
+    const enabledTokenAccount = createMockTokenAccount(enabledTokenId);
+    const disabledTokenAccount = createMockTokenAccount(disabledTokenId);
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue([enabledTokenId]);
+
+    const result = await filterDisabledTokenAccounts(currency, [
+      enabledTokenAccount,
+      disabledTokenAccount,
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(enabledTokenAccount);
+    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(currency);
+  });
+
+  it("should keep enabled token accounts", async () => {
+    const enabledTokenId1 = "0xenabled1";
+    const enabledTokenId2 = "0xenabled2";
+    const enabledTokenAccount1 = createMockTokenAccount(enabledTokenId1);
+    const enabledTokenAccount2 = createMockTokenAccount(enabledTokenId2);
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue([enabledTokenId1, enabledTokenId2]);
+
+    const result = await filterDisabledTokenAccounts(currency, [
+      enabledTokenAccount1,
+      enabledTokenAccount2,
+    ]);
+
+    expect(result).toHaveLength(2);
+    expect(result).toContain(enabledTokenAccount1);
+    expect(result).toContain(enabledTokenAccount2);
+  });
+
+  it("should not keep token accounts without contractAddress", async () => {
+    const tokenAccountWithoutAddress = {
+      ...createMockTokenAccount("0xtest"),
+      token: {
+        ...createMockTokenAccount("0xtest").token,
+        contractAddress: "",
+      },
+    };
+    const enabledTokenAccount = createMockTokenAccount("0xenabled");
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(["0xenabled"]);
+
+    const result = await filterDisabledTokenAccounts(currency, [
+      tokenAccountWithoutAddress,
+      enabledTokenAccount,
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(enabledTokenAccount);
+    expect(result).not.toContain(tokenAccountWithoutAddress);
+  });
+
+  it("should return empty array when API fails", async () => {
+    const enabledTokenAccount = createMockTokenAccount("0xenabled");
+    const disabledTokenAccount = createMockTokenAccount("0xdisabled");
+
+    mockedGetEnabledInstrumentsCached.mockRejectedValue(new Error("Network error"));
+
+    const result = await filterDisabledTokenAccounts(currency, [
+      enabledTokenAccount,
+      disabledTokenAccount,
+    ]);
+
+    expect(result).toEqual([]);
+    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(currency);
+  });
+
+  it("should handle empty enabled instruments list", async () => {
+    const tokenAccount1 = createMockTokenAccount("0xtoken1");
+    const tokenAccount2 = createMockTokenAccount("0xtoken2");
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue([]);
+
+    const result = await filterDisabledTokenAccounts(currency, [tokenAccount1, tokenAccount2]);
+
+    expect(result).toEqual([]);
   });
 });

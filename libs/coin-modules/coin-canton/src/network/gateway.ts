@@ -426,6 +426,45 @@ export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pub
   isTopologyChangeRequiredCached.clear(cacheKey);
 }
 
+export type InstrumentInfo = {
+  instrument_id: string;
+  display_name?: string;
+};
+
+export type InstrumentsResponse = {
+  instruments: InstrumentInfo[];
+};
+
+export async function getEnabledInstruments(currency: CryptoCurrency): Promise<string[]> {
+  try {
+    const { data } = await gatewayNetwork<InstrumentsResponse>({
+      method: "GET",
+      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
+    });
+    return data.instruments.map(instrument => instrument.instrument_id);
+  } catch (error) {
+    // If API fails, return empty array (fail-safe: only native instrument will work)
+    console.error("Failed to fetch enabled instruments:", error);
+    return [];
+  }
+}
+
+const getEnabledInstrumentsCacheKey = (currency: CryptoCurrency): string => {
+  const nodeId = getNodeId(currency);
+  return `instruments_${nodeId}`;
+};
+
+export const getEnabledInstrumentsCached = makeLRUCache(
+  getEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  minutes(15),
+);
+
+export function clearEnabledInstrumentsCache(currency: CryptoCurrency): void {
+  const cacheKey = getEnabledInstrumentsCacheKey(currency);
+  getEnabledInstrumentsCached.clear(cacheKey);
+}
+
 export async function submitOnboarding(
   currency: CryptoCurrency,
   publicKey: string,
