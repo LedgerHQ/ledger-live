@@ -11,11 +11,10 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceActionStatus,
-  DeviceDisconnectedWhileSendingError,
   DeviceSessionStateType,
   UserInteractionRequired,
   OutOfMemoryDAError,
-  UnsupportedFirmwareDAError,
+  DeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import type {
   ConnectAppDAOutput,
@@ -27,12 +26,14 @@ import {
   UserRefusedAllowManager,
   UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
+  UnsupportedFeatureError,
 } from "@ledgerhq/errors";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
 import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
+import { NoSuchAppOnProvider } from "../errors";
 
 export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;
@@ -241,7 +242,8 @@ export class ConnectAppEventMapper {
       });
       this.eventSubject.complete();
     } else if (
-      error instanceof UnsupportedFirmwareDAError &&
+      "_tag" in error &&
+      error._tag === "UnsupportedFirmwareDAError" &&
       deviceState.sessionStateType !== DeviceSessionStateType.Connected
     ) {
       this.eventSubject.error(
@@ -252,12 +254,34 @@ export class ConnectAppEventMapper {
             deviceState.firmwareUpdateContext!.currentFirmware.version,
         }),
       );
+    } else if (
+      "_tag" in error &&
+      error._tag === "UnsupportedApplicationDAError" &&
+      deviceState.sessionStateType !== DeviceSessionStateType.Connected
+    ) {
+      if (deviceState.deviceModelId === DeviceModelId.NANO_S) {
+        // This will show an error modal with upsell link
+        this.eventSubject.error(
+          new NoSuchAppOnProvider(`Ledger Nano S does not support this feature`, {
+            appName: this.appName,
+          }),
+        );
+        return;
+      }
+      // This will show an error modal with contact support link
+      this.eventSubject.error(
+        new UnsupportedFeatureError(`App ${this.appName} not supported on this device`, {
+          appName: this.appName,
+          deviceModelId: deviceState.deviceModelId,
+          deviceVersion: deviceState.firmwareVersion?.os,
+        }),
+      );
     } else if ("_tag" in error && error._tag === "DeviceLockedError") {
       this.eventSubject.next({ type: "lockedDevice" });
       this.eventSubject.complete();
     } else if ("_tag" in error && error._tag === "RefusedByUserDAError") {
       this.eventSubject.error(new UserRefusedAllowManager());
-    } else if (error instanceof DeviceDisconnectedWhileSendingError) {
+    } else if ("_tag" in error && error._tag === "DeviceDisconnectedWhileSendingError") {
       this.eventSubject.next({ type: "disconnected", expected: false });
     } else if ("_tag" in error && error._tag === "WebHidSendReportError") {
       this.eventSubject.next({ type: "disconnected", expected: false });

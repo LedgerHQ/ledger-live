@@ -4,9 +4,17 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },
-  "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
+  "include": [
+    "src/**/*",
+    "deviceTransactionConfig.ts",
+    "transaction.ts"
+  ],
+  "exclude": []
 }

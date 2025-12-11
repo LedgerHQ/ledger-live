@@ -19,8 +19,8 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { AssetAndAccountResult } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -43,6 +43,7 @@ export const requestAccountLogic = async (
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
   deactivatedCurrencyIds: Set<string>,
+  openAssetAndAccountSelector: (currencyIds?: string[]) => Promise<AssetAndAccountResult>,
   modularDrawerVisible?: boolean,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
@@ -71,10 +72,7 @@ export const requestAccountLogic = async (
   const flow = manifest.name;
 
   const { account, parentAccount } = modularDrawerVisible
-    ? await openAssetAndAccountDrawerPromise({
-        currencies: currencyIds,
-        areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
-      })
+    ? await openAssetAndAccountSelector(currencyIds)
     : await selectAccountAndCurrency(currencyIds, flow, source);
 
   return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));

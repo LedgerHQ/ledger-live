@@ -47,7 +47,11 @@ const SectionGeneral = () => {
         {!shouldDisplayEntryPoint ? (
           <Row
             title={t("settings.display.walletSync")}
-            desc={t("settings.display.walletSyncDesc")}
+            desc={
+              ledgerSyncOptimisationFlag?.enabled
+                ? t("settings.display.walletSyncDescription")
+                : t("settings.display.walletSyncDesc")
+            }
             dataTestId="setting-walletSync"
             id="setting-walletSync"
           >

@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { getSigner } from "./signer";
+import { getSigner, getValidateAddress } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
 import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
@@ -36,5 +36,6 @@ export function getAlpacaAccountBridge(
     signOperation: genericSignOperation(network, kind)(signer.context),
     signRawOperation: genericSignRawOperation(network, kind)(signer.context),
     getSerializedAddressParameters, // NOTE: check wether it should be exposed by coin-module's api instead?
+    validateAddress: getValidateAddress(network),
   } satisfies Partial<AccountBridge<any>>;
 }

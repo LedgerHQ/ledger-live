@@ -69,6 +69,7 @@ export type PrepareTransferRequest = {
   recipient: string;
   execute_before_secs: number;
   instrument_id: string;
+  instrument_admin?: string;
   reason?: string;
 };
 
@@ -87,6 +88,7 @@ export type TransferProposal = {
   receiver: string;
   amount: string;
   instrument_id: string;
+  instrument_admin: string;
   memo: string;
   expires_at_micros: number;
 };
@@ -111,6 +113,13 @@ type TransactionSubmitRequest = {
 };
 
 type TransactionSubmitResponse = { update_id: string };
+
+type Asset = {
+  instrumentAdmin: string;
+  instrumentId: string;
+  issuer: string | null;
+  type: "token" | "native";
+};
 
 export type GetBalanceResponse =
   | {
@@ -228,10 +237,7 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "token";
-        issuer: string;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
@@ -273,10 +279,7 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
@@ -318,10 +321,7 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
@@ -424,6 +424,45 @@ export const isTopologyChangeRequiredCached = makeLRUCache(
 export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pubKey: string): void {
   const cacheKey = getIsTopologyChangeRequiredCacheKey(currency, pubKey);
   isTopologyChangeRequiredCached.clear(cacheKey);
+}
+
+export type InstrumentInfo = {
+  instrument_id: string;
+  display_name?: string;
+};
+
+export type InstrumentsResponse = {
+  instruments: InstrumentInfo[];
+};
+
+export async function getEnabledInstruments(currency: CryptoCurrency): Promise<string[]> {
+  try {
+    const { data } = await gatewayNetwork<InstrumentsResponse>({
+      method: "GET",
+      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
+    });
+    return data.instruments.map(instrument => instrument.instrument_id);
+  } catch (error) {
+    // If API fails, return empty array (fail-safe: only native instrument will work)
+    console.error("Failed to fetch enabled instruments:", error);
+    return [];
+  }
+}
+
+const getEnabledInstrumentsCacheKey = (currency: CryptoCurrency): string => {
+  const nodeId = getNodeId(currency);
+  return `instruments_${nodeId}`;
+};
+
+export const getEnabledInstrumentsCached = makeLRUCache(
+  getEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  minutes(15),
+);
+
+export function clearEnabledInstrumentsCache(currency: CryptoCurrency): void {
+  const cacheKey = getEnabledInstrumentsCacheKey(currency);
+  getEnabledInstrumentsCached.clear(cacheKey);
 }
 
 export async function submitOnboarding(
@@ -704,3 +743,35 @@ export async function getPendingTransferProposals(currency: CryptoCurrency, part
   });
   return data;
 }
+
+// CAL API types
+export type CalToken = {
+  id: string;
+  name: string;
+  ticker: string;
+  network: string;
+  contract_address: string;
+  token_identifier: string;
+};
+
+/**
+ * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
+ */
+async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
+  const calUrl = getEnv("CAL_SERVICE_URL");
+  const { data: calTokens } = await gatewayNetwork<CalToken[]>({
+    method: "GET",
+    url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,
+  });
+
+  // Map id -> token_identifier
+  const tokenIdentifierMap = new Map<string, string>();
+  for (const token of calTokens) {
+    tokenIdentifierMap.set(token.id, token.token_identifier);
+  }
+  return tokenIdentifierMap;
+}
+
+const getCalTokensCacheKey = (currency: CryptoCurrency): string => currency.id;
+
+export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));

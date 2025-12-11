@@ -17,6 +17,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-polkadot/serialization";
 import { hydrate } from "@ledgerhq/coin-polkadot/preload";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -102,6 +103,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const preload = () => {
