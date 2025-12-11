@@ -361,7 +361,7 @@ const MainSideBar = () => {
 
   const getMinHeightForStarredAccountsList = () => {
     if (totalStarredAccounts === 0) {
-      return "max-content"; // this is the height of the placeholder
+      return "max-content"; // let it take the full height of the placeholder
     }
 
     const minHeight =
