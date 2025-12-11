@@ -4191,7 +4191,8 @@
       "confirm": "Your account balance will be updated once the network confirms the transaction.",
       "button": {
         "details": "View details",
-        "retry": "Retry"
+        "retry": "Retry",
+        "abort": "Abort"
       }
     },
     "fees": {
