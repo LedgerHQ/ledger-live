@@ -119,6 +119,62 @@ export default function trackingWrapper(trackCall: TrackExchange) {
     completeExchangeNoParams: (manifest: AppManifest) => {
       track("Completes Exchange no params", getEventData(manifest));
     },
+
+    swapPayloadRequested: ({
+      provider,
+      transactionId,
+      fromAccountAddress,
+      toAccountAddress,
+      fromCurrencyId,
+      toCurrencyId,
+      fromAmount,
+      quoteId,
+    }: {
+      provider: string;
+      transactionId: string;
+      fromAccountAddress: string;
+      toAccountAddress: string;
+      fromCurrencyId: string;
+      toCurrencyId?: string;
+      fromAmount: string | number;
+      quoteId?: string;
+    }) => {
+      track("Swap payload requested", {
+        provider,
+        transactionId,
+        fromAccountAddress,
+        toAccountAddress,
+        fromCurrencyId,
+        toCurrencyId,
+        fromAmount: String(fromAmount),
+        quoteId,
+      });
+    },
+
+    swapResponseRetrieved: ({
+      binaryPayload,
+      signature,
+      payinAddress,
+      swapId,
+      payinExtraId,
+      extraTransactionParameters,
+    }: {
+      binaryPayload: string;
+      signature: string;
+      payinAddress: string;
+      swapId: string;
+      payinExtraId?: string;
+      extraTransactionParameters?: string;
+    }) => {
+      track("Swap response retrieved", {
+        binaryPayload,
+        signature,
+        payinAddress,
+        swapId,
+        payinExtraId,
+        extraTransactionParameters,
+      });
+    },
   } as const;
 }
 
