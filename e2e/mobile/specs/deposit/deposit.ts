@@ -33,7 +33,24 @@ export async function runCreateNewAccountAndDepositTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: currentAccount.currency.speculosApp,
-        cliCommands: [liveDataCommand(currentAccount.currency.speculosApp, currentAccount.index)],
+        cliCommands: [
+          async (userdataPath?: string) => {
+            await liveDataCommand(
+              currentAccount.currency.speculosApp,
+              currentAccount.index,
+            )(userdataPath);
+
+            const { address } = await CLI.getAddress({
+              currency: newAccount.currency.speculosApp.name,
+              path: newAccount.accountPath,
+              derivationMode: newAccount.derivationMode,
+            });
+
+            newAccount.address = address;
+
+            return address;
+          },
+        ],
       });
     });
 
@@ -63,7 +80,9 @@ export async function runSelectCryptoNetworkTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, () => {
+  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${
+    account.currency.ticker
+  }`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -76,10 +95,14 @@ export async function runSelectCryptoNetworkTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, async () => {
-      withAccount
-        ? await app.portfolio.tapQuickActionReceiveButton()
-        : await app.portfolioEmptyState.navigateToReceive();
+    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
+      account.currency.ticker
+    }`, async () => {
+      if (withAccount) {
+        await app.portfolio.tapQuickActionReceiveButton();
+      } else {
+        await app.portfolioEmptyState.navigateToReceive();
+      }
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.validateNetworksScreen(networks);

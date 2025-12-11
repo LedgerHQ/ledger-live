@@ -1,6 +1,11 @@
 import { runSendInvalidTokenAmountTest } from "../send";
 
-const transaction = new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST);
+const transaction = new Transaction(
+  TokenAccount.BSC_BUSD_1,
+  TokenAccount.BSC_BUSD_2,
+  "1",
+  Fee.FAST,
+);
 runSendInvalidTokenAmountTest(
   transaction,
   new RegExp(

@@ -4,6 +4,12 @@ import axios from "axios";
 
 export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Account) {
   try {
+    const addressFrom = AccountFrom.address || AccountFrom.parentAccount?.address;
+
+    if (!addressFrom) {
+      throw new Error("No address available from accounts when requesting minimum swap amount.");
+    }
+
     const requestConfig = {
       method: "GET",
       url: "https://swap-stg.ledger-test.com/v5/quote",
@@ -11,7 +17,7 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
         from: AccountFrom.currency.id,
         to: AccountTo.currency.id,
         amountFrom: 0.0001,
-        addressFrom: AccountFrom.address,
+        addressFrom,
         fiatForCounterValue: "USD",
         slippage: 1,
         networkFees: 0.001,

@@ -4,6 +4,7 @@ import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 async function navigateToSendScreen(accountName: string) {
   await app.account.openViaDeeplink();
@@ -18,13 +19,69 @@ const beforeAllFunction = async (transaction: TransactionType) => {
       llmAccountListUI: { enabled: true },
     },
     cliCommands: [
-      (userdataPath?: string) => {
-        return CLI.liveData({
+      async (userdataPath?: string) => {
+        await CLI.liveData({
           currency: transaction.accountToDebit.currency.speculosApp.name,
           index: transaction.accountToDebit.index,
           add: true,
           appjson: userdataPath,
         });
+
+        const { address } = await CLI.getAddress({
+          currency: transaction.accountToCredit.currency.speculosApp.name,
+          path: transaction.accountToCredit.accountPath,
+          derivationMode: transaction.accountToCredit.derivationMode,
+        });
+
+        transaction.accountToCredit.address = address;
+        transaction.recipientAddress = address;
+
+        return address;
+      },
+    ],
+  });
+
+  await app.portfolio.waitForPortfolioPageToLoad();
+};
+
+const beforeAllInvalidAddressFunction = async (
+  transaction: TransactionType,
+  overrideRecipient?: string,
+) => {
+  await app.init({
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    featureFlags: {
+      llmAccountListUI: { enabled: true },
+    },
+    cliCommands: [
+      async (userdataPath?: string) => {
+        await CLI.liveData({
+          currency: transaction.accountToDebit.currency.speculosApp.name,
+          index: transaction.accountToDebit.index,
+          add: true,
+          appjson: userdataPath,
+        });
+
+        if (
+          transaction.accountToCredit.accountName !== Account.EMPTY.accountName &&
+          transaction.accountToCredit.accountName !== Account.BTC_NATIVE_SEGWIT_1.accountName
+        ) {
+          const { address } = await CLI.getAddress({
+            currency: transaction.accountToCredit.currency.id,
+            path: transaction.accountToCredit.accountPath,
+            derivationMode: transaction.accountToCredit.derivationMode,
+          });
+
+          transaction.accountToCredit.address = address;
+          return address;
+        }
+
+        if (overrideRecipient !== undefined) {
+          transaction.accountToCredit.address = overrideRecipient;
+          return overrideRecipient;
+        }
+
+        return transaction.accountToCredit.address;
       },
     ],
   });
@@ -75,6 +132,7 @@ export function runSendTest(
 export function runSendInvalidAddressTest(
   transaction: TransactionType,
   expectedErrorMessage: string,
+  address: string | undefined,
   tmsLinks: string[],
   tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   accountName?: string,
@@ -83,12 +141,13 @@ export function runSendInvalidAddressTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - invalid address input", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllInvalidAddressFunction(transaction, address);
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - invalid address input`, async () => {
+      const recipientAddress = address ?? transaction.accountToCredit.address;
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
-      await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
+      await app.send.setRecipient(recipientAddress, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);
     });
   });
@@ -111,7 +170,17 @@ export function runSendValidAddressTest(
 
     it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} (${testName})`, async () => {
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
-      await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
+      const shouldLowerCaseRecipientAddress =
+        transaction.accountToCredit === Account.ETH_2_LOWER_CASE ||
+        testName.toLowerCase().includes("lower case");
+
+      const baseRecipientAddress = transaction.accountToCredit.address ?? "";
+      const recipientAddress = shouldLowerCaseRecipientAddress
+        ? baseRecipientAddress.toLowerCase()
+        : baseRecipientAddress;
+      transaction.accountToCredit.address = recipientAddress;
+      console.log("recipientAddress", recipientAddress);
+      await app.send.setRecipient(recipientAddress, transaction.memoTag);
       await app.send.expectSendRecipientSuccess(expectedWarningMessage);
       await app.send.recipientContinue(transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
