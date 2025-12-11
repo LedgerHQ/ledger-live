@@ -1,12 +1,7 @@
 import { Box } from "@ledgerhq/react-ui/index";
 import React from "react";
 import styled from "styled-components";
-import {
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP,
-  WARNING_REASON,
-  type ModularDrawerAddAccountStep,
-  type WarningReason,
-} from "../domain";
+import { WARNING_REASON, type WarningReason } from "../domain";
 
 const GradientContainer = styled.div`
   width: 500px;
@@ -34,39 +29,20 @@ const GradientInner = styled.div<{ $gradientColor: string }>`
   opacity: 0.3;
 `;
 
-const GRADIENT_COLORS = {
-  SUCCESS: "rgba(110, 178, 96, 1)",
-  WARNING: "rgba(99, 88, 183, 1)",
-  DEFAULT: "rgba(248, 163, 37, 1)",
-} as const;
-
-const getGradientColor = (
-  currentStep: ModularDrawerAddAccountStep,
-  noAssociatedAccounts: boolean,
-): string => {
-  if (currentStep === MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED) {
-    return noAssociatedAccounts ? GRADIENT_COLORS.WARNING : GRADIENT_COLORS.SUCCESS;
-  }
-  if (currentStep === MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING && noAssociatedAccounts) {
-    return GRADIENT_COLORS.WARNING;
-  }
-  return GRADIENT_COLORS.DEFAULT;
-};
-
-const STEPS_WITH_GRADIENT = [
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED,
-] as const;
-
-interface HeaderGradientProps {
-  currentStep: ModularDrawerAddAccountStep;
+interface HeaderGradientProps<Step> {
+  currentStep: Step;
+  stepsWithGradient: ReadonlyArray<Step>;
   warningReason?: WarningReason;
+  getGradientColor: (currentStep: Step, noAssociatedAccounts: boolean) => string;
 }
 
-const HeaderGradient: React.FC<HeaderGradientProps> = ({ currentStep, warningReason }) => {
-  const shouldShowGradient = (
-    STEPS_WITH_GRADIENT as ReadonlyArray<ModularDrawerAddAccountStep>
-  ).includes(currentStep);
+const HeaderGradient = <Step,>({
+  currentStep,
+  stepsWithGradient,
+  warningReason,
+  getGradientColor,
+}: HeaderGradientProps<Step>) => {
+  const shouldShowGradient = stepsWithGradient.includes(currentStep);
 
   if (!shouldShowGradient) {
     return null;

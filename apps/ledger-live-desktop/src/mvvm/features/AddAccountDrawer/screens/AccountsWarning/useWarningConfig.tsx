@@ -75,6 +75,24 @@ export const useWarningConfig = (
     },
   };
 
+  const noAccountsAddedWarning = (description?: string) => {
+    return {
+      icon: <Icons.WarningFill size="L" color="warning.c70" />,
+      title: t("modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.title", {
+        currency: currency.name,
+      }),
+      description:
+        description ??
+        t("modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.description"),
+      accountRow: null,
+      primaryAction: {
+        text: t("modularAssetDrawer.scanAccounts.warning.noAccountsAddedWarning.close"),
+        onClick: handleClose,
+      },
+      secondaryAction: null,
+    };
+  };
+
   const noAssociatedAccountsWarning = {
     icon: <Icons.InformationFill size="L" color="primary.c80" />,
     title: t("modularAssetDrawer.scanAccounts.warning.title", { currency: currency.name }),
@@ -94,7 +112,7 @@ export const useWarningConfig = (
     },
   };
 
-  return { emptyAccountWarning, noAssociatedAccountsWarning };
+  return { noAccountsAddedWarning, emptyAccountWarning, noAssociatedAccountsWarning };
 };
 
 const getUrl = (currency: CryptoCurrency) => {

@@ -392,6 +392,7 @@
     "src/exchange/swap/const/blockchain.ts",
     "src/exchange/swap/hooks/wrapper.tsx",
     "src/families/algorand/descriptor.ts",
+    "src/families/aleo/hw/getViewKey/index.ts",
     "src/families/aleo/types.ts",
     "src/families/aptos/config.ts",
     "src/families/aptos/constants.ts",
