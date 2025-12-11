@@ -460,6 +460,8 @@ interface SwapTestCase {
   expectedErrorPerDevice?: {
     [deviceId: string]: string;
   };
+  addressFrom: string;
+  addressTo: string;
 }
 
 const swapWithDifferentSeed: SwapTestCase[] = [
@@ -468,6 +470,8 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     xrayTicket: "B2CQA-3089",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    addressFrom: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
+    addressTo: "DLVArScX1BQEr7gZSSpHMGMq7HKKFKdFF82Cs6PvEKVC",
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This receiving account does not belong to the device you have connected. Please change and retry",
@@ -477,12 +481,16 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
     xrayTicket: "B2CQA-3090",
     errorMessage: null,
+    addressFrom: "bc1qcy8hnxctr03mh62cu00y0wphmfpa2gwr7elje5",
+    addressTo: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
     xrayTicket: "B2CQA-3091",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    addressFrom: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
+    addressTo: "bc1qcy8hnxctr03mh62cu00y0wphmfpa2gwr7elje5",
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This sending account does not belong to the device you have connected. Please change and retry",
@@ -490,26 +498,20 @@ const swapWithDifferentSeed: SwapTestCase[] = [
   },
 ];
 
-for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
-  test.describe.only("Swap - Using different seed", () => {
+for (const {
+  swap,
+  xrayTicket,
+  errorMessage,
+  expectedErrorPerDevice,
+  addressFrom,
+  addressTo,
+} of swapWithDifferentSeed) {
+  test.describe("Swap - Using different seed", () => {
     setupEnv(true);
 
     test.use({
       userdata: "speculos-x-other-account",
       speculosApp: app,
-      cliCommandsOnApp: [
-        [
-          {
-            app: swap.accountToDebit.currency.speculosApp,
-            cmd: getAddressCommand(swap.accountToDebit),
-          },
-          {
-            app: swap.accountToCredit.currency.speculosApp,
-            cmd: getAddressCommand(swap.accountToCredit),
-          },
-        ],
-        { scope: "test" },
-      ],
     });
 
     const familyDebit = getFamilyByCurrencyId(swap.accountToDebit.currency.id);
@@ -542,6 +544,8 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
       async ({ app, electronApp }) => {
         const tmsDescription = getDescription(test.info().annotations, "TMS");
         await addTmsLink(tmsDescription.split(", "));
+        swap.accountToDebit.address = addressFrom;
+        swap.accountToCredit.address = addressTo;
 
         const minAmount = await app.swap.getMinimumAmount(
           swap.accountToDebit,

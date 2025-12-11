@@ -44,7 +44,10 @@ export default class SendPage {
   }
 
   @Step("Set recipient and memo tag")
-  async setRecipient(address: string, memoTag?: string) {
+  async setRecipient(address: string | undefined, memoTag?: string) {
+    if (!address) {
+      throw new Error("Recipient address is not set");
+    }
     await waitForElementById(this.recipientInputId); // Issue with RN75 : QAA-370
     await typeTextById(this.recipientInputId, address);
     if (memoTag && memoTag !== "noTag") {
@@ -102,7 +105,10 @@ export default class SendPage {
   }
 
   @Step("Set recipient and continue")
-  async setRecipientAndContinue(address: string, memoTag?: string) {
+  async setRecipientAndContinue(address: string | undefined, memoTag?: string) {
+    if (!address) {
+      throw new Error("Recipient address is not set");
+    }
     await this.setRecipient(address, memoTag);
     await this.recipientContinue(memoTag);
   }
@@ -170,7 +176,10 @@ export default class SendPage {
   }
 
   @Step("Expect recipient in summary")
-  async expectSummaryRecipient(recipient: string) {
+  async expectSummaryRecipient(recipient: string | undefined) {
+    if (!recipient) {
+      throw new Error("Recipient address is not set");
+    }
     const rec = this.summaryRecipient();
     await detoxExpect(rec).toHaveText(recipient);
   }

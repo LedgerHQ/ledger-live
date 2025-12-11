@@ -37,13 +37,26 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
       },
       ...(setAccountToCredit
         ? [
-            (userDataPath?: string) => {
-              return CLI.liveData({
+            async (userDataPath?: string) => {
+              await CLI.liveData({
                 currency: transaction.accountToCredit.currency.speculosApp.name,
                 index: transaction.accountToCredit.index,
                 appjson: userDataPath,
                 add: true,
               });
+
+              const parentAccount = transaction.accountToCredit.parentAccount;
+              invariant(parentAccount, "Parent account is required");
+
+              const { address } = await CLI.getAddress({
+                currency: parentAccount.currency.id,
+                path: parentAccount.accountPath,
+                derivationMode: parentAccount.derivationMode,
+              });
+
+              transaction.accountToCredit.address = address;
+
+              return address;
             },
           ]
         : []),
@@ -113,7 +126,7 @@ export function runSendSPLAddressValid(
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
-      const addressToCredit = transaction.accountToCredit.address || "";
+      const addressToCredit = "8nnwXo313DXWcE3kBR54gDKDmcySeGVjYRztbCAPzxev";
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
