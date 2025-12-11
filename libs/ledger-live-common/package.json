@@ -65,6 +65,10 @@
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
+    "./bridge/descriptor": {
+      "require": "./lib/bridge/descriptor.js",
+      "default": "./lib-es/bridge/descriptor.js"
+    },
     "./test-helpers/cryptoAssetsStore": {
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
       "require": "./lib/test-helpers/cryptoAssetsStore.js",
