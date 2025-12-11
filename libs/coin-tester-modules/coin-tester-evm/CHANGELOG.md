@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.11.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0), [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/live-common@34.54.1-hotfix.0
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-evm@2.36.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/live-signer-evm@0.10.3-hotfix.0
+  - @ledgerhq/coin-tester@0.13.1-hotfix.0
+
 ## 1.11.1
 
 ### Patch Changes

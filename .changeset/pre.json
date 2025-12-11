@@ -155,7 +155,13 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "chilled-baboons-speak",
+    "cold-rice-admire",
+    "eleven-plants-cover",
     "great-donkeys-raise",
+    "happy-seahorses-hunt",
+    "polite-foxes-poke",
+    "quiet-horses-poke",
     "rude-tomatoes-divide",
     "wise-planets-fly"
   ]

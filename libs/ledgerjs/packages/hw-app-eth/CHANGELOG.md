@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-eth
 
+## 7.0.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/domain-service@1.4.3-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.14-hotfix.0
+
 ## 7.0.0
 
 ### Major Changes

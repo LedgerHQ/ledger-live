@@ -1,5 +1,12 @@
 # @ledgerhq/live-network
 
+## 2.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+
 ## 2.1.2
 
 ### Patch Changes

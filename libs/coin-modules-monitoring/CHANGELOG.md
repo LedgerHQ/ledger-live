@@ -1,5 +1,14 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.6.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0), [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/live-common@34.54.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+
 ## 2.6.3
 
 ### Patch Changes

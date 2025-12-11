@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.16.1-hotfix.0
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`e585ca1`](https://github.com/LedgerHQ/ledger-live/commit/e585ca1d5d8d4f883b857582a208fdaa14f17c58) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix old-to-new device name matching logic, for Nano X
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.15.1-hotfix.0
+
 ## 0.16.0
 
 ### Minor Changes

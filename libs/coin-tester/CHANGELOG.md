@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester
 
+## 0.13.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
+
 ## 0.13.0
 
 ### Minor Changes

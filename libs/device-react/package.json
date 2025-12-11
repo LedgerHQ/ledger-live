@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.3.3",
+  "version": "0.3.4-hotfix.0",
   "description": "Ledger Live device react module",
   "keywords": [
     "Ledger"

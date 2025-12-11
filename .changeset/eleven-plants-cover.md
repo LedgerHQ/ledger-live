@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/errors": minor
-"@ledgerhq/live-common": minor
+"@ledgerhq/errors": patch
+"@ledgerhq/live-common": patch
 ---
 
 Add new error type `UnsupportedFeatureError`

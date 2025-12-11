@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.7.0",
+  "version": "1.7.1-hotfix.0",
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [

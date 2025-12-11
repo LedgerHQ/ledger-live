@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "0.16.1",
+  "version": "0.16.2-hotfix.0",
   "description": "Ledger Live wallet",
   "keywords": [
     "Ledger"

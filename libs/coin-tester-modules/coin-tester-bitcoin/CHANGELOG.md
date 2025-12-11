@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.2.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.26.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+  - @ledgerhq/hw-app-btc@10.13.1-hotfix.0
+  - @ledgerhq/coin-tester@0.13.1-hotfix.0
+
 ## 1.2.1
 
 ### Patch Changes

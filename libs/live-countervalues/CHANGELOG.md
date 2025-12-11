@@ -1,5 +1,14 @@
 # @ledgerhq/live-countervalues
 
+## 0.10.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+
 ## 0.10.1
 
 ### Patch Changes
