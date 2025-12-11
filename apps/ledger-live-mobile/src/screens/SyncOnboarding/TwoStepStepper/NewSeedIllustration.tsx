@@ -90,7 +90,7 @@ const NewSeedIllustration = () => (
     </G>
     <Defs>
       <Pattern id="pattern0_468_23756" patternContentUnits="objectBoundingBox" width="2" height="3">
-        <Use href="#image0_468_23756" transform="scale(0.00390625) translate(28,130)" />
+        <Use href="#image0_468_23756" transform="scale(0.00390625)" />
       </Pattern>
       <LinearGradient
         id="paint0_linear_468_23756"
