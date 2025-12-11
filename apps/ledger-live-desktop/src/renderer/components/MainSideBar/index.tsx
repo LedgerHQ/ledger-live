@@ -39,6 +39,10 @@ import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
+
+const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
+const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
+
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
   style: {
     opacity: p.collapsed ? 1 : 0,
@@ -222,11 +226,6 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 
-// WebHID is now the default transport, no need for warning tag
-const TagContainerLDMK = ({ collapsed: _collapsed }: { collapsed: boolean }) => {
-  return null;
-};
-
 // Check if the selected tab is a Live-App under discovery tab
 const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
   liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
@@ -364,9 +363,6 @@ const MainSideBar = () => {
     if (totalStarredAccounts === 0) {
       return "max-content"; // this is the height of the placeholder
     }
-
-    const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
-    const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
 
     const minHeight =
       Math.min(totalStarredAccounts, MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN) *
@@ -566,7 +562,6 @@ const MainSideBar = () => {
             <Box pt={4}>
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
-              <TagContainerLDMK collapsed={!secondAnim} />
             </Box>
           </SideBar>
         );
