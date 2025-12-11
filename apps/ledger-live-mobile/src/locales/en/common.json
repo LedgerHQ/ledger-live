@@ -665,6 +665,11 @@
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
     },
+    "NanoSNotSupported": {
+      "title": "Ledger Nano S™ does not support this feature",
+      "description": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features.",
+      "upsellCtaLabel": "Discover your Upgrade Program"
+    },
     "NotEnoughGas": {
       "title": "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description": "Please send some coins to your account to pay for token transactions."
@@ -1136,6 +1141,11 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
+    },
+    "UnsupportedFeatureError": {
+      "title": "Unsupported feature",
+      "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
+      "ctaLabel": "Contact Ledger Support"
     },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",

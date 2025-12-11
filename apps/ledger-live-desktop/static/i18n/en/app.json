@@ -6156,6 +6156,11 @@
       "title": "Update Device Firmware",
       "description": "Please update your device firmware to the latest version to access this feature"
     },
+    "UnsupportedFeatureError": {
+      "title": "Unsupported feature",
+      "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
+      "ctaLabel": "Contact Ledger Support"
+    },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider.",
