@@ -52,5 +52,5 @@ export interface StakingAnalysis {
   operationType: OperationType;
   targetStakingNodeId: number | null;
   previousStakingNodeId: number | null;
-  amount: bigint;
+  stakedAmount: bigint;
 }

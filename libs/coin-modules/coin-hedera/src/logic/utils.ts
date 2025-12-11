@@ -556,7 +556,6 @@ export const analyzeStakingOperation = async (
     operationType,
     previousStakingNodeId,
     targetStakingNodeId,
-    // staked amount is always entire balance on Hedera that is fully liquid
-    amount: BigInt(accountAfter.balance.balance),
+    stakedAmount: BigInt(accountAfter.balance.balance), // always entire balance on Hedera (fully liquid)
   };
 };

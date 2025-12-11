@@ -95,7 +95,7 @@ export async function getBlock(height: number): Promise<Block> {
           operationType: stakingAnalysis.operationType,
           stakedNodeId: stakingAnalysis.targetStakingNodeId,
           previousStakedNodeId: stakingAnalysis.previousStakingNodeId,
-          amount: stakingAnalysis.amount,
+          stakedAmount: stakingAnalysis.stakedAmount,
         },
       ];
     } else {

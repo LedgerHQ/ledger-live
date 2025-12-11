@@ -166,6 +166,7 @@ function processTransfers({
     operationType = stakingAnalysis.operationType;
     extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
     extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
+    extra.stakedAmount = stakingAnalysis.stakedAmount;
   }
 
   // each transfer may trigger staking reward claim

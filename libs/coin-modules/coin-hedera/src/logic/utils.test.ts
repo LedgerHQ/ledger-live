@@ -996,7 +996,7 @@ describe("logic utils", () => {
         operationType: "DELEGATE",
         previousStakingNodeId: null,
         targetStakingNodeId: 5,
-        amount: BigInt(1000),
+        stakedAmount: BigInt(1000),
       });
       expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `lt:${mockTimestamp}`);
       expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `eq:${mockTimestamp}`);
@@ -1016,7 +1016,7 @@ describe("logic utils", () => {
         operationType: "UNDELEGATE",
         previousStakingNodeId: 5,
         targetStakingNodeId: null,
-        amount: BigInt(1000),
+        stakedAmount: BigInt(1000),
       });
     });
 
@@ -1034,7 +1034,7 @@ describe("logic utils", () => {
         operationType: "REDELEGATE",
         previousStakingNodeId: 3,
         targetStakingNodeId: 10,
-        amount: BigInt(1000),
+        stakedAmount: BigInt(1000),
       });
     });
 

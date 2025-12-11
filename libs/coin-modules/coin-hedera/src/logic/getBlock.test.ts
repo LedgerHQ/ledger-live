@@ -188,7 +188,7 @@ describe("getBlock", () => {
       operationType: "DELEGATE",
       targetStakingNodeId: 5,
       previousStakingNodeId: null,
-      amount: BigInt(100),
+      stakedAmount: BigInt(100),
     };
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -204,7 +204,7 @@ describe("getBlock", () => {
       operationType: mockStakingAnalysis.operationType,
       stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
       previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
-      amount: mockStakingAnalysis.amount,
+      stakedAmount: mockStakingAnalysis.stakedAmount,
     });
   });
 
@@ -224,7 +224,7 @@ describe("getBlock", () => {
       operationType: "UNDELEGATE",
       targetStakingNodeId: null,
       previousStakingNodeId: 3,
-      amount: BigInt(100),
+      stakedAmount: BigInt(100),
     };
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -237,7 +237,7 @@ describe("getBlock", () => {
       operationType: mockStakingAnalysis.operationType,
       stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
       previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
-      amount: mockStakingAnalysis.amount,
+      stakedAmount: mockStakingAnalysis.stakedAmount,
     });
   });
 
@@ -257,7 +257,7 @@ describe("getBlock", () => {
       operationType: "REDELEGATE",
       targetStakingNodeId: 10,
       previousStakingNodeId: 5,
-      amount: BigInt(100),
+      stakedAmount: BigInt(100),
     };
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -271,7 +271,7 @@ describe("getBlock", () => {
         operationType: mockStakingAnalysis.operationType,
         stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
         previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
-        amount: mockStakingAnalysis.amount,
+        stakedAmount: mockStakingAnalysis.stakedAmount,
       },
     ]);
   });

@@ -504,7 +504,7 @@ describe("createApi", () => {
           operationType: "DELEGATE",
           stakedNodeId: 34,
           previousStakedNodeId: null,
-          amount: BigInt(21083561014),
+          stakedAmount: BigInt(21083561014),
         },
       ]);
       expect(undelegateOperations).toEqual([
@@ -513,7 +513,7 @@ describe("createApi", () => {
           operationType: "UNDELEGATE",
           stakedNodeId: null,
           previousStakedNodeId: 22,
-          amount: BigInt(21083561014),
+          stakedAmount: BigInt(21083561014),
         },
       ]);
       expect(redelegateOperations).toEqual([
@@ -522,7 +522,7 @@ describe("createApi", () => {
           operationType: "REDELEGATE",
           stakedNodeId: 6,
           previousStakedNodeId: 34,
-          amount: BigInt(21083561014),
+          stakedAmount: BigInt(21083561014),
         },
       ]);
       expect(rewardsTransaction?.operations).toEqual([
@@ -670,18 +670,21 @@ describe("createApi", () => {
       expect(delegateOp?.details).toMatchObject({
         previousStakingNodeId: null,
         targetStakingNodeId: expect.any(Number),
+        stakedAmount: expect.any(BigInt),
       });
       expect(undelegateOp?.value).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
         targetStakingNodeId: null,
+        stakedAmount: expect.any(BigInt),
       });
       expect(redelegateOp?.value).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
         targetStakingNodeId: expect.any(Number),
+        stakedAmount: expect.any(BigInt),
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
