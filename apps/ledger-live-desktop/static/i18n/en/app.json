@@ -7845,6 +7845,11 @@
           "description": "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Wallet once it's created.",
           "cta": "How to create a {{currency}} account?",
           "close": "Close"
+        },
+        "noAccountsAddedWarning": {
+          "title": "No {{currency}} accounts were added",
+          "description": "You haven't completed the required setup for one or more selected accounts.",
+          "close": "Close"
         }
       },
       "status": {
@@ -8015,6 +8020,39 @@
       "datepicker": {
         "label": "Birthday height",
         "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      }
+    }
+  },
+  "aleo": {
+    "addAccount": {
+      "stepViewKeyWarning": {
+        "title": "Set up Aleo private balance",
+        "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
+        "bullets": [
+          "Read-only access to decrypt your private balance",
+          "Ledger cannot send or spend your funds",
+          "Only you can sign and spend your funds",
+          "Proof generation is handled by third-party prover services to ensure fast processing",
+          "Provers cannot access or spend your funds"
+        ],
+        "cta": {
+          "allow": "Allow",
+          "cancel": "Cancel",
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
+        }
+      },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
+      "warnings": {
+        "noAccountsAddedWarning": {
+          "description": "You haven't shared view key for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
+        }
       }
     }
   }

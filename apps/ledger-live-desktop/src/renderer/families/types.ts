@@ -21,6 +21,7 @@ import {
   MessageProperties,
   AccountLike,
 } from "@ledgerhq/types-live";
+import type { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
@@ -385,6 +386,11 @@ export type LLDCoinFamily<
     explorerView: ExplorerView | null | undefined,
     operation: Operation,
   ) => string | null | undefined;
+
+  /**
+   * Component allowing to fully customize the add account flow in the AddAccountsModal
+   */
+  ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
 
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
