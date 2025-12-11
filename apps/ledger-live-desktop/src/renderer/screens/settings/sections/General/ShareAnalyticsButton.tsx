@@ -13,10 +13,10 @@ const ShareAnalyticsButton = () => {
   const shareAnalytics = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
 
-  const toggleShareAnalytics = (value: boolean) => {
+  const toggleShareAnalytics = async (value: boolean) => {
     dispatch(setShareAnalytics(value));
     dispatch(setSharePersonalizedRecommendations(value));
-    updateIdentify();
+    await updateIdentify();
   };
 
   return (

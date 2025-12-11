@@ -9,9 +9,9 @@ const ShareAnalyticsButtonFF = () => {
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const dispatch = useDispatch();
 
-  const toggleShareAnalytics = (value: boolean) => {
+  const toggleShareAnalytics = async (value: boolean) => {
     dispatch(setShareAnalytics(value));
-    updateIdentify();
+    await updateIdentify();
     track(
       "toggle_clicked",
       {
