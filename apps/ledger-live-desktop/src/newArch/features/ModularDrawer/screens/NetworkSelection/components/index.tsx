@@ -8,6 +8,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../../components/AccountCount";
 import { accountsCountAndApy } from "../../../components/AccountCountApy";
+import { accountsApy } from "../../../components/AccountApy";
 import { balanceItem } from "../../../components/Balance";
 import { useAccountData } from "../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
@@ -35,6 +36,7 @@ export const SelectNetwork = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
+    accountsApy,
     useBalanceDeps,
     balanceItem,
   };

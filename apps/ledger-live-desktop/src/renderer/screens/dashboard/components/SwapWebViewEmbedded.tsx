@@ -23,32 +23,17 @@ const EmbeddedContainer = styled.div`
   overflow: hidden;
 `;
 
-type SwapWebViewEmbeddedProps = {
-  height?: string;
-};
+interface SwapCardProps {
+  height: string;
+  children: React.ReactNode;
+  testId?: string;
+}
 
-export default function SwapWebViewEmbedded({ height = "550px" }: SwapWebViewEmbeddedProps) {
-  const swapLiveEnabledFlag = useSwapLiveConfig();
-  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
-
-  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
-  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
-  const { updateManifests } = useRemoteLiveAppContext();
-
-  const manifest = localManifest || remoteManifest;
-
-  if (!manifest) {
-    return (
-      <Card
-        grow
-        style={{ overflow: "hidden", height, display: "flex", flexDirection: "column" }}
-        data-testid="embedded-swap-container"
-      >
-        <NetworkErrorScreen refresh={updateManifests} type="warning" />
-      </Card>
-    );
-  }
-
+function SwapCard({
+  height,
+  children,
+  testId = "embedded-swap-container",
+}: Readonly<SwapCardProps>) {
   return (
     <Card
       grow
@@ -59,11 +44,51 @@ export default function SwapWebViewEmbedded({ height = "550px" }: SwapWebViewEmb
         flexDirection: "column",
         position: "relative",
       }}
-      data-testid="embedded-swap-container"
+      data-testid={testId}
     >
+      {children}
+    </Card>
+  );
+}
+
+interface SwapWebViewEmbeddedProps {
+  height?: string;
+}
+
+export default function SwapWebViewEmbedded({
+  height = "550px",
+}: Readonly<SwapWebViewEmbeddedProps>) {
+  const swapLiveEnabledFlag = useSwapLiveConfig();
+  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
+
+  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
+  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
+
+  const { updateManifests, state } = useRemoteLiveAppContext();
+
+  const manifest = localManifest || remoteManifest;
+
+  if (!manifest && state.isLoading) {
+    return (
+      <SwapCard height={height} testId="embedded-swap-container-loader">
+        <SwapLoader isLoading />
+      </SwapCard>
+    );
+  }
+
+  if (!manifest) {
+    return (
+      <SwapCard height={height} testId="embedded-swap-container-warning">
+        <NetworkErrorScreen refresh={updateManifests} type="warning" />
+      </SwapCard>
+    );
+  }
+
+  return (
+    <SwapCard height={height}>
       <EmbeddedContainer>
         <SwapWebView manifest={manifest} isEmbedded Loader={SwapLoader} />
       </EmbeddedContainer>
-    </Card>
+    </SwapCard>
   );
 }

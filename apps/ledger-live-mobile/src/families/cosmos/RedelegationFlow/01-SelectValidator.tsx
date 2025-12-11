@@ -112,7 +112,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         validator,
         max: max ?? new BigNumber(0),
         status,
-        nextScreen: ScreenName.CosmosRedelegationSelectDevice,
+        nextScreen: ScreenName.CosmosRedelegationBridgeTransaction,
       });
     },
     [navigation, route.params, transaction, status, max, validatorSrc],

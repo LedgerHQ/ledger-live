@@ -11,8 +11,8 @@ import {
 } from "~/renderer/reducers/onboarding";
 import { track } from "~/renderer/analytics/segment";
 import { analyticsFlowName } from "~/renderer/components/SyncOnboarding/Manual/shared";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 
 const NewSeedPanel = ({
   handleComplete,

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
 import { fetchCurrencyFromMock } from "./__mocks__/fetchCurrencyFrom.mocks";

@@ -1,5 +1,25 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.8.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+- [#12891](https://github.com/LedgerHQ/ledger-live/pull/12891) [`c5cfce0`](https://github.com/LedgerHQ/ledger-live/commit/c5cfce008b12ddb2f9b4291807a3d4fdfdfb8949) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove select device
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+- [#12891](https://github.com/LedgerHQ/ledger-live/pull/12891) [`c5cfce0`](https://github.com/LedgerHQ/ledger-live/commit/c5cfce008b12ddb2f9b4291807a3d4fdfdfb8949) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove select device
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
 ## 0.7.0
 
 ### Minor Changes

@@ -10,7 +10,6 @@ export type MyLedgerNavigatorStackParamList = {
         searchQuery?: string;
         tab?: ManagerTab;
         installApp?: string;
-        firmwareUpdate?: boolean;
         device?: Device | null;
         appsToRestore?: string[];
         updateModalOpened?: boolean;
@@ -21,7 +20,6 @@ export type MyLedgerNavigatorStackParamList = {
     deviceInfo: DeviceInfo;
     result: ListAppsResult;
     searchQuery?: string;
-    firmwareUpdate?: boolean;
     appsToRestore?: string[];
     updateModalOpened?: boolean;
     tab: ManagerTab;

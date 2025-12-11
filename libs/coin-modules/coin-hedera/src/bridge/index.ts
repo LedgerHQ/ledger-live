@@ -19,6 +19,7 @@ import { getAccountShape, buildIterateResult, postSync } from "./synchronisation
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import resolver from "../signer/index";
 import type { Transaction, TransactionStatus, HederaSigner, HederaAccount } from "../types";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -62,6 +63,7 @@ function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

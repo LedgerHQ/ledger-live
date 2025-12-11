@@ -3,6 +3,7 @@ import { createApi } from "@ledgerhq/coin-canton/api/index";
 import { Transaction as CantonTransaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 // The calls data can be copied to mock-data.ts from the file.
 // This function creates a live API with logging for generating mock data
@@ -174,6 +175,7 @@ const accountBridge: AccountBridge<CantonTransaction, CantonAccount> = {
   },
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge = {

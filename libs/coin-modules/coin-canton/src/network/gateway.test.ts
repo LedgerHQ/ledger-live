@@ -2,8 +2,12 @@ import {
   getBalance,
   isPartyAlreadyExists,
   submitOnboarding,
+  getEnabledInstruments,
+  getEnabledInstrumentsCached,
+  clearEnabledInstrumentsCache,
   type GetBalanceResponse,
   type InstrumentBalance,
+  type InstrumentsResponse,
   type OnboardingPrepareResponse,
 } from "./gateway";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -124,5 +128,170 @@ describe("getBalance", () => {
     mockNetwork.mockRejectedValue(partyNotFoundError);
 
     await expect(getBalance(mockCurrency, "test-party-id")).rejects.toThrow(TopologyChangeError);
+  });
+});
+
+describe("getEnabledInstruments", () => {
+  const mockCurrency = {
+    id: "canton_network",
+  } as unknown as CryptoCurrency;
+
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
+      nodeId: "test-node-id",
+      useGateway: true,
+      networkType: "devnet",
+      nativeInstrumentId: "Amulet",
+      status: {
+        type: "active",
+      },
+    }));
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should fetch and return enabled instruments from API", async () => {
+    const mockInstrumentsResponse: InstrumentsResponse = {
+      instruments: [
+        { instrument_id: "Amulet", display_name: "Canton Coin" },
+        { instrument_id: "0x1234567890abcdef", display_name: "Test Token 1" },
+        { instrument_id: "0xabcdef1234567890", display_name: "Test Token 2" },
+      ],
+    };
+
+    mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
+
+    const result = await getEnabledInstruments(mockCurrency);
+
+    expect(result).toEqual(["Amulet", "0x1234567890abcdef", "0xabcdef1234567890"]);
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "GET",
+        url: expect.stringContaining("/v1/node/test-node-id/instruments"),
+      }),
+    );
+  });
+
+  it("should return empty array on API failure (fail-safe)", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    mockNetwork.mockRejectedValue(new Error("Network error"));
+
+    const result = await getEnabledInstruments(mockCurrency);
+
+    expect(result).toEqual([]);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to fetch enabled instruments:",
+      expect.any(Error),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("should return empty array when API returns empty instruments list", async () => {
+    const mockEmptyResponse: InstrumentsResponse = {
+      instruments: [],
+    };
+
+    mockNetwork.mockResolvedValue({ data: mockEmptyResponse, status: 200 });
+
+    const result = await getEnabledInstruments(mockCurrency);
+
+    expect(result).toEqual([]);
+  });
+
+  it("should handle malformed API response gracefully", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    // API returns data without instruments property
+    mockNetwork.mockResolvedValue({ data: { invalid: "response" }, status: 200 });
+
+    const result = await getEnabledInstruments(mockCurrency);
+
+    expect(result).toEqual([]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("getEnabledInstrumentsCached", () => {
+  const mockCurrency = {
+    id: "canton_network",
+  } as unknown as CryptoCurrency;
+
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
+      nodeId: "test-node-id",
+      useGateway: true,
+      networkType: "devnet",
+      nativeInstrumentId: "Amulet",
+      status: {
+        type: "active",
+      },
+    }));
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Clear cache before each test
+    clearEnabledInstrumentsCache(mockCurrency);
+  });
+
+  it("should cache results and return cached value on subsequent calls", async () => {
+    const mockInstrumentsResponse: InstrumentsResponse = {
+      instruments: [{ instrument_id: "Amulet" }, { instrument_id: "0x1234567890abcdef" }],
+    };
+
+    mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
+
+    // First call - should fetch from API
+    const result1 = await getEnabledInstrumentsCached(mockCurrency);
+    expect(result1).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+
+    // Second call - should return cached value
+    const result2 = await getEnabledInstrumentsCached(mockCurrency);
+    expect(result2).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
+
+    // Third call - should still return cached value
+    const result3 = await getEnabledInstrumentsCached(mockCurrency);
+    expect(result3).toEqual(["Amulet", "0x1234567890abcdef"]);
+    expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
+  });
+
+  it("should fetch fresh data after cache is cleared", async () => {
+    const mockResponse1: InstrumentsResponse = {
+      instruments: [{ instrument_id: "Amulet" }],
+    };
+
+    const mockResponse2: InstrumentsResponse = {
+      instruments: [{ instrument_id: "Amulet" }, { instrument_id: "0xnewtoken" }],
+    };
+
+    mockNetwork.mockResolvedValueOnce({ data: mockResponse1, status: 200 });
+
+    // First call
+    const result1 = await getEnabledInstrumentsCached(mockCurrency);
+    expect(result1).toEqual(["Amulet"]);
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+
+    // Clear cache
+    clearEnabledInstrumentsCache(mockCurrency);
+
+    // Set up new response
+    mockNetwork.mockResolvedValueOnce({ data: mockResponse2, status: 200 });
+
+    // Second call after clear - should fetch fresh data
+    const result2 = await getEnabledInstrumentsCached(mockCurrency);
+    expect(result2).toEqual(["Amulet", "0xnewtoken"]);
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 });

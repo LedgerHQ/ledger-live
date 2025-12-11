@@ -19,6 +19,7 @@ import { buildSignOperation } from "../signOperation";
 import { TonSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronisation";
 import type { TonAccount, Transaction } from "../types";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -57,6 +58,7 @@ export function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

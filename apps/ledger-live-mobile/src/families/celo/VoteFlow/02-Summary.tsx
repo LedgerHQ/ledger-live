@@ -6,14 +6,13 @@ import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
@@ -344,7 +343,7 @@ const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-      <Icon size={13} name="edit-2" />
+      <Icons.PenEdit size="XS" />
     </Circle>
   );
 };

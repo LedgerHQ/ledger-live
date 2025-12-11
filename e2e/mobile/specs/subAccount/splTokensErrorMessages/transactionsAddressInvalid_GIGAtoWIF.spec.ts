@@ -5,7 +5,7 @@ const transactionE2E = {
   recipient: TokenAccount.SOL_WIF_2.address,
   expectedErrorMessage: "This associated token account holds another token",
   xrayTicket: ["B2CQA-3083"],
-  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
+  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSendSPLAddressInvalid(

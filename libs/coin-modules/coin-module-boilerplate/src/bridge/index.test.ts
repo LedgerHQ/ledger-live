@@ -15,6 +15,7 @@ describe("createBridges", () => {
         signRawOperation: expect.any(Function),
         sync: expect.any(Function),
         updateTransaction: expect.any(Function),
+        validateAddress: expect.any(Function),
       },
       currencyBridge: {
         preload: expect.any(Function),

@@ -1,15 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
-import type { OperationType } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
 import preloadedData from "./preloadedData.mock";
-import type {
-  CosmosAccount,
-  CosmosDelegation,
-  CosmosOperation,
-  CosmosRedelegation,
-  CosmosResources,
-  CosmosUnbonding,
+import {
+  isCosmosAccount,
+  type CosmosAccount,
+  type CosmosDelegation,
+  type CosmosOperation,
+  type CosmosRedelegation,
+  type CosmosResources,
+  type CosmosUnbonding,
 } from "./types";
 const { validators } = preloadedData;
 
@@ -340,7 +341,10 @@ function genAccountEnhanceOperations(account: CosmosAccount, rng: Prando): Cosmo
  * @memberof cosmos/mock
  * @param {CosmosAccount} account
  */
-function postSyncAccount(account: CosmosAccount): CosmosAccount {
+function postSyncAccount(account: Account): Account {
+  if (!isCosmosAccount(account)) {
+    throw new Error("postSyncAccount must be called with a CosmosAccount type parameter");
+  }
   const cosmosResources = account?.cosmosResources;
   const delegatedBalance = cosmosResources?.delegatedBalance ?? new BigNumber(0);
   const unbondingBalance = cosmosResources?.unbondingBalance ?? new BigNumber(0);
@@ -355,13 +359,19 @@ function postSyncAccount(account: CosmosAccount): CosmosAccount {
  * @param {CosmosAccount} account
  */
 function postScanAccount(
-  account: CosmosAccount,
+  account: Account,
   {
     isEmpty,
   }: {
     isEmpty: boolean;
   },
-): CosmosAccount {
+): Account {
+  if (!isCosmosAccount(account)) {
+    throw new Error(
+      "postScanAccount from cosmos must be used with a CosmosAccount type as parameter",
+    );
+  }
+
   if (isEmpty) {
     account.cosmosResources = {
       delegations: [],

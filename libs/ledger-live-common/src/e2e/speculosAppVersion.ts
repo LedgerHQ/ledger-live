@@ -59,24 +59,63 @@ export async function getNanoAppCatalog(
   });
 }
 
-function getDeviceFirmwareVersion(): string {
-  const firmwareVersion = process.env.SPECULOS_FIRMWARE_VERSION;
-  if (!firmwareVersion) {
-    throw new Error("SPECULOS_FIRMWARE_VERSION environment variable is not set");
+const firmwareVersionCache: Map<DeviceModelId, string> = new Map();
+
+export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const cached = firmwareVersionCache.get(device);
+  if (cached) return cached;
+
+  const providerId = 1;
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+
+  const deviceVersion = await repository.getDeviceVersion({
+    targetId: getDeviceTargetId(device),
+    providerId,
+  });
+
+  const firmwareIds = deviceVersion.se_firmware_final_versions;
+  if (!Array.isArray(firmwareIds) || firmwareIds.length === 0) {
+    throw new Error(`No firmware versions found for device  ${device}`);
   }
-  return firmwareVersion;
+
+  const firmwares = await Promise.all(firmwareIds.map(id => repository.getFinalFirmwareById(id)));
+
+  // Only firmwares matching providerId
+  const providerFirmwares = firmwares.filter(
+    fw => Array.isArray(fw.providers) && fw.providers.includes(providerId),
+  );
+
+  if (providerFirmwares.length === 0) {
+    throw new Error(
+      `No firmware versions found for device version ${deviceVersion.id} for device ${device}`,
+    );
+  }
+
+  // Latest is chosen by highest numeric ID
+  const latestFirmware = providerFirmwares.reduce((latest, current) =>
+    current.id > latest.id ? current : latest,
+  );
+
+  firmwareVersionCache.set(device, latestFirmware.version);
+  process.env.SPECULOS_FIRMWARE_VERSION = latestFirmware.version;
+
+  return latestFirmware.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
+  const jsonFilePath = path.resolve(process.cwd(), nanoAppFilePath);
+
   try {
-    const device = getSpeculosModel();
-    const firmware = getDeviceFirmwareVersion();
-    const appCatalog = await getNanoAppCatalog(device, firmware);
-    const jsonFilePath = path.join(process.cwd(), nanoAppFilePath);
-    const dirPath = path.dirname(jsonFilePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
+    if (fs.existsSync(jsonFilePath)) {
+      return; // File already exists
     }
+
+    fs.mkdirSync(path.dirname(jsonFilePath), { recursive: true });
+
+    const device = getSpeculosModel();
+    const firmware = await getDeviceFirmwareVersion(device);
+    const appCatalog = await getNanoAppCatalog(device, firmware);
+
     fs.writeFileSync(jsonFilePath, JSON.stringify(appCatalog, null, 2), "utf8");
   } catch (error) {
     console.error("Unable to create app version file:", sanitizeError(error));
@@ -87,10 +126,16 @@ export async function getAppVersionFromCatalog(
   currency: string,
   nanoAppFilePath: string,
 ): Promise<string | undefined> {
+  const jsonFilePath = path.resolve(process.cwd(), nanoAppFilePath);
+
   try {
     await createNanoAppJsonFile(nanoAppFilePath);
-    const rootDir = process.cwd();
-    const jsonFilePath = path.join(rootDir, nanoAppFilePath);
+
+    if (!fs.existsSync(jsonFilePath)) {
+      console.error(`Catalog file not found: ${jsonFilePath}`);
+      return;
+    }
+
     type CatalogApp = { versionDisplayName: string; version: string };
     const raw = fs.readFileSync(jsonFilePath, "utf8");
     const catalog: CatalogApp[] = JSON.parse(raw);

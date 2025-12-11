@@ -37,10 +37,6 @@ jest.mock("../useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: () => jest.fn(() => false),
 }));
 
-jest.mock("~/renderer/drawers/Provider", () => ({
-  setDrawer: jest.fn(),
-}));
-
 const mockOpenAddAccountFlow = jest.fn();
 const mockOpenAssetFlow = jest.fn();
 
@@ -99,9 +95,13 @@ const createMockTokenAccount = (parentId: string, tokenId: string): TokenAccount
 
 describe("useDeepLinkHandler", () => {
   const testDeeplink = async (url: string, accounts: Account[] = []) => {
-    const { result } = renderHook(() => useDeepLinkHandler(), {
-      initialState: { accounts },
-    });
+    const { result } = renderHook(
+      () => useDeepLinkHandler(),
+      {
+        initialState: { accounts },
+      },
+      false,
+    );
     const { handler } = result.current;
     handler(null, url);
   };

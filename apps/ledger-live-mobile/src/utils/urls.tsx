@@ -282,4 +282,6 @@ export const urls = {
   geoBlock: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
+  nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+  nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
 };

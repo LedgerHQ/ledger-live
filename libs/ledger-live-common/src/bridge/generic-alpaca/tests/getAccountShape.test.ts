@@ -82,10 +82,15 @@ describe("genericGetAccountShape", () => {
           },
           {
             hash: "h2",
-            type: "IN",
+            type: "OUT",
             blockHeight: 12,
             subOperations: [{ id: `${currency.id}_subOp1` }],
             extra: { assetReference: "ar2", assetOwner: "ow2" },
+          },
+          {
+            blockHeight: 16,
+            hash: "h4",
+            type: "IN",
           },
           {
             hash: "h1",
@@ -110,10 +115,15 @@ describe("genericGetAccountShape", () => {
           },
           {
             hash: "h2",
-            type: "IN",
+            type: "OUT",
             blockHeight: 12,
             subOperations: [{ id: `${currency.id}_subOp1` }],
             extra: { assetReference: "ar2", assetOwner: "ow2" },
+          },
+          {
+            blockHeight: 16,
+            hash: "h4",
+            type: "IN",
           },
         ],
       ],
@@ -150,8 +160,13 @@ describe("genericGetAccountShape", () => {
           asset.symbol === "TOK1" ? { id: `${currency.id}_token1` } : null,
         );
 
-        const coreOp = { hash: "h2", height: 12 };
-        listOperationsMock.mockResolvedValue([[coreOp]]);
+        listOperationsMock.mockResolvedValue([
+          [
+            { hash: "h2", type: "OUT", height: 12 },
+            { hash: "h3", type: "IN", tx: { failed: true }, height: 14 }, // won't appear in final shape
+            { hash: "h4", type: "IN", tx: { failed: false }, height: 16 },
+          ],
+        ]);
         refreshOperationsMock.mockImplementation(ops => {
           const op = ops[0];
           if (op?.hash === "h0") {
@@ -162,8 +177,8 @@ describe("genericGetAccountShape", () => {
 
         adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
           hash: op.hash,
-          type: "IN",
-          blockHeight: 12,
+          type: op.type,
+          blockHeight: op.height,
           extra: { assetReference: "ar2", assetOwner: "ow2" },
         }));
 
@@ -206,8 +221,26 @@ describe("genericGetAccountShape", () => {
         ]);
 
         const assetOpsPassed = buildSubAccountsMock.mock.calls[0][0].operations;
-        expect(assetOpsPassed).toHaveLength(1);
-        expect(assetOpsPassed[0].hash).toBe("h2");
+        expect(assetOpsPassed).toEqual([
+          {
+            blockHeight: 12,
+            extra: {
+              assetOwner: "ow2",
+              assetReference: "ar2",
+            },
+            hash: "h2",
+            type: "OUT",
+          },
+          {
+            blockHeight: 16,
+            extra: {
+              assetOwner: "ow2",
+              assetReference: "ar2",
+            },
+            hash: "h4",
+            type: "IN",
+          },
+        ]);
 
         expect(result).toMatchObject({
           balance: new BigNumber(1000),

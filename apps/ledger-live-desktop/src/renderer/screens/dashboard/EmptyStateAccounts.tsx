@@ -11,7 +11,7 @@ import { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();

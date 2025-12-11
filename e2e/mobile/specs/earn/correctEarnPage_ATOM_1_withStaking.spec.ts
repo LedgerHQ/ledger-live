@@ -5,7 +5,7 @@ const testConfig = {
   account: Account.ATOM_1,
   staking: true,
   tmsLinks: ["B2CQA-3685"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(

@@ -1,8 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "styled-components/native";
-import { Text, Flex } from "@ledgerhq/native-ui";
+import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import Button from "../Button";
 import FallbackCamera from "~/icons/FallbackCamera";
 
@@ -25,7 +24,7 @@ const FallbackCameraBody: React.FC<Props> = ({
 }: Props) => {
   const { colors } = useTheme();
 
-  const IconSettings = () => <Icon name="settings" size={16} color={colors.neutral.c00} />;
+  const IconSettings = () => <Icons.Settings size="XS" color={colors.neutral.c00} />;
 
   return (
     <Flex flex={1} bg={hasNoBackground ? "transparent" : "background.main"} px={6}>

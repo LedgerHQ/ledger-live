@@ -26,6 +26,7 @@ module.exports = {
     "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
     "@typescript-eslint/no-explicit-any": "warn",
   },
+  parser: "@typescript-eslint/parser",
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],

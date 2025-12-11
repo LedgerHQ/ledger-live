@@ -286,6 +286,7 @@ export type Features = CurrencyFeatures & {
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
+  lifiSolana: DefaultFeature;
 };
 
 /**
@@ -686,6 +687,7 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+  enableDialogDesktop?: boolean;
 }>;
 
 export type Feature_Noah = Feature<{
