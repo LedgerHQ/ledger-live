@@ -4,6 +4,7 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 import GlobalDrawers from "./GlobalDrawers";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import React from "react";
@@ -21,6 +22,7 @@ type AppProvidersProps = {
 const queryClient = new QueryClient();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
+  logStartupEvent("AppProviders render");
   const dmkEnabled = useLdmkFeatureFlagInitiallyEnabled();
 
   return (

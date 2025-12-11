@@ -49,7 +49,7 @@ function UndelegationAmount({ navigation, route }: Props) {
       max: amount,
       undelegatedBalance: amount,
       mode: "undelegation",
-      nextScreen: ScreenName.CosmosUndelegationSelectDevice,
+      nextScreen: ScreenName.CosmosUndelegationBridgeTransaction,
     },
   } as Props["route"];
   return <SelectAmount navigation={navigation} route={newRoute} />;

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   MarketCurrencyChartDataRequestParams,
@@ -8,6 +8,7 @@ import {
   SupportedCoins,
   MarketCurrencyRequestParams,
   MarketCoinDataChart,
+  MarketChartApiResponse,
   Order,
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
@@ -19,7 +20,7 @@ const ROOT_PATH = getEnv("MARKET_API_URL");
 
 export async function getSupportedCoinsList(): Promise<SupportedCoins> {
   const url = `${ROOT_PATH}/coins/list`;
-  const { data } = await network({ method: "GET", url });
+  const { data } = await network<SupportedCoins>({ method: "GET", url });
   return data;
 }
 
@@ -48,7 +49,7 @@ export async function fetchList({
     },
   });
 
-  const { data } = await network({
+  const { data } = await network<MarketItemResponse[]>({
     method: "GET",
     url,
   });
@@ -60,7 +61,7 @@ export async function fetchList({
 export async function supportedCounterCurrencies(): Promise<string[]> {
   const url = `${ROOT_PATH}/simple/supported_vs_currencies`;
 
-  const { data } = await network({
+  const { data } = await network<string[]>({
     method: "GET",
     url,
   });
@@ -84,7 +85,7 @@ export async function fetchCurrencyChartData({
     },
   });
 
-  const { data } = await network({
+  const { data } = await network<MarketChartApiResponse>({
     method: "GET",
     url,
   });
@@ -106,7 +107,7 @@ export async function fetchCurrency({
     },
   });
 
-  const { data } = await network({ method: "GET", url });
+  const { data } = await network<MarketItemResponse[]>({ method: "GET", url });
 
   return data[0];
 }
@@ -132,7 +133,7 @@ export async function fetchMarketPerformers({
     },
   });
 
-  const { data } = await network({ method: "GET", url });
+  const { data } = await network<MarketItemResponse[]>({ method: "GET", url });
 
   return data;
 }

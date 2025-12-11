@@ -1,35 +1,39 @@
 import React from "react";
+import { renderHook } from "tests/testSetup";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  openAssetAndAccountDialog,
-  openAssetAndAccountDialogPromise,
-} from "../AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "../AssetAndAccountDrawer";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
-jest.mock("../../ModularDialogFlowManager", () => {
-  return ({ children }: { children: React.ReactNode }) => children;
-});
+jest.mock("LLD/components/Dialog", () => ({
+  useDialog: jest.fn(),
+}));
+
+import { useDialog } from "LLD/components/Dialog";
+
+const mockUseDialog = jest.mocked(useDialog);
 
 const mockAccount = { id: "account1" } as AccountLike;
 const mockParentAccount = { id: "parent1" } as Account;
 
 const config = createModularDrawerConfiguration({});
 
-describe("openAssetAndAccountDialog", () => {
+describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
   const openDialog = jest.fn();
   const closeDialog = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseDialog.mockReturnValue({ openDialog, closeDialog });
   });
 
   it("should handle callback mode success", () => {
     const onSuccess = jest.fn();
-    openAssetAndAccountDialog({
+
+    const { result } = renderHook(() => useOpenAssetAndAccount(true));
+
+    result.current.openAssetAndAccount({
       onSuccess,
       drawerConfiguration: config,
-      openDialog,
-      closeDialog,
     });
 
     expect(openDialog).toHaveBeenCalledTimes(1);
@@ -50,11 +54,11 @@ describe("openAssetAndAccountDialog", () => {
   it("should handle callback mode cancel", () => {
     const onCancel = jest.fn();
 
-    openAssetAndAccountDialog({
+    const { result } = renderHook(() => useOpenAssetAndAccount(true));
+
+    result.current.openAssetAndAccount({
       onCancel,
       drawerConfiguration: config,
-      openDialog,
-      closeDialog,
     });
 
     expect(openDialog).toHaveBeenCalledTimes(1);
@@ -70,12 +74,13 @@ describe("openAssetAndAccountDialog", () => {
   });
 });
 
-describe("openAssetAndAccountDialogPromise", () => {
+describe("useOpenAssetAndAccount - openAssetAndAccountPromise", () => {
   const openDialog = jest.fn();
   const closeDialog = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseDialog.mockReturnValue({ openDialog, closeDialog });
   });
 
   it("should resolve with account and parentAccount on success", async () => {
@@ -89,10 +94,10 @@ describe("openAssetAndAccountDialogPromise", () => {
       onAccountSelectedHandler = dialogProps?.onAccountSelected;
     });
 
-    const resultPromise = openAssetAndAccountDialogPromise({
+    const { result } = renderHook(() => useOpenAssetAndAccount(true));
+
+    const resultPromise = result.current.openAssetAndAccountPromise({
       drawerConfiguration: config,
-      openDialog,
-      closeDialog,
     });
 
     // Simulate account selection after the promise is created
@@ -100,9 +105,9 @@ describe("openAssetAndAccountDialogPromise", () => {
       onAccountSelectedHandler(mockAccount, mockParentAccount);
     }
 
-    const result = await resultPromise;
+    const resultValue = await resultPromise;
 
-    expect(result).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
+    expect(resultValue).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
     expect(openDialog).toHaveBeenCalled();
     expect(closeDialog).toHaveBeenCalled();
   });
@@ -115,10 +120,10 @@ describe("openAssetAndAccountDialogPromise", () => {
       onCloseHandler = onClose;
     });
 
-    const resultPromise = openAssetAndAccountDialogPromise({
+    const { result } = renderHook(() => useOpenAssetAndAccount(true));
+
+    const resultPromise = result.current.openAssetAndAccountPromise({
       drawerConfiguration: config,
-      openDialog,
-      closeDialog,
     });
 
     // Simulate cancellation by calling onClose

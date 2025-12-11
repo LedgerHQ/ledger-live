@@ -16,6 +16,7 @@ import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useDialog } from "LLD/components/Dialog";
+import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "../../ModularDrawer/hooks/useOpenAssetFlow";
 
 function selectCurrencyDialog(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -39,6 +40,37 @@ function selectCurrencyDialog(
     />,
     onClose,
   );
+}
+
+export function useOpenAssetFlow(
+  modularDrawerVisibleParams: ModularDrawerVisibleParams,
+  source: string,
+  modalNameToReopen?: keyof GlobalModalData,
+) {
+  // Interim hook to switch between dialog and modular drawer implementation
+  // To be removed when dialog implementation is fully deprecated LIVE-23773
+  const featureModularDrawer = useFeature("lldModularDrawer");
+
+  const { openAssetFlowDialog, openAddAccountFlow } = useOpenAssetFlowDialog(
+    modularDrawerVisibleParams,
+    source,
+    modalNameToReopen,
+  );
+
+  const { openAssetFlow: openAssetFlowDrawer, openAddAccountFlow: openAddAccountFlowDrawer } =
+    useOpenAssetFlowDrawer(modularDrawerVisibleParams, source, modalNameToReopen);
+
+  if (featureModularDrawer?.params?.enableDialogDesktop) {
+    return {
+      openAssetFlow: openAssetFlowDialog,
+      openAddAccountFlow,
+    };
+  }
+
+  return {
+    openAssetFlow: openAssetFlowDrawer,
+    openAddAccountFlow: openAddAccountFlowDrawer,
+  };
 }
 
 export function useOpenAssetFlowDialog(

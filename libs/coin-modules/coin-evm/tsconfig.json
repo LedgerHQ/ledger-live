@@ -4,10 +4,17 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },
-  "files": ["node_modules/jest-expect-message/types/index.d.ts"],
-  "include": ["src/**/*"]
+  "files": [
+    "node_modules/jest-expect-message/types/index.d.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ]
 }

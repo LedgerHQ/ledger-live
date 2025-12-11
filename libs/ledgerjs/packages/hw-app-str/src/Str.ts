@@ -36,6 +36,7 @@ const INS_SIGN_TX = 0x04;
 const INS_GET_CONF = 0x06;
 const INS_SIGN_HASH = 0x08;
 const INS_SIGN_SOROBAN_AUTHORIZATION = 0x0a;
+const INS_SIGN_MESSAGE = 0x0c;
 
 const APDU_MAX_PAYLOAD = 255;
 
@@ -175,6 +176,27 @@ export default class Str {
     const pathBuffer = pathToBuffer(path);
     const payload = Buffer.concat([pathBuffer, hash]);
     const resp = await this.sendToDevice(INS_SIGN_HASH, payload);
+    return { signature: resp };
+  }
+
+  /**
+   * Sign a message.
+   *
+   * @param path a path in BIP 32 format
+   * @param message the message to sign
+   * @return an object with the signature
+   * @example
+   * str.signMessage("44'/148'/0'", message).then(o => o.signature)
+   */
+  async signMessage(
+    path: string,
+    message: Buffer,
+  ): Promise<{
+    signature: Buffer;
+  }> {
+    const pathBuffer = pathToBuffer(path);
+    const payload = Buffer.concat([pathBuffer, message]);
+    const resp = await this.sendToDevice(INS_SIGN_MESSAGE, payload);
     return { signature: resp };
   }
 

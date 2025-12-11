@@ -7,8 +7,11 @@ import type {
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { openAssetAndAccountDrawer, openAssetAndAccountDrawerPromise } from "../../ModularDrawer";
+import { useDialog } from "LLD/components/Dialog";
 
-type Result = {
+export type AssetAndAccountResult = {
   account: AccountLike;
   parentAccount?: Account;
 };
@@ -38,7 +41,7 @@ function openAssetAndAccountDialog(params: DrawerParams) {
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
-  const handleSuccess = (result: Result): void => {
+  const handleSuccess = (result: AssetAndAccountResult): void => {
     closeDialog();
     onSuccess?.(result.account, result.parentAccount);
   };
@@ -61,7 +64,7 @@ function openAssetAndAccountDialog(params: DrawerParams) {
 function openAssetAndAccountDialogPromise(
   drawerParams: Omit<DrawerParams, "onSuccess" | "onCancel">,
 ) {
-  return new Promise<Result>((resolve, reject) =>
+  return new Promise<AssetAndAccountResult>((resolve, reject) =>
     openAssetAndAccountDialog({
       ...drawerParams,
       onSuccess: (account, parentAccount) => resolve({ account, parentAccount }),
@@ -70,4 +73,26 @@ function openAssetAndAccountDialogPromise(
   );
 }
 
-export { openAssetAndAccountDialogPromise, openAssetAndAccountDialog };
+export const useOpenAssetAndAccount = (overrideFf = false) => {
+  // Interim hook to switch between dialog and modular drawer implementation
+  // To be removed when dialog implementation is fully deprecated LIVE-23773
+
+  const featureModularDrawer = useFeature("lldModularDrawer");
+
+  const { openDialog, closeDialog } = useDialog();
+
+  if (featureModularDrawer?.params?.enableDialogDesktop || overrideFf) {
+    return {
+      openAssetAndAccount: (params: Omit<DrawerParams, "openDialog" | "closeDialog">) =>
+        openAssetAndAccountDialog({ ...params, openDialog, closeDialog }),
+      openAssetAndAccountPromise: (
+        params: Omit<DrawerParams, "openDialog" | "closeDialog" | "onSuccess" | "onCancel">,
+      ) => openAssetAndAccountDialogPromise({ ...params, openDialog, closeDialog }),
+    };
+  }
+
+  return {
+    openAssetAndAccountPromise: openAssetAndAccountDrawerPromise,
+    openAssetAndAccount: openAssetAndAccountDrawer,
+  };
+};

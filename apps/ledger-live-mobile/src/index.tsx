@@ -1,3 +1,4 @@
+import "LLM/utils/logStartup/beforeJSImports";
 require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
@@ -82,6 +83,7 @@ import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -105,6 +107,8 @@ import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 
+logStartupEvent("After js imports");
+
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
@@ -123,6 +127,7 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  logStartupEvent("App render");
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
@@ -341,6 +346,7 @@ export default class Root extends Component {
   };
 
   render() {
+    logStartupEvent("Root render");
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
         {({ ready, initialCountervalues, currencyInitialized }) =>

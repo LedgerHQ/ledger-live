@@ -1,4 +1,4 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -444,6 +444,11 @@ export type AccountInfo = {
   sequence: number;
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
+
+export type AddressValidationCurrencyParameters = {
+  currency: CryptoCurrency;
+  networkId: number;
+};
 
 export type AlpacaApi<
   MemoType extends Memo = MemoNotSupported,

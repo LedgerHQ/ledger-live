@@ -10,9 +10,8 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { rgba, Text } from "@ledgerhq/native-ui";
+import { rgba, Text, Icons } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import Icon from "react-native-vector-icons/Feather";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -226,7 +225,7 @@ const CustomSelectable = React.memo(
         </Text>
 
         <View style={[styles.validatorSelectionIcon, { backgroundColor: color }]}>
-          {!!selected && <Icon size={16} name="check" color={colors.white} />}
+          {!!selected && <Icons.Check size="XS" color={colors.white} />}
         </View>
       </View>
     );

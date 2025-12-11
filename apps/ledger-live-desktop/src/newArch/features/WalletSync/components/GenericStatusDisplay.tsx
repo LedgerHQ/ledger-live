@@ -16,6 +16,8 @@ export type GenericProps = {
   analyticsPage?: AnalyticsPage;
   type?: "success" | "info";
   specificCta?: string;
+  /** When true, uses a full height layout with content centered and buttons at bottom */
+  fullHeight?: boolean;
 };
 
 const Container = styled(Box)`
@@ -38,13 +40,13 @@ export const GenericStatusDisplay = ({
   analyticsPage,
   type,
   specificCta,
+  fullHeight = false,
 }: GenericProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  return (
-    <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
+  const content = (
+    <>
       <Container>
         {type === "info" ? (
           <Icons.InformationFill size={"L"} color={colors.primary.c60} />
@@ -58,28 +60,54 @@ export const GenericStatusDisplay = ({
       <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
         {description}
       </Text>
+    </>
+  );
 
-      {withClose || withCta ? (
-        <BottomContainer
-          mb={3}
-          width={"100%"}
-          px={"40px"}
+  const buttons = (withClose || withCta) && (
+    <BottomContainer
+      mb={fullHeight ? undefined : 3}
+      width="100%"
+      px={fullHeight ? undefined : "40px"}
+      flexDirection="column"
+      justifyContent={fullHeight ? undefined : "center"}
+      rowGap="16px"
+    >
+      {withCta && onClick && (
+        <ButtonV3 variant="main" onClick={onClick} flex={1}>
+          {specificCta ?? t("walletSync.success.synchAnother")}
+        </ButtonV3>
+      )}
+      {withClose && (
+        <ButtonV3 variant="shade" onClick={onClose} flex={1}>
+          {t("walletSync.success.close")}
+        </ButtonV3>
+      )}
+    </BottomContainer>
+  );
+
+  if (fullHeight) {
+    return (
+      <Flex flexDirection="column" alignItems="center" height="80%">
+        <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
+        <Flex
           flexDirection="column"
+          alignItems="center"
           justifyContent="center"
-          rowGap={"16px"}
+          rowGap="24px"
+          flex={1}
         >
-          {withCta && onClick && (
-            <ButtonV3 variant="main" onClick={onClick} flex={1}>
-              {specificCta ?? t("walletSync.success.synchAnother")}
-            </ButtonV3>
-          )}
-          {withClose && (
-            <ButtonV3 variant="shade" onClick={onClose} flex={1}>
-              {t("walletSync.success.close")}
-            </ButtonV3>
-          )}
-        </BottomContainer>
-      ) : null}
+          {content}
+        </Flex>
+        {buttons}
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
+      <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
+      {content}
+      {buttons}
     </Flex>
   );
 };

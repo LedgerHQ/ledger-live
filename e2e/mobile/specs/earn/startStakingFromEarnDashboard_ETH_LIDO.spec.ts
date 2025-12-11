@@ -5,7 +5,7 @@ const testConfig = {
   account: Account.ETH_1,
   provider: Provider.LIDO,
   tmsLinks: ["B2CQA-3676, B2CQA-1713"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runStartETHStakingFromEarnDashboardTest(

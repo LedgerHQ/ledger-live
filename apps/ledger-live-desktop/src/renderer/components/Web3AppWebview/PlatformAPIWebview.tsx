@@ -43,6 +43,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -101,6 +102,17 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       liveAppId: manifest.id,
     });
 
+    const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
+
+    const openAssetAndAccountSelector = useCallback(
+      (currencyIds?: string[]) =>
+        openAssetAndAccountPromise({
+          currencies: currencyIds,
+          areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
+        }),
+      [openAssetAndAccountPromise],
+    );
+
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
         const source =
@@ -118,10 +130,18 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           { manifest },
           request,
           deactivatedCurrencyIds,
+          openAssetAndAccountSelector,
           modularDrawerVisible,
         );
       },
-      [manifest, dispatch, walletState, deactivatedCurrencyIds, modularDrawerVisible],
+      [
+        manifest,
+        dispatch,
+        walletState,
+        deactivatedCurrencyIds,
+        openAssetAndAccountSelector,
+        modularDrawerVisible,
+      ],
     );
 
     const receiveOnAccount = useCallback(
