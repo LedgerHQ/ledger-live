@@ -8,7 +8,7 @@ export const AccountVirtualList = ({
   bottomComponent,
 }: {
   accounts: Account[];
-  onClick: (networkId: string) => void;
+  onClick: (accountId: string) => void;
   bottomComponent?: React.ReactNode;
 }) => {
   const renderAccountListItem = useCallback(
