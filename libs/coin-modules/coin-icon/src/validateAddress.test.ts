@@ -1,0 +1,27 @@
+import { isValidAddress } from "./logic";
+import { validateAddress } from "./validateAddress";
+
+jest.mock("./logic");
+
+describe("validateAddress", () => {
+  const mockedIsValidAddress = jest.mocked(isValidAddress);
+
+  beforeEach(() => {
+    mockedIsValidAddress.mockClear();
+  });
+
+  it.each([true, false])(
+    "should call safeParseAccountId and return expected value (%s)",
+    async (expectedValue: boolean) => {
+      mockedIsValidAddress.mockReturnValueOnce(expectedValue);
+
+      const address = "some random address";
+      const parameters = {};
+      const result = await validateAddress(address, parameters);
+      expect(result).toEqual(expectedValue);
+
+      expect(mockedIsValidAddress).toHaveBeenCalledTimes(1);
+      expect(mockedIsValidAddress).toHaveBeenCalledWith(address);
+    },
+  );
+});

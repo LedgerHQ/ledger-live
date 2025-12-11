@@ -138,6 +138,11 @@ export interface CurrencyBridge {
   };
 }
 
+export type AddressValidationCurrencyParameters = {
+  currency: CryptoCurrency;
+  networkId: number;
+};
+
 /**
  * Abstraction related to an account
  */
@@ -212,6 +217,10 @@ interface SendReceiveAccountBridge<
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature<A>;
+  validateAddress: (
+    address: string,
+    parameters: Partial<AddressValidationCurrencyParameters>,
+  ) => Promise<boolean>;
 }
 
 interface SerializationAccountBridge<

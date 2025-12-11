@@ -15,7 +15,8 @@
     "src/types/index.ts",
     "src/types/model.ts",
     "src/types/signer.ts",
-    "src/types/bridge.fixture.ts"
+    "src/types/bridge.fixture.ts",
+    "src/logic/validateAddress.ts"
   ],
   "ignore": []
 }

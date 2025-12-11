@@ -23,6 +23,7 @@ import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
 import { buildTransferInstruction } from "./acceptOffer";
 import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
+import { validateAddress } from "./validateAddress";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,
@@ -70,6 +71,7 @@ export function createBridges(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 
   return {
