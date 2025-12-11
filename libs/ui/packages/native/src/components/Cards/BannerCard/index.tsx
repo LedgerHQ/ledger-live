@@ -32,7 +32,7 @@ export const Container = styled(TouchableOpacity)`
 
 export const CloseContainer = styled(TouchableOpacity)`
   background-color: ${(p) => p.theme.colors.opacityDefault.c05};
-  border-radius: 50;
+  border-radius: 50px;
   height: 24px;
   width: 24px;
   display: flex;
