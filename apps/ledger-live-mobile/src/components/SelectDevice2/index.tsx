@@ -25,9 +25,8 @@ import BleDevicePairingFlow, {
   SetHeaderOptionsRequest,
 } from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
-import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
 import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
-import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
+import BluetoothRequirementsDrawer from "../RequiresBLE/BluetoothRequirementsDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
 import {
@@ -45,6 +44,9 @@ import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { useAutoSelectDevice } from "./useAutoSelectDevice";
+import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 
 export type { SetHeaderOptionsRequest };
 
@@ -57,12 +59,13 @@ type Navigation = BaseComposite<
 
 type Props = {
   onSelect: (_: Device) => void;
-  // This component has side-effects because it uses a BLE scanning hook.
-  // And the scanning can only occur when LLM is not communicating with a device.
-  // Other component using this component needs to stop the BLE scanning before starting
-  // to communicate to a device via BLE.
+  /**
+   * This component has side-effects because it performs BLE scanning.
+   * BLE Scanning and BLE connection cannot occur at the same time.
+   * Components consuming this component need to stop the BLE scanning before starting
+   * to communicate with a device via BLE.
+   */
   stopBleScanning?: boolean;
-  displayServicesWidget?: boolean;
   /**
    * SelectDevice component can sometimes need to override the current header (during the bluetooth pairing flow for ex).
    * Any screen consuming this component (directly or indirectly, this prop should be passed along by any intermediary component)
@@ -70,15 +73,39 @@ type Props = {
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
   hasPostOnboardingEntryPointCard?: boolean;
+  /**
+   * Determines what will happen when the user taps on "Add a new device" button.
+   * - If false, the screen will go in a "pairing state" where all scanned BLE devices are shown.
+   * - If true, a choice drawer will be displayed to the user to select a device. The choice is between:
+   *    - "Set up a new Ledger" which redirects to the onboarding
+   *    - "Connect an existing Ledger" switches to the "pairing state" where all scanned BLE devices are shown.
+   */
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
+  /**
+   * If provided, this component will only display devices of the given model ID.
+   */
   filterByDeviceModelId?: DeviceModelId;
+  /**
+   * Additional content to render below the device list.
+   */
   children?: React.ReactNode;
+  /**
+   * If true, this component will automatically select the last connected device if available.
+   */
+  autoSelectLastConnectedDevice?: boolean;
+  /**
+   * If true, this component will connect to the device and check if it's locked before calling onSelect.
+   * onSelect will only be called if the device is not locked.
+   * If the device is locked of if any other error occurs, there will be an error drawer displayed to the user until the device is unlocked, the error is resolved or the user closes the drawer.
+   */
+  performDeviceLockedCheck?: boolean;
 };
 
 /**
- * FIXME: we should completely rebuild this component ASAP,
- * it has grown overly complex and is very difficult to maintain.
+ * This component is used to select a device to connect to.
+ *
+ * Refer to the README.md file for more details.
  */
 export default function SelectDevice({
   onSelect,
@@ -89,8 +116,11 @@ export default function SelectDevice({
   filterByDeviceModelId,
   children,
   stopBleScanning,
+  autoSelectLastConnectedDevice,
+  performDeviceLockedCheck = true,
 }: Props) {
   const { t } = useTranslation();
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -115,10 +145,16 @@ export default function SelectDevice({
     enabled: !isLDMKEnabled,
   });
 
+  const [deviceToCheckLockedStatus, setDeviceToCheckLockedStatus] = useState<Device | null>(null);
+
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
-    isLDMKEnabled && isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
+    isLDMKEnabled &&
+      isFocused &&
+      !stopBleScanning &&
+      pairingFlowStep !== "pairing" &&
+      !deviceToCheckLockedStatus,
   );
 
   const scannedDevices = useMemo(
@@ -137,11 +173,9 @@ export default function SelectDevice({
     );
   }, [scannedDevices, filterByDeviceModelId]);
 
-  // Each time the user navigates back to the screen the BLE requirements are not enforced
-  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
-
   // To be able to triggers the device selection once all the bluetooth requirements are respected
   const [selectedBleDevice, setSelectedBleDevice] = useState<Device | null>(null);
+  const isBleRequired = Boolean(selectedBleDevice);
 
   const [showSelectedBleDeviceNotAvailableDrawer, setShowSelectedBleDeviceNotAvailableDrawer] =
     useState(false);
@@ -158,8 +192,8 @@ export default function SelectDevice({
   // this cancels the requirements checking and does not do anything in order to stop the
   // connection with a device via BLE
   const onUserCloseRequireBluetoothDrawer = useCallback(() => {
-    setIsBleRequired(false);
-  }, [setIsBleRequired]);
+    setSelectedBleDevice(null);
+  }, []);
 
   const notifyDeviceSelected = useCallback(
     (device: Device) => {
@@ -181,6 +215,27 @@ export default function SelectDevice({
     [dispatch, onSelect],
   );
 
+  const checkDeviceStatus = useCallback(
+    (device: Device) => {
+      const isMockEnv = getEnv("MOCK");
+      if (performDeviceLockedCheck && !isMockEnv) {
+        setDeviceToCheckLockedStatus(device);
+      } else {
+        notifyDeviceSelected(device);
+      }
+    },
+    [performDeviceLockedCheck, notifyDeviceSelected],
+  );
+
+  const handleDeviceUnlocked = useCallback(() => {
+    setDeviceToCheckLockedStatus(null);
+    deviceToCheckLockedStatus && notifyDeviceSelected(deviceToCheckLockedStatus);
+  }, [notifyDeviceSelected, deviceToCheckLockedStatus]);
+
+  const handleDeviceLockedCheckClosed = useCallback(() => {
+    setDeviceToCheckLockedStatus(null);
+  }, [setDeviceToCheckLockedStatus]);
+
   const handleOnSelect = useCallback(
     (device: Device) => {
       dispatch(updateMainNavigatorVisibility(true));
@@ -195,18 +250,17 @@ export default function SelectDevice({
       const isMockEnv = getEnv("MOCK");
       const isProxyDebug = deviceId.includes("httpdebug");
 
-      // If neither wired nor in mock/debug mode, bluetooth is required
+      // If neither wired nor in mock/debug mode, it's a BLE device
       if (!wired && !isMockEnv && !isProxyDebug) {
         setSelectedBleDevice(device);
-        setIsBleRequired(true);
       } else {
-        setIsBleRequired(false);
-        notifyDeviceSelected(device);
+        setSelectedBleDevice(null);
+        checkDeviceStatus(device);
       }
 
       setIsPairingDevices(false);
     },
-    [dispatch, setIsBleRequired, notifyDeviceSelected],
+    [dispatch, setSelectedBleDevice, checkDeviceStatus],
   );
 
   /**
@@ -225,7 +279,7 @@ export default function SelectDevice({
     if (showSelectedBleDeviceNotAvailableDrawer && availableDeviceMatchingSelectedBleDevice) {
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
-      notifyDeviceSelected({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
+      checkDeviceStatus({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
       return;
     }
     // Once all the bluetooth requirements are respected, the device selection is triggered
@@ -235,18 +289,21 @@ export default function SelectDevice({
         setShowSelectedBleDeviceNotAvailableDrawer(true);
         return;
       }
-      notifyDeviceSelected({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
+      checkDeviceStatus({ ...availableDeviceMatchingSelectedBleDevice, wired: false });
       setSelectedBleDevice(null);
       setShowSelectedBleDeviceNotAvailableDrawer(false);
     }
   }, [
     bluetoothRequirementsState,
     selectedBleDevice,
-    notifyDeviceSelected,
+    checkDeviceStatus,
     availableDeviceMatchingSelectedBleDevice,
     showSelectedBleDeviceNotAvailableDrawer,
   ]);
 
+  /**
+   * Discover USB devices and proxy devices
+   */
   useEffect(() => {
     const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
     const setDeviceFromId = (id: string) => (id.startsWith("usb") ? setUSBDevice : setProxyDevice);
@@ -272,6 +329,17 @@ export default function SelectDevice({
     });
     return () => sub.unsubscribe();
   }, []);
+
+  /**
+   * Auto selection of the last connected device
+   */
+  useAutoSelectDevice({
+    enabled: isFocused,
+    deviceToAutoSelect: autoSelectLastConnectedDevice ? lastConnectedDevice : null,
+    availableUSBDevice: USBDevice,
+    onAutoSelect: handleOnSelect,
+    usbDeviceToSelectExpirationDuration: 1200,
+  });
 
   const deviceList = useMemo(() => {
     let devices: DisplayedDevice[] = bleKnownDevices
@@ -406,7 +474,13 @@ export default function SelectDevice({
   return (
     <StyledView>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
-      <RequiresBluetoothDrawer
+      <DeviceLockedCheckDrawer
+        isOpen={Boolean(deviceToCheckLockedStatus)}
+        device={deviceToCheckLockedStatus}
+        onDeviceUnlocked={handleDeviceUnlocked}
+        onClose={handleDeviceLockedCheckClosed}
+      />
+      <BluetoothRequirementsDrawer
         isOpenedOnIssue={isBleRequired}
         onUserClose={onUserCloseRequireBluetoothDrawer}
         bluetoothRequirementsState={bluetoothRequirementsState}

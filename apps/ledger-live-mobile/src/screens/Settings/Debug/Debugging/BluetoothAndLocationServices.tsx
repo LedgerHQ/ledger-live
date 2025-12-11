@@ -3,7 +3,7 @@ import { Flex, Alert, Switch } from "@ledgerhq/native-ui";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import RequiresBLE from "~/components/RequiresBLE";
 import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
-import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
+import BluetoothRequirementsDrawer from "~/components/RequiresBLE/BluetoothRequirementsDrawer";
 
 /**
  * Debugging screen to test:
@@ -78,7 +78,7 @@ export default function DebugBluetoothAndLocationServices() {
               />
             </Flex>
             <Flex mt={5}>
-              <RequiresBluetoothDrawer
+              <BluetoothRequirementsDrawer
                 isOpenedOnIssue={isRequireCustomizedBluetoothEnabled}
                 onUserClose={onUserClose}
                 bluetoothRequirementsState={bluetoothRequirementsState}
