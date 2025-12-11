@@ -847,7 +847,7 @@
     "stake": "Stake",
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
-    "availableBalanceTooltip": "This amount is disposable.",
+    "availableBalanceTooltip": "Funds you can use right now.",
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
@@ -5857,6 +5857,12 @@
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
+      "account": {
+        "lockedBalance": "Locked",
+        "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
+        "withdrawableBalance": "Withdrawable",
+        "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
+      },
       "addAccount": {
         "title": "Add Canton Account",
         "reonboard": {

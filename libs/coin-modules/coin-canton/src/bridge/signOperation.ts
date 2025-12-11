@@ -32,12 +32,16 @@ export const buildSignOperation =
               tokenId: string;
               expireInSeconds: number;
               memo?: string;
+              instrumentAdmin?: string;
             } = {
               recipient: transaction.recipient,
               amount: transaction.amount,
               expireInSeconds: 60 * 60,
               tokenId: transaction.tokenId,
             };
+            if (transaction.instrumentAdmin) {
+              params.instrumentAdmin = transaction.instrumentAdmin;
+            }
             if (transaction.memo) {
               params.memo = transaction.memo;
             }
