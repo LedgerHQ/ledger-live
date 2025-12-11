@@ -12,7 +12,7 @@ export const MIN_MODAL_HEIGHT = 30;
 
 type ScreenContainerProps = {
   edges?: Array<"top" | "bottom" | "left" | "right">;
-}
+};
 
 const ScreenContainer = styled(Flex).attrs<ScreenContainerProps>(p => ({
   edges: ["bottom"],

@@ -50,10 +50,9 @@ export default () => null;
 
 const AnimatedDrawerContainer = Animated.createAnimatedComponent(
   styled(Flex).attrs(p => ({
+    position: "absolute",
     alignSelf: "flex-end",
     justifyContent: "flex-end",
-    position: "absolute",
-    bottom: 0,
     backgroundColor: p.theme.colors.background.main,
     borderTopRightRadius: 24,
     borderTopLeftRadius: 24,
@@ -212,6 +211,7 @@ export function TransferTabIcon() {
           animatedProps={drawerContainerProps}
           style={[
             {
+              bottom: -bottomInset,
               width: screenWidth,
               maxHeight: drawerHeight,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
