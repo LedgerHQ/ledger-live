@@ -3015,6 +3015,8 @@
       }
     },
     "availableBalance": "Available balance",
+    "availableBalanceTooltip": "Funds you can use right now.",
+
     "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
@@ -8213,6 +8215,12 @@
     }
   },
   "canton": {
+    "account": {
+      "lockedBalance": "Locked",
+      "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
+      "withdrawableBalance": "Withdrawable",
+      "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
+    },
     "onboard": {
       "account": "Account",
       "authorize": "Authorize",
