@@ -1,7 +1,13 @@
 import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { AleoTransactionType } from "../types";
+
+export function parseMicrocredits(microcreditsU64: string) {
+  invariant(microcreditsU64.endsWith("u64"), `aleo: invalid balance format (${microcreditsU64})`);
+  return microcreditsU64.slice(0, -3);
+}
 
 export function parseMicrocredits(microcreditsU64: string) {
   invariant(microcreditsU64.endsWith("u64"), `aleo: invalid balance format (${microcreditsU64})`);
@@ -35,3 +41,21 @@ export function patchAccountWithViewKey(account: Account, viewKey: string): Acco
     pendingOperations: updateOperations(account.pendingOperations),
   };
 }
+
+export const determineTransactionType = (
+  functionId: string,
+  operationType: OperationType,
+): AleoTransactionType => {
+  if (functionId === "transfer_private") return "private";
+  if (functionId === "transfer_public") return "public";
+
+  if (operationType === "IN") {
+    return functionId.endsWith("to_private") ? "private" : "public";
+  }
+
+  if (operationType === "OUT") {
+    return functionId.startsWith("transfer_private") ? "private" : "public";
+  }
+
+  return "public";
+};

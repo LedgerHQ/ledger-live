@@ -1,9 +1,12 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { type GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  type GetAccountShape,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import type { Operation } from "@ledgerhq/types-live";
-import { getBalance } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 import type { AleoAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
@@ -15,7 +18,12 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
   }
 
-  const accountId = encodeAccountId({
+  const [latestBlock, balances] = await Promise.all([
+    lastBlock(currency),
+    getBalance(currency, address),
+  ]);
+
+  const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
@@ -26,21 +34,41 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     }),
   });
 
-  const balances = await getBalance(currency, address);
   const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
   const transparentBalance = new BigNumber(nativeBalance.toString());
   const privateBalance = null;
   const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
 
-  const blockHeight = 0;
-  const operations: Operation[] = [];
+  const shouldSyncFromScratch = !initialAccount;
+  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const latestOperation = oldOperations[0];
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  const latestAccountOperations = await listOperations({
+    currency,
+    address,
+    ledgerAccountId,
+    fetchAllPages: true,
+    pagination: {
+      minHeight: 0,
+      order: "asc",
+      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+    },
+  });
+
+  // sort by date desc
+  latestAccountOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // merge old and new operations
+  const operations = shouldSyncFromScratch
+    ? latestAccountOperations.operations
+    : mergeOps(oldOperations, latestAccountOperations.operations);
 
   return {
     type: "Account",
-    id: accountId,
+    id: ledgerAccountId,
     balance: spendableBalance,
     spendableBalance: spendableBalance,
-    blockHeight,
+    blockHeight: latestBlock.height,
     operations,
     operationsCount: operations.length,
     lastSyncDate: new Date(),

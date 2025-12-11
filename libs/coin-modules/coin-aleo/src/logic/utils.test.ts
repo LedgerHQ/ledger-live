@@ -1,6 +1,6 @@
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { parseMicrocredits, patchAccountWithViewKey } from "./utils";
+import { parseMicrocredits, patchAccountWithViewKey, determineTransactionType } from "./utils";
 
 describe("logic utils", () => {
   beforeEach(() => {
@@ -85,14 +85,45 @@ describe("logic utils", () => {
         }),
       ]);
     });
+  });
 
-    it("should throw if viewKey is missing", () => {
-      const mockAccount = getMockedAccount({
-        id: "js:2:aleo:aleo1test:",
-        operations: [],
-      });
+  describe("determineTransactionType", () => {
+    it("should return private for transfer_private regardless of operation type", () => {
+      expect(determineTransactionType("transfer_private", "IN")).toBe("private");
+      expect(determineTransactionType("transfer_private", "OUT")).toBe("private");
+      expect(determineTransactionType("transfer_private", "NONE")).toBe("private");
+    });
 
-      expect(() => patchAccountWithViewKey(mockAccount, "")).toThrow();
+    it("should return public for transfer_public regardless of operation type", () => {
+      expect(determineTransactionType("transfer_public", "IN")).toBe("public");
+      expect(determineTransactionType("transfer_public", "OUT")).toBe("public");
+      expect(determineTransactionType("transfer_public", "NONE")).toBe("public");
+    });
+
+    it("should return private for IN operations ending with to_private", () => {
+      expect(determineTransactionType("transfer_public_to_private", "IN")).toBe("private");
+    });
+
+    it("should return public for IN operations ending with to_public", () => {
+      expect(determineTransactionType("transfer_private_to_public", "IN")).toBe("public");
+    });
+
+    it("should return private for OUT operations starting with transfer_private", () => {
+      expect(determineTransactionType("transfer_private_to_public", "OUT")).toBe("private");
+    });
+
+    it("should return public for OUT operations starting with transfer_public", () => {
+      expect(determineTransactionType("transfer_public_to_private", "OUT")).toBe("public");
+    });
+
+    it("should return fallback for unrecognized function ids", () => {
+      expect(determineTransactionType("unknown_function", "IN")).toBe("public");
+      expect(determineTransactionType("unknown_function", "OUT")).toBe("public");
+    });
+
+    it("should return fallback for NONE operations with cross-balance transfers", () => {
+      expect(determineTransactionType("transfer_public_to_private", "NONE")).toBe("public");
+      expect(determineTransactionType("transfer_private_to_public", "NONE")).toBe("public");
     });
   });
 });

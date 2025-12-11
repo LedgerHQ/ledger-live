@@ -392,6 +392,11 @@ export type LLDCoinFamily<
    */
   ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
 
+  /**
+   * Component allowing to add metadata cell to list of transactions
+   */
+  CustomMetadataCell?: React.ComponentType<{ operation: O }>;
+
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };

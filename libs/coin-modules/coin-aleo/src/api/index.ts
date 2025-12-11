@@ -12,11 +12,16 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
+  Operation,
 } from "@ledgerhq/coin-framework/api/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import coinConfig, { type AleoConfig } from "../config";
+import { listOperations } from "../logic";
 
-export function createApi(config: AleoConfig, _currencyId: string): Api {
+export function createApi(config: AleoConfig, currencyId: string): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: (_signature: string): Promise<string> => {
@@ -48,8 +53,51 @@ export function createApi(config: AleoConfig, _currencyId: string): Api {
     lastBlock: async (): Promise<BlockInfo> => {
       throw new Error("lastBlock is not supported");
     },
-    listOperations: async (_address, _pagination) => {
-      throw new Error("listOperations is not supported");
+    listOperations: async (address, pagination) => {
+      const ledgerAccountId = encodeAccountId({
+        type: "js",
+        version: "2",
+        currencyId: currency.id,
+        xpubOrAddress: address,
+        derivationMode: "",
+      });
+
+      const { operations, nextCursor } = await listOperations({
+        currency,
+        address,
+        ledgerAccountId,
+        pagination,
+        fetchAllPages: false,
+      });
+
+      const alpacaOperations = operations.map(
+        operation =>
+          ({
+            id: operation.id,
+            type: operation.type,
+            senders: operation.senders,
+            recipients: operation.recipients,
+            value: BigInt(operation.value.toFixed(0)),
+            asset: { type: "native" },
+            details: {
+              ...operation.extra,
+              ledgerOpType: operation.type,
+            },
+            tx: {
+              hash: operation.hash,
+              fees: BigInt(operation.fee.toFixed(0)),
+              date: operation.date,
+              block: {
+                hash: operation.blockHash ?? "",
+                height: operation.blockHeight ?? 0,
+                time: operation.date,
+              },
+              failed: operation.hasFailed ?? false,
+            },
+          }) satisfies Operation,
+      );
+
+      return [alpacaOperations, nextCursor ?? ""];
     },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");

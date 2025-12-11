@@ -8005,6 +8005,12 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
     },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
+      }
+    },
     "addAccount": {
       "stepViewKeyWarning": {
         "title": "Set up Aleo private balance",

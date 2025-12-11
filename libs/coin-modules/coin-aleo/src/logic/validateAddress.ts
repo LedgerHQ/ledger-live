@@ -1,4 +1,4 @@
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
 
 export async function validateAddress(
   _address: string,
