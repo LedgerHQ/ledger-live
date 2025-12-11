@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.99.1-hotfix.0
+
+### Patch Changes
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`eebdb40`](https://github.com/LedgerHQ/ledger-live/commit/eebdb402cfa1368c31cb9e4f347464495d3dcdd5) Thanks [@thesan](https://github.com/thesan)! - migrated @shopify/flash-list to v2
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`ec5e52d`](https://github.com/LedgerHQ/ledger-live/commit/ec5e52dc117562a98287b6673dc24f0ebb734ef1) Thanks [@thesan](https://github.com/thesan)! - Detail the startup time in segment and the performance screen
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`2c8643c`](https://github.com/LedgerHQ/ledger-live/commit/2c8643c14dd8d7cb0cffc0c7dab84044f9815893) Thanks [@thesan](https://github.com/thesan)! - fix Fabric rendering making unable to open newly added assets after adding a second account
+
 ## 3.99.0
 
 ### Minor Changes
