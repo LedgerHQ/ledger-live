@@ -16,20 +16,27 @@ const AccountsWarning = ({
   navigateToEditAccountName,
   navigateToFundAccount,
   isAccountSelectionFlow,
+  descriptions,
 }: AccountsWarningProps) => {
   const source = useSelector(modularDrawerSourceSelector);
-  const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
-    currency,
-    navigateToEditAccountName,
-    navigateToFundAccount,
-    isAccountSelectionFlow,
-    emptyAccount,
-  );
+  const { emptyAccountWarning, noAssociatedAccountsWarning, noAccountsAddedWarning } =
+    useWarningConfig(
+      currency,
+      navigateToEditAccountName,
+      navigateToFundAccount,
+      isAccountSelectionFlow,
+      emptyAccount,
+    );
 
-  const warning =
-    warningReason === WARNING_REASON.NO_ASSOCIATED_ACCOUNTS
-      ? noAssociatedAccountsWarning
-      : emptyAccountWarning;
+  const warningContent = {
+    [WARNING_REASON.NO_ASSOCIATED_ACCOUNTS]: noAssociatedAccountsWarning,
+    [WARNING_REASON.ALREADY_EMPTY_ACCOUNT]: emptyAccountWarning,
+    [WARNING_REASON.NO_ACCOUNTS_ADDED]: noAccountsAddedWarning(
+      descriptions?.noAccountsAddedWarning,
+    ),
+  };
+
+  const warning = warningContent[warningReason];
 
   return (
     <Flex flexDirection="column" height="100%" alignItems="center">

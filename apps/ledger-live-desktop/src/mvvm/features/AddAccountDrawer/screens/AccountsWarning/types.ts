@@ -2,16 +2,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { WarningReason } from "../../domain";
 
-export interface ActionButtonsProps {
-  primaryAction: {
-    text: string;
-    onClick: () => void;
-  };
-  secondaryAction: {
-    text: string;
-    onClick: () => void;
-  };
-}
+export type ActionButtonsProps = {
+  primaryAction: { text: string; onClick: () => void } | null;
+  secondaryAction: { text: string; onClick: () => void } | null;
+};
 
 export interface AccountsWarningProps {
   warningReason: WarningReason;
@@ -20,4 +14,7 @@ export interface AccountsWarningProps {
   navigateToFundAccount: (account: Account) => void;
   emptyAccount?: Account;
   isAccountSelectionFlow: boolean;
+  descriptions?: {
+    noAccountsAddedWarning?: string;
+  };
 }

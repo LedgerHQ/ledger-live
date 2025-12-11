@@ -1,0 +1,50 @@
+import React from "react";
+import styled from "styled-components";
+import type { Account } from "@ledgerhq/types-live";
+import { Text, Flex, Icons } from "@ledgerhq/react-ui/index";
+import Box from "~/renderer/components/Box";
+import Spinner from "~/renderer/components/Spinner";
+import {
+  ALEO_ACCOUNT_SHARING_STATUS,
+  type AleoAccountSharingStatus,
+} from "~/renderer/families/aleo/AddAccountDrawer/domain";
+import { useAccountName } from "~/renderer/reducers/wallet";
+
+interface AccountRowProps {
+  account: Account;
+  status: AleoAccountSharingStatus;
+}
+
+const AccountItem = styled(Flex)`
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: ${p => p.theme.colors.opacityDefault.c05};
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ViewKeyConfirmationAccountRow = ({ account, status }: AccountRowProps) => {
+  const accountName = useAccountName(account);
+
+  const statusIcon = {
+    [ALEO_ACCOUNT_SHARING_STATUS.CONFIRMED]: <Icons.Check size="S" color="neutral.c60" />,
+    [ALEO_ACCOUNT_SHARING_STATUS.REJECTED]: <Icons.Close size="S" color="neutral.c60" />,
+    [ALEO_ACCOUNT_SHARING_STATUS.WAITING]: <Icons.Refresh size="S" color="neutral.c60" />,
+    [ALEO_ACCOUNT_SHARING_STATUS.PENDING]: (
+      <Box size={20} justifyContent="center" alignItems="center">
+        <Spinner size={14} />
+      </Box>
+    ),
+  }[status];
+
+  return (
+    <AccountItem>
+      <Text fontSize={4} color="neutral.c80">
+        {accountName}
+      </Text>
+      {statusIcon}
+    </AccountItem>
+  );
+};
+
+export default ViewKeyConfirmationAccountRow;
