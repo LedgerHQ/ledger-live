@@ -125,9 +125,6 @@ export interface CurrencyBridge {
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
-  // Get the UI descriptor for this currency (defines structure for transaction flows)
-  // Returns descriptor with inputs, fees configuration, etc.
-  getDescriptor?: (currency: CryptoCurrency) => Record<string, unknown>;
   nftResolvers?: {
     nftMetadata: (arg: {
       contract: string;

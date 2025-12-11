@@ -6,7 +6,6 @@ export const cantonConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
       },
       nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-live-mainnet",
       nodeId: "ledger-live-mainnet",
@@ -23,7 +22,6 @@ export const cantonConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
       },
       nodeUrl: "https://canton-gateway-devnet.api.live.ledger-test.com/v1/node/ledger-live-devnet",
       nodeId: "ledger-live-devnet",
@@ -40,7 +38,6 @@ export const cantonConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
       },
       nodeUrl:
         "https://canton-gateway-testnet.api.live.ledger-test.com/v1/node/ledger-live-testnet",

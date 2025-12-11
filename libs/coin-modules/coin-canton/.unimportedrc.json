@@ -25,8 +25,7 @@
     "src/network/mock-network.ts",
     "src/test/bot-specs.ts",
     "src/test/cantonTestUtils.ts",
-    "src/test/fixtures.ts",
-    "src/supportedFeatures.ts"
+    "src/test/fixtures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices"

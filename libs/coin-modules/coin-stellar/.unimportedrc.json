@@ -20,7 +20,6 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/globals.d.ts",
-    "src/supportedFeatures.ts"
+    "src/globals.d.ts"
   ]
 }

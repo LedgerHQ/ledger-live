@@ -25,7 +25,6 @@
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
     "src/types/assets.ts",
-    "src/supportedFeatures.ts",
     "src/utils/IconGenerator.ts",
     "src/utils/index.ts"
   ]

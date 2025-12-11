@@ -21,8 +21,7 @@
   ],
   "ignoreUnimported": [
     "src/network/index.ts",
-    "src/signer/signMessage.ts",
-    "src/supportedFeatures.ts"
+    "src/signer/signMessage.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/types-cryptoassets",

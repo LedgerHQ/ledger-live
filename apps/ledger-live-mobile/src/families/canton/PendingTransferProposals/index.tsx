@@ -1,6 +1,6 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
-import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import {
   useCantonAcceptOrRejectOffer,
@@ -38,7 +38,6 @@ import { type TransferProposalAction } from "./types";
 
 type Props = {
   account: Account;
-  parentAccount: Account;
 };
 
 type Modal = {
@@ -52,20 +51,13 @@ type RestoreModalState = {
   contractId: string;
 };
 
-const initialValues = {
-  groupedIncoming: [],
-  groupedOutgoing: [],
-  incomingCount: 0,
-  outgoingCount: 0,
-};
-
 const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstructionType> = {
   accept: "accept-transfer-instruction",
   reject: "reject-transfer-instruction",
   withdraw: "withdraw-transfer-instruction",
 };
 
-const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) => {
+const PendingTransferProposals: React.FC<Props> = ({ account }) => {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const route = useRoute<ScreenRoute>();
   const unit = useAccountUnit(account);
@@ -75,15 +67,15 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState<string>("");
   const restoreRef = useRef<{ action: TransferProposalAction; contractId: string } | null>(null);
-  const accountXpub = parentAccount.xpub ?? "";
+  const accountXpub = account.xpub ?? "";
 
   const performTransferInstruction = useCantonAcceptOrRejectOffer({
-    currency: parentAccount.currency,
-    account: parentAccount,
+    currency: account.currency,
+    account,
     partyId: accountXpub,
   });
 
-  const cantonAccount = isCantonAccount(parentAccount) ? parentAccount : null;
+  const cantonAccount = isCantonAccount(account) ? account : null;
 
   const redirectToReonboarding = useCallback(
     (action?: TransferProposalAction, contractId?: string) => {
@@ -114,9 +106,15 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
   );
 
   const { groupedIncoming, groupedOutgoing, incomingCount, outgoingCount } = useMemo(() => {
-    if (!isCantonAccount(account)) return initialValues;
-
-    const pendingTransferProposals = account.cantonResources?.pendingTransferProposals ?? [];
+    const pendingTransferProposals = cantonAccount?.cantonResources?.pendingTransferProposals;
+    if (!pendingTransferProposals || pendingTransferProposals.length === 0) {
+      return {
+        groupedIncoming: [],
+        groupedOutgoing: [],
+        incomingCount: 0,
+        outgoingCount: 0,
+      };
+    }
 
     const { incoming, outgoing } = processTransferProposals(pendingTransferProposals, accountXpub);
 
@@ -126,7 +124,7 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
       incomingCount: incoming.length,
       outgoingCount: outgoing.length,
     };
-  }, [account, accountXpub]);
+  }, [cantonAccount, accountXpub]);
 
   const handleModalConfirm = useCallback(
     async (contractId: string, action: TransferProposalAction, deviceId: string) => {
@@ -431,12 +429,7 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
             <CurrencyUnitValue unit={unit} value={amountValue} showCode alwaysShowSign />
           </Text>
           <Text variant="small" color="neutral.c70" mt={0.5}>
-            <CounterValue
-              currency={getAccountCurrency(account)}
-              value={amountValue}
-              showCode
-              alwaysShowSign
-            />
+            <CounterValue currency={account.currency} value={amountValue} showCode alwaysShowSign />
           </Text>
         </Flex>
 

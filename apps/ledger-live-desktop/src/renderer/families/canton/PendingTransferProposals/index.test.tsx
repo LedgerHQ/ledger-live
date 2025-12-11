@@ -129,7 +129,7 @@ describe("PendingTransferProposals", () => {
   it("should sync account after successful action", async () => {
     mockPerformTransferInstruction.mockResolvedValue(undefined);
 
-    render(<PendingTransferProposals account={mockAccount} parentAccount={mockAccount} />, {
+    render(<PendingTransferProposals account={mockAccount} />, {
       initialState: buildInitialState(),
     });
     fireEvent.click(screen.getByText("families.canton.pendingTransactions.accept"));
@@ -163,7 +163,7 @@ describe("PendingTransferProposals", () => {
         new TopologyChangeError("Topology change detected"),
       );
 
-      render(<PendingTransferProposals account={account} parentAccount={mockAccount} />, {
+      render(<PendingTransferProposals account={account} />, {
         initialState: buildInitialState(),
       });
       fireEvent.click(screen.getByText(`families.canton.pendingTransactions.${action}`));
@@ -173,10 +173,10 @@ describe("PendingTransferProposals", () => {
         expect(mockHandleTopologyChangeError).toHaveBeenCalledWith(
           mockDispatch,
           expect.objectContaining({
-            currency: mockAccount.currency,
+            currency: account.currency,
             device: mockDevice,
             accounts: [],
-            mainAccount: mockAccount,
+            mainAccount: account,
             navigationSnapshot: expect.objectContaining({
               type: "transfer-proposal",
               handler: expect.any(Function),
@@ -197,7 +197,7 @@ describe("PendingTransferProposals", () => {
       );
       mockGetCurrentDevice.mockReturnValue(null);
 
-      render(<PendingTransferProposals account={mockAccount} parentAccount={mockAccount} />, {
+      render(<PendingTransferProposals account={mockAccount} />, {
         initialState: buildInitialState({
           devices: {
             currentDevice: null,

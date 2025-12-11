@@ -12,7 +12,6 @@
   ],
   "ignoreUnimported": [
     "src/api/node.mock.ts",
-    "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/test/bridge.dataset.ts"
   ]
 }

@@ -26,8 +26,7 @@
     "src/serialization.ts",
     "src/signer.ts",
     "src/synchronisation.unit.test.ts",
-    "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": []

@@ -7,7 +7,6 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: "https://xrp.coin.ledger.com",
     } as XrpCoinConfig,

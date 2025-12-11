@@ -61,8 +61,7 @@
     "src/types/constants.ts",
     "src/types/index.ts",
     "src/types/network.ts",
-    "src/types/signer.ts",
-    "src/supportedFeatures.ts"
+    "src/types/signer.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-framework",

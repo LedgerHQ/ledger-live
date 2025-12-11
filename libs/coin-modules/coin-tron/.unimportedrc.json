@@ -14,8 +14,7 @@
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
-    "src/test/index.ts",
-    "src/supportedFeatures.ts"
+    "src/test/index.ts"
   ],
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.ts"],
   "ignoreUnused": [

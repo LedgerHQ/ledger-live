@@ -20,9 +20,7 @@
     "jest-matcher-utils",
     "jest-message-util"
   ],
-  "ignoreUnimported": [
-    "src/supportedFeatures.ts"
-  ],
+  "ignoreUnimported": [],
   "ignoreUnused": [
     "rxjs"
   ]

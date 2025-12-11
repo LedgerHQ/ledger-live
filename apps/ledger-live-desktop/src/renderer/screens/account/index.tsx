@@ -170,9 +170,7 @@ const AccountPage = ({
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
 
-          {PendingTransferProposals && (
-            <PendingTransferProposals account={account as Account} parentAccount={mainAccount} />
-          )}
+          {PendingTransferProposals && <PendingTransferProposals account={account as Account} />}
 
           {account.type === "Account" && <NftEntryPoint account={account} />}
 

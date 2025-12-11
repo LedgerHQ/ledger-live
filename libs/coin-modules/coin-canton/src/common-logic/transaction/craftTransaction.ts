@@ -15,7 +15,6 @@ export async function craftTransaction(
   },
   transaction: {
     recipient?: string;
-    instrumentAdmin?: string;
     amount: BigNumber;
     tokenId: string;
     expireInSeconds: number;
@@ -33,10 +32,6 @@ export async function craftTransaction(
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,
   };
-
-  if (transaction.instrumentAdmin) {
-    params.instrument_admin = transaction.instrumentAdmin;
-  }
 
   if (transaction.memo) {
     params.reason = transaction.memo;

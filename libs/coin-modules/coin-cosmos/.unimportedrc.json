@@ -34,8 +34,7 @@
     "src/getTransactionStatus.ts",
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
-    "src/synchronisation.ts",
-    "src/supportedFeatures.ts"
+    "src/synchronisation.ts"
   ],
   "ignoreUnused": ["rxjs"]
 }

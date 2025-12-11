@@ -11,10 +11,6 @@ export const cosmosConfig: CosmosConfig = {
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
         type: "active",
-        features: [
-          { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
-        ],
       },
     },
   },
@@ -26,10 +22,6 @@ export const cosmosConfig: CosmosConfig = {
       ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
       status: {
         type: "active",
-        features: [
-          { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
-        ],
       },
     },
   },

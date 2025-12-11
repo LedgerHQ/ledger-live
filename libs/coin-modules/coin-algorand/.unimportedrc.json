@@ -15,7 +15,6 @@
     "src/tokens.ts"
   ],
   "ignoreUnimported": [
-    "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/test/bridge.dataset.ts"
   ]
 }

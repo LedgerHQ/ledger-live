@@ -7,10 +7,6 @@ export const tezosConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
       },
       baker: {
         url: getEnv("API_TEZOS_BAKER"),

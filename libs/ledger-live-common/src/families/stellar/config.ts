@@ -7,7 +7,6 @@ export const stellarConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
       },
       explorer: {
         url: getEnv("API_STELLAR_HORIZON"),

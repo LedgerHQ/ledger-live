@@ -62,7 +62,6 @@ export type Transaction = TransactionCommon & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
-  instrumentAdmin?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -71,7 +70,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
-  instrumentAdmin?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

@@ -375,7 +375,6 @@ export type LLDCoinFamily<
    */
   PendingTransferProposals?: React.ComponentType<{
     account: A;
-    parentAccount: A;
   }>;
 
   /**

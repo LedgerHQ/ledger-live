@@ -22,8 +22,7 @@
     "src/network/node/stakingInfo.ts",
     "src/network/node/validators.ts",
     "src/network/sidecar.fixture.ts",
-    "src/types/bridge.fixture.ts",
-    "src/supportedFeatures.ts"
+    "src/types/bridge.fixture.ts"
   ],
   "ignoreUnused": [
     "@polkadot/api",
