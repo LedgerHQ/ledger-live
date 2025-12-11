@@ -5,6 +5,7 @@ import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
+import { updateIdentify } from "~/renderer/analytics/segment";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 
