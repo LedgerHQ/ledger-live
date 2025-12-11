@@ -140,6 +140,13 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
+  onboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
   mixpanelAnalytics: initFeature({
     enabled: false,
     params: { record_sessions_percent: 100 },
