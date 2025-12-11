@@ -16,7 +16,7 @@ type StoryProgressBarProps = {
 /**
  * StoryProgressBar component to display the progress of a story.
  * @param param0 {StoryProgressBarProps} - Props for the StoryProgressBar component.
- * @returns JSX.Element
+ * @returns React.JSX.Element
  */
 export function StoryProgressBar({
   durationMs = 5000,

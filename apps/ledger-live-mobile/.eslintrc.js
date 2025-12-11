@@ -127,5 +127,16 @@ module.exports = {
         "@typescript-eslint/no-var-requires": "off",
       },
     },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      excludedFiles: ["src/mocks/**"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
   ],
 };

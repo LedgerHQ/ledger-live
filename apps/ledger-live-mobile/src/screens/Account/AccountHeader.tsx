@@ -4,7 +4,7 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
-import Animated from "react-native-reanimated";
+import { SharedValue } from "react-native-reanimated";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyHeaderLayout from "~/components/CurrencyHeaderLayout";
@@ -24,7 +24,7 @@ function AccountHeader({
   countervalueAvailable,
   parentAccount,
 }: {
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   account: AccountLike;
   useCounterValue?: boolean;

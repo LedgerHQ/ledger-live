@@ -100,7 +100,7 @@ export type Props = {
   hideTabBar?: boolean;
 } & BottomTabBarProps;
 
-const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): JSX.Element => {
+const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): React.JSX.Element => {
   const bgColor = getBgColor(colors);
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   const { bottom: bottomInset } = insets;
@@ -219,7 +219,7 @@ export default function CustomTabBar({
   colors,
   insets,
   hideTabBar = false,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <Animated.View>
       {!hideTabBar && (

@@ -135,7 +135,7 @@ type Status = PartialNullable<{
 type Props<H extends Status, P> = {
   onResult?: (_: NonNullable<P>) => Promise<void> | void;
   onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
+  renderOnResult?: (_: P) => React.JSX.Element | null;
   status: H;
   device: Device;
   payload?: P | null;
@@ -159,7 +159,7 @@ export default function DeviceAction<R, H extends Status, P>({
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
   request: R;
-}): JSX.Element {
+}): React.JSX.Element {
   const status = action?.useHook(selectedDevice, request);
   const payload = action?.mapResult(status);
 
@@ -189,7 +189,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   onClose,
 }: Props<H, P> & {
   request?: R;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   const { colors, dark } = useTheme();
   const { colors: colorsFromStyled } = useThemeFromStyledComponents();
   const dispatch = useDispatch();
