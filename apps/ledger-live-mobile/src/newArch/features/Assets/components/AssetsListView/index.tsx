@@ -9,9 +9,6 @@ import BigNumber from "bignumber.js";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import isEqual from "lodash/isEqual";
-import { getEstimatedListSize } from "LLM/utils/getEstimatedListSize";
-
-const ESTIMED_ITEM_SIZE = 150;
 
 type ViewProps = ReturnType<typeof useAssetsListViewModel>;
 
@@ -20,7 +17,6 @@ const View: React.FC<ViewProps> = ({
   onItemPress,
   onContentChange,
   isSyncEnabled,
-  limitNumberOfAssets,
 }) => {
   const List = useMemo(() => {
     return isSyncEnabled ? globalSyncRefreshControl<FlashListProps<Asset>>(FlashList) : FlashList;
@@ -45,15 +41,9 @@ const View: React.FC<ViewProps> = ({
     [onItemPress],
   );
 
-  const estimatedListSize = getEstimatedListSize({
-    limit: limitNumberOfAssets,
-  });
-
   return (
     <List
       testID="AssetsList"
-      estimatedItemSize={ESTIMED_ITEM_SIZE}
-      estimatedListSize={estimatedListSize}
       renderItem={renderItem}
       data={assetsToDisplay}
       showsVerticalScrollIndicator={false}
