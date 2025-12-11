@@ -215,7 +215,7 @@ apps/web-tools/trustchain/                               @ledgerhq/live-hub
 apps/ledger-live-desktop/tests/                                             @ledgerhq/live-hub
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/live-hub
 e2e/                                                                        @ledgerhq/qaa
-tools/actions/composites/merge-e2e-detox-timings/action.yml                 @ledgerhq/qaa
+tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/
