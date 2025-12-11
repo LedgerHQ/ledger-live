@@ -19,8 +19,8 @@ export const formatAddress = (
   } = {},
 ) => {
   const {
-    prefixLength = 5,
-    suffixLength = 5,
+    prefixLength = 4,
+    suffixLength = 4,
     separator = "...",
     threshold = prefixLength + separator.length + suffixLength,
   } = options;

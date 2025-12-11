@@ -4,7 +4,7 @@ describe("formatAddress", () => {
   it("should format address correctly with default options", () => {
     const address = "1234567890abcdef1234567890abcdef12345678";
     const formattedAddress = formatAddress(address);
-    expect(formattedAddress).toBe("12345...45678");
+    expect(formattedAddress).toBe("1234...5678");
   });
 
   it("should format address correctly with custom options", () => {
