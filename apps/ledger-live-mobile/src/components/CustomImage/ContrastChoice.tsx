@@ -17,7 +17,7 @@ type ContainerProps = {
   appearance: Appearance;
 };
 
-const Container = styled(Box).attrs<ContainerProps>((p) => ({
+const Container = styled(Box).attrs<ContainerProps>(p => ({
   height: p.appearance.type === "two-colors" ? 50 : 56,
   width: p.appearance.type === "two-colors" ? 50 : 56,
   borderRadius: p.appearance.type === "two-colors" ? "5px" : "8px",
