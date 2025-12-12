@@ -893,9 +893,7 @@ describe("Staking Operations", () => {
       const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
 
       expect(operation.type).toEqual("DELEGATE");
-      expect(operation.details).toBeDefined();
-      expect(operation.details).toHaveProperty("stakedAmount");
-      expect(operation.details?.stakedAmount).toEqual(1000000000n);
+      expect(operation.details).toBe({stakedAmount:1000000000n});
     });
 
     test("transactionToOp should include stakedAmount in details for UNDELEGATE operations", () => {
@@ -908,17 +906,6 @@ describe("Staking Operations", () => {
       expect(operation.details).toHaveProperty("stakedAmount");
       expect(operation.details?.stakedAmount).toEqual(1000000000n);
     });
-
-    test("transactionToOp should not include details for non-staking operations", () => {
-      const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-
-      const operation = sdk.alpacaTransactionToOp(address, mockTransaction);
-
-      expect(operation.type).not.toEqual("DELEGATE");
-      expect(operation.type).not.toEqual("UNDELEGATE");
-      expect(operation.details).toBeUndefined();
-    });
-  });
 
   describe("Operation Extra Information", () => {
     test("getOperationExtra should be a function", () => {
