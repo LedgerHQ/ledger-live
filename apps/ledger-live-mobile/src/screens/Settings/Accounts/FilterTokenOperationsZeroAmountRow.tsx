@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Switch } from "@ledgerhq/native-ui";
 import { setFilterTokenOperationsZeroAmount } from "~/actions/settings";
 import SettingsRow from "~/components/SettingsRow";

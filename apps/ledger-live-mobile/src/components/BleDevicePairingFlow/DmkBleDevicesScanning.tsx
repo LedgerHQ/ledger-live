@@ -9,7 +9,7 @@ import {
   BleDevicesScanningProps,
 } from "~/components/BleDevicePairingFlow/BleDevicesScanning";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { FilterByDeviceModelId } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
 import { useIsFocused } from "@react-navigation/core";

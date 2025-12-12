@@ -10,7 +10,7 @@ import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
 import getOrCreateUser from "~/user";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 
 const RatingsModal = () => {
   const {

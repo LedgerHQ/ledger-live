@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";

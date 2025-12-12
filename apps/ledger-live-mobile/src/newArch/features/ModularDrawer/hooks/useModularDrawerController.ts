@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { AccountLike } from "@ledgerhq/types-live";
 import {
   openModularDrawer,

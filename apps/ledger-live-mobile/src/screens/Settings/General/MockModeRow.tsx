@@ -3,7 +3,7 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import SettingsRow from "~/components/SettingsRow";
 import Track from "~/analytics/Track";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import Switch from "~/components/Switch";
 
 function MockModeRow() {

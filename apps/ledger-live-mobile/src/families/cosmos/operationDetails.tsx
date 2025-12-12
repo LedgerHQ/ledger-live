@@ -7,7 +7,7 @@ import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmo
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";

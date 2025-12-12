@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useNavigation } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";

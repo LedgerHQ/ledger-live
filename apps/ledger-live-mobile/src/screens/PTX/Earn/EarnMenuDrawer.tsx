@@ -3,7 +3,7 @@ import { Theme } from "@ledgerhq/native-ui/lib/styles/theme";
 import { useRoute, NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import styled from "styled-components/native";
 import { makeSetEarnMenuModalAction } from "~/actions/earn";
 import { track } from "~/analytics";

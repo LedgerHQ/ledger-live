@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency, Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";

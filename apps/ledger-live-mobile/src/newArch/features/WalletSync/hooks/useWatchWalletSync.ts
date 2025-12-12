@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import { useStore, useSelector, useDispatch } from "~/context/store";
 import noop from "lodash/noop";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import walletsync, {
@@ -36,7 +36,6 @@ import { latestDistantStateSelector, latestDistantVersionSelector } from "~/redu
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import type { AppStore } from "~/reducers";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -210,6 +209,6 @@ function useSaveUpdate() {
 }
 
 function useGetState() {
-  const store = useStore() as AppStore;
+  const store = useStore();
   return useCallback(() => store.getState(), [store]);
 }

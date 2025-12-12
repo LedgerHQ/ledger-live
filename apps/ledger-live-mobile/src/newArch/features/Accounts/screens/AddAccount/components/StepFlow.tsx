@@ -16,7 +16,7 @@ import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import ScannedInvalidQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 type Props = {

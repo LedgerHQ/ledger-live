@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";

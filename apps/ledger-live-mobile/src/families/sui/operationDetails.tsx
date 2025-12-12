@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";

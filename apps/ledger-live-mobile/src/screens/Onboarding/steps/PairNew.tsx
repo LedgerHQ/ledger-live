@@ -1,7 +1,7 @@
 import React, { useCallback, memo, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
 import { TrackScreen, track } from "~/analytics";

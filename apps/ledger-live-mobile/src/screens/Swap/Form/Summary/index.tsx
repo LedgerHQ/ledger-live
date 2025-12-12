@@ -6,7 +6,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProviderIcon from "~/components/ProviderIcon";

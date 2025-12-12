@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans, useTranslation } from "react-i18next";
 import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";

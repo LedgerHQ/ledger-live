@@ -6,7 +6,7 @@ import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import type { ModularDrawerProps } from "../ModularDrawer";

@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";

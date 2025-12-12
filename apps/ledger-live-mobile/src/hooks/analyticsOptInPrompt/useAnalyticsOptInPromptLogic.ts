@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";

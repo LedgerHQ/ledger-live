@@ -6,7 +6,7 @@ import set from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
 import { StyleSheet, ScrollView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "~/context/store";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
@@ -28,7 +28,7 @@ const Separator = styled(Flex).attrs({
 })``;
 
 export default function Store() {
-  const state = useSelector<State, State>(s => s);
+  const state = useSelector(s => s);
   const { colors } = useTheme();
 
   const [hasMadeChanges, setHasMadeChanges] = useState(false);

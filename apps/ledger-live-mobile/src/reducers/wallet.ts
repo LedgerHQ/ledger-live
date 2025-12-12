@@ -10,7 +10,8 @@ import {
 } from "@ledgerhq/live-wallet/store";
 import { handleActions } from "redux-actions";
 import { State } from "./types";
-import { useSelector, shallowEqual } from "react-redux";
+import { shallowEqual } from "react-redux";
+import { useSelector } from "~/context/store";
 import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 

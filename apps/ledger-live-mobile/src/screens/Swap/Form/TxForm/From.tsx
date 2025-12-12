@@ -19,7 +19,7 @@ import { ScreenName } from "~/const";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { AccountLike } from "@ledgerhq/types-live";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";

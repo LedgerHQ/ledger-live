@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Subscription } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";

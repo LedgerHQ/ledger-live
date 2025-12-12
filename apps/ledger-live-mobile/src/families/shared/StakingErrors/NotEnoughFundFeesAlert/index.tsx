@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useSettings, useAccountUnit } from "~/hooks";

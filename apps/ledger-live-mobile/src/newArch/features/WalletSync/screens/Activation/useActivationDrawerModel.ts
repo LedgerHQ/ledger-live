@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "../../hooks/useCurrentStep";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { blockPasswordLock } from "~/actions/appstate";
 
 type Props = {

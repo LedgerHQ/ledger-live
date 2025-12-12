@@ -6,7 +6,7 @@ import identity from "lodash/identity";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,

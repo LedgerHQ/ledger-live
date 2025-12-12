@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/TextInput";

@@ -1,5 +1,5 @@
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   trustchainSelector,
   resetTrustchainStore,

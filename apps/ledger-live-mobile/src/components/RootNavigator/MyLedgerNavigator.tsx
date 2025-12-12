@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";

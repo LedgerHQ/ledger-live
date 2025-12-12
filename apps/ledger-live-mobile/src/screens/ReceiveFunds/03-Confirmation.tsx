@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";

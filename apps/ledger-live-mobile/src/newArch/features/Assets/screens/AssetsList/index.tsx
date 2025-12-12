@@ -8,7 +8,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { AssetsListNavigator } from "./types";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { hasNoAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { RefreshMedium } from "@ledgerhq/icons-ui/nativeLegacy";

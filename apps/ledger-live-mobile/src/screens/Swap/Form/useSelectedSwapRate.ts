@@ -1,6 +1,6 @@
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { useCallback, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { rateSelector, updateRateAction } from "~/actions/swap";
 
 type UseSelectedSwapRateProps = {

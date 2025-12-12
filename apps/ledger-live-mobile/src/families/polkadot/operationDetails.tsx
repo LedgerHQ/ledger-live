@@ -9,7 +9,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-commo
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Text } from "@ledgerhq/native-ui";
 import {
   PolkadotAccount,

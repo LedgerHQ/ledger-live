@@ -15,7 +15,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Observable, Subscription } from "rxjs";
 import { filter, take } from "rxjs/operators";
 import styled from "styled-components/native";

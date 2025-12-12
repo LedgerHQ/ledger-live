@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";

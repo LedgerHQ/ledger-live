@@ -11,7 +11,7 @@ import {
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";

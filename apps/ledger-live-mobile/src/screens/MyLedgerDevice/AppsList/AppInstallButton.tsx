@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import manager from "@ledgerhq/live-common/manager/index";
 
 import type { App } from "@ledgerhq/types-live";

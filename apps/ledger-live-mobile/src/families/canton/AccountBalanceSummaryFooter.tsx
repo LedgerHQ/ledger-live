@@ -5,7 +5,7 @@ import { useWithdrawableBalance } from "@ledgerhq/live-common/families/canton/re
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { TFunction } from "i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";

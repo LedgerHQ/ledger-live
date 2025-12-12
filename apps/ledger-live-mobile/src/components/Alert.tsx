@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import styled from "styled-components/native";
 import { IconsLegacy, Alert as BaseAlert, Flex } from "@ledgerhq/native-ui";
 import { AlertProps as BaseAlertProps } from "@ledgerhq/native-ui/components/message/Alert/index";

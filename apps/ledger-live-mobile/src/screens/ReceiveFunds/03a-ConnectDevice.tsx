@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, LayoutChangeEvent } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import {
   getAccountCurrency,
   getMainAccount,

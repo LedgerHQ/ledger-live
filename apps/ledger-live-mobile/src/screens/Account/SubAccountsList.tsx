@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";

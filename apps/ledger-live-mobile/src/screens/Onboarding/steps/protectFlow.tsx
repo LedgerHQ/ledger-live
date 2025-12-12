@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "styled-components/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";

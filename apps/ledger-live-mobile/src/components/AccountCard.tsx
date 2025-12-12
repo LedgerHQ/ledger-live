@@ -10,7 +10,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { accountsSelector } from "~/reducers/accounts";
 
 export type Props = CardProps & {

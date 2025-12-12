@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";

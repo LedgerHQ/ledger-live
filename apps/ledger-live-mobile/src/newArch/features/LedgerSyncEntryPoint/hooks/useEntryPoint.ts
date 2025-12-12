@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/reducers/settings";

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps } from "@react-navigation/native";

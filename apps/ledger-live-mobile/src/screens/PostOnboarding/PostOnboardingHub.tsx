@@ -7,7 +7,7 @@ import {
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";

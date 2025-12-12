@@ -7,7 +7,7 @@ import React, {
   useState,
   PropsWithChildren,
 } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
