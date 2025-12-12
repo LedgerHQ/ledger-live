@@ -32,6 +32,7 @@ type Props = {
   emptyState?: React.ReactNode;
   collapsed?: boolean;
   flex?: string;
+  style?: React.CSSProperties;
 };
 class SideBarList extends Component<Props> {
   render() {
@@ -43,6 +44,7 @@ class SideBarList extends Component<Props> {
       emptyState,
       collapsed,
       flex = "auto",
+      style,
     } = this.props;
     return (
       <>
@@ -57,6 +59,7 @@ class SideBarList extends Component<Props> {
         )}
         {children ? (
           <ListWrapper
+            style={style}
             collapsed={collapsed}
             scroll={scroll}
             flow={2}
