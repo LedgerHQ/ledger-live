@@ -1,6 +1,13 @@
 {
   "ignoreUnresolved": [],
-  "ignoreUnused": [],
+  "ignoreUnused": [
+    "@ledgerhq/coin-framework",
+    "@ledgerhq/cryptoassets",
+    "@ledgerhq/devices",
+    "@ledgerhq/errors",
+    "@ledgerhq/live-env",
+    "@ledgerhq/live-network"
+  ],
   "ignoreUnimported": [
     "src/ZCash.ts"
   ]

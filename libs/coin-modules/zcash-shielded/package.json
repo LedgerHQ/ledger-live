@@ -19,6 +19,28 @@
   "main": "lib/ZCash.js",
   "module": "lib-es/ZCash.js",
   "types": "lib/ZCash.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
