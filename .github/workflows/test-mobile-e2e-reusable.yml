@@ -148,6 +148,7 @@ jobs:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
           event_name: ${{ github.event_name }}
+          ref: ${{ inputs.ref || github.ref_name }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
