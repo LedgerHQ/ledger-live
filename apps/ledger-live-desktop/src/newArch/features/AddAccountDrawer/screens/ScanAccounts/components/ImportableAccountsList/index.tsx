@@ -2,6 +2,7 @@ import { Box, Flex, Link, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { TrackAddAccountScreen } from "~/newArch/features/AddAccountDrawer/analytics/TrackAddAccountScreen";
 
 export type ImportableAccountsListProps = {
   importableAccounts: Account[];
