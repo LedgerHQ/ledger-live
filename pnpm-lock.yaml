@@ -25,8 +25,8 @@ catalogs:
       specifier: 1.0.1
       version: 1.0.1
     '@ledgerhq/device-transport-kit-speculos':
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 1.1.2
+      version: 1.1.2
     '@ledgerhq/device-transport-kit-web-hid':
       specifier: 1.2.1
       version: 1.2.1
@@ -8477,7 +8477,7 @@ importers:
         version: 0.12.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.1.0(@ledgerhq/device-management-kit@0.12.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.1.2(@ledgerhq/device-management-kit@0.12.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15087,10 +15087,10 @@ packages:
       react-native: '>0.74.1'
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@1.1.0':
-    resolution: {integrity: sha512-R1RY51UooxOAyV315PLn7nwTEL0B0sW5YqtrAzKp6/gg5OokL/ZtYluMndEOuXbOo+dNWLKGzvMgTA/fjxY3SA==}
+  '@ledgerhq/device-transport-kit-speculos@1.1.2':
+    resolution: {integrity: sha512-quj33dENI+H6C7MMLYVIvdT+6QlGhyRPELtbc6hAMGLjBeoeY3uU0aY3EoaL4RAEyWXxL0k7KM8uduiwO+txmg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.9.2
+      '@ledgerhq/device-management-kit': ^0.13.0
       rxjs: 7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@1.2.1':
@@ -19457,7 +19457,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -20212,6 +20212,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -22221,7 +22222,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -25802,7 +25803,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -31055,6 +31056,7 @@ packages:
   next@14.2.12:
     resolution: {integrity: sha512-cDOtUSIeoOvt1skKNihdExWMTybx3exnvbFbb9ecZDIxlvIbREQzt9A5Km3Zn3PfU+IFjyYGsHS+lN9VInAGKA==}
     engines: {node: '>=18.17.0'}
+    deprecated: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/security-update-2025-12-11 for more details.
     hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
@@ -32783,6 +32785,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33041,7 +33044,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -47008,11 +47011,11 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.1.0(@ledgerhq/device-management-kit@0.12.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@1.1.2(@ledgerhq/device-management-kit@0.12.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.12.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
-      axios: 1.8.2
+      axios: 1.13.2
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
