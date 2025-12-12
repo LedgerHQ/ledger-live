@@ -128,6 +128,7 @@ function ScanDeviceAccounts() {
             !scanning;
           return (
             <View key={id}>
+              <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
               <ScannedAccountsSection
                 defaultSelected={defaultSelected}
                 key={id}
