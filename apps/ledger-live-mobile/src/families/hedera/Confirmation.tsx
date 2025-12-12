@@ -132,14 +132,14 @@ export default function ReceiveConfirmation({ route }: Props) {
             <Flex width={QRContainerSize} flexDirection="row" mt={6}>
               <StyledPressable
                 borderRadius={2}
-                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.6 : 1 }]}
               >
                 <ShareButton value={address} />
               </StyledPressable>
               <StyledPressable
                 borderRadius={2}
                 isFlex
-                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.6 : 1 }]}
               >
                 <CopyButton text={address}>
                   <Trans i18nKey="transfer.receive.copyAddress" />
