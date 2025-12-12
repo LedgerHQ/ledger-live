@@ -111,7 +111,7 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
-  "sei_network_evm",
+  "sei_evm",
   "berachain",
   "hyperevm",
   "coreum",

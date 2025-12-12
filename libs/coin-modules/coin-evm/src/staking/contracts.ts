@@ -3,7 +3,7 @@ import type { StakingContractConfig } from "../types/staking";
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
   // Source: https://docs.sei.io/evm/precompiles/staking
-  sei_network_evm: {
+  sei_evm: {
     contractAddress: "0x0000000000000000000000000000000000001005",
     functions: {
       delegate: "delegate",

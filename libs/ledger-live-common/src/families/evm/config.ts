@@ -628,7 +628,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
-  config_currency_sei_network_evm: {
+  config_currency_sei_evm: {
     type: "object",
     default: {
       status: {
