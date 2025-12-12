@@ -543,7 +543,7 @@ const MainSideBar = () => {
               </SideBarList>
 
               <Space grow of={30} />
-              <Hide visible={secondAnim && totalStarredAccounts === 0} mb={"-8px"}>
+              <Hide visible={secondAnim && totalStarredAccounts > 0} mb={"-8px"}>
                 <Separator />
               </Hide>
               <SideBarList
