@@ -9,6 +9,9 @@ import Form from "./Form";
 import Enjoy from "./Enjoy";
 import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
+import { useSelector } from "react-redux";
+import { trackingEnabledSelector } from "~/reducers/settings";
+import getOrCreateUser from "~/user";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",
@@ -31,6 +34,20 @@ const RatingsModal = () => {
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
+
+  const [equipmentId, setEquipmentId] = useState<string | null>(null);
+
+  const trackingEnabled = useSelector(trackingEnabledSelector);
+
+  useEffect(() => {
+    if (trackingEnabled) {
+      getOrCreateUser().then(({ user }) => {
+        setEquipmentId(user.id);
+      });
+    } else {
+      setEquipmentId(null);
+    }
+  }, [trackingEnabled]);
 
   const sharedHeight = useSharedValue<DimensionValue>(0);
   const onLayout = useCallback(
@@ -65,13 +82,13 @@ const RatingsModal = () => {
   const component = useMemo(() => {
     if (!isRatingsModalOpen) return null; //to prevent step 1 re-mounting and page tracking when closing the modal
     const components = {
-      form: <Form setStep={setStep} />,
+      form: <Form setStep={setStep} equipmentId={equipmentId} />,
       enjoy: <Enjoy closeModal={closeModal} />,
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 
     return components[step as keyof typeof components];
-  }, [closeModal, setStep, step, isRatingsModalOpen]);
+  }, [closeModal, setStep, step, isRatingsModalOpen, equipmentId]);
 
   return (
     <QueuedDrawer
