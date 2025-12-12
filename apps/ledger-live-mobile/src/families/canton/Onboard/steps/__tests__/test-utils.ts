@@ -119,22 +119,31 @@ export const createMockNavigation = () => ({
 export const mockViewComponent = ({ children, testID, ...props }: any) =>
   React.createElement(View, { testID, ...props }, children);
 
+const withTypesSupport = <T extends jest.Mock>(hook: T): T & { withTypes: () => T } => {
+  (hook as any).withTypes = () => hook;
+  return hook as T & { withTypes: () => T };
+};
+
 export const getMockReactRedux = () => {
   const mockHoursAndMinutesOptions = { format: (date: Date) => date.toISOString() };
   return {
-    useDispatch: jest.fn(() => jest.fn()),
-    useSelector: jest.fn((selector: any) => {
-      const selectorStr = selector?.toString() || "";
-      if (selectorStr.includes("lastConnectedDeviceSelector")) return createMockDevice();
-      if (selectorStr.includes("accountsSelector")) return [];
-      if ((selector as any)?.__mockHoursAndMinutesSelector) return mockHoursAndMinutesOptions;
-      return null;
-    }),
-    useStore: jest.fn(() => ({
-      getState: jest.fn(() => ({})),
-      dispatch: jest.fn(),
-      subscribe: jest.fn(),
-    })),
+    useDispatch: withTypesSupport(jest.fn(() => jest.fn())),
+    useSelector: withTypesSupport(
+      jest.fn((selector: any) => {
+        const selectorStr = selector?.toString() || "";
+        if (selectorStr.includes("lastConnectedDeviceSelector")) return createMockDevice();
+        if (selectorStr.includes("accountsSelector")) return [];
+        if ((selector as any)?.__mockHoursAndMinutesSelector) return mockHoursAndMinutesOptions;
+        return null;
+      }),
+    ),
+    useStore: withTypesSupport(
+      jest.fn(() => ({
+        getState: jest.fn(() => ({})),
+        dispatch: jest.fn(),
+        subscribe: jest.fn(),
+      })),
+    ),
   };
 };
 

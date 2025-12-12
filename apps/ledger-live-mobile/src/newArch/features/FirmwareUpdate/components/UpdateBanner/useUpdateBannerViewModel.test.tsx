@@ -11,11 +11,20 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
 }));
 
-// Mock react redux's useSelector
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useSelector: jest.fn().mockImplementation((selector: () => unknown) => selector()),
-}));
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const mockUseSelector = jest
+    .fn()
+    .mockImplementation((selector: () => unknown) => selector()) as jest.Mock & {
+    withTypes: () => jest.Mock;
+  };
+  mockUseSelector.withTypes = () => mockUseSelector;
+  return {
+    ...actual,
+    useSelector: mockUseSelector,
+  };
+});
 
 // Mock the selectors
 jest.mock("~/reducers/settings", () => ({

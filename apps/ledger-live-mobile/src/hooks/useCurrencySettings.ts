@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { currencySettingsSelector } from "../reducers/settings";
 import type { State } from "../reducers/types";

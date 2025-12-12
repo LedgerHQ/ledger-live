@@ -6,10 +6,16 @@ import { renderHook } from "@testing-library/react-native";
 import settings from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useSelector: jest.fn(),
-}));
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const mockUseSelector = jest.fn() as jest.Mock & { withTypes: () => jest.Mock };
+  mockUseSelector.withTypes = () => mockUseSelector;
+  return {
+    ...actual,
+    useSelector: mockUseSelector,
+  };
+});
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;

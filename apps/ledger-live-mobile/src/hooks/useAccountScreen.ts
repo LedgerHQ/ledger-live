@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector } from "~/context/store";
+import { shallowEqual } from "react-redux";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "../reducers/accounts";
 

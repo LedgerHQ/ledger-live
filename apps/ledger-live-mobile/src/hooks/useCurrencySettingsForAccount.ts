@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 import type { State } from "../reducers/types";

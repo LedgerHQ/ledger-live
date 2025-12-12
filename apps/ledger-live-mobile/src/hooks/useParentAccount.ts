@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { parentAccountSelector } from "../reducers/accounts";
 import { State } from "../reducers/types";
