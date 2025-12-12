@@ -886,6 +886,38 @@ describe("Staking Operations", () => {
       expect(operation.asset).toEqual({ type: "native" });
       expect(operation.tx.block.hash).toBeUndefined();
     });
+
+    test("transactionToOp should include stakedAmount in details for DELEGATE operations", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
+
+      expect(operation.type).toEqual("DELEGATE");
+      expect(operation.details).toBeDefined();
+      expect(operation.details).toHaveProperty("stakedAmount");
+      expect(operation.details?.stakedAmount).toEqual(1000000000n);
+    });
+
+    test("transactionToOp should include stakedAmount in details for UNDELEGATE operations", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "998950000"));
+
+      expect(operation.type).toEqual("UNDELEGATE");
+      expect(operation.details).toBeDefined();
+      expect(operation.details).toHaveProperty("stakedAmount");
+      expect(operation.details?.stakedAmount).toEqual(1000000000n);
+    });
+
+    test("transactionToOp should not include details for non-staking operations", () => {
+      const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+
+      const operation = sdk.alpacaTransactionToOp(address, mockTransaction);
+
+      expect(operation.type).not.toEqual("DELEGATE");
+      expect(operation.type).not.toEqual("UNDELEGATE");
+      expect(operation.details).toBeUndefined();
+    });
   });
 
   describe("Operation Extra Information", () => {
@@ -1909,7 +1941,7 @@ describe("filterOperations", () => {
           operationType: "DELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: -10000000000n,
+          stakedAmount: -10000000000n,
         },
       ]);
     });
@@ -1932,7 +1964,7 @@ describe("filterOperations", () => {
           operationType: "UNDELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: 10000000000n,
+          stakedAmount: 10000000000n,
         },
       ]);
     });
