@@ -1,8 +1,7 @@
-import { ComponentProps } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { GestureResponderEvent } from "react-native";
 import { AnyContentCard, ContentCardsType } from "../../dynamicContent/types";
 
-export type ButtonAction = ComponentProps<typeof TouchableOpacity>["onPress"];
+export type ButtonAction = ((event?: GestureResponderEvent) => void) | undefined;
 
 export type ContentCardProps = AnyContentCard & {
   metadata: ContentCardMetadata;

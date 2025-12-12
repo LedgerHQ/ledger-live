@@ -5,6 +5,7 @@ import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { readFile } from "fs/promises";
+import { NANO_APP_CATALOG_PATH } from "../utils/constants";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -101,7 +102,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  setEnv("E2E_NANO_APP_VERSION_PATH", "artifacts/appVersion/nano-app-catalog.json");
+  setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

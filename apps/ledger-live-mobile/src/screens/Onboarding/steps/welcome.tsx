@@ -163,7 +163,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+          <Rect
+            transform={[{ translateX: 0 }, { translateY: 0 }]}
+            width="100%"
+            height="100%"
+            fill="url(#myGradient)"
+          />
         </Svg>
         <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}

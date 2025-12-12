@@ -45,7 +45,6 @@ export function EvmStakingDrawer() {
       walletApiAccountId={drawer.props.walletApiAccountId}
       has32Eth={drawer.props.has32Eth ?? false}
       providers={providers}
-      singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
     />
   );
 }
@@ -55,8 +54,6 @@ interface Props {
   has32Eth: boolean;
   providers: EthStakingProvider[];
   walletApiAccountId: string;
-  /** @deprecated redirect functionality no longer being considered in latest version of the modal */
-  singleProviderRedirectMode: boolean;
 }
 
 function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) {

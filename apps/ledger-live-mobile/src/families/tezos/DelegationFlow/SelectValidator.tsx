@@ -290,7 +290,7 @@ export default function SelectValidator({ navigation, route }: Props) {
           ]}
           onChangeText={onChangeText}
           value={transaction.recipient}
-          blurOnSubmit
+          submitBehavior="blurAndSubmit"
           autoCapitalize="none"
           clearButtonMode="always"
         />

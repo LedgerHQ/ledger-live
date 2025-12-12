@@ -42,66 +42,34 @@ const BackgroundRed = () => {
         </RadialGradient>
 
         {/* 3. mask using that gradient */}
-        <Mask id="fadeMaskPink" x="0" y="0" width="100%" height="100%">
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradPink)" />
+        <Mask id="fadeMaskPink" width="100%" height="100%">
+          <Rect width="100%" height="100%" fill="url(#maskGradPink)" />
         </Mask>
 
         {/* 4. mask using that gradient */}
-        <Mask id="fadeMaskOrange" x="0" y="0" width="100%" height="100%">
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradOrange)" />
+        <Mask id="fadeMaskOrange" width="100%" height="100%">
+          <Rect width="100%" height="100%" fill="url(#maskGradOrange)" />
         </Mask>
 
         {/* 5. mask using that gradient */}
-        <Mask id="fadeMaskDots" x="0" y="0" width="100%" height="100%">
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradDots)" />
+        <Mask id="fadeMaskDots" width="100%" height="100%">
+          <Rect width="100%" height="100%" fill="url(#maskGradDots)" />
         </Mask>
       </Defs>
 
-      <Mask id="fadeMaskPurple" x="0" y="0" width="100%" height="100%">
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradPurple)" />
+      <Mask id="fadeMaskPurple" width="100%" height="100%">
+        <Rect width="100%" height="100%" fill="url(#maskGradPurple)" />
       </Mask>
 
       {/* 4a. purple base */}
-      <Rect
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="#B84DB2"
-        mask="url(#fadeMaskPink)"
-        opacity={0.4}
-      />
+      <Rect width="100%" height="100%" fill="#B84DB2" mask="url(#fadeMaskPink)" opacity={0.4} />
 
-      <Rect
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="#FF7715"
-        mask="url(#fadeMaskOrange)"
-        opacity={0.3}
-      />
+      <Rect width="100%" height="100%" fill="#FF7715" mask="url(#fadeMaskOrange)" opacity={0.3} />
 
-      <Rect
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="#544598"
-        mask="url(#fadeMaskPurple)"
-        opacity={0.2}
-      />
+      <Rect width="100%" height="100%" fill="#544598" mask="url(#fadeMaskPurple)" opacity={0.2} />
 
       {/* 4b. grey-dot mosaic on top, same mask */}
-      <Rect
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="url(#dots)"
-        mask="url(#fadeMaskDots)"
-        opacity={0.4}
-      />
+      <Rect width="100%" height="100%" fill="url(#dots)" mask="url(#fadeMaskDots)" opacity={0.4} />
     </Svg>
   );
 };

@@ -12,8 +12,7 @@ const FullNodeWarning = ({ size = 16, color, warningColor = "white", backgroundC
     <Mask
       id="a"
       maskUnits={"userSpaceOnUse" as const}
-      x={2}
-      y={-2}
+      transform={[{ translateX: 2 }, { translateY: -2 }]}
       width={size + 2}
       height={size + 2}
     >
