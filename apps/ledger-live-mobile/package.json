@@ -168,7 +168,6 @@
     "prop-types": "15.8.1",
     "react": "catalog:",
     "react-i18next": "catalog:",
-    "react-is": "18.3.1",
     "react-native": "catalog:",
     "react-native-android-location-services-dialog-box": "2.8.2",
     "react-native-biometrics": "3.0.1",
