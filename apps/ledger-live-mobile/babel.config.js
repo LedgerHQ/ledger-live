@@ -13,6 +13,7 @@ module.exports = {
     "@babel/plugin-transform-export-namespace-from",
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
+    "babel-plugin-styled-components",
     ["@babel/plugin-transform-private-methods", { loose: true }],
     "babel-plugin-transform-inline-environment-variables",
     // only inject collapsable={false} for builds running Detox tests
