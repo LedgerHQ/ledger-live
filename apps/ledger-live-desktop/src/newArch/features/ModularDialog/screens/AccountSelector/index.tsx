@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { AddAccountButton } from "./components/AddAccountButton";
-import { SelectAccountList } from "./components/List";
+import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
@@ -18,7 +18,7 @@ type Props = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
-export const AccountSelection = ({
+export const AccountSelector = ({
   asset,
   onAccountSelected,
   hideAddAccountButton,
@@ -40,7 +40,7 @@ export const AccountSelection = ({
       <TrackDrawerScreen
         page={overridePageName ?? MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
       />
-      <SelectAccountList
+      <AccountSelectorContent
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}

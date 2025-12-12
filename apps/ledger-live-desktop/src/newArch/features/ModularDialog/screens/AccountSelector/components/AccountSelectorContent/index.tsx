@@ -1,16 +1,21 @@
 import React, { useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { AccountList } from "@ledgerhq/react-ui/pre-ldls/index";
-import { ListWrapper } from "../../../components/ListWrapper";
-import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
+import { AccountVirtualList } from "../AccountVirtualList";
+import { ListWrapper } from "../../../../components/ListWrapper";
+import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDrawer.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useSelector } from "react-redux";
-import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import {
+  localeSelector,
+  discreetModeSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
+import BigNumber from "bignumber.js";
 
-type SelectAccountProps = {
+type AccountSelectorContentProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts: AccountTuple[];
   detailedAccounts: BaseRawDetailedAccount[];
@@ -20,15 +25,16 @@ type SelectAccountProps = {
 const TITLE_HEIGHT = 52;
 const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
 
-export const SelectAccountList = ({
+export const AccountSelectorContent = ({
   detailedAccounts,
   accounts,
   onAccountSelected,
   bottomComponent,
-}: SelectAccountProps) => {
+}: AccountSelectorContentProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const formattedAccounts = useMemo(() => {
     return detailedAccounts.map(account => ({
@@ -41,9 +47,16 @@ export const SelectAccountList = ({
               locale,
             })
           : "",
-      fiatValue: "",
+      fiatValue:
+        account.fiatValue !== undefined && account.fiatValue !== null
+          ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(account.fiatValue), {
+              showCode: true,
+              discreet,
+              locale,
+            })
+          : "",
     }));
-  }, [detailedAccounts, locale, discreet]);
+  }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
   const trackAccountClick = (name: string) => {
     trackModularDrawerEvent("account_clicked", {
@@ -69,7 +82,7 @@ export const SelectAccountList = ({
 
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountList
+      <AccountVirtualList
         bottomComponent={bottomComponent}
         accounts={formattedAccounts}
         onClick={onAccountClick}
