@@ -11,28 +11,45 @@ import { blockPasswordLock } from "~/actions/appstate";
 import { useDispatch, useSelector } from "react-redux";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
   onClose: () => void;
+  currency?: CryptoCurrency | TokenCurrency | null;
 };
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
-const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) => {
+const useAddAccountViewModel = ({ isOpened, onClose, currency }: AddAccountDrawerProps) => {
   const dispatch = useDispatch();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const trustchain = useSelector(trustchainSelector);
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
+  const { openDrawer } = useModularDrawerController();
+
+  const shouldOpenModularDrawerDirectly = ledgerSyncOptimisationFlag?.enabled && trustchain?.rootId;
+
+  useEffect(() => {
+    if (isOpened && shouldOpenModularDrawerDirectly) {
+      const currenciesToUse = currency ? [currency.id] : undefined;
+      openDrawer({
+        currencies: currenciesToUse,
+        areCurrenciesFiltered: currenciesToUse?.length === 1,
+        enableAccountSelection: false,
+        flow: "add_account",
+        source: "add_account_drawer",
+      });
+      onClose();
+    }
+  }, [isOpened, shouldOpenModularDrawerDirectly, currency, openDrawer, onClose]);
 
   const startingStep = useMemo(
-    () =>
-      ledgerSyncOptimisationFlag?.enabled && trustchain?.rootId
-        ? Steps.ChooseSyncMethod
-        : Steps.AddAccountMethod,
-    [ledgerSyncOptimisationFlag?.enabled, trustchain?.rootId],
+    () => (shouldOpenModularDrawerDirectly ? Steps.ChooseSyncMethod : Steps.AddAccountMethod),
+    [shouldOpenModularDrawerDirectly],
   );
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigateToChooseSyncMethod = () => {

@@ -85,6 +85,16 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
+        {shouldDisplayEntryPoint && ledgerSyncOptimisationFlag?.enabled ? (
+          <Row
+            title={t("settings.display.walletSync")}
+            desc={t("settings.display.walletSyncDescription")}
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
+          >
+            <WalletSync variant="sync" />
+          </Row>
+        ) : null}
 
         <FeatureToggle featureId="marketperformanceWidgetDesktop">
           <Row
