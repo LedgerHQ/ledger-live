@@ -6,7 +6,7 @@ const ScannedAccountsSection = ({
   ...rest
 }: {
   defaultSelected?: boolean;
-} & React.ComponentProps<typeof SelectableAccountsList>): JSX.Element => {
+} & React.ComponentProps<typeof SelectableAccountsList>): React.JSX.Element => {
   const { onSelectAll, accounts } = rest;
 
   /**

@@ -448,7 +448,7 @@ const ErrorSection = ({ disabled, onRetry }: { disabled: boolean; onRetry: () =>
   );
 };
 
-export const LearnMore = (): JSX.Element => {
+export const LearnMore = (): React.JSX.Element => {
   const link = useLocalizedUrl(urls.canton.learnMore);
 
   return (

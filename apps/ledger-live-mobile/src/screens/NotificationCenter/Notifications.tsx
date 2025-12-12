@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Animated,
   FlatList,
   Linking,
   TouchableHighlight,
-  View,
   RefreshControl,
   type ViewToken,
 } from "react-native";
@@ -14,7 +12,8 @@ import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Swipeable } from "react-native-gesture-handler";
+import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -24,11 +23,16 @@ import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
+import Animated, {
+  SharedValue,
+  useAnimatedStyle,
+  interpolate,
+  Extrapolation,
+} from "react-native-reanimated";
 
 const { height } = getWindowDimensions();
 
 const Container = styled(SettingsNavigationScrollView)``;
-const AnimatedView = Animated.createAnimatedComponent(View);
 const RemoveContainer = styled(TouchableHighlight)`
   background-color: ${p => p.theme.colors.neutral.c30};
   justify-content: center;
@@ -39,7 +43,7 @@ const RemoveContainer = styled(TouchableHighlight)`
 `;
 
 export default function NotificationCenter() {
-  const rowRefs = new Map();
+  const rowRefs = useRef(new Map<string, React.RefObject<SwipeableMethods>>()).current;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -128,24 +132,35 @@ export default function NotificationCenter() {
   // ---------------
 
   // ----- Render functions --------
-  const renderRightActions = (
-    _progress: Animated.AnimatedInterpolation<string | number>,
-    dragX: Animated.AnimatedInterpolation<string | number>,
-    item: NotificationContentCard,
-  ) => {
-    const scale = dragX.interpolate({
-      inputRange: [-80, 0],
-      outputRange: [1, 0],
-      extrapolate: "clamp",
+  const RightActions = ({
+    item,
+    translation,
+  }: {
+    item: NotificationContentCard;
+    translation: SharedValue<number>;
+  }) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      "worklet";
+      const scale = interpolate(translation.value, [-80, 0], [1, 0], Extrapolation.CLAMP);
+      return {
+        transform: [{ scale }],
+      };
     });
+
     return (
       <RemoveContainer onPress={() => deleteNotification(item)} underlayColor={colors.primary.c20}>
-        <AnimatedView style={{ transform: [{ scale }] }}>
+        <Animated.View style={animatedStyle}>
           <TrashMedium color="neutral.c100" size={20} />
-        </AnimatedView>
+        </Animated.View>
       </RemoveContainer>
     );
   };
+
+  const renderRightActions = (
+    item: NotificationContentCard,
+    _progress: SharedValue<number>,
+    translation: SharedValue<number>,
+  ) => <RightActions item={item} translation={translation} />;
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
 
@@ -153,19 +168,22 @@ export default function NotificationCenter() {
     const time = getTime(card.createdAt);
     const hasLink = !!card.link && !!card.cta;
 
+    if (!rowRefs.has(card.id)) {
+      rowRefs.set(card.id, React.createRef<SwipeableMethods>());
+    }
+    const swipeableRef = rowRefs.get(card.id)!;
+
     return (
       <Swipeable
         key={card.id}
-        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, card)}
-        ref={ref => {
-          if (ref && !rowRefs.get(card.id)) {
-            rowRefs.set(card.id, ref);
-          }
-        }}
-        onBegan={() => {
+        renderRightActions={(progress, translation) =>
+          renderRightActions(card, progress, translation)
+        }
+        ref={swipeableRef}
+        onSwipeableOpenStartDrag={() => {
           // Close row when starting swipe another
           [...rowRefs.entries()].forEach(([id, ref]) => {
-            if (id !== card.id && ref) ref.close();
+            if (id !== card.id && ref.current) ref.current.close();
           });
         }}
       >

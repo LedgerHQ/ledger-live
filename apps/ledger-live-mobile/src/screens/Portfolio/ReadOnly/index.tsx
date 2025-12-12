@@ -156,7 +156,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen category="Wallet" source={source} />
-      <CollapsibleHeaderFlatList<JSX.Element>
+      <CollapsibleHeaderFlatList<React.JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         renderItem={({ item }) => item}

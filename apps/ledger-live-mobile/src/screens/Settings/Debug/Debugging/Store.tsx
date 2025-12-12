@@ -187,7 +187,7 @@ export default function Store() {
           autoFocus
           autoCorrect={false}
           selectTextOnFocus
-          blurOnSubmit={true}
+          submitBehavior="blurAndSubmit"
           clearButtonMode="always"
           placeholder={String(currentValue)}
         />

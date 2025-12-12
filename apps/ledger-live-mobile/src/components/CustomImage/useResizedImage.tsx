@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { ImageResizeError } from "@ledgerhq/live-common/customImage/errors";
 import { ImageBase64Data, ImageDimensions, ImageFileUri } from "./types";
 
@@ -22,24 +22,26 @@ export type Params = Partial<ImageFileUri> & {
 
 function useResizedImage(params: Params) {
   const { imageFileUri, targetDimensions, onError, onResult } = params;
+
   useEffect(() => {
     let dead = false;
     if (!imageFileUri)
       return () => {
         dead = true;
       };
-    manipulateAsync(
-      imageFileUri,
-      [
-        {
-          resize: {
-            width: targetDimensions.width,
-            height: targetDimensions.height,
-          },
-        },
-      ],
-      { base64: true, compress: 1, format: SaveFormat.PNG },
-    )
+    ImageManipulator.manipulate(imageFileUri)
+      .resize({
+        width: targetDimensions.width,
+        height: targetDimensions.height,
+      })
+      .renderAsync()
+      .then(image =>
+        image.saveAsync({
+          base64: true,
+          compress: 1,
+          format: SaveFormat.PNG,
+        }),
+      )
       .then(({ base64, height, width }) => {
         if (dead) return;
         const fullBase64 = `data:image/png;base64, ${base64}`;

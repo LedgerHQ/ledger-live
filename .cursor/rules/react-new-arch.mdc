@@ -1,0 +1,116 @@
+---
+alwaysApply: true
+description: React New Architecture engineering rules (newArch) for Ledger Live
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# React New Architecture (`newArch`)
+
+_Mandatory rules for all files inside `src/newArch/`._
+
+## Migration Principles
+
+- New code must conform to `newArch` patterns.
+- Upon completion, `src/newArch` replaces `src/` entirely.
+- Applies equally to `ledger-live-mobile` and `ledger-live-desktop` codebases.
+- Code reviews enforce strict adherence.
+
+## Folder & Project Structure
+
+### High-Level Structure
+
+```
+src/newArch/
+├── features/
+│   └── FeatureName/
+│       ├── __integrations__/
+│       ├── components/
+│       ├── screens/
+│       ├── hooks/
+│       └── utils/
+├── components/
+├── hooks/
+└── utils/
+```
+
+### Feature Folder Responsibilities
+
+- `components/` gathers reusable UI elements across multiple screens.
+- `screens/` contains individual screen folders and their private building blocks.
+- `hooks/` contains feature-specific reusable hooks.
+- `utils/` contains feature-scoped utilities.
+
+### Nesting Guidelines
+
+- Place elements inside the closest folder matching their reuse scope.
+- Screen-specific building blocks stay inside the screen folder.
+- Feature-level components belong to `FeatureName/components/`.
+- Global shared UI belongs to `src/newArch/components/`.
+
+## Component & File Patterns
+
+### Index-Based Structure
+
+- Each component resides in its own folder.
+- Entry file: `index.tsx`.
+- Support files live alongside it:
+
+  - `use<ComponentName>ViewModel.ts`
+  - `types.ts`
+  - `styles.ts`
+
+### Naming Rules
+
+- Let folder hierarchy convey context; component names remain concise.
+- Use the **List / Detail** naming pattern for multi-view workflows.
+- ViewModel hooks always follow the naming: `use<ComponentName>ViewModel.ts`
+
+### Constants & Utils
+
+- Store utilities in a `utils/` directory near their consumers.
+- Shared constants belong to `utils/constants/`.
+- Utilities remain separate from component folders.
+
+## Import Rules
+
+- Keep relative imports shallow (within one directory level).
+- Use TypeScript path aliases for broader access.
+- Import directories via alias paths instead of long relative chains.
+- Importing `index.tsx` explicitly is discouraged — rely on folder alias exports.
+
+## ViewModel Pattern
+
+- Components needing external logic use: `Container → ViewModel → View`.
+- The ViewModel produces data and handlers.
+- The View receives everything via props.
+- The View does not directly call hooks that connect to external systems.
+
+## Data Fetching & State Management
+
+- Use RTK Query
+  - `dada-client` or `cal-client` are good examples to follow
+- Use consistent loading, retry, and error states.
+- Prefer optimistic UI when appropriate.
+- Apply caching and stale-time strategies.
+
+## Testing
+
+### Integration Tests
+
+- Every new feature under `src/newArch/` **must include an integration test** located inside its `__integrations__/` folder.
+- A **minimal integration test** must be created as soon as the feature folder is added.
+- This test should be expanded and updated progressively as the feature grows.
+- Integration tests ensure that screens, components, hooks, and navigation work together as expected within the New Architecture.
+- use MSW to mock Network API calls
+
+### Hooks & Utils
+
+- All **hooks** must have dedicated tests validating their logic, edge cases, and interactions with external systems.
+- **Utilities (`utils/`)** must also be covered by unit tests to ensure stability and prevent regressions.
+- Keep test files close to their source whenever appropriate (e.g., `utils/` and `hooks/` can contain their own `__tests__/`).
+
+### General Guidelines
+
+- Prefer **integration-first** testing where possible, to validate the complete behavior of the feature.
+- Keep mocks minimal—favor realistic wiring of components through the New Architecture patterns.
+- Follow the project's existing **custom test renderer** conventions and best practices.

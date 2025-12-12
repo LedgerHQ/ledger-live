@@ -24,7 +24,7 @@ const CurrencyUnitValue = ({
   before = "",
   after = "",
   ...otherFormatCurrencyUnitOptions
-}: CurrencyUnitValueProps): JSX.Element => {
+}: CurrencyUnitValueProps): React.JSX.Element => {
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
   const shouldApplyDiscreetMode = useContext(DiscreetModeContext);

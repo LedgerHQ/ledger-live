@@ -16,7 +16,7 @@ async function updateUser() {
   };
 }
 
-export default async () => {
+const getOrCreateUser = async () => {
   if (!user) {
     user = await getUser();
   }
@@ -47,4 +47,6 @@ export default async () => {
     created: false,
   };
 };
-export { updateUser };
+
+export default getOrCreateUser;
+export { updateUser, getOrCreateUser };

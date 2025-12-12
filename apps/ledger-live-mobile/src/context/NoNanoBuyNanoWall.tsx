@@ -14,7 +14,7 @@ import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWa
  */
 export const useNoNanoBuyNanoWallScreenOptions = ():
   | {
-      component: () => JSX.Element;
+      component: () => React.JSX.Element;
       options: NativeStackNavigationOptions;
     }
   | object => {

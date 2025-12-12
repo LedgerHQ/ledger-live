@@ -15,7 +15,7 @@ const Scene = ({ children }: { children: React.ReactNode }) => <Flex flex={1}>{c
 
 export type Metadata = {
   id: string;
-  illustration: JSX.Element | null;
+  illustration: React.JSX.Element | null;
   drawer: null | { route: string; screen: string };
 };
 
@@ -101,9 +101,9 @@ type StepProp =
   | { onNext: () => void; deviceModelId: DeviceModelId };
 
 export type Step = {
-  (props: StepProp): JSX.Element;
+  (props: StepProp): React.JSX.Element;
   id: string;
-  Next: (props: StepProp) => JSX.Element;
+  Next: (props: StepProp) => React.JSX.Element;
   contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
