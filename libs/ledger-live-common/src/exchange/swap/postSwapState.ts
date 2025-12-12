@@ -106,6 +106,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   seedIdTo,
   refundAddress,
   payoutAddress,
+  data,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -138,7 +139,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
 
     const shouldIncludeAddresses =
       rest.statusCode === "WrongDeviceForAccountPayout" ||
-      rest.statusCode === "WrongDeviceForAccountRefund";
+      rest.statusCode === "WrongDeviceForAccountRefund" ||
+      rest.statusCode === "FeeNotLoaded";
 
     const requestData = {
       provider,
@@ -147,11 +149,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
       fromAmount,
-      fromAccountAddress: shouldIncludeAddresses ? fromAccountAddress : undefined,
-      toAccountAddress: shouldIncludeAddresses ? toAccountAddress : undefined,
-      payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
-      payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
+      ...(shouldIncludeAddresses && {
+        fromAccountAddress,
+        toAccountAddress,
+        payloadRefundAddress: refundAddress,
+        payloadPayoutAddress: payoutAddress,
+      }),
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
+      data,
       ...rest,
     };
 
