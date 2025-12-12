@@ -115,6 +115,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             ...liveOp.extra,
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
+            ...(liveOp.extra.stakedAmount && {
+              stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
+            }),
           },
           tx: {
             hash: liveOp.hash,

@@ -171,7 +171,7 @@ export type HederaOperationExtra = {
   memo?: string | null;
   targetStakingNodeId?: number | null;
   previousStakingNodeId?: number | null;
-  stakedAmount?: bigint;
+  stakedAmount?: BigNumber;
 };
 
 export type HederaValidator = {
