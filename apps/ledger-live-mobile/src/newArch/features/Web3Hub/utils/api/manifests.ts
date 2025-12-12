@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 import VersionNumber from "react-native-version-number";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { GetNextPageParamFunction, InfiniteData, QueryFunction } from "@tanstack/react-query";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { URL_ORIGIN } from "LLM/features/Web3Hub/constants";

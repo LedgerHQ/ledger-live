@@ -15,7 +15,7 @@ import { hasCompletedOnboardingSelector, lastConnectedDeviceSelector } from "~/r
 
 type Metadata = {
   id: string;
-  illustration: JSX.Element;
+  illustration: React.JSX.Element;
   drawer: null | { route: string; screen: string };
 };
 

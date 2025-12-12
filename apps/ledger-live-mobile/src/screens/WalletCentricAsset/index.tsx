@@ -200,7 +200,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
         data={data}
-        renderItem={renderItem<JSX.Element>}
+        renderItem={renderItem<React.JSX.Element>}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}

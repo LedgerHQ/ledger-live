@@ -36,8 +36,8 @@ function ReadOnlyAccount({ route }: Props) {
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<JSX.Element>) => item, []);
-  const keyExtractor = useCallback((_: JSX.Element, index: number) => String(index), []);
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<React.JSX.Element>) => item, []);
+  const keyExtractor = useCallback((_: React.JSX.Element, index: number) => String(index), []);
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 

@@ -1,0 +1,7 @@
+---
+description: LDLS UI React design system rules
+globs: ["**/*.tsx", "**/*.jsx"]
+alwaysApply: true
+---
+
+@node_modules/@ledgerhq/ldls-ui-react/ai-rules/RULES.md

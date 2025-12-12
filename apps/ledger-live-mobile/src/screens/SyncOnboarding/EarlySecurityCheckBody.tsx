@@ -46,8 +46,8 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
   // ***** Updates UI *****
   // For both genuine check step and firmware update check step
-  let primaryBottomCta: JSX.Element | null = null;
-  let secondaryBottomCta: JSX.Element | null = null;
+  let primaryBottomCta: React.JSX.Element | null = null;
+  let secondaryBottomCta: React.JSX.Element | null = null;
 
   // Updates the genuine check UI step
   let genuineCheckStepTitle;

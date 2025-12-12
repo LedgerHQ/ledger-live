@@ -42,7 +42,7 @@ export default function MainNavigator() {
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
-      ({ ...props }: BottomTabBarProps): JSX.Element =>
+      ({ ...props }: BottomTabBarProps): React.JSX.Element =>
         customTabBar({
           ...props,
           colors,

@@ -23,7 +23,7 @@ export const hoursAndMinutesOptionsSelector = createSelector(
     }),
 );
 
-function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | null {
+function FormatDate({ date, withHoursMinutes = false }: Props): React.JSX.Element | null {
   const defaultOptions = useSelector(defaultOptionsSelector);
 
   const hoursAndMinutesOptions = useSelector(hoursAndMinutesOptionsSelector);

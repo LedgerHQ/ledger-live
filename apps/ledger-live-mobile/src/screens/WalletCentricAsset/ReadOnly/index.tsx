@@ -137,7 +137,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1, paddingTop: 48, marginBottom: 40 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
-        renderItem={({ item }) => item as JSX.Element}
+        renderItem={({ item }) => item as React.JSX.Element}
         keyExtractor={(_, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}

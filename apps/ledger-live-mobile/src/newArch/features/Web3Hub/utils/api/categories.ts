@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { URL_ORIGIN } from "LLM/features/Web3Hub/constants";
 import { mocks } from "./mocks/categories";
 

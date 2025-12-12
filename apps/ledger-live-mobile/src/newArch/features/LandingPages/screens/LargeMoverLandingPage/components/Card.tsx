@@ -78,7 +78,12 @@ export const Card: React.FC<CardProps> = ({
             <Stop offset="0.5" stopColor={middleColor} stopOpacity="0" />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" width={width} height={100} fill="url(#midGlowTop)" />
+        <Rect
+          transform={[{ translateX: 0 }, { translateY: 0 }]}
+          width={width}
+          height={100}
+          fill="url(#midGlowTop)"
+        />
       </Svg>
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currency={currency} width={width} />
@@ -130,7 +135,12 @@ export const Card: React.FC<CardProps> = ({
               <Stop offset="0.5" stopColor={middleColor} stopOpacity="0.9" />
             </LinearGradient>
           </Defs>
-          <Rect x="0" y="0" width="90%" height="20" fill="url(#midGlow)" />
+          <Rect
+            transform={[{ translateX: 0 }, { translateY: 0 }]}
+            width="90%"
+            height="20"
+            fill="url(#midGlow)"
+          />
         </Svg>
       </Flex>
       <Flex

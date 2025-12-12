@@ -11,7 +11,12 @@ const Vote = ({ size = 16, color }: { size?: number; color?: string }) => (
     </G>
     <Defs>
       <ClipPath id="clip0">
-        <Rect y="2.5" width={size} height={(size * 11) / 16} fill="white" />
+        <Rect
+          transform={[{ translateY: 2.5 }]}
+          width={size}
+          height={(size * 11) / 16}
+          fill="white"
+        />
       </ClipPath>
     </Defs>
   </Svg>

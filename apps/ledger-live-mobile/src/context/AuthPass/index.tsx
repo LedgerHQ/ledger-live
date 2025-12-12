@@ -21,7 +21,7 @@ import {
 } from "~/actions/auth";
 
 type OwnProps = {
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 const AuthPass: React.FC<OwnProps> = ({ children }) => {

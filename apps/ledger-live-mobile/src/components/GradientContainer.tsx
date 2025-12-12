@@ -71,7 +71,13 @@ export default function GradientContainer({
             <Stop offset="100%" stopOpacity={endOpacity} stopColor={color || colors.neutral.c30} />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" rx={borderRadius} width="100%" height="100%" fill="url(#myGradient)" />
+        <Rect
+          transform={[{ translateX: 0 }, { translateY: 0 }]}
+          rx={borderRadius}
+          width="100%"
+          height="100%"
+          fill="url(#myGradient)"
+        />
       </Svg>
       {children}
     </Flex>

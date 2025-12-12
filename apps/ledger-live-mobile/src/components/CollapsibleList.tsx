@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
-  FlatList,
   StyleProp,
   ViewStyle,
   ListRenderItem,
@@ -100,8 +99,6 @@ const CollapsibleList = <T,>({
     };
   }, [openState]);
 
-  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-
   return (
     <Animated.View
       style={[
@@ -123,7 +120,7 @@ const CollapsibleList = <T,>({
           </LText>
         </View>
       </TouchableWithoutFeedback>
-      <AnimatedFlatList
+      <Animated.FlatList
         style={opacityStyle}
         data={data}
         renderItem={renderItem as ListRenderItem<unknown>}
