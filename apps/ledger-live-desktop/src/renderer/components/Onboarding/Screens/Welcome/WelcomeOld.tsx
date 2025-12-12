@@ -95,7 +95,7 @@ export function WelcomeOld() {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
 
   useEffect(() => {
     if (hasCompletedOnboarding && !trustchain) {
@@ -200,11 +200,11 @@ export function WelcomeOld() {
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
-            onClick={_ => {
+            onClick={() =>
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
-                : handleAcceptTermsAndGetStarted();
-            }}
+                : handleAcceptTermsAndGetStarted()
+            }
             mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
@@ -212,11 +212,11 @@ export function WelcomeOld() {
           <Button
             iconPosition="right"
             variant="main"
-            onClick={_ => {
+            onClick={() =>
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalyticsOptInPrompt("Onboarding", buyNew)
-                : buyNew();
-            }}
+                : buyNew()
+            }
             outline={true}
             flexDirection="column"
             whiteSpace="normal"
@@ -227,11 +227,11 @@ export function WelcomeOld() {
           <LedgerSyncEntryPoint
             entryPoint={LSEntryPoint.onboarding}
             needEligibleDevice={false}
-            onPress={() => {
+            onPress={() =>
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalyticsOptInPrompt("Onboarding", setupLedgerSync)
-                : setupLedgerSync();
-            }}
+                : setupLedgerSync()
+            }
           />
           {__DEV__ ? (
             <Button
@@ -265,7 +265,7 @@ export function WelcomeOld() {
       </LeftContainer>
       <RightContainer>
         <CarouselTopBar>
-          {colors.palette.type === "dark" ? (
+          {theme === "dark" ? (
             <InvertThemeV3>
               <LangSwitcher />
             </InvertThemeV3>

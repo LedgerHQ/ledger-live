@@ -27,8 +27,8 @@ const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 32px;
-  background-color: ${p => p.theme.colors.palette.action.hover};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
+  color: ${p => p.theme.colors.primary.c80};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +40,7 @@ const ManageButton = styled.button`
   padding: 16px;
   margin: 5px 0;
   border-radius: 4px;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   background-color: rgba(0, 0, 0, 0);
   display: flex;
   flex-direction: row;
@@ -48,7 +48,7 @@ const ManageButton = styled.button`
   align-items: flex-start;
 
   &:hover {
-    border: 1px solid ${p => p.theme.colors.palette.primary.main};
+    border: 1px solid ${p => p.theme.colors.primary.c80};
   }
 
   ${p =>
@@ -57,14 +57,14 @@ const ManageButton = styled.button`
           pointer-events: none;
           cursor: auto;
           ${IconWrapper} {
-            background-color: ${p.theme.colors.palette.action.active};
-            color: ${p.theme.colors.palette.text.shade20};
+            background-color: ${p.theme.colors.opacityDefault.c10};
+            color: ${p.theme.colors.neutral.c40};
           }
           ${Title} {
-            color: ${p.theme.colors.palette.text.shade50};
+            color: ${p.theme.colors.neutral.c70};
           }
           ${Description} {
-            color: ${p.theme.colors.palette.text.shade30};
+            color: ${p.theme.colors.neutral.c40};
           }
         `
       : `
@@ -88,7 +88,7 @@ const Description = styled(Text).attrs<{
 }>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))<{
   isPill?: boolean;
 }>`

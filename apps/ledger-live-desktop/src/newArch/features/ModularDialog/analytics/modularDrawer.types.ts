@@ -32,8 +32,8 @@ export type ModularDrawerEventParams = {
     formatNetworkConfig?: boolean;
     network_component_features?: ModularDrawerNetworkComponentFeatures;
   };
-  [EVENTS_NAME.MODULAR_ACCOUNT_SELECTION]: {};
-  [EVENTS_NAME.MODULAR_FUND_ACCOUNT_LIST]: {};
+  [EVENTS_NAME.MODULAR_ACCOUNT_SELECTION]: object;
+  [EVENTS_NAME.MODULAR_FUND_ACCOUNT_LIST]: object;
   [EVENTS_NAME.ASSET_CLICKED]: {
     asset: string;
     page: string;

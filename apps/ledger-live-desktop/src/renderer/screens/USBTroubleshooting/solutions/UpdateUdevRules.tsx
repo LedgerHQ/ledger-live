@@ -20,8 +20,8 @@ const Pre = styled(Box).attrs({
   padding: 10px 12px;
   border-radius: 4px;
   margin: 8px 0;
-  background-color: ${p => p.theme.colors.palette.text.shade5};
-  color: ${p => p.theme.colors.palette.text.shade80};
+  background-color: ${p => p.theme.colors.neutral.c20};
+  color: ${p => p.theme.colors.neutral.c80};
   font-family: monospace;
   font-size: 12px;
   align-items: center;
@@ -36,7 +36,7 @@ const snippet =
 const UpdateUdevRulesSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
   const onCopy = useCallback(() => {
-    clipboard && clipboard.writeText(snippet);
+    if (clipboard) clipboard.writeText(snippet);
   }, []);
   return (
     <Wrapper>
@@ -49,7 +49,7 @@ const UpdateUdevRulesSolution = ({ number = 1 }: { number?: number }) => {
       <Content>
         <Illustration image={illustration} />
         <Box flex={2}>
-          <Text mb={3} ff="Inter|SemiBold" color="palette.text.shade90" fontSize={5}>
+          <Text mb={3} ff="Inter|SemiBold" color="neutral.c90" fontSize={5}>
             {t("connectTroubleshooting.followSteps")}
           </Text>
           <BulletRow

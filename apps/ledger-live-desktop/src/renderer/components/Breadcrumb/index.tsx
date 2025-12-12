@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     font-family: "Inter";
     font-weight: 600;
     font-size: 12px;
-    color: ${p => p.theme.colors.palette.text.shade60};
+    color: ${p => p.theme.colors.neutral.c70};
   }
 
   > :first-child {

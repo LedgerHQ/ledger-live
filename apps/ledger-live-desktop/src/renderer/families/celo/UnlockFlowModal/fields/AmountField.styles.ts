@@ -3,7 +3,7 @@ import Box from "~/renderer/components/Box";
 
 export const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
 }))`
@@ -13,5 +13,5 @@ export const TextSeparator = styled.span`
   height: 1em;
   margin: 0 4px;
   border: 1px solid;
-  border-color: ${p => p.theme.colors.palette.text.shade20};
+  border-color: ${p => p.theme.colors.neutral.c40};
 `;

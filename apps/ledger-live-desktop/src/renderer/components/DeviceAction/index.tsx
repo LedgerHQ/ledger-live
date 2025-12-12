@@ -164,7 +164,7 @@ type InnerProps<P> = {
   Result?: React.ComponentType<P>;
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
+  renderOnResult?: (_: P) => React.JSX.Element | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -180,7 +180,7 @@ type Props<H extends States, P> = InnerProps<P> & {
 class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
   componentDidMount() {
     const { onResult, payload } = this.props;
-    onResult && onResult(payload);
+    onResult?.(payload);
   }
 
   render() {
@@ -338,7 +338,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   useTrackDmkErrorsEvents({ error });
 
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
 
@@ -739,7 +739,7 @@ export default function DeviceAction<R, H extends States, P>({
 }: InnerProps<P> & {
   action: Action<R, H, P>;
   request: R;
-}): JSX.Element {
+}): React.JSX.Element {
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);

@@ -89,12 +89,12 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
   const appNameToDisplay = numberOfApps === 1 && installedSupportedApps[0].name;
   return (
     <Container ref={cardRef}>
-      <FadeInOutBox in={visible} timing={800} color="palette.primary.contrastText">
+      <FadeInOutBox in={visible} timing={800} color="neutral.c00">
         <Box horizontal pt={2} overflow="hidden">
           <Box
             borderRadius={1}
             flex="1"
-            bg="palette.primary.main"
+            bg="primary.c80"
             horizontal
             pr={6}
             pl={200}
@@ -106,7 +106,7 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
             </IconContainer>
             <Box flex={1} justifyContent="space-between">
               <Box mb={3}>
-                <Text ff="Inter|SemiBold" fontSize={6} color="palette.primary.contrastText">
+                <Text ff="Inter|SemiBold" fontSize={6} color="neutral.c00">
                   <Trans
                     i18nKey="manager.applist.installSuccess.title"
                     values={{

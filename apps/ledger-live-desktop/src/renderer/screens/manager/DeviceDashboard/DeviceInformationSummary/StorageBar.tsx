@@ -27,7 +27,7 @@ const StorageBarWrapper = styled.div`
   width: 100%;
   border-radius: 3px;
   height: 23px;
-  background: ${p => p.theme.colors.palette.text.shade10};
+  background: ${p => p.theme.colors.neutral.c30};
   overflow: hidden;
   position: relative;
 `;
@@ -71,7 +71,7 @@ const StorageBarItem = styled.div.attrs<{
   ratio: number;
 }>(props => ({
   style: {
-    backgroundColor: props.installing ? props.theme.colors.palette.text.shade30 : props.color,
+    backgroundColor: props.installing ? props.theme.colors.neutral.c40 : props.color,
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...transitionStyles[props.state as keyof typeof transitionStyles](
       `${(props.ratio * 1e2).toFixed(3)}%`,
@@ -82,7 +82,7 @@ const StorageBarItem = styled.div.attrs<{
   flex: 0.005 0 0;
   background-color: black;
   position: relative;
-  border-right: 1px solid ${p => p.theme.colors.palette.background.paper};
+  border-right: 1px solid ${p => p.theme.colors.background.card};
   box-sizing: border-box;
   transform-origin: left;
   opacity: 1;
@@ -102,12 +102,12 @@ const StorageBarItem = styled.div.attrs<{
 
 const TooltipContentWrapper = styled.div`
   & > :nth-child(1) {
-    color: ${p => rgba(p.theme.colors.palette.background.paper, 0.7)};
+    color: ${p => rgba(p.theme.colors.background.card, 0.7)};
     text-align: center;
     display: block;
   }
   & > :nth-child(2) {
-    color: ${p => p.theme.colors.palette.background.paper};
+    color: ${p => p.theme.colors.background.card};
     text-align: center;
   }
 `;

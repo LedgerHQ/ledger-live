@@ -98,7 +98,7 @@ export function useOpenAssetFlow(
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
-        autoCloseDrawer && setDrawer();
+        if (autoCloseDrawer) setDrawer();
         dispatch(
           openModal("MODAL_ADD_ACCOUNTS", {
             currency: cryptoCurrency,

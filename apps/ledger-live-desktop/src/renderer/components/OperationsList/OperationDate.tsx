@@ -4,7 +4,7 @@ import Text from "~/renderer/components/Text";
 import { useDateFormatted, hourFormat } from "~/renderer/hooks/useDateFormatter";
 
 const Hour = styled(Text).attrs(() => ({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 3,
   ff: "Inter",
 }))`

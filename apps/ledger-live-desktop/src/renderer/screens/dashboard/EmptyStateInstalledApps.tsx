@@ -31,13 +31,13 @@ const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
     >
       <Image alt="emptyState Dashboard logo" resource={NoApps} width="250" />
       <Box mt={5} alignItems="center">
-        <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={5}>
+        <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={5}>
           {t("emptyState.dashboard.title")}
         </Text>
         <Box mt={3}>
           <Text
             ff="Inter|Regular"
-            color="palette.text.shade60"
+            color="neutral.c70"
             textAlign="center"
             fontSize={4}
             style={{
@@ -63,7 +63,7 @@ const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
         <Box mt={5} justifyContent="center">
           <LinkHelp
             style={{
-              color: theme.colors.palette.text.shade60,
+              color: theme.colors.neutral.c70,
             }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.dashboard.buttons.help" />}
@@ -74,4 +74,4 @@ const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
     </Box>
   );
 };
-export default React.memo<{}>(withTheme(EmptyStateInstalledApps));
+export default React.memo(withTheme(EmptyStateInstalledApps));

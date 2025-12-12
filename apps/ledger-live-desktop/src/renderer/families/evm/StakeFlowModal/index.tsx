@@ -234,13 +234,13 @@ const StakeModal = ({ account, source }: Props) => {
                   </Text>
                 </Box>
                 <Box>
-                  <Text ff="Inter|SemiBold" fontSize={13} color={colors.palette.text.shade60}>
+                  <Text ff="Inter|SemiBold" fontSize={13} color={colors.neutral.c70}>
                     {t("ethereum.stake.readAbout")}
                   </Text>
                 </Box>
               </Box>
               <Flex flexShrink={0} alignItems="center" justifyContent="center">
-                <Icons.ExternalLink size="M" color={colors.palette.text.shade60} />
+                <Icons.ExternalLink size="M" color={colors.neutral.c70} />
               </Flex>
             </Flex>
           </Footer>

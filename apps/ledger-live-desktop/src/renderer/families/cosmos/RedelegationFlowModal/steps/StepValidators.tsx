@@ -24,14 +24,14 @@ import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/ty
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 48px;
   width: 100%;
   padding-right: ${p => p.theme.space[3]}px;
   padding-left: ${p => p.theme.space[3]}px;
   &:hover {
     background-color: transparent;
-    border-color: ${p => p.theme.colors.palette.text.shade30};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
 `;
 const Container = styled(Box).attrs<{ isOpen?: boolean }>(p => ({
@@ -173,7 +173,7 @@ export default function StepValidators({
                 {t("cosmos.redelegation.flow.steps.validators.chooseValidator")}
               </Text>
             )}
-            <Box color="palette.text.shade20">
+            <Box color="neutral.c40">
               <ChevronRight size={16} />
             </Box>
           </Box>

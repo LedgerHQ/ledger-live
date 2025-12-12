@@ -27,7 +27,7 @@ const Dashes = styled.div`
   opacity: 0.5;
   height: 3px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='1' y1='1.5' x2='39' y2='1.5' stroke='%23${p =>
-    p.theme.colors.palette.primary.main.slice(
+    p.theme.colors.primary.c80.slice(
       1,
     )}' stroke-opacity='0.5' stroke-width='2' stroke-linecap='round' stroke-dasharray='2 6'/%3E%3C/svg%3E%0A");
 `;
@@ -38,7 +38,7 @@ const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
 }))``;
 const Description = styled(Text).attrs(p => ({
-  color: p.theme.colors.palette.text.shade60,
+  color: p.theme.colors.neutral.c70,
   ff: "Inter|Regular",
   mb: 12,
   textAlign: "center",
@@ -51,7 +51,7 @@ const BlueInfoContainer = styled(Box).attrs(() => ({
   alignItems: "center",
   mt: 28,
 }))`
-  background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
+  background-color: ${p => rgba(p.theme.colors.primary.c80, 0.1)};
 `;
 const InfoIconContainer = styled(Box).attrs(() => ({
   mr: "6px",
@@ -61,7 +61,7 @@ const InfoText = styled(Text).attrs(p => ({
   ff: "Inter|Medium",
   fontSize: 12,
   lineHeight: 18,
-  color: p.theme.colors.palette.primary.main,
+  color: p.theme.colors.primary.c80,
 }))`
   flex: 1;
   line-height: 18px;
@@ -84,7 +84,7 @@ const LiveAppDisclaimer = ({ manifest }: Props) => {
 
       <BlueInfoContainer>
         <InfoIconContainer>
-          <InfoIcon color={colors.palette.primary.main} size={20} />
+          <InfoIcon color={colors.primary.c80} size={20} />
         </InfoIconContainer>
         <InfoText>{t("platform.disclaimer.legalAdvice")}</InfoText>
       </BlueInfoContainer>

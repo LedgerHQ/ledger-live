@@ -17,7 +17,7 @@ import {
 
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   mt: 6,
   mb: 4,
   px: 5,

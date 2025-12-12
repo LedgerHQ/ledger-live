@@ -60,7 +60,7 @@ function DropdownIndicatorsContainer() {
   return null;
 }
 
-export default function Dropdown<O extends OptionTypeBase>(props: Props<O>): JSX.Element {
+export default function Dropdown<O extends OptionTypeBase>(props: Props<O>): React.JSX.Element {
   const theme = useTheme();
 
   return (

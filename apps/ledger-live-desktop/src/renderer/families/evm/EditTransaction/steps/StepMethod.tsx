@@ -19,9 +19,7 @@ import { StepProps } from "../types";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${p =>
-    `1px solid ${
-      p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
-    }`};
+    `1px solid ${p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40}`};
   padding: 20px 16px;
   border-radius: 4px;
   &:hover {
@@ -30,14 +28,12 @@ const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
 `;
 
 const EditTypeHeader = styled(Box)<{ selected: boolean }>`
-  color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+  color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
   margin-left: 10px;
 `;
 
 const Description = styled(Box)<{ selected: boolean }>`
-  color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+  color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
   margin-top: 5px;
   margin-left: 15px;
   width: 400px;

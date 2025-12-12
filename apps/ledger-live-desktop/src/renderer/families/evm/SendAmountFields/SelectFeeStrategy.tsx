@@ -42,15 +42,15 @@ const FeesWrapper = styled(Tabbable)<{ error?: boolean }>`
     `1px solid ${
       p?.selected
         ? p?.error
-          ? p.theme.colors.palette.warning.c70
-          : p.theme.colors.palette.primary.main
-        : p.theme.colors.palette.divider
+          ? p.theme.colors.warning.c70
+          : p.theme.colors.primary.c80
+        : p.theme.colors.neutral.c40
     }`};
   padding: 20px 16px;
   font-family: "Inter";
   border-radius: 4px;
   width: 140px;
-  ${p => (p.disabled ? `background: ${p.theme.colors.palette.background.default};` : "")};
+  ${p => (p.disabled ? `background: ${p.theme.colors.background.default};` : "")};
 
   &:hover {
     cursor: ${p => (p.disabled ? "unset" : "pointer")};
@@ -61,11 +61,11 @@ const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean; error?:
   color: ${p =>
     p.selected
       ? p?.error
-        ? p.theme.colors.palette.warning.c70
-        : p.theme.colors.palette.primary.main
+        ? p.theme.colors.warning.c70
+        : p.theme.colors.primary.c80
       : p.disabled
-        ? p.theme.colors.palette.text.shade20
-        : p.theme.colors.palette.text.shade50};
+        ? p.theme.colors.neutral.c40
+        : p.theme.colors.neutral.c70};
 `;
 const FeesValue = styled(Box)`
   flex-direction: column;
@@ -80,9 +80,9 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean; error?: boo
   background-color: ${p =>
     p.selected
       ? p?.error
-        ? p.theme.colors.palette.warning.c70
-        : p.theme.colors.palette.primary.main
-      : p.theme.colors.palette.text.shade20};
+        ? p.theme.colors.warning.c70
+        : p.theme.colors.primary.c80
+      : p.theme.colors.neutral.c40};
   padding: 5px 6px;
 `;
 
@@ -123,12 +123,12 @@ const SelectFeeStrategy = ({
             selected={selected}
             disabled={disabled}
             error={!!messageGas}
-            onClick={() => {
+            onClick={() =>
               !disabled &&
-                onClick({
-                  feesStrategy: strategy,
-                });
-            }}
+              onClick({
+                feesStrategy: strategy,
+              })
+            }
           >
             <>
               <FeesHeader
@@ -153,13 +153,7 @@ const SelectFeeStrategy = ({
                 <FormattedVal
                   noShrink
                   inline
-                  color={
-                    selected
-                      ? "palette.primary.main"
-                      : disabled
-                        ? "palette.text.shade40"
-                        : "palette.text.shade100"
-                  }
+                  color={selected ? "primary.c80" : disabled ? "neutral.c60" : "neutral.c100"}
                   fontSize={3}
                   fontWeight="600"
                   val={estimatedFees}
@@ -171,7 +165,7 @@ const SelectFeeStrategy = ({
                 <CounterValue
                   currency={feesCurrency}
                   value={estimatedFees}
-                  color={disabled ? "palette.text.shade20" : "palette.text.shade50"}
+                  color={disabled ? "neutral.c40" : "neutral.c70"}
                   fontSize={3}
                   showCode
                   alwaysShowValue
@@ -179,15 +173,12 @@ const SelectFeeStrategy = ({
               </FeesValue>
               {feesCurrency.id === "ethereum" && (
                 <ApproximateTransactionTime selected={selected} error={!!messageGas}>
-                  <Clock
-                    size={12}
-                    color={messageGas ? "palette.neutral.c00" : "palette.neutral.c100"}
-                  />
+                  <Clock size={12} color={messageGas ? "neutral.c00" : "neutral.c100"} />
                   <Text
                     fontSize={2}
                     fontWeight="500"
                     ml={1}
-                    color={messageGas ? "palette.neutral.c00" : "palette.neutral.c100"}
+                    color={messageGas ? "neutral.c00" : "neutral.c100"}
                   >
                     {strategy === "medium" ? (
                       <>

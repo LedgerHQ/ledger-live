@@ -7,8 +7,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.02)};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.02)};
   > * {
     flex: 1;
     display: flex;
@@ -30,19 +30,19 @@ const Header = () => {
   const { t } = useTranslation();
   return (
     <Wrapper>
-      <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
         {t("delegation.validator")}
       </Text>
-      <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
         {t("delegation.transactionID")}
       </Text>
-      <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
         {t("delegation.amount")}
       </Text>
-      <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
         {t("delegation.value")}
       </Text>
-      <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
         {t("delegation.duration")}
       </Text>
       <Text />

@@ -27,10 +27,11 @@ const useActionCards = () => {
     const actionCard = findActionCard(cardId);
 
     if (currentCard) {
-      isTrackedUser
-        ? braze.logCardDismissal(currentCard)
-        : currentCard.id &&
-          dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
+      if (isTrackedUser) {
+        braze.logCardDismissal(currentCard);
+      } else if (currentCard.id) {
+        dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
+      }
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
     }
     dispatch(setActionCards(actionCards.filter((n: ActionContentCard) => n.id !== actionCard?.id)));
@@ -49,9 +50,7 @@ const useActionCards = () => {
     const currentCard = findCard(cardId);
     const actionCard = findActionCard(cardId);
 
-    if (actionCard?.isMock) {
-      link && openURL(link);
-    }
+    if (actionCard?.isMock && link) openURL(link);
 
     if (currentCard) {
       // For some reason braze won't log the click event if the card url is empty
@@ -59,8 +58,8 @@ const useActionCards = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       currentCard.url = currentCard.id;
-      isTrackedUser && braze.logContentCardClick(currentCard as braze.ClassicCard);
-      link && openURL(link);
+      if (isTrackedUser) braze.logContentCardClick(currentCard as braze.ClassicCard);
+      if (link) openURL(link);
     }
     if (actionCard) {
       track("contentcard_clicked", {

@@ -12,10 +12,10 @@ interface TransactionConfirmProps {
 }
 
 export const TransactionConfirm: React.FC<TransactionConfirmProps> = ({ device }) => {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   return (
     <>
-      {renderVerifyUnwrapped({ modelId: device.modelId, type: colors.palette.type })}
+      {renderVerifyUnwrapped({ modelId: device.modelId, type: theme })}
       <Box px={20}>
         <Text ff={"Inter|Medium"} textAlign={"center"} fontSize={22}>
           <Trans i18nKey="sign.description" />

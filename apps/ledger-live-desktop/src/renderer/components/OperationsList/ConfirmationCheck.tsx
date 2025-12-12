@@ -30,18 +30,18 @@ const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
     : p.isConfirmed
       ? 0
       : `1px solid ${
-          p.type === "IN" ? p.theme.colors.warning : rgba(p.theme.colors.palette.text.shade60, 0.2)
+          p.type === "IN" ? p.theme.colors.legacyWarning : rgba(p.theme.colors.neutral.c70, 0.2)
         }`;
 function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
   switch (p.type) {
     case "IN":
-      return p.isConfirmed ? p.marketColor : p.theme.colors.warning;
+      return p.isConfirmed ? p.marketColor : p.theme.colors.legacyWarning;
     case "FREEZE":
       return p.theme.colors.wallet;
     case "REWARD":
       return p.theme.colors.gold;
     default:
-      return p.theme.colors.palette.text.shade60;
+      return p.theme.colors.neutral.c70;
   }
 }
 
@@ -54,11 +54,11 @@ type ContainerProps = {
 
 export const Container = styled(Box).attrs<ContainerProps>(p => ({
   bg: p.hasFailed
-    ? mix(p.theme.colors.alertRed, p.theme.colors.palette.background.paper, 0.95)
+    ? mix(p.theme.colors.alertRed, p.theme.colors.background.card, 0.95)
     : p.isConfirmed
       ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
-      : p.theme.colors.palette.background.paper,
+        mix(inferColor(p) as string, p.theme.colors.background.card, 0.8)
+      : p.theme.colors.background.card,
   color: p.hasFailed ? p.theme.colors.alertRed : inferColor(p),
   alignItems: "center",
   justifyContent: "center",
@@ -70,8 +70,8 @@ export const Container = styled(Box).attrs<ContainerProps>(p => ({
   width: 24px;
 `;
 const WrapperClock = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade60",
+  bg: "background.card",
+  color: "neutral.c70",
 }))`
   border-radius: 50%;
   position: absolute;

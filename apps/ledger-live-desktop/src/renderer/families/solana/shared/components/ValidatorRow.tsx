@@ -122,7 +122,7 @@ const StyledValidatorRow = styled(ValidatorRow)<
 const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active?: boolean;
@@ -131,6 +131,6 @@ const TotalStakeTitle = styled(Text)`
   font-size: 11px;
   font-weight: 500;
   text-align: right;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 export default SolanaValidatorRow;

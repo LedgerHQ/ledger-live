@@ -20,7 +20,7 @@ export function FullCard(props: PropsCard<LiveAppManifest>) {
 
   const { manifest } = props;
   const highlighted = !!manifest.highlight;
-  const textColor = highlighted ? "white" : theme.colors.palette.text.shade100;
+  const textColor = highlighted ? "white" : theme.colors.neutral.c100;
 
   const subtitle = useMemo(
     () =>

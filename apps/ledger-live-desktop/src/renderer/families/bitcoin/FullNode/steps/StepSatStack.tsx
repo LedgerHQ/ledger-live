@@ -23,16 +23,10 @@ const SatStack = ({ satStackDownloaded }: { satStackDownloaded: boolean }) => {
   }, []);
   return !satStackDownloaded ? (
     <Box>
-      <Text ff="Inter|SemiBold" textAlign={"center"} fontSize={6} color="palette.text.shade100">
+      <Text ff="Inter|SemiBold" textAlign={"center"} fontSize={6} color="neutral.c100">
         <Trans i18nKey="fullNode.modal.steps.satstack.connectionSteps.notConnected.header" />
       </Text>
-      <Text
-        ff="Inter|Medium"
-        textAlign={"center"}
-        fontSize={4}
-        color="palette.text.shade50"
-        my={24}
-      >
+      <Text ff="Inter|Medium" textAlign={"center"} fontSize={4} color="neutral.c70" my={24}>
         <Trans i18nKey="fullNode.modal.steps.satstack.connectionSteps.notConnected.description" />
       </Text>
       <Box alignItems={"center"} mb={6}>
@@ -57,22 +51,10 @@ const SatStack = ({ satStackDownloaded }: { satStackDownloaded: boolean }) => {
           <ProgressCircle hideProgress size={50} progress={0.08} />
         </Rotating>
       )}
-      <Text
-        ff="Inter|SemiBold"
-        textAlign={"center"}
-        mt={32}
-        fontSize={6}
-        color="palette.text.shade100"
-      >
+      <Text ff="Inter|SemiBold" textAlign={"center"} mt={32} fontSize={6} color="neutral.c100">
         <Trans i18nKey={`fullNode.modal.steps.satstack.connectionSteps.${type}.header`} />
       </Text>
-      <Text
-        ff="Inter|Regular"
-        mt={2}
-        textAlign={"center"}
-        fontSize={3}
-        color="palette.text.shade50"
-      >
+      <Text ff="Inter|Regular" mt={2} textAlign={"center"} fontSize={3} color="neutral.c70">
         <Trans i18nKey={`fullNode.modal.steps.satstack.connectionSteps.${type}.description`} />
       </Text>
     </Box>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-deprecated */
 
 import React, { useCallback, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
@@ -504,7 +505,7 @@ const DebugMock = () => {
       <Box>
         <Item
           id={`${nonce}`}
-          color="palette.text.shade100"
+          color="neutral.c100"
           ff="Inter|Medium"
           fontSize={3}
           onClick={toggleExpanded}
@@ -517,7 +518,7 @@ const DebugMock = () => {
           {queue.length ? (
             <Box px={1}>
               <Text
-                color="palette.text.shade100"
+                color="neutral.c100"
                 ff="Inter|SemiBold"
                 fontSize={3}
                 onClick={toggleExpandedQueue}
@@ -533,7 +534,7 @@ const DebugMock = () => {
                           marginLeft: 10,
                         }}
                         ff="Inter|Medium"
-                        color="palette.text.shade100"
+                        color="neutral.c100"
                         fontSize={3}
                         onClick={() => unQueueEventByIndex(i)}
                       >
@@ -548,7 +549,7 @@ const DebugMock = () => {
           {history.length ? (
             <Box px={1}>
               <Text
-                color="palette.text.shade100"
+                color="neutral.c100"
                 ff="Inter|SemiBold"
                 fontSize={3}
                 onClick={toggleExpandedHistory}
@@ -568,7 +569,7 @@ const DebugMock = () => {
           {/* Events here are supposed to be generic and not for a specific flow */}
           <Box px={1}>
             <Text
-              color="palette.text.shade100"
+              color="neutral.c100"
               ff="Inter|SemiBold"
               fontSize={3}
               onClick={toggleExpandedQuick}
@@ -581,7 +582,7 @@ const DebugMock = () => {
                   <Text
                     mx={1}
                     ff="Inter|Regular"
-                    color="palette.text.shade100"
+                    color="neutral.c100"
                     fontSize={3}
                     key={i}
                     onClick={() => queueEvent(event)}
@@ -593,7 +594,7 @@ const DebugMock = () => {
           </Box>
           <Box px={1}>
             <Text
-              color="palette.text.shade100"
+              color="neutral.c100"
               ff="Inter|SemiBold"
               fontSize={3}
               onClick={toggleExpandedSwap}
@@ -605,7 +606,7 @@ const DebugMock = () => {
               ? swapEvents.map(({ name, event }, i) => (
                   <Text
                     ff="Inter|Regular"
-                    color="palette.text.shade100"
+                    color="neutral.c100"
                     fontSize={3}
                     key={i}
                     onClick={() => queueEvent(event)}
@@ -617,7 +618,7 @@ const DebugMock = () => {
           </Box>
           <Box px={1}>
             <Text
-              color="palette.text.shade100"
+              color="neutral.c100"
               ff="Inter|SemiBold"
               fontSize={3}
               onClick={toggleExpandedLocalization}
@@ -629,7 +630,7 @@ const DebugMock = () => {
               ? localizationEvents.map(({ name, event }, i) => (
                   <Text
                     ff="Inter|Regular"
-                    color="palette.text.shade100"
+                    color="neutral.c100"
                     fontSize={3}
                     key={i}
                     onClick={() => queueEvent(event)}
@@ -641,7 +642,7 @@ const DebugMock = () => {
           </Box>
           <Box px={1}>
             <Text
-              color="palette.text.shade100"
+              color="neutral.c100"
               ff="Inter|SemiBold"
               fontSize={3}
               onClick={toggleExpandedNotif}
@@ -706,7 +707,7 @@ const DebugMock = () => {
                 />
                 <Text
                   ff="Inter|Regular"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={3}
                   mb={2}
                   onClick={onNotifClick}
@@ -715,7 +716,7 @@ const DebugMock = () => {
                 </Text>
                 <Text
                   ff="Inter|Regular"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   mb={2}
                   fontSize={3}
                   onClick={() => {

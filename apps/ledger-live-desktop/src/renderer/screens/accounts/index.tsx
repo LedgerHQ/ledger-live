@@ -64,7 +64,7 @@ export default function AccountsPage() {
   );
 }
 export const GenericBox = styled(Box)`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   flex: 1;
   padding: 10px 20px;
   margin-bottom: 9px;

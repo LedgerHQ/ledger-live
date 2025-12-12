@@ -14,7 +14,7 @@ const ManagerAppIconContainer = styled.div`
   top: 0;
   left: 0;
   transition: opacity 0.2s ease-out;
-  color: ${p => p.theme.colors.palette.text.shade20};
+  color: ${p => p.theme.colors.neutral.c40};
 `;
 const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
   width: ${p => p.size}px;

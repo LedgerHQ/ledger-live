@@ -23,7 +23,7 @@ const StepSummaryNetworkFeesRow = ({
   return (
     <>
       <Box horizontal justifyContent="space-between">
-        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+        <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
           <Trans i18nKey="send.steps.details.maxFees" />{" "}
           <ToolTip content={t("send.steps.details.maxFeesInfo")}>
             <InfoCircle size={12} />
@@ -31,7 +31,7 @@ const StepSummaryNetworkFeesRow = ({
         </Text>
         <Box>
           <FormattedVal
-            color={feeTooHigh ? "warning" : colors.palette.text.shade80}
+            color={feeTooHigh ? "legacyWarning" : colors.neutral.c80}
             disableRounding
             unit={feesUnit}
             alwaysShowValue
@@ -42,7 +42,7 @@ const StepSummaryNetworkFeesRow = ({
           />
           <Box textAlign="right">
             <CounterValue
-              color={feeTooHigh ? "warning" : colors.palette.text.shade60}
+              color={feeTooHigh ? "legacyWarning" : colors.neutral.c70}
               fontSize={3}
               currency={feesCurrency}
               value={estimatedFees}
@@ -53,7 +53,7 @@ const StepSummaryNetworkFeesRow = ({
         </Box>
       </Box>
       {feeTooHigh ? (
-        <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+        <Box horizontal justifyContent="flex-end" alignItems="center" color="legacyWarning">
           <IconExclamationCircle size={10} />
           <Text
             ff="Inter|Medium"

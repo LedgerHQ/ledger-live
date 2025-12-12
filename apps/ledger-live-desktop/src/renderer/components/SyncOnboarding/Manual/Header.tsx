@@ -27,9 +27,9 @@ const Header = ({ onClose, device, displayTitle, companionStep }: Props) => {
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
-  const palette = colors.palette.type;
+  const palette = theme;
   const title = companionStep === "first-step" ? "titleTwoStep" : "secureCryptoTitle";
 
   return (

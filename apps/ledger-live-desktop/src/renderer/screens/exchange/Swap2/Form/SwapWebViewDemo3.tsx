@@ -125,11 +125,7 @@ const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: SwapWebProps) => {
-  const {
-    colors: {
-      palette: { type: themeType },
-    },
-  } = useTheme();
+  const { theme } = useTheme();
   const walletState = useSelector(walletSelector);
   const dispatch = useDispatch();
   const redirectToHistory = useRedirectToSwapHistory();
@@ -355,7 +351,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             gasPrice: string;
             value: string;
           }
-        | {}
+        | object
       > => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -547,7 +543,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
           manifest={manifestWithHash}
           inputs={{
             source: initialSource,
-            theme: themeType,
+            theme,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,

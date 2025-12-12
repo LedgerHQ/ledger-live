@@ -30,8 +30,8 @@ const UpdatableHeader = styled.div`
 `;
 const Badge = styled(Text)`
   border-radius: 29px;
-  background-color: ${p => p.theme.colors.palette.primary.main};
-  color: ${p => p.color || p.theme.colors.palette.background.paper};
+  background-color: ${p => p.theme.colors.primary.c80};
+  color: ${p => p.color || p.theme.colors.background.card};
   height: 18px;
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
     updateAllQueue.length > 0 ? (
       <>
         <Box data-testid="manager-update-all-progress-bar">
-          <Text ff="Inter|SemiBold" fontSize={5} color="palette.primary.main">
+          <Text ff="Inter|SemiBold" fontSize={5} color="primary.c80">
             <Trans
               i18nKey="manager.applist.updatable.progressTitle"
               values={{
@@ -97,7 +97,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
               count={updateAllQueue.length}
             />
           </Text>
-          <Text ff="Inter|SemiBold" fontSize={2} color="palette.text.shade60">
+          <Text ff="Inter|SemiBold" fontSize={2} color="neutral.c70">
             <Trans i18nKey="manager.applist.updatable.progressWarning" />
           </Text>
         </Box>
@@ -111,7 +111,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
             py={1}
             maxWidth="100%"
           >
-            <Text ff="Inter|SemiBold" fontSize={3} color="palette.primary.main">
+            <Text ff="Inter|SemiBold" fontSize={3} color="primary.c80">
               <Trans i18nKey="manager.applist.updatable.progress" />
             </Text>
           </Box>
@@ -122,7 +122,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
       </>
     ) : (
       <>
-        <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
+        <Text ff="Inter|SemiBold" fontSize={4} color="primary.c80">
           <Trans i18nKey="manager.applist.updatable.title" count={update.length} />
         </Text>
         <Badge ff="Inter|Bold" fontSize={3} color="white">

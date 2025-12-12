@@ -43,7 +43,7 @@ const Receive1ShareAddress = ({
             flex: 1,
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           {name ? (

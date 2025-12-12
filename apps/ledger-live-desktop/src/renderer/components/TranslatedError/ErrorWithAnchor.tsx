@@ -14,7 +14,7 @@ type ErrorWithAnchorContentProps = Readonly<{
 export function ErrorWithAnchorContent({
   html,
   dataTestId,
-}: ErrorWithAnchorContentProps): JSX.Element {
+}: ErrorWithAnchorContentProps): React.JSX.Element {
   const { segments }: { segments: HtmlLinkSegment[] } = useHtmlLinkSegments(html);
 
   const handleLinkClick = (href: string) => {
@@ -27,7 +27,7 @@ export function ErrorWithAnchorContent({
         const uuid = uniqueId();
         return segment.type === "link" ? (
           <Link
-            color="palette.text.warning"
+            color="warning.c70"
             alwaysUnderline
             key={uuid}
             onClick={() => handleLinkClick(segment.href)}

@@ -62,16 +62,14 @@ const ButtonWrapper = styled.div<WrapperProps>`
   height: ${p => (p.rounded ? 40 : 34)}px};
   width: ${p => (p.rounded ? 40 : 34)}px};
   border: 1px solid
-    ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.palette.text.shade60)};
+    ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c70)};
   border-radius: ${p => (p.rounded ? 20 : 4)}px;
   padding: ${p => (p.rounded ? 14 : 8)}px;
   text-align: center;
   background: ${p => (p.filled ? p.theme.colors.starYellow : "transparent")};
   &:hover {
-    background: ${p =>
-      p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.palette.divider, 0.2)};
-    border-color: ${p =>
-      p.filled ? p.theme.colors.starYellow : p.theme.colors.palette.text.shade100};
+    background: ${p => (p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.neutral.c40, 0.2))};
+    border-color: ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c100)};
   }
 `;
 
@@ -105,7 +103,6 @@ const StarIcon = styled.div<{
   filter: brightness(1);
   transition: filter 0.1s ease-out;
   &:hover {
-    filter: ${p =>
-      p.theme.colors.palette.type === "dark" ? "brightness(1.3)" : "brightness(0.8)"};
+    filter: ${p => (p.theme.theme === "dark" ? "brightness(1.3)" : "brightness(0.8)")};
   }
 `;

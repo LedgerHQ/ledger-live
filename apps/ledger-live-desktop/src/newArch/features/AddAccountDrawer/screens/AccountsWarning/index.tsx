@@ -44,7 +44,7 @@ const AccountsWarning = ({
           fontSize={24}
           textAlign="center"
           fontWeight="semiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="accounts-added-title"
           marginBottom={16}
         >

@@ -116,7 +116,7 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
                 <Text
                   mt={4}
                   fontSize={4}
-                  color="palette.text.shade80"
+                  color="neutral.c80"
                   textAlign="center"
                   style={{ whiteSpace: "pre-wrap" }}
                 >

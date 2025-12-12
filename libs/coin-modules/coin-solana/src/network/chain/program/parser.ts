@@ -116,7 +116,7 @@ export const parse = (ix: ParsedInstruction | PartiallyDecodedInstruction): Pars
 export const parseQuiet = (ix: ParsedInstruction | PartiallyDecodedInstruction): ParsedProgram => {
   try {
     return parse(ix);
-  } catch (_) {
+  } catch {
     return unknown();
   }
 };

@@ -28,7 +28,7 @@ export function Error({ title, description, top, range }: Props) {
         alignItems="center"
         justifyContent="center"
       >
-        <Icons.WarningFill color="palette.warning.c70" size="S" />
+        <Icons.WarningFill color="warning.c70" size="S" />
       </Flex>
 
       <Text
