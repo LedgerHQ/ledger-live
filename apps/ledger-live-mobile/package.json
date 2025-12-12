@@ -238,6 +238,7 @@
     "@babel/runtime": "7.27.1",
     "@jest/reporters": "29.7.0",
     "@ledgerhq/live-common": "workspace:^",
+    "babel-plugin-styled-components": "2.1.4",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "15.1.0",
