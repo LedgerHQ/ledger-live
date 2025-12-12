@@ -15,7 +15,7 @@ const TouchableCard = styled(Pressable)`
   border-radius: 8px;
   padding: 16px;
   align-items: center;
-  gap: 12px;
+  gap: 12;
   flex-direction: row;
   align-self: stretch;
 `;

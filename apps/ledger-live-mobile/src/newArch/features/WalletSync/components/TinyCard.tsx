@@ -53,6 +53,6 @@ const CardContainer = styled(Flex)`
 const CurrentInstance = styled(Box)`
   height: 6px;
   width: 6px;
-  border-radius: 50;
+  border-radius: 50%;
   background-color: ${p => p.theme.colors.success.c70};
 `;

@@ -22,7 +22,7 @@ const Wrapper = styled(View)<{ tokens: Tokens; isFocused: boolean }>`
     isFocused ? Number(tokens["spacing-s"]) - 2 : Number(tokens["spacing-s"])}px;
   align-items: center;
   flex-direction: row;
-  gap: ${({ tokens }) => tokens["spacing-xxs"]}px;
+  gap: ${({ tokens }) => tokens["spacing-xxs"]};
   border-radius: ${({ tokens }) => tokens["radius-s"]}px;
   background-color: ${({ tokens }) => tokens["colors-surface-transparent-subdued-default"]};
   overflow: hidden;

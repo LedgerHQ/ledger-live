@@ -35,7 +35,7 @@ const InfoWrapper = styled(View)<{ tokens: Tokens }>`
 const LeftElementWrapper = styled(View)`
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 4;
 `;
 
 const TOKEN_KEYS = [

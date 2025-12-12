@@ -29,14 +29,14 @@ const InfoWrapper = styled(View)`
   justify-content: center;
   overflow: hidden;
   flex: 1;
-  gap: 4px;
+  gap: 4;
   margin-left: 16px;
 `;
 
 const LeftElementWrapper = styled(View)`
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 4;
 `;
 
 export const AssetItem = ({

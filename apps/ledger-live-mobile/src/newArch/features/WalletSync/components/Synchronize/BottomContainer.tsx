@@ -23,7 +23,7 @@ const FlexContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 12px;
+  gap: 12;
 `;
 
 const BottomContainer = ({ steps }: Props) => {

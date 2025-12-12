@@ -18,7 +18,7 @@ import { InterstitialType } from "~/components/WebPTXPlayer";
 import { DdRum, RumActionType } from "@datadog/mobile-react-native";
 
 export const Loader = styled(Flex)`
-  gap: 28px;
+  gap: 28;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -34,7 +34,7 @@ export const Loader = styled(Flex)`
 const VisualWrapper = styled(Flex)`
   flex-direction: row;
   align-items: center;
-  gap: 24px;
+  gap: 24;
 `;
 
 const IconContainer = styled(Flex)<{ bgColor?: string }>`
@@ -51,7 +51,7 @@ const IconContainer = styled(Flex)<{ bgColor?: string }>`
 
 const Ellipsis = styled(Flex)`
   flex-direction: row;
-  gap: 8px;
+  gap: 8;
 `;
 
 const Circle = styled(SVGCircle)`
