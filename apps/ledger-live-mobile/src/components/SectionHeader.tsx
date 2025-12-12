@@ -11,9 +11,9 @@ type Props = {
 
 type ContainerProps = {
   withoutMarginBottom?: boolean;
-}
+};
 
-const Container = styled(Flex).attrs<ContainerProps>((p) => ({
+const Container = styled(Flex).attrs<ContainerProps>(p => ({
   backgroundColor: "neutral.c30",
   padding: 5,
   borderRadius: 2,

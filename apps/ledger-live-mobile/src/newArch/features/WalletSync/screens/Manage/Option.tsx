@@ -37,6 +37,6 @@ export const Option = ({ label, description, onClick, testId, disabled }: Option
 
 const Container = styled(Flex).attrs<{
   disabled?: boolean;
-}>((p) => ({
+}>(p => ({
   opacity: p.disabled ? 0.3 : 1,
 }))<{ disabled?: boolean }>``;
