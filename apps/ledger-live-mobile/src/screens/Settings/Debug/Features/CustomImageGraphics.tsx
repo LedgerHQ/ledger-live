@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Button, Divider, Flex, Icons, Switch, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SliderComponent } from "@react-native-community/slider";
+import Slider from "@react-native-community/slider";
 import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,
@@ -57,7 +57,7 @@ export default function DebugCustomImageGraphics() {
   const insets = useSafeAreaInsets();
 
   const slider = (
-    <SliderComponent
+    <Slider
       value={progress}
       minimumValue={0}
       maximumValue={1}
