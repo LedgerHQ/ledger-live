@@ -1,62 +1,27 @@
-import { Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import ButtonV3 from "~/renderer/components/ButtonV3";
+import { Banner, Button } from "@ledgerhq/ldls-ui-react";
 
-type Props = { onClick: () => void };
+export type ErrorType = "network" | "backend";
 
-export const GenericError = ({ onClick }: Props) => {
+type Props = {
+  onClick: () => void;
+  errorType?: ErrorType;
+};
+
+export const GenericError = ({ onClick, errorType = "backend" }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Container>
-      <Icons.DeleteCircleFill size="M" color={"palette.error.c70"} />
-      <Content>
-        <Title>{t("modularAssetDrawer.genericError.title")}</Title>
-        <Description>{t("modularAssetDrawer.genericError.description")}</Description>
-        <Flex>
-          <ButtonV3 variant="error" onClick={onClick}>
-            <Cta>{t("modularAssetDrawer.genericError.cta")}</Cta>
-          </ButtonV3>
-        </Flex>
-      </Content>
-    </Container>
+    <Banner
+      appearance="error"
+      title={t(`modularAssetDrawer.errors.${errorType}.title`)}
+      description={t(`modularAssetDrawer.errors.${errorType}.description`)}
+      primaryAction={
+        <Button appearance="transparent" size="sm" onClick={onClick}>
+          {t("modularAssetDrawer.errors.cta")}
+        </Button>
+      }
+    />
   );
 };
-
-const Container = styled.div`
-  padding: 16px;
-  width: 100%;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: row;
-  background-color: ${p => p.theme.colors.palette.error.c70a02};
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 8px;
-  flex-shrink: 1;
-`;
-
-const Title = styled(Text)`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${p => p.theme.colors.palette.text.shade100};
-  margin-bottom: 4px;
-`;
-
-const Description = styled(Text)`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${p => p.theme.colors.palette.text.shade100};
-  margin-bottom: 12px;
-`;
-
-const Cta = styled(Text)`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${p => p.theme.colors.palette.constant.white};
-`;
