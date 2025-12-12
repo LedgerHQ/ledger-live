@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.99.1-hotfix.2
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`4b39033`](https://github.com/LedgerHQ/ledger-live/commit/4b390339106c5cec460dfe6e05e7637c41485ed8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix LIVE-23351 and LIVE-23397 by better estimating network fees
+
 ## 3.99.1-hotfix.1
 
 ### Patch Changes

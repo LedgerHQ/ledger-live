@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.19.1-hotfix.0
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add isEmbeddedSwap tracking param to allow passing information for Swap on Portfolio to transaction handler tracking events
+
 ## 0.19.0
 
 ### Minor Changes
