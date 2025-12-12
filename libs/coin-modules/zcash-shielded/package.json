@@ -36,6 +36,7 @@
     "unimported": "unimported"
   },
   "devDependencies": {
+    "@ledgerhq/coin-framework": "6.10.0",
     "@types/jest": "^29.5.10",
     "jest": "^29.7.0",
     "jest-util": "30.2.0",
