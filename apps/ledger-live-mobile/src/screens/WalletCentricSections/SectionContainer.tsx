@@ -10,7 +10,7 @@ interface SectionContainerProps extends FlexBoxProps {
   testID?: string;
 }
 
-const SectionContainer = styled(Flex).attrs<SectionContainerProps>((p) => ({
+const SectionContainer = styled(Flex).attrs<SectionContainerProps>(p => ({
   py: 8,
   borderTopWidth: p.isFirst ? 0 : 1,
   borderTopColor: "neutral.c30",

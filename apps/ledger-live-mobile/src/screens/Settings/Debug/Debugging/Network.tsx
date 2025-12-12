@@ -14,7 +14,7 @@ type BulletProps = {
   backgroundColor: string;
 };
 
-const Bullet = styled(Flex).attrs<BulletProps>((p) => ({
+const Bullet = styled(Flex).attrs<BulletProps>(p => ({
   backgroundColor: p.backgroundColor,
 }))`
   width: 8px;

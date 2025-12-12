@@ -94,16 +94,14 @@ type NotificationContainerProps = FlexBoxProps & {
   variant: NotificationVariant;
 };
 
-const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>(
-  (p) => ({
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    bg: variantProps[p.variant]?.bg ?? variantProps.primary.bg,
-    p: variantProps[p.variant]?.padding,
-    borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
-  }),
-)<NotificationContainerProps>``;
+const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>((p) => ({
+  width: "100%",
+  flexDirection: "row",
+  alignItems: "center",
+  bg: variantProps[p.variant]?.bg ?? variantProps.primary.bg,
+  p: variantProps[p.variant]?.padding,
+  borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
+}))<NotificationContainerProps>``;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs<{
   p?: number;

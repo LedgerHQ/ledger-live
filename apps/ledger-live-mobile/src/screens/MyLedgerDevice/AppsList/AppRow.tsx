@@ -21,7 +21,7 @@ type Props = {
 
 const RowContainer = styled(Flex).attrs<{
   disabled?: boolean;
-}>((p) => ({
+}>(p => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
