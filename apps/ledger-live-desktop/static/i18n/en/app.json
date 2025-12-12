@@ -4567,6 +4567,10 @@
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
       },
+      "themeConsole": {
+        "title": "Theme Toggle",
+        "desc": "Display a floating overlay to quickly switch themes."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",
