@@ -56,6 +56,12 @@ module.exports = {
         ],
         paths: [
           "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+          {
+            name: "react-redux",
+            importNames: ["useSelector", "useDispatch", "useStore"],
+            message:
+              "Import typed hooks from '~/context/store' instead of 'react-redux' to ensure proper TypeScript typing.",
+          },
         ],
       },
     ],
@@ -103,6 +109,29 @@ module.exports = {
   },
   overrides: [
     {
+      // Allow direct react-redux imports in store.ts where typed hooks are defined
+      files: ["src/context/store.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                message: "Please remove the /lib import from live-common import.",
+              },
+              {
+                group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+                message:
+                  "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+              },
+            ],
+            paths: ["lodash"],
+          },
+        ],
+      },
+    },
+    {
       files: [
         "src/**/*.test.{ts,tsx}",
         "src/screens/Settings/Debug/**/*",
@@ -112,10 +141,29 @@ module.exports = {
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",
         "**/*Mock*",
+        "__tests__/**/*",
       ],
       rules: {
         "i18next/no-literal-string": "off",
         "no-console": "off",
+        // Allow direct react-redux imports in test files for mocking purposes
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+                message: "Please remove the /lib import from live-common import.",
+              },
+              {
+                group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+                message:
+                  "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+              },
+            ],
+            paths: ["lodash"],
+          },
+        ],
       },
     },
     {
