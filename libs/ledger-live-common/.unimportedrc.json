@@ -318,12 +318,7 @@
     "src/test-helpers/cryptoAssetsStore.ts",
     "src/bridge/generic-alpaca/registerValidateAddress.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -360,6 +355,7 @@
     "src/dada-client/state-manager/types.ts",
     "src/dada-client/types/trend.ts",
     "src/dada-client/utils/currencySelection.ts",
+    "src/dada-client/utils/errorUtils.ts",
     "src/device",
     "src/device/hooks/useLatestFirmware.ts",
     "src/device/use-cases/appDataBackup/deleteAppData.ts",

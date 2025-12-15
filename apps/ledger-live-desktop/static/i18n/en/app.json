@@ -7881,6 +7881,17 @@
       "title": "A network error occurred",
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
       "cta": "Retry"
+    },
+    "errors": {
+      "network": {
+        "title": "Connection failed",
+        "description": "No internet connection. Please try again"
+      },
+      "backend": {
+        "title": "Connection failed",
+        "description": "Something went wrong on our end. Please try again later"
+      },
+      "cta": "Try again"
     }
   },
   "nftEntryPoint": {
