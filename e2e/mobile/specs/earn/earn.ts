@@ -87,7 +87,21 @@ export async function runStartETHStakingFromEarnDashboardTest(
         await beforeAllFunction({
           userdata: "skip-onboarding",
           speculosApp: account.currency.speculosApp,
-          cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+          cliCommands: [
+            async (userdataPath?: string) => {
+              await liveDataCommand(account.currency.speculosApp, account.index)(userdataPath);
+
+              const { address } = await CLI.getAddress({
+                currency: account.currency.speculosApp.name,
+                path: account.accountPath,
+                derivationMode: account.derivationMode,
+              });
+
+              account.address = address;
+
+              return address;
+            },
+          ],
         });
       });
 

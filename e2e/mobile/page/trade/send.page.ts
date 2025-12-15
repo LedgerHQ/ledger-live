@@ -44,10 +44,7 @@ export default class SendPage {
   }
 
   @Step("Set recipient and memo tag")
-  async setRecipient(address: string | undefined, memoTag?: string) {
-    if (!address) {
-      throw new Error("Recipient address is not set");
-    }
+  async setRecipient(address: string, memoTag?: string) {
     await waitForElementById(this.recipientInputId); // Issue with RN75 : QAA-370
     await typeTextById(this.recipientInputId, address);
     if (memoTag && memoTag !== "noTag") {

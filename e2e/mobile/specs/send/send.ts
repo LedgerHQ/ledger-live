@@ -145,7 +145,7 @@ export function runSendInvalidAddressTest(
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - invalid address input`, async () => {
-      const recipientAddress = address ?? transaction.accountToCredit.address;
+      const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);
