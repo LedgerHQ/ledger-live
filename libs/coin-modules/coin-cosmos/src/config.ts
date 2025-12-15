@@ -6,7 +6,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
-      lcd: "https://lcd-axelar.imperator.co",
+      lcd: "https://axelar-rest.publicnode.com",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
