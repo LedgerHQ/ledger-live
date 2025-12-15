@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -9,11 +10,15 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { BitcoinFamily } from "./types";
+import ButtonV3 from "~/renderer/components/ButtonV3";
+import BigNumber from "bignumber.js";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import BigNumber from "bignumber.js";
-import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { openModal } from "~/renderer/actions/modals";
+import type { BitcoinFamily } from "./types";
+import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
+import Spinner from "~/renderer/components/Spinner";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -54,11 +59,18 @@ const AmountValue = styled(Text).attrs(() => ({
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
 
+type ZCashSyncState = "disabled" | "running" | "paused" | "complete" | "outdated";
+
 const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+  const [syncState, setSyncState] = useState<ZCashSyncState>("disabled"); // TODO: initial state depends on the account data
+  const [progress] = useState(0);
+
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const { getFeature } = useFeatureFlags();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const showComponent = getFeature("zcashShielded");
 
@@ -89,6 +101,70 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
 
+  const updateSyncState = () => {
+    switch (syncState) {
+      case "disabled":
+        // Open modal to import UFVK
+        dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account }));
+        setSyncState("running");
+        break;
+      // case "ready":
+      //   // Open modal to start sync
+      //   setSyncState("running");
+      //   break;
+      case "running":
+        // Pause block processing task
+        setSyncState("paused");
+        break;
+      case "paused":
+        // Resume block processing task
+        setSyncState("running");
+        break;
+      case "outdated":
+        // Start sync from the last known block
+        setSyncState("running");
+        break;
+    }
+  };
+
+  const ActionButton = () => {
+    switch (syncState) {
+      case "disabled":
+        return (
+          <ButtonV3 variant="main" onClick={updateSyncState}>
+            <Text>{t("zcash.shielded.state.showBalance")}</Text>
+          </ButtonV3>
+        );
+      case "paused":
+        return (
+          <ButtonV3
+            variant="main"
+            Icon={<Refresh size={20} />}
+            style={{ padding: "100%" }}
+            onClick={updateSyncState}
+          />
+        );
+      case "running":
+        return (
+          <ButtonV3
+            variant="main"
+            Icon={<Pause size={20} />}
+            style={{ padding: "100%" }}
+            onClick={updateSyncState}
+          />
+        );
+      case "outdated":
+        return (
+          <ButtonV3
+            variant="main"
+            Icon={<Refresh size={20} />}
+            style={{ padding: "100%" }}
+            onClick={updateSyncState}
+          />
+        );
+    }
+  };
+
   return (
     <Wrapper>
       <BalanceDetail>
@@ -117,18 +193,32 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
           <Discreet>{transparentBalanceLabel}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="zcash.account.privateBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{privateBalanceLabel}</Discreet>
-        </AmountValue>
+      <BalanceDetail style={{ flexDirection: "row", alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="zcash.account.privateBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{privateBalanceLabel}</Discreet>
+          </AmountValue>
+        </div>
+        <div style={{ display: "flex", paddingLeft: "30px" }}>
+          {syncState !== "disabled" ? (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {syncState === "running" ? <Spinner size={14} /> : null}
+              {syncState === "paused" ? <Text>Paused at </Text> : null}
+              <Text style={{ paddingLeft: "3px", paddingRight: "10px" }}>{progress}%</Text>
+            </div>
+          ) : null}
+          <div>
+            <ActionButton />
+          </div>
+        </div>
       </BalanceDetail>
     </Wrapper>
   );

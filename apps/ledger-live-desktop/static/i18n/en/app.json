@@ -7899,6 +7899,40 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
+    },
+    "shielded": {
+      "state": {
+        "showBalance": "Show balance",
+        "lastSync": "Last sync {{days}} ago"
+      },
+      "flows": {
+        "export": {
+          "title": "Enable shielded",
+          "breadcrumbs": {
+            "0": "Intro",
+            "1": "Device",
+            "2": "UFVK",
+            "3": "Confirmation"
+          },
+          "steps": {
+            "intro": {
+              "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on the Ledger device."
+            },
+            "export": {
+              "text": "Confirm you want to export the UFVK on the device"
+            },
+            "confirmation": {
+              "success": {
+                "title": "UFVK exported successfully",
+                "text": "You can now start to synchronize your account and include your shielded transaction into your history."
+              },
+              "error": {
+                "text": "It was not possible to export the UFVK"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
