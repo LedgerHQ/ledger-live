@@ -240,7 +240,7 @@ export async function createSpeculosDevice(
         ]),
   ];
 
-  console.log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
+  log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 
   const p = spawn("docker", [...params, "--seed", `${seed}`]);
 

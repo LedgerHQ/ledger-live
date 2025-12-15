@@ -358,6 +358,8 @@ export function runExportSwapHistoryOperationsTest(
   swap: SwapType,
   provider: Provider,
   swapId: string,
+  addressFrom: string,
+  addressTo: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -373,6 +375,8 @@ export function runExportSwapHistoryOperationsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+      swap.accountToDebit.address = addressFrom;
+      swap.accountToCredit.address = addressTo;
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
       await app.swap.checkExportedFileContents(swap, provider, swapId);

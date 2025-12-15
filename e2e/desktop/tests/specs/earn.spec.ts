@@ -21,6 +21,23 @@ function setupEnv(disableBroadcast?: boolean) {
   });
 }
 
+const liveDataWithAddressCommand = (account: Account) => (appjsonPath: string) =>
+  CLI.liveData({
+    currency: account.currency.id,
+    index: account.index,
+    add: true,
+    appjson: appjsonPath,
+  }).then(async () => {
+    const { address } = await CLI.getAddress({
+      currency: account.currency.id,
+      path: account.accountPath,
+      derivationMode: account.derivationMode,
+    });
+
+    account.address = address;
+    return address;
+  });
+
 const ethEarn = [
   {
     account: Account.ETH_1,
@@ -45,16 +62,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithAddressCommand(account)],
     });
 
     const family = getFamilyByCurrencyId(account.currency.id);

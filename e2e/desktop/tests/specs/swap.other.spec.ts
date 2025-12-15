@@ -25,16 +25,6 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-const getAddressCommand = (account: Account | TokenAccount) => async () => {
-  const { address } = await CLI.getAddress({
-    currency: account.currency.speculosApp.name,
-    path: account.accountPath,
-    derivationMode: account.derivationMode,
-  });
-
-  account.address = address;
-  return address;
-};
 const liveDataWithAddressCommand = (account: Account | TokenAccount) => (userdataPath?: string) =>
   CLI.liveData({
     currency: account.currency.speculosApp.name,
@@ -1352,6 +1342,8 @@ test.describe("Swap history", () => {
     xrayTicket: "B2CQA-604",
     provider: Provider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",
+    addressFrom: "9MQyG8qo6i616yApRoRVMXYerGV4swwtd2bDETC3RCWB",
+    addressTo: "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
   };
 
   setupEnv(true);
@@ -1388,6 +1380,9 @@ test.describe("Swap history", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      swapHistory.swap.accountToDebit.address = swapHistory.addressFrom;
+      swapHistory.swap.accountToCredit.address = swapHistory.addressTo;
 
       await app.layout.goToSwap();
       await app.swap.goToSwapHistory();
