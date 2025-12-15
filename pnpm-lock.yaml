@@ -4816,35 +4816,7 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
-    dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:^
-        version: link:../../coin-framework
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
     devDependencies:
-      '@ledgerhq/disable-network-setup':
-        specifier: workspace:^
-        version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-live
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14

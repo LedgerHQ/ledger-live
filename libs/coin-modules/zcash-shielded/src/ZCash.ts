@@ -3,7 +3,7 @@
  */
 
 export default class ZCash {
-  static AVERAGE_BLOCK_SYNC_TIME_MS = 5;
+  static readonly AVERAGE_BLOCK_SYNC_TIME_MS = 5;
 
   /**
    * Estimates sync time given a start and an end block.
