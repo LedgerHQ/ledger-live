@@ -1,3 +1,31 @@
+// Common import restrictions
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+    message:
+      "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+  },
+];
+
+// Lodash import restriction
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+// React-redux import restrictions
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from '~/context/store' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+];
+
 module.exports = {
   env: {
     node: true,
@@ -43,26 +71,8 @@ module.exports = {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-          {
-            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-            message:
-              "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
-          },
-        ],
-        paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
-          {
-            name: "react-redux",
-            importNames: ["useSelector", "useDispatch", "useStore"],
-            message:
-              "Import typed hooks from '~/context/store' instead of 'react-redux' to ensure proper TypeScript typing.",
-          },
-        ],
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
       },
     ],
     "i18next/no-literal-string": [
@@ -115,18 +125,8 @@ module.exports = {
         "no-restricted-imports": [
           "error",
           {
-            patterns: [
-              {
-                group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-                message: "Please remove the /lib import from live-common import.",
-              },
-              {
-                group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-                message:
-                  "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
-              },
-            ],
-            paths: ["lodash"],
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
           },
         ],
       },
@@ -150,18 +150,8 @@ module.exports = {
         "no-restricted-imports": [
           "error",
           {
-            patterns: [
-              {
-                group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-                message: "Please remove the /lib import from live-common import.",
-              },
-              {
-                group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-                message:
-                  "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
-              },
-            ],
-            paths: ["lodash"],
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
           },
         ],
       },
