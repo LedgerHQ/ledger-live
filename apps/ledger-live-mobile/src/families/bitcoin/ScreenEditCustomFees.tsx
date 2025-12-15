@@ -18,7 +18,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const options = {
   title: i18next.t("send.summary.fees"),

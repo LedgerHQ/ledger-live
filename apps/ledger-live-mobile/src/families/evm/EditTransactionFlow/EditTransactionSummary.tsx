@@ -33,7 +33,7 @@ import TranslatedError from "~/components/TranslatedError";
 import { NavigatorName, ScreenName } from "~/const";
 import AlertTriangle from "~/icons/AlertTriangle";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SummaryAmountSection from "~/screens/SendFunds/SummaryAmountSection";
 import SummaryFromSection from "~/screens/SendFunds/SummaryFromSection";
 import SummaryToSection from "~/screens/SendFunds/SummaryToSection";

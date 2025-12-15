@@ -8,11 +8,11 @@ import { GestureResponderEvent } from "react-native";
 import { NavigatorName, ScreenName } from "~/const";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
-import { useParentAccount } from "~/hooks/useParentAccount";
+import { useParentAccount } from "LLM/hooks/useParentAccount";
 import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;

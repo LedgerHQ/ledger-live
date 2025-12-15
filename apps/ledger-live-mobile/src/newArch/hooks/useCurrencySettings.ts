@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useSelector } from "~/context/store";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { currencySettingsSelector } from "../reducers/settings";
-import type { State } from "../reducers/types";
+import { currencySettingsSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 
 /**
  * Hook to get currency settings for a currency.
@@ -14,11 +14,9 @@ import type { State } from "../reducers/types";
  * The currency settings.
  */
 export function useCurrencySettings(currency: CryptoCurrency | TokenCurrency) {
-  const currencyId = currency.id;
   const selector = useCallback(
     (state: State) => currencySettingsSelector(state.settings, { currency }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currencyId],
+    [currency],
   );
   return useSelector(selector);
 }

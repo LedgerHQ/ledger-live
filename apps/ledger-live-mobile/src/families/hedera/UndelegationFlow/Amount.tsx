@@ -21,7 +21,7 @@ import { useAccountUnit } from "~/hooks";
 import { urls } from "~/utils/urls";
 import type { HederaUndelegationFlowParamList } from "./types";
 import ReadonlyAmountRatio from "../shared/ReadonlyAmountRatio";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaUndelegationFlowParamList,

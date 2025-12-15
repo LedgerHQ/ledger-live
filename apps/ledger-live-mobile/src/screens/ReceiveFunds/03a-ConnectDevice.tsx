@@ -13,7 +13,7 @@ import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "~/components/GenericErrorView";

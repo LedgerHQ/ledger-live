@@ -19,7 +19,7 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotSimpleOperationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Navigation = StackNavigatorProps<
   PolkadotSimpleOperationFlowParamList,

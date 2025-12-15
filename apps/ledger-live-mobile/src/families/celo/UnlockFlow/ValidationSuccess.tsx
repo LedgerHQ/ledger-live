@@ -13,7 +13,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import type { CeloUnlockFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockValidationSuccess>

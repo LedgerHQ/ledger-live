@@ -13,7 +13,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { CeloWithdrawFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawValidationSuccess>

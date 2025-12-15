@@ -22,7 +22,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({
   item,

@@ -15,7 +15,7 @@ import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRegistrationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationStarted>;
 

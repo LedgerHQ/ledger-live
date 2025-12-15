@@ -15,7 +15,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<

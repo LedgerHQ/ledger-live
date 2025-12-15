@@ -8,7 +8,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
 import { urls } from "~/utils/urls";
 import ExternalLink from "~/components/ExternalLink";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const ReceiveButton = ({ accountId }: { accountId: string }) => {
   const { colors } = useTheme();

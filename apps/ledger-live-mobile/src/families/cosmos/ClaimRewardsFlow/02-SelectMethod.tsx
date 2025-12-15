@@ -21,8 +21,8 @@ import TranslatedError from "~/components/TranslatedError";
 import ValidatorImage from "../shared/ValidatorImage";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const options = [
   {

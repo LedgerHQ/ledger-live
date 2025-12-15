@@ -15,7 +15,7 @@ import type {
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { CosmosDelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationValidationSuccess>

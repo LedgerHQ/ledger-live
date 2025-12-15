@@ -27,7 +27,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 interface Props {

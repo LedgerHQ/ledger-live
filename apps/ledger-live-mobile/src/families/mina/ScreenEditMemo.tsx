@@ -13,7 +13,7 @@ import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.MinaEditMemo>

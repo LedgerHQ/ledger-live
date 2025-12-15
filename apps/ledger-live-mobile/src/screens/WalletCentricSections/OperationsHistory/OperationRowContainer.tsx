@@ -1,7 +1,7 @@
 import React from "react";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import OperationRow from "~/components/OperationRow";
-import { useParentAccount } from "~/hooks/useParentAccount";
+import { useParentAccount } from "LLM/hooks/useParentAccount";
 
 type OperationRowContainerProps = {
   operation: Operation;

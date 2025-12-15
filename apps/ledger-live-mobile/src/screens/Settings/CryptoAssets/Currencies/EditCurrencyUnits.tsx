@@ -8,7 +8,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { updateCurrencySettings } from "~/actions/settings";
-import { useCurrencySettings } from "~/hooks/useCurrencySettings";
+import { useCurrencySettings } from "LLM/hooks/useCurrencySettings";
 
 type NavigationProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,

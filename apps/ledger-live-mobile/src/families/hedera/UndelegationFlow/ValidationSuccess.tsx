@@ -18,7 +18,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { HederaUndelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<

@@ -11,7 +11,7 @@ import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidatorSelect>;
 

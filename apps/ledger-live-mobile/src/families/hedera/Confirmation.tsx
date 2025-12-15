@@ -17,7 +17,7 @@ import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReceiveConfirmationTokenAlert from "./ReceiveConfirmationTokenAlert";
 import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
 import { getFreshAccountAddress } from "~/utils/address";

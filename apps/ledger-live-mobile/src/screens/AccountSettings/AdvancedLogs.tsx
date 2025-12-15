@@ -13,7 +13,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 import { ScreenName } from "~/const";
 import { useSettings } from "~/hooks";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AdvancedLogs>

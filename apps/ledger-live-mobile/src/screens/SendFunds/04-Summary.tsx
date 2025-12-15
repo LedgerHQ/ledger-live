@@ -10,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
 import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";

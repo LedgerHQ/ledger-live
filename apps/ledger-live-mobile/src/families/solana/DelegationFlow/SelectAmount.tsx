@@ -34,8 +34,8 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { urls } from "~/utils/urls";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 

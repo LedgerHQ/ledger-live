@@ -14,7 +14,7 @@ import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the hook declaration.

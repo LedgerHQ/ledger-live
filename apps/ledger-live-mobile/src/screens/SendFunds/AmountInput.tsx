@@ -11,7 +11,7 @@ import LText from "~/components/LText/index";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "~/components/CurrencyInput";
 import TranslatedError from "~/components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { TransferFeeCalculated } from "@ledgerhq/live-common/families/solana/types";
 import Alert from "~/components/Alert";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";

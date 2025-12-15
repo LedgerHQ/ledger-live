@@ -15,7 +15,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import CopyButton from "./Components/CopyButton";
 import { useTheme } from "styled-components/native";
 

@@ -15,7 +15,7 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 type NavigationProps = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StacksEditMemo>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StacksEditMemo>

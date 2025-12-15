@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useSelector } from "~/context/store";
 import { shallowEqual } from "react-redux";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { accountScreenSelector } from "../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 
 /**
  * Hook to safely use accountScreenSelector with react-redux v9.
@@ -25,9 +25,8 @@ export function useAccountScreen(route?: {
 } {
   const selector = useMemo(
     () => accountScreenSelector(route),
-    // Only recreate the selector when the relevant params change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [route?.params?.account?.id, route?.params?.accountId, route?.params?.parentId],
+    [route?.params?.account, route?.params?.accountId, route?.params?.parentId],
   );
 
   return useSelector(selector, shallowEqual);

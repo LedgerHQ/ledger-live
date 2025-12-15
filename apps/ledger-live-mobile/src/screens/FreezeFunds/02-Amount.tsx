@@ -32,8 +32,8 @@ import Button from "~/components/wrappedUi/Button";
 import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountUnit, useMaybeAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountUnit, useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const infoModalData = [
   {

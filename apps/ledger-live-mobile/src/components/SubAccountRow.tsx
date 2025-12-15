@@ -15,7 +15,7 @@ import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
 import { State as RootState } from "~/reducers/types";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: TokenAccount;

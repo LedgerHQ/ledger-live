@@ -30,8 +30,8 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   NativeStackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>

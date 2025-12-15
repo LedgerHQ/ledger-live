@@ -38,13 +38,13 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import Config from "react-native-config";
 import SupportLinkError from "~/components/SupportLinkError";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,

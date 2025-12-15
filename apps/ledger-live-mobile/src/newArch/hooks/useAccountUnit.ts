@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector } from "~/context/store";
-import { accountUnitSelector } from "../reducers/settings";
+import { accountUnitSelector } from "~/reducers/settings";
 import { AccountLike } from "@ledgerhq/types-live";
 import { State } from "~/reducers/types";
 
@@ -14,11 +14,7 @@ import { State } from "~/reducers/types";
  * The unit for the account.
  */
 export function useAccountUnit(account: AccountLike) {
-  const selector = useCallback(
-    (state: State) => accountUnitSelector(state, account),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [account.id], // Check account identity
-  );
+  const selector = useCallback((state: State) => accountUnitSelector(state, account), [account]);
   return useSelector(selector);
 }
 
@@ -32,12 +28,9 @@ export function useAccountUnit(account: AccountLike) {
  * The unit for the account.
  */
 export function useMaybeAccountUnit(account?: AccountLike | null) {
-  const accountId = account?.id;
-
   const selector = useCallback(
     (state: State) => (account ? accountUnitSelector(state, account) : undefined),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accountId], // Check account identity
+    [account],
   );
   return useSelector(selector);
 }

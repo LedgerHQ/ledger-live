@@ -19,7 +19,7 @@ import { useAccountUnit } from "~/hooks";
 import type { HederaClaimRewardsFlowParamList } from "./types";
 import ValidatorIcon from "~/families/hedera/shared/ValidatorIcon";
 import CounterValue from "~/components/CounterValue";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaClaimRewardsFlowParamList,

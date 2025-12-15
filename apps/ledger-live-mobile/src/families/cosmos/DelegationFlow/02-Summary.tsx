@@ -27,11 +27,11 @@ import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
 import Config from "react-native-config";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import TranslatedError from "~/components/TranslatedError";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,

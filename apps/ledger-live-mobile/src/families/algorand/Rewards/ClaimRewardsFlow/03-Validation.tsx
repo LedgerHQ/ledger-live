@@ -14,7 +14,7 @@ import SkipLock from "~/components/behaviour/SkipLock";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
 import { ScreenName } from "~/const";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,

@@ -28,11 +28,11 @@ import Line from "../components/Line";
 import Words from "../components/Words";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 

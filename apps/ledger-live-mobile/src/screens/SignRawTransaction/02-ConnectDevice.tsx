@@ -19,7 +19,7 @@ import type {
 import { useRawTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
   SignRawTransactionNavigatorParamList,

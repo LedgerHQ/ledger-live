@@ -10,7 +10,7 @@ import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   NativeStackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationSuccess>

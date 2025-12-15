@@ -27,7 +27,7 @@ import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosRedelegationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosRedelegationFlowParamList,

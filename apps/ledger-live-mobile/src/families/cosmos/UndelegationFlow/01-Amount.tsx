@@ -9,7 +9,7 @@ import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosUndelegationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosUndelegationFlowParamList,

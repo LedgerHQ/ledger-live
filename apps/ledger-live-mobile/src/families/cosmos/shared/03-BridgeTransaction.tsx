@@ -11,7 +11,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 import { Loading } from "~/components/Loading";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<

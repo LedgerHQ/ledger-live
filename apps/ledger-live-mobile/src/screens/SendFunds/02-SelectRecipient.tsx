@@ -32,8 +32,8 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
-import { useCurrencySettingsForAccount } from "~/hooks/useCurrencySettingsForAccount";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";

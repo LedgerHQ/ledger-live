@@ -30,7 +30,7 @@ import { e2eBridgeClient } from "../../../e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { getFreshAccountAddress } from "~/utils/address";
 

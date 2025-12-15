@@ -23,7 +23,7 @@ import Touchable from "~/components/Touchable";
 import { urls } from "~/utils/urls";
 import Info from "~/icons/Info";
 import ExternalLink from "~/icons/ExternalLink";
-import { useCurrencySettingsForAccount } from "~/hooks/useCurrencySettingsForAccount";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
@@ -38,7 +38,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type HelpLinkProps = {
   event: string;

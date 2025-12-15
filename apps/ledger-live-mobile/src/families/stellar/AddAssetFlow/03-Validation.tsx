@@ -14,7 +14,7 @@ import SkipLock from "~/components/behaviour/SkipLock";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { StellarAddAssetFlowParamList } from "./types";
 import { ScreenName } from "~/const";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   StellarAddAssetFlowParamList,

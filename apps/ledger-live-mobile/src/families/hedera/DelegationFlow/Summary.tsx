@@ -25,7 +25,7 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import ValidatorIcon from "~/families/hedera/shared/ValidatorIcon";
 import Alert from "~/components/Alert";
@@ -34,7 +34,7 @@ import type { HederaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationSummary>;
 

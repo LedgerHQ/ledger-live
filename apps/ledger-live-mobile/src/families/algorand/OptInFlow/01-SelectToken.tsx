@@ -23,7 +23,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({
   item,

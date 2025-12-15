@@ -22,7 +22,7 @@ import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import AssociationInsufficientFundsError from "~/families/hedera/AssociateTokenFlow/AssociationInsufficientFundsError";
 import { urls } from "~/utils/urls";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSummary>

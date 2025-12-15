@@ -10,7 +10,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import DelegationRow from "../shared/DelegationRow";
 import type { HederaClaimRewardsFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaClaimRewardsFlowParamList,

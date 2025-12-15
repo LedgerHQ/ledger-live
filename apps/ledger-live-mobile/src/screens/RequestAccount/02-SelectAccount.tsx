@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useAccountsByCryptoCurrency } from "~/hooks/useAccountsByCryptoCurrency";
+import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import FilteredSearchBar from "~/components/FilteredSearchBar";

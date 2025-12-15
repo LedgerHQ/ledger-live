@@ -1,7 +1,7 @@
 import { ScreenName } from "../../const";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Navigation = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 

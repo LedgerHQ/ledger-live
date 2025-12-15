@@ -11,7 +11,7 @@ import ValidatorRow from "../ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteValidatorSelect>;
 

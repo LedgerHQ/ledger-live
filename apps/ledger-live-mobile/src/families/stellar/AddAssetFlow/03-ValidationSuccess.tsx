@@ -15,7 +15,7 @@ import type { StellarAddAssetFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import invariant from "invariant";
 import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidationSuccess>

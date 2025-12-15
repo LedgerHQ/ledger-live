@@ -7,7 +7,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "~/const";
 import Touchable from "~/components/Touchable";
 import { accountsSelector } from "~/reducers/accounts";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";

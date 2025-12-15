@@ -9,7 +9,7 @@ import type {
 import {
   accountsByCryptoCurrencyScreenSelector,
   flattenAccountsByCryptoCurrencyScreenSelector,
-} from "../reducers/accounts";
+} from "~/reducers/accounts";
 
 /**
  * Hook to get accounts by crypto currency.
@@ -21,13 +21,7 @@ import {
  * The accounts for the currency.
  */
 export function useAccountsByCryptoCurrency(currency: CryptoOrTokenCurrency) {
-  const currencyId = currency?.id;
-  const selector = useMemo(
-    () => accountsByCryptoCurrencyScreenSelector(currency),
-    // Only recreate the selector when currency identity changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currencyId],
-  );
+  const selector = useMemo(() => accountsByCryptoCurrencyScreenSelector(currency), [currency]);
   return useSelector(selector, shallowEqual);
 }
 
@@ -41,12 +35,9 @@ export function useAccountsByCryptoCurrency(currency: CryptoOrTokenCurrency) {
  * The flattened accounts for the currency.
  */
 export function useFlattenAccountsByCryptoCurrency(currency?: CryptoCurrency | TokenCurrency) {
-  const currencyId = currency?.id;
   const selector = useMemo(
     () => flattenAccountsByCryptoCurrencyScreenSelector(currency),
-    // Only recreate the selector when currency identity changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currencyId],
+    [currency],
   );
   return useSelector(selector, shallowEqual);
 }

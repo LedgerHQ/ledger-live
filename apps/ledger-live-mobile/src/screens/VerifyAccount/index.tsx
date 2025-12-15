@@ -18,7 +18,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import Button from "~/components/wrappedUi/Button";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>

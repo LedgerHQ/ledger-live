@@ -5,7 +5,7 @@ import { ScreenName } from "~/const";
 import SettingsRow from "~/components/SettingsRow";
 import LText from "~/components/LText";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCurrencySettings } from "~/hooks/useCurrencySettings";
+import { useCurrencySettings } from "LLM/hooks/useCurrencySettings";
 
 type Props = {
   currency: CryptoCurrency;

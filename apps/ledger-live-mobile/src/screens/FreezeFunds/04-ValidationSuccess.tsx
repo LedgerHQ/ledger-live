@@ -18,7 +18,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigatorProps = CompositeScreenProps<
   StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeValidationSuccess>,

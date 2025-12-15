@@ -16,7 +16,7 @@ import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   NativeStackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>

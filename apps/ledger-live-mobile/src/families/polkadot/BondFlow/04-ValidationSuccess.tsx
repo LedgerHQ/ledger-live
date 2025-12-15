@@ -16,7 +16,7 @@ import ValidateSuccess from "~/components/ValidateSuccess";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { BaseNavigation, RootNavigation } from "~/components/RootNavigator/types/helpers";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = {
   navigation: BaseNavigation;

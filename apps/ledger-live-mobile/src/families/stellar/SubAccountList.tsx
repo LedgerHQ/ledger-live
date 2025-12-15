@@ -6,7 +6,7 @@ import IconPlus from "~/icons/Plus";
 import Button from "~/components/Button";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const ReceiveButton = ({ accountId }: { accountId: string }) => {
   const { colors } = useTheme();

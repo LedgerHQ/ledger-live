@@ -14,7 +14,7 @@ import type {
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { SuiStakingFlowParamList } from "./types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidationSuccess>

@@ -26,13 +26,13 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,

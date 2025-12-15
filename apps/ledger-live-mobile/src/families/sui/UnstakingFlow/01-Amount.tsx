@@ -9,7 +9,7 @@ import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiUnstakingFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiUnstakingFlowParamList, ScreenName.SuiUnstakingAmount>

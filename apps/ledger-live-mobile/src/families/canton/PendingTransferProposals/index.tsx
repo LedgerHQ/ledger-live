@@ -22,7 +22,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import SectionHeader from "~/components/SectionHeader";
 import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import ArrowRight from "~/icons/ArrowRight";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";

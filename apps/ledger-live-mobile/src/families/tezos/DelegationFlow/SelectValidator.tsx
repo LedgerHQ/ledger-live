@@ -34,7 +34,7 @@ import Info from "~/icons/Info";
 import BakerImage from "../BakerImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { TezosDelegationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const keyExtractor = (baker: Baker) => baker.address;
 

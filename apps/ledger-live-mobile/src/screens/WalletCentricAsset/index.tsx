@@ -15,7 +15,7 @@ import BigNumber from "bignumber.js";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useFlattenAccountsByCryptoCurrency } from "~/hooks/useAccountsByCryptoCurrency";
+import { useFlattenAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";

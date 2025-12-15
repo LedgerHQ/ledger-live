@@ -16,7 +16,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import GenericErrorView from "~/components/GenericErrorView";
 import Card from "~/components/Card";
 import useExportLogs from "~/components/useExportLogs";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { urls } from "~/utils/urls";
 
 type Props = CompositeScreenProps<

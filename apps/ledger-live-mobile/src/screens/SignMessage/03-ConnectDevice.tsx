@@ -14,7 +14,7 @@ import {
 import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 export default function ConnectDevice({
   route,

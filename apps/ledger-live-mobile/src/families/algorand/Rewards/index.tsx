@@ -11,7 +11,7 @@ import AccountSectionLabel from "~/components/AccountSectionLabel";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import { ScreenName, NavigatorName } from "~/const";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;

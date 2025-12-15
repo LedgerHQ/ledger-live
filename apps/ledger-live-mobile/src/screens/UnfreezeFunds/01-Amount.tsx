@@ -32,8 +32,8 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeAmount>;
 

@@ -4,7 +4,7 @@ import i18next from "i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
 import Evm1559CustomFees from "./Evm1559CustomFees";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

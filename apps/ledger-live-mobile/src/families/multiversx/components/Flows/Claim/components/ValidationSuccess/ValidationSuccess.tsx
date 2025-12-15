@@ -10,7 +10,7 @@ import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ValidationSuccessPropsType } from "./types";
 import styles from "./styles";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 /*
  * Handle the component declaration.

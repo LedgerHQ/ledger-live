@@ -26,12 +26,12 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { SuiStakingFlowParamList } from "../StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import Alert from "~/components/Alert";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingAmount>

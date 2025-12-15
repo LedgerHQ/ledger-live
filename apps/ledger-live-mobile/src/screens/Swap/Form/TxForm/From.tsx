@@ -23,7 +23,7 @@ import { useSelector } from "~/context/store";
 import { AccountLike } from "@ledgerhq/types-live";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";

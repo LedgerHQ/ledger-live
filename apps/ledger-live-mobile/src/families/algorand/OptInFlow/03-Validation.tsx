@@ -14,7 +14,7 @@ import SkipLock from "~/components/behaviour/SkipLock";
 import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInSummary>;
 export default function Validation({ route }: Props) {

@@ -21,7 +21,7 @@ import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export function OperationDetails({ route }: OperationDetailsParamList) {
   const { swapOperation } = route.params;

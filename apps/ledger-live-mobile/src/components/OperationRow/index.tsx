@@ -24,9 +24,9 @@ import perFamilyOperationDetails from "../../generated/operationDetails";
 import { track } from "~/analytics";
 import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
-import { useCurrencySettingsForAccount } from "~/hooks/useCurrencySettingsForAccount";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]

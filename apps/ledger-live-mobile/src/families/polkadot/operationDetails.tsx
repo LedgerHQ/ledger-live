@@ -34,7 +34,7 @@ import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {

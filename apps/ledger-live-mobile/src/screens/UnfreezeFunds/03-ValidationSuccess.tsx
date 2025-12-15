@@ -13,7 +13,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeValidationSuccess>,

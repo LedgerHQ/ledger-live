@@ -16,8 +16,8 @@ import ValidatorImage from "../shared/ValidatorImage";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSelectValidator>

@@ -12,7 +12,7 @@ import SelectPoolSearchBox from "../shared/SearchBox";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import Skeleton from "~/components/Skeleton";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,

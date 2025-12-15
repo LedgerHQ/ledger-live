@@ -16,7 +16,7 @@ import {
   setAccountName as setAccountNameStore,
 } from "@ledgerhq/live-wallet/store";
 import { walletSelector } from "~/reducers/wallet";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";

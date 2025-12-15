@@ -14,7 +14,7 @@ import Button from "~/components/Button";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.CeloManageAssetsNavigator>

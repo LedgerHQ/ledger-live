@@ -19,7 +19,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationStarted>;
 

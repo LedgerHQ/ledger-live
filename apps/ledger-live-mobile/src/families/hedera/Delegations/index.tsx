@@ -18,7 +18,7 @@ import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import DelegationStatusIcon from "~/families/hedera/Delegations/DelegationStatusIcon";
 import { DelegationStatusModal } from "~/families/hedera/shared/DelegationStatusModal";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useAccountName } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { rgba } from "../../../colors";

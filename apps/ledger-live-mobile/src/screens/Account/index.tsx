@@ -19,7 +19,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "~/reducers/settings";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { track, TrackScreen } from "~/analytics";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";

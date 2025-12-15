@@ -18,7 +18,7 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import Config from "react-native-config";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigatorProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OperationDetails>

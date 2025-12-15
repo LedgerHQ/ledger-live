@@ -12,7 +12,7 @@ import { ScreenName } from "~/const";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { HederaRedelegationFlowParamList } from "./types";
 import ValidatorRow from "../shared/ValidatorRow";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationSelectValidator>

@@ -18,7 +18,7 @@ import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloActivateFlowParamList } from "./types";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidatorSelect>;
 

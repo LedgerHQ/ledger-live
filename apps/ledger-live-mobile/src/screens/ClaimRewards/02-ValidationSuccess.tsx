@@ -12,7 +12,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { ClaimRewardsNavigatorParamList } from "~/components/RootNavigator/types/ClaimRewardsNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useAccountScreen } from "~/hooks/useAccountScreen";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsValidationSuccess>,
