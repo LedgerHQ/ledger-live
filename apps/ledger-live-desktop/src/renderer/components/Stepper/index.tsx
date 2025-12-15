@@ -101,8 +101,9 @@ const Stepper = <T, StepProps>({
   // we'll need to improve this. also ...props is bad practice...
   const stepProps = {
     ...props,
-    onClose,
+    stepId,
     t,
+    onClose,
     transitionTo,
   };
   return (
