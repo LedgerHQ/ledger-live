@@ -115,7 +115,7 @@ const LanguageSelect = () => {
           pl="12px"
           pr={3}
           bg="opacityDefault.c10"
-          borderRadius="50"
+          borderRadius={50}
           testID="language-select-button"
         >
           <Text mr="2px" testID="current-selected-language">

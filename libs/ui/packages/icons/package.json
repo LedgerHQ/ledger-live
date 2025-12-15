@@ -72,8 +72,9 @@
     "react-native": "catalog:",
     "react-native-svg": "catalog:",
     "rimraf": "^4.4.1",
-    "styled-components": "^6.1.13",
-    "styled-system": "^5.1.5",
+    "styled-components": "catalog:",
+    "styled-system": "catalog:",
+    "stylis": "catalog:",
     "tiny-glob": "^0.2.9"
   }
 }

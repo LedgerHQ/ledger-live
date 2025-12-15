@@ -35,7 +35,7 @@ export const TabsContainer = styled(FlexBox)<{ stretchItems: boolean }>`
   flex-direction: row;
   width: 100%;
   align-items: stretch;
-  ${(p) => (p.stretchItems ? "" : "justify-content: center;")}
+  ${(p) => (p.stretchItems ? null : "justify-content: center;")}
 `;
 
 const TemplateTabsGroup = ({

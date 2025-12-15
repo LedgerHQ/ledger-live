@@ -19,9 +19,9 @@ module.exports = {
       "babel-plugin-styled-components",
       {
         ssr: false,
-        displayName: true,
-        fileName: true,
-        minify: true,
+        displayName: process.env.NODE_ENV === "development",
+        fileName: process.env.NODE_ENV === "production",
+        minify: process.env.NODE_ENV === "production",
         transpileTemplateLiterals: true,
         pure: true,
       },

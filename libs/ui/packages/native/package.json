@@ -62,7 +62,8 @@
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
     "rn-range-slider": "2.1.1",
-    "styled-system": "^5.1.5"
+    "styled-system": "catalog:",
+    "stylis": "catalog:"
   },
   "peerDependencies": {
     "react": ">=17",
@@ -70,7 +71,7 @@
     "react-native-reanimated": "3.16.7",
     "react-native-safe-area-context": ">=5.5.2",
     "react-native-svg": ">=12.1.1",
-    "styled-components": "^6.1.0"
+    "styled-components": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "7.27.1",
@@ -172,7 +173,7 @@
     "rimraf": "^4.4.1",
     "storybook": "^7.6.18",
     "storybook-dark-mode": "^3.0.3",
-    "styled-components": "^6.1.13",
+    "styled-components": "catalog:",
     "stylelint": "^14.9.1",
     "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-styled-components": "^0.1.1",

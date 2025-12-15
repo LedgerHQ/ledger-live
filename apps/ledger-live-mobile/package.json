@@ -216,8 +216,9 @@
     "rn-fetch-blob": "0.12.0",
     "rxjs": "catalog:",
     "semver": "7.5.4",
-    "styled-components": "6.1.13",
-    "styled-system": "5.1.5",
+    "styled-components": "catalog:",
+    "styled-system": "catalog:",
+    "stylis": "catalog:",
     "text-encoding-polyfill": "0.6.7",
     "uuid": "8.3.2"
   },

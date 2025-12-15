@@ -53,6 +53,9 @@ catalog:
   rxjs: 7.8.2
   isomorphic-ws: 5.0.0
   ws: 8.18.3
+  "styled-components": 6.1.19
+  "styled-system": 5.1.5
+  "stylis": 4.0.0
 
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
@@ -62,4 +65,4 @@ overrides:
 
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-  - '@ledgerhq/*'
+  - "@ledgerhq/*"
