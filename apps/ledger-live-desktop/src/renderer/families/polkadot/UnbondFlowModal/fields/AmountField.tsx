@@ -18,7 +18,7 @@ import Text from "~/renderer/components/Text";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
 }))`
@@ -28,7 +28,7 @@ const TextSeparator = styled.span`
   height: 1em;
   margin: 0 4px;
   border: 1px solid;
-  border-color: ${p => p.theme.colors.palette.text.shade20};
+  border-color: ${p => p.theme.colors.neutral.c40};
 `;
 type Props = {
   t: TFunction;
@@ -79,16 +79,16 @@ const AmountField = ({ account, onChangeTransaction, transaction, status }: Prop
         </Label>
         {typeof useAllAmount === "boolean" ? (
           <Box horizontal alignItems="center">
-            <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={13}>
+            <Text color="neutral.c60" ff="Inter|Medium" fontSize={13}>
               <Trans i18nKey="polkadot.unbond.steps.amount.availableLabel" />
               {": "}
             </Text>
-            <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={13}>
+            <Text color="neutral.c60" ff="Inter|Medium" fontSize={13}>
               <SpendableAmount account={account} transaction={transaction} disableRounding />
             </Text>
             <TextSeparator />
             <Text
-              color="palette.text.shade40"
+              color="neutral.c60"
               ff="Inter|Medium"
               fontSize={13}
               style={{

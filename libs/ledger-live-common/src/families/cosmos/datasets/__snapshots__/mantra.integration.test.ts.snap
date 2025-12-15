@@ -3,7 +3,7 @@
 exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
 [
   {
-    "balance": "714929",
+    "balance": "714930",
     "currencyId": "mantra",
     "derivationMode": "",
     "freshAddress": "mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn",
@@ -12,7 +12,7 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "204929",
+    "spendableBalance": "204930",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

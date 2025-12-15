@@ -68,14 +68,14 @@ export default function AccountBalanceSummary({
       if (displayCountervalue) data.reverse();
       return (
         <>
-          <FormattedVal fontSize={5} color="palette.text.shade100" showCode {...data[0]} />
+          <FormattedVal fontSize={5} color="neutral.c100" showCode {...data[0]} />
           {countervalueAvailable ? (
             <FormattedVal fontSize={4} color="warmGrey" showCode {...data[1]} />
           ) : null}
-          <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
+          <Box ff="Inter|Regular" color="neutral.c70" fontSize={3} mt={2}>
             {dayFormatter(d.date)}
           </Box>
-          <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+          <Box ff="Inter|Regular" color="neutral.c70" fontSize={3}>
             {hourFormatter(d.date)}
           </Box>
         </>
@@ -120,7 +120,7 @@ export default function AccountBalanceSummary({
         />
       </Box>
 
-      <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
+      <Box px={5} ff="Inter" fontSize={4} color="neutral.c80" pt={5}>
         {account.type === "TokenAccount" &&
         tokensWithUnsupportedGraph.includes(account.token.id) ? (
           <>

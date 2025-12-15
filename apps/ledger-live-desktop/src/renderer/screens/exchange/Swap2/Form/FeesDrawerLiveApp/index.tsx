@@ -158,7 +158,7 @@ export default function FeesDrawerLiveApp({
         {...swapDefaultTrack}
       />
       <Box mt={3} flow={4} mx={3} flex="1">
-        <Text color={"palette.neutral.c70"} fontSize={14} fontWeight="500">
+        <Text color={"neutral.c70"} fontSize={14} fontWeight="500">
           {t("swap2.form.details.label.feesDescription")}
         </Text>
         {transaction && mainAccount && (

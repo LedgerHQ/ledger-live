@@ -4,7 +4,7 @@ import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import type { SuiAccount, Transaction } from "../types";
 import { ONE_SUI } from "../constants";
 
-// eslint-disable-next-line no-loss-of-precision
+// eslint-disable-next-line @typescript-eslint/no-loss-of-precision, no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 
 export enum AccountType {

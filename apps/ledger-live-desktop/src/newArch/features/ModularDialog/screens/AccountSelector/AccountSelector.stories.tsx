@@ -5,7 +5,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import { legacy_createStore as createStore } from "redux";
 import { track } from "~/renderer/analytics/__mocks__/segment";
-import { AccountSelection } from ".";
+import { AccountSelector } from ".";
 import { bitcoinCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 
 const detailedAccount = {
@@ -68,9 +68,9 @@ const store = createStore(() => defaultStore);
 
 const onAccountSelected = fn();
 
-const meta: Meta<typeof AccountSelection> = {
-  title: "ModularDrawer/AccountSelection",
-  component: AccountSelection,
+const meta: Meta<typeof AccountSelector> = {
+  title: "ModularDrawer/AccountSelector",
+  component: AccountSelector,
   args: {
     asset: bitcoinCurrency,
     onAccountSelected: onAccountSelected(),
@@ -88,7 +88,7 @@ const meta: Meta<typeof AccountSelection> = {
 
 export default meta;
 
-type Story = StoryObj<typeof AccountSelection>;
+type Story = StoryObj<typeof AccountSelector>;
 
 export const Default: Story = {
   args: {

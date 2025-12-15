@@ -1,27 +1,24 @@
 import { Theme } from "../../../styles/theme";
 
-export function getLinkColors({
-  palette,
-}: Theme["colors"]): Record<
-  "disabled" | "main" | "color" | "shade",
-  Record<"default" | "pressed", string>
-> {
+export function getLinkColors(
+  colors: Theme["colors"],
+): Record<"disabled" | "main" | "color" | "shade", Record<"default" | "pressed", string>> {
   return {
     disabled: {
-      default: palette.neutral.c50,
-      pressed: palette.neutral.c50,
+      default: colors.neutral.c50,
+      pressed: colors.neutral.c50,
     },
     main: {
-      default: palette.neutral.c100,
-      pressed: palette.neutral.c80,
+      default: colors.neutral.c100,
+      pressed: colors.neutral.c80,
     },
     color: {
-      default: palette.primary.c80,
-      pressed: palette.primary.c70,
+      default: colors.primary.c80,
+      pressed: colors.primary.c70,
     },
     shade: {
-      default: palette.neutral.c70,
-      pressed: palette.neutral.c80,
+      default: colors.neutral.c70,
+      pressed: colors.neutral.c80,
     },
   };
 }

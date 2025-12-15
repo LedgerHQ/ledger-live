@@ -48,8 +48,7 @@ export type Props = {
 export default function Chart({ height, data, color, valueKey = "value" }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<ChartJs | null>(null);
-  const theme = useTheme().colors.palette;
-
+  const { colors } = useTheme();
   const generatedData: ChartData = useMemo(
     () => ({
       datasets: [
@@ -94,10 +93,10 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
             type: "time",
             gridLines: {
               display: false,
-              color: theme.text.shade10,
+              color: colors.neutral.c30,
             },
             ticks: {
-              fontColor: theme.text.shade60,
+              fontColor: colors.neutral.c70,
               fontFamily: "Inter",
               maxTicksLimit: 7,
             },
@@ -107,11 +106,11 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
           {
             display: false,
             gridLines: {
-              color: theme.text.shade10,
+              color: colors.neutral.c30,
               borderDash: [5, 5],
               drawTicks: false,
               drawBorder: false,
-              zeroLineColor: theme.text.shade10,
+              zeroLineColor: colors.neutral.c30,
             },
             ticks: {
               beginAtZero: true,
@@ -120,7 +119,7 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
         ],
       },
     }),
-    [theme.text.shade10, theme.text.shade60],
+    [colors.neutral.c30, colors.neutral.c70],
   );
 
   useLayoutEffect(() => {

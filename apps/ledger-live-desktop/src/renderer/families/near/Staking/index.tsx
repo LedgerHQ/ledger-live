@@ -84,7 +84,7 @@ const Staking = ({ account }: { account: NearAccount }) => {
               <Button
                 id={"account-stake-button"}
                 mr={2}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 disabled={!stakingEnabled}
                 onClick={onStake}
@@ -119,7 +119,7 @@ const Staking = ({ account }: { account: NearAccount }) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="near.stake.emptyState.description"
                   values={{

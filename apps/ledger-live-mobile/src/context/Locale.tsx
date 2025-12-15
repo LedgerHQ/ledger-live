@@ -44,8 +44,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SUPPORTED_LANGUAGES = [
+export const SUPPORTED_LANGUAGES = [
   "en",
   "fr",
   "es",

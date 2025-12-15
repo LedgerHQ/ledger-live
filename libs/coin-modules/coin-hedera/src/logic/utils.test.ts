@@ -20,9 +20,11 @@ import {
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
 import type {
   HederaAccount,
   HederaMemo,
+  HederaMirrorTransaction,
   HederaPreloadData,
   HederaTxData,
   HederaValidator,
@@ -60,6 +62,8 @@ import {
   getChecksum,
   mapIntentToSDKOperation,
   getOperationDetailsExtraFields,
+  calculateAPY,
+  analyzeStakingOperation,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -949,6 +953,115 @@ describe("logic utils", () => {
         { key: "gasUsed", value: "950" },
         { key: "gasLimit", value: "2000" },
       ]);
+    });
+  });
+
+  describe("calculateAPY", () => {
+    it("should calculate APY correctly for a typical reward rate", () => {
+      const result = calculateAPY(3538);
+
+      expect(result).toBeCloseTo(0.01291, 5);
+    });
+
+    it("should return 0 for zero reward rate", () => {
+      const result = calculateAPY(0);
+
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("analyzeStakingOperation", () => {
+    const mockAddress = "0.0.12345";
+    const mockTimestamp = "1762202064.065172388";
+    const mockTx = {
+      consensus_timestamp: mockTimestamp,
+      name: "CRYPTOUPDATEACCOUNT",
+    } as HederaMirrorTransaction;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("detects DELEGATE operation when staking starts", async () => {
+      const accountBefore = getMockedMirrorAccount({ staked_node_id: null });
+      const accountAfter = getMockedMirrorAccount({ staked_node_id: 5 });
+
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(accountBefore)
+        .mockResolvedValueOnce(accountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(result).toEqual({
+        operationType: "DELEGATE",
+        previousStakingNodeId: null,
+        targetStakingNodeId: 5,
+        stakedAmount: BigInt(1000),
+      });
+      expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `lt:${mockTimestamp}`);
+      expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `eq:${mockTimestamp}`);
+    });
+
+    it("detects UNDELEGATE operation when staking stops", async () => {
+      const accountBefore = getMockedMirrorAccount({ staked_node_id: 5 });
+      const accountAfter = getMockedMirrorAccount({ staked_node_id: null });
+
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(accountBefore)
+        .mockResolvedValueOnce(accountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(result).toEqual({
+        operationType: "UNDELEGATE",
+        previousStakingNodeId: 5,
+        targetStakingNodeId: null,
+        stakedAmount: BigInt(1000),
+      });
+    });
+
+    it("detects REDELEGATE operation when changing nodes", async () => {
+      const accountBefore = getMockedMirrorAccount({ staked_node_id: 3 });
+      const accountAfter = getMockedMirrorAccount({ staked_node_id: 10 });
+
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(accountBefore)
+        .mockResolvedValueOnce(accountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(result).toEqual({
+        operationType: "REDELEGATE",
+        previousStakingNodeId: 3,
+        targetStakingNodeId: 10,
+        stakedAmount: BigInt(1000),
+      });
+    });
+
+    it("returns null for regular account update (both null)", async () => {
+      const accountBefore = getMockedMirrorAccount({ staked_node_id: null });
+      const accountAfter = getMockedMirrorAccount({ staked_node_id: null });
+
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(accountBefore)
+        .mockResolvedValueOnce(accountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(result).toBeNull();
+    });
+
+    it("returns null when staked node doesn't change", async () => {
+      const accountBefore = getMockedMirrorAccount({ staked_node_id: 5 });
+      const accountAfter = getMockedMirrorAccount({ staked_node_id: 5 });
+
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(accountBefore)
+        .mockResolvedValueOnce(accountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(result).toBeNull();
     });
   });
 });

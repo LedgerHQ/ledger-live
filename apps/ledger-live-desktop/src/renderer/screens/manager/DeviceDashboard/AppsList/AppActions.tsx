@@ -145,7 +145,7 @@ const AppActions = React.memo(
       <AppActionsWrapper right={!hasTwoItems}>
         {showLearnMore ? (
           <Button
-            color={"palette.primary.main"}
+            color={"primary.c80"}
             style={{
               display: "flex",
               backgroundColor: "rgba(0,0,0,0)",
@@ -197,7 +197,7 @@ const AppActions = React.memo(
                   }
                 >
                   <Button
-                    color={canAddAccount ? "palette.primary.main" : "palette.text.shade40"}
+                    color={canAddAccount ? "primary.c80" : "neutral.c60"}
                     inverted
                     style={{
                       display: "flex",
@@ -227,7 +227,7 @@ const AppActions = React.memo(
                 </Tooltip>
               ) : hasSpecificAction ? (
                 <Button
-                  color={"palette.primary.main"}
+                  color={"primary.c80"}
                   style={{
                     display: "flex",
                     backgroundColor: "rgba(0,0,0,0)",

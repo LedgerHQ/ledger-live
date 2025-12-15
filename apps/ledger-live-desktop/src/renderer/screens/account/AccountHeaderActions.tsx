@@ -69,16 +69,16 @@ const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
 }))`
   width: 40px;
   height: 40px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade60};
+  border: 1px solid ${p => p.theme.colors.neutral.c70};
   border-radius: 20px;
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.2))};
-    border-color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.2))};
+    border-color: ${p => p.theme.colors.neutral.c100};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.3))};
   }
 `;
 
@@ -98,7 +98,7 @@ type OwnProps = {
 };
 type Props = {
   t: TFunction;
-  openModal: Function;
+  openModal: (name: string, data: unknown) => void;
 } & OwnProps;
 
 const ActionItem = ({
@@ -188,7 +188,7 @@ const pageName = "Page Account";
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const mainAccount = getMainAccount(account, parentAccount);
-  const contrastText = useTheme().colors.palette.text.shade60;
+  const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
 

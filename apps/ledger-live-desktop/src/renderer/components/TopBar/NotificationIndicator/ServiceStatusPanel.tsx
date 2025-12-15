@@ -20,7 +20,7 @@ const IncidentContainer = styled(Box)`
   display: flex;
   flex-direction: row;
   border-radius: 4px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border: 1px solid ${p => p.theme.colors.neutral.c30};
   padding: 16px;
   margin: 6px;
 `;
@@ -48,7 +48,7 @@ function IncidentArticle({ incidentData }: IncidentProps) {
   return (
     <IncidentContainer>
       <IncidentLeftColumnContainer>
-        <IncidentIconContainer color="warning">
+        <IncidentIconContainer color="legacyWarning">
           <TriangleWarning size={15} />
         </IncidentIconContainer>
       </IncidentLeftColumnContainer>
@@ -64,7 +64,7 @@ function IncidentArticle({ incidentData }: IncidentProps) {
                 ff="Inter|Medium"
                 fontSize="12px"
                 lineHeight="18px"
-                color="palette.text.shade50"
+                color="neutral.c70"
               >
                 <ErrorWithAnchorContent html={body} />
               </Text>
@@ -88,7 +88,7 @@ function StatusOkHeader() {
       <SuccessAnimatedIcon height={64} width={64} />
       <Text
         mt="22px"
-        color="palette.text.shade100"
+        color="neutral.c100"
         ff="Inter|SemiBold"
         fontSize="18px"
         lineHeight="21.78px"
@@ -98,7 +98,7 @@ function StatusOkHeader() {
       </Text>
       <Text
         mt="8px"
-        color="palette.text.shade50"
+        color="neutral.c70"
         ff="Inter|Regular"
         fontSize="13px"
         lineHeight="16px"
@@ -115,13 +115,13 @@ function StatusNotOkHeader({ incidents }: { incidents: Incident[] }) {
   return (
     <ScrollArea hideScrollbar>
       <Box py="32px" alignItems="center">
-        <Box color="warning">
+        <Box color="legacyWarning">
           <TriangleWarning size={54} />
         </Box>
         <Text
           mt="22px"
           mb="42px"
-          color="palette.text.shade100"
+          color="neutral.c100"
           ff="Inter|SemiBold"
           fontSize="18px"
           lineHeight="21.78px"

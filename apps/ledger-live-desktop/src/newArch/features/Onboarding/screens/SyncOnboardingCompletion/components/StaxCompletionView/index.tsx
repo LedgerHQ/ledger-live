@@ -5,11 +5,7 @@ import onboardingSuccessDark from "../../assets/stax/onboardingSuccessDark.mp4";
 import onboardingSuccessLight from "../../assets/stax/onboardingSuccessLight.mp4";
 
 export default function StaxCompletionView() {
-  const {
-    colors: {
-      palette: { type: theme },
-    },
-  } = useTheme();
+  const { theme } = useTheme();
   return (
     <Flex height={"100vh"} data-testid="stax-completion-view">
       <video autoPlay loop height="100%">

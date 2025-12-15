@@ -38,7 +38,7 @@ export const FirebaseRemoteConfigProvider = ({
   children,
 }: {
   children: React.ReactNode;
-}): JSX.Element | null => {
+}): React.JSX.Element | null => {
   const [config, setConfig] = useState<RemoteConfig | null>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);

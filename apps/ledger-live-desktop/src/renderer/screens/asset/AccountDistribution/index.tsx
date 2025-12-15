@@ -68,7 +68,7 @@ export default function AccountDistribution({ accounts }: Props) {
   return (
     <>
       <Box horizontal alignItems="center">
-        <Text ff="Inter|Medium" fontSize={6} color="palette.text.shade100">
+        <Text ff="Inter|Medium" fontSize={6} color="neutral.c100">
           {t("accountDistribution.header", {
             count: accountDistribution.length,
           })}

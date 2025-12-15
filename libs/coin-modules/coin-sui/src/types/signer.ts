@@ -9,4 +9,5 @@ export type SuiSignature = {
   signature: null | string;
   return_code: number;
 };
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SuiSigner extends Sui {}

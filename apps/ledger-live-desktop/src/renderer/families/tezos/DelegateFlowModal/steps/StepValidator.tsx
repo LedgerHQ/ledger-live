@@ -23,14 +23,14 @@ const Row = styled(Box).attrs(() => ({
   padding: 8px;
   margin-bottom: 8px;
   border-radius: 4px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   justify-content: space-between;
   align-items: center;
   transition: box-shadow 250ms ease-out;
 
   &:hover,
   &:active {
-    background-color: ${p => p.theme.colors.palette.action.active};
+    background-color: ${p => p.theme.colors.opacityDefault.c10};
   }
 
   &:last-child {
@@ -45,7 +45,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
       <Text
         ff="Inter|SemiBold"
         fontSize={3}
-        color="palette.text.shade100"
+        color="neutral.c100"
         style={{
           marginLeft: 8,
         }}
@@ -56,7 +56,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
         <Text
           ff="Inter|SemiBold"
           fontSize={3}
-          color="warning"
+          color="legacyWarning"
           style={{
             marginLeft: 8,
           }}
@@ -71,7 +71,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
       }}
       ff="Inter|SemiBold"
       fontSize={3}
-      color="palette.text.shade100"
+      color="neutral.c100"
     >
       {baker.nominalYield}
     </Text>
@@ -116,16 +116,16 @@ const StepValidator = ({
         currency="xtz"
       />
       <Box>
-        <Text ff="Inter|Regular" color="palette.text.shade80" fontSize={4} textAlign="center">
+        <Text ff="Inter|Regular" color="neutral.c80" fontSize={4} textAlign="center">
           <Trans i18nKey="delegation.flow.steps.validator.description" />
         </Text>
       </Box>
       <Box my={24}>
         <Box mb={3} horizontal justifyContent="space-between">
-          <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade60">
+          <Text ff="Inter|Medium" fontSize={3} color="neutral.c70">
             <Trans i18nKey="delegation.validator" />
           </Text>
-          <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade60">
+          <Text ff="Inter|Medium" fontSize={3} color="neutral.c70">
             <Trans i18nKey="delegation.yield" />
           </Text>
         </Box>
@@ -145,7 +145,7 @@ const StepValidator = ({
       </Box>
       <Box alignItems="center">
         <Button onClick={() => transitionTo("custom")}>
-          <Box horizontal flow={1} alignItems="center" color="palette.primary.main">
+          <Box horizontal flow={1} alignItems="center" color="primary.c80">
             <UserPlusIcon size={24} />
             <Box ml={10}>
               <Text ff="Inter|SemiBold" fontSize={4}>
@@ -155,7 +155,7 @@ const StepValidator = ({
           </Box>
         </Button>
         <Box mt={5}>
-          <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade40">
+          <Text ff="Inter|Medium" fontSize={2} color="neutral.c60">
             <Trans
               i18nKey="delegation.flow.steps.validator.providedBy"
               values={{

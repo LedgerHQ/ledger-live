@@ -54,13 +54,13 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Reado
               flexDirection: "column",
             }}
           >
-            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+            <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
               {formatCurrencyUnit(unit, new BigNumber(validator.activeStake?.toString()), {
                 showCode: true,
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="aptos.stake.totalStake" />
+              <Trans color="neutral.c70" i18nKey="aptos.stake.totalStake" />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -70,7 +70,7 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Reado
       }
       subtitle={
         <Box>
-          <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
+          <Text ff="Inter|Medium" fontSize={2} color="neutral.c70">
             <Trans i18nKey="aptos.stake.commission" />
             <Text
               style={{
@@ -119,7 +119,7 @@ const StyledValidatorRow = styled(ValidatorRow)`
 const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active?: boolean;

@@ -12,14 +12,14 @@ import IconQrCode from "~/renderer/icons/QrCode";
 import BigNumber from "bignumber.js";
 
 const Right = styled(Box).attrs(() => ({
-  bg: "palette.background.default",
+  bg: "background.default",
   px: 3,
   alignItems: "center",
   justifyContent: "center",
 }))`
   border-top-right-radius: ${radii[1]}px;
   border-bottom-right-radius: ${radii[1]}px;
-  border-left: 1px solid ${p => p.theme.colors.palette.divider};
+  border-left: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 const WrapperQrCode = styled(Box)`
   margin-bottom: 10px;
@@ -76,7 +76,8 @@ class RecipientAddress extends PureComponent<Props, State> {
     this.setState(prev => ({
       qrReaderOpened: !prev.qrReaderOpened,
     }));
-    !qrReaderOpened ? track("Send Flow QR Code Opened") : track("Send Flow QR Code Closed");
+    if (!qrReaderOpened) track("Send Flow QR Code Opened");
+    else track("Send Flow QR Code Closed");
   };
 
   handleOnPick = (code: string) => {

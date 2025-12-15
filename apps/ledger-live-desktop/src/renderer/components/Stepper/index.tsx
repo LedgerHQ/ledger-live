@@ -152,4 +152,4 @@ const Stepper = <T, StepProps>({
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default withTranslation()(Stepper) as <T, StepProps>(
   props: OwnProps<T, StepProps>,
-) => JSX.Element; // to preserve the generic types
+) => React.JSX.Element; // to preserve the generic types

@@ -3,8 +3,7 @@ import invariant from "invariant";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
-import { estimateFees } from "../logic/estimateFees";
+import { HEDERA_TRANSACTION_MODES, MAP_STAKING_MODE_TO_OPERATION_TYPE } from "../constants";
 import {
   safeParseAccountId,
   isTokenAssociateTransaction,
@@ -21,18 +20,15 @@ const buildOptimisticTokenAssociateOperation = async ({
 }): Promise<Operation> => {
   invariant(isTokenAssociateTransaction(transaction), "invalid transaction properties");
 
-  const estimatedFee = await estimateFees({
-    currency: account.currency,
-    operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
-  });
+  const fee = transaction.maxFee ?? new BigNumber(0);
   const type: OperationType = "ASSOCIATE_TOKEN";
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
-    value: estimatedFee.tinybars,
-    fee: estimatedFee.tinybars,
+    value: fee,
+    fee,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
@@ -56,13 +52,8 @@ const buildOptimisticCoinOperation = async ({
   transaction: Transaction;
   transactionType?: OperationType;
 }): Promise<Operation> => {
-  const estimatedFee =
-    transactionType === "FEES"
-      ? transaction.amount
-      : await estimateFees({
-          currency: account.currency,
-          operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
-        });
+  const fee =
+    transactionType === "FEES" ? transaction.amount : transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
   const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
@@ -74,7 +65,7 @@ const buildOptimisticCoinOperation = async ({
     hash: "",
     type,
     value,
-    fee: BigNumber.isBigNumber(estimatedFee) ? estimatedFee : estimatedFee.tinybars,
+    fee,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
@@ -98,10 +89,7 @@ const buildOptimisticHTSTokenOperation = async ({
   tokenAccount: TokenAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
-  const estimatedFee = await estimateFees({
-    currency: account.currency,
-    operationType: HEDERA_OPERATION_TYPES.TokenTransfer,
-  });
+  const fee = transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = "OUT";
   const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
@@ -112,7 +100,7 @@ const buildOptimisticHTSTokenOperation = async ({
     account,
     transaction: {
       ...transaction,
-      amount: estimatedFee.tinybars,
+      amount: fee,
     },
     transactionType: "FEES",
   });
@@ -125,7 +113,7 @@ const buildOptimisticHTSTokenOperation = async ({
         hash: "",
         type,
         value,
-        fee: estimatedFee.tinybars,
+        fee,
         blockHash: null,
         blockHeight: null,
         senders: [account.freshAddress.toString()],
@@ -151,21 +139,7 @@ const buildOptimisticERC20TokenOperation = async ({
   tokenAccount: TokenAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
-  const estimatedFees = await estimateFees({
-    operationType: HEDERA_OPERATION_TYPES.ContractCall,
-    txIntent: {
-      intentType: "transaction",
-      type: HEDERA_TRANSACTION_MODES.Send,
-      asset: {
-        type: "erc20",
-        assetReference: tokenAccount.token.contractAddress,
-        assetOwner: account.freshAddress,
-      },
-      amount: BigInt(transaction.amount.toString()),
-      sender: account.freshAddress,
-      recipient: transaction.recipient,
-    },
-  });
+  const fee = transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = "OUT";
   const memo = transaction.memo;
@@ -174,7 +148,7 @@ const buildOptimisticERC20TokenOperation = async ({
     account,
     transaction: {
       ...transaction,
-      amount: estimatedFees.tinybars,
+      amount: fee,
     },
     transactionType: "FEES",
   });
@@ -187,7 +161,7 @@ const buildOptimisticERC20TokenOperation = async ({
         hash: "",
         type,
         value,
-        fee: estimatedFees.tinybars,
+        fee,
         blockHash: null,
         blockHeight: null,
         senders: [account.freshAddress.toString()],
@@ -213,19 +187,16 @@ const buildOptimisticUpdateAccountOperation = async ({
 }): Promise<Operation> => {
   invariant(isStakingTransaction(transaction), "invalid transaction properties");
 
-  const estimatedFee = await estimateFees({
-    operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
-    currency: account.currency,
-  });
+  const fee = transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
-  const type: OperationType = "UPDATE_ACCOUNT";
+  const type: OperationType = MAP_STAKING_MODE_TO_OPERATION_TYPE[transaction.mode];
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
     value,
-    fee: estimatedFee.tinybars,
+    fee,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

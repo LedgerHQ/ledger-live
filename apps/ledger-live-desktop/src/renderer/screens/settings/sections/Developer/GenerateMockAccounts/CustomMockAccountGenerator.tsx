@@ -63,7 +63,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
         </Box>
 
         <Box flex={1}>
-          <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade100" mb={2}>
+          <Text ff="Inter|Medium" fontSize={3} color="neutral.c100" mb={2}>
             {t("settings.developer.mockAccounts.tokenIds.label")}
           </Text>
           <Input

@@ -1,6 +1,6 @@
 import React from "react";
-import { CardButton } from "@ledgerhq/react-ui/pre-ldls/index";
-import { Icons } from "@ledgerhq/react-ui/index";
+import { CardButton } from "@ledgerhq/ldls-ui-react";
+import { Plus } from "@ledgerhq/ldls-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -12,10 +12,11 @@ export const AddAccountButton = ({ onAddAccountClick }: Props) => {
 
   return (
     <CardButton
-      onClick={onAddAccountClick}
       title={t("drawers.selectAccount.addAccount")}
-      iconRight={<Icons.Plus size="S" />}
-      variant="dashed"
+      icon={Plus}
+      hideChevron
+      appearance="outline"
+      onClick={onAddAccountClick}
     />
   );
 };

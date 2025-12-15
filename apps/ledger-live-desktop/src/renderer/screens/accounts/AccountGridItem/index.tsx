@@ -45,7 +45,7 @@ export default function AccountCard({
   );
 }
 const Card = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
+  bg: "background.card",
   p: 3,
   boxShadow: 0,
   borderRadius: 1,
@@ -54,10 +54,10 @@ const Card = styled(Box).attrs(() => ({
   border: 1px solid transparent;
   transition: background-color ease-in-out 200ms;
   :hover {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
   :active {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
-    background: ${p => p.theme.colors.palette.action.hover};
+    border-color: ${p => p.theme.colors.neutral.c40};
+    background: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;

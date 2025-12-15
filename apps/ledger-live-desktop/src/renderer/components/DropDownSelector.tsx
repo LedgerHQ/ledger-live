@@ -14,29 +14,25 @@ export const DropDownItem = styled(Box).attrs<DropDownItemProps>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
   px: 3,
-  color: p.disabled
-    ? "palette.text.shade50"
-    : p.isActive
-      ? "palette.text.shade100"
-      : "palette.text.shade60",
-  bg: p.isActive && !p.disabled ? "palette.background.default" : "",
+  color: p.disabled ? "neutral.c70" : p.isActive ? "neutral.c100" : "neutral.c70",
+  bg: p.isActive && !p.disabled ? "background.default" : "",
 }))<DropDownItemProps>`
   height: 40px;
   white-space: nowrap;
   cursor: pointer;
   width: 100%;
   &:hover {
-    background-color: ${p => !p.disabled && p.theme.colors.palette.background.default};
+    background-color: ${p => !p.disabled && p.theme.colors.background.default};
   }
 `;
 const DropContainer = styled.div`
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
-  border: ${p => `1px solid ${p.theme.colors.palette.divider}`};
+  border: ${p => `1px solid ${p.theme.colors.neutral.c40}`};
   max-height: 400px;
   max-width: 250px;
   ${p => p.theme.overflow.yAuto};
   border-radius: 6px;
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  background-color: ${p => p.theme.colors.background.card};
   padding: 8px;
 
   > * {

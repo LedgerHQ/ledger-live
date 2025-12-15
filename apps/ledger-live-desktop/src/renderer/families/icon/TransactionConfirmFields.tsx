@@ -18,7 +18,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   mt: 6,
   mb: 4,
   px: 5,
@@ -41,7 +41,7 @@ const IconFreesField = ({
     <Box horizontal justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         unit={unit}
         val={fees || 0}
         fontSize={3}

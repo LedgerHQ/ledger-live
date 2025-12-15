@@ -3,6 +3,7 @@ import * as array from "d3-array";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 import { ScaleContinuousNumeric, ScaleTime } from "d3-scale";
 import type { Item, ItemArray } from "./types";
 import Bar from "./Bar";
@@ -86,38 +87,34 @@ export default class BarInteraction extends Component<
     const { width, height, color, children } = this.props;
     const { barVisible, barOffsetX, barOffsetY } = this.state;
 
+    const onGestureBegin = this.onGestureBegin;
+    const onGestureUpdate = this.onGestureUpdate;
+    const onGestureEnd = this.onGestureEnd;
+
     const panGesture = Gesture.Pan()
       .maxPointers(1)
       .activeOffsetX([-10, 10]) // nb of pixel to wait before start point
       .activeOffsetY([-20, 20]) // allow to scroll
-      .onBegin(e => {
-        this.onGestureBegin(e.x);
+      .activateAfterLongPress(250)
+      .onStart(e => {
+        "worklet";
+        runOnJS(onGestureBegin)(e.x);
       })
       .onUpdate(e => {
-        this.onGestureUpdate(e.x);
+        "worklet";
+        runOnJS(onGestureUpdate)(e.x);
       })
       .onEnd(() => {
-        this.onGestureEnd();
+        "worklet";
+        runOnJS(onGestureEnd)();
       })
       .onFinalize(() => {
-        this.onGestureEnd();
+        "worklet";
+        runOnJS(onGestureEnd)();
       });
-
-    const longPressGesture = Gesture.LongPress()
-      .onStart(e => {
-        this.onGestureBegin(e.x);
-      })
-      .onEnd(() => {
-        this.onGestureEnd();
-      })
-      .onFinalize(() => {
-        this.onGestureEnd();
-      });
-
-    const composedGesture = Gesture.Simultaneous(panGesture, longPressGesture);
 
     return (
-      <GestureDetector gesture={composedGesture}>
+      <GestureDetector gesture={panGesture}>
         <View
           style={{
             width,

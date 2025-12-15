@@ -23,7 +23,7 @@ const Dot = styled.div<{
   height: 8px;
 `;
 const Wrapper = styled(Box)`
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
   border-radius: 4px;
   padding: 12px 20px;
   display: flow;
@@ -43,7 +43,7 @@ const getColorsForStatus = (status: string) => {
       }
     : naiveMapping.ok.includes(status)
       ? {
-          textColor: "palette.text.shade100",
+          textColor: "neutral.c100",
           dotColor: colors.positiveGreen,
         }
       : {
@@ -71,7 +71,7 @@ const FullNodeStatus = () => {
         }
       >
         <Wrapper horizontal alignItems="center">
-          <Text mr={2} ff="Inter|Regular" fontSize={3} color={"palette.text.shade50"}>
+          <Text mr={2} ff="Inter|Regular" fontSize={3} color={"neutral.c70"}>
             {statusLabel}
           </Text>
           {progress && formattedProgress ? (

@@ -42,7 +42,7 @@ const colors = {
   transparent: "transparent",
   pearl: "#ff0000",
   alertRed: "#ea2e49",
-  warning: "#f57f17",
+  legacyWarning: "#f57f17", // Renamed to avoid conflict with V3 design system warning palette
   black: "#000000",
   dark: "#142533",
   separator: "#aaaaaa",
@@ -133,7 +133,7 @@ const overflow = {
     overflow-x: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${p => p.theme.colors.palette.text.shade30};
+      --track-color: ${p => p.theme.colors.neutral.c40};
     }
   `,
   y: css`
@@ -141,7 +141,7 @@ const overflow = {
     overflow-y: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${p => p.theme.colors.palette.text.shade30};
+      --track-color: ${p => p.theme.colors.neutral.c40};
     }
   `,
   yAuto: css`
@@ -149,14 +149,14 @@ const overflow = {
     overflow-y: auto;
     will-change: transform;
     &:hover {
-      --track-color: ${p => p.theme.colors.palette.text.shade30};
+      --track-color: ${p => p.theme.colors.neutral.c40};
     }
   `,
   xy: css`
     overflow: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${p => p.theme.colors.palette.text.shade30};
+      --track-color: ${p => p.theme.colors.neutral.c40};
     }
   `,
   trackSize: 12,

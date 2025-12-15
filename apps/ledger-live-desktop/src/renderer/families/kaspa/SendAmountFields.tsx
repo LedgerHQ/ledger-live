@@ -32,7 +32,6 @@ const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
 const Fields: Props = ({
   transaction,
   account,
-  parentAccount,
   status,
   updateTransaction,
   mapStrategies,
@@ -114,7 +113,6 @@ const Fields: Props = ({
           onClick={onFeeStrategyClick}
           transaction={transaction}
           account={account}
-          parentAccount={parentAccount}
           suffixPerByte={true}
           mapStrategies={mapStrategies}
           status={status}

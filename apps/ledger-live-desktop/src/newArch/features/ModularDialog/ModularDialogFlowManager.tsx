@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
-import { AccountSelection } from "./screens/AccountSelection";
+import { AccountSelector } from "./screens/AccountSelector";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 import {
@@ -112,7 +111,7 @@ const ModularDialogFlowManager = ({
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelection asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
         }
         return null;
       default:
@@ -128,16 +127,14 @@ const ModularDialogFlowManager = ({
         onClose={handleClose}
         onBack={handleBack}
       />
-      <div style={{ height: "480px", overflow: "hidden" }}>
-        <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
-          <AnimatedScreenWrapper
-            key={currentStep}
-            screenKey={currentStep}
-            direction={navigationDirection}
-          >
-            {renderStepContent(currentStep)}
-          </AnimatedScreenWrapper>
-        </AnimatePresence>
+      <div className="h-[480px] overflow-hidden">
+        <AnimatedScreenWrapper
+          key={`${currentStep}-${navigationDirection}`}
+          screenKey={currentStep}
+          direction={navigationDirection}
+        >
+          {renderStepContent(currentStep)}
+        </AnimatedScreenWrapper>
       </div>
     </>
   );

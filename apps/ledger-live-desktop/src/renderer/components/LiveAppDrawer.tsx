@@ -37,7 +37,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { useStartExchangeAction } from "../hooks/useConnectAppAction";
 
 const Divider = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 const ContentWrapper = styled.main`

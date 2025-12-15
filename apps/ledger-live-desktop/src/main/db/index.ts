@@ -83,7 +83,7 @@ async function ensureNSLoaded(ns: string) {
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
-  DBPath && init(DBPath);
+  if (DBPath) init(DBPath);
 }
 
 /**

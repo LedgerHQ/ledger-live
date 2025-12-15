@@ -59,11 +59,9 @@ import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";
-import { colors } from "~/renderer/styles/theme";
 import { setDrawer } from "../Provider";
 import AmountDetails from "./AmountDetails";
 import {
-  B,
   GradientHover,
   HashContainer,
   OpDetailsData,
@@ -76,6 +74,7 @@ import {
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 const mapStateToProps = (
   state: State,
@@ -230,7 +229,7 @@ const OperationD = (props: Props) => {
         pathname: url,
       });
     }
-    onClose && onClose();
+    onClose?.();
   }, [mainAccount, history, onClose, location]);
   const goToSubAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}/${account.id}`;
@@ -240,7 +239,7 @@ const OperationD = (props: Props) => {
         pathname: url,
       });
     }
-    onClose && onClose();
+    onClose?.();
   }, [mainAccount, account, history, onClose, location]);
   const currencyName = currency
     ? currency.type === "TokenCurrency"
@@ -319,7 +318,7 @@ const OperationD = (props: Props) => {
         ff="Inter|SemiBold"
         textAlign="center"
         fontSize={4}
-        color="palette.text.shade60"
+        color="neutral.c70"
         mt={0}
         mb={1}
         data-testid="transaction-type"
@@ -345,9 +344,9 @@ const OperationD = (props: Props) => {
                 <FormattedVal
                   color={
                     !isConfirmed && operation.type === "IN"
-                      ? colors.warning
+                      ? "warning.c70"
                       : amount.isNegative()
-                        ? "palette.text.shade80"
+                        ? "neutral.c80"
                         : undefined
                   }
                   unit={unit}
@@ -403,7 +402,7 @@ const OperationD = (props: Props) => {
                 <CounterValue
                   data-testid="operation-amount"
                   alwaysShowSign
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                   fontSize={3}
                   date={date}
                   currency={currency}
@@ -432,11 +431,11 @@ const OperationD = (props: Props) => {
                       />
                     </Box>
                   ) : null}
-                  <FormattedVal unit={feesUnit} showCode val={fee} color="palette.text.shade80" />
+                  <FormattedVal unit={feesUnit} showCode val={fee} color="neutral.c80" />
                 </Box>
                 <Box horizontal justifyContent="flex-end">
                   <CounterValue
-                    color="palette.text.shade60"
+                    color="neutral.c70"
                     date={date}
                     fontSize={3}
                     currency={feesCurrency}
@@ -448,7 +447,7 @@ const OperationD = (props: Props) => {
                     prefix={
                       <Box
                         mr={1}
-                        color="palette.text.shade60"
+                        color="neutral.c70"
                         style={{
                           width: "auto",
                         }}
@@ -482,7 +481,7 @@ const OperationD = (props: Props) => {
             ff="Inter|SemiBold"
             textAlign="center"
             fontSize={4}
-            color="palette.text.shade60"
+            color="neutral.c70"
           >
             <Trans i18nKey={`operation.type.${operation.type}`} />
           </Text>
@@ -509,7 +508,7 @@ const OperationD = (props: Props) => {
           </Box>
         </OpDetailsData>
       </OpDetailsSection>
-      <B />
+      <Divider />
       {subOperations.length > 0 && account.type === "Account" && (
         <>
           <OpDetailsSection>
@@ -548,7 +547,7 @@ const OperationD = (props: Props) => {
                     t={t}
                     withAddress={false}
                   />
-                  {i < subOperations.length - 1 && <B />}
+                  {i < subOperations.length - 1 && <Divider />}
                 </div>
               );
             })}
@@ -576,7 +575,7 @@ const OperationD = (props: Props) => {
                   t={t}
                   withAddress={false}
                 />
-                {i < internalOperations.length - 1 && <B />}
+                {i < internalOperations.length - 1 && <Divider />}
               </div>
             ))}
           </Box>
@@ -630,7 +629,7 @@ const OperationD = (props: Props) => {
         </OpDetailsTitle>
         <OpDetailsData data-testid="operation-date">{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
-      <B />
+      <Divider />
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.identifier")}</OpDetailsTitle>
         <OpDetailsData>
@@ -658,7 +657,7 @@ const OperationD = (props: Props) => {
                   underline
                   fontSize={3}
                   ml={2}
-                  color="palette.text.shade80"
+                  color="neutral.c80"
                   onClick={() => openURL(urls.multipleDestinationAddresses)}
                 >
                   <Box mr={1}>
@@ -675,7 +674,7 @@ const OperationD = (props: Props) => {
       {OpDetailsExtra && (
         <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
-      <B />
+      <Divider />
       {OpDetailsPostAlert && (
         <OpDetailsPostAlert operation={operation} type={type} account={account as Account} />
       )}
@@ -727,7 +726,7 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
 const More = styled(Text).attrs<TextProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",
   fontSize: p.fontSize ? p.fontSize : 2,
-  color: p.color || "palette.text.shade100",
+  color: p.color || "neutral.c100",
   tabIndex: 0,
 }))<TextProps & { textTransform?: boolean }>`
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};

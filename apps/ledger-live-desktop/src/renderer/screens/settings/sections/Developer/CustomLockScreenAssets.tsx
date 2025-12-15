@@ -16,7 +16,7 @@ import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
 
 const CustomLockScreenAssets = () => {
   const history = useHistory();
-  const type: Theme["theme"] = useTheme().colors.palette.type;
+  const type: Theme["theme"] = useTheme().theme;
 
   const onBack = useCallback(() => {
     history.push({ pathname: "/settings/developer" });
@@ -38,13 +38,7 @@ const CustomLockScreenAssets = () => {
         >
           {"Back"}
         </Button>
-        <Text
-          variant="h2Inter"
-          color="palette.text.shade100"
-          margin={"0 auto"}
-          fontSize={24}
-          pr={50}
-        >
+        <Text variant="h2Inter" color="neutral.c100" margin={"0 auto"} fontSize={24} pr={50}>
           {"Custom lockscreen assets"}
         </Text>
       </Flex>

@@ -254,7 +254,7 @@ export const CurrencyRow = memo(function CurrencyRowItem({
 });
 
 const TooltipContainer = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.palette.neutral.c100};
+  background-color: ${({ theme }) => theme.colors.neutral.c100};
   padding: 10px;
   border-radius: 4px;
   display: flex;

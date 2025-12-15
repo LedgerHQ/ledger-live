@@ -122,6 +122,16 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn",
       },
     },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
   ],
   settings: {
     react: {

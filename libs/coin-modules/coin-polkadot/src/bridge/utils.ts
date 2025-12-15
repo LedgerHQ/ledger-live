@@ -7,7 +7,7 @@ export const EXISTENTIAL_DEPOSIT = new BigNumber(10_000_000_000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1_000_000_000); // Polkadot recommended Existential Deposit error margin
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
-// eslint-disable-next-line no-loss-of-precision
+// eslint-disable-next-line @typescript-eslint/no-loss-of-precision, no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const FEES_SAFETY_BUFFER = new BigNumber(1000000000); // Arbitrary buffer for paying fees of next transactions
 

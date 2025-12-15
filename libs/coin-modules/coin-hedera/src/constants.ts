@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { OperationType } from "@ledgerhq/types-live";
 
 /**
  * Internal types to distinguish custom Hedera transaction behaviors.
@@ -11,6 +12,14 @@ export enum HEDERA_TRANSACTION_MODES {
   Undelegate = "undelegate",
   Redelegate = "redelegate",
   ClaimRewards = "claim-rewards",
+}
+
+/**
+ * Enum representing Hedera transaction names used in the Hedera Mirror Node API.
+ */
+export enum HEDERA_TRANSACTION_NAMES {
+  ContractCall = "CONTRACTCALL",
+  UpdateAccount = "CRYPTOUPDATEACCOUNT",
 }
 
 /**
@@ -100,9 +109,22 @@ export const SUPPORTED_ERC20_TOKENS = [
   },
 ];
 
-export const MAP_STAKING_MODE_TO_MEMO = {
+export const MAP_STAKING_MODE_TO_MEMO: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Collect Staking Rewards",
   [HEDERA_TRANSACTION_MODES.Delegate]: "Stake",
   [HEDERA_TRANSACTION_MODES.Undelegate]: "Unstake",
   [HEDERA_TRANSACTION_MODES.Redelegate]: "Restake",
 } as const;
+
+export const MAP_STAKING_MODE_TO_OPERATION_TYPE: Record<string, OperationType> = {
+  [HEDERA_TRANSACTION_MODES.Delegate]: "DELEGATE",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "UNDELEGATE",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "REDELEGATE",
+};
+
+export const MAP_STAKING_MODE_TO_METHOD: Record<string, string> = {
+  [HEDERA_TRANSACTION_MODES.Delegate]: "Delegate",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "Undelegate",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "Redelegate",
+  [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Claim Rewards",
+};

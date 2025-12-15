@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 type ResultScreenProps = {
   Illustration?:
     | React.ComponentType<{ size?: number }>
-    | ((props: { size?: number }) => JSX.Element)
+    | ((props: { size?: number }) => React.JSX.Element)
     | null;
   illustrationSize?: number;
   title?: string | null;

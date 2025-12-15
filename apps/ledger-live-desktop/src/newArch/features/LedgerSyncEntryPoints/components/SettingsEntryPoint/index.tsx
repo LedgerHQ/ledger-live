@@ -33,13 +33,13 @@ export default function SettingsEntryPoint({ onPress }: { onPress: () => void })
           marginRight: "10%",
         }}
       >
-        <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
+        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={14}>
           {t("walletSync.entryPoints.settings.title")}
         </Box>
         <Box
           ff="Inter"
           fontSize={3}
-          color="palette.text.shade60"
+          color="neutral.c70"
           mt={1}
           mr={1}
           style={{
