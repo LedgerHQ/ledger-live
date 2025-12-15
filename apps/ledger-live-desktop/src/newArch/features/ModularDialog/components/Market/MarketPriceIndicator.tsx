@@ -1,6 +1,6 @@
 import React from "react";
 import { cva } from "class-variance-authority";
-import { useMarketPriceIndicator } from "../hooks/useMarketPriceIndicator";
+import { useMarketIndicator } from "./useMarketIndicator";
 
 const percentStyles = cva("body-3", {
   variants: {
@@ -16,7 +16,7 @@ const percentStyles = cva("body-3", {
 });
 
 export const MarketPriceIndicator = ({ percent, price }: { percent: number; price: string }) => {
-  const { variant, percentText } = useMarketPriceIndicator(percent);
+  const { variant, percentText } = useMarketIndicator(percent);
 
   return (
     <div data-testid="market-price-indicator" className="flex flex-col items-end">

@@ -14,7 +14,7 @@ export const formatPercentText = (percent: number): string => {
   return `${percent}%`;
 };
 
-export const useMarketPriceIndicator = (percent: number) => {
+export const useMarketIndicator = (percent: number) => {
   return useMemo(
     () => ({
       variant: getPercentVariant(percent),
