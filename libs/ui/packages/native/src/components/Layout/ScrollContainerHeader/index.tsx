@@ -6,13 +6,12 @@ import Header from "./Header";
 import type { HeaderProps } from "./Header";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-const StyledFlatList = baseStyled(FlatList)<
-  {
-    onScroll: ReturnType<typeof useAnimatedScrollHandler>;
-    scrollEventThrottle: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } & Omit<ScrollContainerHeaderProps<any>, "onScroll" | "data" | "renderItem">
->``;
+type StyledFlatListProps<ItemType> = {
+  onScroll: ReturnType<typeof useAnimatedScrollHandler>;
+  scrollEventThrottle: number;
+} & Omit<ScrollContainerHeaderProps<ItemType>, "onScroll" | "data" | "renderItem">;
+
+const StyledFlatList = baseStyled(FlatList)<StyledFlatListProps<any>>``;
 
 const AnimatedFlatList = Animated.createAnimatedComponent(StyledFlatList);
 
@@ -34,7 +33,7 @@ const ScrollContainerHeader = <ItemType,>({
   onScroll,
   containerProps,
   ...props
-}: ScrollContainerHeaderProps<ItemType>): JSX.Element => {
+}: ScrollContainerHeaderProps<ItemType>): React.ReactElement => {
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler((event) => {
     currentPositionY.value = event.contentOffset.y;

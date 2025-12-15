@@ -101,10 +101,14 @@ const HeaderFilter = styled.div<{
   background-color: transparent;
   border-bottom: 2px solid;
   border-bottom-color: ${props =>
-    props.enabled ? props.theme.logTypes[props.filter] : "rgba(0, 0, 0, 0.5)"};
+    props.enabled
+      ? props.theme.logTypes[props.filter as keyof typeof props.theme.logTypes]
+      : "rgba(0, 0, 0, 0.5)"};
   opacity: ${props => (props.enabled ? 1 : 0.2)};
   color: ${props =>
-    props.enabled ? props.theme.logTypes[props.filter] : props.theme.tabDisabledText};
+    props.enabled
+      ? props.theme.logTypes[props.filter as keyof typeof props.theme.logTypes]
+      : props.theme.tabDisabledText};
   flex: 1;
   height: 40px;
   display: flex;
@@ -193,7 +197,8 @@ const LogRender = styled.pre<{
   flex-direction: row;
   word-break: break-all;
   white-space: pre-line;
-  color: ${props => props.theme.logTypes[props.log.type]};
+  color: ${props =>
+    props.theme.logTypes[(props.log.type as keyof typeof props.theme.logTypes) || ""]};
   padding: 0 10px;
   margin: 0;
 `;
@@ -553,8 +558,8 @@ const App = () => {
                   <div style={{ flex: 1 }}>
                     <Select
                       placeholder="Select a Transport"
-                      value={transportOptions.find(o => o.value === transportMode)}
-                      onChange={o => {
+                      value={transportOptions.find(o => o.value === transportMode) || null}
+                      onChange={(o: (typeof transportOptions)[number] | null) => {
                         if (!o) return;
                         localStorage.setItem(LS_PREF_TRANSPORT, o.value);
                         setTransportMode(o.value);
@@ -604,11 +609,10 @@ const App = () => {
                 <FormContainer>
                   {selectedCommand
                     ? Object.keys(selectedCommand.dependencies || {}).map(key =>
-                        // @ts-ignore
                         dependencies && dependencies[key] ? (
-                          <strong key={key}>'{key}' dependency resolved.</strong>
+                          <strong key={key}>&apos;{key}&apos; dependency resolved.</strong>
                         ) : (
-                          <em key={key}>'{key}' dependency loading...</em>
+                          <em key={key}>&apos;{key}&apos; dependency loading...</em>
                         ),
                       )
                     : null}

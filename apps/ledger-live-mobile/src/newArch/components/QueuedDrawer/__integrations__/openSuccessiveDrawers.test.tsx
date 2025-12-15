@@ -12,65 +12,111 @@ const maybeWaitForRemovalByTestId = async (testId: string) => {
 };
 
 describe("QueuedDrawer", () => {
-  beforeEach(() => {
-    jest.clearAllTimers();
-    jest.clearAllMocks();
-  })
+  afterEach(() => {
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+  });
 
   test("open one drawer, then close it with close button", async () => {
     const { user } = render(<TestPages />);
     // open drawer
     expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
-    jest.advanceTimersToNextTimer();
-    // expect it's visible
-    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // Wait for drawer to appear with timer advancement
+    await waitFor(
+      async () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.getByText("Drawer 1")).toBeVisible();
+      },
+      { timeout: 2000, interval: 50 },
+    );
+
     // press close
     await user.press(screen.getByTestId("modal-close-button"));
-    jest.advanceTimersToNextTimer();
-    // expect it's not visible
-    expect(screen.queryByText("Drawer 1")).toBeNull();
+
+    // Wait for drawer to disappear
+    await waitFor(
+      () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.queryByText("Drawer 1")).toBeNull();
+      },
+      { timeout: 2000 },
+    );
 
     // check the queue is empty and ready to be used again
-    // open first drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
-    jest.advanceTimersToNextTimer();
-    // expect first is visible
-    expect(await screen.findByText("Drawer 1")).toBeVisible();
-  }, 30000);
+
+    await waitFor(
+      async () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.getByText("Drawer 1")).toBeVisible();
+      },
+      { timeout: 2000, interval: 50 },
+    );
+  });
 
   test("open one drawer, queue a second drawer, unqueue it, then close first drawer from outside state (via drawer prop)", async () => {
     const { user } = render(<TestPages />);
     // open drawer
     expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
-    jest.advanceTimersToNextTimer();
-    // expect it's visible
-    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // Wait for drawer 1 to fully appear
+    await waitFor(
+      async () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.getByText("Drawer 1")).toBeVisible();
+      },
+      { timeout: 2000, interval: 50 },
+    );
 
     // queue open second drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
-    jest.advanceTimersToNextTimer();
+
     // expect second not visible
     expect(screen.queryByText("Drawer 2")).toBeNull();
+
     // unqueue second drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
-    jest.advanceTimersToNextTimer();
 
     // close drawer from "cancel request open" button
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer1Button));
-    jest.advanceTimersToNextTimer();
-    // expect it's not visible
-    expect(screen.queryByText("Drawer 1")).toBeNull();
-    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // Wait for drawer to disappear
+    await waitFor(
+      () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.queryByText("Drawer 1")).toBeNull();
+        expect(screen.queryByText("Drawer 2")).toBeNull();
+      },
+      { timeout: 2000 },
+    );
 
     // check the queue is empty and ready to be used again
-    // open first drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
-    jest.advanceTimersToNextTimer();
-    // expect first is visible
-    expect(await screen.findByText("Drawer 1")).toBeVisible();
-  }, 30000);
+
+    await waitFor(
+      async () => {
+        act(() => {
+          jest.advanceTimersByTime(50);
+        });
+        expect(screen.getByText("Drawer 1")).toBeVisible();
+      },
+      { timeout: 2000, interval: 50 },
+    );
+  });
 
   test("open two drawers, then close them consecutively with close button", async () => {
     const { user } = render(<TestPages />);

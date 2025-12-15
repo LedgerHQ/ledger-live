@@ -10,8 +10,10 @@ import { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 export const MIN_MODAL_HEIGHT = 30;
 
+type SafeAreaViewEdges = React.ComponentProps<typeof SafeAreaView>["edges"];
+
 type ScreenContainerProps = {
-  edges?: Array<"top" | "bottom" | "left" | "right">;
+  edges?: SafeAreaViewEdges;
 };
 
 const ScreenContainer = styled(Flex).attrs<ScreenContainerProps>(p => ({
@@ -60,7 +62,9 @@ export default function NavigationModalContainer({
         <Pressable
           style={{ flex: 1 }}
           onPress={() => {
-            navigation.canGoBack() && navigation.goBack();
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            }
           }}
         />
       </Flex>

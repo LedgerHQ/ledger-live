@@ -19,20 +19,24 @@ type Props = {
   optimisticState: State;
 };
 
-const RowContainer = styled(Flex).attrs<{
+type RowContainerProps = {
   disabled?: boolean;
-}>(p => ({
+};
+
+const RowContainer = styled(Flex).attrs<RowContainerProps>(p => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
   paddingVertical: 14,
   height: 64,
   opacity: p.disabled ? 0.2 : 1,
-}))<{ disabled?: boolean }>``;
+}))``;
 
-const LabelContainer = styled(Flex).attrs<{
+type LabelContainerProps = {
   paddingHorizontal?: number;
-}>({
+};
+
+const LabelContainer = styled(Flex).attrs<LabelContainerProps>({
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: "50%",
