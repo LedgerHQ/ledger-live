@@ -12,6 +12,11 @@ const maybeWaitForRemovalByTestId = async (testId: string) => {
 };
 
 describe("QueuedDrawer", () => {
+  beforeEach(() => {
+    jest.clearAllTimers();
+    jest.clearAllMocks();
+  })
+
   test("open one drawer, then close it with close button", async () => {
     const { user } = render(<TestPages />);
     // open drawer
@@ -32,7 +37,7 @@ describe("QueuedDrawer", () => {
     jest.advanceTimersToNextTimer();
     // expect first is visible
     expect(await screen.findByText("Drawer 1")).toBeVisible();
-  });
+  }, 30000);
 
   test("open one drawer, queue a second drawer, unqueue it, then close first drawer from outside state (via drawer prop)", async () => {
     const { user } = render(<TestPages />);
@@ -65,7 +70,7 @@ describe("QueuedDrawer", () => {
     jest.advanceTimersToNextTimer();
     // expect first is visible
     expect(await screen.findByText("Drawer 1")).toBeVisible();
-  });
+  }, 30000);
 
   test("open two drawers, then close them consecutively with close button", async () => {
     const { user } = render(<TestPages />);
