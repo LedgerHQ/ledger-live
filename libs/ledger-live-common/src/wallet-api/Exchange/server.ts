@@ -467,6 +467,17 @@ export const handlers = ({
           throw wrappedError;
         }
 
+        tracking.swapPayloadRequested({
+          provider,
+          transactionId,
+          fromAccountAddress,
+          toAccountAddress,
+          fromCurrencyId: fromCurrency!.id,
+          toCurrencyId: toCurrency?.id,
+          fromAmount,
+          quoteId,
+        });
+
         const {
           binaryPayload,
           signature,
@@ -492,6 +503,15 @@ export const handlers = ({
           });
 
           throw wrappedError;
+        });
+
+        tracking.swapResponseRetrieved({
+          binaryPayload,
+          signature,
+          payinAddress,
+          swapId,
+          payinExtraId,
+          extraTransactionParameters,
         });
 
         // Complete Swap
