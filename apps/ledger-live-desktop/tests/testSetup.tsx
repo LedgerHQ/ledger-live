@@ -28,7 +28,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
-import { DialogProvider } from "LLD/components/Dialog";
 
 config.disabled = true;
 
@@ -127,11 +126,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): React.J
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
-        <DialogProvider>
-          <StyleProvider selectedPalette="dark">
-            <ContextMenuWrapper>{children}</ContextMenuWrapper>
-          </StyleProvider>
-        </DialogProvider>
+        <StyleProvider selectedPalette="dark">
+          <ContextMenuWrapper>{children}</ContextMenuWrapper>
+        </StyleProvider>
       </DrawerProvider>
     </I18nextProvider>
   );
@@ -222,7 +219,6 @@ function renderHook<Result, Props>(
     initialState?: DeepPartial<State>;
     store?: ReduxStore;
   } = {},
-  minimalProviders = true,
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
     initialProps,
@@ -235,7 +231,7 @@ function renderHook<Result, Props>(
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal={minimalProviders}>
+        <Providers store={store} minimal>
           {children}
         </Providers>
       ),

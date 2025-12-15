@@ -65,6 +65,7 @@ import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersio
 import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
+import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -310,6 +311,7 @@ export default function Default() {
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}
                     />
                   ) : null}
+                  <ModularDialogRoot />
                   <Switch>
                     <Route
                       path="/onboarding"

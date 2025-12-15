@@ -7,12 +7,7 @@ import {
   ethereumCurrency,
   scrollCurrency,
 } from "../../__mocks__/useSelectAssetFlow.mock";
-import {
-  currencies,
-  mockDomMeasurements,
-  mockOnAssetSelected,
-  DialogTestWrapper,
-} from "../../__tests__/shared";
+import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
@@ -35,26 +30,30 @@ const mixedCurrencies = [
   ethereumCurrency,
 ];
 const mixedCurrenciesIds = mixedCurrencies.map(currency => currency.id);
+
+const waitForSkeletonToBeRemoved = async () => {
+  // Wait for the asset list to be rendered (skeletons are replaced with actual content)
+  await waitFor(() => {
+    expect(screen.getByTestId("asset-selector-list-container")).toBeInTheDocument();
+  });
+};
+
 describe("ModularDialogFlowManager - Select Network Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   it("should render AssetSelection step with correct props", async () => {
     render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mockCurrencies}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
     expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
 
-    // Wait for the asset list to be rendered (skeletons are replaced with actual content)
-    await waitFor(() => {
-      expect(screen.getByTestId("asset-selector-list-container")).toBeInTheDocument();
-    });
+    await waitForSkeletonToBeRemoved();
 
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
@@ -62,15 +61,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected when an asset is selected", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mockCurrencies}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const bitcoinAsset = screen.getByText(/bitcoin/i);
     await user.click(bitcoinAsset);
 
@@ -79,15 +78,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mockCurrencies}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -99,15 +98,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected after network selection", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mockCurrencies}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -120,15 +119,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   // This test is to ensure that we display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies it refers to the setAssetsToDisplay in the useMemo done inside ModularDialogFlowManager.tsx
   it("should display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mixedCurrenciesIds}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mixedCurrenciesIds}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
 
@@ -146,15 +145,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should handle the search in the assetsSelection screen when I have no provider currencies but only provided currencies", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mixedCurrenciesIds}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mixedCurrenciesIds}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
 
@@ -179,15 +178,15 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should display the empty state when there are no assets", async () => {
     const { user } = render(
-      <DialogTestWrapper>
-        <ModularDialogFlowManager
-          currencies={mockCurrencies}
-          onAssetSelected={mockOnAssetSelected}
-        />
-      </DialogTestWrapper>,
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      { initialState: { modularDrawer: { isOpen: true } } },
     );
 
-    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const input = screen.getByRole("textbox");
     await user.type(input, "whatCurrencyAmI");
 
