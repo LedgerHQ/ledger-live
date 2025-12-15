@@ -8,15 +8,21 @@ import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
+import { setUpTests } from "react-native-reanimated";
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
 
-beforeAll(() =>
+
+beforeAll(() => {
   server.listen({
     onUnhandledRequest: "bypass",
   }),
-);
+
+  // Call the react-native-reanimated setupTests function
+  setUpTests();
+});
+
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
