@@ -46,6 +46,7 @@ export interface HederaMirrorAccount {
   max_automatic_token_associations: number;
   staked_node_id: number | null;
   pending_reward: number;
+  evm_address: string;
   balance: {
     balance: number;
     timestamp: string;
