@@ -5,13 +5,13 @@ import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawe
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
-import { accountsCount } from "../../../../components/AccountCount";
-import { accountsCountAndApy } from "../../../../components/AccountCountApy";
 import { balanceItem } from "../../../../components/Balance";
 import { useAccountData } from "../../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { NetworkVirtualList } from "../NetworkVirtualList";
-import { accountsApy } from "../../../../components/AccountApy";
+import { accountsApy } from "../../../../components/Account/AccountApy";
+import { accountsCount } from "../../../../components/Account/AccountCount";
+import { accountsCountAndApy } from "../../../../components/Account/AccountCountApy";
 
 type NetworkSelectorContentProps = {
   networks?: CryptoOrTokenCurrency[];
