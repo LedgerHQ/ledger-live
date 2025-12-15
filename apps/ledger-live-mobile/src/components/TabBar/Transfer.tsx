@@ -49,7 +49,7 @@ const hitSlop = {
 export default () => null;
 
 const AnimatedDrawerContainer = Animated.createAnimatedComponent(
-  styled(Flex).attrs(p => ({
+  styled(Flex).attrs<BaseStyledProps>(p => ({
     position: "absolute",
     alignSelf: "flex-end",
     justifyContent: "flex-end",
