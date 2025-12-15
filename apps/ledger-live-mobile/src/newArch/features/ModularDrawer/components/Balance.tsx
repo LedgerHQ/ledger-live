@@ -13,7 +13,7 @@ const BalanceContainer = styled.View`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4;
+  gap: 4px;
 `;
 
 // Local component for fiat value display without styling

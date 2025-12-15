@@ -34,5 +34,5 @@ export const StoryProgressView = Styled(View)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 8;
+  gap: 8px;
 `;

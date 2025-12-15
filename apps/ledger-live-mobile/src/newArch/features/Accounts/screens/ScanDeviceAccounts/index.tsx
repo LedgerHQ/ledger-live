@@ -35,7 +35,7 @@ const StyledPressable = styled(Pressable)`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  column-gap: 12;
+  column-gap: 12px;
 `;
 
 function ScanDeviceAccounts() {

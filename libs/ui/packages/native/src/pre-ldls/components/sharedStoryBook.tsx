@@ -6,7 +6,7 @@ import { Tag } from "./Tag/Tag";
 export const BalanceContainer = styled.View`
   flex-direction: column;
   align-items: flex-end;
-  gap: 4;
+  gap: 4px;
 `;
 
 export const leftElement = <Tag>{"1.34% APY"}</Tag>;
