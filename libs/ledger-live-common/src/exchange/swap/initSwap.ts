@@ -77,7 +77,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
-          EquipmentId: getEnv("USER_ID"),
+          EquipmentId: input.userId ?? "",
 
           ...(getSwapUserIP() !== undefined ? getSwapUserIP() : {}),
         };

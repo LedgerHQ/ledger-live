@@ -773,10 +773,10 @@ const envDefinitions = {
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },
-  USER_ID: {
+  FIRMWARE_SALT: {
     def: "",
     parser: stringParser,
-    desc: "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
+    desc: "firmware distribution salt derived from userId. used for firmware update incremental deployment.",
   },
   WALLETCONNECT: {
     def: false,

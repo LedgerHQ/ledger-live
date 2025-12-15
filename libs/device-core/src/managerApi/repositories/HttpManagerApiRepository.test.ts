@@ -8,20 +8,13 @@ import {
 } from "../entities/LanguagePackageEntity";
 import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
 
-jest.mock("../use-cases/getUserHashes", () => ({
-  ...jest.requireActual("../use-cases/getUserHashes"),
-  getUserHashes: jest.fn(),
-}));
-
 jest.mock("@ledgerhq/live-network/network", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
 
-import { getUserHashes } from "../use-cases/getUserHashes";
 import network from "@ledgerhq/live-network/network";
 
-const mockedGetUserHashes = jest.mocked(getUserHashes);
 const mockedNetwork = jest.mocked(network);
 
 describe("HttpManagerApiRepository", () => {
@@ -38,14 +31,11 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should call network() with the correct parameters", async () => {
-    mockedGetUserHashes.mockReturnValue({
-      firmwareSalt: "mockedFirmwareSalt",
-    });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
       device_version: 123,
       providerId: 12,
-      userId: "userId",
+      firmwareSalt: "mockedFirmwareSalt",
     };
 
     await httpManagerApiRepository.fetchLatestFirmware(params).catch(() => {
@@ -65,14 +55,11 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should return null if data.result is null", async () => {
-    mockedGetUserHashes.mockReturnValue({
-      firmwareSalt: "mockedFirmwareSalt",
-    });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
       device_version: 123,
       providerId: 12,
-      userId: "userId",
+      firmwareSalt: "mockedFirmwareSalt",
     };
     mockedNetwork.mockResolvedValue({
       data: {
@@ -86,14 +73,11 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should return data.se_firmware_osu_version", async () => {
-    mockedGetUserHashes.mockReturnValue({
-      firmwareSalt: "mockedFirmwareSalt",
-    });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
       device_version: 123,
       providerId: 12,
-      userId: "userId",
+      firmwareSalt: "mockedFirmwareSalt",
     };
     mockedNetwork.mockResolvedValue({
       data: {

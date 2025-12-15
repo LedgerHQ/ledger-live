@@ -1,7 +1,6 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
-import { getUserHashes } from "../use-cases/getUserHashes";
 import URL from "url";
 import { ManagerApiRepository } from "./ManagerApiRepository";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
@@ -30,10 +29,9 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   // properly the return type of `makeLRUCache` without using `any` for the
   // parameters.
   readonly fetchLatestFirmware: ManagerApiRepository["fetchLatestFirmware"] = makeLRUCache(
-    async ({ current_se_firmware_final_version, device_version, providerId, userId }) => {
-      const salt = getUserHashes(userId).firmwareSalt;
+    async ({ current_se_firmware_final_version, device_version, providerId, firmwareSalt }) => {
       tracer.trace("Fetch latest firmware", {
-        salt,
+        salt: firmwareSalt,
       });
       const {
         data,
@@ -48,7 +46,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
           pathname: `${this.managerApiBase}/get_latest_firmware`,
           query: {
             livecommonversion: this.liveCommonVersion,
-            salt,
+            salt: firmwareSalt,
             current_se_firmware_final_version,
             device_version,
             provider: providerId,

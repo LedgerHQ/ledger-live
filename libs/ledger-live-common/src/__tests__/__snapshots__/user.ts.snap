@@ -2,7 +2,7 @@
 
 exports[`stable user 1`] = `
 {
-  "endpointOverrides100": 20,
-  "firmwareSalt": "544d89",
+  "endpointOverrides100": 65,
+  "firmwareSalt": "94738b",
 }
 `;

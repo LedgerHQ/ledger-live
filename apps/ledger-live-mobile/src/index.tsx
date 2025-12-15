@@ -16,6 +16,7 @@ import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { datadogIdSelector } from "@ledgerhq/client-ids/store";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
@@ -96,7 +97,6 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
@@ -206,26 +206,21 @@ function App() {
     }
   }, [dispatch]);
 
+  const datadogId = useSelector(datadogIdSelector);
+
   useEffect(() => {
     if (!datadogFF?.enabled) return;
-    const setUserEquipmentId = async () => {
-      const { user } = await getOrCreateUser();
-      if (!user) return;
-      const { datadogId } = user;
-      DdSdkReactNative.setUserInfo({
-        id: datadogId,
-      });
-    };
-    initializeDatadogProvider(
+    DdSdkReactNative.setUserInfo({
+      id: datadogId.exportDatadogIdForAnalytics(),
+    });
+    void initializeDatadogProvider(
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       datadogFF?.params as PartialInitializationConfiguration,
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
-    )
-      .then(setUserEquipmentId)
-      .catch(e => {
-        console.error("Datadog initialization failed", e);
-      });
-  }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
+    ).catch(e => {
+      console.error("Datadog initialization failed", e);
+    });
+  }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled, datadogId]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 

@@ -17,7 +17,6 @@ import {
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
-  getIdentities,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -35,7 +34,9 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { initIdentities } from "~/helpers/identities";
+import { syncUserIdEnv, subscribeToUserIdChanges } from "~/helpers/syncUserIdEnv";
+import { setShouldResetSegment } from "~/analytics/segment";
 
 interface Props {
   onInitFinished: () => void;
@@ -84,7 +85,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         initialCountervalues,
         largeMoverState,
         cryptoAssetsCache,
-        persistedIdentities,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -97,7 +97,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
-        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -154,10 +153,18 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importLargeMoverState(largeMoverState));
       }
 
-      // Load persisted identities
-      if (persistedIdentities) {
-        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+      // Initialize identities (from persisted data, legacy migration, or from scratch)
+      const created = await initIdentities(store);
+
+      // If a new user was created, set flag to reset Segment when it starts
+      // This must be done before Segment is initialized (which happens in SegmentSetup)
+      if (created) {
+        setShouldResetSegment(true);
       }
+
+      // Sync FIRMWARE_SALT env var from store
+      syncUserIdEnv(store);
+      subscribeToUserIdChanges(store);
 
       setInitialCountervalues(initialCountervalues);
       setReady(true);

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route } from "react-router-dom";
-import user from "~/helpers/user";
+import { useSelector } from "LLD/hooks/redux";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -35,18 +36,14 @@ import CustomLockScreenTester from "./CustomLockScreenTester";
 
 const Default = () => {
   const { t } = useTranslation();
-  const [segmentId, setSegmentID] = useState("loading...");
-
-  useEffect(() => {
-    user().then(u => {
-      setSegmentID(u.id);
-    });
-  }, []);
-
+  const userId = useSelector(userIdSelector);
   return (
     <Body>
-      <Row title={t("settings.developer.userId")} desc={segmentId} dataTestId="developer-user-id" />
-
+      <Row
+        title={t("settings.developer.userId")}
+        desc={userId.exportUserIdForDebugDisplay()}
+        dataTestId="developer-user-id"
+      />
       <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
         <AllowDebugAppsToggle />
       </Row>

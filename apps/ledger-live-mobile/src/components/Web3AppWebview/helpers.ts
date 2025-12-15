@@ -31,7 +31,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
 import { track } from "../../analytics";
-import getOrCreateUser from "../../user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
@@ -586,19 +586,8 @@ const wallet = {
 };
 
 function useGetUserId() {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    getOrCreateUser().then(({ user }) => {
-      if (mounted) setUserId(user.id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 }
 
 export function useSelectAccount({

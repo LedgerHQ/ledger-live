@@ -7,11 +7,12 @@ import { DeviceInfoEntity, HttpManagerApiRepository } from "@ledgerhq/device-cor
 export function useLatestFirmware(
   deviceInfo?: DeviceInfoEntity | null,
   managerApiRepository: HttpManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
+  firmwareSalt?: string,
 ) {
   return useGetLatestFirmware({
     deviceInfo,
     providerId: getProviderId(deviceInfo),
-    userId: getEnv("USER_ID"),
+    firmwareSalt: firmwareSalt ?? getEnv("FIRMWARE_SALT") ?? "",
     managerApiRepository,
   });
 }

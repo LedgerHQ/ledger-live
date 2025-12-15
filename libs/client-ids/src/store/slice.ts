@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DeviceId } from "../ids";
+import { DeviceId, UserId, DatadogId } from "../ids";
 import { initialIdentitiesState } from "./types";
 import { PersistedIdentities } from "./persistence";
+import { v4 as uuid } from "uuid";
 
 /**
  * Redux slice for identities management
- * Only manages DeviceIds - UserId and DatadogId are managed by apps
  */
 export const identitiesSlice = createSlice({
   name: "identities",
@@ -15,9 +15,36 @@ export const identitiesSlice = createSlice({
      * Initialize identities from persisted data
      */
     initFromPersisted: (state, action: PayloadAction<PersistedIdentities>) => {
+      if (action.payload.userId) {
+        state.userId = UserId.fromString(action.payload.userId);
+      }
+      if (action.payload.datadogId) {
+        state.datadogId = DatadogId.fromString(action.payload.datadogId);
+      }
       state.deviceIds = action.payload.deviceIds.map(DeviceId.fromString);
       state.pushDevicesSyncState = action.payload.pushDevicesSyncState;
       state.pushDevicesServiceUrl = action.payload.pushDevicesServiceUrl ?? null;
+    },
+
+    /**
+     * Import from legacy system (localStorage/user storage)
+     */
+    importFromLegacy: (state, action: PayloadAction<{ userId: string; datadogId?: string }>) => {
+      state.userId = UserId.fromString(action.payload.userId);
+      if (action.payload.datadogId) {
+        state.datadogId = DatadogId.fromString(action.payload.datadogId);
+      } else {
+        // Generate datadogId if not provided in legacy data
+        state.datadogId = DatadogId.fromString(uuid());
+      }
+    },
+
+    /**
+     * Initialize from scratch (generate new userId and datadogId)
+     */
+    initFromScratch: state => {
+      state.userId = UserId.fromString(uuid());
+      state.datadogId = DatadogId.fromString(uuid());
     },
 
     /**

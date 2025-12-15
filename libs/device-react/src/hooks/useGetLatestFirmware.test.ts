@@ -28,7 +28,7 @@ describe("useGetLatestFirmware", () => {
     const mockedOptions: UseGetLatestFirmwareForDeviceOptions = {
       deviceInfo: { mcuVersion: "0.1.0" } as DeviceInfoEntity,
       providerId: 1,
-      userId: "userId",
+      firmwareSalt: "firmwareSalt",
       managerApiRepository: new HttpManagerApiRepository("shiba inu", "Akita inu"),
     };
     const { result } = renderHook(() => useGetLatestFirmware(mockedOptions));

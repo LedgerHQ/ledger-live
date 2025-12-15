@@ -286,6 +286,7 @@ export type InitSwapInput = {
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
+  userId?: string;
 };
 
 export type InitSwapInputRaw = {

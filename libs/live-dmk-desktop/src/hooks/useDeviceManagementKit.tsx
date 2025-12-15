@@ -5,7 +5,7 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
-import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
@@ -16,8 +16,7 @@ let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
-    const userId = getEnv("USER_ID");
-    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
+    const firmwareDistributionSalt = getEnv("FIRMWARE_SALT");
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
     });

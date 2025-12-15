@@ -17,7 +17,7 @@ import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import user from "~/helpers/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -350,10 +350,7 @@ function getAnalytics(): AnalyticsBrowser | null {
   return analyticsInstance;
 }
 export const startAnalytics = async (store: ReduxStore) => {
-  if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
-  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
-  // and hence canBeTracked will always be set to true...
-  const { id } = await user();
+  if (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN"))) return;
   storeInstance = store;
 
   const canBeTracked = trackingEnabledSelector(store.getState());
@@ -365,13 +362,15 @@ export const startAnalytics = async (store: ReduxStore) => {
   const analytics = getAnalytics();
   if (!analytics) return;
 
+  const userId = userIdSelector(store.getState());
+
   const allProperties = {
     ...extraProperties(store),
-    userId: id,
-    braze_external_id: id, // Needed for braze with this exact name
+    userId: userId.exportUserIdForSegment(),
+    braze_external_id: userId.exportUserIdForBraze(), // Needed for braze with this exact name
   };
-  logger.analyticsStart(id, allProperties);
-  analytics.identify(id, allProperties, {
+  logger.analyticsStart(userId.exportUserIdForSegment(), allProperties);
+  analytics.identify(userId.exportUserIdForSegment(), allProperties, {
     context: getContext(),
   });
 };
@@ -418,19 +417,30 @@ export const updateIdentify = async () => {
   if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
   if (!analytics) return;
-  const { id } = await user();
+  const userId = userIdSelector(storeInstance.getState());
 
   const allProperties = {
     ...extraProperties(storeInstance),
-    userId: id,
-    braze_external_id: id, // Needed for braze with this exact name
+    userId: userId.exportUserIdForSegment(),
+    braze_external_id: userId.exportUserIdForBraze(), // Needed for braze with this exact name
   };
-  analytics.identify(id, allProperties, {
+  analytics.identify(userId.exportUserIdForSegment(), allProperties, {
     context: getContext(),
   });
 };
 /** Ensure PTX flag attributes are set as soon as feature flags load */
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
+
+/**
+ * Reset Segment analytics to clear user data
+ * Should be called when a new user is created to avoid mixing analytics data
+ */
+export const resetSegment = () => {
+  const analytics = getAnalytics();
+  if (analytics && typeof analytics.reset === "function") {
+    analytics.reset();
+  }
+};
 
 export const track = (
   eventName: string,

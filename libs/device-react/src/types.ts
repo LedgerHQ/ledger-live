@@ -3,6 +3,6 @@ import { DeviceInfoEntity, HttpManagerApiRepository } from "@ledgerhq/device-cor
 export type UseGetLatestFirmwareForDeviceOptions = {
   deviceInfo?: DeviceInfoEntity | null;
   providerId: number;
-  userId: string;
+  firmwareSalt: string;
   managerApiRepository: HttpManagerApiRepository;
 };

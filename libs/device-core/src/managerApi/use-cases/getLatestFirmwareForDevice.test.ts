@@ -30,7 +30,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 
@@ -63,7 +63,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 
@@ -92,7 +92,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 
@@ -127,7 +127,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 
@@ -156,7 +156,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 
@@ -183,7 +183,7 @@ describe("getLatestFirmwareForDevice", () => {
     const params = {
       deviceInfo,
       providerId: 42,
-      userId: "",
+      firmwareSalt: "",
       managerApiRepository: mockedManagerApiRepository,
     };
 

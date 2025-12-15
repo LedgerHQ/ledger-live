@@ -6,7 +6,7 @@ import { UseGetLatestFirmwareForDeviceOptions } from "../types";
 export function useGetLatestFirmware({
   deviceInfo,
   providerId,
-  userId,
+  firmwareSalt,
   managerApiRepository,
 }: UseGetLatestFirmwareForDeviceOptions): FirmwareUpdateContextEntity | null {
   const [firmware, setFirmware] = useState<FirmwareUpdateContextEntity | null>(null);
@@ -16,7 +16,7 @@ export function useGetLatestFirmware({
       getLatestFirmwareForDevice({
         deviceInfo,
         providerId,
-        userId,
+        firmwareSalt,
         managerApiRepository,
       }).then((latestFirmware: FirmwareUpdateContextEntity | null) => {
         if (unmounted) {
@@ -28,6 +28,6 @@ export function useGetLatestFirmware({
     return () => {
       unmounted = true;
     };
-  }, [deviceInfo, managerApiRepository, providerId, setFirmware, userId]);
+  }, [deviceInfo, managerApiRepository, providerId, setFirmware, firmwareSalt]);
   return firmware;
 }

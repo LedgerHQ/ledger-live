@@ -1,10 +1,11 @@
 import { Middleware } from "@reduxjs/toolkit";
-import { IdentitiesState } from "./types";
+import { IdentitiesState, isDummyUserId } from "./types";
 import { identitiesSlice } from "./slice";
 import { pushDevicesApi, createPushDevicesRequest } from "../api/api";
 import { getEnv } from "@ledgerhq/live-env";
 import * as rateLimitState from "./rateLimitState";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Dispatch = (action: any) => any;
 
 const RATE_LIMIT_MS = 5 * 60 * 1000; // 5 minutes
@@ -31,12 +32,6 @@ export interface SyncMiddlewareConfig<State = unknown> {
   getIdentitiesState: (state: State) => IdentitiesState;
 
   /**
-   * Function to get user ID (equipment_id) asynchronously
-   * This is managed by apps, not by the identities store
-   */
-  getUserId: (state: State) => Promise<string>;
-
-  /**
    * Selector to get analytics consent from the global state
    * This avoids duplicating analytics consent in the identities state
    */
@@ -45,7 +40,6 @@ export interface SyncMiddlewareConfig<State = unknown> {
 
 /**
  * Check if identities state needs to be synced
- * Note: userId check is done in attemptSync since getUserId is async
  */
 function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): boolean {
   // Bypass sync if PUSH_DEVICES_SERVICE_URL is not configured
@@ -66,6 +60,10 @@ function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): b
     return false;
   }
 
+  if (isDummyUserId(identitiesState.userId)) {
+    return false;
+  }
+
   if (identitiesState.deviceIds.length === 0) {
     return false;
   }
@@ -81,18 +79,22 @@ function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): b
 /**
  * Attempt to sync devices to the backend
  * RTK Query handles retries automatically via baseQuery retry configuration
+ * @internal - Exported for testing purposes only
  */
-async function attemptSync<State>(
+export async function attemptSync<State>(
   state: State,
   config: SyncMiddlewareConfig<State>,
   dispatch: Dispatch,
 ): Promise<void> {
   const identitiesState = config.getIdentitiesState(state);
-  const userId = await config.getUserId(state);
   const analyticsConsent = config.getAnalyticsConsent(state);
 
-  // Skip sync if no userId, no consent, or no device IDs
-  if (!userId || !analyticsConsent || identitiesState.deviceIds.length === 0) {
+  // Skip sync if userId is dummy, no consent, or no device IDs
+  if (
+    isDummyUserId(identitiesState.userId) ||
+    !analyticsConsent ||
+    identitiesState.deviceIds.length === 0
+  ) {
     return;
   }
 
@@ -102,6 +104,7 @@ async function attemptSync<State>(
     return;
   }
 
+  const userId = identitiesState.userId.exportUserIdForPushDevicesService();
   const request = createPushDevicesRequest(userId, identitiesState.deviceIds);
   const result = await dispatch(pushDevicesApi.endpoints.pushDevices.initiate(request));
 

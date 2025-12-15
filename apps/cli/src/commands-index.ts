@@ -55,7 +55,6 @@ import ledgerSync from "./commands/live/ledgerSync";
 import liveData from "./commands/live/liveData";
 import portfolio from "./commands/live/portfolio";
 import synchronousOnboarding from "./commands/live/synchronousOnboarding";
-import user from "./commands/live/user";
 import version from "./commands/live/version";
 import swap from "./commands/ptx/swap";
 
@@ -117,7 +116,6 @@ export default {
   liveData,
   portfolio,
   synchronousOnboarding,
-  user,
   version,
   swap,
 };

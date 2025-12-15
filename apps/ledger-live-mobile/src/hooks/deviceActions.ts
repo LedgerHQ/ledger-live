@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useSelector } from "~/context/hooks";
 import { createAction as appCreateAction } from "@ledgerhq/live-common/hw/actions/app";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as rawTransactionCreateAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
@@ -37,6 +38,10 @@ import {
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { userIdSelector, isDummyUserId } from "@ledgerhq/client-ids/store";
+import type { InitSwapInput } from "@ledgerhq/live-common/exchange/swap/types";
+import { Observable } from "rxjs";
+import type { SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
 
 export function useAppDeviceAction() {
   const envMock = useEnv("MOCK");
@@ -77,12 +82,23 @@ export function useRawTransactionDeviceAction() {
 export function useInitSwapDeviceAction() {
   const mock = useEnv("MOCK");
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const userId = useSelector(userIdSelector);
+  const userIdString = !isDummyUserId(userId) ? userId.exportUserIdForSwap() : undefined;
+
+  const initSwapWithUserId = useMemo(
+    () =>
+      (input: InitSwapInput): Observable<SwapRequestEvent> => {
+        return initSwap({ ...input, userId: userIdString });
+      },
+    [userIdString],
+  );
+
   return useMemo(
     () =>
       mock
         ? initSwapCreateAction(connectAppExecMock, initSwapExecMock)
-        : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwap),
-    [isLdmkConnectAppEnabled, mock],
+        : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwapWithUserId),
+    [isLdmkConnectAppEnabled, mock, initSwapWithUserId],
   );
 }
 

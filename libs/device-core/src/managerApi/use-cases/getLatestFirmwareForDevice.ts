@@ -6,14 +6,14 @@ import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
-  userId: string;
+  firmwareSalt: string;
   managerApiRepository: ManagerApiRepository;
 };
 
 export async function getLatestFirmwareForDevice({
   deviceInfo,
   providerId,
-  userId,
+  firmwareSalt,
   managerApiRepository,
 }: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
   const mcusPromise = managerApiRepository.fetchMcus();
@@ -42,7 +42,7 @@ export async function getLatestFirmwareForDevice({
     osu = await managerApiRepository.fetchLatestFirmware({
       current_se_firmware_final_version: seFirmwareVersion.id,
       device_version: deviceVersion.id,
-      userId,
+      firmwareSalt,
       providerId,
     });
   }

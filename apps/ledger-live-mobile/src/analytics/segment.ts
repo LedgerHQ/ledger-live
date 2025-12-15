@@ -16,7 +16,7 @@ import {
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import {
   getStablecoinYieldSetting,
@@ -26,7 +26,6 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -77,6 +76,7 @@ type MaybeAppStore = Maybe<AppStore>;
 let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let segmentClient: SegmentClient | undefined;
 let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
+let shouldResetSegment = false; // Flag to indicate if Segment should be reset when starting
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
@@ -181,15 +181,15 @@ const getMEVAttributes = (state: State) => {
 
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
-  const { user } = await getOrCreateUser();
+  const userId = userIdSelector(state);
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
 
   return {
-    userId: user?.id,
-    braze_external_id: user?.id, // Needed for braze with this exact name
+    userId: userId.exportUserIdForSegment(),
+    braze_external_id: userId.exportUserIdForBraze(), // Needed for braze with this exact name
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
@@ -409,14 +409,15 @@ const extraProperties = async (store: AppStore) => {
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
-  const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
   const initialUrl = await Linking.getInitialURL();
   const isDeeplinkSession = !!initialUrl;
 
-  if (created && ANALYTICS_LOGS) {
-    console.log("analytics:identify", user.id);
+  const state = store.getState();
+  const userId = userIdSelector(state);
+  if (ANALYTICS_LOGS) {
+    console.log("analytics:identify", userId.exportUserIdForSegment());
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
@@ -428,13 +429,19 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     // This allows us to not retrieve users ip addresses for privacy reasons
     segmentClient.add({ plugin: new AnonymousIpPlugin() });
     // This allows us to make sure we are adding the userId to the event
-    segmentClient.add({ plugin: new UserIdPlugin() });
+    const userIdPlugin = new UserIdPlugin();
+    userIdPlugin.setStore(store);
+    segmentClient.add({ plugin: userIdPlugin });
     // This allows us to debounce identify events for Braze and save data points
     segmentClient.add({ plugin: new BrazePlugin() });
 
-    if (created) {
-      segmentClient.reset();
+    // If a new user was created, reset Segment to avoid mixing analytics data
+    // Must be called after segmentClient is created but before identify
+    if (shouldResetSegment) {
+      resetSegment();
+      shouldResetSegment = false; // Reset the flag after using it
     }
+
     await updateIdentify();
   }
   await track("Start", { isDeeplinkSession });
@@ -457,7 +464,8 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   };
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, allProperties);
+  const userId = userIdSelector(storeInstance.getState());
+  await segmentClient?.identify(userId.exportUserIdForSegment(), allProperties);
 };
 
 type Properties = Error | Record<string, unknown> | null;
@@ -526,6 +534,25 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
 };
+
+/**
+ * Set flag to reset Segment on next start
+ * Should be called when a new user is created, before Segment is initialized
+ */
+export const setShouldResetSegment = (value: boolean) => {
+  shouldResetSegment = value;
+};
+
+/**
+ * Reset Segment client to clear user data
+ * Should be called when a new user is created to avoid mixing analytics data
+ */
+export const resetSegment = () => {
+  if (segmentClient && typeof segmentClient.reset === "function") {
+    segmentClient.reset();
+  }
+};
+
 export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,

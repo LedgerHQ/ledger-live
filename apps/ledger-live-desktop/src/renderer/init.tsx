@@ -55,8 +55,9 @@ import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
-import { startAnalytics } from "./analytics/segment";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { startAnalytics, resetSegment } from "./analytics/segment";
+import { initIdentities } from "~/renderer/helpers/identities";
+import { syncUserIdEnv, subscribeToUserIdChanges } from "~/renderer/helpers/syncUserIdEnv";
 
 const rootNode = document.getElementById("react-root");
 
@@ -151,7 +152,7 @@ async function init() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
-  sentry(() => sentryLogsSelector(store.getState()));
+  sentry(() => sentryLogsSelector(store.getState()), store);
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());
@@ -170,10 +171,6 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
-  // Make sure startAnalytics is always called after a first getKey() because otherwise
-  // will run into issues where shareAnalytics state will not reflect the user's preferences and always be set to true...
-  startAnalytics(store);
-
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
   if (wasHardReset) {
@@ -211,10 +208,21 @@ async function init() {
     store.dispatch(lock());
   }
 
-  // Load persisted identities
-  const persistedIdentities = await getKey("app", "identities");
-  if (persistedIdentities) {
-    store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+  // Initialize identities (from persisted data, legacy migration, or from scratch)
+  // Must be called before startAnalytics so userId is available
+  const created = await initIdentities(store);
+
+  // Sync FIRMWARE_SALT env var from store
+  syncUserIdEnv(store);
+  subscribeToUserIdChanges(store);
+
+  // Start analytics after identities are initialized so userId is available
+  startAnalytics(store);
+
+  // If a new user was created, reset Segment to avoid mixing analytics data
+  // Must be called after startAnalytics so the analytics client is initialized
+  if (created) {
+    resetSegment();
   }
 
   const initialCountervalues = await getKey("app", "countervalues");

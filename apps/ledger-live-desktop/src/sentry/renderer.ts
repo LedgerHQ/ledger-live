@@ -1,18 +1,20 @@
 import * as Sentry from "@sentry/electron/renderer";
-import user from "./../helpers/user";
+import { datadogIdSelector } from "@ledgerhq/client-ids/store";
 import { init, setShouldSendCallback } from "./install";
 import { Primitive } from "@sentry/types";
+import type { Store } from "redux";
+import type { State } from "~/renderer/reducers";
 // @ts-expect-error The right type would be SentryMainModule from "@sentry/electron/main"…
 // …but we should avoid importing the whole module and blow the bundle size
 const available = init(Sentry, {
   integrations: [Sentry.browserTracingIntegration()],
 });
-export default async (shouldSendCallback: () => boolean) => {
+export default async (shouldSendCallback: () => boolean, store: Store<State>) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
-  const u = await user();
+  const datadogId = datadogIdSelector(store.getState());
   Sentry.setUser({
-    id: u.id,
+    id: datadogId.exportDatadogIdForSentry(),
     ip_address: undefined,
   });
 };

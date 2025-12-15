@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { getBrazeConfig } from "~/braze-setup";
-import getUser from "~/helpers/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import {
   ActionContentCard,
   ContentCard as LedgerContentCard,
@@ -102,8 +102,9 @@ export async function useBraze() {
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
+  const userId = useSelector(userIdSelector);
+
   const initBraze = useCallback(async () => {
-    const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
@@ -130,7 +131,7 @@ export async function useBraze() {
       return;
     }
 
-    if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
+    braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : anonymousBrazeId.current);
 
     braze.requestContentCardsRefresh();
 
@@ -167,7 +168,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
+  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId, userId]);
 
   useEffect(() => {
     initBraze();

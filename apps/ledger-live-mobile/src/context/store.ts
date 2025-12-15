@@ -9,7 +9,6 @@ import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import getOrCreateUser from "~/user";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
@@ -23,11 +22,6 @@ export const store = configureStore({
       .concat(
         createIdentitiesSyncMiddleware({
           getIdentitiesState: (state: State) => state.identities,
-          getUserId: async (_state: State) => {
-            // FIXME LIVE-23880: Migrate to use userId from identities store or app-level user management
-            const { user } = await getOrCreateUser();
-            return user.id;
-          },
           getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
         }),
       ),

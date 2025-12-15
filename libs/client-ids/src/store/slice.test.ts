@@ -30,6 +30,32 @@ describe("identitiesSlice", () => {
       expect(state.pushDevicesServiceUrl).toBe("https://api.example.com");
     });
 
+    it("should initialize userId from persisted data", () => {
+      const persisted: PersistedIdentities = {
+        userId: "user-123",
+        deviceIds: ["device-1"],
+        pushDevicesSyncState: "unsynced",
+        pushDevicesServiceUrl: null,
+      };
+      const action = identitiesSlice.actions.initFromPersisted(persisted);
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("user-123");
+    });
+
+    it("should initialize datadogId from persisted data", () => {
+      const persisted: PersistedIdentities = {
+        datadogId: "datadog-456",
+        deviceIds: ["device-1"],
+        pushDevicesSyncState: "unsynced",
+        pushDevicesServiceUrl: null,
+      };
+      const action = identitiesSlice.actions.initFromPersisted(persisted);
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.datadogId.exportDatadogIdForPersistence()).toBe("datadog-456");
+    });
+
     it("should handle missing pushDevicesServiceUrl (backward compatibility)", () => {
       const persisted: PersistedIdentities = {
         deviceIds: ["device-1"],
@@ -40,6 +66,59 @@ describe("identitiesSlice", () => {
       const state = identitiesSlice.reducer(initialIdentitiesState, action);
 
       expect(state.pushDevicesServiceUrl).toBeNull();
+    });
+  });
+
+  describe("importFromLegacy", () => {
+    it("should import userId from legacy system", () => {
+      const action = identitiesSlice.actions.importFromLegacy({ userId: "legacy-user-123" });
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-123");
+    });
+
+    it("should import userId and datadogId from legacy system", () => {
+      const action = identitiesSlice.actions.importFromLegacy({
+        userId: "legacy-user-123",
+        datadogId: "legacy-datadog-456",
+      });
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-123");
+      expect(state.datadogId.exportDatadogIdForPersistence()).toBe("legacy-datadog-456");
+    });
+
+    it("should generate datadogId if not provided in legacy data", () => {
+      const action = identitiesSlice.actions.importFromLegacy({ userId: "legacy-user-123" });
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-123");
+      // datadogId should be generated (UUID format)
+      expect(state.datadogId.exportDatadogIdForPersistence()).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+      );
+    });
+  });
+
+  describe("initFromScratch", () => {
+    it("should generate new userId and datadogId", () => {
+      const action = identitiesSlice.actions.initFromScratch();
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      // Both should be generated (UUID format)
+      expect(state.userId.exportUserIdForPersistence()).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+      );
+      expect(state.datadogId.exportDatadogIdForPersistence()).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+      );
+      // Should be different from dummy IDs
+      expect(state.userId.exportUserIdForPersistence()).not.toBe(
+        initialIdentitiesState.userId.exportUserIdForPersistence(),
+      );
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(
+        initialIdentitiesState.datadogId.exportDatadogIdForPersistence(),
+      );
     });
   });
 

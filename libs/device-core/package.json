@@ -24,7 +24,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/hashes": "1.8.0",
     "semver": "catalog:"
   },
   "devDependencies": {

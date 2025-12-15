@@ -11,7 +11,7 @@ export interface ManagerApiRepository {
     current_se_firmware_final_version: Id;
     device_version: Id;
     providerId: number;
-    userId: string;
+    firmwareSalt: string;
   }): Promise<OsuFirmware | null | undefined>;
 
   fetchMcus(): Promise<McuVersion[]>;

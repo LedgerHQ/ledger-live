@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useSelector } from "~/context/hooks";
+import { useSelector, useStore } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
 import { start, updateUserPreferences } from "./braze";
 
@@ -7,13 +7,14 @@ const HookNotifications = () => {
   const [notificationsStarted, setNotificationsStarted] = useState(false);
   const notifications = useSelector(notificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const store = useStore();
 
   const sync = useCallback(() => {
     if (notificationsStarted) return;
     setNotificationsStarted(true);
-    start(isTrackedUser);
+    start(isTrackedUser, store);
     updateUserPreferences(notifications);
-  }, [notificationsStarted, notifications, isTrackedUser]);
+  }, [notificationsStarted, notifications, isTrackedUser, store]);
 
   useEffect(sync, [sync]);
 

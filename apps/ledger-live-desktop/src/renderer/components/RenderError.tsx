@@ -1,4 +1,4 @@
-import React, { PureComponent, useCallback, useState } from "react";
+import React, { PureComponent, useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
@@ -15,6 +15,7 @@ import Space from "~/renderer/components/Space";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
+import { ReactReduxContext } from "react-redux";
 
 type Props = {
   error: Error;
@@ -23,6 +24,7 @@ type Props = {
 };
 export default function RenderError({ error, withoutAppData, children }: Props) {
   const { t } = useTranslation();
+  const hasStore = Boolean(useContext(ReactReduxContext)?.store);
   const hardReset = useHardReset();
   const troubleshootingCrashUrl = urls.troubleshootingCrash;
   const [isHardResetting, setIsHardResetting] = useState(false);
@@ -85,24 +87,26 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
       <Box horizontal flow={2}>
         <ExportLogsButton primary={false} title={t("crash.logs")} withoutAppData={withoutAppData} />
         <OpenUserDataDirectoryBtn>{t("crash.dataFolder")}</OpenUserDataDirectoryBtn>
-        <Unsafe>
-          <Button lighterDanger onClick={handleOpenHardResetModal}>
-            {t("common.reset")}
-          </Button>
-          <ConfirmModal
-            analyticsName="HardReset"
-            isDanger
-            isLoading={isHardResetting}
-            isOpened={isHardResetModalOpened}
-            onClose={handleCloseHardResetModal}
-            onReject={handleCloseHardResetModal}
-            onConfirm={handleHardReset}
-            confirmText={t("common.reset")}
-            title={t("settings.hardResetModal.title")}
-            desc={t("settings.hardResetModal.desc")}
-            renderIcon={hardResetIconRender}
-          />
-        </Unsafe>
+        {hasStore && (
+          <Unsafe>
+            <Button lighterDanger onClick={handleOpenHardResetModal}>
+              {t("common.reset")}
+            </Button>
+            <ConfirmModal
+              analyticsName="HardReset"
+              isDanger
+              isLoading={isHardResetting}
+              isOpened={isHardResetModalOpened}
+              onClose={handleCloseHardResetModal}
+              onReject={handleCloseHardResetModal}
+              onConfirm={handleHardReset}
+              confirmText={t("common.reset")}
+              title={t("settings.hardResetModal.title")}
+              desc={t("settings.hardResetModal.desc")}
+              renderIcon={hardResetIconRender}
+            />
+          </Unsafe>
+        )}
       </Box>
       <Box my={6} color="neutral.c80">
         <ErrContainer>{printError(error)}</ErrContainer>

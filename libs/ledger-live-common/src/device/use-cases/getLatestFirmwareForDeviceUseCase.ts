@@ -9,11 +9,12 @@ export type { FirmwareInfoEntity, FirmwareUpdateContextEntity } from "@ledgerhq/
 export function getLatestFirmwareForDeviceUseCase(
   deviceInfo: DeviceInfo,
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
+  firmwareSalt?: string,
 ) {
   return getLatestFirmwareForDevice({
     deviceInfo,
     providerId: getProviderId(deviceInfo),
-    userId: getEnv("USER_ID"),
+    firmwareSalt: firmwareSalt ?? getEnv("FIRMWARE_SALT") ?? "",
     managerApiRepository,
   });
 }

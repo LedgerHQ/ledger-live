@@ -4,10 +4,70 @@
       "libs/client-ids/src/api/api.ts",
       "libs/ledger-live-common/src/hw/actions/manager.ts"
     ],
-    "exportDeviceIdForPersistence": [
-      "libs/client-ids/src/store/persistence.ts",
-      "libs/client-ids/src/ids/DeviceId.ts"
+    "exportDeviceIdForPersistence": ["libs/client-ids/src/store/persistence.ts"]
+  },
+  "libs/client-ids/src/ids/UserId.ts": {
+    "exportUserIdForPushDevicesService": [
+      "libs/client-ids/src/api/api.ts",
+      "libs/client-ids/src/store/middleware.ts"
+    ],
+    "exportUserIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
+    "exportUserIdForRecoverHash": [
+      "apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts"
+    ],
+    "exportUserIdForFirmwareSaltHash": [
+      "apps/ledger-live-desktop/src/renderer/helpers/syncUserIdEnv.ts",
+      "apps/ledger-live-mobile/src/helpers/syncUserIdEnv.ts"
+    ],
+    "exportUserIdForSegment": [
+      "libs/client-ids/src/store/selectors.ts",
+      "apps/ledger-live-mobile/src/analytics/segment.ts",
+      "apps/ledger-live-mobile/src/analytics/UserIdPlugin.tsx",
+      "apps/ledger-live-desktop/src/renderer/analytics/segment.ts"
+    ],
+    "exportUserIdForDebugDisplay": [
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Information/EquipmentIdRow.tsx",
+      "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx"
+    ],
+    "exportUserIdForRatings": [
+      "apps/ledger-live-mobile/src/screens/NpsRatingsModal/index.tsx",
+      "apps/ledger-live-mobile/src/screens/RatingsModal/index.tsx"
+    ],
+    "exportUserIdForBraze": [
+      "apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts",
+      "apps/ledger-live-mobile/src/notifications/braze.ts",
+      "apps/ledger-live-mobile/src/analytics/segment.ts",
+      "apps/ledger-live-desktop/src/renderer/analytics/segment.ts"
+    ],
+    "exportUserIdForWalletAPI": [
+      "apps/ledger-live-mobile/src/components/Web3AppWebview/helpers.ts",
+      "apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/WalletAPIWebview.tsx"
+    ],
+    "exportUserIdForChainwatch": [
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx",
+      "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx"
+    ],
+    "exportUserIdForWalletSyncInstanceName": [
+      "apps/ledger-live-mobile/src/newArch/features/WalletSync/hooks/useInstanceName.ts",
+      "apps/ledger-live-mobile/src/mvvm/features/WalletSync/hooks/useInstanceName.ts"
+    ],
+    "exportUserIdForExportedLogs": [
+      "apps/ledger-live-desktop/src/renderer/components/ExportLogsButton.tsx",
+      "apps/ledger-live-desktop/src/newArch/hooks/useExportLogs.ts",
+      "apps/ledger-live-desktop/src/mvvm/hooks/useExportLogs.ts"
+    ],
+    "exportUserIdForSwap": [
+      "apps/ledger-live-mobile/src/hooks/deviceActions.ts"
     ]
+  },
+  "libs/client-ids/src/ids/DatadogId.ts": {
+    "exportDatadogIdForAnalytics": [
+      "libs/client-ids/src/store/selectors.ts",
+      "apps/ledger-live-mobile/src/index.tsx",
+      "apps/ledger-live-mobile/src/analytics/UserIdPlugin.tsx"
+    ],
+    "exportDatadogIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
+    "exportDatadogIdForSentry": ["apps/ledger-live-desktop/src/sentry/renderer.ts"]
   },
   "libs/client-ids/src/store/persistence.ts": {
     "exportIdentitiesForPersistence": [
