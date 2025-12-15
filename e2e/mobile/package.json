@@ -13,7 +13,9 @@
     "test:ios:debug": "pnpm test:detox --configuration ios.sim.debug",
     "test:android:debug": "pnpm test:detox --configuration android.emu.debug",
     "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
-    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
+    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug",
+    "allure:generate": "allure generate ./artifacts --clean -o ./artifacts/allure-report",
+    "allure:open": "allure open ./artifacts/allure-report"
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
