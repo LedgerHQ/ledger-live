@@ -63,6 +63,7 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",

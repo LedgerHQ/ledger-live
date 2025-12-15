@@ -1,5 +1,6 @@
 import React from "react";
-import { CryptoIcon, AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { ListItem } from "@ledgerhq/ldls-ui-react";
 
 type AssetListItemProps = AssetType & {

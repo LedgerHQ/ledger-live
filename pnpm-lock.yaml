@@ -508,6 +508,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/crypto-icons':
+        specifier: 'catalog:'
+        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -46847,6 +46850,14 @@ snapshots:
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
       styled-components: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
+
+  '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
+    dependencies:
+      '@ledgerhq/ui-shared': 0.2.2
+      react: 18.3.1
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
+      styled-components: 5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
 
   '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
