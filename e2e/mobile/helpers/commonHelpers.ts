@@ -50,14 +50,6 @@ export function isRemoteIos(): boolean {
   return isSpeculosRemote() && isIos();
 }
 
-export async function addDelayBeforeInteractingWithDevice(
-  // TODO: QAA-683
-  ciDelay: number = 10_000,
-  localDelay: number = 0,
-) {
-  await delay(process.env.CI ? ciDelay : localDelay);
-}
-
 /**
  * Creates a regex string for Detox URL blacklisting
  * @returns Formatted regex string for Detox

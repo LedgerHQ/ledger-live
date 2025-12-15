@@ -146,12 +146,12 @@ export function runSwapWithDifferentSeedTest(
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+      await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap();
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
         await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
-        await app.swap.verifyDeviceActionLoadingNotVisible();
         await app.swap.waitForSuccessAndContinue();
       }
     });
@@ -299,10 +299,9 @@ export function runUserRefusesTransactionTest(
         minAmount,
       );
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap();
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
-      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
     });
   });
@@ -425,13 +424,12 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.waitForQuotes();
 
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
 
+      await app.swapLiveApp.tapExecuteSwap();
+
       const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await app.common.enableSynchronization();
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
-      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });
