@@ -66,7 +66,10 @@ function createStakingRewardOperations(tx: HederaMirrorTransaction): BlockOperat
 export async function getBlock(height: number): Promise<Block> {
   const { start, end } = getTimestampRangeFromBlockHeight(height);
   const blockInfo = await getBlockInfo(height);
-  const transactions = await apiClient.getTransactionsByTimestampRange(start, end);
+  const transactions = await apiClient.getTransactionsByTimestampRange({
+    startTimestamp: `gte:${start}`,
+    endTimestamp: `lt:${end}`,
+  });
 
   // analyze CRYPTOUPDATEACCOUNT transactions to distinguish staking operations from regular account updates.
   // this creates a map of transaction_hash -> StakingAnalysis to avoid repeated lookups.

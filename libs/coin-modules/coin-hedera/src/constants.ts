@@ -128,3 +128,15 @@ export const MAP_STAKING_MODE_TO_METHOD: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.Redelegate]: "Redelegate",
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Claim Rewards",
 };
+
+/**
+ * Operation types where fees should be excluded from value of native HBAR operations.
+ */
+export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
+  "OUT",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+  "UPDATE_ACCOUNT",
+  "CONTRACT_CALL",
+];

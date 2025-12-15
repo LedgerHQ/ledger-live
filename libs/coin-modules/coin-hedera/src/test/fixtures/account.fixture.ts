@@ -140,6 +140,9 @@ export const MAINNET_TEST_ACCOUNTS = {
     associatedTokenWithoutBalance: "0.0.7243470",
     notAssociatedToken: "0.0.3176721",
   },
+  withQuickBalanceChanges: {
+    accountId: "0.0.10176637",
+  },
   activeStaking: {
     accountId: "0.0.8835924",
     publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
