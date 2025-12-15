@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.99.1-hotfix.3
+
+### Patch Changes
+
+- [#13250](https://github.com/LedgerHQ/ledger-live/pull/13250) [`351b40f`](https://github.com/LedgerHQ/ledger-live/commit/351b40fb07ba9dcd99f77d061bdca4267fe6a661) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Datadog integration to have its own id
+
 ## 3.99.1-hotfix.2
 
 ### Patch Changes
