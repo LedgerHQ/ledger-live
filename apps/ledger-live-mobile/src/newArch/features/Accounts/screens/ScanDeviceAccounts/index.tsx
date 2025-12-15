@@ -128,7 +128,6 @@ function ScanDeviceAccounts() {
             !scanning;
           return (
             <View key={id}>
-              <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
               <ScannedAccountsSection
                 defaultSelected={defaultSelected}
                 key={id}
@@ -178,20 +177,23 @@ function ScanDeviceAccounts() {
         })}
       </NavigationScrollView>
       {sections.some(s => s.data.length > 0) && (
-        <ScanDeviceAccountsFooter
-          isScanning={scanning}
-          canRetry={
-            (!scanning && noImportableAccounts && !cantCreateAccount) ||
-            (!scanning && scannedAccounts.length === 0)
-          }
-          canDone={!scanning && cantCreateAccount && noImportableAccounts}
-          onRetry={restartSubscription}
-          onStop={stopSubscription}
-          onDone={quitFlow}
-          onContinue={importAccounts}
-          isDisabled={selectedIds.length === 0}
-          returnToSwap={returnToSwap}
-        />
+        <>
+          <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
+          <ScanDeviceAccountsFooter
+            isScanning={scanning}
+            canRetry={
+              (!scanning && noImportableAccounts && !cantCreateAccount) ||
+              (!scanning && scannedAccounts.length === 0)
+            }
+            canDone={!scanning && cantCreateAccount && noImportableAccounts}
+            onRetry={restartSubscription}
+            onStop={stopSubscription}
+            onDone={quitFlow}
+            onContinue={importAccounts}
+            isDisabled={selectedIds.length === 0}
+            returnToSwap={returnToSwap}
+          />
+        </>
       )}
       <GenericErrorBottomModal
         error={error}
