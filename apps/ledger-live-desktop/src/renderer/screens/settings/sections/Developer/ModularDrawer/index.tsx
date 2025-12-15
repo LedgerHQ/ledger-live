@@ -16,7 +16,7 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 

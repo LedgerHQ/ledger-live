@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { Flex } from "@ledgerhq/react-ui/index";
