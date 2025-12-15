@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import {
   HandlersPayloads,
   WalletHandlers,
@@ -47,13 +47,10 @@ const getAccountName = (
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,
 ): string | undefined => {
-  const accountId = account?.id;
   const selector = useCallback(
     (state: State) =>
       !account ? undefined : accountNameWithDefaultSelector(state.wallet, account),
-    // Only recreate the selector when account identity changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accountId],
+    [account],
   );
   return useSelector(selector);
 };
@@ -70,12 +67,9 @@ export const useMaybeAccountName = (
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
 ): (string | undefined)[] => {
-  const accountIds = useMemo(() => accounts.map(a => a?.id).join(","), [accounts]);
   const selector = useCallback(
     (state: State) => accounts.map(account => getAccountName(state, account)),
-    // Only recreate the selector when account identities change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accountIds],
+    [accounts],
   );
   return useSelector(selector, shallowEqual);
 };
@@ -86,11 +80,9 @@ export const useBatchMaybeAccountName = (
  * Uses a memoized selector to prevent unnecessary re-renders in react-redux v9.
  */
 export const useAccountName = (account: AccountLike) => {
-  const accountId = account.id;
   const selector = useCallback(
     (state: State) => accountNameWithDefaultSelector(state.wallet, account),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accountId],
+    [account],
   );
   return useSelector(selector);
 };
