@@ -112,16 +112,14 @@ const ScanAccounts = ({
 
       <ScrollContainer>
         {importableAccounts.length > 0 ? (
-          <>
-            <ImportableAccountsList
-              handleDeselectAll={handleDeselectAll}
-              handleSelectAll={handleSelectAll}
-              importableAccounts={importableAccounts}
-              renderAccount={renderAccount}
-              selectedIds={selectedIds}
-              scanning={scanning}
-            />
-          </>
+          <ImportableAccountsList
+            handleDeselectAll={handleDeselectAll}
+            handleSelectAll={handleSelectAll}
+            importableAccounts={importableAccounts}
+            renderAccount={renderAccount}
+            selectedIds={selectedIds}
+            scanning={scanning}
+          />
         ) : null}
         {!scanning && creatableAccounts.length > 0 ? (
           <>
