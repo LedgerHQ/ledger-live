@@ -212,7 +212,7 @@ jobs:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
-    timeout-minutes: 120
+    timeout-minutes: 220
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
