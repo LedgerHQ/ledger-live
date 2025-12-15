@@ -74,6 +74,7 @@
         "expo-modules-autolinking",
         "expo-modules-core",
         "prop-types",
+        "react-is",
         "react-native-fast-pbkdf2",
         "react-native-level-fs",
         "react-native-navigation-bar-color",
