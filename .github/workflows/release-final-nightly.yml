@@ -61,7 +61,7 @@ jobs:
           skip-turbo-cache: "false"
 
       - name: install dependencies
-        run: pnpm i -F "./libs/**" -F "@ledgerhq/ledger-live"
+        run: pnpm i -F "./libs/**" -F "./apps/cli/**" -F "@ledgerhq/ledger-live"
 
       - name: build libs
         run: pnpm run build:libs
