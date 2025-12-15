@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo } from "react";
+import React, { useCallback, useState, memo, useEffect } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -37,6 +37,11 @@ export const headerOptions: ReactNavigationHeaderOptions = {
 type ChooseDeviceProps = Props & {
   isFocused?: boolean;
   goToFollowInstructions: (device: Device) => void;
+  /*
+   * Sometimes we navigate to selection with a device that we already know
+   * we want to connect to
+   */
+  preselectedDevice?: Device;
 };
 
 const request = {
@@ -45,6 +50,7 @@ const request = {
 
 const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   goToFollowInstructions,
+  preselectedDevice,
 }) => {
   const isFocused = useIsFocused();
   const action = useAppDeviceAction();
@@ -94,6 +100,12 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
     },
     [navigation],
   );
+
+  useEffect(() => {
+    if (preselectedDevice) {
+      selectDevice(preselectedDevice);
+    }
+  }, [preselectedDevice, selectDevice]);
 
   if (!isFocused) return null;
 

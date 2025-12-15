@@ -56,6 +56,10 @@ export function useEntryPoint(entryPoint: EntryPoint) {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,
       ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : cardEntryPoint),
     },
+    [EntryPoint.onboarding]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.onboarding ?? false,
+      ...cardEntryPoint,
+    },
     [EntryPoint.postOnboarding]: {
       enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
       ...cardEntryPoint,

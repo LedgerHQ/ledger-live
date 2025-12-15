@@ -12,6 +12,7 @@ type Props = BaseComposite<
 
 export function ActivationProcess({ route, navigation }: Props) {
   const { isDrawerInstructionsVisible, closeDrawer, openDrawer, device } = useFollowInstructions();
+  const { device: preselectedDevice } = route.params || {};
 
   return (
     <>
@@ -19,6 +20,7 @@ export function ActivationProcess({ route, navigation }: Props) {
         navigation={navigation}
         route={route}
         goToFollowInstructions={openDrawer}
+        preselectedDevice={preselectedDevice}
       />
       {isDrawerInstructionsVisible && (
         <FollowInstructionsDrawer
