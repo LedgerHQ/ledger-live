@@ -585,6 +585,7 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
+      onboarding: true,
       postOnboarding: true,
     },
   },
@@ -740,7 +741,6 @@ export const DEFAULT_FEATURES: Features = {
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
-
   llmAnimatedSplashScreen: {
     enabled: true,
     params: {
@@ -748,6 +748,13 @@ export const DEFAULT_FEATURES: Features = {
       android: true,
     },
   },
+  llmOnboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
 };
 
 // Firebase SDK treat JSON values as strings
