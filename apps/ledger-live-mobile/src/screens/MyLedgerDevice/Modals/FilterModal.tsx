@@ -68,7 +68,7 @@ const FilterLine = styled(Touchable)`
   justify-content: space-between;
   width: 100%;
   height: 48px;
-  padding-vertical: 12px;
+  padding: 12px 0;
 `;
 
 const ArrowIconContainer = styled(Flex).attrs({
