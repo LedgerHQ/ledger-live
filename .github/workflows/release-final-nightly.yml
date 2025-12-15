@@ -85,7 +85,7 @@ jobs:
           token: ${{ steps.jfrog-login-publish.outputs.oidc-token }}
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
           npmrc-location: "$HOME/.npmrc"
-          provenance: "true"
+          provenance: "false"
 
       - name: publish nightly
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
