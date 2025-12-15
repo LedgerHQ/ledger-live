@@ -72,9 +72,8 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
       };
     case "warning":
       return {
-        // FIX_ME When removing colors.warning in old theme"
-        background: theme.colors.palette.warning.c10,
-        iconColor: theme.colors.palette.warning.c70,
+        background: theme.colors.warning.c10,
+        iconColor: theme.colors.warning.c70,
       };
     case "error":
       return {

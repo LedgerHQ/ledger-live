@@ -22,7 +22,7 @@ import { getProductName } from "LLD/utils/getProductName";
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;
@@ -39,7 +39,7 @@ const TextField = ({ field, tokenUnit }: FieldComponentProps) => {
     <SignMessageConfirmField label={field.label}>
       {tokenUnit ? (
         <FormattedVal
-          color={"palette.text.shade80"}
+          color={"neutral.c80"}
           val={Number(field.value)}
           unit={tokenUnit}
           fontSize={3}
@@ -69,7 +69,7 @@ type Props = {
 };
 
 const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequested }: Props) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
@@ -127,7 +127,7 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
               </Title>
               <SubTitle
                 variant="bodyLineHeight"
-                color="palette.text.shade100"
+                color="neutral.c100"
                 textAlign="center"
                 fontSize={14}
               >

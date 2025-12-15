@@ -13,7 +13,7 @@ const ReceiveButton = ({ account }: { account: Account }) => {
     dispatch(openModal("MODAL_STELLAR_ADD_ASSET", { account }));
   };
   return (
-    <Button small color="palette.primary.main" onClick={onReceiveClick}>
+    <Button small color="primary.c80" onClick={onReceiveClick}>
       <Box horizontal flow={1} alignItems="center">
         <IconPlus size={12} />
         <Box>

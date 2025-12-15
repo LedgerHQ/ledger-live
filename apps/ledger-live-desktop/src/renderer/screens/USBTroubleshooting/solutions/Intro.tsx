@@ -20,13 +20,13 @@ const Intro = ({ onStart, onBack }: { onStart: () => void; onBack: () => void })
   return (
     <Box alignItems="center" justifyContent="center" flex={1}>
       <Illustration image={illustration} />
-      <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22} mt={48} mb={12}>
+      <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={22} mt={48} mb={12}>
         {t("connectTroubleshooting.steps.entry.title")}
       </Text>
       <Text
         mb={48}
         ff="Inter|Regular"
-        color="palette.text.shade80"
+        color="neutral.c80"
         fontSize={4}
         style={{
           maxWidth: 480,

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 const TableLine = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   horizontal: true,
   alignItems: "center",
   justifyContent: "flex-start",
@@ -28,13 +28,13 @@ const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 3,
 }))<{ strong?: boolean; clickable?: boolean }>`
-  color: ${p => (p.strong ? "palette.text.shade100" : "palette.text.shade80")}
+  color: ${p => (p.strong ? "neutral.c100" : "neutral.c80")}
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${p =>
     p.clickable
       ? `
     &:hover {
-      color: ${p.theme.colors.palette.primary.main};
+      color: ${p.theme.colors.primary.c80};
     }
     `
       : ``}
@@ -54,6 +54,6 @@ const Divider = styled.div`
   width: 100%;
   height: 1px;
   margin-bottom: ${p => p.theme.space[1]}px;
-  background-color: ${p => p.theme.colors.palette.divider};
+  background-color: ${p => p.theme.colors.neutral.c40};
 `;
 export { TableLine, Column, Wrapper, Ellipsis, Divider, Withdraw };

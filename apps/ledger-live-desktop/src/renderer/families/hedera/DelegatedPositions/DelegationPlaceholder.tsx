@@ -40,7 +40,7 @@ export default function DelegationPlaceholder({ account }: Readonly<Props>) {
       />
       <Wrapper horizontal>
         <Box style={{ maxWidth: "65%" }}>
-          <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+          <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
             <Trans i18nKey="delegation.delegationEarn" values={{ name: account.currency.name }} />
           </Text>
           <Box mt={2}>

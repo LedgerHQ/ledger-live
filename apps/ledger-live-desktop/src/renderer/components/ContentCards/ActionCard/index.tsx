@@ -13,12 +13,12 @@ type Props = {
   actions: {
     primary: {
       label?: string;
-      action: Function;
+      action: () => void;
       dataTestId?: string;
     };
     dismiss: {
       label?: string;
-      action: Function;
+      action: () => void;
       dataTestId?: string;
     };
   };

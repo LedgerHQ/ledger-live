@@ -18,7 +18,7 @@ import { StepProps } from "../types";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   px: 7,
 }))``;
 
@@ -36,7 +36,7 @@ const Wrapper = styled(Box).attrs(() => ({
 
 const BulletText = styled(Text).attrs(() => ({
   ff: "Inter|Regular",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 2,
 }))``;
 
@@ -50,22 +50,22 @@ const StepResetDevice = ({ deviceModelId }: StepProps) => {
         <SubTitle justifyContent="start">
           <Trans i18nKey="manager.modal.resetSteps.first" />
         </SubTitle>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans
             i18nKey="manager.modal.resetSteps.connect"
             values={{ deviceName: device ? device.productName : "" }}
           />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.turnOn" />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.falsePin" />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.turnOff" values={{ action: powerOffDevice }} />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.confirmTurnOff" values={{ action: powerOff }} />
         </BulletText>
       </Wrapper>
@@ -74,10 +74,10 @@ const StepResetDevice = ({ deviceModelId }: StepProps) => {
         <SubTitle justifyContent="start">
           <Trans i18nKey="manager.modal.resetSteps.second" values={{ mode: recovery }} />
         </SubTitle>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.boot" values={{ option: bootOptions }} />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.recoveryMode" values={{ mode: recovery }} />
         </BulletText>
       </Wrapper>
@@ -86,16 +86,16 @@ const StepResetDevice = ({ deviceModelId }: StepProps) => {
         <SubTitle justifyContent="start">
           <Trans i18nKey="manager.modal.resetSteps.third" />
         </SubTitle>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans i18nKey="manager.modal.resetSteps.openLive" />
         </BulletText>
-        <BulletText ff="Inter|Regular" color="palette.text.shade80" fontSize={2}>
+        <BulletText ff="Inter|Regular" color="neutral.c80" fontSize={2}>
           <Trans
             i18nKey="manager.modal.resetSteps.uninstall"
             values={{ deviceName: device ? device.productName : "" }}
           />
         </BulletText>
-        <Text ff="Inter|Regular" color="palette.text.shade80" fontSize={1}>
+        <Text ff="Inter|Regular" color="neutral.c80" fontSize={1}>
           <Trans i18nKey="manager.modal.resetSteps.disclaimer" />
         </Text>
       </Wrapper>

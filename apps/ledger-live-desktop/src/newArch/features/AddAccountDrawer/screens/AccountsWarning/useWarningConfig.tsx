@@ -42,12 +42,13 @@ export const useWarningConfig = (
 
   const handleClose = useCallback(() => setDrawer(), []);
 
-  const handleFundAccount = useCallback(() => {
-    emptyAccount && navigateToFundAccount(emptyAccount);
-  }, [emptyAccount, navigateToFundAccount]);
+  const handleFundAccount = useCallback(
+    () => emptyAccount && navigateToFundAccount(emptyAccount),
+    [emptyAccount, navigateToFundAccount],
+  );
 
   const emptyAccountWarning = {
-    icon: <Icons.WarningFill size="L" color="palette.warning.c70" />,
+    icon: <Icons.WarningFill size="L" color="warning.c70" />,
     title: t("modularAssetDrawer.scanAccounts.warning.title", { currency: currency.name }),
     description: t("modularAssetDrawer.scanAccounts.warning.description", {
       account: emptyAccountName,

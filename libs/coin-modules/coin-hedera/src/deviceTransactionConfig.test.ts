@@ -1,14 +1,12 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "./constants";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
-import type { Transaction, TransactionStatus } from "./types";
+import type { TransactionStatus } from "./types";
+import { getMockedAccount } from "./test/fixtures/account.fixture";
+import { getMockedTransaction } from "./test/fixtures/transaction.fixture";
 
 describe("getDeviceTransactionConfig", () => {
-  const mockAccount = {
-    id: "mock-account-id",
-    currency: { id: "hedera" },
-  } as Account;
+  const mockAccount = getMockedAccount({ id: "mock-account-id" });
 
   const createMockStatus = (estimatedFees: BigNumber): TransactionStatus => ({
     errors: {},
@@ -20,13 +18,11 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("staking transactions", () => {
     it("should return correct fields for ClaimRewards transaction", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
         amount: new BigNumber(0),
-        recipient: "",
         memo: "Claiming rewards",
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -55,15 +51,13 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should return correct fields for Delegate transaction", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         amount: new BigNumber(0),
-        recipient: "",
         properties: {
           stakingNodeId: 10,
         },
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -77,7 +71,42 @@ describe("getDeviceTransactionConfig", () => {
         {
           type: "text",
           label: "Method",
-          value: "Update Account",
+          value: "Delegate",
+        },
+        {
+          label: "Fees",
+          type: "fees",
+        },
+        {
+          type: "text",
+          label: "Staked Node ID",
+          value: "10",
+        },
+      ]);
+    });
+
+    it("should return correct fields for Redelegate transaction", async () => {
+      const transaction = getMockedTransaction({
+        mode: HEDERA_TRANSACTION_MODES.Redelegate,
+        amount: new BigNumber(0),
+        properties: {
+          stakingNodeId: 10,
+        },
+      });
+
+      const status = createMockStatus(new BigNumber(100000));
+
+      const fields = await getDeviceTransactionConfig({
+        account: mockAccount,
+        transaction,
+        status,
+      });
+
+      expect(fields).toEqual([
+        {
+          type: "text",
+          label: "Method",
+          value: "Redelegate",
         },
         {
           label: "Fees",
@@ -92,13 +121,10 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include staking node ID if not provided", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Undelegate,
         amount: new BigNumber(0),
-        recipient: "",
-        properties: {},
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -112,7 +138,7 @@ describe("getDeviceTransactionConfig", () => {
         {
           type: "text",
           label: "Method",
-          value: "Update Account",
+          value: "Undelegate",
         },
         {
           label: "Fees",
@@ -124,14 +150,11 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("token associate transactions", () => {
     it("should return correct fields for TokenAssociate transaction", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-        amount: new BigNumber(0),
-        recipient: "",
         subAccountId: "token-account-id",
         memo: "Associating token",
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(50000));
 
@@ -160,13 +183,10 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include fees if they are zero", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-        amount: new BigNumber(0),
-        recipient: "",
         subAccountId: "token-account-id",
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(0));
 
@@ -188,14 +208,13 @@ describe("getDeviceTransactionConfig", () => {
 
   describe("regular transfer transactions", () => {
     it("should return correct fields for regular Send transaction", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),
         recipient: "0.0.12345",
         useAllAmount: false,
         memo: "Payment",
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -228,13 +247,12 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should show 'Transfer All' method when useAllAmount is true", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(0),
         recipient: "0.0.12345",
         useAllAmount: true,
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -252,14 +270,13 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should include gas limit for Send transactions with gasLimit", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),
         recipient: "0.0.12345",
         useAllAmount: false,
         gasLimit: new BigNumber(300000),
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 
@@ -292,13 +309,12 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     it("should not include memo if not provided", async () => {
-      const transaction = {
-        family: "hedera",
+      const transaction = getMockedTransaction({
         mode: HEDERA_TRANSACTION_MODES.Send,
         amount: new BigNumber(1000000),
         recipient: "0.0.12345",
         useAllAmount: false,
-      } as Transaction;
+      });
 
       const status = createMockStatus(new BigNumber(100000));
 

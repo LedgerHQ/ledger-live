@@ -31,7 +31,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
   position: sticky;
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
   top: -${p => p.theme.space[3]}px;
   left: 0;
   right: 0;
@@ -48,8 +48,8 @@ const FilterHeader = styled.div<{ isIncomplete?: boolean }>`
   padding: 10px 20px;
   margin: 0px;
   align-items: center;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  box-shadow: 0 1px 0 0 ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.background.card};
+  box-shadow: 0 1px 0 0 ${p => p.theme.colors.neutral.c30};
   border-radius: 4px 4px 0 0;
   position: sticky;
   top: ${p => (p.isIncomplete ? -p.theme.space[3] : p.theme.sizes.topBarHeight)}px;
@@ -185,7 +185,7 @@ const AppsList = ({
       <Card mt={0}>
         {isDeviceTab && !installedApps.length ? (
           <Box pb={6} pt={8} data-testid="manager-no-apps-empty-state">
-            <Box mb={4} mt={5} horizontal color="palette.text.shade30" justifyContent="center">
+            <Box mb={4} mt={5} horizontal color="neutral.c40" justifyContent="center">
               <NoResults />
             </Box>
             <Text textAlign="center" ff="Inter|SemiBold" fontSize={6}>

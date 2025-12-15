@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
-import { estimateFees } from "../logic/estimateFees";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedERC20TokenCurrency,
@@ -17,14 +16,10 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: new BigNumber(0),
       recipient: "0.0.1234",
+      maxFee: new BigNumber(1000),
       properties: {
         token: mockedToken,
       },
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
     });
 
     const op = await buildOptimisticOperation({
@@ -34,7 +29,7 @@ describe("buildOptimisticOperation", () => {
 
     expect(op.type).toBe("ASSOCIATE_TOKEN");
     expect(op.extra).toEqual({ associatedTokenId: mockedToken.contractAddress });
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.1234");
   });
@@ -44,11 +39,7 @@ describe("buildOptimisticOperation", () => {
     const mockedTransaction = getMockedTransaction({
       amount: new BigNumber(123),
       recipient: "0.0.5678",
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+      maxFee: new BigNumber(1500),
     });
 
     const op = await buildOptimisticOperation({
@@ -57,14 +48,13 @@ describe("buildOptimisticOperation", () => {
     });
 
     expect(op.type).toBe("OUT");
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.value).toEqual(new BigNumber(123));
     expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.5678");
   });
 
   it("builds optimistic operation for HTS token", async () => {
-    const mockedAccount = getMockedAccount();
     const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const parentAccount = getMockedAccount({ subAccounts: [tokenAccount] });
@@ -72,11 +62,7 @@ describe("buildOptimisticOperation", () => {
       subAccountId: tokenAccount.id,
       amount: new BigNumber(123),
       recipient: "0.0.9999",
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.TokenTransfer,
+      maxFee: new BigNumber(2000),
     });
 
     const op = await buildOptimisticOperation({
@@ -86,11 +72,11 @@ describe("buildOptimisticOperation", () => {
     const subOp = (op.subOperations ?? [])[0];
 
     expect(op.type).toBe("FEES");
-    expect(op.value).toEqual(estimatedFee.tinybars);
+    expect(op.value).toEqual(mockedTransaction.maxFee);
     expect(op.subOperations).toHaveLength(1);
     expect(subOp.type).toBe("OUT");
     expect(subOp.value).toEqual(new BigNumber(123));
-    expect(subOp.fee).toEqual(estimatedFee.tinybars);
+    expect(subOp.fee).toEqual(mockedTransaction.maxFee);
     expect(subOp.accountId).toBe(tokenAccount.id);
     expect(subOp.recipients).toContain("0.0.9999");
   });
@@ -103,22 +89,7 @@ describe("buildOptimisticOperation", () => {
       subAccountId: tokenAccount.id,
       amount: new BigNumber(123),
       recipient: "0.0.9999",
-    });
-
-    const estimatedFee = await estimateFees({
-      operationType: HEDERA_OPERATION_TYPES.ContractCall,
-      txIntent: {
-        intentType: "transaction",
-        type: HEDERA_TRANSACTION_MODES.Send,
-        asset: {
-          type: "erc20",
-          assetReference: tokenAccount.token.contractAddress,
-          assetOwner: parentAccount.freshAddress,
-        },
-        amount: BigInt(mockedTransaction.amount.toString()),
-        sender: parentAccount.freshAddress,
-        recipient: mockedTransaction.recipient,
-      },
+      maxFee: new BigNumber(2500),
     });
 
     const op = await buildOptimisticOperation({
@@ -128,11 +99,11 @@ describe("buildOptimisticOperation", () => {
     const subOp = (op.subOperations ?? [])[0];
 
     expect(op.type).toBe("FEES");
-    expect(op.value).toEqual(estimatedFee.tinybars);
+    expect(op.value).toEqual(mockedTransaction.maxFee);
     expect(op.subOperations).toHaveLength(1);
     expect(subOp.type).toBe("OUT");
     expect(subOp.value).toEqual(new BigNumber(123));
-    expect(subOp.fee).toEqual(estimatedFee.tinybars);
+    expect(subOp.fee).toEqual(mockedTransaction.maxFee);
     expect(subOp.accountId).toBe(tokenAccount.id);
     expect(subOp.recipients).toContain("0.0.9999");
   });
@@ -144,14 +115,10 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.Delegate,
       amount: new BigNumber(0),
       recipient: "",
+      maxFee: new BigNumber(1200),
       properties: {
         stakingNodeId,
       },
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
     });
 
     const op = await buildOptimisticOperation({
@@ -159,8 +126,8 @@ describe("buildOptimisticOperation", () => {
       transaction: mockedTransaction,
     });
 
-    expect(op.type).toBe("UPDATE_ACCOUNT");
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.type).toBe("DELEGATE");
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.value).toEqual(new BigNumber(0));
     expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.extra).toEqual({
@@ -188,15 +155,11 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.Redelegate,
       amount: new BigNumber(0),
       recipient: "",
+      maxFee: new BigNumber(1300),
+      memo: "Redelegating to better validator",
       properties: {
         stakingNodeId: newNodeId,
       },
-      memo: "Redelegating to better validator",
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
     });
 
     const op = await buildOptimisticOperation({
@@ -204,8 +167,8 @@ describe("buildOptimisticOperation", () => {
       transaction: mockedTransaction,
     });
 
-    expect(op.type).toBe("UPDATE_ACCOUNT");
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.type).toBe("REDELEGATE");
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.extra).toEqual({
       memo: "Redelegating to better validator",
       targetStakingNodeId: newNodeId,
@@ -230,14 +193,10 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.Undelegate,
       amount: new BigNumber(0),
       recipient: "",
+      maxFee: new BigNumber(1100),
       properties: {
         stakingNodeId: null,
       },
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
     });
 
     const op = await buildOptimisticOperation({
@@ -245,8 +204,8 @@ describe("buildOptimisticOperation", () => {
       transaction: mockedTransaction,
     });
 
-    expect(op.type).toBe("UPDATE_ACCOUNT");
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.type).toBe("UNDELEGATE");
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.value).toEqual(new BigNumber(0));
     expect(op.extra).toEqual({
       memo: null,
@@ -272,12 +231,8 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
       amount: new BigNumber(0),
       recipient: "",
+      maxFee: new BigNumber(1400),
       memo: "Claiming staking rewards",
-    });
-
-    const estimatedFee = await estimateFees({
-      currency: mockedAccount.currency,
-      operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
     });
 
     const op = await buildOptimisticOperation({
@@ -286,7 +241,7 @@ describe("buildOptimisticOperation", () => {
     });
 
     expect(op.type).toBe("OUT");
-    expect(op.fee).toEqual(estimatedFee.tinybars);
+    expect(op.fee).toEqual(mockedTransaction.maxFee);
     expect(op.extra).toEqual({
       memo: "Claiming staking rewards",
     });

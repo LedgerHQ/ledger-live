@@ -7,7 +7,7 @@ export default styled.label.attrs<{
 }>(p => ({
   fontSize: p.fontSize || 4,
   ff: p.ff || "Inter|Medium",
-  color: p.color || "palette.text.shade60",
+  color: p.color || "neutral.c70",
   alignItems: "center",
   display: "block",
 }))<{

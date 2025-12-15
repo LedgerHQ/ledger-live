@@ -199,21 +199,21 @@ export const OptionRowDesc = styled(Box).attrs(() => ({
   fontSize: 3,
   textAlign: "left",
   lineHeight: 1.69,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))``;
 
 export const OptionRowTitle = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   fontSize: 4,
   textAlign: "left",
   lineHeight: 1.69,
 }))``;
 
 const AdvancedLogsContainer = styled.div`
-  border: 1px dashed ${p => p.theme.colors.palette.background.default};
-  background-color: ${p => p.theme.colors.palette.background.default};
-  color: ${p => p.theme.colors.palette.text.shade100};
+  border: 1px dashed ${p => p.theme.colors.background.default};
+  background-color: ${p => p.theme.colors.background.default};
+  color: ${p => p.theme.colors.neutral.c100};
   font-family: monospace;
   font-size: 11px;
   outline: none;
@@ -231,7 +231,7 @@ export const Container = styled(Box).attrs(() => ({
   mb: 3,
   pb: 4,
 }))`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   justify-content: space-between;
 `;
 

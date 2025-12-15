@@ -68,11 +68,8 @@ export const useMarketCoin = () => {
     : colors.primary.c80;
 
   const toggleStar = useCallback(() => {
-    if (isStarred) {
-      id && dispatch(removeStarredMarketCoins(id));
-    } else {
-      id && dispatch(addStarredMarketCoins(id));
-    }
+    if (!id) return;
+    dispatch(isStarred ? removeStarredMarketCoins(id) : addStarredMarketCoins(id));
   }, [dispatch, isStarred, id]);
 
   const changeRange = useCallback(

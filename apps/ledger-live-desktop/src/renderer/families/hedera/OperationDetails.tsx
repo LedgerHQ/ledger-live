@@ -132,7 +132,7 @@ const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
 
   return (
     <Cell>
-      <Box color="palette.text.shade80" ff="Inter" fontSize={3}>
+      <Box color="neutral.c80" ff="Inter" fontSize={3}>
         {token.contractAddress} ({token.name})
       </Box>
     </Cell>
@@ -148,7 +148,7 @@ const UpdateAccountAddressCell = ({ operation }: AddressCellProps<HederaOperatio
 
   return (
     <Cell>
-      <Box color="palette.text.shade80" ff="Inter" fontSize={3}>
+      <Box color="neutral.c80" ff="Inter" fontSize={3}>
         {memo}
       </Box>
     </Cell>

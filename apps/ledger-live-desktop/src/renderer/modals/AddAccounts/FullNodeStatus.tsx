@@ -18,8 +18,8 @@ const Container = styled(Box).attrs(() => ({
   padding: 16px;
   border-radius: 4px;
   align-items: center;
-  background-color: ${p => p.theme.colors.palette.action.hover};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
+  color: ${p => p.theme.colors.primary.c80};
 `;
 const FullNodeStatus = ({ currency }: { currency?: (CryptoCurrency | TokenCurrency) | null }) => {
   const latestStatus: SatStackStatus | undefined | null = useSatStackStatus();

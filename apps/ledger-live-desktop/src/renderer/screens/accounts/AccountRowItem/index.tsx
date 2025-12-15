@@ -24,7 +24,7 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 const Row = styled(Box)`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 4px;
   border: 1px solid transparent;
   box-shadow: 0 4px 8px 0 #00000007;
@@ -39,11 +39,11 @@ const Row = styled(Box)`
   position: relative;
   transition: background-color ease-in-out 200ms;
   :hover {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
   :active:not(:focus-within) {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
-    background: ${p => p.theme.colors.palette.action.hover};
+    border-color: ${p => p.theme.colors.neutral.c40};
+    background: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;
 const RowContent = styled.div<{
@@ -57,8 +57,8 @@ const RowContent = styled.div<{
   opacity: ${p => (p.disabled ? 0.3 : 1)};
   padding: 16px 20px;
   & * {
-    color: ${p => (p.disabled ? p.theme.colors.palette.text.shade100 : "auto")};
-    fill: ${p => (p.disabled ? p.theme.colors.palette.text.shade100 : "auto")};
+    color: ${p => (p.disabled ? p.theme.colors.neutral.c100 : "auto")};
+    fill: ${p => (p.disabled ? p.theme.colors.neutral.c100 : "auto")};
   }
 `;
 const TokenContent = styled.div`
@@ -72,7 +72,7 @@ const TokenContentWrapper = styled.div`
 `;
 const TokenBarIndicator = styled.div`
   width: 15px;
-  border-left: 1px solid ${p => p.theme.colors.palette.divider};
+  border-left: 1px solid ${p => p.theme.colors.neutral.c40};
   z-index: 2;
   margin-left: 33px;
   position: absolute;
@@ -80,7 +80,7 @@ const TokenBarIndicator = styled.div`
   margin-top: -16px;
   height: 100%;
   &:hover {
-    border-color: ${p => p.theme.colors.palette.text.shade60};
+    border-color: ${p => p.theme.colors.neutral.c70};
   }
 `;
 const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
@@ -89,8 +89,8 @@ const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
-  background: ${p => p.theme.colors.palette.background.paper};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 0px 0px 4px 4px;
   height: 32px;
   text-align: center;

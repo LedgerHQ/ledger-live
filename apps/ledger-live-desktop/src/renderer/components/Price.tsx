@@ -57,10 +57,10 @@ export default function Price({
   );
   const theme = useTheme();
   const textColor = useMemo(
-    () => (color ? colors[color] : theme.colors.palette.text.shade100),
+    () => (color ? colors[color] : theme.colors.neutral.c100),
     [color, theme],
   );
-  const bgColor = theme.colors.palette.background.paper;
+  const bgColor = theme.colors.background.card;
   const activityColor = useMemo(
     () =>
       withActivityColor

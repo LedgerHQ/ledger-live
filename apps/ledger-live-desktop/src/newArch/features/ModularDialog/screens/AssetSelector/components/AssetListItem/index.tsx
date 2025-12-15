@@ -20,8 +20,8 @@ const renderDescriptionTag = ({
     <div className="flex items-center gap-8">
       {leftElement}
       {shouldDisplayId && assetId && numberOfNetworks && (
-        <div className="bg-muted inline-flex rounded-sm px-8 py-2">
-          <span className="body-4 text-muted">{`${assetId} (${numberOfNetworks} networks)`}</span>
+        <div className="inline-flex rounded-sm bg-muted px-8 py-2">
+          <span className="text-muted body-4">{`${assetId} (${numberOfNetworks} networks)`}</span>
         </div>
       )}
     </div>

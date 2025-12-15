@@ -1,14 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import {
-  ApyIndicator,
-  AssetType,
-  MarketPercentIndicator,
-  MarketPriceIndicator,
-} from "@ledgerhq/react-ui/pre-ldls";
+import { ApyIndicator, AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "../../../../components/ListWrapper";
 import SkeletonList from "../../../../components/SkeletonList";
+import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";

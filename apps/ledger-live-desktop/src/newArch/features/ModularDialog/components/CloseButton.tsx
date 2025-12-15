@@ -27,5 +27,5 @@ const CloseIconWrapper = styled.div`
   z-index: 1000;
   background-color: red;
   border-radius: 1000px;
-  background-color: ${p => p.theme.colors.palette.opacityDefault.c05};
+  background-color: ${p => p.theme.colors.opacityDefault.c05};
 `;

@@ -7,7 +7,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 const ContentContainer = styled.div.attrs<{ bg: string }>(p => ({
   style: {
     background: p.bg,
-    color: p.theme.colors.palette.background.paper,
+    color: p.theme.colors.background.card,
   },
 }))<{ bg: string }>`
   font-family: Inter, sans-serif;
@@ -57,7 +57,7 @@ const ToolTip = ({
   containerStyle,
 }: Props) => {
   const colors = useTheme().colors;
-  const bg = tooltipBg ? get(colors, tooltipBg, tooltipBg) : colors.palette.text.shade100;
+  const bg = tooltipBg ? get(colors, tooltipBg, tooltipBg) : colors.neutral.c100;
   return (
     <Tippy
       {...defaultTippyOptions}

@@ -12,10 +12,10 @@ const Wrapper = styled(Box).attrs<{
 }>((p: { status: Status }) => ({
   alignItems: "center",
   color: ["active", "valid"].includes(p.status)
-    ? "palette.primary.main"
+    ? "primary.c80"
     : p.status === "error"
       ? "alertRed"
-      : "palette.text.shade40",
+      : "neutral.c60",
   grow: true,
   justifyContent: "center",
   relative: true,
@@ -31,14 +31,12 @@ const Wrapper = styled(Box).attrs<{
 const StepNumber = styled(Box).attrs<{
   status: Status;
 }>(p => ({
-  color: ["active", "valid", "error"].includes(p.status)
-    ? "palette.primary.contrastText"
-    : "palette.text.shade40",
+  color: ["active", "valid", "error"].includes(p.status) ? "neutral.c00" : "neutral.c60",
   bg: ["active", "valid"].includes(p.status)
-    ? "palette.primary.main"
+    ? "primary.c80"
     : p.status === "error"
       ? "alertRed"
-      : "palette.background.paper",
+      : "background.card",
   ff: p.status === "active" ? "Inter|Bold" : "Inter|SemiBold",
 }))<{
   status: Status;
@@ -51,10 +49,10 @@ const StepNumber = styled(Box).attrs<{
   border: 1px solid
     ${p =>
       ["active", "valid"].includes(p.status)
-        ? p.theme.colors.palette.primary.main
+        ? p.theme.colors.primary.c80
         : p.status === "error"
           ? p.theme.colors.alertRed
-          : p.theme.colors.palette.text.shade30};
+          : p.theme.colors.neutral.c40};
   font-size: 10px;
   height: ${RADIUS}px;
   line-height: ${RADIUS}px;

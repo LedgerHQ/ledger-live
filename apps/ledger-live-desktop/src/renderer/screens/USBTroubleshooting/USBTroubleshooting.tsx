@@ -62,11 +62,13 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   );
   const onExit = useCallback(() => {
     dispatch(setUSBTroubleshootingIndex());
-    onboarding
-      ? history.goBack()
-      : history.push({
-          pathname: "/manager",
-        });
+    if (onboarding) {
+      history.goBack();
+    } else {
+      history.push({
+        pathname: "/manager",
+      });
+    }
   }, [dispatch, history, onboarding]);
   const onDone = useCallback(() => {
     sendEvent({ type: "DONE" });

@@ -30,7 +30,7 @@ function ValidatorOption({ validator, unit }: Readonly<Props>) {
           <Text data-testid="modal-provider-title">{validator.name}</Text>
         </Title>
         {validator.overstaked && (
-          <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
+          <Flex alignItems="center" columnGap={1} color="warning.c70">
             <Icons.Warning size="XS" style={{ width: "10px" }} />
             <Text fontSize={2}>
               {t("hedera.delegation.flow.steps.validator.rowSubtitleOverstaked")}
@@ -39,7 +39,7 @@ function ValidatorOption({ validator, unit }: Readonly<Props>) {
         )}
       </InfoContainer>
       <SideInfo>
-        <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+        <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
           {formatCurrencyUnit(unit, new BigNumber(validator.activeStake.toString()), {
             showCode: true,
           })}

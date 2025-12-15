@@ -1,5 +1,4 @@
-import { renderHook } from "tests/testSetup";
-import { act } from "@testing-library/react";
+import { renderHook, act } from "tests/testSetup";
 import { useSearch } from "../useSearch";
 import { track } from "~/renderer/analytics/segment";
 import { jest } from "@jest/globals";

@@ -42,7 +42,7 @@ export default function StepStarter({ account, transaction }: StepProps) {
             ff="Inter|SemiBold"
             fontSize={13}
             textAlign="center"
-            color="palette.text.shade80"
+            color="neutral.c80"
             style={{
               lineHeight: 1.57,
             }}

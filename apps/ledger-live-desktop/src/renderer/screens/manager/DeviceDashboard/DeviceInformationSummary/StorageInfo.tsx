@@ -38,7 +38,7 @@ const FreeInfo = styled.div<{ danger?: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  color: ${p => (p.danger ? p.theme.colors.warning : p.theme.colors.palette.text.shade100)};
+  color: ${p => (p.danger ? p.theme.colors.legacyWarning : p.theme.colors.neutral.c100)};
 `;
 
 /**

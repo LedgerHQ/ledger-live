@@ -63,12 +63,12 @@ function TransferFeeAdditionalRows({
   return (
     <>
       <Box horizontal justifyContent="space-between" alignItems="center" mt={10} mb={20}>
-        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+        <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
           <Trans i18nKey="solana.token.transferFees.transferFeesLabel" />
         </Text>
         <Box>
           <FormattedVal
-            color="palette.text.shade80"
+            color="neutral.c80"
             disableRounding
             unit={unit}
             alwaysShowValue
@@ -79,7 +79,7 @@ function TransferFeeAdditionalRows({
           />
           <Box textAlign="right">
             <CounterValue
-              color="palette.text.shade60"
+              color="neutral.c70"
               fontSize={3}
               currency={tokenAccount.token}
               value={new BigNumber(transferFees.transferFee)}

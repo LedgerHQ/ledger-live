@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 const Disclaimer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-  color: "palette.background.paper",
+  color: "background.card",
   borderRadius: 1,
   p: 3,
   mb: 5,

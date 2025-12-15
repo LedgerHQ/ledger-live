@@ -9,7 +9,7 @@ import InfoDisplay from "~/renderer/components/InfoDisplay";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   justify-content: center;
   min-height: 220px;

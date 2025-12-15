@@ -25,7 +25,7 @@ export function Result({
   }
 
   return (
-    <Grid columns={3} gridGap={4}>
+    <Grid columns={3} columnGap={4} rowGap={4}>
       {search.result.map(m => (
         <FullCard key={m.id} manifest={m} onClick={disclaimer.onSelect} />
       ))}

@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   > * {
     width: 25%;
     display: flex;
@@ -28,15 +28,15 @@ const Wrapper = styled.div`
 `;
 const Header = () => (
   <Wrapper>
-    <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"accountDistribution.account"} />
     </Text>
-    <Text ff="Inter|SemiBold" color="palette.text.shade60" fontSize={3}>
+    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"accountDistribution.distribution"} />
     </Text>
     <Text
       ff="Inter|SemiBold"
-      color="palette.text.shade60"
+      color="neutral.c70"
       style={{
         justifyContent: "flex-end",
       }}
@@ -46,7 +46,7 @@ const Header = () => (
     </Text>
     <Text
       ff="Inter|SemiBold"
-      color="palette.text.shade60"
+      color="neutral.c70"
       style={{
         justifyContent: "flex-end",
       }}

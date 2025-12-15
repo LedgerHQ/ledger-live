@@ -18,9 +18,7 @@ const ItemWrapper = styled.div.attrs<{
   active: boolean;
 }>(p => ({
   style: {
-    backgroundColor: p.active
-      ? p.theme.colors.palette.action.hover
-      : p.theme.colors.palette.background.paper,
+    backgroundColor: p.active ? p.theme.colors.opacityDefault.c10 : p.theme.colors.background.card,
   },
 }))<{
   active: boolean;
@@ -34,11 +32,10 @@ const ItemWrapper = styled.div.attrs<{
   border: 1px solid transparent;
   cursor: pointer;
   margin: 2px 0px;
-  color: ${p =>
-    p.active ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade80};
+  color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c80)};
 
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => p.theme.colors.neutral.c100};
   }
 `;
 type Props = {
@@ -74,7 +71,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
               alwaysShowSign={false}
               animateTicker={false}
               ellipsis
-              color="palette.text.shade60"
+              color="neutral.c70"
               unit={unit}
               showCode
               val={account.balance}

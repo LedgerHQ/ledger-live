@@ -39,7 +39,7 @@ const Earn = () => {
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();

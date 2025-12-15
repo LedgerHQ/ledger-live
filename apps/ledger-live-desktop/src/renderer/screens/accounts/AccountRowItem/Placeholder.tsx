@@ -24,8 +24,8 @@ const AddAccountButton = styled(Box)`
 
   &:hover {
     cursor: pointer;
-    border-color: ${p => p.theme.colors.palette.text.shade100};
-    color: ${p => p.theme.colors.palette.text.shade100};
+    border-color: ${p => p.theme.colors.neutral.c100};
+    color: ${p => p.theme.colors.neutral.c100};
   }
 `;
 const Placeholder = () => {
@@ -55,4 +55,4 @@ const Placeholder = () => {
     </Box>
   );
 };
-export default React.memo<{}>(Placeholder);
+export default React.memo(Placeholder);

@@ -15,8 +15,8 @@ export const IconWrapper = styled(Box)`
 `;
 
 export const WrapperClock = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade60",
+  bg: "background.card",
+  color: "neutral.c70",
 }))`
   border-radius: 50%;
   position: absolute;

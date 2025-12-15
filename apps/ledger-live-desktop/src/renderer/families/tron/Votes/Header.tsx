@@ -5,7 +5,7 @@ import Text from "~/renderer/components/Text";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 export const TableLine = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 3,
 }))`
   flex: 1.25;

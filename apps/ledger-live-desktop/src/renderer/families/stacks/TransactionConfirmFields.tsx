@@ -14,7 +14,7 @@ const StacksMemoField = ({ field }: { field: DeviceTransactionField }) => {
   invariant(field.type === "stacks.memo", "stacks.memo field expected");
   return (
     <TransactionConfirmField label={field.label}>
-      <Text style={addressStyle} ml={1} ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+      <Text style={addressStyle} ml={1} ff="Inter|Medium" color="neutral.c80" fontSize={3}>
         {field.value}
       </Text>
     </TransactionConfirmField>

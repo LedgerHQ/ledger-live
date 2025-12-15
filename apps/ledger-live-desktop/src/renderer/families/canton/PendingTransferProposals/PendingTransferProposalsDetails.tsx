@@ -14,7 +14,6 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
   OpDetailsData,
-  B,
   HashContainer,
   GradientHover,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
@@ -23,6 +22,7 @@ import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import type { TransferProposalAction } from "./types";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 type PendingProposal = {
   contract_id: string;
@@ -127,7 +127,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
               showCode
               fontSize={4}
               alwaysShowSign
-              color={isIncoming ? undefined : "palette.text.shade80"}
+              color={isIncoming ? undefined : "neutral.c80"}
             />
           </Box>
         </OpDetailsData>
@@ -185,7 +185,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
         </OpDetailsSection>
       )}
 
-      <B />
+      <Divider />
 
       <OpDetailsSection>
         <OpDetailsTitle>
@@ -201,7 +201,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
         </OpDetailsData>
       </OpDetailsSection>
 
-      <B />
+      <Divider />
 
       <Box horizontal mt={4} flow={2} justifyContent="center">
         {isIncoming ? (

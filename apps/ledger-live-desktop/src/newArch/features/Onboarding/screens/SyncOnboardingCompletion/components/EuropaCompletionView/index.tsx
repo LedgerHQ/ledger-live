@@ -7,8 +7,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import Europa from "../../assets/europa-success.png";
 
 export default function EuropaCompletionView() {
-  const { colors } = useTheme();
-  const theme = colors.palette.type;
+  const { theme } = useTheme();
 
   return (
     <Flex height="100vh" width="100vw" data-testid="europa-completion-view">

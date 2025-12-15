@@ -43,7 +43,7 @@ function SuccessDisplay({
         style={{
           userSelect: "text",
         }}
-        color="palette.text.shade80"
+        color="neutral.c80"
       >
         {description}
       </Text>

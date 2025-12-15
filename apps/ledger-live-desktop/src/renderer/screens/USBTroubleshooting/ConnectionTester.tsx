@@ -21,7 +21,7 @@ const Wrapper = styled(Box)`
   margin-top: 12px;
   min-height: 80px;
   padding: 20px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 8px;
 `;
 
@@ -31,11 +31,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
   const { t } = useTranslation();
   const [connectionStatus, setConnectionStatus] = useState(0);
   const currentDevice = useSelector(getCurrentDevice);
-  const {
-    colors: {
-      palette: { type: theme },
-    },
-  } = useTheme();
+  const { theme } = useTheme();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   useEffect(() => {
     let sub: Subscription | undefined;
@@ -66,7 +62,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
       {connectionStatus === 1 ? (
         <Box horizontal alignItems="center" justifyContent="center">
           <IconCheckFull size={16} />
-          <Text ff="Inter|Medium" mx={2} fontSize={4} color="palette.primary.main">
+          <Text ff="Inter|Medium" mx={2} fontSize={4} color="primary.c80">
             {t("connectTroubleshooting.connected")}
           </Text>
           <Button
@@ -80,7 +76,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
           </Button>
         </Box>
       ) : (
-        <Box color="palette.text.shade50" horizontal alignItems="center" justifyContent="center">
+        <Box color="neutral.c70" horizontal alignItems="center" justifyContent="center">
           <Spinner size={16} />
           <Text ff="Inter|Medium" fontSize={4} ml={2}>
             {t("connectTroubleshooting.connecting")}

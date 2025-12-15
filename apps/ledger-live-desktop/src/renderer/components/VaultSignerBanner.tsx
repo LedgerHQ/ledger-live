@@ -27,7 +27,7 @@ const VaultSignerBanner = () => {
           />
         ),
       }}
-      status={"warning"}
+      status={"legacyWarning"}
     />
   );
 };
