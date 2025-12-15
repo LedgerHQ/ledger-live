@@ -94,7 +94,7 @@ function ScanDeviceAccounts() {
     >
       <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-      {scanning || !scannedAccounts.length ? (
+      {scanning || scannedAccounts.length === 0 ? (
         <Flex px={6} style={styles.headerTitle}>
           <Text
             variant="h4"
@@ -106,16 +106,19 @@ function ScanDeviceAccounts() {
           </Text>
         </Flex>
       ) : (
-        <Flex px={6} style={styles.headerTitle}>
-          <Text
-            variant="h4"
-            testID="receive-header-step2-title"
-            fontSize="24px"
-            color="neutral.c100"
-          >
-            <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
-          </Text>
-        </Flex>
+        <>
+          <Flex px={6} style={styles.headerTitle}>
+            <Text
+              variant="h4"
+              testID="receive-header-step2-title"
+              fontSize="24px"
+              color="neutral.c100"
+            >
+              <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
+            </Text>
+          </Flex>
+          <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
+        </>
       )}
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
@@ -178,7 +181,6 @@ function ScanDeviceAccounts() {
       </NavigationScrollView>
       {sections.some(s => s.data.length > 0) && (
         <>
-          <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
           <ScanDeviceAccountsFooter
             isScanning={scanning}
             canRetry={
