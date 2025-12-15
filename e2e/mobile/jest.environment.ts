@@ -14,9 +14,6 @@ import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelper
 import { $TmsLink, Step, $Tag } from "jest-allure2-reporter/api";
 import { Subject } from "rxjs";
 import expect from "expect";
-import detox from "detox/internals";
-
-setupEnvironment();
 
 Object.assign(globalThis, {
   Step,
