@@ -29,11 +29,8 @@ import { SettingsPage } from "./settings.page";
 import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
-<<<<<<< HEAD
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
-=======
 import { MemoTagPage } from "./memoTag.page";
->>>>>>> d0fc4de41e (feature(e2e): memo tag automation for  XRP, SOL, ADA, HBAR)
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
