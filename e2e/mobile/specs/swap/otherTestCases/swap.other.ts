@@ -512,9 +512,10 @@ export function runSwapCheckProvider(
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
-  const handleSwapPageFlow = async (account: Account) => {
+  const validateSwapAssetsPage = async (accountFrom: string, accountTo: string) => {
     await app.swapLiveApp.expectSwapLiveApp();
-    await app.swapLiveApp.checkAssetFrom(account.currency.ticker, "");
+    await app.swapLiveApp.checkAssetFrom(accountFrom, "");
+    await app.swapLiveApp.checkAssetTo(accountTo, "-");
   };
 
   describe("Swap - Entry Points", () => {
@@ -533,21 +534,21 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
       let readyPromise = waitSwapReady();
       await app.transferMenuDrawer.navigateToSwap();
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage(account.currency.ticker, "");
 
       await app.account.openViaDeeplink();
       readyPromise = waitSwapReady();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapSwap();
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage("", account.currency.ticker);
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
       readyPromise = waitSwapReady();
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
       await readyPromise;
-      await handleSwapPageFlow(account);
+      await validateSwapAssetsPage("", account.currency.ticker);
     });
   });
 }

@@ -44,6 +44,12 @@ export default class SwapLiveAppPage {
     return await getWebElementText(this.fromSelector);
   }
 
+  @Step("Check if the to currency is already selected")
+  async getToCurrencyTexts() {
+    await waitWebElementByTestId(this.toSelector);
+    return await getWebElementText(this.toSelector);
+  }
+
   @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);

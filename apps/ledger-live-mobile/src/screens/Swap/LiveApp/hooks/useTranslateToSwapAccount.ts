@@ -2,14 +2,16 @@ import { useSelector } from "~/context/store";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { walletSelector } from "~/reducers/wallet";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 
 import { DefaultAccountSwapParamList } from "../../types";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
-  fromAccountId?: string;
-  fromToken?: string;
+  toAccountId?: string;
+  toTokenId?: string;
   amountFrom?: string;
   affiliate?: string;
 };
@@ -48,11 +50,17 @@ export const useTranslateToSwapAccount = (
 
     // A specific account was given
     if (defaultAccount) {
-      newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
+      newParams.toAccountId = walletApi.accountToWalletAPIAccount(
         walletState,
         defaultAccount,
         params?.defaultParentAccount,
       ).id;
+
+      // Set toTokenId only if the account is a token account
+      if (isTokenAccount(defaultAccount)) {
+        const currency = getAccountCurrency(defaultAccount);
+        newParams.toTokenId = walletApi.currencyToWalletAPICurrency(currency).id;
+      }
 
       return newParams;
     }
@@ -72,14 +80,17 @@ export const useTranslateToSwapAccount = (
           isTokenAccount(account) ? currentAccount.id === account.parentId : false,
         );
 
-        newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
+        newParams.toAccountId = walletApi.accountToWalletAPIAccount(
           walletState,
           account,
           isAccount(parentAccount) ? parentAccount : undefined,
         ).id;
       }
 
-      newParams.fromToken = currency.id;
+      // Set toTokenId only if the currency is a token
+      if (isTokenCurrency(defaultCurrency)) {
+        newParams.toTokenId = currency.id;
+      }
       return newParams;
     }
 
