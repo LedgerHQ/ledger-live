@@ -720,10 +720,6 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  if (!isReady) {
-    return null;
-  }
-
   return (
     <AppLoadingManager
       isNavigationReady={isReady}
@@ -740,17 +736,19 @@ export const DeeplinksProvider = ({
         }
       }}
     >
-      <NavigationContainer
-        theme={theme}
-        linking={linking}
-        ref={navigationRef}
-        onReady={() => {
-          isReadyRef.current = true;
-          setTimeout(() => SplashScreen.hide(), 300);
-        }}
-      >
-        {children}
-      </NavigationContainer>
+      {isReady ? (
+        <NavigationContainer
+          theme={theme}
+          linking={linking}
+          ref={navigationRef}
+          onReady={() => {
+            isReadyRef.current = true;
+            setTimeout(() => SplashScreen.hide(), 300);
+          }}
+        >
+          {children}
+        </NavigationContainer>
+      ) : null}
     </AppLoadingManager>
   );
 };
