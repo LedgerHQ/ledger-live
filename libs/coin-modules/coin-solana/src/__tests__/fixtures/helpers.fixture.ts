@@ -173,7 +173,7 @@ export function transaction(options?: {
     recipient: "",
     model: {
       kind,
-      uiState: { subAccountId: options?.subAccountId },
+      uiState: { subAccountId: options?.subAccountId, memo: "random memo for unit test" },
       commandDescriptor: {
         command: {
           kind,

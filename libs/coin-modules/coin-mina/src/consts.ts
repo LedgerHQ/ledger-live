@@ -12,7 +12,6 @@ export const MINA_DECIMALS = 9;
 export const MINA_SYMBOL = "MINA";
 export const MINA_CURVE_TYPE = "pallas";
 
-export const MAX_MEMO_LENGTH = 32;
 export const MINA_DECODED_ADDRESS_LENGTH = 72;
 
 export const MAX_TRANSACTIONS_PER_PAGE = 100;
