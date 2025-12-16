@@ -2137,7 +2137,7 @@ describe("getCoinsForAmount", () => {
     });
   });
 
-  describe.only("dedup", () => {
+  describe("dedup", () => {
     const outs: PaginatedTransactionResponse = {
       data: [],
       hasNextPage: false,
