@@ -483,7 +483,6 @@
     "bip32",
     "bip39",
     "ethers",
-    "i18next",
     "rlp",
     "tsx",
     "yargs"
