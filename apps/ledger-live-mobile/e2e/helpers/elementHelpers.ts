@@ -5,11 +5,6 @@ import { by, element, waitFor, web, expect } from "detox";
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
 
-function sync_delay(ms: number) {
-  const done = new Int32Array(new SharedArrayBuffer(4));
-  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
-}
-
 export const ElementHelpers = {
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
     return waitFor(element(by.id(id)))
