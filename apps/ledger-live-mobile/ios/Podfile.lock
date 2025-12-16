@@ -2354,29 +2354,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (6.13.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.49.2)
-    - Yoga
   - RNShare (12.2.0):
     - DoubleConversion
     - glog
@@ -2450,7 +2427,6 @@ PODS:
   - segment-analytics-react-native (2.20.5):
     - React-Core
     - sovran-react-native
-  - Sentry/HybridSDK (8.49.2)
   - SocketRocket (0.7.1)
   - sovran-react-native (1.1.3):
     - React-Core
@@ -2585,7 +2561,6 @@ DEPENDENCIES:
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
-  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - "segment-analytics-react-native (from `../node_modules/@segment/analytics-react-native`)"
@@ -2626,7 +2601,6 @@ SPEC REPOS:
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
-    - Sentry
     - SocketRocket
     - TOCropViewController
     - ZXingObjC
@@ -2873,8 +2847,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
-  RNSentry:
-    :path: "../node_modules/@sentry/react-native"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
@@ -3037,13 +3009,11 @@ SPEC CHECKSUMS:
   RNReactNativeHapticFeedback: eb5395b503c7a8f10de5e6722ef8afd3c61bc4f5
   RNReanimated: 1ec7b5ab25af07e4379202b31dc179045f197134
   RNScreens: fb0814a1c33438d6be0df1326b5efd569d7c84ee
-  RNSentry: 6092028c8588b03eccfbf84bbb9c1ca1be17b5af
   RNShare: e816de191f13f2d2a63e7ffdadbaa85a7539c1aa
   RNSVG: f79679fe33eb77562fe7d6e3fbb0c8855829e549
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: be835fc068af1177254e7b421858d7a4bc3de7d0
-  Sentry: 47021097466aa130802420d485a34da445963d99
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6

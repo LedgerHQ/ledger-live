@@ -72,7 +72,6 @@ function Earn({ route }: Props) {
   );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
-    // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
   }
 

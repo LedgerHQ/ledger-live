@@ -28,7 +28,6 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
@@ -729,8 +728,6 @@ export const DeeplinksProvider = ({
     <AppLoadingManager
       isNavigationReady={isReady}
       onAppReady={async () => {
-        navigationIntegration.registerNavigationContainer(navigationRef);
-
         try {
           DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
 

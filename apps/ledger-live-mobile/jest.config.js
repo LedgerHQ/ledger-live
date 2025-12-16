@@ -9,7 +9,6 @@ const transformIncludePatterns = [
   "rn-range-slider",
   "react-native-reanimated",
   "react-native-modal",
-  "@sentry/react-native",
   "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",

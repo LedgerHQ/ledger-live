@@ -26,13 +26,6 @@ In other cases, these env files will be used:
 |prerelease|com.ledger.live.prerelease|com.ledger.live|
 |nightly|com.ledger.live.nightly|com.ledger.live|
 |staging|com.ledger.live.dev|com.ledger.live.dev|
-# Sentry projects
-| target | iOS | Android |
-|--|--|--|
-|release|[llm-ios](https://sentry.io/organizations/ledger/projects/llm-ios) - ✅ auto upload enabled|[llm-android](https://sentry.io/organizations/ledger/projects/llm-android) - ✅ auto upload enabled|
-|prerelease|[llm-ios-prerelease](https://sentry.io/organizations/ledger/projects/llm-ios-prerelease) - ✅ auto upload enabled|[llm-android-prerelease](https://sentry.io/organizations/ledger/projects/llm-android-prerelease) - ✅ auto upload enabled|
-|nightly|[llm-ios-nightly](https://sentry.io/organizations/ledger/projects/llm-ios-nightly) - ✅ auto upload enabled|[llm-android-nightly](https://sentry.io/organizations/ledger/projects/llm-android-nightly) - ✅ auto upload enabled|
-|staging|[llm-ios-staging](https://sentry.io/organizations/ledger/projects/llm-ios-staging) - ❌ auto upload disabled|[llm-android-staging](https://sentry.io/organizations/ledger/projects/llm-android-staging) - ❌ auto upload disabled|
 # Google Service (feature flag)
 | target | iOS | Android |
 |--|--|--|

@@ -25,7 +25,6 @@ const forcedDependencies = [
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
-const { withSentryConfig } = require("@sentry/react-native/metro");
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
 const buildTsAlias = (conf = {}) =>
@@ -109,18 +108,15 @@ const metroConfig = {
   },
 };
 
-module.exports = withRozenite(
-  withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig)),
-  {
-    enabled: process.env.WITH_ROZENITE === "true",
-    include: [
-      "@rozenite/network-activity-plugin",
-      "@rozenite/expo-atlas-plugin",
-      "@rozenite/react-navigation-plugin",
-      "@rozenite/redux-devtools-plugin",
-      "@rozenite/mmkv-plugin",
-    ],
-    enhanceMetroConfig: config =>
-      withRozeniteExpoAtlasPlugin(config).then(config => withRozeniteReduxDevTools(config)),
-  },
-);
+module.exports = withRozenite(mergeConfig(getDefaultConfig(__dirname), metroConfig), {
+  enabled: process.env.WITH_ROZENITE === "true",
+  include: [
+    "@rozenite/network-activity-plugin",
+    "@rozenite/expo-atlas-plugin",
+    "@rozenite/react-navigation-plugin",
+    "@rozenite/redux-devtools-plugin",
+    "@rozenite/mmkv-plugin",
+  ],
+  enhanceMetroConfig: config =>
+    withRozeniteExpoAtlasPlugin(config).then(config => withRozeniteReduxDevTools(config)),
+});
