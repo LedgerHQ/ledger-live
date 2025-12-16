@@ -26,6 +26,7 @@ type PendingProposal = {
 
 type Props = {
   account: Account;
+  parentAccount: Account;
   contractId: string;
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
   isOpen: boolean;
@@ -34,6 +35,7 @@ type Props = {
 
 const PendingTransferProposalsDetails: React.FC<Props> = ({
   account,
+  parentAccount,
   contractId,
   onOpenModal,
   isOpen,
@@ -94,7 +96,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
     );
   }
 
-  const isIncoming = proposal.sender !== account.xpub;
+  const isIncoming = proposal.sender !== parentAccount.xpub;
 
   return (
     <QueuedDrawer

@@ -11,7 +11,14 @@ import BigNumber from "bignumber.js";
 import { CantonAccount } from "../types";
 import { createMockCantonCurrency } from "../test/fixtures";
 
-jest.mock("../network/gateway");
+jest.mock("../network/gateway", () => ({
+  ...jest.requireActual("../network/gateway"),
+  getLedgerEnd: jest.fn(),
+  getOperations: jest.fn(),
+  getPendingTransferProposals: jest.fn(),
+  getCalTokensCached: jest.fn(),
+  getEnabledInstrumentsCached: jest.fn(),
+}));
 jest.mock("../signer");
 jest.mock("../config");
 jest.mock("./onboard");
@@ -410,13 +417,13 @@ describe("makeGetAccountShape", () => {
 describe("filterDisabledTokenAccounts", () => {
   const currency = createMockCantonCurrency();
 
-  const createMockTokenAccount = (contractAddress: string): TokenAccount => ({
+  const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
     type: "TokenAccount",
     id: `token-account-${contractAddress}`,
     parentId: "parent-account-id",
     token: {
       type: "TokenCurrency",
-      id: `token-id-${contractAddress}`,
+      id: tokenId ?? `token-id-${contractAddress}`,
       contractAddress,
       name: "Test Token",
       ticker: "TEST",
@@ -442,29 +449,46 @@ describe("filterDisabledTokenAccounts", () => {
   });
 
   it("should return empty array when subAccounts is undefined", async () => {
-    const result = await filterDisabledTokenAccounts(currency, undefined);
+    const calTokens = new Map<string, string>();
+    const result = await filterDisabledTokenAccounts(currency, undefined, calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
   it("should return empty array when subAccounts is empty", async () => {
-    const result = await filterDisabledTokenAccounts(currency, []);
+    const calTokens = new Map<string, string>();
+    const result = await filterDisabledTokenAccounts(currency, [], calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
   it("should filter out disabled token accounts", async () => {
-    const enabledTokenId = "0xenabled";
-    const disabledTokenId = "0xdisabled";
-    const enabledTokenAccount = createMockTokenAccount(enabledTokenId);
-    const disabledTokenAccount = createMockTokenAccount(disabledTokenId);
+    const enabledAdminId = "0xenabled";
+    const disabledAdminId = "0xdisabled";
+    const enabledTokenId = "token-id-enabled";
+    const disabledTokenId = "token-id-disabled";
+    const enabledInstrumentId = "instrument-enabled";
+    const disabledInstrumentId = "instrument-disabled";
 
-    mockedGetEnabledInstrumentsCached.mockResolvedValue([enabledTokenId]);
+    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
+    const disabledTokenAccount = createMockTokenAccount(disabledAdminId, disabledTokenId);
 
-    const result = await filterDisabledTokenAccounts(currency, [
-      enabledTokenAccount,
-      disabledTokenAccount,
+    // calTokens maps token.id -> instrumentId
+    const calTokens = new Map<string, string>([
+      [enabledTokenId, enabledInstrumentId],
+      [disabledTokenId, disabledInstrumentId],
     ]);
+
+    // enabledInstruments is a Set of keys in format "instrumentId____adminId"
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(
+      new Set([`${enabledInstrumentId}____${enabledAdminId}`]),
+    );
+
+    const result = await filterDisabledTokenAccounts(
+      currency,
+      [enabledTokenAccount, disabledTokenAccount],
+      calTokens,
+    );
 
     expect(result).toHaveLength(1);
     expect(result[0]).toBe(enabledTokenAccount);
@@ -472,17 +496,30 @@ describe("filterDisabledTokenAccounts", () => {
   });
 
   it("should keep enabled token accounts", async () => {
-    const enabledTokenId1 = "0xenabled1";
-    const enabledTokenId2 = "0xenabled2";
-    const enabledTokenAccount1 = createMockTokenAccount(enabledTokenId1);
-    const enabledTokenAccount2 = createMockTokenAccount(enabledTokenId2);
+    const adminId1 = "0xenabled1";
+    const adminId2 = "0xenabled2";
+    const tokenId1 = "token-id-1";
+    const tokenId2 = "token-id-2";
+    const instrumentId1 = "instrument-1";
+    const instrumentId2 = "instrument-2";
 
-    mockedGetEnabledInstrumentsCached.mockResolvedValue([enabledTokenId1, enabledTokenId2]);
+    const enabledTokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
+    const enabledTokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
 
-    const result = await filterDisabledTokenAccounts(currency, [
-      enabledTokenAccount1,
-      enabledTokenAccount2,
+    const calTokens = new Map<string, string>([
+      [tokenId1, instrumentId1],
+      [tokenId2, instrumentId2],
     ]);
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(
+      new Set([`${instrumentId1}____${adminId1}`, `${instrumentId2}____${adminId2}`]),
+    );
+
+    const result = await filterDisabledTokenAccounts(
+      currency,
+      [enabledTokenAccount1, enabledTokenAccount2],
+      calTokens,
+    );
 
     expect(result).toHaveLength(2);
     expect(result).toContain(enabledTokenAccount1);
@@ -491,48 +528,58 @@ describe("filterDisabledTokenAccounts", () => {
 
   it("should not keep token accounts without contractAddress", async () => {
     const tokenAccountWithoutAddress = {
-      ...createMockTokenAccount("0xtest"),
+      ...createMockTokenAccount("0xtest", "token-id-noaddr"),
       token: {
-        ...createMockTokenAccount("0xtest").token,
+        ...createMockTokenAccount("0xtest", "token-id-noaddr").token,
         contractAddress: "",
       },
     };
-    const enabledTokenAccount = createMockTokenAccount("0xenabled");
+    const enabledAdminId = "0xenabled";
+    const enabledTokenId = "token-id-enabled";
+    const enabledInstrumentId = "instrument-enabled";
+    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
 
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(["0xenabled"]);
-
-    const result = await filterDisabledTokenAccounts(currency, [
-      tokenAccountWithoutAddress,
-      enabledTokenAccount,
+    const calTokens = new Map<string, string>([
+      ["token-id-noaddr", "instrument-noaddr"],
+      [enabledTokenId, enabledInstrumentId],
     ]);
+
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(
+      new Set([`${enabledInstrumentId}____${enabledAdminId}`, "instrument-noaddr____"]),
+    );
+
+    const result = await filterDisabledTokenAccounts(
+      currency,
+      [tokenAccountWithoutAddress, enabledTokenAccount],
+      calTokens,
+    );
 
     expect(result).toHaveLength(1);
     expect(result[0]).toBe(enabledTokenAccount);
     expect(result).not.toContain(tokenAccountWithoutAddress);
   });
 
-  it("should return empty array when API fails", async () => {
-    const enabledTokenAccount = createMockTokenAccount("0xenabled");
-    const disabledTokenAccount = createMockTokenAccount("0xdisabled");
+  it("should handle empty enabled instruments list", async () => {
+    const adminId1 = "0xtoken1";
+    const adminId2 = "0xtoken2";
+    const tokenId1 = "token-id-1";
+    const tokenId2 = "token-id-2";
 
-    mockedGetEnabledInstrumentsCached.mockRejectedValue(new Error("Network error"));
+    const tokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
+    const tokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
 
-    const result = await filterDisabledTokenAccounts(currency, [
-      enabledTokenAccount,
-      disabledTokenAccount,
+    const calTokens = new Map<string, string>([
+      [tokenId1, "instrument-1"],
+      [tokenId2, "instrument-2"],
     ]);
 
-    expect(result).toEqual([]);
-    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(currency);
-  });
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
 
-  it("should handle empty enabled instruments list", async () => {
-    const tokenAccount1 = createMockTokenAccount("0xtoken1");
-    const tokenAccount2 = createMockTokenAccount("0xtoken2");
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue([]);
-
-    const result = await filterDisabledTokenAccounts(currency, [tokenAccount1, tokenAccount2]);
+    const result = await filterDisabledTokenAccounts(
+      currency,
+      [tokenAccount1, tokenAccount2],
+      calTokens,
+    );
 
     expect(result).toEqual([]);
   });

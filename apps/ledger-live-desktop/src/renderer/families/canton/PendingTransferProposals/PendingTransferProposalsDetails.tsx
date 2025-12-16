@@ -37,6 +37,7 @@ type PendingProposal = {
 export type PendingTransferProposalsDetailsProps = {
   onClose?: () => void;
   account: Account;
+  parentAccount: Account;
   contractId: string;
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
 };
@@ -45,6 +46,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
   account,
   contractId,
   onClose,
+  parentAccount,
   onOpenModal,
 }) => {
   const { t } = useTranslation();
@@ -113,7 +115,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
     );
   }
 
-  const isIncoming = proposal.sender !== account.xpub;
+  const isIncoming = proposal.sender !== parentAccount.xpub;
 
   return (
     <Box flow={3} px={20} mt={20}>

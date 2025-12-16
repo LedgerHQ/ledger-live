@@ -138,11 +138,12 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
     (contractId: string) => {
       setDrawer(PendingTransferProposalsDetails, {
         account,
+        parentAccount,
         contractId,
         onOpenModal: handleOpenModal,
       });
     },
-    [account, handleOpenModal],
+    [account, parentAccount, handleOpenModal],
   );
 
   if (incomingCount === 0 && outgoingCount === 0) {
