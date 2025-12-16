@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { AssetSelectorContent } from "./components/AssetSelectorContent";
+import { ErrorInfo } from "@ledgerhq/live-common/dada-client/utils/errorUtils";
 
 export type AssetSelectorProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -17,7 +18,7 @@ export type AssetSelectorProps = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   loadNext?: () => void;
-  error?: boolean;
+  errorInfo?: ErrorInfo;
   refetch?: () => void;
   assetsSorted?: AssetData[];
 };
@@ -28,7 +29,7 @@ const AssetSelector = ({
   assetsConfiguration,
   onAssetSelected,
   loadNext,
-  error,
+  errorInfo,
   refetch,
   assetsSorted,
 }: Readonly<AssetSelectorProps>) => {
@@ -58,8 +59,8 @@ const AssetSelector = ({
         />
       )}
       <SearchInputContainer />
-      {error && refetch ? (
-        <GenericError onClick={refetch} />
+      {errorInfo?.hasError ? (
+        <GenericError onClick={refetch} type={errorInfo.isNetworkError ? "network" : "backend"} />
       ) : (
         <AssetSelectorContent
           assetsToDisplay={assetsToDisplay}
