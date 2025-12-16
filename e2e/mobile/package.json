@@ -59,7 +59,7 @@
     "eslint-plugin-prettier": "5.1.3",
     "expect": "27.5.1",
     "express": "4.22.0",
-    "glob": "^11.0.1",
+    "glob": "^9.0.0",
     "jest": "30.2.0",
     "jest-allure2-reporter": "2.2.8",
     "jest-docblock": "30.2.0",
