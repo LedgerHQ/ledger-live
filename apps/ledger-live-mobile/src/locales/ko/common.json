@@ -665,6 +665,11 @@
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™는 이 기능을 지원하지 않습니다",
+      "description" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Wallet의 모든 최신 기능을 이용해 보세요.",
+      "upsellCtaLabel" : "업그레이드 프로그램 살펴보기"
+    },
     "NotEnoughGas" : {
       "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요.",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
@@ -1136,6 +1141,11 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "지원되지 않는 기능",
+      "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요",
+      "ctaLabel" : "문의하기"
     },
     "EtherscanAPIError" : {
       "title" : "트랜잭션을 가져오지 못했습니다",
@@ -3756,7 +3766,7 @@
         },
         "notAvailable" : {
           "title" : "아직 스왑이 불가능한 지역입니다",
-          "content" : "조금만 기다려 주세요. <br/>조만간 해당 기능을 런칭을 앞두고 있습니다"
+          "content" : "조금만 기다려 주세요.  조만간 해당 기능을 런칭을 앞두고 있습니다"
         },
         "amount" : {
           "useMax" : "최대치 사용"
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "서비스 제공 업체 이용 불가",
-      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "서비스 제공 업체 이용 불가",
+      "description" : "이 서비스 제공업체에서는 스왑을 완료할 수 없습니다. 다른 업체를 이용해 보세요."
+    },
+    "swapRateExpiredError" : {
+      "title" : "요율 만료",
+      "description" : "거래소 요율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
     },
     "default" : {
       "title" : "문제가 발생했습니다",
