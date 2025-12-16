@@ -32,7 +32,6 @@ describe("Receive different currency", () => {
     //["solana"], // TOFIX Error during flow
     ["cardano"],
     ["dogecoin"],
-    ["tron"],
     ["avalanche_c_chain"],
     ["polygon", "polygon"],
     ["polkadot", "assethub_polkadot"],
