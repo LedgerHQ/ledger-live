@@ -1,10 +1,35 @@
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { VirtualList } from "./index";
-import { action } from "@storybook/addon-actions";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const items = Array.from({ length: 50 }, (_, i) => ({ i }));
+
+const PaginatedList = () => {
+  const [listItems, setListItems] = useState(Array.from({ length: 50 }, (_, i) => i));
+  const [isFetching, setIsFetching] = useState(false);
+
+  const handleFetchNextPage = async () => {
+    if (isFetching) return;
+    setIsFetching(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setListItems(prev => [...prev, ...Array.from({ length: 50 }, (_, i) => prev.length + i)]);
+    setIsFetching(false);
+  };
+
+  return (
+    <VirtualList
+      itemHeight={50}
+      isLoading={isFetching}
+      onVisibleItemsScrollEnd={handleFetchNextPage}
+      hasNextPage={true}
+      items={listItems}
+      renderItem={item => (
+        <div className="bg-neutral-100 h-[50px] border border-solid border-black">Item {item}</div>
+      )}
+    />
+  );
+};
 
 const meta: Meta<typeof VirtualList<{ i: number }>> = {
   component: VirtualList,
@@ -98,7 +123,7 @@ export const Default: Story = {
     overscan: 5,
     items,
     renderItem: ({ i }: { i: number }) => (
-      <div className="h-[50px] border border-solid border-black bg-primary/20">Item {i}</div>
+      <div className="bg-neutral-200 h-[50px] border border-solid border-black">Item {i}</div>
     ),
   },
 };
@@ -112,47 +137,18 @@ export const WithCustomLastRow: Story = {
         {...args}
         items={items}
         renderItem={item => (
-          <div className="h-[50px] border border-solid border-black bg-success/20">Item {item}</div>
+          <div className="bg-neutral-100 h-[50px] border border-solid border-black">
+            Item {item}
+          </div>
         )}
-        bottomComponent={<div className="h-[50px] bg-error/20">End of List</div>}
+        bottomComponent={<div className="bg-neutral-300 h-[50px]">End of List</div>}
       />
     );
   },
 };
 
 export const WithPagination: Story = {
-  render: args => {
-    const [items, setItems] = useState(Array.from({ length: 50 }, (_, i) => i));
-    const [isFetching, setIsFetching] = useState(false);
-
-    const handleFetchNextPage = async () => {
-      action("fetchNextPage")();
-      if (isFetching) return;
-      setIsFetching(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setItems(prev => [...prev, ...Array.from({ length: 50 }, (_, i) => prev.length + i)]);
-      setIsFetching(false);
-    };
-
-    return (
-      <VirtualList
-        {...args}
-        isLoading={isFetching}
-        onVisibleItemsScrollEnd={handleFetchNextPage}
-        hasNextPage={true}
-        items={items}
-        renderItem={item => (
-          <div className="h-[50px] border border-solid border-black bg-success/20">Item {item}</div>
-        )}
-      />
-    );
-  },
-  args: {
-    itemHeight: 50,
-    overscan: 5,
-    hasNextPage: true,
-    isLoading: false,
-  },
+  render: () => <PaginatedList />,
 };
 
 export const TestVirtualList: Story = {
@@ -177,4 +173,3 @@ export const TestVirtualList: Story = {
     await waitFor(() => expect(firstVisibleItem).not.toBeInTheDocument());
   },
 };
-

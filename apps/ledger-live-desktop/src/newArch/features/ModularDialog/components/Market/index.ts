@@ -6,4 +6,3 @@ export {
   formatPercentText,
   type PercentVariant,
 } from "./useMarketIndicator";
-
