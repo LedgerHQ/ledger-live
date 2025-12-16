@@ -12,9 +12,11 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import Animation from "~/components/Animation";
-import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";
-import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.json";
-import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const staxClsAsset = require("~/animations/device/customLockScreen/stax.lottie.json");
+const flexClsAsset = require("~/animations/device/customLockScreen/flex.lottie.json");
+const apexClsAsset = require("~/animations/device/customLockScreen/apex.lottie.json");
 import { useTheme } from "styled-components/native";
 import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -66,18 +68,22 @@ const Step0Welcome: React.FC<
     setWaitingForUserPicture(true);
   }, [setWaitingForUserPicture]);
 
+  const staxClsPreview = useLottieAsset(staxClsAsset);
+  const flexClsPreview = useLottieAsset(flexClsAsset);
+  const apexClsPreview = useLottieAsset(apexClsAsset);
+
   const animationSource = useMemo(() => {
     switch (deviceModelId) {
       case DeviceModelId.stax:
-        return STAX_CLS_PREVIEW;
+        return staxClsPreview;
       case DeviceModelId.europa:
-        return FLEX_CLS_PREVIEW;
+        return flexClsPreview;
       case DeviceModelId.apex:
-        return APEX_CLS_PREVIEW;
+        return apexClsPreview;
       default:
         return "";
     }
-  }, [deviceModelId]);
+  }, [deviceModelId, staxClsPreview, flexClsPreview, apexClsPreview]);
 
   const { colors } = useTheme();
 

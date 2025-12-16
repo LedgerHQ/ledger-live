@@ -8,7 +8,9 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import lottie from "~/animations/lottie.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const lottieAsset = require("~/animations/lottie.lottie.json");
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +27,7 @@ export function ActivationLoading({ route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const lottie = useLottieAsset(lottieAsset);
 
   const title = "walletSync.loading.title";
   const subtitle = created ? "walletSync.loading.activation" : "walletSync.loading.synch";

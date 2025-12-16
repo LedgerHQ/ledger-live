@@ -2,7 +2,9 @@ import Animation from "~/components/Animation";
 import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const onboardingSuccessAsset = require("~/animations/onboardingSuccess.lottie.json");
 import { useIsFocused } from "@react-navigation/core";
 
 type Props = {
@@ -17,6 +19,7 @@ const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish, loop }) => {
   const isFocused = useIsFocused();
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [hasBeenFocused, setHasBeenFocused] = useState<boolean>(false);
+  const OnboardingSuccessAnimation = useLottieAsset(onboardingSuccessAsset);
 
   useEffect(() => {
     if (!hasBeenFocused && isFocused) {

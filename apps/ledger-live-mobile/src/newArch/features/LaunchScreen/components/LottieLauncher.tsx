@@ -1,16 +1,20 @@
 import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animation from "~/components/Animation";
-import Splashscreen from "./Splashscreen.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const splashscreenAsset = require("./Splashscreen.lottie.json");
 
 const LottieLauncher = ({ onFinish }: { onFinish: () => void }) => {
   const { width, height } = Dimensions.get("window");
   const size = Math.min(width, height);
 
+  const splashscreen = useLottieAsset(splashscreenAsset);
+
   return (
     <View style={styles.container}>
       <Animation
-        source={Splashscreen}
+        source={splashscreen}
         style={{ width: size, height: size }}
         loop={false}
         autoPlay

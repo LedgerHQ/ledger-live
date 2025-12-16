@@ -2,52 +2,120 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { LottieViewProps } from "lottie-react-native";
 import { ViewStyle } from "react-native";
 
-import BluePlugAndPinCode from "../animations/device/blue/1PlugAndPinCode/data.json";
-import BlueEnterPinCode from "../animations/device/blue/3EnterPinCode/data.json";
-import BlueQuitApp from "../animations/device/blue/4QuitApp/data.json";
-import BlueAllowManager from "../animations/device/blue/5AllowManager/data.json";
-import BlueOpenApp from "../animations/device/blue/6OpenApp/data.json";
-import BlueValidate from "../animations/device/blue/7Validate/data.json";
+import { resolveLottieAsset } from "~/utils/lottieAsset";
 
-import NanoSPPinDark from "../animations/device/nanoSP/dark/pin.json";
-import NanoSPPinLight from "../animations/device/nanoSP/light/pin.json";
-import NanoSPContinueDark from "../animations/device/nanoSP/dark/continue.json";
-import NanoSPContinueLight from "../animations/device/nanoSP/light/continue.json";
+const BluePlugAndPinCode = resolveLottieAsset(
+  require("../animations/device/blue/1PlugAndPinCode/data.lottie.json"),
+);
+const BlueEnterPinCode = resolveLottieAsset(
+  require("../animations/device/blue/3EnterPinCode/data.lottie.json"),
+);
+const BlueQuitApp = resolveLottieAsset(
+  require("../animations/device/blue/4QuitApp/data.lottie.json"),
+);
+const BlueAllowManager = resolveLottieAsset(
+  require("../animations/device/blue/5AllowManager/data.lottie.json"),
+);
+const BlueOpenApp = resolveLottieAsset(
+  require("../animations/device/blue/6OpenApp/data.lottie.json"),
+);
+const BlueValidate = resolveLottieAsset(
+  require("../animations/device/blue/7Validate/data.lottie.json"),
+);
 
-import NanoXPinDark from "../animations/device/nanoX/dark/pin.json";
-import NanoXPinLight from "../animations/device/nanoX/light/pin.json";
-import NanoXContinueDark from "../animations/device/nanoX/dark/continue.json";
-import NanoXContinueLight from "../animations/device/nanoX/light/continue.json";
-import NanoXPairingDark from "../animations/device/nanoX/dark/pairing.json";
-import NanoXPairingLight from "../animations/device/nanoX/light/pairing.json";
-import NanoXPairedDark from "../animations/device/nanoX/dark/paired.json";
-import NanoXPairedLight from "../animations/device/nanoX/light/paired.json";
+const NanoSPPinDark = resolveLottieAsset(
+  require("../animations/device/nanoSP/dark/pin.lottie.json"),
+);
+const NanoSPPinLight = resolveLottieAsset(
+  require("../animations/device/nanoSP/light/pin.lottie.json"),
+);
+const NanoSPContinueDark = resolveLottieAsset(
+  require("../animations/device/nanoSP/dark/continue.lottie.json"),
+);
+const NanoSPContinueLight = resolveLottieAsset(
+  require("../animations/device/nanoSP/light/continue.lottie.json"),
+);
 
-import StaxPinDark from "../animations/device/stax/dark/pin.json";
-import StaxPinLight from "../animations/device/stax/light/pin.json";
-import StaxContinueDark from "../animations/device/stax/dark/continue.json";
-import StaxContinueLight from "../animations/device/stax/light/continue.json";
+const NanoXPinDark = resolveLottieAsset(require("../animations/device/nanoX/dark/pin.lottie.json"));
+const NanoXPinLight = resolveLottieAsset(
+  require("../animations/device/nanoX/light/pin.lottie.json"),
+);
+const NanoXContinueDark = resolveLottieAsset(
+  require("../animations/device/nanoX/dark/continue.lottie.json"),
+);
+const NanoXContinueLight = resolveLottieAsset(
+  require("../animations/device/nanoX/light/continue.lottie.json"),
+);
+const NanoXPairingDark = resolveLottieAsset(
+  require("../animations/device/nanoX/dark/pairing.lottie.json"),
+);
+const NanoXPairingLight = resolveLottieAsset(
+  require("../animations/device/nanoX/light/pairing.lottie.json"),
+);
+const NanoXPairedDark = resolveLottieAsset(
+  require("../animations/device/nanoX/dark/paired.lottie.json"),
+);
+const NanoXPairedLight = resolveLottieAsset(
+  require("../animations/device/nanoX/light/paired.lottie.json"),
+);
 
-import FlexPinDark from "../animations/device/flex/dark/pin.json";
-import FlexPinLight from "../animations/device/flex/light/pin.json";
-import FlexContinueDark from "../animations/device/flex/dark/continue.json";
-import FlexContinueLight from "../animations/device/flex/light/continue.json";
+const StaxPinDark = resolveLottieAsset(require("../animations/device/stax/dark/pin.lottie.json"));
+const StaxPinLight = resolveLottieAsset(require("../animations/device/stax/light/pin.lottie.json"));
+const StaxContinueDark = resolveLottieAsset(
+  require("../animations/device/stax/dark/continue.lottie.json"),
+);
+const StaxContinueLight = resolveLottieAsset(
+  require("../animations/device/stax/light/continue.lottie.json"),
+);
 
-import ApexPinDark from "../animations/device/apex/dark/pin.json";
-import ApexPinLight from "../animations/device/apex/light/pin.json";
-import ApexContinueDark from "../animations/device/apex/dark/continue.json";
-import ApexContinueLight from "../animations/device/apex/light/continue.json";
+const FlexPinDark = resolveLottieAsset(require("../animations/device/flex/dark/pin.lottie.json"));
+const FlexPinLight = resolveLottieAsset(require("../animations/device/flex/light/pin.lottie.json"));
+const FlexContinueDark = resolveLottieAsset(
+  require("../animations/device/flex/dark/continue.lottie.json"),
+);
+const FlexContinueLight = resolveLottieAsset(
+  require("../animations/device/flex/light/continue.lottie.json"),
+);
 
-import NanoSPlugAndPinCodeDark from "../animations/device/nanoS/1PlugAndPinCode/dark.json";
-import NanoSPlugAndPinCodeLight from "../animations/device/nanoS/1PlugAndPinCode/light.json";
-import NanoSEnterPinCodeDark from "../animations/device/nanoS/3EnterPinCode/dark.json";
-import NanoSEnterPinCodeLight from "../animations/device/nanoS/3EnterPinCode/light.json";
-import NanoSQuitAppDark from "../animations/device/nanoS/4QuitApp/dark.json";
-import NanoSQuitAppLight from "../animations/device/nanoS/4QuitApp/light.json";
-import NanoSOpenAppDark from "../animations/device/nanoS/6OpenApp/dark.json";
-import NanoSOpenAppLight from "../animations/device/nanoS/6OpenApp/light.json";
-import NanoSValidateDark from "../animations/device/nanoS/7Validate/dark.json";
-import NanoSValidateLight from "../animations/device/nanoS/7Validate/light.json";
+const ApexPinDark = resolveLottieAsset(require("../animations/device/apex/dark/pin.lottie.json"));
+const ApexPinLight = resolveLottieAsset(require("../animations/device/apex/light/pin.lottie.json"));
+const ApexContinueDark = resolveLottieAsset(
+  require("../animations/device/apex/dark/continue.lottie.json"),
+);
+const ApexContinueLight = resolveLottieAsset(
+  require("../animations/device/apex/light/continue.lottie.json"),
+);
+
+const NanoSPlugAndPinCodeDark = resolveLottieAsset(
+  require("../animations/device/nanoS/1PlugAndPinCode/dark.lottie.json"),
+);
+const NanoSPlugAndPinCodeLight = resolveLottieAsset(
+  require("../animations/device/nanoS/1PlugAndPinCode/light.lottie.json"),
+);
+const NanoSEnterPinCodeDark = resolveLottieAsset(
+  require("../animations/device/nanoS/3EnterPinCode/dark.lottie.json"),
+);
+const NanoSEnterPinCodeLight = resolveLottieAsset(
+  require("../animations/device/nanoS/3EnterPinCode/light.lottie.json"),
+);
+const NanoSQuitAppDark = resolveLottieAsset(
+  require("../animations/device/nanoS/4QuitApp/dark.lottie.json"),
+);
+const NanoSQuitAppLight = resolveLottieAsset(
+  require("../animations/device/nanoS/4QuitApp/light.lottie.json"),
+);
+const NanoSOpenAppDark = resolveLottieAsset(
+  require("../animations/device/nanoS/6OpenApp/dark.lottie.json"),
+);
+const NanoSOpenAppLight = resolveLottieAsset(
+  require("../animations/device/nanoS/6OpenApp/light.lottie.json"),
+);
+const NanoSValidateDark = resolveLottieAsset(
+  require("../animations/device/nanoS/7Validate/dark.lottie.json"),
+);
+const NanoSValidateLight = resolveLottieAsset(
+  require("../animations/device/nanoS/7Validate/light.lottie.json"),
+);
 
 export type AnimationSource = LottieViewProps["source"];
 export type AnimationRecord = Record<"light" | "dark", AnimationSource>;

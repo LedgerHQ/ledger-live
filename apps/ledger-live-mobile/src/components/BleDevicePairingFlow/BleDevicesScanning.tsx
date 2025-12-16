@@ -8,7 +8,9 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "~/components/wrappedUi/Link";
-import lottie from "./assets/bluetooth.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const lottieAsset = require("./assets/bluetooth.lottie.json");
 import { urls } from "~/utils/urls";
 import { TrackScreen, track } from "~/analytics";
 import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
@@ -32,6 +34,7 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
   areKnownDevicesPairable,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
+  const lottie = useLottieAsset(lottieAsset);
 
   const productName =
     filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)

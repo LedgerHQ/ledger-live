@@ -5,48 +5,121 @@ import { Flex } from "@ledgerhq/native-ui";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import Animation from "~/components/Animation";
+import { resolveLottieAsset } from "~/utils/lottieAsset";
 
-import pinCodeNanoXLight from "../../../assets/nanoX/pinCode/light.json";
-import pinCodeNanoXDark from "../../../assets/nanoX/pinCode/dark.json";
-import pinCodeNanoSLight from "../../../assets/nanoS/pinCode/light.json";
-import pinCodeNanoSDark from "../../../assets/nanoS/pinCode/dark.json";
-import pinCodeNanoSPLight from "../../../assets/nanoSP/pinCode/light.json";
-import pinCodeNanoSPDark from "../../../assets/nanoSP/pinCode/dark.json";
+const pinCodeNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/pinCode/light.lottie.json"),
+);
+const pinCodeNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/pinCode/dark.lottie.json"),
+);
+const pinCodeNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/pinCode/light.lottie.json"),
+);
+const pinCodeNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/pinCode/dark.lottie.json"),
+);
+const pinCodeNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/pinCode/light.lottie.json"),
+);
+const pinCodeNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/pinCode/dark.lottie.json"),
+);
 
-import recoverNanoXLight from "../../../assets/nanoX/recover/light.json";
-import recoverNanoXDark from "../../../assets/nanoX/recover/dark.json";
-import recoverNanoSLight from "../../../assets/nanoS/recover/light.json";
-import recoverNanoSDark from "../../../assets/nanoS/recover/dark.json";
-import recoverNanoSPLight from "../../../assets/nanoSP/recover/light.json";
-import recoverNanoSPDark from "../../../assets/nanoSP/recover/dark.json";
+const recoverNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/recover/light.lottie.json"),
+);
+const recoverNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/recover/dark.lottie.json"),
+);
+const recoverNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/recover/light.lottie.json"),
+);
+const recoverNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/recover/dark.lottie.json"),
+);
+const recoverNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/recover/light.lottie.json"),
+);
+const recoverNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/recover/dark.lottie.json"),
+);
 
-import confirmWordsNanoXLight from "../../../assets/nanoX/confirmWords/light.json";
-import confirmWordsNanoXDark from "../../../assets/nanoX/confirmWords/dark.json";
-import confirmWordsNanoSLight from "../../../assets/nanoS/confirmWords/light.json";
-import confirmWordsNanoSDark from "../../../assets/nanoS/confirmWords/dark.json";
-import confirmWordsNanoSPLight from "../../../assets/nanoSP/confirmWords/light.json";
-import confirmWordsNanoSPDark from "../../../assets/nanoSP/confirmWords/dark.json";
+const confirmWordsNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/confirmWords/light.lottie.json"),
+);
+const confirmWordsNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/confirmWords/dark.lottie.json"),
+);
+const confirmWordsNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/confirmWords/light.lottie.json"),
+);
+const confirmWordsNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/confirmWords/dark.lottie.json"),
+);
+const confirmWordsNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/confirmWords/light.lottie.json"),
+);
+const confirmWordsNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/confirmWords/dark.lottie.json"),
+);
 
-import numberOfWordsNanoXLight from "../../../assets/nanoX/numberOfWords/light.json";
-import numberOfWordsNanoXDark from "../../../assets/nanoX/numberOfWords/dark.json";
-import numberOfWordsNanoSLight from "../../../assets/nanoS/numberOfWords/light.json";
-import numberOfWordsNanoSDark from "../../../assets/nanoS/numberOfWords/dark.json";
-import numberOfWordsNanoSPLight from "../../../assets/nanoSP/numberOfWords/light.json";
-import numberOfWordsNanoSPDark from "../../../assets/nanoSP/numberOfWords/dark.json";
+const numberOfWordsNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/numberOfWords/light.lottie.json"),
+);
+const numberOfWordsNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/numberOfWords/dark.lottie.json"),
+);
+const numberOfWordsNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/numberOfWords/light.lottie.json"),
+);
+const numberOfWordsNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/numberOfWords/dark.lottie.json"),
+);
+const numberOfWordsNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/numberOfWords/light.lottie.json"),
+);
+const numberOfWordsNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/numberOfWords/dark.lottie.json"),
+);
 
-import powerOnNanoXLight from "../../../assets/nanoX/powerOn/light.json";
-import powerOnNanoXDark from "../../../assets/nanoX/powerOn/dark.json";
-import powerOnNanoSLight from "../../../assets/nanoS/powerOn/light.json";
-import powerOnNanoSDark from "../../../assets/nanoS/powerOn/dark.json";
-import powerOnNanoSPLight from "../../../assets/nanoSP/powerOn/light.json";
-import powerOnNanoSPDark from "../../../assets/nanoSP/powerOn/dark.json";
+const powerOnNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/powerOn/light.lottie.json"),
+);
+const powerOnNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/powerOn/dark.lottie.json"),
+);
+const powerOnNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/powerOn/light.lottie.json"),
+);
+const powerOnNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/powerOn/dark.lottie.json"),
+);
+const powerOnNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/powerOn/light.lottie.json"),
+);
+const powerOnNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/powerOn/dark.lottie.json"),
+);
 
-import powerOnRecoveryNanoXLight from "../../../assets/nanoX/powerOnRecovery/light.json";
-import powerOnRecoveryNanoXDark from "../../../assets/nanoX/powerOnRecovery/dark.json";
-import powerOnRecoveryNanoSLight from "../../../assets/nanoS/powerOnRecovery/light.json";
-import powerOnRecoveryNanoSDark from "../../../assets/nanoS/powerOnRecovery/dark.json";
-import powerOnRecoveryNanoSPLight from "../../../assets/nanoSP/powerOnRecovery/light.json";
-import powerOnRecoveryNanoSPDark from "../../../assets/nanoSP/powerOnRecovery/dark.json";
+const powerOnRecoveryNanoXLight = resolveLottieAsset(
+  require("../../../assets/nanoX/powerOnRecovery/light.lottie.json"),
+);
+const powerOnRecoveryNanoXDark = resolveLottieAsset(
+  require("../../../assets/nanoX/powerOnRecovery/dark.lottie.json"),
+);
+const powerOnRecoveryNanoSLight = resolveLottieAsset(
+  require("../../../assets/nanoS/powerOnRecovery/light.lottie.json"),
+);
+const powerOnRecoveryNanoSDark = resolveLottieAsset(
+  require("../../../assets/nanoS/powerOnRecovery/dark.lottie.json"),
+);
+const powerOnRecoveryNanoSPLight = resolveLottieAsset(
+  require("../../../assets/nanoSP/powerOnRecovery/light.lottie.json"),
+);
+const powerOnRecoveryNanoSPDark = resolveLottieAsset(
+  require("../../../assets/nanoSP/powerOnRecovery/dark.lottie.json"),
+);
 
 const lottieAnimations = {
   nanoS: {

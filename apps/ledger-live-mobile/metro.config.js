@@ -25,6 +25,7 @@ const forcedDependencies = [
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
+const defaultConfig = getDefaultConfig(__dirname);
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
 const buildTsAlias = (conf = {}) =>
@@ -82,6 +83,7 @@ const metroConfig = {
     unstable_enableSymlinks: true,
     unstable_enablePackageExports: true,
     unstable_conditionNames: ["require", "react-native", "browser"],
+    assetExts: [...defaultConfig.resolver.assetExts, "lottie.json"],
     nodeModulesPaths,
     resolverMainFields: ["react-native", "browser", "main"],
     extraNodeModules: {

@@ -25,8 +25,10 @@ import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
-import lightAnimSource from "~/animations/mainButton/light.json";
-import darkAnimSource from "~/animations/mainButton/dark.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const lightAnimAsset = require("~/animations/mainButton/light.lottie.json");
+const darkAnimAsset = require("~/animations/mainButton/dark.lottie.json");
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs({
@@ -119,6 +121,9 @@ export function TransferTabIcon() {
   );
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const lightAnimSource = useLottieAsset(lightAnimAsset);
+  const darkAnimSource = useLottieAsset(darkAnimAsset);
 
   const [isOpened, setIsOpened] = useState(false);
   const [lottieProgress, setLottieProgress] = useState(0);

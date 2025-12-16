@@ -15,7 +15,9 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import { ShadowedView } from "react-native-fast-shadow";
 import Animation from "~/components/Animation";
-import CHARON from "~/animations/device/charon/charon.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const charonAsset = require("~/animations/device/charon/charon.lottie.json");
 import { SeedPathStatus } from "./types";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
@@ -39,6 +41,7 @@ const SeedStep = ({
 }: SeedCompanionStepProps) => {
   const { t } = useTranslation();
   const track = useTrack();
+  const CHARON = useLottieAsset(charonAsset);
 
   const handleLearnMoreClick = useCallback(() => {
     track("button_clicked", {

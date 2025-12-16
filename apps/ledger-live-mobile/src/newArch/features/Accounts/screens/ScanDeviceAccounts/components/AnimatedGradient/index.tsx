@@ -4,10 +4,13 @@ import { useTheme } from "styled-components/native";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 
-import lottie from "~/animations/lottie.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const lottieAsset = require("~/animations/lottie.lottie.json");
 
 function AnimatedGradient() {
   const { colors } = useTheme();
+  const lottie = useLottieAsset(lottieAsset);
 
   return (
     <GradientContainer

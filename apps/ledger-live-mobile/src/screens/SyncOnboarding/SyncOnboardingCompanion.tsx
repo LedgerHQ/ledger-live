@@ -58,7 +58,9 @@ import SecretRecoveryPhraseImage from "./assets/srp.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
 import Animation from "~/components/Animation";
-import CHARON from "~/animations/device/charon/charon.json";
+import { useLottieAsset } from "~/utils/lottieAsset";
+
+const charonAsset = require("~/animations/device/charon/charon.lottie.json");
 import { ShadowedView } from "react-native-fast-shadow";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 
@@ -165,6 +167,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const dispatchRedux = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const deviceInitialApps = useFeature("deviceInitialApps");
+  const CHARON = useLottieAsset(charonAsset);
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
