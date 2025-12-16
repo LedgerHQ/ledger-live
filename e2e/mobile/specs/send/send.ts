@@ -4,6 +4,7 @@ import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { delay } from "../../helpers/commonHelpers";
 
 async function navigateToSendScreen(accountName: string) {
   await app.account.openViaDeeplink();
@@ -60,7 +61,8 @@ export function runSendTest(
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await device.disableSynchronization();
+      // await app.common.disableSynchronizationForiOS();
+      await delay(3000);
       await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 

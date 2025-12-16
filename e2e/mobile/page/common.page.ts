@@ -3,6 +3,7 @@ import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Ac
 import { delay, isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
+import { retryUntilTimeout } from "utils/retry";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -64,10 +65,10 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
-    await waitForElementById(this.validateSuccessScreenId);
-    await waitForElementById(this.successViewDetailsButtonId);
-    await delay(1000);
-    await tapById(this.successViewDetailsButtonId);
+    await delay(3000);
+    await retryUntilTimeout(async () => {
+      await tapById(this.successViewDetailsButtonId);
+    });
   }
 
   @Step("Select the first displayed account")
