@@ -24,27 +24,22 @@ export const ElementHelpers = {
   },
 
   getElementsById(id: string | RegExp) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return element(by.id(id));
   },
 
   getElementById(id: string | RegExp, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return element(by.id(id)).atIndex(index);
   },
 
   getElementByText(text: string | RegExp, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return element(by.text(text)).atIndex(index);
   },
 
   getWebElementById(id: string, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return web.element(by.web.id(id)).atIndex(index);
   },
 
   getWebElementByTag(tag: string, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return web.element(by.web.tag(tag)).atIndex(index);
   },
 
@@ -165,7 +160,6 @@ export const ElementHelpers = {
     const scrollViewMatcher = scrollViewId
       ? by.id(scrollViewId)
       : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView");
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     await waitFor(element(elementMatcher))
       .toBeVisible()
       .whileElement(scrollViewMatcher)
