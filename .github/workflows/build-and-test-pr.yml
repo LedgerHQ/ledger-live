@@ -79,6 +79,21 @@ jobs:
       macos-specificity-runner-label: "performance-pool"
       skip-pod-checks: "false"
 
+  rock-remote-build-android:
+    name: "Rock Remote Build - Android"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rock Remote Build - Android
+        id: rock-remote-build-android
+        uses: callstackincubator/android@v3
+        with:
+          variant: debug
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: ./apps/ledger-live-mobile
+
   # Tests
   test-libraries:
     name: "Test Libraries"
@@ -145,6 +160,7 @@ jobs:
       - test-desktop
       - test-mobile
       - build-test-mobile
+      - rock-remote-build-android
       - test-libraries
       - test-design-system
       - build-web-tools

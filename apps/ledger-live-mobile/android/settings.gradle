@@ -3,9 +3,12 @@ pluginManagement {
 }
 plugins { id("com.facebook.react.settings") }
 
+
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
-    ex.autolinkLibrariesFromCommand()
+    ex.autolinkLibrariesFromCommand(
+      ['npx', 'rock', 'config', '-p', 'android']
+    )
   } else {
     def command = [
       'node',
@@ -38,8 +41,10 @@ project(':react-native-webview').projectDir = new File(rootProject.projectDir, '
 include ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 
-apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle")
-useExpoModules()
+if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') != '1') {
+  apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle")
+  useExpoModules()
+}
 
 include ':app'
 includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile())

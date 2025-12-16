@@ -30,12 +30,13 @@ target 'ledgerlivemobile' do
       'ios'
     ]
   end
- 
-  config = use_native_modules!(config_command)
+
+  # config = use_native_modules!(config_command)
+  config = use_native_modules!(['npx', 'rock', 'config', '-p', 'ios'])
 
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
-  
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
