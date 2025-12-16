@@ -1,13 +1,19 @@
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { CardanoNotEnoughFunds, CardanoFeeTooHigh, CardanoFeeHigh } from "../errors";
+import {
+  CardanoNotEnoughFunds,
+  CardanoFeeTooHigh,
+  CardanoFeeHigh,
+  CardanoMemoExceededSizeError,
+} from "../errors";
 import type { CardanoAccount, CardanoOutput, Transaction, TransactionStatus } from "../types";
 import coinConfig from "../config";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getTransactionStatusByTransactionMode } from "./handler";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { validateMemo } from "../logic/validateMemo";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -58,6 +64,10 @@ export const getTransactionStatus: AccountBridge<
     throw new CardanoFeeTooHigh();
   } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
     txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
+  }
+
+  if (!validateMemo(transaction.memo)) {
+    txStatus.errors.transaction = new CardanoMemoExceededSizeError();
   }
 
   return txStatus;

@@ -1,10 +1,12 @@
+import { NotEnoughGas } from "@ledgerhq/errors";
 import { Account, VersionedMessage } from "@solana/web3.js";
-import { ChainAPI } from "./network";
-import { prepareTransaction } from "./prepareTransaction";
-import { SolanaAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { SolanaMemoIsTooLong } from "./errors";
+import { ChainAPI } from "./network";
+import { prepareTransaction } from "./prepareTransaction";
+import { SolanaAccount, Transaction, TransferTransaction } from "./types";
+import * as logicValidateMemo from "./logic/validateMemo";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -18,8 +20,17 @@ jest.mock("./estimateMaxSpendable", () => {
     ),
   };
 });
+jest.mock("./logic/validateMemo", () => {
+  const actual = jest.requireActual("./logic/validateMemo");
+  return {
+    ...actual,
+    validateMemo: jest.fn(actual.validateMemo), // replace with mock
+  };
+});
 
 describe("testing prepareTransaction", () => {
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
+
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -150,6 +161,108 @@ describe("testing prepareTransaction", () => {
 
     expect(preparedTransaction).not.toBe(nonRawTransaction);
   });
+
+  it.each(["transfer", "token.transfer"])(
+    "should not set error on transaction when memo is validated for kind %s",
+    async (kind: string) => {
+      spiedValidateMemo.mockReturnValue(true);
+
+      const transactionToPrepare = transaction({
+        kind: kind as Transaction["model"]["kind"],
+        subAccountId: "subAccountId",
+      });
+      const preparedTransaction = await prepareTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        {
+          currency: { units: [{ magnitude: 2 }] },
+          subAccounts: [
+            {
+              id: "subAccountId",
+              type: "TokenAccount",
+              token: { contractAddress: "mintAddress", units: [{ magnitude: 2 }] },
+            },
+          ],
+        } as unknown as SolanaAccount,
+        transactionToPrepare,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        {
+          getAccountInfo: () => ({
+            data: {
+              parsed: {
+                type: "mint",
+                info: {
+                  mintAuthority: null,
+                  supply: "",
+                  decimals: 2,
+                  isInitialized: true,
+                  freezeAuthority: null,
+                },
+              },
+              program: "spl-token",
+            },
+          }),
+        } as unknown as ChainAPI,
+      );
+
+      expect(preparedTransaction.model.commandDescriptor?.errors.transaction).not.toBeDefined();
+
+      expect(spiedValidateMemo).toHaveBeenCalledWith(
+        (transactionToPrepare.model as TransferTransaction).uiState.memo,
+      );
+    },
+  );
+
+  it.each(["transfer", "token.transfer"])(
+    "should set error on transaction when memo is invalidated for kind %s",
+    async (kind: string) => {
+      spiedValidateMemo.mockReturnValue(false);
+
+      const transactionToPrepare = transaction({
+        kind: kind as Transaction["model"]["kind"],
+        subAccountId: "subAccountId",
+      });
+      const preparedTransaction = await prepareTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        {
+          currency: { units: [{ magnitude: 2 }] },
+          subAccounts: [
+            {
+              id: "subAccountId",
+              type: "TokenAccount",
+              token: { contractAddress: "mintAddress", units: [{ magnitude: 2 }] },
+            },
+          ],
+        } as unknown as SolanaAccount,
+        transactionToPrepare,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        {
+          getAccountInfo: () => ({
+            data: {
+              parsed: {
+                type: "mint",
+                info: {
+                  mintAuthority: null,
+                  supply: "",
+                  decimals: 2,
+                  isInitialized: true,
+                  freezeAuthority: null,
+                },
+              },
+              program: "spl-token",
+            },
+          }),
+        } as unknown as ChainAPI,
+      );
+
+      expect(preparedTransaction.model.commandDescriptor?.errors.transaction).toBeInstanceOf(
+        SolanaMemoIsTooLong,
+      );
+
+      expect(spiedValidateMemo).toHaveBeenCalledWith(
+        (transactionToPrepare.model as TransferTransaction).uiState.memo,
+      );
+    },
+  );
 });
 
 function api(estimatedFees?: number) {

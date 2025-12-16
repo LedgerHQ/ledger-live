@@ -1,4 +1,8 @@
+import { TransactionIntent } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { XrpMapMemo } from "../types";
+import { XrpInvalidMemoError } from "./errors";
 import { validateIntent } from "./validateIntent";
+import * as logicValidateMemo from "./validateMemo";
 
 const mockGetBalance = jest.fn();
 
@@ -24,12 +28,16 @@ jest.mock("./utils", () => ({
   }),
 }));
 
+jest.mock("./validateMemo");
+
 const reserveBase = 10_000_000n; // 10 XRP (drops)
 
 const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 
 describe("validateIntent", () => {
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -51,6 +59,10 @@ describe("validateIntent", () => {
         amount: 20_000_000n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -86,6 +98,10 @@ describe("validateIntent", () => {
         amount: 1_000_000n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -120,6 +136,10 @@ describe("validateIntent", () => {
         amount: 10_000_000n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -150,6 +170,10 @@ describe("validateIntent", () => {
         amount: 10_000_000n,
         recipient: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -181,6 +205,10 @@ describe("validateIntent", () => {
         amount: 5_000_000n,
         recipient: RECIPIENT_NEW,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -212,6 +240,10 @@ describe("validateIntent", () => {
         amount: 0n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -243,6 +275,10 @@ describe("validateIntent", () => {
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
         recipient: "not-an-address",
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -274,6 +310,10 @@ describe("validateIntent", () => {
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
         recipient: "",
+        memo: {
+          type: "",
+          memos: new Map<string, Record<string, unknown>>(),
+        },
       } as any,
       [
         {
@@ -286,5 +326,93 @@ describe("validateIntent", () => {
     );
 
     expect(result.errors.recipient?.name).toBe("RecipientRequired");
+  });
+
+  it("should not set error on transaction when memo is validated", async () => {
+    mockGetServerInfos.mockResolvedValue({
+      info: {
+        validated_ledger: {
+          reserve_base_xrp: reserveBase / 1_000_000n, // XRP value, not drops
+        },
+      },
+    });
+
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
+
+    spiedValidateMemo.mockReturnValueOnce(true);
+
+    const memos = new Map<string, string | string[]>();
+    memos.set("destinationTag", "random memo for unit test");
+
+    const status = await validateIntent(
+      {
+        intentType: "transaction",
+        sender: SENDER,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
+        amount: 1_000_000n,
+        recipient: "",
+        memo: {
+          type: "",
+          memos,
+        },
+      } as TransactionIntent<XrpMapMemo>,
+      [{ value: 10_000n, asset: { type: "native" }, locked: 0n }],
+    );
+    expect(status.errors.transaction).not.toBeDefined();
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(memos.get("destinationTag"));
+  });
+
+  it("should set error on transaction when memo is invalidated", async () => {
+    mockGetServerInfos.mockResolvedValue({
+      info: {
+        validated_ledger: {
+          reserve_base_xrp: reserveBase / 1_000_000n, // XRP value, not drops
+        },
+      },
+    });
+
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
+
+    spiedValidateMemo.mockReturnValueOnce(false);
+
+    const memos = new Map<string, string | string[]>();
+    memos.set("destinationTag", "random memo for unit test");
+
+    const status = await validateIntent(
+      {
+        intentType: "transaction",
+        sender: SENDER,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
+        amount: 1_000_000n,
+        recipient: "",
+        memo: {
+          type: "",
+          memos,
+        },
+      } as TransactionIntent<XrpMapMemo>,
+      [
+        {
+          value: 10_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
+    );
+    expect(status.errors.transaction).toBeInstanceOf(XrpInvalidMemoError);
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(memos.get("destinationTag"));
   });
 });
