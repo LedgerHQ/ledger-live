@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import "crypto";
 import { v4 as uuid } from "uuid";
-import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Linking, Platform } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
@@ -422,11 +421,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
 };
 
 export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
-  Sentry.addBreadcrumb({
-    category: "identify",
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
   const isTracking = getIsTracking(state, mandatory);
   if (!storeInstance || !isTracking.enabled) {
@@ -476,13 +470,6 @@ export const track = async (
   eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  Sentry.addBreadcrumb({
-    message: event,
-    category: "track",
-    data: eventProperties || undefined,
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
 
   const isTracking = getIsTracking(state, mandatory);
@@ -615,12 +602,6 @@ export const screen = async (
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  Sentry.addBreadcrumb({
-    message: eventName,
-    category: "screen",
-    data: properties || {},
-    level: "info",
-  });
 
   const state = storeInstance && storeInstance.getState();
 

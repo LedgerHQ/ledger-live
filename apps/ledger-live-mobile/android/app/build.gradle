@@ -1,7 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: "io.sentry.android.gradle"
 
 apply plugin: 'com.google.gms.google-services'
 
@@ -125,7 +124,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.98.0"
+        versionName "3.99.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -191,16 +190,6 @@ android {
         }
     }
 }
-
-
-apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-
-
-sentry {
-    autoUploadProguardMapping = shouldSentryAutoUpload()
-    uploadNativeSymbols = shouldSentryAutoUpload()
-}
-
 
 
 dependencies {
