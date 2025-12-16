@@ -1,7 +1,7 @@
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Switch from "~/renderer/components/Switch";

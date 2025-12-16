@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import styled from "styled-components";
 import { Flex, Input, Text } from "@ledgerhq/react-ui";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
 import { useTranslation } from "react-i18next";
 

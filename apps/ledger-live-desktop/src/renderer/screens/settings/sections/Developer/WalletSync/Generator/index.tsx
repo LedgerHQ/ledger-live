@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import Select from "~/renderer/components/Select";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { Switch, Button } from "@ledgerhq/ldls-ui-react";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { useDispatch } from "react-redux";
 import {
   addInstance,

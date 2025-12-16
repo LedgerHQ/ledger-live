@@ -35,7 +35,7 @@ const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 // Helper to get the back button from DialogHeader (uses aria-label since DialogHeader doesn't expose test-id)
 const getBackButton = () => {
-  return screen.getByLabelText("components.sheetBar.goBackAriaLabel");
+  return screen.getByLabelText("components.dialogHeader.goBackAriaLabel");
 };
 
 beforeEach(() => {

@@ -4,4 +4,4 @@ globs: ["**/*.tsx", "**/*.jsx"]
 alwaysApply: true
 ---
 
-@node_modules/@ledgerhq/ldls-ui-react/ai-rules/RULES.md
+@node_modules/@ledgerhq/lumen-ui-react/ai-rules/RULES.md

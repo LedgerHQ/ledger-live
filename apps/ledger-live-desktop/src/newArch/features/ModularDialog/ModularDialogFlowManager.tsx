@@ -14,7 +14,7 @@ import {
   closeDialog,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
-import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/ldls-ui-react";
+import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";

@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";

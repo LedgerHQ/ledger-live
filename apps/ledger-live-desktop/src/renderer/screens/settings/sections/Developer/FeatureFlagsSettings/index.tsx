@@ -10,7 +10,7 @@ import {
   useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
-import { Switch, Button } from "@ledgerhq/ldls-ui-react";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
 import includes from "lodash/includes";

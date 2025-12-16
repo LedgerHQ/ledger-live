@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "@ledgerhq/ldls-ui-react";
+import { Skeleton } from "@ledgerhq/lumen-ui-react";
 
 const SkeletonList = () => (
   <div className="flex flex-1 flex-col overflow-hidden px-4">

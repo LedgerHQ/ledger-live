@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectItemText,
   SelectTrigger,
-} from "@ledgerhq/ldls-ui-react";
+} from "@ledgerhq/lumen-ui-react";
 interface VerticalLabeledSelectProps<T = SelectOption> {
   label: string;
   value: T;
