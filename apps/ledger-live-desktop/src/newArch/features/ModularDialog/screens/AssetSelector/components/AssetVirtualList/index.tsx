@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { AssetType, VirtualList } from "@ledgerhq/react-ui/pre-ldls";
+import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import { VirtualList } from "LLD/components/VirtualList";
 import { AssetListItem } from "../AssetListItem";
 
 type AssetVirtualListProps = {
