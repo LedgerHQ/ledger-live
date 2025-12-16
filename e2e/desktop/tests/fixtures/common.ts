@@ -181,6 +181,39 @@ export const test = base.extend<TestFixtures>({
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
 
+    const networkLogs: any[] = [];
+
+    page.on("request", request => {
+      networkLogs.push({
+        type: "request",
+        url: request.url(),
+        method: request.method(),
+        headers: request.headers(),
+        postData: request.postData(),
+        timestamp: Date.now(),
+      });
+    });
+    page.on("response", async response => {
+      let body: string | undefined;
+
+      try {
+        body = await response.text();
+      } catch {
+        body = "[unreadable/binary]";
+      }
+
+      networkLogs.push({
+        type: "response",
+        url: response.url(),
+        status: response.status(),
+        headers: response.headers(),
+        body,
+        timestamp: Date.now(),
+      });
+    });
+
+    (page as any)._networkLogs = networkLogs;
+
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
       await client.send("Emulation.setCPUThrottlingRate", {
@@ -211,7 +244,10 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      await captureArtifacts(page, testInfo);
+      const networkFile = testInfo.outputPath("network.json");
+
+      await writeFile(networkFile, JSON.stringify((page as any)._networkLogs, null, 2));
+      await captureArtifacts(page, testInfo, networkFile);
     }
 
     //Remove video if test passed

@@ -19,7 +19,7 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
-export async function captureArtifacts(page: Page, testInfo: TestInfo) {
+export async function captureArtifacts(page: Page, testInfo: TestInfo, networkFilePath?: string) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
 
@@ -38,6 +38,13 @@ export async function captureArtifacts(page: Page, testInfo: TestInfo) {
       const videoData = await readFileAsync(finalVideoPath);
       await testInfo.attach("Test Video", { body: videoData, contentType: "video/webm" });
     }
+  }
+
+  if (networkFilePath) {
+    await testInfo.attach("Network calls", {
+      path: networkFilePath,
+      contentType: "application/json",
+    });
   }
 
   const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
