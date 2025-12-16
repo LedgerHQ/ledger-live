@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import SelectDevice, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 
@@ -74,6 +74,7 @@ export default function SelectDeviceScreen({
         },
       ]}
     >
+      <TrackScreen name="device connection" />
       <Flex px={16} py={8} flex={1}>
         <SelectDevice
           onSelect={selectDevice}
