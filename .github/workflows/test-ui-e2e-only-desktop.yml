@@ -254,7 +254,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: ${{ inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos' }}
+          platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
