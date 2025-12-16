@@ -25,7 +25,7 @@ const PaginatedList = () => {
       hasNextPage={true}
       items={listItems}
       renderItem={item => (
-        <div className="bg-neutral-100 h-[50px] border border-solid border-black">Item {item}</div>
+        <div className="bg-muted h-[50px] border border-solid border-black">Item {item}</div>
       )}
     />
   );
@@ -123,7 +123,7 @@ export const Default: Story = {
     overscan: 5,
     items,
     renderItem: ({ i }: { i: number }) => (
-      <div className="bg-neutral-200 h-[50px] border border-solid border-black">Item {i}</div>
+      <div className="bg-primary h-[50px] border border-solid border-black">Item {i}</div>
     ),
   },
 };
@@ -141,7 +141,7 @@ export const WithCustomLastRow: Story = {
             Item {item}
           </div>
         )}
-        bottomComponent={<div className="bg-neutral-300 h-[50px]">End of List</div>}
+        bottomComponent={<div className="bg-error h-[50px]">End of List</div>}
       />
     );
   },
