@@ -8,7 +8,7 @@ import {
   SelectContent,
   SelectItemText,
   SelectItem,
-} from "@ledgerhq/ldls-ui-react";
+} from "@ledgerhq/lumen-ui-react";
 
 interface LabeledSelectProps<T extends SelectOption = SelectOption> {
   label: string;

@@ -2,7 +2,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Icon, Text } from "@ledgerhq/react-ui";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";

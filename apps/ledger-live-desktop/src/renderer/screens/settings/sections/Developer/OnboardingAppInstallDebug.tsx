@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useSelector } from "react-redux";
 import { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";

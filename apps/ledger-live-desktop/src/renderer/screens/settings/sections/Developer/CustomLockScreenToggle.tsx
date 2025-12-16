@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { useHistory } from "react-router-dom";

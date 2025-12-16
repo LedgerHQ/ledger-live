@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { enableLearnPageStagingUrlSelector } from "~/renderer/reducers/settings";
 import { setEnableLearnPageStagingUrl } from "~/renderer/actions/settings";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 const EnableLearnPageStagingUrl = () => {
   const dispatch = useDispatch();
   const enableLearnPageStagingUrl = useSelector(enableLearnPageStagingUrlSelector);

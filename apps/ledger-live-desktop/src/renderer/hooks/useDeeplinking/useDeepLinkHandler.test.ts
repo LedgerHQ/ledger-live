@@ -95,13 +95,9 @@ const createMockTokenAccount = (parentId: string, tokenId: string): TokenAccount
 
 describe("useDeepLinkHandler", () => {
   const testDeeplink = async (url: string, accounts: Account[] = []) => {
-    const { result } = renderHook(
-      () => useDeepLinkHandler(),
-      {
-        initialState: { accounts },
-      },
-      false,
-    );
+    const { result } = renderHook(() => useDeepLinkHandler(), {
+      initialState: { accounts },
+    });
     const { handler } = result.current;
     handler(null, url);
   };

@@ -2,8 +2,8 @@ import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "~/renderer/actions/settings";
 import { themeSelector } from "~/renderer/actions/general";
-import { useTheme, ThemeMode, IconButton } from "@ledgerhq/ldls-ui-react";
-import { Moon, Sun } from "@ledgerhq/ldls-ui-react/symbols";
+import { useTheme, ThemeMode, IconButton } from "@ledgerhq/lumen-ui-react";
+import { Moon, Sun } from "@ledgerhq/lumen-ui-react/symbols";
 
 const STORAGE_KEY = "theme-console-position";
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { Switch, Button } from "@ledgerhq/ldls-ui-react";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
 import api from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/api/index";

@@ -10,10 +10,11 @@ import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 import {
   resetModularDrawerState,
   modularDrawerFlowSelector,
+  modularDialogIsOpenSelector,
+  closeDialog,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
-import { DialogHeader } from "@ledgerhq/ldls-ui-react";
-import { useDialog } from "LLD/components/Dialog";
+import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -36,8 +37,8 @@ const ModularDialogFlowManager = ({
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
-  const { closeDialog } = useDialog();
   const flow = useSelector(modularDrawerFlowSelector);
+  const isOpen = useSelector(modularDialogIsOpenSelector);
 
   const { t } = useTranslation();
 
@@ -47,8 +48,8 @@ const ModularDialogFlowManager = ({
       flow,
       page: currentRouteNameRef.current,
     });
+    dispatch(closeDialog());
     onClose?.();
-    closeDialog();
   };
 
   useEffect(() => {
@@ -120,23 +121,25 @@ const ModularDialogFlowManager = ({
   };
 
   return (
-    <>
-      <DialogHeader
-        appearance="extended"
-        title={t(TranslationKeyMap[currentStep])}
-        onClose={handleClose}
-        onBack={handleBack}
-      />
-      <div className="h-[480px] overflow-hidden">
-        <AnimatedScreenWrapper
-          key={`${currentStep}-${navigationDirection}`}
-          screenKey={currentStep}
-          direction={navigationDirection}
-        >
-          {renderStepContent(currentStep)}
-        </AnimatedScreenWrapper>
-      </div>
-    </>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent>
+        <DialogHeader
+          appearance="extended"
+          title={t(TranslationKeyMap[currentStep])}
+          onClose={handleClose}
+          onBack={handleBack}
+        />
+        <div className="h-[480px] overflow-hidden">
+          <AnimatedScreenWrapper
+            key={`${currentStep}-${navigationDirection}`}
+            screenKey={currentStep}
+            direction={navigationDirection}
+          >
+            {renderStepContent(currentStep)}
+          </AnimatedScreenWrapper>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

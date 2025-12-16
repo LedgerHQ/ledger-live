@@ -32,7 +32,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCu
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Tick } from "./Tick";

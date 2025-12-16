@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { setTestProviderInfo } from "@ledgerhq/live-common/exchange/providers/index";
 import Input from "~/renderer/components/Input";
-import { Switch, Button } from "@ledgerhq/ldls-ui-react";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "../../SettingsSection";

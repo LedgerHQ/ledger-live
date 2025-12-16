@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
 import { Flex, Theme, Text, Icons } from "@ledgerhq/react-ui";

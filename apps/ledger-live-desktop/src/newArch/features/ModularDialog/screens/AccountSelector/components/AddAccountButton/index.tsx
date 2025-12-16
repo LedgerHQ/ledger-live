@@ -1,6 +1,6 @@
 import React from "react";
-import { CardButton } from "@ledgerhq/ldls-ui-react";
-import { Plus } from "@ledgerhq/ldls-ui-react/symbols";
+import { CardButton } from "@ledgerhq/lumen-ui-react";
+import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 
 type Props = {
