@@ -56,6 +56,7 @@ import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 const rootNode = document.getElementById("react-root");
 
@@ -209,6 +210,13 @@ async function init() {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
+
+  // Load persisted identities
+  const persistedIdentities = await getKey("app", "identities");
+  if (persistedIdentities) {
+    store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+  }
+
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

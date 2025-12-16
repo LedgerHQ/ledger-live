@@ -73,6 +73,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
+    "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "0.0.55",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
