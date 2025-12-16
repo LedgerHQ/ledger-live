@@ -1,10 +1,3 @@
-import { BigNumber } from "bignumber.js";
-import { getTransactionStatus } from "./getTransactionStatus";
-import {
-  CASPER_MINIMUM_VALID_AMOUNT_MOTES,
-  MayBlockAccountError,
-  InvalidMinimumAmountError,
-} from "../consts";
 import {
   AmountRequired,
   InvalidAddress,
@@ -12,16 +5,30 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { BigNumber } from "bignumber.js";
+import {
+  CASPER_MINIMUM_VALID_AMOUNT_MOTES,
+  InvalidMinimumAmountError,
+  MayBlockAccountError,
+} from "../consts";
 import { CasperInvalidTransferId } from "../errors";
+import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction, TEST_ADDRESSES } from "../test/fixtures";
+import { CasperAccount, Transaction } from "../types";
+import * as bridgeHelpersAddresses from "./bridgeHelpers/addresses";
+import { getTransactionStatus } from "./getTransactionStatus";
 
 describe("getTransactionStatus", () => {
   // Create fixtures
   const mockAccount = createMockAccount();
   const validTransaction = createMockTransaction();
+  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedIsAddressValid = jest.spyOn(bridgeHelpersAddresses, "isAddressValid");
 
   beforeEach(() => {
     jest.clearAllMocks();
+    spiedValidateMemo.mockReturnValue(true);
+    spiedIsAddressValid.mockReturnValue(true);
   });
 
   test("should validate a valid transaction", async () => {
@@ -46,6 +53,9 @@ describe("getTransactionStatus", () => {
   });
 
   test("should return error when recipient is invalid", async () => {
+    spiedIsAddressValid.mockClear();
+    spiedIsAddressValid.mockReturnValueOnce(false);
+
     const txWithInvalidRecipient = {
       ...validTransaction,
       recipient: TEST_ADDRESSES.INVALID,
@@ -65,17 +75,6 @@ describe("getTransactionStatus", () => {
     const status = await getTransactionStatus(mockAccount, txToSelf);
 
     expect(status.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
-  });
-
-  test("should return error when transfer ID is invalid", async () => {
-    const txWithInvalidTransferId = {
-      ...validTransaction,
-      transferId: "invalid-id",
-    };
-
-    const status = await getTransactionStatus(mockAccount, txWithInvalidTransferId);
-
-    expect(status.errors.sender).toBeInstanceOf(CasperInvalidTransferId);
   });
 
   test("should handle useAllAmount correctly", async () => {
@@ -166,16 +165,6 @@ describe("getTransactionStatus", () => {
         expectedStatus: { errors: {}, warnings: {}, estimatedFees: createMockTransaction().fees },
       },
       {
-        name: "Invalid recipient",
-        account: createMockAccount(),
-        transaction: createMockTransaction({ recipient: TEST_ADDRESSES.INVALID }),
-        expectedStatus: {
-          errors: { recipient: new InvalidAddress() },
-          warnings: {},
-          estimatedFees: createMockTransaction().fees,
-        },
-      },
-      {
         name: "Zero amount",
         account: createMockAccount(),
         transaction: createMockTransaction({ amount: new BigNumber("0") }),
@@ -260,5 +249,35 @@ describe("getTransactionStatus", () => {
         }
       });
     });
+  });
+
+  it("should not set error on transaction when transfer id is validated", async () => {
+    spiedValidateMemo.mockClear();
+    spiedValidateMemo.mockReturnValue(true);
+
+    const account = { spendableBalance: BigNumber(1) } as CasperAccount;
+    const transaction = {
+      amount: BigNumber(1),
+      transferId: "random transfer id for unit test",
+    } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).not.toBeDefined();
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.transferId);
+  });
+
+  it("should set error on transaction when transfer id is invalidated", async () => {
+    spiedValidateMemo.mockClear();
+    spiedValidateMemo.mockReturnValue(false);
+
+    const account = { spendableBalance: BigNumber(1) } as CasperAccount;
+    const transaction = {
+      amount: BigNumber(1),
+      transferId: "random transfer id for unit test",
+    } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).toBeInstanceOf(CasperInvalidTransferId);
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.transferId);
   });
 });
