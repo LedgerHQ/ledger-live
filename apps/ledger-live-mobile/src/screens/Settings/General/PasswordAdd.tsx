@@ -4,6 +4,7 @@ import { PasswordAddFlowParamList } from "~/components/RootNavigator/types/Passw
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import PasswordForm from "./PasswordForm";
+import { Keyboard } from "react-native";
 
 type Props = StackNavigatorProps<PasswordAddFlowParamList, ScreenName.PasswordAdd>;
 
@@ -18,6 +19,9 @@ const PasswordAdd = ({ navigation }: Props) => {
     navigation.navigate(ScreenName.ConfirmPassword, {
       password,
     });
+    // this is a hack to make the button show above the keyboard
+    // when navigating to the next screen (confirmation password)
+    Keyboard.dismiss();
   };
 
   return (
