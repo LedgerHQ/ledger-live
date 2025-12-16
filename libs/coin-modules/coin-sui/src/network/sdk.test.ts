@@ -915,17 +915,6 @@ describe("Staking Operations", () => {
   });
 });
 
-describe("Operation Extra Information", () => {
-  test("getOperationExtra should be a function", () => {
-    expect(typeof sdk.getOperationExtra).toBe("function");
-  });
-
-  test("getOperationExtra should return a Promise", () => {
-    const result = sdk.getOperationExtra("test_digest");
-    expect(result).toBeInstanceOf(Promise);
-  });
-});
-
 describe("queryTransactions", () => {
   it("should call api.queryTransactionBlocks with correct params for IN", async () => {
     mockApi.queryTransactionBlocks.mockResolvedValueOnce({
