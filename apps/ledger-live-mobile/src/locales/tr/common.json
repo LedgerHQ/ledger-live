@@ -665,6 +665,11 @@
       "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™ bu özelliği desteklemez",
+      "description" : "En yeni Ledger Wallet özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin.",
+      "upsellCtaLabel" : "Model Yükseltme Programınızı keşfedin"
+    },
     "NotEnoughGas" : {
       "title" : "{{cryptoName}} ağındaki işlem ücretlerini ödemek için hesabınızda {{fees}} {{ticker}} olması gerekiyor.  <link0>{{ticker}} satın alın</link0> veya hesabınıza daha fazlasını yatırın.",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
@@ -1136,6 +1141,11 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "Desteklenmeyen özellik",
+      "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin.",
+      "ctaLabel" : "Ledger Destek"
     },
     "EtherscanAPIError" : {
       "title" : "İşlemler alınamadı",
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Sağlayıcı kullanılamıyor",
-      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "Sağlayıcı kullanılamıyor",
+      "description" : "Takas işleminizi bu sağlayıcı ile tamamlayamıyoruz. Lütfen başka bir sağlayıcıyla deneyin."
+    },
+    "swapRateExpiredError" : {
+      "title" : "Kurun Süresi Doldu",
+      "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
     },
     "default" : {
       "title" : "Bir hata oluştu",
