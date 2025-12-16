@@ -665,6 +665,11 @@
       "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
+    "NanoSNotSupported" : {
+      "title" : "El Ledger Nano S™ no es compatible con esta función",
+      "description" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Wallet.",
+      "upsellCtaLabel" : "Descubre tu programa de renovación"
+    },
     "NotEnoughGas" : {
       "title" : "Necesitas {{fees}} {{ticker}} en tu cuenta para pagar tarifas de transacción en la red {{cryptoName}}.  <link0>Compra {{ticker}}</link0> o deposita más en tu cuenta.",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
@@ -1136,6 +1141,11 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "Función no compatible",
+      "description" : "La app necesaria para esta operación no está disponible actualmente en tu dispositivo Ledger. Para obtener más detalles, ponte en contacto con el Soporte de Ledger.",
+      "ctaLabel" : "Ponte en contacto con el Soporte de Ledger"
     },
     "EtherscanAPIError" : {
       "title" : "Se produjo un fallo al recuperar las transacciones",
@@ -3756,7 +3766,7 @@
         },
         "notAvailable" : {
           "title" : "La permuta aún no está disponible en tu área",
-          "content" : "Ten un poco más de paciencia,<br/>implementaremos esta función muy pronto"
+          "content" : "Ten un poco más de paciencia, implementaremos esta función muy pronto"
         },
         "amount" : {
           "useMax" : "Utilizar máx"
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Proveedor no disponible",
-      "description" : "Changelly no puede procesar esta transacción. Código de error 8HBB{{errorCode}}"
+      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "Proveedor no disponible",
+      "description" : "No podemos completar tu permuta con este proveedor. Inténtalo con otro."
+    },
+    "swapRateExpiredError" : {
+      "title" : "Tasa caducada",
+      "description" : "La tasa de cambio ha caducado. Actualiza e inténtalo de nuevo."
     },
     "default" : {
       "title" : "Algo ha salido mal",

@@ -665,6 +665,11 @@
       "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™ unterstützt diese Funktion nicht",
+      "description" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Wallet-Funktionen sicherzustellen.",
+      "upsellCtaLabel" : "Upgrade-Programm entdecken"
+    },
     "NotEnoughGas" : {
       "title" : "Du brauchst {{fees}} {{ticker}} auf deinem Konto, um die Transaktionsgebühren für das {{cryptoName}}-Netzwerk zu bezahlen.  <link0>Kaufe {{ticker}}</link0> oder zahle zusätzliche Mittel auf dein Konto ein.",
       "description" : "Bitte sende einige Coins an dein Konto, um Token-Transaktionen bezahlen zu können."
@@ -1136,6 +1141,11 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperre dein Gerät und versuche es noch einmal.",
       "descriptionWithProductName" : "Entsperre deine {{ productName }} und versuche es noch einmal."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "Nicht unterstützte Funktion",
+      "description" : "Die für diesen Vorgang benötigte App ist derzeit auf deinem Ledger-Gerät nicht verfügbar. Bitte kontaktiere den Ledger-Kundenservice für weitere Details.",
+      "ctaLabel" : "Ledger-Kundenservice kontaktieren"
     },
     "EtherscanAPIError" : {
       "title" : "Abruf der Transaktionen fehlgeschlagen",
@@ -2127,7 +2137,7 @@
         "desc_1" : "Verwende ein <1>OTG-Kabel</1>, um deine Ledger Nano X mit deinem Android-Smartphone zu verbinden (iOS wird nicht unterstützt). Verwalte deine Krypto mit Ledger Wallet Mobile oder einer anderen kompatiblen (Web-)App.",
         "bullets" : {
           "0" : {
-            "label" : "Vergewisseren Sie sich, dass Bluetooth auf Ihrem Smartphone und auf Ihrem Ledger Nano X aktiviert ist. Ihr Ledger Nano X sollte sich auf dem Dashboard, dem Hauptstartbildschirm, befinden.<br>"
+            "label" : "Vergewisseren Sie sich, dass Bluetooth auf Ihrem Smartphone und auf Ihrem Ledger Nano X aktiviert ist. Ihr Ledger Nano X sollte sich auf dem Dashboard, dem Hauptstartbildschirm, befinden. "
           },
           "1" : {
             "label" : "<1>{{Os}}</1>: Vergewissere dich, dass die Standortdienste in den Einstellungen deines Smartphones für Ledger Wallet aktiviert sind. Ledger Wallet nutzt niemals deine Standortinformationen. Dies ist eine Voraussetzung für Bluetooth unter {{Os}}."
@@ -3756,7 +3766,7 @@
         },
         "notAvailable" : {
           "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
-          "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
+          "content" : "Haben Sie noch etwas Geduld, wir werden diese Funktion sehr bald einführen"
         },
         "amount" : {
           "useMax" : "Max. verwenden"
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Anbieter nicht verfügbar",
-      "description" : "Changelly kann diese Transaktion nicht verarbeiten. Fehlercode: 8HBB{{errorCode}}"
+      "description" : "Changelly kann diese Transaktion nicht verarbeiten. Fehlercode: 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "Anbieter nicht verfügbar",
+      "description" : "Wir können deinen Swap bei diesem Anbieter nicht durchführen. Bitte probiere es mit einem anderen."
+    },
+    "swapRateExpiredError" : {
+      "title" : "Kurs abgelaufen",
+      "description" : "Wechselkurs abgelaufen. Bitte lade die Seite neu und versuche es dann noch einmal."
     },
     "default" : {
       "title" : "Etwas ist schief gelaufen",

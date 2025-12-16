@@ -665,6 +665,11 @@
       "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™はこの機能に対応していません",
+      "description" : "Ledger Walletの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをご検討ください。",
+      "upsellCtaLabel" : "最適なアップグレードプランをチェック"
+    },
     "NotEnoughGas" : {
       "title" : "{{cryptoName}}ネットワークでのトランザクション手数料を支払うには、アカウントに{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>か、アカウントにさらに入金してください。",
       "description" : "トークンのトランザクションの支払いに必要なコインをアカウントに送ってください。"
@@ -1136,6 +1141,11 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "サポートされていない機能",
+      "description" : "この操作に必要なアプリは、現在お使いのLedgerデバイスでは利用できません。詳細についてはLedgerサポートにお問い合わせください。",
+      "ctaLabel" : "Ledgerサポートへお問い合わせ"
     },
     "EtherscanAPIError" : {
       "title" : "トランザクションの取得に失敗しました",
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "スワッププロバイダー利用不可",
-      "description" : "Changellyはこの取引を処理できません。エラーコード 8HBB{{errorCode}}"
+      "description" : "Changellyはこの取引を処理できません。Error code 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "スワッププロバイダー利用不可",
+      "description" : "このプロバイダーでは、スワップを完了することができません。他のプロバイダーをお試しください。"
+    },
+    "swapRateExpiredError" : {
+      "title" : "レート期限切れ",
+      "description" : "取引レートの有効期限が切れました。更新してもう一度お試しください。"
     },
     "default" : {
       "title" : "問題が発生しました。",

@@ -665,6 +665,11 @@
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™ 不支持此功能",
+      "description" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Wallet 功能。",
+      "upsellCtaLabel" : "探索您的升级计划"
+    },
     "NotEnoughGas" : {
       "title" : "您的账户中需要有 {{fees}} {{ticker}} 以支付 {{cryptoName}} 网络上的交易费用。<link0>购买 {{ticker}}</link0> 或向账户存入更多资产。",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
@@ -1136,6 +1141,11 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "功能不受支持",
+      "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。",
+      "ctaLabel" : "联系 Ledger 客服"
     },
     "EtherscanAPIError" : {
       "title" : "未能提取交易",
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "服务提供商不可用",
-      "description" : "Changelly 无法处理此交易。错误代码 8HBB{{errorCode}}"
+      "description" : "Changelly 无法处理此交易。错误代码 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "服务提供商不可用",
+      "description" : "我们无法完成您通过该服务提供商进行的互换。请尝试其他服务提供商。"
+    },
+    "swapRateExpiredError" : {
+      "title" : "费率已过期",
+      "description" : "汇率已过期。请刷新并重试。"
     },
     "default" : {
       "title" : "出错了",
