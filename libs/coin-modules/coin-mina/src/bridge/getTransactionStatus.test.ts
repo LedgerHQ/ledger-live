@@ -1,18 +1,20 @@
-import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
+  AmountRequired,
+  FeeNotLoaded,
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-  InvalidAddress,
-  FeeNotLoaded,
-  AmountRequired,
-  InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
-import getTransactionStatus from "./getTransactionStatus";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { Transaction } from "../types/common";
+import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "./errors";
 import getEstimatedFees from "./getEstimatedFees";
+import getTransactionStatus from "./getTransactionStatus";
 
 // Mock dependencies
 jest.mock("@ledgerhq/coin-framework/currencies", () => ({
@@ -24,6 +26,7 @@ describe("getTransactionStatus", () => {
   // Standard test fixtures
   const mockAccount = createMockAccount();
   const mockTransaction = createMockTransaction({ amount: new BigNumber(800) });
+  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -171,5 +174,39 @@ describe("getTransactionStatus", () => {
     expect(result.amount).toEqual(new BigNumber(890)); // spendableBalance(900) - fee(10)
     expect(result.totalSpent).toEqual(new BigNumber(900)); // spendableBalance
     expect(result.errors).toEqual({});
+  });
+
+  it("should not set error on transaction when memo is validated", async () => {
+    spiedValidateMemo.mockReturnValueOnce(true);
+
+    const account = {
+      pendingOperations: [] as Operation[],
+      spendableBalance: BigNumber(1),
+    } as Account;
+    const transaction = {
+      fees: { accountCreationFee: BigNumber(0), fee: BigNumber(1) },
+      memo: "random memo for unit test",
+    } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).not.toBeDefined();
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
+  });
+
+  it("should set error on transaction when memo is invalidated", async () => {
+    spiedValidateMemo.mockReturnValueOnce(false);
+
+    const account = {
+      pendingOperations: [] as Operation[],
+      spendableBalance: BigNumber(1),
+    } as Account;
+    const transaction = {
+      fees: { accountCreationFee: BigNumber(0), fee: BigNumber(1) },
+      memo: "random memo for unit test",
+    } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).toBeInstanceOf(InvalidMemoMina);
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
 });

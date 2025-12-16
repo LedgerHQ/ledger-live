@@ -20,6 +20,8 @@ import { XrpMapMemo } from "../types";
 import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
 import { getBalance } from "./getBalance";
+import { validateMemo } from "./validateMemo";
+import { XrpInvalidMemoError } from "./errors";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<XrpMapMemo>,
@@ -85,6 +87,14 @@ export const validateIntent = async (
 
   if (!errors.amount && amount === 0n) {
     errors.amount = new AmountRequired();
+  }
+
+  const destinationTag =
+    transactionIntent.memo && transactionIntent.memo.memos
+      ? transactionIntent.memo.memos.get("destinationTag")
+      : undefined;
+  if (destinationTag && typeof destinationTag === "string" && !validateMemo(destinationTag)) {
+    errors.transaction = new XrpInvalidMemoError();
   }
 
   return {

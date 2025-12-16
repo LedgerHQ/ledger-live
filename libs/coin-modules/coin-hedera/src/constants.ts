@@ -53,8 +53,6 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
-export const MEMO_CHARACTER_LIMIT = 100;
-
 /**
  * Enum representing the delegation status of a Hedera account
  */
