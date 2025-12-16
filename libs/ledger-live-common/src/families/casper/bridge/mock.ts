@@ -22,7 +22,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAddress, isAddressValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/addresses";
-import { isTransferIdValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/transferId";
+import { validateMemo } from "@ledgerhq/coin-casper/logic/validateMemo";
 import {
   CasperInvalidTransferId,
   InvalidMinimumAmount,
@@ -68,7 +68,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.sender = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
-  else if (!isTransferIdValid(t.transferId)) {
+  else if (!validateMemo(t.transferId)) {
     errors.sender = new CasperInvalidTransferId("", {
       maxTransferId: CASPER_MAX_TRANSFER_ID,
     });

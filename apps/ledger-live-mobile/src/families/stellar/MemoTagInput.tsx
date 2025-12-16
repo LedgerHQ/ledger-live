@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { isMemoValid } from "@ledgerhq/live-common/families/stellar/bridge/logic";
+import { validateMemo } from "@ledgerhq/live-common/families/stellar/bridge/logic";
 import {
   StellarWrongMemoFormat,
   type Transaction as StellarTransaction,
@@ -18,7 +18,7 @@ export default ({ onChange, ...inputProps }: MemoTagInputProps<StellarTransactio
   const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (type: MemoType, value: string) => {
-    const error = !value || isMemoValid(type, value) ? undefined : new StellarWrongMemoFormat();
+    const error = !value || validateMemo(value, type) ? undefined : new StellarWrongMemoFormat();
     const memoType = !value ? "NO_MEMO" : type;
     const patch = (tx: StellarTransaction) => ({ ...tx, memoType, memoValue: value });
     onChange({ value, patch, error });
