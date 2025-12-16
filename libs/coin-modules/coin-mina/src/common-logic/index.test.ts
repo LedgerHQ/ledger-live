@@ -4,11 +4,9 @@ import {
   getMaxAmount,
   getTotalSpent,
   reEncodeRawSignature,
-  isValidMemo,
 } from ".";
 import { BigNumber } from "bignumber.js";
 import type { MinaAccount, Transaction } from "../types/common";
-import { MAX_MEMO_LENGTH } from "../consts";
 import { Operation } from "@ledgerhq/types-live";
 
 // Create a minimal mock implementation for the tests
@@ -107,18 +105,6 @@ describe("testingAddress", () => {
     for (const address of invalidAddresses) {
       expect(isValidAddress(address as string)).toBe(false);
     }
-  });
-});
-
-describe("isValidMemo", () => {
-  it("should return true for valid memo", () => {
-    expect(isValidMemo("")).toBe(true);
-    expect(isValidMemo("Valid memo")).toBe(true);
-    expect(isValidMemo("A".repeat(MAX_MEMO_LENGTH))).toBe(true);
-  });
-
-  it("should return false for memo exceeding max length", () => {
-    expect(isValidMemo("A".repeat(MAX_MEMO_LENGTH + 1))).toBe(false);
   });
 });
 

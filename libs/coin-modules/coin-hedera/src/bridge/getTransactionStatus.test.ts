@@ -1,30 +1,30 @@
-import BigNumber from "bignumber.js";
 import {
+  AmountRequired,
+  ClaimRewardsFeesWarning,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  AmountRequired,
   NotEnoughBalance,
-  ClaimRewardsFeesWarning,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import * as accountHelpers from "@ledgerhq/coin-framework/account";
-import { HEDERA_TRANSACTION_MODES, MEMO_CHARACTER_LIMIT } from "../constants";
+import BigNumber from "bignumber.js";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaInvalidStakingNodeIdError,
+  HederaMemoExceededSizeError,
   HederaNoStakingRewardsError,
   HederaRecipientEvmAddressVerificationRequired,
   HederaRecipientInvalidChecksum,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
-  HederaMemoIsTooLong,
 } from "../errors";
-import { getTransactionStatus } from "./getTransactionStatus";
 import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
-import * as preloadData from "../preload-data";
+import * as logicValidateMemo from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
+import * as preloadData from "../preload-data";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedERC20TokenCurrency,
@@ -32,6 +32,8 @@ import {
 } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { EstimateFeesResult, HederaPreloadData, Transaction } from "../types";
+import { getTransactionStatus } from "./getTransactionStatus";
+import * as bridgeUtils from "./utils";
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
@@ -39,14 +41,18 @@ describe("getTransactionStatus", () => {
   const mockPreload = { validators: [{ nodeId: 1 }, { nodeId: 2 }] } as HederaPreloadData;
   const validRecipientAddress = "0.0.1234567";
   const validRecipientAddressWithChecksum = "0.0.1234567-ylkls";
+  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedCalculateAmount = jest.spyOn(bridgeUtils, "calculateAmount");
+  const spiedFindSubAccountById = jest.spyOn(accountHelpers, "findSubAccountById");
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.restoreAllMocks();
 
     jest.spyOn(estimateFees, "estimateFees").mockResolvedValueOnce(mockedEstimatedFee);
     jest.spyOn(logicUtils, "getCurrencyToUSDRate").mockResolvedValueOnce(mockedUsdRate);
     jest.spyOn(preloadData, "getCurrentHederaPreloadData").mockReturnValueOnce(mockPreload);
+
+    spiedValidateMemo.mockReturnValue(true);
   });
 
   afterAll(() => {
@@ -136,75 +142,6 @@ describe("getTransactionStatus", () => {
 
     expect(result.errors).toEqual({});
     expect(result.warnings).toEqual({});
-  });
-
-  it.each([
-    ["undefined", undefined],
-    ["empty", ""],
-    ["short", "aaaaa"],
-    ["exact limit", "a".repeat(MEMO_CHARACTER_LIMIT)],
-  ])("allows %s memo", async (_description, memo) => {
-    const mockedAccount = getMockedAccount();
-    const mockedTransaction = getMockedTransaction({ memo });
-
-    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
-
-    expect(result.errors.memo).toBeUndefined();
-  });
-
-  it.each([
-    {
-      mode: HEDERA_TRANSACTION_MODES.Delegate,
-      description: "delegate",
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.Undelegate,
-      description: "undelegate",
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.Redelegate,
-      description: "redelegate",
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
-      description: "claim rewards",
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.Send,
-      description: "send native",
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.Send,
-      description: "send hts token",
-      subAccount: getMockedTokenAccount(getMockedHTSTokenCurrency(), { id: "hts-id" }),
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.Send,
-      description: "send erc20 token",
-      subAccount: getMockedTokenAccount(getMockedERC20TokenCurrency(), { id: "erc20-id" }),
-    },
-    {
-      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-      description: "token associate",
-      properties: { token: getMockedHTSTokenCurrency() },
-    },
-  ])("adds error for too long memo - $description", async ({ mode, subAccount, properties }) => {
-    const tooLongMemo = "a".repeat(MEMO_CHARACTER_LIMIT + 1);
-    const mockedAccount = getMockedAccount();
-    const mockedTransaction = getMockedTransaction({
-      mode,
-      memo: tooLongMemo,
-      ...(subAccount && { subAccountId: subAccount.id }),
-      ...(properties && { properties }),
-    } as Transaction);
-
-    jest.spyOn(accountHelpers, "findSubAccountById").mockImplementation(() => {
-      return subAccount;
-    });
-
-    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
-
-    expect(result.errors.memo).toBeInstanceOf(HederaMemoIsTooLong);
   });
 
   it("adds error for invalid recipient address", async () => {
@@ -507,4 +444,110 @@ describe("getTransactionStatus", () => {
     expect(result.warnings).toEqual({});
     expect(result.amount).toEqual(new BigNumber(0));
   });
+
+  it.each([
+    {
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      subAccount: getMockedTokenAccount(getMockedHTSTokenCurrency(), { id: "hts-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      subAccount: getMockedTokenAccount(getMockedERC20TokenCurrency(), { id: "erc20-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      properties: { token: getMockedHTSTokenCurrency() },
+    },
+  ])(
+    'should set no error on transaction when memo is validated for "$mode" transaction',
+    async ({ mode, subAccount, properties }) => {
+      spiedFindSubAccountById.mockReturnValueOnce(subAccount);
+
+      spiedValidateMemo.mockClear();
+      spiedValidateMemo.mockReturnValue(true);
+
+      spiedCalculateAmount.mockResolvedValue({ amount: BigNumber(0), totalSpent: BigNumber(0) });
+
+      const account = getMockedAccount();
+      const transaction = {
+        amount: BigNumber(0),
+        memo: "random memo for unit test",
+        mode,
+        ...(subAccount && { subAccountId: subAccount.id }),
+        ...(properties && { properties }),
+      } as Transaction;
+      const status = await getTransactionStatus(account, transaction);
+      expect(status.errors.transaction).not.toBeDefined();
+
+      expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
+    },
+  );
+
+  it.each([
+    {
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      subAccount: getMockedTokenAccount(getMockedHTSTokenCurrency(), { id: "hts-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      subAccount: getMockedTokenAccount(getMockedERC20TokenCurrency(), { id: "erc20-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      properties: { token: getMockedHTSTokenCurrency() },
+    },
+  ])(
+    'should set error on transaction when memo is invalidated for "$mode" transaction',
+    async ({ mode, subAccount, properties }) => {
+      spiedFindSubAccountById.mockReturnValueOnce(subAccount);
+
+      spiedValidateMemo.mockClear();
+      spiedValidateMemo.mockReturnValue(false);
+
+      spiedCalculateAmount.mockResolvedValue({ amount: BigNumber(0), totalSpent: BigNumber(0) });
+
+      const account = getMockedAccount();
+      const transaction = {
+        amount: BigNumber(0),
+        memo: "random memo for unit test",
+        mode,
+        ...(subAccount && { subAccountId: subAccount.id }),
+        ...(properties && { properties }),
+      } as Transaction;
+      const status = await getTransactionStatus(account, transaction);
+      expect(status.errors.transaction).toBeInstanceOf(HederaMemoExceededSizeError);
+
+      expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
+    },
+  );
 });

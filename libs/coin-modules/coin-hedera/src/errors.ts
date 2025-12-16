@@ -23,4 +23,5 @@ export const HederaInvalidStakingNodeIdError = createCustomErrorClass(
   "HederaInvalidStakingNodeIdError",
 );
 export const HederaNoStakingRewardsError = createCustomErrorClass("HederaNoStakingRewardsError");
-export const HederaMemoIsTooLong = createCustomErrorClass("HederaMemoIsTooLong");
+
+export const HederaMemoExceededSizeError = createCustomErrorClass("HederaMemoExceededSizeError");

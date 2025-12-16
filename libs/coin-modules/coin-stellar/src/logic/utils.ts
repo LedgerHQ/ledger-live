@@ -40,34 +40,6 @@ export function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
   return [tr.assetReference || "", tr.assetOwner || ""];
 }
 
-export function isMemoValid(memoType: string, memoValue: string): boolean {
-  switch (memoType) {
-    case "MEMO_TEXT":
-      if (memoValue.length > 28) {
-        return false;
-      }
-
-      break;
-
-    case "MEMO_ID":
-      if (new BigNumber(memoValue.toString()).isNaN()) {
-        return false;
-      }
-
-      break;
-
-    case "MEMO_HASH":
-    case "MEMO_RETURN":
-      if (!memoValue.length || memoValue.length !== 64) {
-        return false;
-      }
-
-      break;
-  }
-
-  return true;
-}
-
 export async function isAccountMultiSign(account: string): Promise<boolean> {
   const signers = await fetchSigners(account);
   return signers.length > 1;

@@ -6890,6 +6890,10 @@
       "title": "Cardano invalid protocol parameters",
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
+    "CardanoMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -6963,8 +6967,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",

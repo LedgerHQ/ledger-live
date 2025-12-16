@@ -2,7 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { transactionToIntent } from "./utils";
+import { applyMemoToIntent, transactionToIntent } from "./utils";
 import { GenericTransaction } from "./types";
 
 // => alpaca validateIntent
@@ -52,11 +52,12 @@ export function genericGetTransactionStatus(
         ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
         : {}),
     };
+
+    let intent = transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType);
+    intent = applyMemoToIntent(intent, transaction);
+
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
-      await alpacaApi.validateIntent(
-        transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-        { value: fees, parameters: feesParameters },
-      );
+      await alpacaApi.validateIntent(intent, { value: fees, parameters: feesParameters });
 
     return {
       errors,

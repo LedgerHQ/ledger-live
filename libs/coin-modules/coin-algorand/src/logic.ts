@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import algorandAPI from "./api";
 import type { AlgorandOperationMode } from "./types";
 
-export const ALGORAND_MAX_MEMO_SIZE = 32;
 export const ALGORAND_MIN_ACCOUNT_BALANCE = 100000;
 
 export const recipientHasAsset = async (

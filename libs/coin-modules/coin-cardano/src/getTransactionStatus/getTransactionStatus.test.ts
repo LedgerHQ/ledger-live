@@ -1,14 +1,48 @@
 /* eslint @typescript-eslint/consistent-type-assertions: 0 */
 
-import BigNumber from "bignumber.js";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { CardanoAccount, CardanoOutput, Transaction } from "../types";
-import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
-import * as mode from "./handler";
+import * as sanction from "@ledgerhq/coin-framework/sanction/index";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig, { CardanoCoinConfig } from "../config";
+import { CardanoMemoExceededSizeError } from "../errors";
+import * as logicValidateMemo from "../logic/validateMemo";
+import { CardanoAccount, CardanoOutput, Transaction } from "../types";
+import { getTransactionStatus } from "./getTransactionStatus";
+import * as handler from "./handler";
+
+jest.mock("../logic/validateMemo");
 
 describe("getTransactionStatus", () => {
+  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedGetTransactionStatusByTransactionMode = jest.spyOn(
+    handler,
+    "getTransactionStatusByTransactionMode",
+  );
+  const spiedIsAddressSanctioned = jest.spyOn(sanction, "isAddressSanctioned");
+  const spiedGetCoinConfig = jest.spyOn(coinConfig, "getCoinConfig");
+
+  beforeEach(() => {
+    spiedValidateMemo.mockClear();
+    spiedGetTransactionStatusByTransactionMode.mockClear();
+    spiedIsAddressSanctioned.mockClear();
+    spiedGetCoinConfig.mockClear();
+
+    spiedValidateMemo.mockReturnValue(true);
+    spiedIsAddressSanctioned.mockResolvedValue(false);
+    spiedGetTransactionStatusByTransactionMode.mockResolvedValue({
+      errors: {},
+      warnings: {},
+      amount: BigNumber(0),
+      totalSpent: BigNumber(0),
+      estimatedFees: BigNumber(0),
+    });
+    spiedGetCoinConfig.mockReturnValue({
+      maxFeesWarning: BigNumber(0),
+      maxFeesError: BigNumber(0),
+    } as unknown as CardanoCoinConfig);
+  });
+
   it("should return not enough funds error when there are no utxos", async () => {
     const initialAccount = {
       pendingOperations: [],
@@ -55,7 +89,8 @@ describe("getTransactionStatus", () => {
       "addr1UvY42XTJHMPHDEDch9UWagjhipLjke37Uqm7qzfcSkdPHT",
     ];
 
-    jest.spyOn(sanction, "isAddressSanctioned").mockImplementation((_, address) => {
+    spiedIsAddressSanctioned.mockClear();
+    spiedIsAddressSanctioned.mockImplementation((_, address) => {
       return Promise.resolve(sanctionedAddresses.includes(address));
     });
 
@@ -92,22 +127,6 @@ describe("getTransactionStatus", () => {
   });
 
   it("should return as no sender error when no utxo address is sanctioned", async () => {
-    const maxFeesWarning = BigNumber(1000000);
-    jest.spyOn(coinConfig, "getCoinConfig").mockReturnValue({
-      maxFeesWarning: maxFeesWarning,
-      maxFeesError: maxFeesWarning.multipliedBy(2),
-    } as unknown as CardanoCoinConfig);
-
-    jest.spyOn(mode, "getTransactionStatusByTransactionMode").mockResolvedValue({
-      errors: {},
-      warnings: {},
-      amount: BigNumber(0),
-      totalSpent: BigNumber(0),
-      estimatedFees: maxFeesWarning,
-    });
-
-    jest.spyOn(sanction, "isAddressSanctioned").mockResolvedValue(false);
-
     const utxos = [
       {
         address: "addr1eKHLg16K8UTAak8srh6LiTRufkT2uziFKekkfZBxcRNMED",
@@ -136,5 +155,39 @@ describe("getTransactionStatus", () => {
 
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors).toEqual({});
+  });
+
+  it("should not set error on transaction when memo is validated", async () => {
+    spiedValidateMemo.mockClear();
+    spiedValidateMemo.mockReturnValueOnce(true);
+
+    const account = {
+      pendingOperations: [] as Operation[],
+      cardanoResources: {
+        utxos: [{} as CardanoOutput],
+      },
+    } as CardanoAccount;
+    const transaction = { memo: "random memo for unit test" } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).not.toBeDefined();
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
+  });
+
+  it("should set error on transaction when memo is invalidated", async () => {
+    spiedValidateMemo.mockClear();
+    spiedValidateMemo.mockReturnValueOnce(false);
+
+    const account = {
+      pendingOperations: [] as Operation[],
+      cardanoResources: {
+        utxos: [{} as CardanoOutput],
+      },
+    } as CardanoAccount;
+    const transaction = { memo: "random memo for unit test" } as Transaction;
+    const status = await getTransactionStatus(account, transaction);
+    expect(status.errors.transaction).toBeInstanceOf(CardanoMemoExceededSizeError);
+
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
 });

@@ -5,11 +5,10 @@ import {
   TOKEN_TRANSFER_MAX_FEE,
   TOKEN_TRANSFER_QUERY_ID,
 } from "../../constants";
-import { TonComment, TonPayloadFormat, TonPayloadJettonTransfer } from "../../types";
+import { TonPayloadFormat, TonPayloadJettonTransfer } from "../../types";
 import {
   addressesAreEqual,
   buildTonTransaction,
-  commentIsValid,
   getLedgerTonPath,
   getTransferExpirationTime,
   isAddressValid,
@@ -51,30 +50,6 @@ describe("TON addresses", () => {
     expect(addressesAreEqual(addr.rawWrong, addr.noBounceUrl)).toBe(false);
     expect(addressesAreEqual(addr.noBounceNoUrl, addr.diff)).toBe(false);
   });
-});
-
-test("TON Comments are valid", () => {
-  const msg = (e: boolean, m: string): TonComment => ({ isEncrypted: e, text: m });
-  expect(commentIsValid(msg(false, ""))).toBe(true);
-  expect(commentIsValid(msg(false, "Hello world!"))).toBe(true);
-  expect(
-    commentIsValid(
-      msg(
-        false,
-        " 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789", // 120 chars
-      ),
-    ),
-  ).toBe(true);
-  expect(
-    commentIsValid(
-      msg(
-        false,
-        " 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 ", // 121 chars
-      ),
-    ),
-  ).toBe(false);
-  expect(commentIsValid(msg(false, "😀"))).toBe(false);
-  expect(commentIsValid(msg(true, ""))).toBe(false);
 });
 
 describe("TON transfers", () => {

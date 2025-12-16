@@ -22,13 +22,14 @@ import {
   SolanaTokenAccountHoldsAnotherToken,
   SolanaValidatorRequired,
 } from "../errors";
-import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "../logic";
+import { encodeAccountIdWithTokenAccountAddress } from "../logic";
 import createTransaction from "../createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import { testOnChainData } from "../tests/test-onchain-data.fixture";
+import { MAX_MEMO_LENGTH } from "../logic/validateMemo";
 
 const mainAccId = encodeAccountId({
   type: "js",

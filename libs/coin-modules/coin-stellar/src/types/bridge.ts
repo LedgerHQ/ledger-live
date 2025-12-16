@@ -42,7 +42,7 @@ export const StellarMemoType = [
 ] as const;
 
 // typesafe enum
-type StellarMemoKind = (typeof StellarMemoType)[number];
+export type StellarMemoKind = (typeof StellarMemoType)[number];
 
 export type StellarMemo =
   | { type: "NO_MEMO" }

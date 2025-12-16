@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
-    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
+    },
+    "XrpInvalidMemo": {
+      "title": "Memo format is wrong, it should be less than 4294967296"
+    },
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters"
     },
     "PinNotSet": {
       "title": "PIN not set"

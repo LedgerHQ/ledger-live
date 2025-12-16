@@ -10,11 +10,7 @@ import {
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  HEDERA_OPERATION_TYPES,
-  HEDERA_TRANSACTION_MODES,
-  MEMO_CHARACTER_LIMIT,
-} from "../constants";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaRecipientTokenAssociationRequired,
@@ -23,7 +19,7 @@ import {
   HederaInvalidStakingNodeIdError,
   HederaRedundantStakingNodeIdError,
   HederaNoStakingRewardsError,
-  HederaMemoIsTooLong,
+  HederaMemoExceededSizeError,
 } from "../errors";
 import { estimateFees } from "../logic/estimateFees";
 import {
@@ -42,6 +38,7 @@ import type {
   TransactionTokenAssociate,
 } from "../types";
 import { calculateAmount } from "./utils";
+import { validateMemo } from "../logic/validateMemo";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
@@ -66,14 +63,6 @@ function validateRecipient(account: Account, recipient: string): Error | null {
   return null;
 }
 
-function validateMemo(memo: string | undefined): Error | null {
-  if (memo && memo.length > MEMO_CHARACTER_LIMIT) {
-    return new HederaMemoIsTooLong(undefined, { maxLength: MEMO_CHARACTER_LIMIT });
-  }
-
-  return null;
-}
-
 async function handleTokenAssociateTransaction(
   account: Account,
   transaction: TransactionTokenAssociate,
@@ -92,10 +81,9 @@ async function handleTokenAssociateTransaction(
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
   const isAssociationFlow = isTokenAssociationRequired(account, transaction.properties.token);
-  const memoError = validateMemo(transaction.memo);
 
-  if (memoError) {
-    errors.memo = memoError;
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (isAssociationFlow) {
@@ -136,14 +124,13 @@ async function handleHTSTokenTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
-  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (memoError) {
-    errors.memo = memoError;
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (!errors.recipient) {
@@ -212,14 +199,13 @@ async function handleERC20TokenTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
-  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (memoError) {
-    errors.memo = memoError;
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (transaction.amount.eq(0)) {
@@ -259,14 +245,13 @@ async function handleCoinTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
-  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (memoError) {
-    errors.memo = memoError;
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
@@ -275,6 +260,10 @@ async function handleCoinTransaction(
 
   if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance("");
+  }
+
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   return {
@@ -298,10 +287,9 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
   });
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
-  const memoError = validateMemo(transaction.memo);
 
-  if (memoError) {
-    errors.memo = memoError;
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new HederaMemoExceededSizeError();
   }
 
   if (

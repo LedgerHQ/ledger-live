@@ -5,6 +5,7 @@ import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import {
   Balance,
   Operation as CoreOperation,
+  MapMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -18,6 +19,7 @@ import {
   GenericTransactionRaw,
   OperationCommon,
 } from "./types";
+import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
@@ -439,3 +441,42 @@ export const buildOptimisticOperation = (
   }
   return operation;
 };
+
+/**
+ * Applies memo information to transaction intent
+ * Handles both destination tags (XRP-like) and Stellar-style memos
+ */
+export function applyMemoToIntent(
+  transactionIntent: TransactionIntent<any>,
+  transaction: GenericTransaction,
+): TransactionIntent<any> {
+  // Handle destination tag memo (for XRP-like chains)
+  if (transaction.tag) {
+    const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
+    const txMemo = String(transaction.tag);
+
+    txWithMemoTag.memo = {
+      type: "map",
+      memos: new Map(),
+    };
+    txWithMemoTag.memo.memos.set("destinationTag", txMemo);
+
+    return txWithMemoTag;
+  }
+
+  // Handle Stellar-style memo
+  if (transaction.memoType && transaction.memoValue) {
+    const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
+    const txMemoType = String(transaction.memoType);
+    const txMemoValue = String(transaction.memoValue);
+
+    txWithMemo.memo = {
+      type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
+      value: txMemoValue,
+    };
+
+    return txWithMemo;
+  }
+
+  return transactionIntent;
+}
