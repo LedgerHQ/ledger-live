@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
@@ -9,7 +9,7 @@ import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import { closeModal } from "~/renderer/actions/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import SendWorkflow from "LLD/features/Send";
+import { openSendFlowDialog } from "~/renderer/reducers/sendFlow";
 import type { State } from "~/renderer/reducers";
 
 type Props = {
@@ -48,24 +48,30 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
     onClose?.();
   }, [dispatch, onClose]);
 
-  // New flow: render SendWorkflow directly (no Modal wrapper to avoid double backdrop)
-  if (newSendFlow?.enabled) {
-    if (!isOpened) return null;
+  useEffect(() => {
+    if (!newSendFlow?.enabled || !isOpened) return;
 
     const sendData = modalData || {};
-    const workflowParams = {
-      account: sendData.account ?? undefined,
-      parentAccount: sendData.parentAccount ?? undefined,
-      recipient: sendData.recipient,
-      amount: sendData.amount?.toString(),
-      fromMAD: false,
-    };
+    const amount = sendData.amount ? sendData.amount.toString() : undefined;
 
-    return (
-      <DomainServiceProvider>
-        <SendWorkflow onClose={handleModalClose} params={workflowParams} />
-      </DomainServiceProvider>
+    dispatch(
+      openSendFlowDialog({
+        params: {
+          account: sendData.account ?? undefined,
+          parentAccount: sendData.parentAccount ?? undefined,
+          recipient: sendData.recipient,
+          amount,
+          fromMAD: false,
+          startWithWarning: sendData.startWithWarning,
+        },
+        onClose,
+      }),
     );
+    dispatch(closeModal("MODAL_SEND"));
+  }, [dispatch, isOpened, modalData, newSendFlow?.enabled, onClose]);
+
+  if (newSendFlow?.enabled) {
+    return null;
   }
 
   // Old flow: keep Modal wrapper

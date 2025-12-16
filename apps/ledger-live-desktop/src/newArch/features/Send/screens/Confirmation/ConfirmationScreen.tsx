@@ -70,7 +70,7 @@ export function ConfirmationScreen() {
       </div>
 
       {isSuccess && (
-        <div className="flex flex-col gap-16 rounded-lg bg-muted p-16">
+        <div className="flex flex-col gap-16 rounded-lg bg-muted px-16">
           <div className="flex justify-between">
             <span className="text-muted body-3">To:</span>
             <span className="body-3">{tx?.recipient ?? "-"}</span>

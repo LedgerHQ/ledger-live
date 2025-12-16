@@ -80,7 +80,7 @@ export function RecipientScreen() {
   const accountName = account?.id || "Unknown";
 
   return (
-    <div className="flex flex-col gap-24 px-0">
+    <div className="flex flex-col gap-24 px-12">
       <div className="flex flex-col gap-8">
         <h2 className="heading-2">Send</h2>
         <p className="text-muted body-2">Step: Recipient • Account: {accountName}</p>
