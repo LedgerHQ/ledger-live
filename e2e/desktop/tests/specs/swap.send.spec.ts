@@ -66,7 +66,6 @@ const swaps = [
       "@Stax",
       "@Flex",
       "@NanoGen5",
-      "@smoke",
       "@swapSmoke",
       "@ethereum",
       "@family-evm",
