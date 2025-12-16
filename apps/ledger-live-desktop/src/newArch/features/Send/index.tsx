@@ -6,13 +6,9 @@ import { SendFlowOrchestrator, createStepRegistry } from "./SendFlowOrchestrator
 import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
 import { useSendFlowContext } from "./context/SendFlowContext";
 import { FLOW_STATUS } from "../FlowWizard/types";
-import { AccountSelectionScreen } from "./screens/AccountSelection/AccountSelectionScreen";
 
 import type { AnimationConfig } from "../FlowWizard/types";
-import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
-import { AmountScreen } from "./screens/Amount/AmountScreen";
-import { SignatureScreen } from "./screens/Signature/SignatureScreen";
-import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
+import { AccountSelectionScreen } from "./screens/AccountSelection/AccountSelectionScreen";
 
 const SEND_ANIMATION_CONFIG: AnimationConfig = {
   forward: "animate-fade-in",
@@ -21,10 +17,10 @@ const SEND_ANIMATION_CONFIG: AnimationConfig = {
 
 const stepRegistry = createStepRegistry({
   [SEND_FLOW_STEP.ACCOUNT_SELECTION]: AccountSelectionScreen,
-  [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
-  [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
-  [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
-  [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+  [SEND_FLOW_STEP.RECIPIENT]: () => <></>,
+  [SEND_FLOW_STEP.AMOUNT]: () => <></>,
+  [SEND_FLOW_STEP.SIGNATURE]: () => <></>,
+  [SEND_FLOW_STEP.CONFIRMATION]: () => <></>,
 });
 
 type SendWorkflowParams = Readonly<{
