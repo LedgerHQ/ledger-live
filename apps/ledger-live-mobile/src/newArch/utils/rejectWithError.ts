@@ -1,5 +1,3 @@
-import { captureExceptionWithExtraData } from "./captureExceptionWithExtraData";
-
 /**
  * Rejects a promise with the provided error.
  *
@@ -11,7 +9,10 @@ import { captureExceptionWithExtraData } from "./captureExceptionWithExtraData";
  * @returns A promise that is rejected with the provided error or a new `Error` instance.
  */
 export function rejectWithError({ e, extraData }: ErrorData): Promise<never> {
-  captureExceptionWithExtraData(e, extraData);
+  // Log error with extra data for debugging
+  if (extraData) {
+    console.error("Error with extra data:", e, extraData);
+  }
   const errorToReject = constructErrorMessage(e);
   return Promise.reject(errorToReject);
 }

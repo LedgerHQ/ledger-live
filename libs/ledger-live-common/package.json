@@ -192,6 +192,7 @@
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",

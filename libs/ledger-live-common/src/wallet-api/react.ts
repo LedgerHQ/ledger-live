@@ -16,7 +16,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { InfiniteData } from "@reduxjs/toolkit/query";
+import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import type {
   TokensDataWithPagination,
   PageParam,

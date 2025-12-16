@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Account, AccountListItem } from "../AccountListItem";
-import { VirtualList } from "@ledgerhq/react-ui/pre-ldls";
+import { VirtualList } from "LLD/components/VirtualList";
 
 export const AccountVirtualList = ({
   accounts,

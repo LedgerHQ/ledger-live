@@ -1,6 +1,6 @@
 import React from "react";
 import { cva } from "class-variance-authority";
-import { useMarketIndicator } from "./useMarketIndicator";
+import { useMarketIndicator } from "../useMarketIndicator";
 
 const percentStyles = cva("body-3", {
   variants: {

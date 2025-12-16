@@ -59,7 +59,7 @@ const ModularDialogFlowManager = ({
   }, [dispatch]);
 
   const {
-    error,
+    errorInfo,
     refetch,
     loadingStatus,
     assetsToDisplay,
@@ -96,7 +96,7 @@ const ModularDialogFlowManager = ({
             assetsConfiguration={assetsConfiguration}
             onAssetSelected={handleAssetSelected}
             loadNext={loadNext}
-            error={!!error}
+            errorInfo={errorInfo}
             refetch={refetch}
             assetsSorted={assetsSorted}
           />

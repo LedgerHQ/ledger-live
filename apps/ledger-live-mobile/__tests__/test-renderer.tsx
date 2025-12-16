@@ -1,4 +1,5 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { initialIdentitiesState } from "@ledgerhq/client-ids/store";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
@@ -54,6 +55,7 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,

@@ -28,7 +28,7 @@ export function useModularDrawerData({
   );
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
-  const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
+  const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,
     product: "lld",
@@ -75,6 +75,7 @@ export function useModularDrawerData({
     data,
     isLoading,
     error,
+    errorInfo,
     refetch,
     loadingStatus,
     assetsSorted,

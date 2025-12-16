@@ -27,8 +27,15 @@ export function useModularDrawerRemoteData({
 }: UseModularDrawerRemoteDataProps) {
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
-  const { sortedCryptoCurrencies, error, refetch, loadingStatus, loadNext, assetsSorted } =
-    useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
+  const {
+    sortedCryptoCurrencies,
+    error,
+    errorInfo,
+    refetch,
+    loadingStatus,
+    loadNext,
+    assetsSorted,
+  } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
   const { assetsToDisplay } = useAssetSelection(currencyIds, sortedCryptoCurrencies);
 
@@ -61,6 +68,7 @@ export function useModularDrawerRemoteData({
 
   return {
     error,
+    errorInfo,
     refetch,
     loadingStatus,
     assetsToDisplay,
