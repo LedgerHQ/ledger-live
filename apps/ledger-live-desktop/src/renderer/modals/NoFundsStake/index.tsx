@@ -80,7 +80,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
         mode: "buy",
       },
     });
-  }, [currency, history, dispatch]);
+  }, [history, dispatch, account, parentAccount?.id, currency.id]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
