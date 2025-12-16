@@ -371,12 +371,13 @@ export const alpacaGetOperationAmount = (
   const zero = BigNumber(0);
 
   const tx = transaction.transaction?.data.transaction;
+  const change = transaction.balanceChanges;
   if (isStaking(tx) || isUnstaking(tx)) {
-    // delegate/undelegate amount is stored in the details
+    if (change) return removeFeesFromAmountForNative(change[0], getOperationFee(transaction)).abs();
     return BigNumber(0);
   } else {
     return (
-      transaction.balanceChanges
+      change
         ?.filter(
           balanceChange =>
             typeof balanceChange.owner !== "string" &&
@@ -428,9 +429,11 @@ export function alpacaTransactionToOp(
   };
 
   if (type === "DELEGATE" || type === "UNDELEGATE") {
+    // for staking, the amount is stored in the details
     op.details = {
-      stakedAmount: BigInt(alpacaGetOperationAmount(address, transaction, coinType).toString()),
+      stakedAmount: op.value,
     };
+    op.value = 0n;
   }
 
   return op;
