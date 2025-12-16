@@ -1,11 +1,11 @@
 import {
   AmountRequired,
-  NotEnoughBalance,
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughSpendableBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-  RecipientRequired,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
+  NotEnoughBalanceBecauseDestinationNotCreated,
+  NotEnoughSpendableBalance,
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
@@ -16,22 +16,23 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fetchAccountNetworkInfo, getRecipientAccount } from "../network";
-import {
-  StellarWrongMemoFormat,
-  StellarAssetRequired,
-  StellarAssetNotAccepted,
-  StellarAssetNotFound,
-  StellarNotEnoughNativeBalance,
-  StellarFeeSmallerThanRecommended,
-  StellarFeeSmallerThanBase,
-  StellarNotEnoughNativeBalanceToAddTrustline,
-  StellarMuxedAccountNotExist,
-  StellarSourceHasMultiSign,
-  StellarMemo,
-} from "../types";
 import { fetchAccount } from "../network/horizon";
 import { BASE_RESERVE, MIN_BALANCE } from "../network/serialization";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
+import {
+  StellarAssetNotAccepted,
+  StellarAssetNotFound,
+  StellarAssetRequired,
+  StellarFeeSmallerThanBase,
+  StellarFeeSmallerThanRecommended,
+  StellarMemo,
+  StellarMuxedAccountNotExist,
+  StellarNotEnoughNativeBalance,
+  StellarNotEnoughNativeBalanceToAddTrustline,
+  StellarSourceHasMultiSign,
+  StellarWrongMemoFormat,
+} from "../types";
+import { isAccountMultiSign, isAddressValid } from "./utils";
+import { validateMemo } from "./validateMemo";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,
@@ -212,9 +213,10 @@ export const validateIntent = async (
   if (await isAccountMultiSign(transactionIntent.sender)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
+
   if (
     transactionIntent?.memo?.type !== "NO_MEMO" &&
-    !isMemoValid(transactionIntent?.memo?.type, transactionIntent?.memo?.value)
+    !validateMemo(transactionIntent?.memo?.value, transactionIntent?.memo?.type)
   ) {
     errors.transaction = new StellarWrongMemoFormat();
   }
