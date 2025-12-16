@@ -23,7 +23,7 @@ export function SignatureScreen() {
   }, [operation, navigation]);
 
   return (
-    <div className="flex flex-col gap-24 p-24">
+    <div className="mt-24 flex flex-col gap-24 px-24">
       <div className="flex flex-col gap-8">
         <h2 className="heading-2">Sign Transaction</h2>
         <p className="text-muted body-2">Step: Signature</p>

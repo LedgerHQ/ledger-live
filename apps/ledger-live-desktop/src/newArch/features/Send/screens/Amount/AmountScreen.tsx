@@ -91,7 +91,7 @@ export function AmountScreen() {
   }, [state.account.currency, status.estimatedFees]);
 
   return (
-    <div className="flex flex-col gap-24 p-24">
+    <div className="flex flex-col gap-24 px-12">
       <div className="flex flex-col gap-8">
         <h2 className="heading-2">Amount</h2>
         <p className="text-muted body-2">Step: Amount</p>

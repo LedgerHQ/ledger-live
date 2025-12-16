@@ -6,7 +6,6 @@ import { SendFlowOrchestrator, createStepRegistry } from "./SendFlowOrchestrator
 import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
 import { useSendFlowContext } from "./context/SendFlowContext";
 import { FLOW_STATUS } from "../FlowWizard/types";
-import { useDialog } from "LLD/components/Dialog";
 import { AccountSelectionScreen } from "./screens/AccountSelection/AccountSelectionScreen";
 
 import type { AnimationConfig } from "../FlowWizard/types";
@@ -73,15 +72,13 @@ function SendFlowDialogContent() {
   return (
     <>
       {showHeader && (
-        <div className="px-6 pt-6">
-          <DialogHeader
-            appearance="compact"
-            title={t("newSendFlow.title", { currency: currencyName })}
-            description={t("newSendFlow.available", { amount: availableBalance })}
-            onBack={showBackButton ? handleBack : undefined}
-            onClose={close}
-          />
-        </div>
+        <DialogHeader
+          appearance="compact"
+          title={t("newSendFlow.title", { currency: currencyName })}
+          description={t("newSendFlow.available", { amount: availableBalance })}
+          onBack={showBackButton ? handleBack : undefined}
+          onClose={close}
+        />
       )}
       {statusGradientClass && (
         <div
@@ -93,12 +90,9 @@ function SendFlowDialogContent() {
 }
 
 export default function SendWorkflow({ onClose, params }: SendWorkflowProps) {
-  const { closeDialog } = useDialog();
-
   const handleClose = useCallback(() => {
-    closeDialog();
     onClose?.();
-  }, [closeDialog, onClose]);
+  }, [onClose]);
 
   const initParams: SendFlowInitParams = {
     account: params?.account,

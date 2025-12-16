@@ -34,7 +34,7 @@ const ModularDialogFlowManager = ({
   onAssetSelected,
   onAccountSelected,
   onClose,
-  renderHeader,
+  skipDialogWrapper = false,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
@@ -122,24 +122,14 @@ const ModularDialogFlowManager = ({
     }
   };
 
-  const header = renderHeader ? (
-    renderHeader({
-      title: t(TranslationKeyMap[currentStep]),
-      onClose: handleClose,
-      ...(handleBack && { onBack: handleBack }),
-    })
-  ) : (
-    <DialogHeader
-      appearance="extended"
-      title={t(TranslationKeyMap[currentStep])}
-      onClose={handleClose}
-      {...(handleBack && { onBack: handleBack })}
-    />
-  );
-
   const content = (
     <>
-      {header}
+      <DialogHeader
+        appearance="extended"
+        title={t(TranslationKeyMap[currentStep])}
+        onClose={handleClose}
+        {...(handleBack && { onBack: handleBack })}
+      />
       <div className="h-[480px] overflow-hidden">
         <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
           <AnimatedScreenWrapper
@@ -154,9 +144,9 @@ const ModularDialogFlowManager = ({
     </>
   );
 
-  // If renderHeader is provided, assume we're already in a DialogProvider (ex: Send flow)
+  // If skipDialogWrapper is true, assume we're already in a Dialog (ex: Send flow)
   // Otherwise, wrap in Dialog/DialogContent (ex: ModularDialogRoot)
-  if (renderHeader) {
+  if (skipDialogWrapper) {
     return content;
   }
 
