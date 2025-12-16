@@ -6,6 +6,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getModularSelector, ModularSelector } from "./modularSelectorUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   let originalBroadcastValue: string | undefined;
@@ -60,20 +61,26 @@ export async function performSwapUntilQuoteSelectionStep(
 
 async function selectAccountFrom(app: Application, electronApp: ElectronApplication, swap: Swap) {
   await app.swap.selectFromAccountCoinSelector(electronApp);
-  await selectAccountMAD(app, swap.accountToDebit);
-  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
+  const selector = await getModularSelector(app, "ASSET");
+  if (selector) {
+    await selectAccountMAD(selector, swap.accountToDebit);
+    await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
+  }
 }
 
 async function selectAccountTo(app: Application, electronApp: ElectronApplication, swap: Swap) {
   await app.swap.selectToAccountCoinSelector(electronApp);
-  await selectAccountMAD(app, swap.accountToCredit);
-  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+  const selector = await getModularSelector(app, "ASSET");
+  if (selector) {
+    await selectAccountMAD(selector, swap.accountToCredit);
+    await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+  }
 }
 
-export async function selectAccountMAD(app: Application, account: Account) {
-  await app.modularDrawer.selectAssetByTickerAndName(account.currency);
-  await app.modularDrawer.selectNetwork(account.currency);
-  await app.modularDrawer.selectAccountByName(account);
+export async function selectAccountMAD(selector: ModularSelector, account: Account) {
+  await selector.selectAsset(account.currency);
+  await selector.selectNetwork(account.currency);
+  await selector.selectAccountByName(account);
 }
 
 export async function handleSwapErrorOrSuccess(

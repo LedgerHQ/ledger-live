@@ -21,6 +21,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -574,14 +575,14 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await selectAccountMAD(app, account1);
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selectAccountMAD(selector, account1);
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-        await app.modularDrawer.selectNetwork(account2.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await selector.selectAsset(account2.currency);
+        await selector.selectNetwork(account2.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
@@ -644,17 +645,17 @@ test.describe("Swap a coin for which you have no account yet", () => {
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-        await app.modularDrawer.selectNetwork(account1.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.selectAsset(account1.currency);
+        await selector.selectNetwork(account1.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await selectAccountMAD(app, account2);
+        await selectAccountMAD(selector, account2);
       } else {
         await app.swap.selectAssetFrom(electronApp, account1.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
@@ -706,22 +707,25 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-      await app.modularDrawer.selectNetwork(account1.currency);
-      await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.selectAsset(account1.currency);
+        await selector.selectNetwork(account1.currency);
+        await selector.clickOnAddAndExistingAccount();
 
-      await app.scanAccountsDrawer.selectFirstAccount();
-      await app.scanAccountsDrawer.clickContinueButton();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
 
-      await app.swap.selectToAccountCoinSelector(electronApp);
-      await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-      await app.modularDrawer.selectNetwork(account2.currency);
-      await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await app.swap.selectToAccountCoinSelector(electronApp);
+        await selector.selectAsset(account2.currency);
+        await selector.selectNetwork(account2.currency);
+        await selector.clickOnAddAndExistingAccount();
 
-      await app.scanAccountsDrawer.selectFirstAccount();
-      await app.scanAccountsDrawer.clickContinueButton();
-      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
-      await app.swap.checkAssetTo(electronApp, account2.currency.name);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
+        await app.swap.checkAssetFrom(electronApp, account1.currency.name);
+        await app.swap.checkAssetTo(electronApp, account2.currency.name);
+      }
     },
   );
 });
@@ -1274,16 +1278,16 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
         await app.swap.selectFromAccountCoinSelector(electronApp);
 
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.selectAssetByTickerAndName(fromAccount.currency);
-          await app.modularDrawer.selectNetwork(fromAccount.currency);
-          await app.modularDrawer.selectAccountByName(fromAccount);
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.selectAsset(fromAccount.currency);
+          await selector.selectNetwork(fromAccount.currency);
+          await selector.selectAccountByName(fromAccount);
 
           await app.swap.selectToAccountCoinSelector(electronApp);
-          await app.modularDrawer.selectAssetByTickerAndName(toAccount.currency);
-          await app.modularDrawer.selectNetwork(toAccount.currency);
-          await app.modularDrawer.selectAccountByName(toAccount);
+          await selector.selectAsset(toAccount.currency);
+          await selector.selectNetwork(toAccount.currency);
+          await selector.selectAccountByName(toAccount);
         } else {
           const networkName = fromAccount.parentAccount?.currency.name;
           await app.swap.selectAsset(fromAccount.currency.name, networkName);

@@ -18,7 +18,7 @@ const SearchInputContainer = () => {
         debounceTime={modularDrawer?.params?.searchDebounceTime}
         onChange={handleSearch}
         onDebouncedChange={handleDebouncedChange}
-        data-testid="modular-asset-drawer-search-input"
+        data-testid="modular-asset-dialog-search-input"
       />
     </div>
   );

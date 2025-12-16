@@ -12,6 +12,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const subAccounts = [
   {
@@ -74,11 +75,11 @@ for (const token of subAccounts) {
 
         await app.portfolio.openAddAccountModal();
 
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTicker(token.account.currency);
-          await app.modularDrawer.selectNetwork(token.account.currency);
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.validateItems();
+          await selector.selectAsset(token.account.currency);
+          await selector.selectNetwork(token.account.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
         } else {
