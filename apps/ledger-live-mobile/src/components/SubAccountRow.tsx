@@ -3,7 +3,8 @@ import React, { memo } from "react";
 import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -14,7 +15,7 @@ import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
 import { State as RootState } from "~/reducers/types";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: TokenAccount;

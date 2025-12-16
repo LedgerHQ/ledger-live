@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
 import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,

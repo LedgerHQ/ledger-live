@@ -15,7 +15,7 @@ import {
 import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
 import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 

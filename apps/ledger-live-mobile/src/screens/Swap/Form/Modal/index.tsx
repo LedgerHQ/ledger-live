@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";

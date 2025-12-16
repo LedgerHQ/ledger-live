@@ -29,7 +29,7 @@ import { rgba } from "../../../../../../../colors";
 import type { SetDelegationPropsType } from "./types";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import Config from "react-native-config";
 
 /*

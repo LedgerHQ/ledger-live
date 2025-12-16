@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";

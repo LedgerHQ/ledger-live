@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -16,9 +15,9 @@ import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import { accountScreenSelector } from "~/reducers/accounts";
 import type { HederaClaimRewardsFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -29,7 +28,7 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const transaction = route.params.transaction;
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");

@@ -1,12 +1,10 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
 import { useSignedTxHandler } from "~/logic/screenTransactionHooks";
@@ -58,6 +56,7 @@ import { SignedOperation } from "@ledgerhq/types-live";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -141,7 +140,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const { appName, onSuccess, onError, analyticsPropertyFlow, transaction, status } = route.params;
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;

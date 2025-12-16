@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { FlatList, StyleSheet, View } from "react-native";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -13,9 +12,9 @@ import { TrackScreen } from "~/analytics";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
-import { accountScreenSelector } from "~/reducers/accounts";
 import type { HederaDelegationFlowParamList } from "./types";
 import ValidatorRow from "../shared/ValidatorRow";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationSelectValidator>
@@ -25,7 +24,7 @@ const keyExtractor = (v: HederaValidator) => v.nodeId.toString();
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const [searchQuery, setSearchQuery] = useState("");
 
   invariant(account, "account must be defined");

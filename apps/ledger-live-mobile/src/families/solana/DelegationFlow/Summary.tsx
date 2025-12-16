@@ -20,7 +20,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans } from "react-i18next";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -29,25 +28,25 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import Config from "react-native-config";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { delegationAction, validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(delegationAction, "delegation action must be defined");
   invariant(account, "account must be defined");

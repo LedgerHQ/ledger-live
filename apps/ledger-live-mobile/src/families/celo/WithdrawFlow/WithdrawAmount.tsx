@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -12,7 +11,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text, Icons } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -27,9 +25,10 @@ import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>
@@ -40,7 +39,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const openModal = useCallback((time: boolean) => setInfoModalOpen(time), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
   const bridge = getAccountBridge(account, parentAccount);

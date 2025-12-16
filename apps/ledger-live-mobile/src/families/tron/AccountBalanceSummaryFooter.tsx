@@ -13,7 +13,7 @@ import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;

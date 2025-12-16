@@ -9,7 +9,7 @@ import {
 import { useDetailedAccounts, RawDetailedAccount } from "../../hooks/useDetailedAccounts";
 import { AddAccountButton, AccountItem } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";

@@ -1,6 +1,6 @@
 import React from "react";
 import { SharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import AssetCentricGraphCard from "~/components/AssetCentricGraphCard";

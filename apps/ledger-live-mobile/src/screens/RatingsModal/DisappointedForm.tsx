@@ -4,7 +4,7 @@ import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { track, TrackScreen } from "~/analytics";
 import useRatings from "~/logic/ratings";
 import getWindowDimensions from "~/logic/getWindowDimensions";

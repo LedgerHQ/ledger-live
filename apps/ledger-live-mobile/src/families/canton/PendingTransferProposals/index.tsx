@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BigNumber } from "bignumber.js";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { hoursAndMinutesOptionsSelector } from "~/components/DateFormat/FormatDate";
@@ -22,7 +22,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import SectionHeader from "~/components/SectionHeader";
 import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import ArrowRight from "~/icons/ArrowRight";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";

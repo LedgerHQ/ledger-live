@@ -8,7 +8,7 @@ import {
   AnalyticsPage,
   AnalyticsButton,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";

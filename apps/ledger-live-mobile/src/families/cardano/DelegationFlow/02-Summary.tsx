@@ -4,7 +4,6 @@ import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -30,7 +29,7 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
+
 import PoolImage from "../shared/PoolImage";
 import { ScreenName } from "~/const";
 import ArrowRight from "~/icons/ArrowRight";
@@ -39,12 +38,13 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import Config from "react-native-config";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -54,7 +54,7 @@ type Props = StackNavigatorProps<
 export default function DelegationSummary({ navigation, route }: Props) {
   const { pool } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account must be defined");
 
   const { cardanoResources } = account as CardanoAccount;

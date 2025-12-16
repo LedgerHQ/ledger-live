@@ -19,7 +19,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import { normalize } from "~/helpers/normalizeSize";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const { height } = getWindowDimensions();
 type Props = {

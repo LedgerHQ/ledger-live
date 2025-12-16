@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Currency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SharedValue } from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";

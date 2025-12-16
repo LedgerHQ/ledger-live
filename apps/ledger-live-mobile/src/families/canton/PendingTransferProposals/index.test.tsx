@@ -112,7 +112,7 @@ jest.mock("~/components/Touchable", () => getMockTouchable());
 
 jest.mock("~/context/Locale", () => getMockLocale());
 
-jest.mock("~/hooks/useAccountUnit", () => getMockUseAccountUnit());
+jest.mock("LLM/hooks/useAccountUnit", () => getMockUseAccountUnit());
 
 jest.mock("~/icons/ArrowRight", () => ({
   __esModule: true,

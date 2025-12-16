@@ -24,7 +24,7 @@ import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";

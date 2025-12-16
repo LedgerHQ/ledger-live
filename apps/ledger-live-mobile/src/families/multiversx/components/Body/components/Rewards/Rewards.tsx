@@ -17,7 +17,7 @@ import LText from "~/components/LText";
 import { ScreenName, NavigatorName } from "~/const";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

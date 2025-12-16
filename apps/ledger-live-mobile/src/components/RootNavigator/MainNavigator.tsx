@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

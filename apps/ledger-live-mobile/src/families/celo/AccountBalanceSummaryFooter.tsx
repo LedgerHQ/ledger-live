@@ -9,7 +9,7 @@ import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   readonly account: CeloAccount;

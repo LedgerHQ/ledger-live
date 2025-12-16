@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";

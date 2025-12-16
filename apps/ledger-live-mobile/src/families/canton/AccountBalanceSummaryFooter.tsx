@@ -5,12 +5,12 @@ import { useWithdrawableBalance } from "@ledgerhq/live-common/families/canton/re
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { TFunction } from "i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 import { Account, AccountLike } from "@ledgerhq/types-live";

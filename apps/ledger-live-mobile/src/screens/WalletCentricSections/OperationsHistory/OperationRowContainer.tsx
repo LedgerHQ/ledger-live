@@ -1,9 +1,7 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import OperationRow from "~/components/OperationRow";
-import { parentAccountSelector } from "~/reducers/accounts";
-import { State } from "~/reducers/types";
+import { useParentAccount } from "LLM/hooks/useParentAccount";
 
 type OperationRowContainerProps = {
   operation: Operation;
@@ -20,7 +18,7 @@ export function OperationRowContainer({
   isLast,
   testID,
 }: Readonly<OperationRowContainerProps>) {
-  const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
+  const parentAccount = useParentAccount(account);
 
   return (
     <OperationRow

@@ -1,5 +1,10 @@
 import Config from "react-native-config";
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
+import {
+  useDispatch as useDispatchBase,
+  useSelector as useSelectorBase,
+  useStore as useStoreBase,
+} from "react-redux";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
@@ -41,6 +46,10 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
+export type AppDispatch = typeof store.dispatch;
+export const useDispatch = useDispatchBase.withTypes<AppDispatch>();
+export const useSelector = useSelectorBase.withTypes<State>();
+export const useStore = useStoreBase.withTypes<StoreType>();
 
 setupRecentAddressesStore(store);
 setupCryptoAssetsStore(store);

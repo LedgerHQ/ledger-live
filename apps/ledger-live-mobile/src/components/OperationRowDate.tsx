@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { createSelector } from "reselect";
 import { localeSelector } from "~/reducers/settings";
 

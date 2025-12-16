@@ -10,14 +10,12 @@ import {
   KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
@@ -30,8 +28,9 @@ import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
@@ -43,7 +42,7 @@ type Props =
 
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const { locale } = useSettings();
   invariant(
     account && (account as CosmosAccount).cosmosResources && route.params.transaction,

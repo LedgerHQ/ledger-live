@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -20,7 +19,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationStarted>;
 
@@ -33,7 +32,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     });
   }, [navigation, route.params]);
 
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
   invariant(account, "account must be defined");
 

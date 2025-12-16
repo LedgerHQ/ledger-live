@@ -8,7 +8,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import { blockPasswordLock } from "~/actions/appstate";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";

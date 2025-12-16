@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 

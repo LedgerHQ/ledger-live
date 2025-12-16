@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -9,7 +8,6 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -19,6 +17,7 @@ import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReceiveConfirmationTokenAlert from "./ReceiveConfirmationTokenAlert";
 import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
 import { getFreshAccountAddress } from "~/utils/address";
@@ -38,7 +37,7 @@ type Props = {
 
 export default function ReceiveConfirmation({ route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = account && getAccountCurrency(account);

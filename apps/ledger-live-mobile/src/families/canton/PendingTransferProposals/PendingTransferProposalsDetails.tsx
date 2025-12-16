@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Flex, Text, Button, Box } from "@ledgerhq/native-ui";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";

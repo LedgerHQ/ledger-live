@@ -12,7 +12,7 @@ import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FieldProps = {
   account: Account;

@@ -8,7 +8,7 @@ import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { StyleProp, ViewStyle } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   openReceiveOptionsDrawer,
   closeReceiveOptionsDrawer,

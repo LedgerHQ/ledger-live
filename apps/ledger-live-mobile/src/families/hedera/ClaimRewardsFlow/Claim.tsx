@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,10 +16,10 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
 import { useAccountUnit } from "~/hooks";
-import { accountScreenSelector } from "~/reducers/accounts";
 import type { HederaClaimRewardsFlowParamList } from "./types";
 import ValidatorIcon from "~/families/hedera/shared/ValidatorIcon";
 import CounterValue from "~/components/CounterValue";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaClaimRewardsFlowParamList,
@@ -28,7 +27,7 @@ type Props = StackNavigatorProps<
 >;
 
 function ClaimRewardsClaim({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");

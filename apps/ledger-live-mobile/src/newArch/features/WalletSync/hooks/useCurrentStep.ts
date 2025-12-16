@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { activateDrawerStepSelector } from "~/reducers/walletSync";
 import { Steps } from "../types/Activation";
 import { setLedgerSyncActivateStep } from "~/actions/walletSync";

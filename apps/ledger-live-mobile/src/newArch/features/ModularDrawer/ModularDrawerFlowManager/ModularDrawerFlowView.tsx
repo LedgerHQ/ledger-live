@@ -8,7 +8,7 @@ import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
 
 export function ModularDrawerFlowView({

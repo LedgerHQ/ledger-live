@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {

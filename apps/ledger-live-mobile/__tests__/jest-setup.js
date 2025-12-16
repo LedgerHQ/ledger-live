@@ -106,6 +106,20 @@ jest.mock("~/analytics/segment", () => ({
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
 
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  const withTypesSupport = hook => {
+    hook.withTypes = () => hook;
+    return hook;
+  };
+  return {
+    ...actual,
+    useDispatch: withTypesSupport(actual.useDispatch),
+    useSelector: withTypesSupport(actual.useSelector),
+    useStore: withTypesSupport(actual.useStore),
+  };
+});
+
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
 jest.mock("@gorhom/bottom-sheet", () => mockGorhomBottomSheet);

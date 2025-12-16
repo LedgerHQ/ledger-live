@@ -6,7 +6,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProviderIcon from "~/components/ProviderIcon";
@@ -27,7 +27,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 interface Props {

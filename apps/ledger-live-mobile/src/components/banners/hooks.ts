@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { dismissBanner } from "../../actions/settings";
 import { dismissedBannersSelector } from "../../reducers/settings";
 
