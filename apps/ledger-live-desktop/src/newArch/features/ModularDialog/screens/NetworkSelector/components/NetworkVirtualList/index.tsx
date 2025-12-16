@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { VirtualList } from "@ledgerhq/react-ui/pre-ldls";
+import { VirtualList } from "LLD/components/VirtualList";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NetworkListItem } from "../NetworkListItem";
 
