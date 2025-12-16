@@ -992,7 +992,7 @@ describe("logic utils", () => {
         endTimestamp: mockEndTimestamp,
       });
 
-      expect(result).toBe(BigInt(0));
+      expect(result).toEqual(new BigNumber(0));
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
         address: mockAddress,
@@ -1006,21 +1006,21 @@ describe("logic utils", () => {
         {
           consensus_timestamp: "1762202065.000000000",
           transfers: [
-            { account: mockAddress, amount: 2000 }, // +2000
+            { account: mockAddress, amount: 2000 },
             { account: "0.0.98", amount: -2000 },
           ],
         },
         {
           consensus_timestamp: "1762202070.000000000",
           transfers: [
-            { account: mockAddress, amount: -500 }, // -500
+            { account: mockAddress, amount: -500 },
             { account: "0.0.99", amount: 500 },
           ],
         },
         {
           consensus_timestamp: "1762202072.000000000",
           transfers: [
-            { account: mockAddress, amount: 300 }, // +300
+            { account: mockAddress, amount: 300 },
             { account: "0.0.100", amount: -300 },
           ],
         },
@@ -1036,7 +1036,7 @@ describe("logic utils", () => {
         endTimestamp: mockEndTimestamp,
       });
 
-      expect(result).toBe(BigInt(1800)); // 2000 - 500 + 300
+      expect(result).toEqual(new BigNumber(1800)); // 2000 - 500 + 300
     });
 
     it("should ignore transfers for other accounts", async () => {
@@ -1067,7 +1067,7 @@ describe("logic utils", () => {
         endTimestamp: mockEndTimestamp,
       });
 
-      expect(result).toBe(BigInt(1000));
+      expect(result).toEqual(new BigNumber(1000));
     });
 
     it("should return 0 when timestamps are equal or invalid", async () => {
@@ -1086,8 +1086,8 @@ describe("logic utils", () => {
         }),
       ]);
 
-      expect(resultEqual).toBe(BigInt(0));
-      expect(resultInvalid).toBe(BigInt(0));
+      expect(resultEqual).toEqual(new BigNumber(0));
+      expect(resultInvalid).toEqual(new BigNumber(0));
     });
   });
 

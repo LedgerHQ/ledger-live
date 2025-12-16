@@ -525,9 +525,9 @@ export const calculateUncommittedBalanceChange = async ({
   address: string;
   startTimestamp: string;
   endTimestamp: string;
-}): Promise<bigint> => {
+}): Promise<BigNumber> => {
   if (Number(startTimestamp) >= Number(endTimestamp)) {
-    return BigInt(0);
+    return new BigNumber(0);
   }
 
   const uncommittedTransactions = await apiClient.getTransactionsByTimestampRange({
@@ -540,9 +540,9 @@ export const calculateUncommittedBalanceChange = async ({
   const uncommittedBalanceChange = uncommittedTransactions.reduce((total, tx) => {
     const transfers = tx.transfers ?? [];
     const relevantTransfers = transfers.filter(t => t.account === address);
-    const netChange = relevantTransfers.reduce((sum, t) => sum + BigInt(t.amount), BigInt(0));
-    return total + netChange;
-  }, BigInt(0));
+    const netChange = relevantTransfers.reduce((sum, t) => sum.plus(t.amount), new BigNumber(0));
+    return total.plus(netChange);
+  }, new BigNumber(0));
 
   return uncommittedBalanceChange;
 };
@@ -612,12 +612,12 @@ export const analyzeStakingOperation = async (
     endTimestamp: mirrorTx.consensus_timestamp,
   });
 
-  const actualStakedAmount = BigInt(accountAfter.balance.balance) + uncommittedBalanceChange;
+  const actualStakedAmount = uncommittedBalanceChange.plus(accountAfter.balance.balance);
 
   return {
     operationType,
     previousStakingNodeId,
     targetStakingNodeId,
-    stakedAmount: actualStakedAmount, // always entire balance on Hedera (fully liquid)
+    stakedAmount: BigInt(actualStakedAmount.toString()), // always entire balance on Hedera (fully liquid)
   };
 };
