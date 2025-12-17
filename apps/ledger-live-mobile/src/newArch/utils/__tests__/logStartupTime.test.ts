@@ -10,13 +10,10 @@ describe("logStartupTime", () => {
   it("should log startup events and resolve them correctly", async () => {
     startupEvents.splice(0);
     jest.useRealTimers();
-    logStartupEvent("Step 1");
+    const step1 = logStartupEvent("Step 1");
     const p = new Promise(r => setTimeout(() => r(logStartupEvent("Step 3"))));
-    logStartupEvent("Step 2");
-    expect(startupEvents).toEqual([
-      { event: "Step 1", time: expect.any(Number) },
-      { event: "Step 2", time: expect.any(Number) },
-    ]);
+    const step2 = logStartupEvent("Step 2");
+    expect(startupEvents).toEqual([step1, step2]);
     await p;
     expect(await resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 1 },
