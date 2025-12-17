@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-aptos": minor
 ---
 
 change address comparision

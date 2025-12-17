@@ -1,8 +1,8 @@
 ---
 "live-mobile": minor
-"ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-framework": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-framework": minor
 ---
 
 feat: canton pending proposals for mobile, show, accept, cancel
