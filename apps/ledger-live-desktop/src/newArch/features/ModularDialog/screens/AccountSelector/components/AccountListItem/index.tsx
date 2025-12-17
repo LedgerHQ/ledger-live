@@ -42,7 +42,13 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
       title={name}
       description={formattedAddress}
       descriptionTag={
-        <CryptoIcon size="16px" ledgerId={cryptoId} network={parentId} ticker={ticker} />
+        <CryptoIcon
+          size="16px"
+          ledgerId={cryptoId}
+          network={parentId}
+          ticker={ticker}
+          overridesRadius="4px"
+        />
       }
       trailingContent={renderTrailingContent(balance, fiatValue)}
       onClick={onClick}

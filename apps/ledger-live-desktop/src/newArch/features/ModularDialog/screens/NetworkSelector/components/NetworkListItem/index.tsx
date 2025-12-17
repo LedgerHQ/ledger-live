@@ -24,7 +24,14 @@ export const NetworkListItem = ({
   return (
     <ListItem
       title={currency.name}
-      leadingContent={<CryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />}
+      leadingContent={
+        <CryptoIcon
+          size="48px"
+          ledgerId={currency.id}
+          ticker={currency.ticker}
+          overridesRadius="12px"
+        />
+      }
       description={description}
       descriptionTag={apy}
       trailingContent={rightElement}
