@@ -45,6 +45,9 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
           npmrc-location: "$HOME/.npmrc"
 
+      - name: Network config
+        run: echo "network-concurrency=2" >> ~/.npmrc
+
       - name: Get checked out commit SHA
         id: get-sha
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -86,6 +89,9 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
           npmrc-location: "$HOME/.npmrc"
           provenance: "false"
+
+      - name: Network config
+        run: echo "network-concurrency=2" >> ~/.npmrc
 
       - name: publish nightly
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
