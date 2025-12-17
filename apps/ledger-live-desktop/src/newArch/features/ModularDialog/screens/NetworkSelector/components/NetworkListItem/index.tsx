@@ -1,6 +1,6 @@
 import React from "react";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { ListItem } from "@ledgerhq/lumen-ui-react";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type NetworkListItemData = {
@@ -25,12 +25,7 @@ export const NetworkListItem = ({
     <ListItem
       title={currency.name}
       leadingContent={
-        <CryptoIcon
-          size="48px"
-          ledgerId={currency.id}
-          ticker={currency.ticker}
-          overridesRadius="12px"
-        />
+        <SquaredCryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />
       }
       description={description}
       descriptionTag={apy}
