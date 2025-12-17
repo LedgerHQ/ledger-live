@@ -173,6 +173,9 @@
       "UNDELEGATE" : "Délégation arrêtée",
       "APPROVE" : "Approuvé",
       "PRE_APPROVAL" : "Pré-approbation",
+      "TRANSFER_PROPOSAL" : "Proposition de transfert",
+      "TRANSFER_REJECTED" : "Transfert rejeté",
+      "TRANSFER_WITHDRAWN" : "Transfert retiré",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
       "UNFREEZE" : "Dégelé",
@@ -203,7 +206,8 @@
       "WITHDRAW_UNSTAKED" : "Retiré",
       "SENDING" : "Envoi",
       "BURN" : "Brûlé",
-      "ASSOCIATE_TOKEN" : "Association de token"
+      "ASSOCIATE_TOKEN" : "Association de token",
+      "CONTRACT_CALL" : "Appel de contrat"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -333,7 +337,7 @@
         },
         "rate" : {
           "title" : "Taux de change",
-          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début de l’échange."
+          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.  Un <0>taux fixe</0> correspond au montant affiché au début de l’échange."
         },
         "receive" : {
           "title" : "Recevez",
@@ -367,7 +371,7 @@
       },
       "notAvailable" : {
         "title" : "Le Swap n’est pas encore disponible pour votre territoire.",
-        "content" : "Merci pour votre patience.<br/>Nous lancerons cette fonctionnalité très rapidement."
+        "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
       },
       "timeout" : {
         "message" : "En raison de problèmes techniques, les résultats sont indisponibles. Veuillez réessayer dans quelques instants."
@@ -618,9 +622,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "Tester"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "Tester"
   },
   "postOnboardingDebugger" : {
@@ -993,7 +994,7 @@
       },
       "status" : {
         "enablingTooltip" : "Diffusion de la transaction en cours",
-        "toSupplyTooltip" : "Vous pouvez maintenant déposer vos actifs."
+        "toSupplyTooltip" : "Vous pouvez maintenant placer vos actifs."
       },
       "types" : {
         "enabling" : "Approbation",
@@ -1032,7 +1033,7 @@
         "info" : "Vous avez approuvé <0>{{amount}}</0> sur ce compte. Vous pouvez réduire le montant moyennant des frais.",
         "infoNoLimit" : "Vous avez fini d’approuver ce compte. Vous pouvez réduire le montant moyennant des frais.",
         "approvedWithLimit" : "Vous avez approuvé <0>{{value}}</0> sur ce compte.",
-        "enabling" : "Vous pouvez déposer des actifs une fois l’approbation du compte confirmée.",
+        "enabling" : "Vous pouvez placer des actifs une fois l’approbation du compte confirmée.",
         "notEnabled" : "Vous devez approuver ce compte avant de pouvoir prêter des actifs.",
         "notEnoughApproved" : "Vous devez augmenter la limite approuvée sur votre compte pour prêter."
       },
@@ -1133,11 +1134,11 @@
       }
     },
     "supply" : {
-      "title" : "Déposer des actifs",
+      "title" : "Placer des actifs",
       "steps" : {
         "amount" : {
           "title" : "Montant",
-          "amountToSupply" : "Montant à déposer",
+          "amountToSupply" : "Montant à placer",
           "maxSupply" : "Montant maximal disponible :"
         },
         "device" : {
@@ -1162,7 +1163,7 @@
     },
     "emptyAccountDeposit" : {
       "title" : "Vous n’avez pas de compte {{ asset }}.",
-      "description" : "Pour déposer des fonds et prêter des cryptos, vous avez besoin d’un compte {{ asset }}. Recevez des fonds sur votre adresse Ethereum.",
+      "description" : "Pour placer des actifs et prêter des cryptos, vous avez besoin d’un compte {{ asset }}. Recevez des actifs sur votre adresse Ethereum.",
       "ctaBuy" : "Acheter des {{ asset }}",
       "ctaReceive" : "Recevoir des {{ asset }}"
     }
@@ -1193,7 +1194,7 @@
       "star" : "Favori",
       "receive" : "Recevoir",
       "send" : "Envoyer",
-      "swap" : "Swap",
+      "swap" : "Échanger",
       "stake" : "Staker",
       "earn" : "Gagner",
       "yield" : "Rendement",
@@ -1447,7 +1448,7 @@
         "actionCompletedPopupLabel" : "Actifs transférés"
       },
       "syncAccounts" : {
-        "title" : "Synchroniser vos comptes crypto",
+        "title" : "Synchronisez vos comptes crypto",
         "titleCompleted" : "Vos comptes sont synchronisés",
         "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
         "actionCompletedPopupLabel" : "Comptes synchronisés"
@@ -2361,7 +2362,7 @@
       },
       "amount" : {
         "title" : "Montant",
-        "banner" : "Montant maximal pouvant être envoyé :",
+        "banner" : "Montant maximal pour envoi :",
         "fees" : "En savoir plus sur les frais",
         "standard" : "Standard",
         "advanced" : "Avancé"
@@ -2888,7 +2889,7 @@
     "pending" : "En attente",
     "pickingStrategy" : "Stratégie de sélection des UTXO",
     "pickingStrategyLabels" : {
-      "DEEP_OUTPUTS_FIRST" : "Coins plus vieux en premier (FIFO)",
+      "DEEP_OUTPUTS_FIRST" : "Coins plus anciens en premier (FIFO)",
       "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
       "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
     }
@@ -4371,7 +4372,7 @@
     "durationDays" : "{{count}} jour",
     "durationDays_other" : "{{count}} jours",
     "howItWorks" : "Fonctionnement de la délégation",
-    "delegationEarn" : "Gagnez des récompenses de staking de {{name}} en déléguant votre compte.",
+    "delegationEarn" : "Gagnez des récompenses de staking {{name}} en déléguant votre compte.",
     "earnRewards" : "Gagner des récompenses",
     "overdelegated" : "Surdélégué",
     "status" : "Statut",
@@ -5168,7 +5169,8 @@
           "pinCode" : "Code PIN",
           "recoveryPhrase" : "Phrase de récupération",
           "hideRecoveryPhrase" : "Cacher votre phrase de récupération",
-          "pairNano" : "Connecter votre appareil"
+          "pairNano" : "Connecter votre appareil",
+          "secureYourCrypto" : "Sécurisez vos cryptos"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5462,29 @@
             "help" : {
               "help" : "Besoin d’aide",
               "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "Sécurisez vos cryptos",
+            "description" : "Pour une sécurité optimale, transférez vos cryptos depuis une plateforme ou un wallet vers Ledger Wallet.",
+            "buttons" : {
+              "next" : "Sécuriser mes cryptos",
+              "nextSecondary" : "Plus tard",
+              "prev" : "Étape précédente"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "Tout est prêt",
+            "description" : "Votre appareil Ledger est bien configuré. Si vous avez envoyé des cryptos, vous les recevrez dans quelques minutes.",
+            "buttons" : {
+              "next" : "Continuer"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "Tout est prêt",
+            "description" : "Votre appareil Ledger est bien configuré. Vous pouvez désormais l’utiliser pour sécuriser vos actifs.",
+            "buttons" : {
+              "next" : "Continuer"
             }
           }
         }
@@ -5826,6 +5851,62 @@
         "quickFix" : "Solution rapide : envoyez-vous des actifs pour les regrouper.",
         "warning" : "Votre compte contient trop de petits UTXO. Envoyez-vous des actifs pour les regrouper.",
         "consolidate" : "Regrouper"
+      },
+      "pendingTransactions" : {
+        "title" : "Transactions en attente ({{count}})",
+        "incoming" : {
+          "title" : "Offres entrantes ({{count}})"
+        },
+        "outgoing" : {
+          "title" : "Offres sortantes ({{count}})"
+        },
+        "pending" : "En attente",
+        "expired" : "Expiré",
+        "status" : {
+          "label" : "Statut",
+          "expired" : "Expiré",
+          "incoming" : "Entrante",
+          "outgoing" : "Sortante"
+        },
+        "from" : "De",
+        "to" : "À",
+        "memo" : "Mémo",
+        "noMemo" : "Aucun mémo",
+        "date" : "Date",
+        "expiresAt" : "Expire à",
+        "expiresIn" : "Expire dans",
+        "amount" : "Montant",
+        "transaction" : "Transaction",
+        "viewTransaction" : "Voir la transaction",
+        "action" : "Action",
+        "accept" : "Accepter",
+        "withdraw" : "Retirer",
+        "reject" : "Refuser",
+        "deviceAppModal" : {
+          "title" : "{{action}} l’offre",
+          "description" : "Ouvrez l’app Canton sur votre appareil Ledger pour {{action}} cette offre.",
+          "contractId" : "ID du contrat",
+          "cancel" : "Annuler",
+          "openApp" : "Ouvrir l’app Canton",
+          "opening" : "Ouverture...",
+          "noDevice" : "Aucun appareil connecté",
+          "appOpenError" : "Impossible d’ouvrir l’app Canton. Veuillez réessayer.",
+          "processing" : "Traitement de l’action {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "Offre acceptée",
+              "description" : "L’offre de transfert a bien été acceptée."
+            },
+            "reject" : {
+              "title" : "Offre rejetée",
+              "description" : "L’offre de transfert a bien été rejetée."
+            },
+            "withdraw" : {
+              "title" : "Offre retirée",
+              "description" : "L’offre de transfert a bien été retirée."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6046,6 +6127,11 @@
     "LatestFirmwareVersionRequired" : {
       "title" : "Mettre à jour le micrologiciel de l’appareil",
       "description" : "Mettez à jour le micrologiciel de votre appareil pour accéder à cette fonctionnalité."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "Fonctionnalité non prise en charge",
+      "description" : "L’app requise pour cette opération n’est actuellement pas disponible pour votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus.",
+      "ctaLabel" : "Contacter l’Assistance Ledger"
     },
     "FirmwareNotRecognized" : {
       "title" : "Fournisseur non valide",
@@ -6277,7 +6363,11 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Erreur de traitement",
-      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB{{errorCode}}"
+      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB-{{randomCode}}"
+    },
+    "SwapQuoteLowLiquidity" : {
+      "title" : "Prestataire non disponible",
+      "description" : "Impossible d’effectuer cet échange avec ce prestataire. Veuillez en choisir un autre."
     },
     "TimeoutError" : {
       "title" : "Le serveur a mis trop longtemps à répondre.",
@@ -6705,7 +6795,7 @@
       "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "CardanoMinAmountError" : {
-      "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
+      "title" : "Montant minimal pour envoi : {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
@@ -6784,6 +6874,10 @@
     "HederaRecipientTokenAssociationUnverified" : {
       "title" : "Impossible de vérifier l’association du token",
       "description" : "Nous n’avons pas pu confirmer que le compte bénéficiaire peut recevoir ce token. L’adresse pourrait être invalide, ou il pourrait y avoir un problème avec le réseau ou le service."
+    },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "Vérification de l’adresse EVM requise",
+      "description" : "Veuillez vérifier l’adresse EVM affichée sur votre appareil Ledger avant de confirmer."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Échec du chargement de l’image.",
@@ -7062,6 +7156,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Erreur de communication",
       "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Montant réduit pour respecter les limites UTXO"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Montant supérieur aux limites UTXO"
     }
   },
   "cryptoOrg" : {
@@ -7118,6 +7218,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "En savoir plus"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Vous êtes sur le point d’envoyer un token ERC20. Pour ce type de transaction, votre appareil Ledger affiche l’adresse EVM du donneur d’ordre et non l’identifiant de son compte.\nAvant de confirmer, veuillez suivre <0>ce guide</0> pour vérifier que l’adresse est correcte."
         }
       }
     },
@@ -7403,7 +7506,7 @@
         "title" : "Choisissez votre méthode de synchronisation",
         "description" : "Vous pouvez soit effectuer la synchronisation directement avec votre appareil Ledger, soit scanner un code QR sur Ledger Wallet.",
         "scan" : {
-          "title" : "Voir le code QR",
+          "title" : "Afficher mon code QR",
           "description" : "Synchronisez. en scannant un code QR"
         },
         "connectDevice" : {
@@ -7569,5 +7672,15 @@
     "restart" : "Redémarrer",
     "downloadOnLedger" : "Télécharger sur Ledger.com",
     "downloadProgress" : "Téléchargement... {{ progress }}%"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "Solde disponible",
+      "availableBalanceTooltip" : "Le solde qui peut être transféré.",
+      "transparentBalance" : "Solde transparent",
+      "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
+      "privateBalance" : "Solde privé",
+      "privateBalanceTooltip" : "Le solde qui est demeure masqué."
+    }
   }
 }

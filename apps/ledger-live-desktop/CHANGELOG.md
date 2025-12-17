@@ -1,5 +1,81 @@
 # ledger-live-desktop
 
+## 2.134.1
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`4b39033`](https://github.com/LedgerHQ/ledger-live/commit/4b390339106c5cec460dfe6e05e7637c41485ed8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix LIVE-23351 and LIVE-23397 by better estimating network fees
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix a bug in error recognition
+
+- Updated dependencies [[`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0), [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858), [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e), [`6769a36`](https://github.com/LedgerHQ/ledger-live/commit/6769a36c18cb7453c93b2a5d8dec3e1e1725cd20), [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b)]:
+  - @ledgerhq/live-common@34.54.1
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/live-dmk-desktop@0.13.1
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/coin-bitcoin@0.26.1
+  - @ledgerhq/coin-canton@0.11.1
+  - @ledgerhq/coin-cosmos@0.20.2
+  - @ledgerhq/coin-evm@2.36.1
+  - @ledgerhq/coin-filecoin@1.15.1
+  - @ledgerhq/domain-service@1.4.3
+  - @ledgerhq/ledger-key-ring-protocol@0.8.1
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/hw-transport-http@6.31.1
+  - @ledgerhq/hw-transport-vault@1.3.14
+  - @ledgerhq/live-network@2.1.3
+  - @ledgerhq/live-countervalues@0.10.2
+  - @ledgerhq/live-countervalues-react@0.7.4
+  - @ledgerhq/live-wallet@0.16.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6
+  - @ledgerhq/live-dmk-speculos@0.2.1
+
+## 2.134.1-hotfix.1
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`4b39033`](https://github.com/LedgerHQ/ledger-live/commit/4b390339106c5cec460dfe6e05e7637c41485ed8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix LIVE-23351 and LIVE-23397 by better estimating network fees
+
+- Updated dependencies [[`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858), [`6769a36`](https://github.com/LedgerHQ/ledger-live/commit/6769a36c18cb7453c93b2a5d8dec3e1e1725cd20), [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b)]:
+  - @ledgerhq/live-common@34.54.1-hotfix.1
+  - @ledgerhq/live-dmk-desktop@0.13.1-hotfix.1
+
+## 2.134.1-hotfix.0
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix a bug in error recognition
+
+- Updated dependencies [[`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0), [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/live-common@34.54.1-hotfix.0
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.13.1-hotfix.0
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.26.1-hotfix.0
+  - @ledgerhq/coin-canton@0.11.1-hotfix.0
+  - @ledgerhq/coin-cosmos@0.20.2-hotfix.0
+  - @ledgerhq/coin-evm@2.36.1-hotfix.0
+  - @ledgerhq/coin-filecoin@1.15.1-hotfix.0
+  - @ledgerhq/domain-service@1.4.3-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.8.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/hw-transport-http@6.31.1-hotfix.0
+  - @ledgerhq/hw-transport-vault@1.3.14-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.10.2-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.7.4-hotfix.0
+  - @ledgerhq/live-wallet@0.16.2-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
+
 ## 2.134.0
 
 ### Minor Changes

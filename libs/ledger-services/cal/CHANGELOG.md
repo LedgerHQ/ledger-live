@@ -1,5 +1,19 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.1.3
+
+## 1.9.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+
 ## 1.9.1
 
 ### Patch Changes

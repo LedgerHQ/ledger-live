@@ -665,6 +665,11 @@
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
       "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
+    "NanoSNotSupported" : {
+      "title" : "™Ledger Nano S لا يدعم هذه الميزة",
+      "description" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Wallet الحديثة.",
+      "upsellCtaLabel" : "اكتشف برنامج الترقية المناسب لك"
+    },
     "NotEnoughGas" : {
       "title" : "تحتاج إلى {{fees}} {{ticker}} في حسابك لدفع رسوم المعاملة على شبكة {{cryptoName}}.  <link0>اشتر {{ticker}}</link0> أو قم بإيداع المزيد في حسابك.",
       "description" : "يرجى إرسال بعض العملات إلى حسابك لسداد قيمة معاملات رموز التوكن."
@@ -1136,6 +1141,11 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "ميزة غير مدعومة",
+      "description" : "التطبيق المطلوب لهذه العملية غير متاح حالياً لجهازك Ledger. يُرجى التواصل مع دعم Ledger للتفاصيل.",
+      "ctaLabel" : "تواصل مع دعم Ledger"
     },
     "EtherscanAPIError" : {
       "title" : "فشل إحضار المعاملات",
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{errorCode}}8HBB"
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "المزود غير متاح",
+      "description" : "لا يمكننا إتمام مبادلتك عن طريق هذا المزود. يُرجى المحاولة من خلال مزود آخر."
+    },
+    "swapRateExpiredError" : {
+      "title" : "انتهت صلاحية المعدَّل",
+      "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
     },
     "default" : {
       "title" : "حدث خطأ ما",

@@ -1,5 +1,175 @@
 # @ledgerhq/live-common
 
+## 34.54.1
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add abortTimeout param to getAppAndVersion
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new error type `UnsupportedFeatureError`
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`6769a36`](https://github.com/LedgerHQ/ledger-live/commit/6769a36c18cb7453c93b2a5d8dec3e1e1725cd20) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add data to investigate feesNotLoaded error
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add isEmbeddedSwap tracking param to allow passing information for Swap on Portfolio to transaction handler tracking events
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e), [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/wallet-api-exchange-module@0.19.1
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/coin-algorand@0.14.1
+  - @ledgerhq/coin-aptos@3.7.1
+  - @ledgerhq/coin-bitcoin@0.26.1
+  - @ledgerhq/coin-canton@0.11.1
+  - @ledgerhq/coin-cardano@0.15.2
+  - @ledgerhq/coin-casper@2.4.2
+  - @ledgerhq/coin-celo@1.7.3
+  - @ledgerhq/coin-cosmos@0.20.2
+  - @ledgerhq/coin-evm@2.36.1
+  - @ledgerhq/coin-filecoin@1.15.1
+  - @ledgerhq/coin-hedera@1.15.1
+  - @ledgerhq/coin-icon@0.15.2
+  - @ledgerhq/coin-internet_computer@1.11.2
+  - @ledgerhq/coin-kaspa@1.5.1
+  - @ledgerhq/coin-mina@1.4.3
+  - @ledgerhq/coin-multiversx@0.8.2
+  - @ledgerhq/coin-near@0.16.2
+  - @ledgerhq/coin-polkadot@6.13.2
+  - @ledgerhq/coin-solana@0.38.1
+  - @ledgerhq/coin-stacks@0.12.2
+  - @ledgerhq/coin-stellar@6.8.1
+  - @ledgerhq/coin-sui@0.18.2
+  - @ledgerhq/coin-tezos@6.10.1
+  - @ledgerhq/coin-ton@0.17.2
+  - @ledgerhq/coin-tron@5.7.2
+  - @ledgerhq/coin-vechain@2.13.1
+  - @ledgerhq/coin-xrp@7.9.1
+  - @ledgerhq/device-core@0.6.10
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-app-algorand@6.31.10
+  - @ledgerhq/hw-app-aptos@6.34.10
+  - @ledgerhq/hw-app-celo@6.35.5
+  - @ledgerhq/hw-app-cosmos@6.32.10
+  - @ledgerhq/hw-app-eth@7.0.1
+  - @ledgerhq/hw-app-exchange@0.18.1
+  - @ledgerhq/hw-app-hedera@1.2.10
+  - @ledgerhq/hw-app-icon@1.3.10
+  - @ledgerhq/hw-app-kaspa@1.3.3
+  - @ledgerhq/hw-app-polkadot@6.34.10
+  - @ledgerhq/hw-app-str@7.2.10
+  - @ledgerhq/hw-app-vet@0.8.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/live-network@2.1.3
+  - @ledgerhq/live-signer-canton@0.5.3
+  - @ledgerhq/live-signer-evm@0.10.3
+  - @ledgerhq/live-signer-solana@0.7.1
+  - @ledgerhq/live-countervalues@0.10.2
+  - @ledgerhq/live-countervalues-react@0.7.4
+  - @ledgerhq/live-wallet@0.16.2
+  - @ledgerhq/speculos-transport@0.3.1
+  - @ledgerhq/hw-app-btc@10.13.1
+  - @ledgerhq/hw-app-multiversx@6.26.1
+  - @ledgerhq/hw-app-near@6.31.10
+  - @ledgerhq/hw-app-tezos@6.31.10
+  - @ledgerhq/hw-app-trx@6.31.10
+  - @ledgerhq/hw-app-xrp@6.32.8
+  - @ledgerhq/hw-bolos@6.32.10
+  - @ledgerhq/hw-transport-mocker@6.29.14
+  - @ledgerhq/live-dmk-shared@0.15.1
+  - @ledgerhq/ledger-cal-service@1.9.2
+  - @ledgerhq/ledger-trust-service@0.4.4
+  - @ledgerhq/hw-app-sui@1.4.0
+
+## 34.54.1-hotfix.1
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`6769a36`](https://github.com/LedgerHQ/ledger-live/commit/6769a36c18cb7453c93b2a5d8dec3e1e1725cd20) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add data to investigate feesNotLoaded error
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add isEmbeddedSwap tracking param to allow passing information for Swap on Portfolio to transaction handler tracking events
+
+- Updated dependencies [[`879bf34`](https://github.com/LedgerHQ/ledger-live/commit/879bf3445a67b3a1f31dac9fddf20f557d59786b)]:
+  - @ledgerhq/wallet-api-exchange-module@0.19.1-hotfix.0
+
+## 34.54.1-hotfix.0
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add abortTimeout param to getAppAndVersion
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new error type `UnsupportedFeatureError`
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-algorand@0.14.1-hotfix.0
+  - @ledgerhq/coin-aptos@3.7.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.26.1-hotfix.0
+  - @ledgerhq/coin-canton@0.11.1-hotfix.0
+  - @ledgerhq/coin-cardano@0.15.2-hotfix.0
+  - @ledgerhq/coin-casper@2.4.2-hotfix.0
+  - @ledgerhq/coin-celo@1.7.3-hotfix.0
+  - @ledgerhq/coin-cosmos@0.20.2-hotfix.0
+  - @ledgerhq/coin-evm@2.36.1-hotfix.0
+  - @ledgerhq/coin-filecoin@1.15.1-hotfix.0
+  - @ledgerhq/coin-hedera@1.15.1-hotfix.0
+  - @ledgerhq/coin-icon@0.15.2-hotfix.0
+  - @ledgerhq/coin-internet_computer@1.11.2-hotfix.0
+  - @ledgerhq/coin-kaspa@1.5.1-hotfix.0
+  - @ledgerhq/coin-mina@1.4.3-hotfix.0
+  - @ledgerhq/coin-multiversx@0.8.2-hotfix.0
+  - @ledgerhq/coin-near@0.16.2-hotfix.0
+  - @ledgerhq/coin-polkadot@6.13.2-hotfix.0
+  - @ledgerhq/coin-solana@0.38.1-hotfix.0
+  - @ledgerhq/coin-stacks@0.12.2-hotfix.0
+  - @ledgerhq/coin-stellar@6.8.1-hotfix.0
+  - @ledgerhq/coin-sui@0.18.2-hotfix.0
+  - @ledgerhq/coin-tezos@6.10.1-hotfix.0
+  - @ledgerhq/coin-ton@0.17.2-hotfix.0
+  - @ledgerhq/coin-tron@5.7.2-hotfix.0
+  - @ledgerhq/coin-vechain@2.13.1-hotfix.0
+  - @ledgerhq/coin-xrp@7.9.1-hotfix.0
+  - @ledgerhq/device-core@0.6.10-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-app-algorand@6.31.10-hotfix.0
+  - @ledgerhq/hw-app-aptos@6.34.10-hotfix.0
+  - @ledgerhq/hw-app-celo@6.35.5-hotfix.0
+  - @ledgerhq/hw-app-cosmos@6.32.10-hotfix.0
+  - @ledgerhq/hw-app-eth@7.0.1-hotfix.0
+  - @ledgerhq/hw-app-exchange@0.18.1-hotfix.0
+  - @ledgerhq/hw-app-hedera@1.2.10-hotfix.0
+  - @ledgerhq/hw-app-icon@1.3.10-hotfix.0
+  - @ledgerhq/hw-app-kaspa@1.3.3-hotfix.0
+  - @ledgerhq/hw-app-polkadot@6.34.10-hotfix.0
+  - @ledgerhq/hw-app-str@7.2.10-hotfix.0
+  - @ledgerhq/hw-app-vet@0.8.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+  - @ledgerhq/live-signer-canton@0.5.3-hotfix.0
+  - @ledgerhq/live-signer-evm@0.10.3-hotfix.0
+  - @ledgerhq/live-signer-solana@0.7.1-hotfix.0
+  - @ledgerhq/live-countervalues@0.10.2-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.7.4-hotfix.0
+  - @ledgerhq/live-wallet@0.16.2-hotfix.0
+  - @ledgerhq/speculos-transport@0.3.1-hotfix.0
+  - @ledgerhq/hw-app-btc@10.13.1-hotfix.0
+  - @ledgerhq/hw-app-multiversx@6.26.1-hotfix.0
+  - @ledgerhq/hw-app-near@6.31.10-hotfix.0
+  - @ledgerhq/hw-app-tezos@6.31.10-hotfix.0
+  - @ledgerhq/hw-app-trx@6.31.10-hotfix.0
+  - @ledgerhq/hw-app-xrp@6.32.8-hotfix.0
+  - @ledgerhq/hw-bolos@6.32.10-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.14-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.15.1-hotfix.0
+  - @ledgerhq/ledger-cal-service@1.9.2-hotfix.0
+  - @ledgerhq/ledger-trust-service@0.4.4-hotfix.0
+  - @ledgerhq/hw-app-sui@1.4.0
+
 ## 34.54.0
 
 ### Minor Changes

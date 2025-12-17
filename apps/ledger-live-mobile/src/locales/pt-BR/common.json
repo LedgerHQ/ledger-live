@@ -665,6 +665,11 @@
       "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
+    "NanoSNotSupported" : {
+      "title" : "A Ledger Nano S™ é incompatível com este recurso",
+      "description" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os novos recursos da Ledger Wallet.",
+      "upsellCtaLabel" : "Descubra o Programa de Upgrade"
+    },
     "NotEnoughGas" : {
       "title" : "Você precisa de {{fees}} {{ticker}} em sua conta para pagar as taxas de transação na rede {{cryptoName}}.  <link0>Compre {{ticker}}</link0> ou deposite mais em sua conta.",
       "description" : "Envie algumas moedas à sua conta para pagar transações de tokens."
@@ -1136,6 +1141,11 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "Recurso incompatível",
+      "description" : "O aplicativo necessário para esta operação não está disponível no seu dispositivo Ledger no momento. Entre em contato com o Suporte Ledger para detalhes.",
+      "ctaLabel" : "Fale com o Suporte Ledger"
     },
     "EtherscanAPIError" : {
       "title" : "Falha em buscar transações",
@@ -8002,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Provedor indisponível",
-      "description" : "A Changelly não pode processar esta transação. Código do erro 8HBB{{errorCode}}"
+      "description" : "A Changelly não pode processar esta transação. Erro código 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "Provedor indisponível",
+      "description" : "Não podemos concluir sua troca com este provedor. Tente novamente com outro provedor."
+    },
+    "swapRateExpiredError" : {
+      "title" : "Cotação Expirada",
+      "description" : "A cotação expirou. Atualize e tente novamente."
     },
     "default" : {
       "title" : "Algo deu errado",
