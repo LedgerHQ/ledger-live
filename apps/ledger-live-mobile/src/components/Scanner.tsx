@@ -2,10 +2,11 @@ import React from "react";
 import { Box, Flex, Icons, NumberedList, ProgressBar, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { CameraView, BarcodeScanningResult } from "expo-camera";
+import { Camera } from "react-native-vision-camera";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 import ScanTargetSvg from "./CameraScreen/ScanTargetSvg";
+import { useQRScanner } from "~/hooks/useQRScanner";
 
 type Props = {
   onResult: (data: string) => void;
@@ -16,9 +17,7 @@ type Props = {
 const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
-    onResult(data);
-  };
+  const { device, codeScanner } = useQRScanner(onResult);
 
   return (
     <Flex
@@ -41,18 +40,16 @@ const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
         >
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
-              permissionGranted ? (
-                <CameraView
-                  active={permissionGranted ?? false}
+              permissionGranted && device ? (
+                <Camera
+                  device={device}
+                  isActive
                   style={{
                     backgroundColor: colors.neutral.c50,
                     width: 280,
                     height: 280,
                   }}
-                  barcodeScannerSettings={{
-                    barcodeTypes: ["qr"],
-                  }}
-                  onBarcodeScanned={onBarCodeScanned}
+                  codeScanner={codeScanner}
                 />
               ) : null
             }

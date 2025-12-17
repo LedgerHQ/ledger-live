@@ -1,13 +1,39 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useCameraPermissions as useExpoCameraPermissions } from "expo-camera";
+import { useCameraPermission, Camera } from "react-native-vision-camera";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { AppState, Linking } from "react-native";
 
 export default function useCameraPermissions() {
-  const [permission, requestPermission, checkPermission] = useExpoCameraPermissions();
+  const { hasPermission, requestPermission: requestVisionPermission } = useCameraPermission();
   const [firstAutomaticRequestCompleted, setFirstAutomaticRequestCompleted] =
     useState<boolean>(false);
+  const [permissionStatus, setPermissionStatus] = useState<{
+    granted: boolean;
+    canAskAgain: boolean;
+  } | null>(null);
   const isMounted = useIsMounted();
+
+  const checkPermission = useCallback(async () => {
+    const status = await Camera.getCameraPermissionStatus();
+    if (isMounted()) {
+      setPermissionStatus({
+        granted: status === "granted",
+        canAskAgain: status === "not-determined",
+      });
+    }
+    return status;
+  }, [isMounted]);
+
+  const requestPermission = useCallback(async () => {
+    const granted = await requestVisionPermission();
+    if (isMounted()) {
+      setPermissionStatus({
+        granted,
+        canAskAgain: false,
+      });
+    }
+    return granted;
+  }, [requestVisionPermission, isMounted]);
 
   useEffect(() => {
     requestPermission().then(() => setFirstAutomaticRequestCompleted(true));
@@ -39,6 +65,11 @@ export default function useCameraPermissions() {
     shouldCheckPermissionOnNextResume.current = true;
     Linking.openSettings();
   }, []);
+
+  const permission = useMemo(
+    () => permissionStatus ?? { granted: hasPermission, canAskAgain: !hasPermission },
+    [hasPermission, permissionStatus],
+  );
 
   const contextValue = useMemo(
     () => ({

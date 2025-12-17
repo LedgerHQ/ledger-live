@@ -3,10 +3,11 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
-import { CameraView, BarcodeScanningResult } from "expo-camera";
+import { Camera } from "react-native-vision-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
+import { useQRScanner } from "~/hooks/useQRScanner";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -20,10 +21,7 @@ const Italic = styled(Text)`
 const ScanQrCode = ({ onQrCodeScanned }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-
-  const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
-    onQrCodeScanned(data);
-  };
+  const { device, codeScanner } = useQRScanner(onQrCodeScanned);
 
   const steps = [
     {
@@ -82,18 +80,16 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
         >
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
-              permissionGranted ? (
-                <CameraView
-                  active={permissionGranted ?? false}
+              permissionGranted && device ? (
+                <Camera
+                  device={device}
+                  isActive
                   style={{
                     backgroundColor: colors.neutral.c50,
                     width: 280,
                     height: 280,
                   }}
-                  barcodeScannerSettings={{
-                    barcodeTypes: ["qr"],
-                  }}
-                  onBarcodeScanned={onBarCodeScanned}
+                  codeScanner={codeScanner}
                 />
               ) : null
             }

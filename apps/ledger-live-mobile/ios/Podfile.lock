@@ -84,10 +84,6 @@ PODS:
     - ExpoModulesCore
   - ExpoAsset (11.0.5):
     - ExpoModulesCore
-  - ExpoCamera (16.0.15):
-    - ExpoModulesCore
-    - ZXingObjC/OneD
-    - ZXingObjC/PDF417
   - ExpoCrypto (13.0.2):
     - ExpoModulesCore
   - ExpoFileSystem (18.0.1):
@@ -2431,12 +2427,13 @@ PODS:
   - sovran-react-native (1.1.3):
     - React-Core
   - TOCropViewController (2.5.3)
+  - VisionCamera (4.7.3):
+    - VisionCamera/Core (= 4.7.3)
+    - VisionCamera/React (= 4.7.3)
+  - VisionCamera/Core (4.7.3)
+  - VisionCamera/React (4.7.3):
+    - React-Core
   - Yoga (0.0.0)
-  - ZXingObjC/Core (3.6.9)
-  - ZXingObjC/OneD (3.6.9):
-    - ZXingObjC/Core
-  - ZXingObjC/PDF417 (3.6.9):
-    - ZXingObjC/Core
 
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native/third-party-podspecs/boost.podspec`)"
@@ -2448,7 +2445,6 @@ DEPENDENCIES:
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@5.0.0_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5_19a127edfcaf4cc45e7d65d3e0455c71/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@52.0.46_da95d96e6b14ca1108c91786bbc295f9/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f1809d_e12fbd8a50e595a6319b3e3621412cf0/node_modules/expo-asset/ios`)"
-  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@16.0.15_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f180_4c99959fb4a5f8c8519cff0737ff9c27/node_modules/expo-camera/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f1809_139024f99efa72035b7aa8ca5faa66eb/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@18.0.1_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5_979371e6af3ae34c571344f67c59cd82/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@13.0.4_bddcfc85fa3d0a2d2bad040fdb52828d/node_modules/expo-font/ios`)"
@@ -2565,6 +2561,7 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - "segment-analytics-react-native (from `../node_modules/@segment/analytics-react-native`)"
   - "sovran-react-native (from `../node_modules/@segment/sovran-react-native`)"
+  - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -2603,7 +2600,6 @@ SPEC REPOS:
     - SDWebImageWebPCoder
     - SocketRocket
     - TOCropViewController
-    - ZXingObjC
 
 EXTERNAL SOURCES:
   boost:
@@ -2624,8 +2620,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo@52.0.46_da95d96e6b14ca1108c91786bbc295f9/node_modules/expo"
   ExpoAsset:
     :path: "../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f1809d_e12fbd8a50e595a6319b3e3621412cf0/node_modules/expo-asset/ios"
-  ExpoCamera:
-    :path: "../../../node_modules/.pnpm/expo-camera@16.0.15_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f180_4c99959fb4a5f8c8519cff0737ff9c27/node_modules/expo-camera/ios"
   ExpoCrypto:
     :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.3_patch_hash=2b53c1e5f1809_139024f99efa72035b7aa8ca5faa66eb/node_modules/expo-crypto/ios"
   ExpoFileSystem:
@@ -2855,6 +2849,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@segment/analytics-react-native"
   sovran-react-native:
     :path: "../node_modules/@segment/sovran-react-native"
+  VisionCamera:
+    :path: "../node_modules/react-native-vision-camera"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_e5c117d3d754a7a98c260b18dfeac954/node_modules/react-native/ReactCommon/yoga"
 
@@ -2879,7 +2875,6 @@ SPEC CHECKSUMS:
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
   Expo: a6ff273c618506b12129a0d06f2a08201bfbcf43
   ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
-  ExpoCamera: 969427803b03c9084a3f48e942daf3f0a6da267f
   ExpoCrypto: c5c052d5f9f668c21975cb4caf072cec23c823fa
   ExpoFileSystem: 7d75cef9b407374b05a4d727fb482d89854a7940
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
@@ -3017,8 +3012,8 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
+  VisionCamera: 7187b3dac1ff3071234ead959ce311875748e14f
   Yoga: 2b02f3f767761bb4ffd25b1bb56fd264be57bd6b
-  ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
 PODFILE CHECKSUM: 1c38f9ea95309652f16182352f749be4e2501fc6
 
