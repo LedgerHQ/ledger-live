@@ -29,7 +29,7 @@ describe("craftTransaction", () => {
       "legacy",
       0,
       {
-        gasPrice: new BigNumber(5),
+        gasPrice: new BigNumber(8),
         maxFeePerGas: null,
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
@@ -142,6 +142,63 @@ describe("craftTransaction", () => {
           ...expectedFee,
         }).unsignedSerialized,
       );
+    });
+
+    it.each([
+      ["an external node", "external", externalNode],
+      ["a ledger node", "ledger", ledgerNode],
+    ])("crafts a transaction without %s when custom fees are passed", async (_, type, node) => {
+      setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+      jest.spyOn(node, "getTransactionCount").mockResolvedValue(18);
+      const getGasEstimation = jest.spyOn(node, "getGasEstimation");
+      const getFeeData = jest.spyOn(node, "getFeeData");
+
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
+          transactionIntent: {
+            intentType: "transaction",
+            type: `send-${transactionType}`,
+            recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+            amount: 10n,
+            asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
+          } as TransactionIntent<MemoNotSupported, BufferTxData>,
+          customFees: {
+            value: 0n,
+            parameters: {
+              gasPrice: feeData.gasPrice && BigInt(feeData.gasPrice.toFixed()),
+              maxFeePerGas: feeData.maxFeePerGas && BigInt(feeData.maxFeePerGas.toFixed()),
+              maxPriorityFeePerGas:
+                feeData.maxPriorityFeePerGas && BigInt(feeData.maxPriorityFeePerGas.toFixed()),
+              gasLimit: 2300n,
+            },
+          },
+        },
+      );
+
+      expect(transaction).toEqual(
+        ethers.Transaction.from({
+          type: transactionTypeNumber,
+          to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          nonce: 18,
+          gasLimit: 2300,
+          data:
+            "0x" +
+            Buffer.concat([
+              Buffer.from("a9059cbb000000000000000000000000", "hex"), // transfer selector
+              Buffer.from("7b2c7232f9e38f30e2868f0e5bf311cd83554b5a", "hex"), // recipient
+              Buffer.from(
+                "000000000000000000000000000000000000000000000000000000000000000a",
+                "hex",
+              ), // amount
+            ]).toString("hex"),
+          value: 0,
+          chainId: 42,
+          ...expectedFee,
+        }).unsignedSerialized,
+      );
+      expect(getGasEstimation).not.toHaveBeenCalled();
+      expect(getFeeData).not.toHaveBeenCalled();
     });
   });
 

@@ -25,6 +25,7 @@ export async function craftTransaction(
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
+    customFees?.parameters,
   );
 
   // Some apps including, including Magic Eden, set the nonce to -1
