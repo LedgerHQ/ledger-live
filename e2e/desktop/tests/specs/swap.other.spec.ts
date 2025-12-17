@@ -10,7 +10,6 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { CLI } from "tests/utils/cliUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -21,25 +20,9 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
-
-const liveDataWithAddressCommand = (account: Account | TokenAccount) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: account.currency.speculosApp.name,
-    index: account.index,
-    add: true,
-    appjson: userdataPath,
-  }).then(async () => {
-    const { address } = await CLI.getAddress({
-      currency: account.currency.speculosApp.name,
-      path: account.accountPath,
-      derivationMode: account.derivationMode,
-    });
-
-    account.address = address;
-    return address;
-  });
 
 test.describe("Swap - Provider redirection", () => {
   const fromAccount = Account.ETH_1;

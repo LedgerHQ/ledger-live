@@ -6,34 +6,7 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-
-const liveDataWithRecipientAddressCommand = (
-  tx: Transaction,
-  options?: { useScheme?: boolean },
-) => {
-  return async (appjsonPath: string) => {
-    await CLI.liveData({
-      currency: tx.accountToDebit.currency.id,
-      index: tx.accountToDebit.index,
-      ...(options?.useScheme && tx.accountToDebit.derivationMode
-        ? { scheme: tx.accountToDebit.derivationMode }
-        : {}),
-      add: true,
-      appjson: appjsonPath,
-    });
-
-    const { address } = await CLI.getAddress({
-      currency: tx.accountToCredit.currency.id,
-      path: tx.accountToCredit.accountPath,
-      derivationMode: tx.accountToCredit.derivationMode,
-    });
-
-    tx.accountToCredit.address = address;
-    tx.recipientAddress = address;
-
-    return address;
-  };
-};
+import { liveDataWithRecipientAddressCommand } from "tests/utils/cliCommandsUtils";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -440,11 +413,10 @@ test.describe("Send flows", () => {
           );
 
           await app.account.clickSend();
-          const recipientAddress =
+          transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
               : transaction.transaction.accountToCredit.address ?? "";
-          transaction.transaction.accountToCredit.address = recipientAddress;
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);

@@ -1,16 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
 import { ApplicationOptions } from "page";
+import { liveDataCommand, liveDataWithAddressCommand } from "../../utils/cliCommandsUtils";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -33,24 +26,7 @@ export async function runCreateNewAccountAndDepositTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: currentAccount.currency.speculosApp,
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await liveDataCommand(
-              currentAccount.currency.speculosApp,
-              currentAccount.index,
-            )(userdataPath);
-
-            const { address } = await CLI.getAddress({
-              currency: newAccount.currency.speculosApp.name,
-              path: newAccount.accountPath,
-              derivationMode: newAccount.derivationMode,
-            });
-
-            newAccount.address = address;
-
-            return address;
-          },
-        ],
+        cliCommands: [liveDataWithAddressCommand(newAccount)],
       });
     });
 
@@ -87,9 +63,7 @@ export async function runSelectCryptoNetworkTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: withAccount ? account.currency.speculosApp : undefined,
-        cliCommands: withAccount
-          ? [liveDataCommand(account.currency.speculosApp, account.index)]
-          : undefined,
+        cliCommands: withAccount ? [liveDataCommand(account)] : undefined,
       });
     });
 
@@ -148,21 +122,7 @@ export async function runDepositInExistingAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await liveDataCommand(account.currency.speculosApp, account.index)(userdataPath);
-
-            const { address } = await CLI.getAddress({
-              currency: account.currency.speculosApp.name,
-              path: account.accountPath,
-              derivationMode: account.derivationMode,
-            });
-
-            account.address = address;
-
-            return address;
-          },
-        ],
+        cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
 

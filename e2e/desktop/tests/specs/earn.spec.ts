@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -19,23 +20,6 @@ function setupEnv(disableBroadcast?: boolean) {
     }
   });
 }
-
-const liveDataWithAddressCommand = (account: Account) => (appjsonPath: string) =>
-  CLI.liveData({
-    currency: account.currency.id,
-    index: account.index,
-    add: true,
-    appjson: appjsonPath,
-  }).then(async () => {
-    const { address } = await CLI.getAddress({
-      currency: account.currency.id,
-      path: account.accountPath,
-      derivationMode: account.derivationMode,
-    });
-
-    account.address = address;
-    return address;
-  });
 
 const ethEarn = [
   {
