@@ -175,7 +175,7 @@ export const makeGetAccountShape =
     const operations = mergeOps(Object.values(stableOperationsByIds), newOperations);
 
     let spendableBalance = BigNumber.max(0, utxosSum.minus(minAdaForTokens));
-    if (delegationInfo && delegationInfo.dRepHex && delegationInfo.rewards) {
+    if (delegationInfo?.dRepHex && delegationInfo?.rewards) {
       // if account is delegated to a dRep, include rewards in spendable balance
       spendableBalance = spendableBalance.plus(delegationInfo.rewards);
     }
