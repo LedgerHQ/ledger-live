@@ -2933,7 +2933,7 @@ importers:
         version: 8.0.1
       '@celo/wallet-ledger':
         specifier: ^8.0.0
-        version: 8.0.1
+        version: 8.0.2
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-evm
@@ -6530,7 +6530,7 @@ importers:
         version: 8.0.1
       '@celo/wallet-ledger':
         specifier: ^8.0.0
-        version: 8.0.1
+        version: 8.0.2
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -10956,8 +10956,8 @@ packages:
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/code-frame@8.0.0-beta.2':
-    resolution: {integrity: sha512-AKiipLsA7UE3vLjLNxBTsAbU39IkC34a7bAPBerVL/SbF71OO//3hxvWoUgYx44rYTj5deeUbuYdttip8dxHLQ==}
+  '@babel/code-frame@8.0.0-beta.3':
+    resolution: {integrity: sha512-bCQEw5OhcQSIsknZm3js7Nh7GchgeboNQsC+Frzu6xnOCMdRlc7Y8MgMcqeWcahgtDKRXECmamDH6KBk4bt5bA==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
   '@babel/compat-data@7.26.5':
@@ -11152,8 +11152,8 @@ packages:
     resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-validator-identifier@8.0.0-beta.2':
-    resolution: {integrity: sha512-n5STLJIc4loOeI2G+mMZwYIiztQWZdy+3du0cspVWoUjZ4AgkCIld4XcY0jJPgLImStacvJKCO6qCf0UBMpETw==}
+  '@babel/helper-validator-identifier@8.0.0-beta.3':
+    resolution: {integrity: sha512-0uFJz8fwc1WRgepEs6L8b+f2n1cTZqAevxJgnIOWRvYiNfGGXrSWCLOPgR3zzNgjaA1O6qvkqKLbTXJ5dYJ89Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
   '@babel/helper-validator-option@7.27.1':
@@ -12126,8 +12126,8 @@ packages:
   '@celo/hw-app-eth@1.0.1':
     resolution: {integrity: sha512-2vJ5aa4AVHKr7mnMpcDXs7N4YUwHpxNLxYEyLNhfD9SJSSnHYMzBq0NPMfcGFzg9ubtgh+JCd4IqwyRn8STKYw==}
 
-  '@celo/ledger-token-signer@0.8.0':
-    resolution: {integrity: sha512-kmXNbSi0OwZSJGmoH21xap1YR24LKmHZ4/eofTe4SW5yQYeySSfcr5g2tIoObwgxf8d+oVdgeEQjIPZWcUT4BQ==}
+  '@celo/ledger-token-signer@0.14.0':
+    resolution: {integrity: sha512-LA/DGKjeid/TnTNz8W74H7UueYqn3ZHlq/XTSOsHyEAmm/dWrS7156yQ0e9Fl568MQSXoUqsCFt3kihQjyoXwQ==}
     engines: {node: '>=20'}
 
   '@celo/utils@8.0.3':
@@ -12137,16 +12137,20 @@ packages:
     resolution: {integrity: sha512-H2c8OrC7wzjjf0SnIskAwpM9kIlDkDZ/2KIG2227SRilrjw+qMFq8KdlFzlc+VQHud1ptGbjrOmJmW/S7OHqAA==}
     engines: {node: '>=20'}
 
-  '@celo/wallet-ledger@8.0.1':
-    resolution: {integrity: sha512-22vhZUpFn1MGtzKnyBr97K9uAMdO7fmKCfLMVSPc9OaC8sjTA8vOmJ7bfGAof5rUTqG3aaCVeiay8eTbZu8EQw==}
+  '@celo/wallet-base@8.0.2':
+    resolution: {integrity: sha512-BuRRYioZWP90GYMSTO1M6qnXeUYu0ya6AtcBEKGN7JEifd+m9wFXecrNT1IZUN0kRb+WXZ3HdbZiYqC04K5Q5w==}
+    engines: {node: '>=20'}
+
+  '@celo/wallet-ledger@8.0.2':
+    resolution: {integrity: sha512-45h+GrhjvLbIMEcT6GU0pNO8fAdDtFZTphQa+7cSg6m4y0U59eQ8ZKcuhfctsffDzUj7eKMB9JlveF8Lt+lDSw==}
     engines: {node: '>=20'}
 
   '@celo/wallet-local@8.0.1':
     resolution: {integrity: sha512-M9/Wpq4lsPZmSd+1QObyRIemoWnaGWbvWVd4s5yUU+PoO3q5C9tkvK0Q7stlsp3dWKP5Fxi6GsHN7aUnQgY7UA==}
     engines: {node: '>=20'}
 
-  '@celo/wallet-remote@8.0.1':
-    resolution: {integrity: sha512-cM0OjlyxWIxvc2LbrrcS8iNgsGq+ux7QzEQhClvvB+/ksMqvJy9DC5FQNyYg00/Sat9onZttEO6YmdPXOlOpow==}
+  '@celo/wallet-remote@8.0.2':
+    resolution: {integrity: sha512-KR9HwviMr3nmBZZ1hBgPs1ERq3dD4cWNtOLrhl0/64SnMxWI1uW22kVFB0HDZQ5XHPOlGvNCcH37c2M8/k2Iag==}
     engines: {node: '>=20'}
 
   '@chainsafe/as-sha256@0.3.1':
@@ -15115,8 +15119,8 @@ packages:
       styled-components:
         optional: true
 
-  '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
-    resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
+  '@ledgerhq/cryptoassets-evm-signatures@13.7.1':
+    resolution: {integrity: sha512-ehLn62L15fOlTH6u5D1eV1d4/QIju6aaUKWy7CpVLSiRmkWEBaORhOL/l9TvBrRIvNLHVBQEhiBaJcJ4hGrlEw==}
 
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
@@ -15169,26 +15173,26 @@ packages:
       '@ledgerhq/device-management-kit': ^0.13.0
       rxjs: 7.8.2
 
-  '@ledgerhq/domain-service@1.2.12':
-    resolution: {integrity: sha512-w33g7EqBtquzNPnvD2tmQq049eL4d8qYZH5vCwJ9Rfe6Vc/bYQvwlHFZ4N/cQPLmWQdsIMWDu+4fYo61p+Ub5A==}
+  '@ledgerhq/domain-service@1.4.3':
+    resolution: {integrity: sha512-KtNzRwFbSas5t2BTbaTD19TY859efVqOuSUSpIsvlzyyO6Xti72UL2K2D1H3gW4S0QUGhrnzCPMzL5DeeKiAPA==}
 
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
-  '@ledgerhq/errors@6.19.1':
-    resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
-
-  '@ledgerhq/errors@6.22.0':
-    resolution: {integrity: sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ==}
-
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
-  '@ledgerhq/evm-tools@1.3.0':
-    resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
+  '@ledgerhq/errors@6.27.1':
+    resolution: {integrity: sha512-Q6nXkg63kSjxa8DDBtjSGAuiOP/jQVQM/0f+0R/ovilQKuxMIxEMXPfonvhQ2AIP4bqKOzGV1c9Iqnow22w/Zg==}
+
+  '@ledgerhq/evm-tools@1.8.2':
+    resolution: {integrity: sha512-6CSPwyeDXkhoaxZ/Fn/XgNn6yXmEzbhUQu9o1WJi+wAG2r5m+CwlUznYeA46r9AccqQ13UuM4cXWZQvrwzlSuA==}
 
   '@ledgerhq/hw-app-eth@6.29.7':
     resolution: {integrity: sha512-8ijfmsZdnaaWg5Ne+Zsu4y22Ba+VyGy1Nq7cuhM+1Uz1dpQDwrbbFlYqluqi17c4hRP0uaaPDLvyitxNelllNQ==}
+
+  '@ledgerhq/hw-transport-mocker@6.29.14':
+    resolution: {integrity: sha512-8eX9EvpE2t7olDmknLMJBOIs5AZeybowsmnEd2A/it0fxo+zkpUS+iqR9Dua2kJCfk57Gt9UiAIA/u/y+ZtQNA==}
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
@@ -15212,14 +15216,17 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
-  '@ledgerhq/live-env@2.4.1':
-    resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
+  '@ledgerhq/live-env@2.22.0':
+    resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
+  '@ledgerhq/logs@6.13.0':
+    resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
   '@ledgerhq/lumen-design-core@0.0.35':
     resolution: {integrity: sha512-qQ9j9y5S7XZ+W3YagTw1uQgWj5t825yHj3Ih4+/DWvpxT+ZQVgnszcQlpIdEbm4tiIJhl4Rwbanb7ecJDIVVtg==}
@@ -15256,8 +15263,8 @@ packages:
   '@ledgerhq/types-devices@6.27.0':
     resolution: {integrity: sha512-FQZdCoYxxMjY7PWFWM8gflSl4++T3Ems2koMiVZhbH4ji3PzafLvK+y422bRdt78zIP3UURbOhuzrpZ2ASv3gw==}
 
-  '@ledgerhq/types-live@6.53.1':
-    resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
+  '@ledgerhq/types-live@6.90.0':
+    resolution: {integrity: sha512-F+YyfE0HZoqc8HkaJXEHhMjU4JX6eHzCfXKmJH/MHiymrqg8tOa+c07mWIlvspf5jcpswRM3r1k81y2A8q/aWw==}
 
   '@ledgerhq/ui-shared@0.2.2':
     resolution: {integrity: sha512-3ASYnyqnZFMRnySADZziM3IIJ2SRQ7lKrRPwpihhf+SsyP7TIo6o4UXMY8eYOupdTARlElS4Qpk4nRL/Ln62Ng==}
@@ -17723,6 +17730,9 @@ packages:
   '@scure/base@1.1.6':
     resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
 
+  '@scure/base@1.1.9':
+    resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
+
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
@@ -19331,7 +19341,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -20083,6 +20093,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -22092,7 +22103,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -24711,6 +24722,15 @@ packages:
       supports-color:
         optional: true
 
+  debug@4.4.3:
+    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   debugnyan@1.0.0:
     resolution: {integrity: sha512-dTvKxcLZCammDLFYi31NRVr5g6vjJ33uf1wcdbIPPxPxxnJ9/xj00Mh/YQkhFMw/VGavaG5KpjSC+4o9r/JjRg==}
     engines: {node: '>=4'}
@@ -25666,7 +25686,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -26273,6 +26293,9 @@ packages:
   exponential-backoff@3.1.2:
     resolution: {integrity: sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==}
 
+  exponential-backoff@3.1.3:
+    resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
+
   express@4.19.2:
     resolution: {integrity: sha512-5T6nhjsT+EOMzuck8JjBHARTHfMht0POzlA60WV2pMD3gyXw2LZnZ+ueGdNxG+0calOJcWKbpFcuzLZ91YWq9Q==}
     engines: {node: '>= 0.10.0'}
@@ -26703,6 +26726,10 @@ packages:
 
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
+    engines: {node: '>= 6'}
+
+  form-data@4.0.5:
+    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
 
   formdata-polyfill@4.0.10:
@@ -32622,6 +32649,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -32880,7 +32908,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -39652,9 +39680,9 @@ snapshots:
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
-  '@babel/code-frame@8.0.0-beta.2':
+  '@babel/code-frame@8.0.0-beta.3':
     dependencies:
-      '@babel/helper-validator-identifier': 8.0.0-beta.2
+      '@babel/helper-validator-identifier': 8.0.0-beta.3
       js-tokens: 8.0.3
       picocolors: 1.1.1
 
@@ -39715,7 +39743,7 @@ snapshots:
       '@babel/types': 7.28.5
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.3.4
+      debug: 4.4.3
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -39843,7 +39871,7 @@ snapshots:
     dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.3.4
+      debug: 4.4.3
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -39854,7 +39882,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.3.4
+      debug: 4.4.3
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -40014,7 +40042,7 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
-  '@babel/helper-validator-identifier@8.0.0-beta.2': {}
+  '@babel/helper-validator-identifier@8.0.0-beta.3': {}
 
   '@babel/helper-validator-option@7.27.1': {}
 
@@ -41465,7 +41493,7 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
       '@babel/types': 7.28.5
-      debug: 4.3.4
+      debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -41490,7 +41518,7 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
       '@babel/types': 7.28.5
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -41628,21 +41656,21 @@ snapshots:
 
   '@celo/hw-app-eth@1.0.1':
     dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/rlp': 5.7.0
-      '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
-      '@ledgerhq/domain-service': 1.2.12
-      '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/evm-tools': 1.3.0
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+      '@ledgerhq/cryptoassets-evm-signatures': 13.7.1
+      '@ledgerhq/domain-service': 1.4.3
+      '@ledgerhq/errors': 6.27.1
+      '@ledgerhq/evm-tools': 1.8.2
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-mocker': 6.29.4
-      '@ledgerhq/logs': 6.12.0
-      '@ledgerhq/types-live': 6.53.1
+      '@ledgerhq/hw-transport-mocker': 6.29.14
+      '@ledgerhq/logs': 6.13.0
+      '@ledgerhq/types-live': 6.90.0
       axios: 1.7.7
       bignumber.js: 9.1.2
-      semver: 7.7.1
+      semver: 7.7.3
 
-  '@celo/ledger-token-signer@0.8.0': {}
+  '@celo/ledger-token-signer@0.14.0': {}
 
   '@celo/utils@8.0.3':
     dependencies:
@@ -41679,20 +41707,39 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-ledger@8.0.1':
+  '@celo/wallet-base@8.0.2':
+    dependencies:
+      '@celo/base': 7.0.3
+      '@celo/connect': 7.0.0
+      '@celo/utils': 8.0.3
+      '@ethereumjs/rlp': 5.0.2
+      '@ethereumjs/util': 8.0.5
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@types/debug': 4.1.12
+      bignumber.js: 9.1.2
+      debug: 4.4.3
+      web3: 1.10.4
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - supports-color
+      - utf-8-validate
+
+  '@celo/wallet-ledger@8.0.2':
     dependencies:
       '@celo/base': 7.0.3
       '@celo/connect': 7.0.0
       '@celo/hw-app-eth': 1.0.1
-      '@celo/ledger-token-signer': 0.8.0
+      '@celo/ledger-token-signer': 0.14.0
       '@celo/utils': 8.0.3
-      '@celo/wallet-base': 8.0.1
-      '@celo/wallet-remote': 8.0.1
+      '@celo/wallet-base': 8.0.2
+      '@celo/wallet-remote': 8.0.2
       '@ethereumjs/util': 8.0.5
-      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/errors': 6.27.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      debug: 4.3.4
-      semver: 7.7.2
+      debug: 4.4.3
+      semver: 7.7.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -41712,11 +41759,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-remote@8.0.1':
+  '@celo/wallet-remote@8.0.2':
     dependencies:
       '@celo/connect': 7.0.0
       '@celo/utils': 8.0.3
-      '@celo/wallet-base': 8.0.1
+      '@celo/wallet-base': 8.0.2
       '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
     transitivePeerDependencies:
@@ -42719,7 +42766,7 @@ snapshots:
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     dependencies:
       env-paths: 2.2.1
-      exponential-backoff: 3.1.2
+      exponential-backoff: 3.1.3
       glob: 8.1.0
       graceful-fs: 4.2.11
       make-fetch-happen: 10.2.1
@@ -43945,7 +43992,7 @@ snapshots:
       '@expo/plist': 0.3.4
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.1
+      debug: 4.4.0
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -43964,11 +44011,11 @@ snapshots:
       '@expo/plist': 0.2.2
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.1
+      debug: 4.4.3
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.3
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -44031,7 +44078,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
       resolve-workspace-root: 2.0.0
-      semver: 7.7.1
+      semver: 7.7.3
       slugify: 1.6.6
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -44075,7 +44122,7 @@ snapshots:
   '@expo/env@0.4.2':
     dependencies:
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.4.1
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 1.0.0
@@ -44085,7 +44132,7 @@ snapshots:
   '@expo/env@1.0.5':
     dependencies:
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.4.0
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 1.0.0
@@ -44132,7 +44179,7 @@ snapshots:
       jimp-compact: 0.16.1
       parse-png: 2.1.0
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.3
       temp-dir: 2.0.0
       unique-string: 2.0.0
 
@@ -44199,7 +44246,7 @@ snapshots:
       '@expo/json-file': 9.1.4
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.4.0
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 1.0.0
@@ -44262,7 +44309,7 @@ snapshots:
       '@expo/image-utils': 0.7.4
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.79.2
-      debug: 4.3.4
+      debug: 4.4.0
       resolve-from: 5.0.0
       semver: 7.7.1
       xml2js: 0.6.0
@@ -44286,7 +44333,7 @@ snapshots:
   '@expo/server@0.5.3':
     dependencies:
       abort-controller: 3.0.0
-      debug: 4.3.4
+      debug: 4.4.3
       source-map-support: 0.5.21
       undici: 6.19.2
     transitivePeerDependencies:
@@ -46673,7 +46720,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -46725,10 +46772,10 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       styled-components: 6.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
+  '@ledgerhq/cryptoassets-evm-signatures@13.7.1':
     dependencies:
-      '@ledgerhq/live-env': 2.4.1
-      axios: 1.7.7
+      '@ledgerhq/live-env': 2.22.0
+      axios: 1.12.2
 
   '@ledgerhq/cryptoassets@6.37.0':
     dependencies:
@@ -46871,31 +46918,28 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/domain-service@1.2.12':
+  '@ledgerhq/domain-service@1.4.3':
     dependencies:
-      '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/logs': 6.12.0
-      '@ledgerhq/types-live': 6.53.1
-      axios: 1.7.7
+      '@ledgerhq/errors': 6.27.1
+      '@ledgerhq/logs': 6.13.0
+      '@ledgerhq/types-live': 6.90.0
+      axios: 1.12.2
       eip55: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
   '@ledgerhq/errors@5.50.0': {}
 
-  '@ledgerhq/errors@6.19.1': {}
-
-  '@ledgerhq/errors@6.22.0': {}
-
   '@ledgerhq/errors@6.27.0': {}
 
-  '@ledgerhq/evm-tools@1.3.0':
+  '@ledgerhq/errors@6.27.1': {}
+
+  '@ledgerhq/evm-tools@1.8.2':
     dependencies:
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/hash': 5.7.0
-      '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
-      '@ledgerhq/live-env': 2.4.1
-      axios: 1.7.7
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ledgerhq/live-env': 2.22.0
+      axios: 1.12.2
       crypto-js: 4.2.0
 
   '@ledgerhq/hw-app-eth@6.29.7':
@@ -46903,12 +46947,18 @@ snapshots:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets': 6.37.0
-      '@ledgerhq/errors': 6.22.0
+      '@ledgerhq/errors': 6.27.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
       '@ledgerhq/logs': 6.12.0
       axios: 0.26.1
       bignumber.js: 9.1.2
+
+  '@ledgerhq/hw-transport-mocker@6.29.14':
+    dependencies:
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/logs': 6.13.0
+      rxjs: 7.8.2
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
@@ -46936,7 +46986,7 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
-  '@ledgerhq/live-env@2.4.1':
+  '@ledgerhq/live-env@2.22.0':
     dependencies:
       rxjs: 7.8.2
       utility-types: 3.11.0
@@ -46944,6 +46994,8 @@ snapshots:
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
+
+  '@ledgerhq/logs@6.13.0': {}
 
   '@ledgerhq/lumen-design-core@0.0.35(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))':
     dependencies:
@@ -46994,7 +47046,7 @@ snapshots:
 
   '@ledgerhq/types-devices@6.27.0': {}
 
-  '@ledgerhq/types-live@6.53.1':
+  '@ledgerhq/types-live@6.90.0':
     dependencies:
       bignumber.js: 9.1.2
       rxjs: 7.8.2
@@ -47491,7 +47543,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.7.1
+      semver: 7.7.3
     optional: true
 
   '@npmcli/fs@2.1.2':
@@ -47839,7 +47891,7 @@ snapshots:
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.52.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.25.1
-      semver: 7.7.1
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
 
@@ -47933,7 +47985,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.4.2
       require-in-the-middle: 7.3.0
-      semver: 7.7.1
+      semver: 7.5.4
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -47946,7 +47998,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.10.0
       require-in-the-middle: 7.3.0
-      semver: 7.7.1
+      semver: 7.5.4
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -50049,7 +50101,7 @@ snapshots:
 
   '@redux-devtools/inspector-monitor-trace-tab@4.1.1(@emotion/react@11.14.0(@types/react@18.2.73)(react@19.2.0))(@redux-devtools/inspector-monitor@6.1.2(@emotion/react@11.14.0(@types/react@18.2.73)(react@19.2.0))(@redux-devtools/core@4.1.1(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1))(react@19.2.0)(redux@5.0.1))(@types/react@18.2.73)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(redux@5.0.1))(@types/react@18.2.73)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(redux@5.0.1)':
     dependencies:
-      '@babel/code-frame': 8.0.0-beta.2
+      '@babel/code-frame': 8.0.0-beta.3
       '@babel/runtime': 7.27.1
       '@emotion/react': 11.14.0(@types/react@18.2.73)(react@19.2.0)
       '@redux-devtools/inspector-monitor': 6.1.2(@emotion/react@11.14.0(@types/react@18.2.73)(react@19.2.0))(@redux-devtools/core@4.1.1(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1))(react@19.2.0)(redux@5.0.1))(@types/react@18.2.73)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(redux@5.0.1)
@@ -50546,13 +50598,15 @@ snapshots:
 
   '@scure/base@1.1.6': {}
 
+  '@scure/base@1.1.9': {}
+
   '@scure/base@1.2.6': {}
 
   '@scure/bip32@1.1.5':
     dependencies:
       '@noble/hashes': 1.2.0
       '@noble/secp256k1': 1.7.1
-      '@scure/base': 1.1.6
+      '@scure/base': 1.1.9
 
   '@scure/bip32@1.3.3':
     dependencies:
@@ -50575,7 +50629,7 @@ snapshots:
   '@scure/bip39@1.1.1':
     dependencies:
       '@noble/hashes': 1.2.0
-      '@scure/base': 1.1.6
+      '@scure/base': 1.1.9
 
   '@scure/bip39@1.2.2':
     dependencies:
@@ -53222,7 +53276,7 @@ snapshots:
       magic-string: 0.30.17
       path-browserify: 1.0.1
       process: 0.11.10
-      semver: 7.7.1
+      semver: 7.7.3
       style-loader: 3.3.4(webpack@5.94.0(metro@0.81.5))
       swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(metro@0.81.5))
       terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.81.5)(webpack@5.94.0(metro@0.81.5))
@@ -53261,7 +53315,7 @@ snapshots:
       magic-string: 0.30.17
       path-browserify: 1.0.1
       process: 0.11.10
-      semver: 7.7.1
+      semver: 7.7.3
       storybook: 8.6.12(prettier@3.2.5)
       style-loader: 3.3.4(webpack@5.94.0(esbuild@0.19.12))
       terser-webpack-plugin: 5.3.10(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12))
@@ -53347,7 +53401,7 @@ snapshots:
       prompts: 2.4.2
       puppeteer-core: 2.1.1
       read-pkg-up: 7.0.1
-      semver: 7.7.1
+      semver: 7.7.3
       strip-json-comments: 3.1.1
       tempy: 1.0.1
       ts-dedent: 2.2.0
@@ -53374,7 +53428,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.4
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -53491,7 +53545,7 @@ snapshots:
       pretty-hrtime: 1.0.3
       prompts: 2.4.2
       read-pkg-up: 7.0.1
-      semver: 7.7.1
+      semver: 7.7.3
       telejson: 7.2.0
       tiny-invariant: 1.3.3
       ts-dedent: 2.2.0
@@ -53716,7 +53770,7 @@ snapshots:
       react-docgen: 7.0.3
       react-dom: 18.3.1(react@18.3.1)
       react-refresh: 0.14.0
-      semver: 7.7.1
+      semver: 7.7.3
       webpack: 5.94.0(metro@0.81.5)
     optionalDependencies:
       '@babel/core': 7.27.1
@@ -53748,7 +53802,7 @@ snapshots:
       react-docgen: 7.0.3
       react-dom: 18.3.1(react@18.3.1)
       resolve: 1.22.8
-      semver: 7.7.1
+      semver: 7.7.3
       storybook: 8.6.12(prettier@3.2.5)
       tsconfig-paths: 4.2.0
       webpack: 5.94.0(esbuild@0.19.12)
@@ -53810,7 +53864,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -53824,7 +53878,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -55643,7 +55697,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -55702,7 +55756,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
     optionalDependencies:
       typescript: 4.9.5
@@ -55714,7 +55768,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.4.3
@@ -55808,7 +55862,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -55855,7 +55909,7 @@ snapshots:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.7.1
+      semver: 7.7.3
       tsutils: 3.21.0(typescript@4.9.5)
     optionalDependencies:
       typescript: 4.9.5
@@ -55869,7 +55923,7 @@ snapshots:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.7.1
+      semver: 7.7.3
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
       typescript: 5.4.3
@@ -55883,7 +55937,7 @@ snapshots:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.7.1
+      semver: 7.7.3
       tsutils: 3.21.0(typescript@5.6.3)
     optionalDependencies:
       typescript: 5.6.3
@@ -55898,7 +55952,7 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
-      semver: 7.7.1
+      semver: 7.5.4
       ts-api-utils: 1.3.0(typescript@5.2.2)
     optionalDependencies:
       typescript: 5.2.2
@@ -55909,11 +55963,11 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.3.4
+      debug: 4.4.3
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.1
+      semver: 7.7.3
       ts-api-utils: 2.1.0(typescript@5.4.3)
       typescript: 5.4.3
     transitivePeerDependencies:
@@ -56417,7 +56471,7 @@ snapshots:
       css-loader: 6.10.0(webpack@5.94.0(@swc/core@1.4.11))
       css-minimizer-webpack-plugin: 3.4.1(webpack@5.94.0(@swc/core@1.4.11))
       cssnano: 5.1.15(postcss@8.5.6)
-      debug: 4.3.4
+      debug: 4.4.3
       default-gateway: 6.0.3
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
@@ -56533,7 +56587,7 @@ snapshots:
       open: 8.4.2
       ora: 5.4.1
       read-pkg: 5.2.0
-      semver: 7.7.1
+      semver: 7.5.4
       strip-ansi: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -57101,7 +57155,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -57662,7 +57716,7 @@ snapshots:
   axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.11
-      form-data: 4.0.4
+      form-data: 4.0.5
       proxy-from-env: 1.1.0
 
   axios@1.8.2:
@@ -58526,7 +58580,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.1
+      debug: 4.4.3
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -59653,7 +59707,7 @@ snapshots:
       dot-prop: 8.0.2
       env-paths: 3.0.0
       json-schema-typed: 8.0.1
-      semver: 7.7.1
+      semver: 7.7.3
       uint8array-extras: 0.3.0
 
   confbox@0.1.8: {}
@@ -60243,7 +60297,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.1
+      semver: 7.5.4
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.4.11)
 
@@ -60256,7 +60310,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.1
+      semver: 7.5.4
     optionalDependencies:
       webpack: 5.94.0(esbuild@0.19.12)
 
@@ -60269,7 +60323,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.1
+      semver: 7.5.4
     optionalDependencies:
       webpack: 5.94.0(metro@0.81.5)
 
@@ -60282,7 +60336,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.1
+      semver: 7.5.4
     optionalDependencies:
       webpack: 5.94.0
 
@@ -60771,6 +60825,10 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debug@4.4.3:
+    dependencies:
+      ms: 2.1.3
+
   debugnyan@1.0.0:
     dependencies:
       bunyan: 1.8.15
@@ -60994,7 +61052,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -61830,14 +61888,14 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
 
   esbuild-register@3.5.0(esbuild@0.24.2):
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       esbuild: 0.24.2
     transitivePeerDependencies:
       - supports-color
@@ -63219,6 +63277,8 @@ snapshots:
 
   exponential-backoff@3.1.2: {}
 
+  exponential-backoff@3.1.3: {}
+
   express@4.19.2:
     dependencies:
       accepts: 1.3.8
@@ -63299,7 +63359,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.1
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -63584,7 +63644,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -63791,7 +63851,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.7.1
+      semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.1.3
       webpack: 5.94.0(@swc/core@1.4.11)
@@ -63812,7 +63872,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.7.1
+      semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.4.3
       webpack: 5.94.0
@@ -63831,7 +63891,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.1
+      semver: 7.7.3
       tapable: 2.2.1
       typescript: 5.4.3
       webpack: 5.94.0(esbuild@0.19.12)
@@ -63848,7 +63908,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.1
+      semver: 7.7.3
       tapable: 2.2.1
       typescript: 5.4.3
       webpack: 5.94.0(metro@0.81.5)
@@ -63894,6 +63954,14 @@ snapshots:
       mime-types: 2.1.35
 
   form-data@4.0.4:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.2
+      mime-types: 2.1.35
+
+  form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
@@ -64154,7 +64222,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -64293,7 +64361,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.1
+      semver: 7.5.4
       serialize-error: 7.0.1
     optional: true
 
@@ -64855,7 +64923,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -64870,7 +64938,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -64929,7 +64997,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -64943,7 +65011,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -65196,7 +65264,7 @@ snapshots:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.3.4
+      debug: 4.4.3
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
@@ -67966,7 +68034,7 @@ snapshots:
   jest-snapshot@27.5.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.27.1
+      '@babel/generator': 7.28.5
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
@@ -68015,7 +68083,7 @@ snapshots:
       jest-util: 28.1.3
       natural-compare: 1.4.0
       pretty-format: 28.1.3
-      semver: 7.7.1
+      semver: 7.7.3
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -69115,7 +69183,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -69123,7 +69191,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -69143,7 +69211,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.3.4
+      debug: 4.4.3
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -69827,7 +69895,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.1
+      semver: 7.5.4
 
   make-error@1.3.6: {}
 
@@ -70691,7 +70759,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.3
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -70713,7 +70781,7 @@ snapshots:
   micromark@4.0.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.3
       decode-named-character-reference: 1.0.2
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.0
@@ -71396,7 +71464,7 @@ snapshots:
       nopt: 5.0.0
       npmlog: 6.0.2
       rimraf: 3.0.2
-      semver: 7.7.1
+      semver: 7.7.3
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -71536,7 +71604,7 @@ snapshots:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.13.1
-      semver: 7.7.1
+      semver: 7.7.3
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -71945,7 +72013,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -73406,7 +73474,7 @@ snapshots:
   proxy-agent@6.5.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -73474,7 +73542,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.3.4
+      debug: 4.4.3
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -75442,7 +75510,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -75703,7 +75771,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -75945,7 +76013,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -76084,7 +76152,7 @@ snapshots:
   socks-proxy-agent@6.2.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -76101,7 +76169,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -76218,7 +76286,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -76229,7 +76297,7 @@ snapshots:
 
   spdy@4.0.2:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       handle-thing: 2.0.1
       http-deceiver: 1.2.7
       select-hose: 2.0.0
@@ -76901,14 +76969,14 @@ snapshots:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
-      debug: 4.3.4
+      debug: 4.4.3
       fast-safe-stringify: 2.1.1
       form-data: 4.0.4
       formidable: 2.1.2
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.14.0
-      semver: 7.7.1
+      semver: 7.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -78035,7 +78103,7 @@ snapshots:
       chalk: 4.1.2
       enhanced-resolve: 5.17.1
       micromatch: 4.0.8
-      semver: 7.7.1
+      semver: 7.5.4
       source-map: 0.7.4
       typescript: 5.1.3
       webpack: 5.94.0(@swc/core@1.4.11)
