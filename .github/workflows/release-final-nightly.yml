@@ -91,7 +91,9 @@ jobs:
           provenance: "false"
 
       - name: Network config
-        run: echo "network-concurrency=2" >> ~/.npmrc
+        run: |
+          echo "network-concurrency=2" >> ~/.npmrc
+          echo "fetch-timeout=600000" >> ~/.npmrc
 
       - name: publish nightly
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
