@@ -14,7 +14,6 @@ describe("getTransactionStatus", () => {
         API_NEAR_PRIVATE_NODE: NEAR_BASE_URL_MOCKED,
         API_NEAR_PUBLIC_NODE: NEAR_BASE_URL_MOCKED,
         API_NEAR_INDEXER: NEAR_BASE_URL_MOCKED,
-        API_NEARBLOCKS_INDEXER: NEAR_BASE_URL_MOCKED,
       },
     }));
 

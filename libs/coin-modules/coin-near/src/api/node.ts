@@ -1,6 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-network/network";
-import liveNetwork from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
@@ -100,36 +99,20 @@ export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
   return data.result;
 };
 
-type statsResponseType = {
-  stats: {
-    id: number;
-    total_supply: string;
-    circulating_supply: string;
-    avg_block_time: string;
-    gas_price: string;
-    nodes_online: number;
-    near_price: string;
-    near_btc_price: string;
-    market_cap: string;
-    volume: string;
-    high_24h: string;
-    high_all: string;
-    low_24h: string;
-    low_all: string;
-    change_24: string;
-    total_txns: string;
-    tps: number;
-  }[];
-};
-
 export const getGasPrice = async (): Promise<string> => {
   const currencyConfig = getCoinConfig();
-
-  const response = await liveNetwork<statsResponseType>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/stats`,
+  const { data } = await network<{ result: { gas_price: string } }>({
+    method: "POST",
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
+    data: {
+      jsonrpc: "2.0",
+      id: "id",
+      method: "gas_price",
+      params: [null],
+    },
   });
 
-  return response.data.stats[0].gas_price;
+  return data?.result?.gas_price;
 };
 
 export const getAccessKey = async ({
@@ -233,14 +216,11 @@ export const getStakingPositions = async (
   let totalStaked = new BigNumber(0);
   let totalAvailable = new BigNumber(0);
   let totalPending = new BigNumber(0);
-  const stakingThreshold = getYoctoThreshold();
 
-  const delegatedValidators = await liveNetwork<{ deposit: string; validator_id: string }[]>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/kitwallet/staking-deposits/${address}`,
-  });
+  const activeDelegatedStakeBalance = await account.getActiveDelegatedStakeBalance();
 
   const stakingPositions = await Promise.all(
-    delegatedValidators.data.map(async ({ validator_id: validatorId }) => {
+    activeDelegatedStakeBalance.stakedValidators.map(async ({ validatorId }) => {
       const contract = new nearAPI.Contract(account, validatorId, {
         viewMethods: [
           "get_account_staked_balance",
@@ -276,6 +256,8 @@ export const getStakingPositions = async (
       available = new BigNumber(available);
       pending = new BigNumber(pending);
 
+      const stakingThreshold = getYoctoThreshold();
+
       if (staked.gte(stakingThreshold)) {
         totalStaked = totalStaked.plus(staked);
       }
@@ -305,55 +287,56 @@ export const getStakingPositions = async (
   };
 };
 
-type validatorsType = {
-  validatorFullData: {
-    deposit: string;
-    validator_id: string;
-    percent: string;
-    accountId: string;
-    poolInfo: {
-      fee: {
-        numerator: number;
-        denominator: number;
-      };
-      delegatorsCount: number;
-    };
-    cumulativeStake: {
-      accumulatedPercent: string;
-      cumulativePercent: string;
-      ownPercentage: string;
-    };
-    currentEpoch: {
-      stake: string;
-    };
-  }[];
-};
+export const getValidators = makeLRUCache(
+  async (): Promise<NearRawValidator[]> => {
+    const currencyConfig = getCoinConfig();
+    const { data } = await network<{ result: { current_validators: NearRawValidator[] } }>({
+      method: "POST",
+      url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "validators",
+        params: [null],
+      },
+    });
 
-type NearValidator = NearRawValidator & {
-  commission: number;
-};
+    return data?.result?.current_validators || [];
+  },
+  () => "",
+  { ttl: 30 * 60 * 1000 },
+);
 
-type fetchValidators = {
-  per_page: number;
-  page: number;
-};
+export const getCommission = makeLRUCache(
+  async (validatorAddress: string): Promise<number | null> => {
+    const currencyConfig = getCoinConfig();
+    const { data } = await network<{ result: { result: [] } }>({
+      method: "POST",
+      url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: validatorAddress,
+          method_name: "get_reward_fee_fraction",
+          args_base64: "e30=",
+          finality: "optimistic",
+        },
+      },
+    });
 
-async function fetchValidators({ per_page, page }: fetchValidators): Promise<NearValidator[]> {
-  const currencyConfig = getCoinConfig();
+    const result = data?.result?.result;
 
-  const delegatedValidators = await liveNetwork<validatorsType>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/validators?per_page=${per_page}&page=${page}`,
-  });
+    if (Array.isArray(result) && result.length) {
+      const parsedResult = JSON.parse(Buffer.from(result).toString());
 
-  const validators = delegatedValidators.data.validatorFullData.map(
-    ({ accountId, currentEpoch, poolInfo }) => ({
-      account_id: accountId,
-      stake: currentEpoch.stake,
-      commission: Math.round((poolInfo.fee.numerator / poolInfo.fee.denominator) * 100),
-    }),
-  );
+      return Math.round((parsedResult.numerator / parsedResult.denominator) * 100);
+    }
 
-  return validators || [];
-}
-
-export const getValidators = makeLRUCache(fetchValidators, () => "", { ttl: 30 * 60 * 1000 });
+    return null;
+  },
+  validatorAddress => validatorAddress,
+  { ttl: 30 * 60 * 1000 },
+);

@@ -1,26 +1,36 @@
+import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import liveNetwork from "@ledgerhq/live-network";
 import { NearTransaction } from "./sdk.types";
 import { getCoinConfig } from "../config";
 
-const fetchTransactions = async (address: string): Promise<NearTransaction[]> => {
+const DEFAULT_TRANSACTIONS_LIMIT = 100;
+const getIndexerUrl = (route: string): string => {
   const currencyConfig = getCoinConfig();
+  return `${currencyConfig.infra.API_NEAR_INDEXER}${route || ""}`;
+};
 
-  const response = await liveNetwork<{ txns: NearTransaction[] }>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/account/${address}/txns-only`,
+const fetchTransactions = async (
+  address: string,
+  limit: number = DEFAULT_TRANSACTIONS_LIMIT,
+): Promise<NearTransaction[]> => {
+  const route = `/transactions?limit=${limit}&account=${address}&date=${new Date().getTime()}`;
+
+  const { data } = await network({
+    method: "GET",
+    url: getIndexerUrl(route),
   });
 
-  return response.data.txns || [];
+  return data?.records || [];
 };
 
 function isSender(transaction: NearTransaction, address: string): boolean {
-  return transaction.signer_account_id === address;
+  return transaction.sender === address;
 }
 
 function getOperationType(transaction: NearTransaction, address: string): OperationType {
-  switch (transaction.actions?.at(0)?.method) {
+  switch (transaction.actions[0]?.data?.method_name) {
     case "deposit_and_stake":
       return "STAKE";
     case "unstake":
@@ -35,10 +45,10 @@ function getOperationType(transaction: NearTransaction, address: string): Operat
 }
 
 function getOperationValue(transaction: NearTransaction, type: OperationType): BigNumber {
-  const amount = transaction.actions?.at(0)?.deposit || 0;
+  const amount = transaction.actions[0]?.data?.deposit || 0;
 
   if (type === "OUT") {
-    return new BigNumber(amount).plus(transaction.outcomes_agg.transaction_fee);
+    return new BigNumber(amount).plus(transaction.fee);
   }
 
   return new BigNumber(amount);
@@ -52,19 +62,19 @@ async function transactionToOperation(
   const type = getOperationType(transaction, address);
 
   return {
-    id: encodeOperationId(accountId, transaction.transaction_hash, type),
+    id: encodeOperationId(accountId, transaction.hash, type),
     accountId,
-    fee: new BigNumber(transaction.outcomes_agg.transaction_fee || 0),
+    fee: new BigNumber(transaction.fee || 0),
     value: getOperationValue(transaction, type),
     type,
-    hash: transaction.transaction_hash,
-    blockHash: transaction.included_in_block_hash,
-    blockHeight: transaction.block.block_height,
-    date: new Date(parseFloat(transaction.block_timestamp) / 1000000),
+    hash: transaction.hash,
+    blockHash: transaction.block_hash,
+    blockHeight: transaction.height,
+    date: new Date(transaction.time),
     extra: {},
-    senders: transaction.signer_account_id ? [transaction.signer_account_id] : [],
-    recipients: transaction.receiver_account_id ? [transaction.receiver_account_id] : [],
-    hasFailed: !transaction.outcomes.status,
+    senders: transaction.sender ? [transaction.sender] : [],
+    recipients: transaction.receiver ? [transaction.receiver] : [],
+    hasFailed: !transaction.success,
   };
 }
 

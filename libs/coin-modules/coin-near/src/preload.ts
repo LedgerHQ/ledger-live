@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { NearPreloadedData } from "./types";
-import { getProtocolConfig, getValidators, getGasPrice } from "./api";
+import { getProtocolConfig, getValidators, getCommission, getGasPrice } from "./api";
 import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
 import { NearProtocolConfigNotLoaded } from "./errors";
 
@@ -91,12 +91,23 @@ export const preload = async (): Promise<NearPreloadedData> => {
 
   const [protocolConfig, rawValidators, gasPrice] = await Promise.all([
     getProtocolConfig(),
-    getValidators({ per_page: 200, page: 1 }), // get first 200 validators
+    getValidators(),
     getGasPrice(),
   ]);
 
+  const defautCommission: number = 10;
+
   const validators = await Promise.all(
-    rawValidators.map(async ({ account_id: validatorAddress, stake, commission }) => {
+    rawValidators.map(async ({ account_id: validatorAddress, stake }) => {
+      let commission = defautCommission;
+      try {
+        commission = (await getCommission(validatorAddress)) || defautCommission;
+      } catch (error) {
+        //nope
+        // there are more then 300 call to get the commission
+        // so if one fail we just use the default value
+      }
+
       return {
         validatorAddress,
         tokens: stake,
