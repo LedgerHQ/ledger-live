@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-cosmos
 
+## 6.32.10
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/hw-transport@6.31.14
+
 ## 6.32.10-hotfix.0
 
 ### Patch Changes

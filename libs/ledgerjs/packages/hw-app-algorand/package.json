@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-algorand",
-  "version": "6.31.10-hotfix.0",
+  "version": "6.31.10",
   "description": "Ledger Hardware Wallet Algorand Application API",
   "keywords": [
     "Ledger",

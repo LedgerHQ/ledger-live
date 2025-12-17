@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.1.3
+
 ## 0.4.4-hotfix.0
 
 ### Patch Changes

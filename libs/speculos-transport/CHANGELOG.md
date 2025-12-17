@@ -1,5 +1,14 @@
 # @ledgerhq/speculos-transport
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.14
+  - @ledgerhq/live-dmk-speculos@0.2.1
+
 ## 0.3.1-hotfix.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-xrp
 
+## 7.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/live-network@2.1.3
+
 ## 7.9.1-hotfix.0
 
 ### Patch Changes

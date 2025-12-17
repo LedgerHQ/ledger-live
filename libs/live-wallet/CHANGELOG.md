@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/ledger-key-ring-protocol@0.8.1
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/live-network@2.1.3
+
 ## 0.16.2-hotfix.0
 
 ### Patch Changes
