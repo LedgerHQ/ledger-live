@@ -127,4 +127,5 @@ setSupportedCurrencies([
   "concordium",
   "concordium_testnet",
   "aleo",
+  "aleo_testnet",
 ]);

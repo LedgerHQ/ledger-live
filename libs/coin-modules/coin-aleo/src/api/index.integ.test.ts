@@ -3,7 +3,7 @@ import { createApi } from "../api";
 
 // TODO: implement proper integration tests
 describe("createApi", () => {
-  const api = createApi({}, "aleo");
+  const api = createApi({ nodeUrl: "" }, "aleo");
 
   beforeAll(() => {
     setupCalClientStore();

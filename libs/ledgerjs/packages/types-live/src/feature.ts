@@ -155,6 +155,7 @@ export type CurrencyFeatures = {
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
   currencyAleo: DefaultFeature;
+  currencyAleoTestnet: DefaultFeature;
 };
 
 /**

@@ -9,6 +9,7 @@
 "@ledgerhq/live-signer-aleo": minor
 "@ledgerhq/coin-framework": minor
 "@ledgerhq/live-cli": minor
+"@ledgerhq/live-env": minor
 ---
 
 feat: coin-aleo template

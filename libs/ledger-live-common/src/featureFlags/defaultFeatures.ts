@@ -36,6 +36,7 @@ export const initFeature = <T>(opts?: Feature<T>) => {
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyPolkadot: { enabled: true },
   currencyAleo: DEFAULT_FEATURE,
+  currencyAleoTestnet: DEFAULT_FEATURE,
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,

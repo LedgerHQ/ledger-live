@@ -5,7 +5,7 @@ describe("createApi", () => {
   it("should set the coin config value", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
-    createApi({}, "aleo");
+    createApi({ nodeUrl: "" }, "aleo");
     const config = coinConfig.getCoinConfig();
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
@@ -13,7 +13,7 @@ describe("createApi", () => {
   });
 
   it("should return an API object with alpaca api methods", () => {
-    const api = createApi({}, "aleo");
+    const api = createApi({ nodeUrl: "" }, "aleo");
 
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
