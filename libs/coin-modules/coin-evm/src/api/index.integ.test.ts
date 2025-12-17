@@ -433,7 +433,7 @@ describe("EVM Api (SEI Network)", () => {
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
       },
     };
-    module = createApi(config as EvmConfig, "sei_network_evm");
+    module = createApi(config as EvmConfig, "sei_evm");
   });
 
   describe.each([

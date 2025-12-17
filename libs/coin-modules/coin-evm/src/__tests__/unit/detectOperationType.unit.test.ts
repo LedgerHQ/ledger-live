@@ -36,36 +36,36 @@ describe("isStakingOperation", () => {
   });
 });
 describe("detectEvmStakingOperationType", () => {
-  const contractAddress = "0x0000000000000000000000000000000000001005"; // Example contract address for sei_network_evm
+  const contractAddress = "0x0000000000000000000000000000000000001005"; // Example contract address for sei_evm
 
   it("should return correct OperationType for delegate", () => {
     const fn = "delegate(string)";
     const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
-    const result = detectEvmStakingOperationType("sei_network_evm", contractAddress, methodId);
+    const result = detectEvmStakingOperationType("sei_evm", contractAddress, methodId);
     expect(result).toBe("DELEGATE");
   });
 
   it("should return correct OperationType for redelegate", () => {
     const fn = "redelegate(string,string,uint256)";
     const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
-    const result = detectEvmStakingOperationType("sei_network_evm", contractAddress, methodId);
+    const result = detectEvmStakingOperationType("sei_evm", contractAddress, methodId);
     expect(result).toBe("REDELEGATE");
   });
 
   it("should return undefined for invalid methodId", () => {
-    const result = detectEvmStakingOperationType("sei_network_evm", contractAddress, "0xdeadbeef");
+    const result = detectEvmStakingOperationType("sei_evm", contractAddress, "0xdeadbeef");
     expect(result).toBeUndefined();
   });
 
   it("should return undefined for mismatched contract address", () => {
     const methodId = "0x9ddb511a"; // selector for delegate(address,uint256)
-    const result = detectEvmStakingOperationType("sei_network_evm", "0xDifferentAddress", methodId);
+    const result = detectEvmStakingOperationType("sei_evm", "0xDifferentAddress", methodId);
     expect(result).toBeUndefined();
   });
 
   it("should return undefined if methodId or address is missing", () => {
-    expect(detectEvmStakingOperationType("sei_network_evm", null, "0x1234")).toBeUndefined();
-    expect(detectEvmStakingOperationType("sei_network_evm", contractAddress, null)).toBeUndefined();
+    expect(detectEvmStakingOperationType("sei_evm", null, "0x1234")).toBeUndefined();
+    expect(detectEvmStakingOperationType("sei_evm", contractAddress, null)).toBeUndefined();
   });
 
   it("should return undefined for unknown currencyId", () => {

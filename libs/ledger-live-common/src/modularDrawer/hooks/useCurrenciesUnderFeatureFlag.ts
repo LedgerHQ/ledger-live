@@ -117,7 +117,7 @@ export function useCurrenciesUnderFeatureFlag() {
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
-      sei_network_evm: seiNetworkEvm,
+      sei_evm: seiNetworkEvm,
       berachain: berachain,
       hyperevm: hyperevm,
       coreum,

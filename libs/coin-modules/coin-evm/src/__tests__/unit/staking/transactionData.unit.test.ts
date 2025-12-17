@@ -8,7 +8,7 @@ describe("buildTransactionParams", () => {
   const delegatorAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
 
   describe("SEI Network", () => {
-    const currencyId = "sei_network_evm";
+    const currencyId = "sei_evm";
 
     it("should build params for delegate operation", () => {
       const params = buildTransactionParams(
@@ -155,12 +155,12 @@ describe("buildTransactionParams", () => {
     it("should throw error for unsupported operation type", () => {
       expect(() => {
         buildTransactionParams(
-          "sei_network_evm",
+          "sei_evm",
           "invalidOperation" as StakingOperation,
           validatorAddress,
           amount,
         );
-      }).toThrow("Unsupported transaction type for sei_network_evm: invalidOperation");
+      }).toThrow("Unsupported transaction type for sei_evm: invalidOperation");
     });
   });
 });

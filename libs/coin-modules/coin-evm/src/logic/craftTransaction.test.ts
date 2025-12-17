@@ -323,7 +323,7 @@ describe("craftTransaction", () => {
 
           const { transaction } = await craftTransaction(
             {
-              id: "sei_network_evm",
+              id: "sei_evm",
               ethereumLikeInfo: { chainId: 42 },
             } as CryptoCurrency,
             {
@@ -364,7 +364,7 @@ describe("craftTransaction", () => {
 
           const { transaction } = await craftTransaction(
             {
-              id: "sei_network_evm",
+              id: "sei_evm",
               ethereumLikeInfo: { chainId: 42 },
             } as CryptoCurrency,
             {
@@ -469,7 +469,7 @@ describe("craftTransaction", () => {
       await expect(
         craftTransaction(
           {
-            id: "sei_network_evm",
+            id: "sei_evm",
             ethereumLikeInfo: { chainId: 42 },
           } as CryptoCurrency,
           {
