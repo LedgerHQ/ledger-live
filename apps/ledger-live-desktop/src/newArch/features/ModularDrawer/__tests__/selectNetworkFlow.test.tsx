@@ -30,6 +30,14 @@ const mixedCurrencies = [
   ethereumCurrency,
 ];
 const mixedCurrenciesIds = mixedCurrencies.map(currency => currency.id);
+
+const waitForSkeletonToBeRemoved = async () => {
+  // Wait for the asset list to be rendered (skeletons are replaced with actual content)
+  await waitFor(() => {
+    expect(screen.getByTestId("asset-selector-list-container")).toBeInTheDocument();
+  });
+};
+
 describe("ModularDrawerFlowManager - Select Network Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -43,7 +51,10 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     );
 
     expect(screen.getByText(/select asset/i)).toBeVisible();
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+
+    await waitForSkeletonToBeRemoved();
+
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
   });
 
@@ -55,7 +66,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const bitcoinAsset = screen.getByText(/bitcoin/i);
     await user.click(bitcoinAsset);
 
@@ -70,7 +82,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -88,7 +101,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -107,7 +121,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
 
@@ -131,7 +146,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
 
@@ -162,7 +178,8 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await waitForSkeletonToBeRemoved();
+
     const input = screen.getByRole("textbox");
     await user.type(input, "whatCurrencyAmI");
 
