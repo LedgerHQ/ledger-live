@@ -24,8 +24,8 @@ const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
-  background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => rgba(p.theme.colors.primary.c80, 0.1)};
+  color: ${p => p.theme.colors.primary.c80};
   align-items: center;
   display: flex;
   justify-content: center;
@@ -56,9 +56,9 @@ const ValueWrapper = styled.span`
 `;
 
 const AdvancedMessageArea = styled.pre`
-  border: 1px solid ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
-  background-color: ${p => p.theme.colors.palette.background.default};
-  color: ${p => p.theme.colors.palette.text.shade80};
+  border: 1px solid ${p => rgba(p.theme.colors.primary.c80, 0.1)};
+  background-color: ${p => p.theme.colors.background.default};
+  color: ${p => p.theme.colors.neutral.c80};
   font-size: 9px;
   font-family: monospace;
   overflow-wrap: break-word;
@@ -80,19 +80,13 @@ const MessageProperty = memo(
         flex="1"
         mb={20}
       >
-        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+        <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
           {label}
         </Text>
-        <Text
-          ff="Inter|Medium"
-          color="palette.text.shade90"
-          fontSize={3}
-          pl={2}
-          style={{ maxWidth: "90%" }}
-        >
+        <Text ff="Inter|Medium" color="neutral.c90" fontSize={3} pl={2} style={{ maxWidth: "90%" }}>
           {tokenUnit ? (
             <FormattedVal
-              color={"palette.text.shade90"}
+              color={"neutral.c90"}
               val={Number(value)}
               unit={tokenUnit}
               fontSize={3}
@@ -168,14 +162,14 @@ export default function StepSummary({ account, message: messageData }: StepProps
           <IconWallet size={14} />
         </Circle>
         <Box flex="1">
-          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="send.steps.details.from" />
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={14} currency={account.currency} />
+              <CryptoCurrencyIcon size={20} currency={account.currency} />
             </div>
-            <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
+            <Text ff="Inter" color="neutral.c100" fontSize={4} style={{ flex: 1 }}>
               {accountName}
             </Text>
           </Box>

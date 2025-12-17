@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/TextInput";
@@ -16,7 +16,7 @@ import {
   setAccountName as setAccountNameStore,
 } from "@ledgerhq/live-wallet/store";
 import { walletSelector } from "~/reducers/wallet";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
@@ -31,7 +31,7 @@ type NavigationProps =
   | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
 const EditAccountName = ({ navigation, route }: NavigationProps) => {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const { colors } = useTheme();
   const { t } = useTranslation();

@@ -9,12 +9,17 @@ export const ADD_ACCOUNT_EVENTS_NAME = {
   FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
   FUNDING_ACTIONS: "add account funding actions",
   LOOKING_FOR_ACCOUNTS: "looking for accounts",
+  SELECT_ACCOUNT_TO_ADD: "select account to add",
 } as const;
 
 export type AddAccountEventName =
   (typeof ADD_ACCOUNT_EVENTS_NAME)[keyof typeof ADD_ACCOUNT_EVENTS_NAME];
 
 export type AddAccountEventParams = {
+  [ADD_ACCOUNT_EVENTS_NAME.SELECT_ACCOUNT_TO_ADD]: {
+    source: string;
+    flow: string;
+  };
   [ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED]: {
     button: string;
     page: string;
@@ -68,6 +73,7 @@ export const ADD_ACCOUNT_PAGE_NAME = {
   FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
   FUNDING_ACTIONS: "add account funding actions",
   LOOKING_FOR_ACCOUNTS: "looking for accounts",
+  SELECT_ACCOUNT_TO_ADD: "select account to add",
 } as const;
 
 export type AddAccountPageName = (typeof ADD_ACCOUNT_PAGE_NAME)[keyof typeof ADD_ACCOUNT_PAGE_NAME];

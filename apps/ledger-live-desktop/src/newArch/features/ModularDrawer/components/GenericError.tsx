@@ -11,7 +11,7 @@ export const GenericError = ({ onClick }: Props) => {
 
   return (
     <Container>
-      <Icons.DeleteCircleFill size="M" color={"palette.error.c70"} />
+      <Icons.DeleteCircleFill size="M" color={"error.c70"} />
       <Content>
         <Title>{t("modularAssetDrawer.genericError.title")}</Title>
         <Description>{t("modularAssetDrawer.genericError.description")}</Description>
@@ -31,7 +31,7 @@ const Container = styled.div`
   border-radius: 12px;
   display: flex;
   flex-direction: row;
-  background-color: ${p => p.theme.colors.palette.error.c70a02};
+  background-color: ${p => p.theme.colors.error.c70a02};
 `;
 
 const Content = styled.div`
@@ -44,19 +44,19 @@ const Content = styled.div`
 const Title = styled(Text)`
   font-size: 16px;
   font-weight: 600;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   margin-bottom: 4px;
 `;
 
 const Description = styled(Text)`
   font-size: 14px;
   font-weight: 500;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   margin-bottom: 12px;
 `;
 
 const Cta = styled(Text)`
   font-size: 14px;
   font-weight: 600;
-  color: ${p => p.theme.colors.palette.constant.white};
+  color: ${p => p.theme.colors.constant.white};
 `;

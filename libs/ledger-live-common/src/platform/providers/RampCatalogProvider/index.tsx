@@ -42,7 +42,7 @@ export function useRampCatalogContext() {
 export function RampCatalogProvider({
   children,
   updateFrequency,
-}: RampCatalogProviderProps): JSX.Element {
+}: RampCatalogProviderProps): React.JSX.Element {
   const [state, setState] = useState<Loadable<RampCatalog>>(initialState);
 
   const updateCatalog = useCallback(async () => {

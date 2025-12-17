@@ -57,7 +57,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         id: "dot-hub",
       },
-      hasBeenMigrated: false,
+      hasBeenMigrated: true,
     },
   },
   config_currency_westend: {

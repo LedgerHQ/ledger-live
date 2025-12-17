@@ -1,5 +1,5 @@
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import {
   TrustchainEjected,
   TrustchainNotAllowed,

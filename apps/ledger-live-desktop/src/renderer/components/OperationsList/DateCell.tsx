@@ -26,7 +26,7 @@ type Props = {
   editable?: boolean;
 };
 
-const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JSX.Element => {
+const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): React.JSX.Element => {
   if (displayWarning) {
     return (
       <Box style={{ verticalAlign: "sub", display: "inline" }}>
@@ -38,7 +38,7 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JS
   return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
 };
 
-const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX.Element => {
+const DateCell = ({ t, family, operation, compact, text, editable }: Props): React.JSX.Element => {
   const ellipsis = {
     display: "block",
     textOverflow: "ellipsis",
@@ -51,7 +51,7 @@ const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX
       <Box
         ff="Inter|SemiBold"
         fontSize={3}
-        color="palette.text.shade80"
+        color="neutral.c80"
         style={ellipsis}
         data-testid={`operation-status-${operation.id}`}
       >
@@ -59,8 +59,8 @@ const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX
           t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
       </Box>
       {editable ? (
-        <Box fontSize={3} color="palette.text.shade80">
-          <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
+        <Box fontSize={3} color="neutral.c80">
+          <Box ff="Inter|SemiBold" fontSize={3} color="neutral.c80" style={ellipsis}>
             <PendingLoadingIcon displayWarning={isStuckOperation({ family, operation })} />
             <Box
               style={{

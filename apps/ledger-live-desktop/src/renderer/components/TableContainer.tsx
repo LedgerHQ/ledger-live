@@ -19,17 +19,17 @@ const TableHeaderRow = styled(Box).attrs(() => ({
   alignItems: "center",
   alignContent: "center",
 }))`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 export const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.02)};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.02)};
 `;
 const TableHeaderTitle = styled(Text).attrs(() => ({
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|Medium",
 }))`
   font-size: 14px;

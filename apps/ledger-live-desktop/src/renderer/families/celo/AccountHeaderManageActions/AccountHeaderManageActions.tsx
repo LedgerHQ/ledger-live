@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { IconType } from "../../types";
 import { CeloFamily } from "../types";
-import Icon from "./Icon";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 
 const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
   account,
@@ -45,7 +45,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
     {
       key: "Stake",
       onClick: onClick,
-      icon: (props: IconType) => <Icon {...props} isDisabled={isRegistrationPending} />,
+      icon: (props: IconType) => <CryptoCurrencyIcon {...props} />,
       disabled: isRegistrationPending,
       label,
       tooltip: disabledLabel,

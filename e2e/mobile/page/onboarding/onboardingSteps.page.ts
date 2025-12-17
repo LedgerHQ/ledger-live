@@ -1,4 +1,4 @@
-import { isIos } from "helpers/commonHelpers";
+import { isIos } from "../../helpers/commonHelpers";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";

@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {
@@ -14,7 +14,7 @@ import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWa
  */
 export const useNoNanoBuyNanoWallScreenOptions = ():
   | {
-      component: () => JSX.Element;
+      component: () => React.JSX.Element;
       options: NativeStackNavigationOptions;
     }
   | object => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import { isAccountEmpty, getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";

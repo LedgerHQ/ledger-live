@@ -37,11 +37,11 @@ export const Title = (props: TextProps & { children?: React.ReactNode }) => (
 );
 
 export const SubTitle = (props: TextProps & { children?: React.ReactNode }) => (
-  <Text variant="body" mb={2} color="palette.neutral.c80" {...props} />
+  <Text variant="body" mb={2} color="neutral.c80" {...props} />
 );
 
 export const BorderFlex: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex)`
-  border: 1px solid ${p => p.theme.colors.palette.neutral.c40};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 
@@ -54,7 +54,7 @@ export const IconContainer: StyledComponent<"div", DefaultTheme, BoxProps> = sty
   justifyContent: "center",
   alignItems: "center",
 })`
-  color: ${p => p.theme.colors.palette.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
 `;
 
 export const Row: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex).attrs({
@@ -83,12 +83,12 @@ export const Bullet = ({
   return (
     <Row mb={8}>
       <IconContainer>
-        {icon ? <Icon name={icon} size={18} color="palette.neutral.c100" /> : bulletText}
+        {icon ? <Icon name={icon} size={18} color="neutral.c100" /> : bulletText}
       </IconContainer>
       <Column flex="1" ml={4}>
         <Text variant="body">{text}</Text>
         {subText && (
-          <Text mt={2} variant="small" color="palette.neutral.c80">
+          <Text mt={2} variant="small" color="neutral.c80">
             {subText}
           </Text>
         )}
@@ -115,7 +115,7 @@ export const CheckStep = ({
 );
 
 const Footer = styled(Column).attrs({ flex: "1", p: 8 })`
-  border-top: 1px solid ${p => p.theme.colors.palette.constant.black};
+  border-top: 1px solid ${p => p.theme.colors.constant.black};
   cursor: pointer;
 `;
 
@@ -124,12 +124,12 @@ export const AsideFooter = ({ text, ...props }: { text: string }) => {
   return (
     <Footer {...props}>
       <Row mb={4}>
-        <Text mr={2} variant="large" color="palette.constant.black">
+        <Text mr={2} variant="large" color="constant.black">
           {t("common.needHelp")}
         </Text>
-        <Icon name="LifeRing" size={18} color="palette.constant.black" />
+        <Icon name="LifeRing" size={18} color="constant.black" />
       </Row>
-      <Text variant="small" color="palette.constant.black">
+      <Text variant="small" color="constant.black">
         {text}
       </Text>
     </Footer>

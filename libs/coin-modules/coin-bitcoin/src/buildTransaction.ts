@@ -32,7 +32,7 @@ export const buildTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<WalletTxInfo> => {
-  const { feePerByte, recipient, opReturnData, utxoStrategy } = transaction;
+  const { feePerByte, recipient, opReturnData, utxoStrategy, changeAddress } = transaction;
 
   if (!feePerByte) {
     throw new FeeNotLoaded();
@@ -60,6 +60,7 @@ export const buildTransaction = async (
     // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
     sequence: transaction.rbf ? 0 : 0xffffffff,
     opReturnData,
+    changeAddress,
   });
 
   log("btcwallet", "txInfo", txInfo);

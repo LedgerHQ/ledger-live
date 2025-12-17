@@ -230,7 +230,7 @@ export function useCustomExchangeHandlers({
               // If manifest not found, default to "encoded" (safer fallback)
               results[liveAppId] = "encoded";
             }
-          } catch (error) {
+          } catch {
             // On error, default to "encoded" format
             results[liveAppId] = "encoded";
           }

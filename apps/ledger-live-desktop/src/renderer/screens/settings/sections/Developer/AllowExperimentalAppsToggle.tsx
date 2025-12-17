@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { allowExperimentalAppsSelector } from "~/renderer/reducers/settings";
 import { setAllowExperimentalApps } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
+
 const AllowExperimentalAppsToggle = () => {
   const dispatch = useDispatch();
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
@@ -15,7 +16,7 @@ const AllowExperimentalAppsToggle = () => {
     <>
       <Track onUpdate event="AllowExperimentalApps" />
       <Switch
-        isChecked={allowExperimentalApps}
+        selected={allowExperimentalApps}
         onChange={onSetAllowExperimentalApps}
         data-testid="settings-allow-experimental-apps"
       />

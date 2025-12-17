@@ -123,10 +123,10 @@ const ActivityIndicatorInner = () => {
           isError
             ? "alertRed"
             : isRotating
-              ? "palette.text.shade60"
+              ? "neutral.c70"
               : areAllAccountsUpToDate
                 ? "positiveGreen"
-                : "palette.text.shade60"
+                : "neutral.c70"
         }
       >
         {getIcon()}

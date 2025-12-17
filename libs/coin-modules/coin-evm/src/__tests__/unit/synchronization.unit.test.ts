@@ -1180,6 +1180,8 @@ describe("EVM Family", () => {
           gasUsed: "0",
           value: "0",
           status: 1,
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
         }));
 
         const expectedAddition = {
@@ -1221,6 +1223,8 @@ describe("EVM Family", () => {
           gasUsed: "0",
           value: "0",
           status: 1,
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")

@@ -91,7 +91,7 @@ export const getFiltersForMessage = async (
     }
     // Fall through to static fallback
     throw new Error("No CAL service URL");
-  } catch (e) {
+  } catch {
     // Static fallback from injected signatures (for external library users)
     const messageId = `${message.domain?.chainId ?? 0}:${verifyingContract}:${schemaHash}`;
 

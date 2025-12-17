@@ -17,7 +17,7 @@ const Container = styled.div`
   width: 100%;
   height: 32px;
   position: relative;
-  border: 1px solid ${p => p.theme.colors.palette.primary.main};
+  border: 1px solid ${p => p.theme.colors.primary.c80};
   border-radius: 32px;
   overflow: hidden;
 `;
@@ -50,7 +50,7 @@ const Indicator = styled.div.attrs<{
 }>`
   flex: ${p => 1 / p.length};
   height: 32px;
-  background-color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => p.theme.colors.primary.c80};
   transition: transform 200ms ease-in;
   will-change: transform;
 `;
@@ -60,7 +60,7 @@ const Label = styled(Text).attrs<{
 }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
-  color: p.active ? "palette.primary.contrastText" : "palette.primary.main",
+  color: p.active ? "neutral.c00" : "primary.c80",
 }))<{ active: boolean }>`
   transition: color 100ms 100ms ease-out;
 `;

@@ -16,7 +16,7 @@ type VideoBackgroundProps = {
 /**
  * VideoBackground component to display a video background with a title.
  * @param param0 {VideoBackgroundProps} - Props for the VideoBackground component.
- * @returns JSX.Element
+ * @returns React.JSX.Element
  */
 export function VideoBackground({
   videoSource,

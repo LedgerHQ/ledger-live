@@ -43,7 +43,7 @@ const transitionStyles = {
 };
 const DrawerContent = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
   style: transitionStyles[state as keyof typeof transitionStyles],
-  bg: "palette.background.paper",
+  bg: "background.card",
 }))<{ state: TransitionStatus; direction: "left" | "right" }>`
   position: absolute;
   top: 0;
@@ -80,7 +80,7 @@ const transitionContainerStyles = {
 const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
   style: transitionContainerStyles[state as keyof typeof transitionContainerStyles],
 }))<{ state: TransitionStatus }>`
-  color: ${p => p.theme.colors.palette.text.shade90};
+  color: ${p => p.theme.colors.neutral.c90};
   position: fixed;
   left: 0;
   top: 0;

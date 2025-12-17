@@ -21,7 +21,6 @@ import {
   Commitment,
   GetLatestBlockhashConfig,
 } from "@solana/web3.js";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
@@ -191,41 +190,32 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByStakeAuth: makeLRUCache(
-      (authAddr: string) =>
-        connection
-          .getParsedProgramAccounts(StakeProgram.programId, {
-            filters: [
-              {
-                memcmp: {
-                  offset: 12,
-                  bytes: authAddr,
-                },
+    getStakeAccountsByStakeAuth: (authAddr: string) =>
+      connection
+        .getParsedProgramAccounts(StakeProgram.programId, {
+          filters: [
+            {
+              memcmp: {
+                offset: 12,
+                bytes: authAddr,
               },
-            ],
-          })
-          .catch(remapErrors),
-      (addr: string) => addr,
-      minutes(3),
-    ),
-
-    getStakeAccountsByWithdrawAuth: makeLRUCache(
-      (authAddr: string) =>
-        connection
-          .getParsedProgramAccounts(StakeProgram.programId, {
-            filters: [
-              {
-                memcmp: {
-                  offset: 44,
-                  bytes: authAddr,
-                },
+            },
+          ],
+        })
+        .catch(remapErrors),
+    getStakeAccountsByWithdrawAuth: (authAddr: string) =>
+      connection
+        .getParsedProgramAccounts(StakeProgram.programId, {
+          filters: [
+            {
+              memcmp: {
+                offset: 44,
+                bytes: authAddr,
               },
-            ],
-          })
-          .catch(remapErrors),
-      (addr: string) => addr,
-      minutes(3),
-    ),
+            },
+          ],
+        })
+        .catch(remapErrors),
 
     getInflationReward: (addresses: string[]) =>
       connection.getInflationReward(addresses.map(addr => new PublicKey(addr))).catch(remapErrors),

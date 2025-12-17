@@ -70,7 +70,7 @@
   },
   "overrides": {
     "@ethersproject/providers": {
-      "ws": "7.5.10"
+      "ws": "8.18.3"
     }
   }
 }

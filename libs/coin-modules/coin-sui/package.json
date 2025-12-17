@@ -143,7 +143,7 @@
     "@mysten/sui": "1.38.0",
     "bignumber.js": "^9.1.2",
     "lodash": "4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

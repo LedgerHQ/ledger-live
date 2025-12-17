@@ -12,8 +12,7 @@ const SvgComponent = (props: SvgProps) => {
       <Rect
         width={51.5}
         height={51.5}
-        x={0.25}
-        y={0.25}
+        transform={[{ translateX: 0.25 }, { translateY: 0.25 }]}
         stroke="url(#b)"
         strokeOpacity={0.16}
         strokeWidth={0.5}
@@ -22,8 +21,7 @@ const SvgComponent = (props: SvgProps) => {
       <Rect
         width={37.741}
         height={37.741}
-        x={7.259}
-        y={7.256}
+        transform={[{ translateX: 7.259 }, { translateY: 7.256 }]}
         fill={colors.primary.c80}
         fillOpacity={0.08}
         rx={8.709}

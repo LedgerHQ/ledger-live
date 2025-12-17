@@ -1,7 +1,7 @@
 import { OpKind } from "@taquito/rpc";
-import { craftTransaction } from ".";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { craftTransaction } from ".";
 
 /**
  * https://teztnets.com/ghostnet-about

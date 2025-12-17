@@ -72,6 +72,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     parentRecipients?: string[];
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
+    internal?: boolean;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -106,6 +107,11 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
+
+  if (op.details?.internal === true) {
+    extra.internal = op.details?.internal;
+  }
+
   const bnFees = new BigNumber(op.tx.fees.toString());
   const hasFailed = op.tx.failed;
 
@@ -214,6 +220,7 @@ export function transactionToIntent(
       transaction.nonce !== null && transaction.nonce !== undefined
         ? BigInt(transaction.nonce.toString())
         : undefined,
+    sponsored: transaction.sponsored,
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
@@ -265,8 +272,11 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     family: transaction.family,
   };
 
-  if ("useAllAmount" in transaction) {
-    raw.useAllAmount = transaction.useAllAmount;
+  const booleanFieldsToPropagate = ["useAllAmount", "sponsored"] as const;
+  for (const field of booleanFieldsToPropagate) {
+    if (field in transaction) {
+      raw[field] = transaction[field];
+    }
   }
 
   const stringFieldsToPropagate = [
@@ -296,6 +306,7 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     "gasPrice",
     "maxFeePerGas",
     "maxPriorityFeePerGas",
+    "additionalFees",
   ] as const;
   for (const field of bigNumberFieldsToPropagate) {
     if (field in transaction) {
@@ -407,11 +418,12 @@ export const buildOptimisticOperation = (
         hash: "",
         type,
         value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
-        fee: new BigNumber(0),
+        fee: new BigNumber(fees.toString()),
         blockHash: null,
         blockHeight: null,
         senders: [account.freshAddress],
         recipients: [transaction.recipient],
+        transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
         accountId: subAccountId,
         date: new Date(),
         transactionRaw: toGenericTransactionRaw({

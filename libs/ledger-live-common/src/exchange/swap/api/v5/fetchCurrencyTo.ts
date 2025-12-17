@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";

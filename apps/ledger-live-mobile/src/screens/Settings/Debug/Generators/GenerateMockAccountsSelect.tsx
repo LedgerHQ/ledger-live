@@ -9,7 +9,7 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { replaceAccounts } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -107,7 +107,7 @@ export const GenerateMockAccountSelectScreen = () => {
                 checked={checkedCurrencies[id]}
                 label={
                   <Flex flexDirection="row" alignItems="center" pt={2}>
-                    <CurrencyIcon circle size={32} currency={currency} />
+                    <CurrencyIcon size={32} currency={currency} />
                     <Text style={{ marginLeft: 5 }}>{name}</Text>
                   </Flex>
                 }

@@ -6,10 +6,10 @@ const BASE_SIZE = 16;
 
 type Props = SvgProps & { size?: number; outline?: ColorValue };
 
-export function Kiln({ size = BASE_SIZE, outline }: Props): JSX.Element {
+export function Kiln({ size = BASE_SIZE, outline }: Props): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <Rect y="0.00390625" width="32" height="32" rx="8" fill="#FBFBFB" />
+      <Rect transform={[{ translateY: 0.00390625 }]} width="32" height="32" rx="8" fill="#FBFBFB" />
       <Path
         d="M15.2991 11.3666C15.4097 11.2539 15.5619 11.1851 15.7309 11.1851C15.8999 11.1851 16.05 11.2519 16.1585 11.3624L18.8409 14.0448C19.0578 14.2617 19.4103 14.2617 19.6272 14.0448L21.761 11.911C21.978 11.694 21.978 11.3415 21.761 11.1246L17.2911 6.64842C16.4318 5.78907 15.0363 5.78907 14.177 6.64842L9.70079 11.1246C9.48385 11.3415 9.48385 11.694 9.70079 11.911L11.8346 14.0448C12.0515 14.2617 12.404 14.2617 12.6209 14.0448L15.2991 11.3666Z"
         fill="#FF6521"
@@ -19,8 +19,7 @@ export function Kiln({ size = BASE_SIZE, outline }: Props): JSX.Element {
         fill="#202020"
       />
       <Rect
-        x="0.5"
-        y="0.503906"
+        transform={[{ translateX: 0.5 }, { translateY: 0.503906 }]}
         width="31"
         height="31"
         rx="7.5"

@@ -24,7 +24,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;
@@ -40,7 +40,7 @@ const AmountField = ({ account, status: { amount }, field }: FieldComponentProps
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         unit={unit}
         val={amount}
         fontSize={3}
@@ -59,7 +59,7 @@ const FeesField = ({ account, parentAccount, status, field }: FieldComponentProp
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         disableRounding
         unit={feesUnit}
         val={estimatedFees}
@@ -125,7 +125,7 @@ const TransactionConfirm = ({
   status,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
 
   const { fields, loading } = useDeviceTransactionConfig({
     account,

@@ -76,7 +76,7 @@ const Receive1ShareAddress = ({
             flex: 1,
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           {name ? (
@@ -113,7 +113,7 @@ const Receive1ShareAddress = ({
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
@@ -122,7 +122,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
             flexShrink: "unset",
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           <span

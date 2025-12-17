@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, LayoutChangeEvent } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -9,12 +9,11 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -42,7 +41,7 @@ export default function ConnectDevice({
   navigation,
   route,
 }: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
   const action = useAppDeviceAction();

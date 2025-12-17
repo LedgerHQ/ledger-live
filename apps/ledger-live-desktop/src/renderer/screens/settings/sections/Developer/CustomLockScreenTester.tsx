@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
@@ -30,7 +30,12 @@ const CustomLockScreenTester = () => {
       >
         <Flex columnGap={2}>
           {supportedDeviceModelIds.map(deviceModelId => (
-            <Button small primary onClick={() => onClickButton(deviceModelId)} key={deviceModelId}>
+            <Button
+              size="sm"
+              appearance="accent"
+              onClick={() => onClickButton(deviceModelId)}
+              key={deviceModelId}
+            >
               {getDeviceModel(deviceModelId)?.productName}
             </Button>
           ))}

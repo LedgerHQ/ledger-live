@@ -60,7 +60,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
             onResult({ imageBase64DataUri: reader.result });
         };
         reader.readAsDataURL(file);
-      } catch (e) {
+      } catch {
         onError(new ImageLoadFromFileError());
       }
       return () => {

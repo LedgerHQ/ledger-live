@@ -4,14 +4,15 @@ import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
 
-import { NavigatorName } from "~/const";
+import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
 import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetOverriddenFeatureFlagPlayload,
-} from "~/actions/types";
+} from "../../../apps/ledger-live-mobile/src/actions/types";
 import { FeatureId } from "@ledgerhq/types-live";
 import { log as detoxLog } from "detox";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const RESPONSE_TIMEOUT = 10000;
 
@@ -188,7 +189,7 @@ export async function addKnownSpeculos(proxyAddress: string) {
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address: proxyAddress, model: process.env.SPECULOS_DEVICE }),
+    payload: JSON.stringify({ address: proxyAddress, model: getSpeculosModel() }),
   });
 }
 

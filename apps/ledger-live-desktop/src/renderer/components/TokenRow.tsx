@@ -34,7 +34,7 @@ const NestedRow = styled(Box)`
     margin-bottom: 0px;
   }
   :active {
-    background: ${p => p.theme.colors.palette.action.hover};
+    background: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;
 function TokenRow(props: Props) {

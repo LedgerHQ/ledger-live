@@ -7,10 +7,7 @@ const TopGradientBox = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(
-    ${p => p.theme.colors.palette.background.paper} 40%,
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(${p => p.theme.colors.background.card} 40%, rgba(255, 255, 255, 0));
   z-index: 2;
   pointer-events: none;
 `;

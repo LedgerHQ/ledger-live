@@ -8,7 +8,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
   counterValueCurrency: Currency;
-  headerText: JSX.Element | string;
+  headerText: React.JSX.Element | string;
 };
 
 function ReadOnlyGraphCard({ counterValueCurrency, headerText }: Props) {

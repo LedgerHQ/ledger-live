@@ -13,11 +13,13 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { receive } from "./receive";
+import { getPreloadStrategy, hydrate, preload } from "../preload";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, buildIterateResult, postSync } from "./synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import resolver from "../signer/index";
 import type { Transaction, TransactionStatus, HederaSigner, HederaAccount } from "../types";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -29,8 +31,9 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
+    preload,
+    hydrate,
+    getPreloadStrategy,
     scanAccounts,
   };
 }
@@ -60,6 +63,7 @@ function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

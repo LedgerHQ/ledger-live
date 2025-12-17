@@ -25,6 +25,7 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -222,6 +223,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   estimateMaxSpendable,
   getSerializedAddressParameters,
+  validateAddress,
 };
 export default {
   currencyBridge,

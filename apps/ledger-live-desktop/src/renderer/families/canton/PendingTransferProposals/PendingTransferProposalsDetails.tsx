@@ -14,14 +14,15 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
   OpDetailsData,
-  B,
   HashContainer,
   GradientHover,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import { useTimeRemaining } from "./utils";
+import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import type { TransferProposalAction } from "./types";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 type PendingProposal = {
   contract_id: string;
@@ -33,17 +34,19 @@ type PendingProposal = {
   isExpired: boolean;
 };
 
-type Props = {
+export type PendingTransferProposalsDetailsProps = {
   onClose?: () => void;
   account: Account;
+  parentAccount: Account;
   contractId: string;
-  onOpenModal: (contractId: string, action: "accept" | "reject" | "withdraw") => void;
+  onOpenModal: (contractId: string, action: TransferProposalAction) => void;
 };
 
-const PendingTransferProposalsDetails: React.FC<Props> = ({
+const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsProps> = ({
   account,
   contractId,
   onClose,
+  parentAccount,
   onOpenModal,
 }) => {
   const { t } = useTranslation();
@@ -112,7 +115,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
     );
   }
 
-  const isIncoming = proposal.sender !== account.xpub;
+  const isIncoming = proposal.sender !== parentAccount.xpub;
 
   return (
     <Box flow={3} px={20} mt={20}>
@@ -126,7 +129,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
               showCode
               fontSize={4}
               alwaysShowSign
-              color={isIncoming ? undefined : "palette.text.shade80"}
+              color={isIncoming ? undefined : "neutral.c80"}
             />
           </Box>
         </OpDetailsData>
@@ -184,7 +187,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
         </OpDetailsSection>
       )}
 
-      <B />
+      <Divider />
 
       <OpDetailsSection>
         <OpDetailsTitle>
@@ -200,7 +203,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
         </OpDetailsData>
       </OpDetailsSection>
 
-      <B />
+      <Divider />
 
       <Box horizontal mt={4} flow={2} justifyContent="center">
         {isIncoming ? (

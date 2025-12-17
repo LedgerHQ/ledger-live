@@ -2,7 +2,7 @@ import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
 export class SendModal extends Modal {
-  private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
+  private drowdownAccount = this.page.locator("#account-debit-placeholder");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly inputError = this.page.locator("id=input-error");
   readonly senderError = this.page.getByTestId("sender-error");

@@ -24,7 +24,7 @@ const RunAsAdminSolution = ({ number = 1 }: { number?: number }) => {
       <Content>
         <Illustration image={illustration} />
         <Box flex={2}>
-          <Text mb={3} ff="Inter|SemiBold" color="palette.text.shade90" fontSize={5}>
+          <Text mb={3} ff="Inter|SemiBold" color="neutral.c90" fontSize={5}>
             {t("connectTroubleshooting.followSteps")}
           </Text>
           {bullets.map((bullet, i) => (

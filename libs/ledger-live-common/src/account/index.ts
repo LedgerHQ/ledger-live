@@ -16,3 +16,9 @@ export * from "./formatters";
 export * from "./helpers";
 export * from "./serialization";
 export * from "./support";
+export {
+  RecentAddressesStore,
+  getRecentAddressesStore,
+  setupRecentAddressesStore,
+  RecentAddressesCache,
+} from "./recentAddresses";

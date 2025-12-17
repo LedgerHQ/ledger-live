@@ -39,7 +39,7 @@
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "@types/bs58": "catalog:",
     "bs58": "catalog:",
-    "rxjs": "7.8.1",
+    "rxjs": "catalog:",
     "semver": "^7"
   },
   "scripts": {

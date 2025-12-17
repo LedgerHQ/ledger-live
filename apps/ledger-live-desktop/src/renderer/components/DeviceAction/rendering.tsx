@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import React, { Fragment, useCallback, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { connect, useDispatch } from "react-redux";
@@ -131,9 +132,9 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
   justify-content: center;
   color: ${p =>
     p.info
-      ? p.theme.colors.palette.primary.main
+      ? p.theme.colors.primary.c80
       : p.warning
-        ? p.theme.colors.warning
+        ? p.theme.colors.legacyWarning
         : p.theme.colors.alertRed};
 `;
 
@@ -157,7 +158,7 @@ export const Footer = styled.div`
 
 export const Title = styled(Text).attrs({
   fontWeight: "semiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 6,
 })`
@@ -173,7 +174,7 @@ const BulletText = styled(Text).attrs({
 
 export const SubTitle = styled(Text).attrs({
   variant: "paragraph",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 3,
 })`
@@ -187,7 +188,7 @@ export const SubTitle = styled(Text).attrs({
 const ErrorTitle = styled(Text).attrs({
   variant: "paragraph",
   fontWeight: "semiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 6,
 })`
@@ -202,7 +203,7 @@ const ErrorTitle = styled(Text).attrs({
  * */
 const ErrorDescription = styled(Text).attrs({
   variant: "paragraph",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   textAlign: "center",
   fontSize: 4,
   whiteSpace: "pre-wrap",
@@ -251,7 +252,7 @@ const Circle = styled(Flex)`
 const Separator = styled.div`
   width: calc(100% + 60px);
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  background-color: ${({ theme }) => theme.colors.neutral.c30};
   margin: 24px -30px;
 `;
 
@@ -264,7 +265,7 @@ const DeviceSwapSummaryStyled = styled.section`
 
 const DeviceSwapSummaryValueStyled = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  color: ${({ theme }) => theme.colors.palette.text.shade100};
+  color: ${({ theme }) => theme.colors.neutral.c100};
   font-size: 14px;
   justify-self: flex-end;
   max-width: 100%;
@@ -825,7 +826,7 @@ export const renderError = ({
   inlineRetry?: boolean;
   withDescription?: boolean;
   stretch?: boolean;
-  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => React.JSX.Element;
 }) => {
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -1025,10 +1026,10 @@ export const HardwareUpdate = ({
       <Image resource={Nano} alt="NanoS" mb="40px"></Image>
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
-      <Title variant="body" color="palette.text.shade100">
+      <Title variant="body" color="neutral.c100">
         <Trans i18nKey={i18nKeyTitle} values={i18nKeyValues} />
       </Title>
-      <Text variant="body" color="palette.text.shade60" textAlign="center">
+      <Text variant="body" color="neutral.c70" textAlign="center">
         <Trans i18nKey={i18nKeyDescription} values={i18nKeyValues} />
       </Text>
     </Flex>
@@ -1075,7 +1076,7 @@ const renderFirmwareUpdatingBase = ({
         <Flex alignItems="flex-start" flexDirection="column">
           <Flex alignItems="center">
             <Circle mr={6}>
-              <Text color="palette.text.shade100" variant="body">
+              <Text color="neutral.c100" variant="body">
                 {"1"}
               </Text>
             </Circle>
@@ -1088,7 +1089,7 @@ const renderFirmwareUpdatingBase = ({
           </Flex>
           <Flex alignItems="center" mt={6}>
             <Circle mr={6}>
-              <Text color="palette.text.shade100" variant="body">
+              <Text color="neutral.c100" variant="body">
                 {"2"}
               </Text>
             </Circle>
@@ -1146,7 +1147,7 @@ const SwapConfirmationDetailedView: React.FC<{
     <DeviceSwapSummaryStyled data-testid="device-swap-summary">
       {deviceSwapSummaryFields.map(([key, value]) => (
         <Fragment key={key}>
-          <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
+          <Text fontWeight="medium" color="neutral.c60" fontSize="14px">
             <Trans i18nKey={`DeviceAction.swap2.${key}`} />
           </Text>
           <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
@@ -1167,7 +1168,7 @@ const SwapConfirmationSimpleView: React.FC<{
     <Text fontSize="24px" fontWeight="semiBold" textAlign="center">
       <Trans i18nKey="DeviceAction.swap.confirmSwap" />
     </Text>
-    <Text color="palette.text.shade60" fontSize="14px" textAlign="center">
+    <Text color="neutral.c70" fontSize="14px" textAlign="center">
       <Trans i18nKey={`DeviceAction.swap.simpleViewNotice.${noticeType.message}`} />
     </Text>
   </DeviceSwapSummaryContainer>
@@ -1274,9 +1275,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     sourceAccount: (
       <>
-        {sourceAccountCurrency && (
-          <CryptoCurrencyIcon circle currency={sourceAccountCurrency} size={18} />
-        )}
+        {sourceAccountCurrency && <CryptoCurrencyIcon currency={sourceAccountCurrency} size={25} />}
         <EllipsesTextStyled textTransform={"capitalize"} title={sourceAccountName}>
           {sourceAccountName}
         </EllipsesTextStyled>
@@ -1284,9 +1283,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     targetAccount: (
       <>
-        {targetAccountCurrency && (
-          <CryptoCurrencyIcon circle currency={targetAccountCurrency} size={18} />
-        )}
+        {targetAccountCurrency && <CryptoCurrencyIcon currency={targetAccountCurrency} size={25} />}
         <EllipsesTextStyled textTransform={"capitalize"} title={targetAccountName}>
           {targetAccountName}
         </EllipsesTextStyled>
@@ -1346,7 +1343,7 @@ export const renderSecureTransferDeviceConfirmation = ({
     </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
-      <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
+      <Text textAlign="center" fontWeight="semiBold" color="neutral.c100" fontSize={5}>
         <Trans i18nKey={`DeviceAction.${exchangeType}.confirm`} />
       </Text>
     </Box>

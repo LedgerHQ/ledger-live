@@ -2,7 +2,7 @@ import {
   memberCredentialsSelector,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";

@@ -19,10 +19,12 @@ apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 apps/cli/src/commands/live                               @ledgerhq/live-hub
 apps/ledger-live-desktop/                                @ledgerhq/live-hub
 apps/ledger-live-mobile/                                 @ledgerhq/live-hub
+apps/web-tools/                                          @ledgerhq/live-hub
 libs/**/errors/                                          @ledgerhq/live-hub
 libs/**/logs/                                            @ledgerhq/live-hub
 libs/**/types-live/                                      @ledgerhq/live-hub
 libs/env/                                                @ledgerhq/live-hub
+libs/identities/                                         @ledgerhq/live-hub
 libs/ledger-live-common/src/                             @ledgerhq/live-hub
 libs/live-countervalues-react/                           @ledgerhq/live-hub
 libs/live-countervalues/                                 @ledgerhq/live-hub
@@ -45,7 +47,6 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
-apps/web-tools/                                          @ledgerhq/coin-integration
 libs/coin-*/                                             @ledgerhq/coin-integration
 libs/domain-service/                                     @ledgerhq/coin-integration
 libs/evm-tools/                                          @ledgerhq/coin-integration
@@ -165,6 +166,7 @@ apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/liv
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
+apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
 libs/**/devices/                                                   @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
@@ -184,7 +186,6 @@ libs/live-dmk-mobile/                                              @ledgerhq/liv
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
-
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/                                @ledgerhq/recover-software
@@ -213,8 +214,9 @@ apps/web-tools/trustchain/                               @ledgerhq/live-hub
 
 # UI tests
 apps/ledger-live-desktop/tests/                                             @ledgerhq/live-hub
-apps/ledger-live-mobile/e2e/                                                @ledgerhq/live-hub
 e2e/                                                                        @ledgerhq/qaa
+apps/ledger-live-mobile/e2e/                                                @ledgerhq/live-hub
+tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/

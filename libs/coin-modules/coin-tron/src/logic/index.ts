@@ -6,3 +6,4 @@ export * from "./getBalance";
 export * from "./listOperations";
 export * from "./lastBlock";
 export * from "./getAccount";
+export * from "./validateAddress";

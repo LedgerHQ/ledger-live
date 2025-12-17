@@ -1,7 +1,7 @@
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -65,7 +65,7 @@ export function useOpenAssetFlow(
     (
       currency: CryptoOrTokenCurrency,
       autoCloseDrawer: boolean = true,
-      onAccountSelected?: (account: Account) => void,
+      onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void,
     ) => {
       dispatch(setFlowValue("add account"));
       dispatch(setSourceValue(source));
@@ -98,7 +98,7 @@ export function useOpenAssetFlow(
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
-        autoCloseDrawer && setDrawer();
+        if (autoCloseDrawer) setDrawer();
         dispatch(
           openModal("MODAL_ADD_ACCOUNTS", {
             currency: cryptoCurrency,

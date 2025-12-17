@@ -32,13 +32,14 @@
     "src/bridge/prepareTransaction.ts",
     "src/bridge/signOperation.ts",
     "src/bridge/synchronization.ts",
-    "src/bridge/updateTransaction.ts",
+    "src/bridge/validateAddress.ts",
     "src/config.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/logic/base32.ts",
     "src/logic/bip32.ts",
+    "src/logic/constants.ts",
     "src/logic/getAllTransactions.ts",
     "src/logic/getFeeRate.ts",
     "src/logic/index.ts",
@@ -59,13 +60,14 @@
     "src/network/getVirtualChainBlueScore.ts",
     "src/network/index.ts",
     "src/network/submitTransaction.ts",
-    "src/test/cli.ts",
-    "src/transaction.ts",
     "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
     "src/test/index.ts",
-    "src/logic/constants.ts"
+    "src/transaction.ts"
   ],
-  "ignoreUnresolved": ["follow-redirects"],
+  "ignoreUnresolved": [
+    "follow-redirects"
+  ],
   "ignoreUnused": [
     "@bitcoinerlab/secp256k1",
     "@ledgerhq/coin-framework",

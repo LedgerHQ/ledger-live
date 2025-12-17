@@ -27,6 +27,7 @@
     ".": "./lib/index.js",
     "./lib/*": "./lib/*.js",
     "./lib/*/": "./lib/*/index.js",
+    "./pre-ldls": "./lib/pre-ldls/index.js",
     "./*": "./lib/*.js",
     "./*/": "./lib/*/index.js",
     "./package.json": "./package.json"
@@ -56,8 +57,7 @@
     "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {
-    "@ledgerhq/crypto-icons": "1.1.3",
-    "@ledgerhq/crypto-icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",

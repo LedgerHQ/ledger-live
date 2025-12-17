@@ -17,7 +17,7 @@ jest.mock("./node", () => ({
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
-const currency = getCryptoCurrencyById("polkadot");
+const currency = getCryptoCurrencyById("assethub_polkadot");
 
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
@@ -34,15 +34,16 @@ describe("getAccount", () => {
         url: SIDECAR_BASE_URL_TEST,
       },
       indexer: {
-        url: "https://polkadot.coin.ledger.com",
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
       },
       metadataShortener: {
-        id: "dot",
+        id: "dot-hub",
         url: "",
       },
       metadataHash: {
         url: "",
       },
+      hasBeenMigrated: true,
     }));
 
     mockServer.listen({ onUnhandledRequest: "error" });
@@ -77,7 +78,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -131,7 +132,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -227,7 +228,7 @@ describe("getAccount", () => {
       .plus(lockedBalance.minus(unlockingBalance))
       .plus(unlockingBalance.minus(unlockedBalance));
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,

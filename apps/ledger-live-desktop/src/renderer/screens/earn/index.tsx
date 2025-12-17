@@ -1,4 +1,7 @@
-import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  stakeProgramsToEarnParam,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -36,7 +39,7 @@ const Earn = () => {
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
@@ -44,6 +47,10 @@ const Earn = () => {
   const stakePrograms = useVersionedStakePrograms();
   const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
+    [stakePrograms],
+  );
+  const ethDepositCohort = useMemo(
+    () => getEthDepositScreenSetting(stakePrograms),
     [stakePrograms],
   );
 
@@ -78,6 +85,7 @@ const Earn = () => {
           stakeCurrenciesParam: stakeCurrenciesParam
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
+          ethDepositCohort,
         }}
       />
     </Card>

@@ -31,14 +31,13 @@ export default React.memo(function ContinueOnEuropa() {
           />
         </G>
         <Rect
-          x="0.75"
-          y="0.75"
           width="46.5"
           height="46.5"
           rx="23.25"
           stroke="black"
           strokeOpacity="0.4"
           strokeWidth="1.5"
+          transform={[{ translateX: 0.75 }, { translateY: 0.75 }]}
         />
         <Defs>
           <ClipPath id="clip0_15082_6009">
@@ -71,14 +70,13 @@ export default React.memo(function ContinueOnEuropa() {
         />
       </G>
       <Rect
-        x="0.75"
-        y="0.75"
         width="46.5"
         height="46.5"
         rx="23.25"
         stroke="white"
         strokeOpacity="0.4"
         strokeWidth="1.5"
+        transform={[{ translateX: 0.75 }, { translateY: 0.75 }]}
       />
       <Defs>
         <ClipPath id="clip0_15009_5922">

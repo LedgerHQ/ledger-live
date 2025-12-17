@@ -7,8 +7,7 @@ export type StepStatus = "inactive" | "completed";
 const CenterCircle = styled(Flex)<{ status: StepStatus }>`
   border-radius: 9999px;
   width: 100%;
-  background: ${p =>
-    p.status === "completed" ? "transparent" : p.theme.colors.palette.neutral.c40};
+  background: ${p => (p.status === "completed" ? "transparent" : p.theme.colors.neutral.c40)};
   border: 2px solid
     ${p => (p.status === "completed" ? p.theme.colors.success.c70 : p.theme.colors.primary.c80)};
   align-items: center;

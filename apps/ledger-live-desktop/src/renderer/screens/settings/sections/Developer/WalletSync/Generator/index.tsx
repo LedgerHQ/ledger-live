@@ -2,8 +2,7 @@ import React, { useMemo, useState } from "react";
 import Select from "~/renderer/components/Select";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import Switch from "~/renderer/components/Switch";
-import ButtonV3 from "~/renderer/components/ButtonV3";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { useDispatch } from "react-redux";
 import {
   addInstance,
@@ -122,7 +121,7 @@ export function GeneratorLedgerSync() {
 
       <Flex justifyContent="space-between" alignItems="center">
         <Text>{t("settings.developer.debugWalletSync.modal.generator.instance")}</Text>
-        <Switch isChecked={state.instances.length > 0} onChange={generateInstances} />
+        <Switch selected={state.instances.length > 0} onChange={generateInstances} />
       </Flex>
 
       <StingifyComponent
@@ -140,8 +139,9 @@ export function GeneratorLedgerSync() {
         ))}
       </StingifyComponent>
 
-      <ButtonV3
-        variant="main"
+      <Button
+        appearance="base"
+        size="sm"
         onClick={() => {
           apply();
           // onClose();
@@ -149,7 +149,7 @@ export function GeneratorLedgerSync() {
         disabled={!state.step}
       >
         {t("settings.developer.debugWalletSync.modal.generator.cta")}
-      </ButtonV3>
+      </Button>
     </Flex>
   );
 }

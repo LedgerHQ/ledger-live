@@ -26,8 +26,8 @@ import {
   NetworkCongestionLevel,
   StellarOperation,
 } from "../types";
-import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
+import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
@@ -139,7 +139,7 @@ export async function fetchBaseFee(): Promise<{
     } else {
       networkCongestionLevel = NetworkCongestionLevel.LOW;
     }
-  } catch (e) {
+  } catch {
     // do nothing, will use defaults
   }
 
@@ -176,7 +176,7 @@ export async function fetchAccount(addr: string): Promise<{
     assets = account.balances?.filter(balance => {
       return balance.asset_type !== "native";
     }) as BalanceAsset[];
-  } catch (e) {
+  } catch {
     balance = "0";
   }
 
@@ -375,7 +375,7 @@ export async function fetchAccountNetworkInfo(account: string): Promise<NetworkI
       baseReserve,
       networkCongestionLevel,
     };
-  } catch (error) {
+  } catch {
     return {
       family: "stellar",
       fees: new BigNumber(0),
@@ -394,7 +394,7 @@ export async function fetchSigners(account: string): Promise<Signer[]> {
   try {
     const extendedAccount = await getServer().accounts().accountId(account).call();
     return extendedAccount.signers;
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -421,7 +421,7 @@ export async function loadAccount(addr: string): Promise<AccountRecord | null> {
 
   try {
     return await getServer().loadAccount(addr);
-  } catch (e) {
+  } catch {
     return null;
   }
 }

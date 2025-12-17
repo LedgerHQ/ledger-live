@@ -57,10 +57,10 @@ export default function Price({
   );
   const theme = useTheme();
   const textColor = useMemo(
-    () => (color ? colors[color] : theme.colors.palette.text.shade100),
+    () => (color ? colors[color] : theme.colors.neutral.c100),
     [color, theme],
   );
-  const bgColor = theme.colors.palette.background.paper;
+  const bgColor = theme.colors.background.card;
   const activityColor = useMemo(
     () =>
       withActivityColor
@@ -83,6 +83,8 @@ export default function Price({
           style={{
             color: activityColor,
             marginRight: 4,
+            display: "inline-block",
+            verticalAlign: "initial",
           }}
         />
       ) : null}
@@ -111,4 +113,6 @@ const PriceWrapper = styled(Box).attrs(() => ({
   line-height: 1.2;
   white-space: pre;
   align-items: baseline;
+  display: inline-flex;
+  flex-shrink: 0;
 `;

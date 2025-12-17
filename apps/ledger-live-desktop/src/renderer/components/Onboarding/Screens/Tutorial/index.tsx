@@ -62,7 +62,7 @@ import {
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 
@@ -145,7 +145,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
     <FlowStepperContainer>
       {!nanoOnboardingFundWalletFeature && (
         <Aside
-          backgroundColor="palette.constant.purple"
+          backgroundColor="constant.purple"
           header={
             <Flex justifyContent="center">
               <Logos.LedgerLiveRegular width={155} height={32} />
@@ -781,7 +781,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     id: currentScreenId,
   } = screens[currentScreenIndex];
   const CurrentScreen = component as unknown as {
-    Illustration: JSX.Element;
+    Illustration: React.JSX.Element;
     Footer: React.ElementType;
     continueLabel: string;
     continueLabelSecondary: string;

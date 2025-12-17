@@ -9,13 +9,13 @@ interface EmptyListProps {
 }
 
 function EmptyList({ search }: EmptyListProps) {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   return (
     <Flex alignItems="center">
       <Image
         style={{ width: 164, height: 164 }}
         source={
-          colors.palette.type === "light"
+          theme === "light"
             ? require("~/images/marketNoResultslight.webp")
             : require("~/images/marketNoResultsdark.webp")
         }

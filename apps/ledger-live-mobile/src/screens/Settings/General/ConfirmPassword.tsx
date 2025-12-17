@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Platform, Vibration } from "react-native";
 import * as Keychain from "react-native-keychain";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 
@@ -48,7 +48,7 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
       );
       const n = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
       if (n) n.goBack();
-    } catch (err) {
+    } catch {
       // eslint-disable-next-line no-console
       if (__DEV__) console.log("could not save credentials");
     }

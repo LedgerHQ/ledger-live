@@ -19,7 +19,7 @@ const IconWrapper = styled(Box).attrs(() => ({
   align-self: center;
   align-items: center;
   justify-content: center;
-  background-color: ${p => p.theme.colors.palette.action.hover};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 const StepCustom = ({
   account,
@@ -42,11 +42,11 @@ const StepCustom = ({
         currency="xtz"
       />
       <Box>
-        <IconWrapper color="palette.primary.main">
+        <IconWrapper color="primary.c80">
           <UserPlusIcon size={30} />
         </IconWrapper>
         <Box mt={24} px={2}>
-          <Text ff="Inter|Regular" color="palette.text.shade80" fontSize={4} textAlign="center">
+          <Text ff="Inter|Regular" color="neutral.c80" fontSize={4} textAlign="center">
             <Trans i18nKey="delegation.flow.steps.custom.text" />
           </Text>
         </Box>

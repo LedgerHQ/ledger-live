@@ -22,7 +22,7 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 
 async function sendCardanoTouchDevices(tx: Transaction) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.TO);
+  const events = await pressUntilTextFound(DeviceLabels.AMOUNT);
   validateTransactionData(tx, events);
   await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
   await waitFor(DeviceLabels.FEES);
@@ -77,18 +77,22 @@ export async function sendCardano(tx: Transaction) {
   return sendCardanoButtonDevice(tx);
 }
 
+const TOUCH_DELEGATE_STEPS = [
+  [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
+  [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+  [DeviceLabels.REGISTER, "swipe"],
+  [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+  [DeviceLabels.CONFIRM, "confirm"],
+  [DeviceLabels.DELEGATE_STAKE, "swipe"],
+  [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+  [DeviceLabels.CONFIRM, "confirm"],
+  [DeviceLabels.HOLD_TO_SIGN, "hold"],
+] as const;
+
 const DELEGATE_STEPS_CONFIG = {
-  [DeviceModelId.stax || DeviceModelId.europa]: [
-    [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.REGISTER, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.CONFIRM, "confirm"],
-    [DeviceLabels.DELEGATE_STAKE, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.CONFIRM, "confirm"],
-    [DeviceLabels.HOLD_TO_SIGN, "hold"],
-  ] as const,
+  [DeviceModelId.stax]: TOUCH_DELEGATE_STEPS,
+  [DeviceModelId.europa]: TOUCH_DELEGATE_STEPS,
+  [DeviceModelId.apex]: TOUCH_DELEGATE_STEPS,
   [DeviceModelId.nanoS]: [
     [DeviceLabels.NEW_ORDINARY, "right"],
     [DeviceLabels.TRANSACTION_FEE, "both"],
@@ -115,8 +119,22 @@ const DELEGATE_STEPS_CONFIG = {
   ] as const,
 };
 
+function getConfirmButtonCoords(): { x: number; y: number } {
+  const speculosModel = getSpeculosModel();
+
+  switch (speculosModel) {
+    case DeviceModelId.stax:
+      return { x: 152, y: 532 };
+    case DeviceModelId.apex:
+      return { x: 114, y: 305 };
+    case DeviceModelId.europa:
+    default:
+      return { x: 186, y: 446 };
+  }
+}
+
 async function delegateTouchDevicesAction(label: DeviceLabels) {
-  const CONFIRM_BUTTON_COORDS = { x: 139, y: 532 };
+  const CONFIRM_BUTTON_COORDS = getConfirmButtonCoords();
   await waitFor(label);
   switch (label) {
     case DeviceLabels.TAP_TO_CONTINUE:
@@ -164,7 +182,7 @@ async function executeDelegateStep(label: DeviceLabels, action: ActionType) {
 export async function delegateCardano() {
   const speculosModel = getSpeculosModel();
   const steps =
-    speculosModel === DeviceModelId.stax || speculosModel === DeviceModelId.europa
+    isTouchDevice() && DELEGATE_STEPS_CONFIG[speculosModel]
       ? DELEGATE_STEPS_CONFIG[speculosModel]
       : speculosModel === DeviceModelId.nanoS
         ? DELEGATE_STEPS_CONFIG[DeviceModelId.nanoS]

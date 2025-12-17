@@ -7,7 +7,7 @@ export const Description = styled(Text).attrs<{
 }>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))<{
   isPill?: boolean;
 }>`
@@ -28,7 +28,7 @@ export const SelectResource = styled(Box).attrs(() => ({
   disabled?: boolean;
 }>`
   height: 58px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
   ${p =>
     p.disabled
@@ -43,8 +43,8 @@ export const TimerWrapper = styled(Box).attrs(() => ({
   alignItems: "center",
   ff: "Inter|Medium",
   fontSize: 3,
-  color: "palette.text.shade60",
-  bg: "palette.text.shade10",
+  color: "neutral.c70",
+  bg: "neutral.c30",
   borderRadius: 4,
   p: 1,
   mr: 4,

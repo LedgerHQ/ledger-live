@@ -10,11 +10,14 @@
     "src/transaction.ts",
     "src/network/gasTracker/index.ts",
     "src/network/node/rpc.native.ts",
-    "src/bridge/js.ts",
     "src/editTransaction/index.ts",
     "src/operation.ts",
     "src/config.ts",
-    "src/api/index.ts"
+    "src/api/index.ts",
+    "src/bridge/preload.ts",
+    "src/bridge/synchronization.ts",
+    "src/network/nft/index.ts",
+    "src/logic/validateAddress.ts"
   ],
   "ignoreUnimported": [
     "src/__tests__/*",

@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,

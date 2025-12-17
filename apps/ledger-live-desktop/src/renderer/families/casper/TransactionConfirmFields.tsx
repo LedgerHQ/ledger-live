@@ -23,7 +23,7 @@ const CasperExtendedAmountField = ({
     <TransactionConfirmField label={field.label}>
       <Box textAlign="right">
         <FormattedVal
-          color={"palette.text.shade80"}
+          color={"neutral.c80"}
           disableRounding={true}
           unit={unit}
           val={specifiedAmount ?? amount}
@@ -33,7 +33,7 @@ const CasperExtendedAmountField = ({
         />
         <Box textAlign="right">
           <FormattedVal
-            color={"palette.text.shade40"}
+            color={"neutral.c60"}
             disableRounding={true}
             unit={currency.units[1]}
             subMagnitude={1}

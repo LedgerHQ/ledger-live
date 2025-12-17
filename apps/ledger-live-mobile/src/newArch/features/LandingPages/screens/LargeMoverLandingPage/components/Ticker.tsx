@@ -26,7 +26,12 @@ export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
             <Stop offset="1" stopColor={midColor} stopOpacity="0" />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100" fill="url(#midGlow)" />
+        <Rect
+          transform={[{ translateX: 0 }, { translateY: 0 }]}
+          width="100%"
+          height="100"
+          fill="url(#midGlow)"
+        />
       </Svg>
       <Flex
         flexDirection="row"

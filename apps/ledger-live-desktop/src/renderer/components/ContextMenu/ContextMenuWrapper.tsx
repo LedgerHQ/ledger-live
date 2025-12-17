@@ -25,7 +25,7 @@ export function withContextMenuContext<P>(
 
 export type ContextMenuItemType = {
   label: string;
-  Icon?: React.ComponentType<{ size: number }> | React.ComponentType<{}>;
+  Icon?: React.ComponentType<{ size: number }> | React.ComponentType<object>;
   callback?: (a: React.MouseEvent<HTMLDivElement>) => void;
   dontTranslateLabel?: boolean;
   id?: string;
@@ -41,7 +41,7 @@ type State = {
   y: number;
 };
 const Separator = styled.div`
-  background-color: ${p => p.theme.colors.palette.divider};
+  background-color: ${p => p.theme.colors.neutral.c40};
   height: 1px;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -56,8 +56,8 @@ const ContextMenuContainer = styled(Box)<{
   width: auto;
   border-radius: 4px;
   box-shadow: 0 4px 8px 0 #00000007;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.background.card};
   padding: 10px;
 `;
 
@@ -68,12 +68,8 @@ type ContextMenuItemContainerProps = {
 
 const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps>(p => ({
   ff: "Inter",
-  color: p.disabled
-    ? "palette.text.shade50"
-    : p.isActive
-      ? "palette.text.shade100"
-      : "palette.text.shade60",
-  bg: p.isActive && !p.disabled ? "palette.background.default" : "",
+  color: p.disabled ? "neutral.c70" : p.isActive ? "neutral.c100" : "neutral.c70",
+  bg: p.isActive && !p.disabled ? "background.default" : "",
 }))<ContextMenuItemContainerProps>`
   padding: 8px 16px;
   text-align: center;
@@ -93,7 +89,7 @@ const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps
   }
   &:hover {
     cursor: pointer;
-    background: ${p => p.theme.colors.palette.background.default};
+    background: ${p => p.theme.colors.background.default};
   }
 `;
 class ContextMenuWrapper extends PureComponent<Props, State> {
@@ -125,8 +121,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
 
   hideContextMenu = (evt?: MouseEvent) => {
     // NB Allow opening the context menu on a different target if already open.
-    // @ts-expect-error FIXME rework this in a non deprecated way
-    if (evt?.srcElement?.parentElement === this.containerRef) {
+    if (evt?.target instanceof HTMLElement && evt.target.parentElement === this.containerRef) {
       return;
     }
     this.setState({
@@ -157,7 +152,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
       >
         <Box horizontal>
           {Icon && (
-            <Box pr={2} color="palette.text.shade60">
+            <Box pr={2} color="neutral.c70">
               <Icon size={16} />
             </Box>
           )}

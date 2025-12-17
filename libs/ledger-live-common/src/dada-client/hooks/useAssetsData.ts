@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useGetAssetsDataInfiniteQuery } from "../state-manager/api";
 import { AssetsDataWithPagination, GetAssetsDataParams } from "../state-manager/types";
+import { parseError } from "../utils/errorUtils";
 
 const emptyData = () => ({
   cryptoAssets: {},
@@ -77,11 +78,14 @@ export function useAssetsData({
 
   const isInitialLoading = isLoading || (isFetching && !isFetchingNextPage);
 
+  const errorInfo = useMemo(() => parseError(error), [error]);
+
   return {
     data: joinedPages,
     isLoading: isInitialLoading,
     isFetchingNextPage,
     error,
+    errorInfo,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
     isError,

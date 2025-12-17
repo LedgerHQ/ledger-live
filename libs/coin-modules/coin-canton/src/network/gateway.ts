@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network";
-import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
+import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import {
@@ -11,6 +12,7 @@ import {
 } from "../types/onboard";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CantonSignature } from "../types/signer";
+import { TopologyChangeError } from "../types/errors";
 
 export type OnboardingPrepareResponse = {
   party_id: string;
@@ -19,17 +21,29 @@ export type OnboardingPrepareResponse = {
   transactions: {
     namespace_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     party_to_key_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     party_to_participant_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     combined_hash: string;
@@ -55,6 +69,7 @@ export type PrepareTransferRequest = {
   recipient: string;
   execute_before_secs: number;
   instrument_id: string;
+  instrument_admin?: string;
   reason?: string;
 };
 
@@ -73,6 +88,7 @@ export type TransferProposal = {
   receiver: string;
   amount: string;
   instrument_id: string;
+  instrument_admin: string;
   memo: string;
   expires_at_micros: number;
 };
@@ -97,6 +113,13 @@ type TransactionSubmitRequest = {
 };
 
 type TransactionSubmitResponse = { update_id: string };
+
+type Asset = {
+  instrumentAdmin: string;
+  instrumentId: string;
+  issuer: string | null;
+  type: "token" | "native";
+};
 
 export type GetBalanceResponse =
   | {
@@ -214,10 +237,7 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "token";
-        issuer: string;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
@@ -259,10 +279,7 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
@@ -304,33 +321,67 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
         operationType: OperationType;
       };
     };
 
+export const SEPARATOR = "____";
+
+export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
+
 const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
-const getNodeId = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
+const getNodeId = (currency: CryptoCurrency) => {
+  const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
+  if (overrideNodeId) {
+    return overrideNodeId;
+  }
+  return coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
+};
 export const getNetworkType = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency).networkType;
 
-const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
-  const API_KEY = getEnv("CANTON_API_KEY");
-  return network<T, U>({
-    ...req,
-    headers: {
-      ...(req.headers || {}),
-      ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
-    },
-  });
+export const isPartyNotFound = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const errorMessage = error.message.toLowerCase().replace(/_/g, " ");
+    return errorMessage.includes("party") && errorMessage.includes("not found");
+  }
+  return false;
 };
 
-export async function prepareOnboarding(currency: CryptoCurrency, pubKey: string) {
+export const isPartyAlreadyExists = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const errorMessage = error.message.toLowerCase().replace(/_/g, " ");
+    return errorMessage.includes("party") && errorMessage.includes("already exists");
+  }
+  return false;
+};
+
+const gatewayNetwork = async <T, U = unknown>(
+  req: LiveNetworkRequest<U>,
+): Promise<LiveNetworkResponse<T>> => {
+  const API_KEY = getEnv("CANTON_API_KEY");
+  try {
+    return await network<T, U>({
+      ...req,
+      headers: {
+        ...(req.headers || {}),
+        ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
+      },
+    });
+  } catch (error) {
+    if (isPartyNotFound(error)) {
+      throw new TopologyChangeError("Topology change detected. Re-onboarding required.");
+    }
+    throw error;
+  }
+};
+
+export async function prepareOnboarding(
+  currency: CryptoCurrency,
+  pubKey: string,
+): Promise<OnboardingPrepareResponse> {
   const gatewayUrl = getGatewayUrl(currency);
   const nodeId = getNodeId(currency);
   const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
@@ -347,12 +398,74 @@ export async function prepareOnboarding(currency: CryptoCurrency, pubKey: string
   return data;
 }
 
-type OnboardingSubmitError409 = {
-  partyId: string;
-  status: 409;
-  type: "PARTY_ALREADY_EXISTS";
-  message: string;
+export async function isTopologyChangeRequired(currency: CryptoCurrency, pubKey: string) {
+  try {
+    const response = await prepareOnboarding(currency, pubKey);
+    // if response is not undefined (we have a transaction to sign) topology change is required
+    if (response) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    if (isPartyAlreadyExists(error)) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+const getIsTopologyChangeRequiredCacheKey = (currency: CryptoCurrency, pubKey: string): string => {
+  const nodeId = getNodeId(currency);
+  return `${pubKey}_${nodeId}`;
 };
+
+export const isTopologyChangeRequiredCached = makeLRUCache(
+  isTopologyChangeRequired,
+  getIsTopologyChangeRequiredCacheKey,
+  minutes(10),
+);
+
+export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pubKey: string): void {
+  const cacheKey = getIsTopologyChangeRequiredCacheKey(currency, pubKey);
+  isTopologyChangeRequiredCached.clear(cacheKey);
+}
+
+export type InstrumentInfo = {
+  id: string;
+  admin: string;
+};
+
+export type InstrumentsResponse = InstrumentInfo[];
+
+export async function getEnabledInstruments(currency: CryptoCurrency): Promise<Set<string>> {
+  try {
+    const { data } = await gatewayNetwork<InstrumentsResponse>({
+      method: "GET",
+      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
+    });
+    return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+  } catch (error) {
+    // If API fails, return empty array (fail-safe: only native instrument will work)
+    console.error("Failed to fetch enabled instruments:", error);
+    return new Set();
+  }
+}
+
+const getEnabledInstrumentsCacheKey = (currency: CryptoCurrency): string => {
+  const nodeId = getNodeId(currency);
+  return `instruments_${nodeId}`;
+};
+
+export const getEnabledInstrumentsCached = makeLRUCache(
+  getEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  minutes(15),
+);
+
+export function clearEnabledInstrumentsCache(currency: CryptoCurrency): void {
+  const cacheKey = getEnabledInstrumentsCacheKey(currency);
+  getEnabledInstrumentsCached.clear(cacheKey);
+}
 
 export async function submitOnboarding(
   currency: CryptoCurrency,
@@ -375,19 +488,19 @@ export async function submitOnboarding(
       },
     });
     return data;
-  } catch (e) {
-    if (e instanceof Error && "type" in e && e.type === "PARTY_ALREADY_EXISTS") {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const { partyId } = e as unknown as OnboardingSubmitError409;
+  } catch (error) {
+    if (isPartyAlreadyExists(error)) {
+      // If party already exists, use party_id from prepare response
+      // The network layer strips custom properties from errors, so we can't extract partyId from error
       return {
         party: {
-          party_id: partyId,
+          party_id: prepareResponse.party_id,
           public_key: publicKey,
         },
       };
     }
 
-    throw e;
+    throw error;
   }
 }
 
@@ -632,3 +745,35 @@ export async function getPendingTransferProposals(currency: CryptoCurrency, part
   });
   return data;
 }
+
+// CAL API types
+export type CalToken = {
+  id: string;
+  name: string;
+  ticker: string;
+  network: string;
+  contract_address: string;
+  token_identifier: string;
+};
+
+/**
+ * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
+ */
+async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
+  const calUrl = getEnv("CAL_SERVICE_URL");
+  const { data: calTokens } = await gatewayNetwork<CalToken[]>({
+    method: "GET",
+    url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,
+  });
+
+  // Map id -> token_identifier
+  const tokenIdentifierMap = new Map<string, string>();
+  for (const token of calTokens) {
+    tokenIdentifierMap.set(token.id, token.token_identifier);
+  }
+  return tokenIdentifierMap;
+}
+
+const getCalTokensCacheKey = (currency: CryptoCurrency): string => currency.id;
+
+export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));

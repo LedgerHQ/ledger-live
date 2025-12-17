@@ -32,10 +32,10 @@
     "@ledgerhq/types-live": "workspace:*",
     "base64-js": "1",
     "bignumber.js": "9",
-    "isomorphic-ws": "^5.0.0",
+    "isomorphic-ws": "catalog:",
     "lodash": "4",
     "pako": "^2.0.4",
-    "rxjs": "7",
+    "rxjs": "catalog:",
     "zod": "^3.22.4"
   },
   "devDependencies": {

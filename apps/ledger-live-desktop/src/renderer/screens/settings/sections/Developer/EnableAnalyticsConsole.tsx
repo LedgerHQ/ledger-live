@@ -1,7 +1,7 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
 import React, { useCallback } from "react";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 const EnableAnalyticsConsole = () => {
   const env = useEnv("ANALYTICS_CONSOLE");
 
@@ -11,7 +11,7 @@ const EnableAnalyticsConsole = () => {
 
   return (
     <Switch
-      isChecked={env}
+      selected={env}
       onChange={onChangeAnalyticsConsole}
       data-testid="settings-enable-earn-page-staging-url"
     />

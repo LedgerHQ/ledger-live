@@ -129,7 +129,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="celo.delegation.emptyState.description"
                   values={{

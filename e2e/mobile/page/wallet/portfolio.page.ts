@@ -150,7 +150,7 @@ export default class PortfolioPage {
 
   @Step("Check asset allocation section")
   async checkAssetAllocationSection() {
-    await scrollToId(this.showAllAssetsButton, this.accountsListView);
+    await scrollToId(this.showAllAssetsButton);
     const assetsCount = await countElementsById(this.assetItemRegExp);
     jestExpect(assetsCount).toBeLessThanOrEqual(5);
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();

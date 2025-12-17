@@ -6,7 +6,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
-      lcd: "https://lcd-axelar.imperator.co",
+      lcd: "https://axelar-rest.publicnode.com",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
@@ -80,7 +80,6 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://rest.core.persistence.one",
       minGasPrice: 0.025,
-      ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       status: {
         type: "active",
       },
@@ -91,7 +90,6 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://lcd.quicksilver.zone",
       minGasPrice: 0.0025,
-      ledgerValidator: "quickvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx02n4pp",
       status: {
         type: "active",
       },

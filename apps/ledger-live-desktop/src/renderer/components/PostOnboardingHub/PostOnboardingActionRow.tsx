@@ -19,8 +19,8 @@ import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
     deviceModelId: DeviceModelId | null;
-    isLedgerSyncActive: boolean;
-    accounts: Account[];
+    isLedgerSyncActive?: boolean;
+    accounts?: Account[];
   };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
@@ -50,7 +50,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.postOnboarding,
-    needEligibleDevice: false,
+    needEligibleDevice: true,
   });
 
   const completeAction = useCompleteActionCallback();
@@ -75,21 +75,22 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     };
 
     if ("startAction" in props && deviceModelId !== null) {
-      props.startAction({
+      props.startAction?.({
         openModalCallback,
         navigationCallback,
         deviceModelId,
         protectId,
         openActivationDrawer,
       });
-      buttonLabelForAnalyticsEvent &&
+      if (buttonLabelForAnalyticsEvent) {
         track("button_clicked2", {
           button: buttonLabelForAnalyticsEvent,
           deviceModelId,
           flow: "post-onboarding",
         });
+      }
     }
-    shouldCompleteOnStart && completeAction(id);
+    if (shouldCompleteOnStart) completeAction(id);
   }, [
     props,
     dispatch,
@@ -112,7 +113,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       borderRadius={3}
       marginBottom={4}
       completed={isActionCompleted}
-      padding="32px 24px"
+      padding="16px 24px"
       {...(isActionCompleted
         ? undefined
         : {
@@ -131,7 +132,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           >
             {t(title)}
           </Text>
-          {!isActionCompleted ? (
+          {!isActionCompleted && description ? (
             <Text variant="body" fontWeight="medium" color="neutral.c70">
               {t(description, {
                 productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,

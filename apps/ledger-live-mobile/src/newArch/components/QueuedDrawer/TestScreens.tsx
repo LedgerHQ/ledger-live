@@ -3,7 +3,7 @@ import Button from "~/components/Button";
 import QueuedDrawer from ".";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import ModalLock from "~/components/ModalLock";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
 import { useNavigation } from "@react-navigation/native";

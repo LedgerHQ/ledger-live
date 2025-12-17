@@ -56,7 +56,9 @@
     "src/deviceSDK/tasks/updateFirmware.ts",
     "src/deviceWordings.ts",
     "src/domain/getTokensWithFunds.ts",
+    "src/domain/getTotalStakeableAssets.ts",
     "src/e2e/data/assetsDrawer.ts",
+    "src/e2e/data/regexes.ts",
     "src/e2e/index.ts",
     "src/e2e/speculos.ts",
     "src/e2e/speculosAppVersion.ts",
@@ -112,7 +114,6 @@
     "src/families/evm/react.ts",
     "src/families/filecoin/deviceTransactionConfig.ts",
     "src/families/filecoin/types.ts",
-    "src/families/hedera/types.ts",
     "src/families/internet_computer/types.ts",
     "src/families/mina/types.ts",
     "src/families/multiversx/banner.ts",
@@ -314,7 +315,8 @@
     "src/modularDrawer/types/detailedAccount.ts",
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
-    "src/test-helpers/cryptoAssetsStore.ts"
+    "src/test-helpers/cryptoAssetsStore.ts",
+    "src/bridge/generic-alpaca/registerValidateAddress.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -353,6 +355,7 @@
     "src/dada-client/state-manager/types.ts",
     "src/dada-client/types/trend.ts",
     "src/dada-client/utils/currencySelection.ts",
+    "src/dada-client/utils/errorUtils.ts",
     "src/device",
     "src/device/hooks/useLatestFirmware.ts",
     "src/device/use-cases/appDataBackup/deleteAppData.ts",
@@ -397,6 +400,8 @@
     "src/families/cardano/staking.ts",
     "src/families/filecoin/utils.ts",
     "src/families/hedera/constants.ts",
+    "src/families/hedera/react.ts",
+    "src/families/hedera/types.ts",
     "src/families/hedera/utils.ts",
     "src/families/internet_computer/consts.ts",
     "src/families/internet_computer/utils.ts",
@@ -462,7 +467,8 @@
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/walletSync/getEnvironmentParams.ts",
-    "src/utils/addressUtils.ts"
+    "src/utils/addressUtils.ts",
+    "src/hooks/useHtmlLinkSegments.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",

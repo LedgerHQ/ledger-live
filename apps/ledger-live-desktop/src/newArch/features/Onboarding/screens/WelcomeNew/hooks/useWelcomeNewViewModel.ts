@@ -12,19 +12,23 @@ import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export function useWelcomeNewViewModel() {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
+  const lldRebornABtest = useFeature("lldRebornABtest");
 
   // URLs
   const urlBuyNew = useLocalizedUrl(urls.buyNew);
+  const urlReborn = useLocalizedUrl(urls.reborn);
   const urlTerms = useLocalizedUrl(urls.terms);
   const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
 
   // URL handlers
   const buyNew = useCallback(() => openURL(urlBuyNew), [urlBuyNew]);
+  const openReborn = useCallback(() => openURL(urlReborn), [urlReborn]);
   const openTermsAndConditions = useCallback(() => openURL(urlTerms), [urlTerms]);
   const openPrivacyPolicy = useCallback(() => openURL(urlPrivacyPolicy), [urlPrivacyPolicy]);
 
@@ -127,12 +131,19 @@ export function useWelcomeNewViewModel() {
   ]);
 
   const handleBuyNew = useCallback(() => {
+    const openUrl = lldRebornABtest?.enabled ? openReborn : buyNew;
     if (isFeatureFlagsAnalyticsPrefDisplayed) {
-      openAnalyticsOptInPrompt("Onboarding", buyNew);
+      openAnalyticsOptInPrompt("Onboarding", openUrl);
     } else {
-      buyNew();
+      openUrl();
     }
-  }, [isFeatureFlagsAnalyticsPrefDisplayed, openAnalyticsOptInPrompt, buyNew]);
+  }, [
+    isFeatureFlagsAnalyticsPrefDisplayed,
+    openAnalyticsOptInPrompt,
+    buyNew,
+    openReborn,
+    lldRebornABtest,
+  ]);
 
   const handleSetupLedgerSync = useCallback(() => {
     if (isFeatureFlagsAnalyticsPrefDisplayed) {

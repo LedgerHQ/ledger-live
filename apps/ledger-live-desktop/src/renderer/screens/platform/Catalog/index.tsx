@@ -39,7 +39,7 @@ const Header = styled(Box).attrs({
 const Title = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 7,
-  color: p.theme.colors.palette.secondary.main,
+  color: p.theme.colors.neutral.c100,
 }))``;
 
 export function Catalog() {

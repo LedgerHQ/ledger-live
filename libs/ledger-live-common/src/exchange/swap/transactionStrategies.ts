@@ -3,6 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { Transaction } from "../../generated/types";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
+import { getFeature } from "../../featureFlags";
+
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export function defaultTransaction({
@@ -183,12 +185,32 @@ export function solanaTransaction({
   amount,
   recipient,
   customFeeConfig: _customFeeConfig,
+  extraTransactionParameters,
 }: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
+  let templateId: string | undefined = undefined;
+  const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
+
+  if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
+    try {
+      const parsed = JSON.parse(extraTransactionParameters);
+      if (typeof parsed?.solanaTransaction?.templateId === "string") {
+        templateId = parsed.solanaTransaction.templateId;
+      } else {
+        console.warn(
+          `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
+        );
+      }
+    } catch (e) {
+      console.warn("Failed to parse extraTransactionParameters", e);
+    }
+  }
+
   return {
     family: "solana",
     amount,
     recipient,
     model: { kind: "transfer", uiState: {} },
+    ...(templateId && { templateId }),
   };
 }
 

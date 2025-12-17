@@ -31,7 +31,7 @@ export const prepareTransaction: AccountBridge<
       account,
       transaction,
     });
-  } catch (e) {
+  } catch {
     fees = BigNumber(0);
   }
 

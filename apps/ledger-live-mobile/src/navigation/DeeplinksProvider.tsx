@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import {
@@ -28,7 +28,6 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
@@ -101,10 +100,8 @@ const linkingOptions = () => ({
     if (url) {
       return url ? getProxyURL(url) : null;
     }
-    const brazeUrl: string = await new Promise(resolve => {
-      Braze.getInitialURL(initialUrl => {
-        resolve(initialUrl);
-      });
+    const brazeUrl: string | null = await new Promise(resolve => {
+      Braze.getInitialPushPayload(payload => resolve(payload?.url ?? null));
     });
     return brazeUrl ? getProxyURL(brazeUrl) : null;
   },
@@ -503,6 +500,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Track deeplink session when app comes from background
+            track("Start", { isDeeplinkSession: true });
+
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
 
@@ -728,8 +728,6 @@ export const DeeplinksProvider = ({
     <AppLoadingManager
       isNavigationReady={isReady}
       onAppReady={async () => {
-        navigationIntegration.registerNavigationContainer(navigationRef);
-
         try {
           DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
 

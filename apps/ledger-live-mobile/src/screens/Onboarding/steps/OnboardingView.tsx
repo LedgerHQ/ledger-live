@@ -13,6 +13,7 @@ type OnboardingViewProps = {
     tracking: {
       category: string;
       name: string;
+      deviceModelId?: string;
     };
   };
 

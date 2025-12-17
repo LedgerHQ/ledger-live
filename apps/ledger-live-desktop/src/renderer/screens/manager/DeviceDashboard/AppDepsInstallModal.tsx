@@ -21,7 +21,7 @@ const Separator = styled.div`
   margin: 0 ${p => p.theme.space[1]}px;
   width: ${p => p.theme.space[4]}px;
   height: 0px;
-  border-bottom: 2px dashed ${p => p.theme.colors.palette.action.hover};
+  border-bottom: 2px dashed ${p => p.theme.colors.opacityDefault.c10};
 `;
 const LinkIconWrapper = styled.div`
   padding: ${p => p.theme.space[1]}px;
@@ -31,8 +31,8 @@ const LinkIconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   align-content: center;
-  color: ${p => p.theme.colors.palette.primary.main};
-  background-color: ${p => p.theme.colors.palette.action.hover};
+  color: ${p => p.theme.colors.primary.c80};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 
 type Props = {

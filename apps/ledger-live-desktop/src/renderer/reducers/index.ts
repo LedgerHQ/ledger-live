@@ -19,6 +19,7 @@ import countervalues, { CountervaluesState } from "./countervalues";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -26,6 +27,7 @@ export type State = LLDRTKApiState & {
   countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
+  identities: IdentitiesState;
   market: MarketState;
   modals: ModalsState;
   modularDrawer: ModularDrawerState;
@@ -44,6 +46,7 @@ export default combineReducers({
   countervalues,
   devices,
   dynamicContent,
+  identities: identitiesSlice.reducer,
   modals,
   modularDrawer,
   settings,

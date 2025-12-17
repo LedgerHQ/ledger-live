@@ -15,10 +15,10 @@ const SellCompleted = () => {
           <IconClock size={16} />
         </WrapperClock>
       </IconWrapper>
-      <Text mt={4} color="palette.text.shade100" ff="Inter|SemiBold" fontSize={5}>
+      <Text mt={4} color="neutral.c100" ff="Inter|SemiBold" fontSize={5}>
         <Trans i18nKey={`sell.exchangeDrawer.completed.title`} />
       </Text>
-      <Text mt={13} textAlign="center" color="palette.text.shade50" ff="Inter|Regular" fontSize={4}>
+      <Text mt={13} textAlign="center" color="neutral.c70" ff="Inter|Regular" fontSize={4}>
         <Trans i18nKey={`sell.exchangeDrawer.completed.description`} />
       </Text>
     </Box>

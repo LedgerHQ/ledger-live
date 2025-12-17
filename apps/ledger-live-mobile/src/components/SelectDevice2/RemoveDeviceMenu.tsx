@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { Flex } from "@ledgerhq/native-ui";

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { fetchCurrencyAll } from "../fetchCurrencyAll";
 import { fetchCurrencyAllMock } from "../__mocks__/fetchCurrencyAll.mocks";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../const/timeout";

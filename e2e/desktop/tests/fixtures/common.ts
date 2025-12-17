@@ -6,7 +6,7 @@ import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 import { Application } from "tests/page";
-import { safeAppendFile } from "tests/utils/fileUtils";
+import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
@@ -110,7 +110,7 @@ export const test = base.extend<TestFixtures>({
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);
-      setEnv("E2E_NANO_APP_VERSION_PATH", "tests/artifacts/appVersion/nano-app-catalog.json");
+      setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
       if (IS_NOT_MOCK && speculosApp) {
         setEnv("MOCK", "");
         process.env.MOCK = "";

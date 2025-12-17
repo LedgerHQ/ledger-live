@@ -3,7 +3,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import React, { useRef, forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTheme } from "styled-components/native";
 import { ScopeProvider } from "jotai-scope";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
@@ -18,7 +18,6 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { DefaultAccountSwapParamList } from "../types";
-import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";

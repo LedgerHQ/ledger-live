@@ -2,11 +2,11 @@ import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency, Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
-import Animated from "react-native-reanimated";
+import { SharedValue } from "react-native-reanimated";
 import BigNumber from "bignumber.js";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
@@ -67,7 +67,7 @@ function Header({
   currency,
   currencyBalance,
 }: {
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   currencyBalance: BigNumber;

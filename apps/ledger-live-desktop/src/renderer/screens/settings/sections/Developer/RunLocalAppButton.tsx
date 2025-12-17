@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import React, { useCallback } from "react";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { readFile, writeFile } from "fs";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
@@ -107,14 +107,14 @@ const RunLocalAppButton = () => {
         desc={t("settings.developer.addLocalAppDesc")}
       >
         <Flex flexDirection={"row"} columnGap={3}>
-          <Button small primary onClick={onBrowseLocalManifest}>
+          <Button size="sm" appearance="accent" onClick={onBrowseLocalManifest}>
             {t("settings.developer.addLocalAppButton")}
           </Button>
 
           <Button
-            small
-            primary
-            onClick={onOpenModal}
+            size="sm"
+            appearance="accent"
+            onClick={() => onOpenModal()}
             data-testid="settings-open-local-manifest-form"
           >
             {t("settings.developer.createLocalAppModal.create")}
@@ -125,12 +125,16 @@ const RunLocalAppButton = () => {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer>
-            <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
+            <Button
+              size="sm"
+              appearance="accent"
+              onClick={() => history.push(`/platform/${manifest.id}`)}
+            >
               {t("settings.developer.runLocalAppOpenButton")}
             </Button>
             <Button
-              small
-              outline
+              size="sm"
+              appearance="transparent"
               onClick={() => {
                 onExportLocalManifest(manifest);
               }}
@@ -139,7 +143,7 @@ const RunLocalAppButton = () => {
               {t("settings.developer.createLocalAppModal.export")}
             </Button>
 
-            <Button small danger onClick={() => removeLocalManifestById(manifest.id)}>
+            <Button size="sm" appearance="red" onClick={() => removeLocalManifestById(manifest.id)}>
               {t("settings.developer.runLocalAppDeleteButton")}
             </Button>
           </ButtonContainer>

@@ -1,7 +1,7 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { makeSetEarnProtocolInfoModalAction } from "~/actions/earn";
 import { Track } from "~/analytics";
 import { rgba } from "~/colors";

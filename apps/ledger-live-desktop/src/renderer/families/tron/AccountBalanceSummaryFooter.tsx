@@ -19,7 +19,7 @@ const Wrapper = styled(Box).attrs(() => ({
   p: 5,
   pb: 0,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: 1.25,
@@ -37,7 +37,7 @@ const TitleWrapper = styled(Box).attrs(() => ({
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))`
   line-height: ${p => p.theme.space[4]}px;
   margin-right: ${p => p.theme.space[1]}px;
@@ -45,7 +45,7 @@ const Title = styled(Text).attrs(() => ({
 const AmountValue = styled(Text).attrs(() => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 
 type Props = {

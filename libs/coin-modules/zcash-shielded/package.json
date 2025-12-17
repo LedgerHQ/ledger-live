@@ -1,0 +1,66 @@
+{
+  "name": "@ledgerhq/zcash-shielded",
+  "version": "0.1.0",
+  "description": "ZCash library shielded accounts",
+  "keywords": [
+    "ZCash"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/zcash-shielded",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/ZCash.js",
+  "module": "lib-es/ZCash.js",
+  "types": "lib/ZCash.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/ZCash.js",
+    "./lib-es/*": "./lib-es/ZCash.js",
+    "./*": {
+      "require": "./lib/ZCash.js",
+      "default": "./lib-es/ZCash.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.10",
+    "jest": "^29.7.0",
+    "jest-util": "30.2.0",
+    "ts-jest": "^29.1.1"
+  }
+}

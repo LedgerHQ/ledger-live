@@ -194,14 +194,14 @@ export function getPostOnboardingActionsForDevice(
       if (mock) return apexPostOnboardingActionsMock;
       return [assetsTransfer, buyCrypto, syncAccounts, customImage];
     case DeviceModelId.nanoS:
-      /** Set here the list of actions for the post onboarding of the Nano S */
-      return [];
+      // Post-onboarding actions for Nano S (no custom lock screen step).
+      return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
-      /** Set here the list of actions for the post onboarding of the Nano SP */
-      return [];
+      // Post-onboarding actions for Nano S Plus (no custom lock screen step).
+      return [assetsTransfer, buyCrypto, syncAccounts];
     case DeviceModelId.nanoX:
-      /** Set here the list of actions for the post onboarding of the Nano X */
-      return [];
+      // Post-onboarding actions for Nano X (no custom lock screen step).
+      return [assetsTransfer, buyCrypto, syncAccounts];
     default:
       return [];
   }

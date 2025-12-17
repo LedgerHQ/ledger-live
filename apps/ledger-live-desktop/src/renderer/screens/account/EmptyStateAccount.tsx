@@ -28,8 +28,7 @@ type OwnProps = {
 };
 type Props = OwnProps & {
   t: TFunction;
-
-  openModal: Function;
+  openModal: (name: string, data: Record<string, unknown>) => void;
 };
 function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -77,15 +76,15 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
           {hasTokens ? (
             <Trans i18nKey="account.emptyState.descToken">
               {"Make sure the"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.managerAppName}
               </Text>
               {"app is installed and start receiving"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.ticker}
               </Text>
               {"and"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {account &&
                   account.type === "Account" &&
                   (account.currency.tokenTypes || []).join(", ")}
@@ -95,7 +94,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
           ) : (
             <Trans i18nKey="account.emptyState.desc">
               {"Make sure the"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.managerAppName}
               </Text>
               {"app is installed and start receiving"}
@@ -134,12 +133,12 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
 const Title = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 6,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 const Description = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   textAlign: "center",
 }))``;
 

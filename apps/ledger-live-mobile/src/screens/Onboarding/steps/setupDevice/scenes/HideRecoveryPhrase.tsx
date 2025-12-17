@@ -23,10 +23,10 @@ const HideRecoveryPhraseScene = () => {
 
   return (
     <>
-      <Text variant="h2" color="palette.neutral.c100" mb={3} uppercase>
+      <Text variant="h2" color="neutral.c100" mb={3} uppercase>
         {t("onboarding.stepSetupDevice.hideRecoveryPhrase.title")}
       </Text>
-      <Text variant="paragraph" color="palette.neutral.c80" mb={16}>
+      <Text variant="paragraph" color="neutral.c80" mb={16}>
         {t("onboarding.stepSetupDevice.hideRecoveryPhrase.desc")}
       </Text>
       <IconBoxList items={items.map(item => ({ ...item, title: t(item.title) }))} />

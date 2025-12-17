@@ -25,9 +25,6 @@ export default function Home() {
           <Link href="/networkTroubleshoot">Network Troubleshooting</Link>
         </li>
         <li>
-          <Link href="/svg-icons">SVG Icons</Link>
-        </li>
-        <li>
           <Link href="/sync">Synchronisation</Link>
         </li>
         <li>
@@ -35,6 +32,9 @@ export default function Home() {
         </li>
         <li>
           <Link href="/trustchain">Trustchain</Link>
+        </li>
+        <li>
+          <Link href="/crypto-icons">Crypto Icons</Link>
         </li>
       </ul>
     </main>

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require("path");
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -18,7 +21,7 @@ const currencyFamiliesRules = {
 };
 
 const livecommonRules = {
-  files: ["src/**"],
+  files: ["src/**", "tests/**"],
   rules: {
     "no-restricted-imports": [
       "error",
@@ -49,8 +52,13 @@ module.exports = {
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   plugins: ["react", "react-hooks"],
-  extends: ["plugin:react/recommended", "plugin:react-hooks/recommended"],
+  extends: [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:tailwindcss/recommended",
+  ],
   globals: {
     __DEV__: "readonly",
     INDEX_URL: "readonly",
@@ -80,9 +88,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
     "react/jsx-filename-extension": "off",
     "space-before-function-paren": "off",
-    "@typescript-eslint/ban-types": "off", // FIXME make an error later
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-use-before-define": "off", // FIXME make an error later
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
@@ -116,10 +122,23 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn",
       },
     },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
   ],
   settings: {
     react: {
       version: "detect",
+    },
+    tailwindcss: {
+      config: path.join(__dirname, "./tailwind.config.ts"),
     },
   },
 };

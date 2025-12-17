@@ -122,9 +122,9 @@ const Evm1559CustomFees = ({
         onChange={onFeesChange(setMaxPriorityFeePerGas)}
         title={"send.summary.maxPriorityFee"}
       />
-      <LText color="palette.neutral.c70">
+      <LText color="neutral.c70">
         {`${t("send.summary.suggested")} : `}
-        <LText color="palette.neutral.c90">
+        <LText color="neutral.c90">
           {lowPriorityFeeValue} - {highPriorityFeeValue} {unitName}
         </LText>
       </LText>
@@ -148,9 +148,9 @@ const Evm1559CustomFees = ({
         onChange={onFeesChange(setMaxFeePerGas)}
         title={"send.summary.maxFee"}
       />
-      <LText color="palette.neutral.c70">
+      <LText color="neutral.c70">
         {`${t("send.summary.nextBlock")} : `}
-        <LText color="palette.neutral.c90">{nextBaseFeeValue}</LText>
+        <LText color="neutral.c90">{nextBaseFeeValue}</LText>
       </LText>
       {maxFeeWarning ? (
         <LText style={styles.warning} color="orange">

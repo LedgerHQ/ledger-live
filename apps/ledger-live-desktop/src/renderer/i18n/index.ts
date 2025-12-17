@@ -14,7 +14,7 @@ import th from "../../../static/i18n/th/app.json";
 
 export const i18_DEFAULT_NAMESPACE = "app";
 
-const LanguageToAppLanguageFile: LanguageMap<Object> = {
+const LanguageToAppLanguageFile: LanguageMap<object> = {
   de,
   en,
   es,

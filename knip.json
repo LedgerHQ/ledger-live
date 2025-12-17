@@ -6,7 +6,7 @@
     "dependencies": "error",
     "devDependencies": "off",
     "optionalPeerDependencies": "off",
-    "duplicates": "warn",
+    "duplicates": "error",
     "enumMembers": "warn",
     "exports": "warn",
     "files": "error",
@@ -17,9 +17,7 @@
     "unresolved": "off"
   },
   "ignoreExportsUsedInFile": true,
-  "project": [
-    "src/**"
-  ],
+  "project": ["src/**"],
   "ignore": [
     "**/__integrations__/*",
     "**/*.test.*",
@@ -46,14 +44,8 @@
       "ignore": [
         "src/newArch/features/Collectibles/**",
         ".storybook/stub.ts",
-        "src/renderer/mockServiceWorker.js"
-      ],
-      "ignoreBinaries": [
-        "eslint",
-        "knip",
-        "prettier",
-        "zx",
-        "lint"
+        "src/renderer/mockServiceWorker.js",
+        "src/newArch/utils/cn.ts"
       ],
       "ignoreDependencies": [
         "prop-types",
@@ -62,20 +54,13 @@
         "buffer",
         "ws",
         "@electron/fuses",
-        "@reduxjs/toolkit"
+        "@reduxjs/toolkit",
+        "class-variance-authority"
       ]
     },
     "./apps/ledger-live-mobile": {
-      "entry": [
-        "index.js",
-        "src/families/**"
-      ],
-      "ignore": [
-        "src/**/*.android.*",
-        "src/**/*.ios.*",
-        "src/logic/keyboardVisible.ts",
-        "babel-plugin-inject-collapsable.js"
-      ],
+      "entry": ["index.js", "src/families/**"],
+      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "babel-plugin-inject-collapsable.js"],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
         "@react-native/gradle-plugin",
@@ -98,34 +83,19 @@
       ]
     },
     "./libs/env": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/live-hooks": {
-      "entry": [
-        "src/useDebounce.ts",
-        "src/useThrottledFunction.ts"
-      ]
+      "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
     },
     "./libs/live-countervalues": {
-      "entry": [
-        "src/logic.ts",
-        "src/api/index.ts",
-        "src/types.ts",
-        "src/portfolio.ts"
-      ]
+      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
     },
     "./libs/live-countervalues-react": {
-      "entry": [
-        "src/index.tsx",
-        "src/portfolio.tsx"
-      ]
+      "entry": ["src/index.tsx", "src/portfolio.tsx"]
     },
     "./libs/live-dmk-mobile": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/live-wallet": {
       "entry": [
@@ -140,25 +110,14 @@
       ]
     },
     "./libs/ledger-key-ring-protocol": {
-      "entry": [
-        "src/index.ts",
-        "src/store.ts",
-        "src/qrcode/index.ts"
-      ]
+      "entry": ["src/index.ts", "src/store.ts", "src/qrcode/index.ts"]
     },
     "./libs/hw-ledger-key-ring-protocol": {
-      "entry": [
-        "src/index.ts"
-      ],
-      "ignoreDependencies": [
-        "@ledgerhq/logs",
-        "@ledgerhq/live-env"
-      ]
+      "entry": ["src/index.ts"],
+      "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
     },
     "./libs/promise": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/ui/packages/native": {
       "entry": [
@@ -175,10 +134,7 @@
         "src/pre-ldls/components/index.ts",
         "index.js"
       ],
-      "ignore": [
-        ".storybook*/*",
-        "storybook/constants/*"
-      ]
+      "ignore": [".storybook*/*", "storybook/constants/*"]
     }
   }
 }

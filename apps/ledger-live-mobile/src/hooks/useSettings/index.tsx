@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { languageSelector, localeSelector, themeSelector } from "~/reducers/settings";
 
 const useSettings = () => {

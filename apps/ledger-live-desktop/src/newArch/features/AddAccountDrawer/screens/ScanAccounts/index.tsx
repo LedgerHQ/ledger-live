@@ -96,7 +96,7 @@ const ScanAccounts = ({
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
       <Flex marginBottom={24}>
         <Text
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="scan-accounts-title"
           flex={1}
           fontSize={24}
@@ -122,14 +122,21 @@ const ScanAccounts = ({
           />
         ) : null}
         {!scanning && creatableAccounts.length > 0 ? (
-          <CreatableAccountsList
-            creatableAccounts={creatableAccounts}
-            currency={currency}
-            newAccountSchemes={newAccountSchemes}
-            renderAccount={renderAccount}
-            showAllCreatedAccounts={showAllCreatedAccounts}
-            toggleShowAllCreatedAccounts={toggleShowAllCreatedAccounts}
-          />
+          <>
+            <TrackAddAccountScreen
+              page={ADD_ACCOUNT_PAGE_NAME.SELECT_ACCOUNT_TO_ADD}
+              source={source}
+              flow={ADD_ACCOUNT_FLOW_NAME}
+            />
+            <CreatableAccountsList
+              creatableAccounts={creatableAccounts}
+              currency={currency}
+              newAccountSchemes={newAccountSchemes}
+              renderAccount={renderAccount}
+              showAllCreatedAccounts={showAllCreatedAccounts}
+              toggleShowAllCreatedAccounts={toggleShowAllCreatedAccounts}
+            />
+          </>
         ) : null}
       </ScrollContainer>
       <Footer

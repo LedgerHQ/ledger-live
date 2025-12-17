@@ -8,6 +8,7 @@ import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import RedelegationSelectValidator from "./01-SelectValidator";
 import RedelegationAmount from "../shared/02-SelectAmount";
+import RedelegationBridgeTransaction from "../shared/03-BridgeTransaction";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
@@ -78,6 +79,14 @@ function RedelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.CosmosRedelegationBridgeTransaction}
+        component={RedelegationBridgeTransaction}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CosmosRedelegationSelectDevice}

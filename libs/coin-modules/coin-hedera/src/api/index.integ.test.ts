@@ -7,6 +7,7 @@ import {
   Long,
   TokenAssociateTransaction,
   TransferTransaction,
+  AccountUpdateTransaction,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
@@ -121,6 +122,37 @@ describe("createApi", () => {
       expect(rawTx.transactionMemo).toBe("token association");
     });
 
+    it.each([HEDERA_TRANSACTION_MODES.Delegate, HEDERA_TRANSACTION_MODES.Undelegate])(
+      "returns serialized %s transaction",
+      async type => {
+        const { transaction: hex } = await api.craftTransaction({
+          intentType: "transaction",
+          asset: {
+            type: "native",
+          },
+          type,
+          amount: BigInt(0),
+          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          memo: {
+            kind: "text",
+            type: "string",
+            value: type,
+          },
+        });
+
+        const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
+
+        expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
+        invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
+        expect(rawTx.accountId).toEqual(
+          AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
+        );
+        expect(rawTx.transactionMemo).toBe(type);
+      },
+    );
+
     it("applies customFees properly", async () => {
       const customFees: FeeEstimation = {
         value: BigInt(1000),
@@ -220,6 +252,32 @@ describe("createApi", () => {
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
+
+    it.each([
+      HEDERA_TRANSACTION_MODES.Delegate,
+      HEDERA_TRANSACTION_MODES.Undelegate,
+      HEDERA_TRANSACTION_MODES.ClaimRewards,
+      HEDERA_TRANSACTION_MODES.Redelegate,
+    ])("returns fee for %s transaction", async type => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: type,
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
   });
 
   describe("getBalance", () => {
@@ -268,6 +326,29 @@ describe("createApi", () => {
       expect(associatedTokenWithoutBalance?.value).toBe(0n);
       expect(notAssociatedToken?.value).toBe(undefined);
     });
+
+    it("returns stake information for delegated account", async () => {
+      const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.activeStaking.accountId);
+      const nativeBalance = balances.find(b => b.asset.type === "native");
+
+      expect(nativeBalance?.stake).toMatchObject({
+        uid: MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
+        address: MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
+        asset: { type: "native" },
+        state: "active",
+        amount: expect.any(BigInt),
+        amountDeposited: expect.any(BigInt),
+        amountRewarded: expect.any(BigInt),
+        delegate: expect.any(String),
+      });
+    });
+
+    it("returns no stake information for non-delegated account", async () => {
+      const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.inactiveStaking.accountId);
+      const nativeBalance = balances.find(b => b.asset.type === "native");
+
+      expect(nativeBalance?.stake).toBe(undefined);
+    });
   });
 
   describe("getBlock", () => {
@@ -304,7 +385,7 @@ describe("createApi", () => {
             asset: {
               type: "native",
             },
-            amount: -2000000n, // 3176695n - 1176695n fee
+            amount: -2000000n, // -3176695n + 1176695n fee
           },
           {
             type: "transfer",
@@ -385,6 +466,100 @@ describe("createApi", () => {
         expect(tx.fees).toBeGreaterThanOrEqual(0n);
       });
     });
+
+    it("returns block with transaction memo", async () => {
+      const blockHeight = 176180671;
+      const txHash = "4Ksb7RTwtvvk9r6vvK0Gwxb38kwPqVbJjP6bL4bu2gTvdwrIGZGk6TWntlgRsjvU";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHash);
+
+      expect(transaction?.details?.memo).toBe("test");
+    });
+
+    it("correctly identifies staking operations in blocks", async () => {
+      const [delegateBlock, undelegateBlock, redelegateBlock, rewardsBlock] = await Promise.all([
+        api.getBlock(176220207),
+        api.getBlock(176220201),
+        api.getBlock(176220211),
+        api.getBlock(176397349),
+      ]);
+
+      const delegateOperations = delegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const undelegateOperations = undelegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const redelegateOperations = redelegateBlock.transactions
+        .flatMap(tx => tx.operations)
+        .filter(op => op.type === "other");
+      const rewardsTransaction = rewardsBlock.transactions.find(
+        tx => tx.hash === "Axie2CIoLVxhU6gcHEDJEdNbQ0BW1AqYXqUu97ume44JGvdfSTvF9go2Svc/lms8",
+      );
+
+      expect(delegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "DELEGATE",
+          stakedNodeId: 34,
+          previousStakedNodeId: null,
+          stakedAmount: BigInt(21083561014),
+        },
+      ]);
+      expect(undelegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "UNDELEGATE",
+          stakedNodeId: null,
+          previousStakedNodeId: 22,
+          stakedAmount: BigInt(21083561014),
+        },
+      ]);
+      expect(redelegateOperations).toEqual([
+        {
+          type: "other",
+          operationType: "REDELEGATE",
+          stakedNodeId: 6,
+          previousStakedNodeId: 34,
+          stakedAmount: BigInt(21083561014),
+        },
+      ]);
+      expect(rewardsTransaction?.operations).toEqual([
+        {
+          type: "transfer",
+          address: "0.0.800",
+          amount: BigInt(-6013422),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.801",
+          amount: BigInt(1968210),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.8835924",
+          amount: BigInt(4045212 + 1968210),
+          asset: {
+            type: "native",
+          },
+        },
+        {
+          type: "transfer",
+          address: "0.0.8835924",
+          amount: BigInt(6013422),
+          asset: {
+            type: "native",
+          },
+        },
+      ]);
+    });
   });
 
   describe("lastBlock", () => {
@@ -422,7 +597,7 @@ describe("createApi", () => {
       const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
       const blockHeights = ops.map(o => o.tx.block.height);
 
-      expect(blockHeights).toHaveLength(4);
+      expect(blockHeights).toHaveLength(6);
       expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
     });
 
@@ -475,6 +650,46 @@ describe("createApi", () => {
       });
     });
 
+    it("returns staking operations with correct metadata", async () => {
+      const lastPagingToken = "1762202113.000000000";
+      const block = await api.lastBlock();
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.activeStaking.accountId, {
+        minHeight: block.height,
+        order: "desc",
+        limit: 30,
+        lastPagingToken,
+      });
+
+      const rewardOp = ops.find(op => op.type === "REWARD");
+      const delegateOp = ops.find(op => op.type === "DELEGATE");
+      const undelegateOp = ops.find(op => op.type === "UNDELEGATE");
+      const redelegateOp = ops.find(op => op.type === "REDELEGATE");
+
+      expect(delegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.details).toMatchObject({
+        previousStakingNodeId: null,
+        targetStakingNodeId: expect.any(Number),
+        stakedAmount: expect.any(BigInt),
+      });
+      expect(undelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.details).toMatchObject({
+        previousStakingNodeId: expect.any(Number),
+        targetStakingNodeId: null,
+        stakedAmount: expect.any(BigInt),
+      });
+      expect(redelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.details).toMatchObject({
+        previousStakingNodeId: expect.any(Number),
+        targetStakingNodeId: expect.any(Number),
+        stakedAmount: expect.any(BigInt),
+      });
+      expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
+      expect(rewardOp?.tx.fees).toBe(BigInt(0));
+    });
+
     it.each(["desc", "asc"] as const)(
       "returns paginated operations for account with high activity (%s)",
       async order => {
@@ -522,5 +737,25 @@ describe("createApi", () => {
         expect(firstPage1Timestamp < lastPage2Timestamp).toBe(order === "asc");
       },
     );
+  });
+
+  describe("getValidators", () => {
+    it("returns validators with APY information", async () => {
+      const result = await api.getValidators();
+
+      expect(result.items.length).toBeGreaterThan(0);
+      result.items.forEach(item => {
+        expect(item).toMatchObject({
+          address: expect.any(String),
+          nodeId: expect.any(String),
+          name: expect.any(String),
+          description: expect.any(String),
+          balance: expect.any(BigInt),
+          apy: expect.any(Number),
+        });
+        expect(item.apy).toBeGreaterThanOrEqual(0);
+        expect(item.apy).toBeLessThanOrEqual(1);
+      });
+    });
   });
 });

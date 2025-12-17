@@ -30,6 +30,7 @@ import {
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -172,6 +173,7 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge: CurrencyBridge = {

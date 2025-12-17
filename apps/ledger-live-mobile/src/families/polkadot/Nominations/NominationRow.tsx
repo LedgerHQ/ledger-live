@@ -16,7 +16,7 @@ import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
 import ArrowRight from "~/icons/ArrowRight";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   nomination: PolkadotNomination;

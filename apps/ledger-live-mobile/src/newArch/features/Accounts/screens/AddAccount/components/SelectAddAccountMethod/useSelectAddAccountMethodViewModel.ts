@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useCallback } from "react";
 import { track } from "~/analytics";

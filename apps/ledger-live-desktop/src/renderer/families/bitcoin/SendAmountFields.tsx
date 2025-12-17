@@ -21,13 +21,12 @@ type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 const Separator = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.neutral.c30};
   margin: 20px 0;
 `;
 const Fields: Props = ({
   transaction,
   account,
-  parentAccount,
   onChange,
   status,
   updateTransaction,
@@ -110,10 +109,10 @@ const Fields: Props = ({
           <Box flow={2}>
             <Box horizontal alignItems="center">
               <Box>
-                <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
+                <Text ff="Inter|Regular" fontSize={12} color="neutral.c70">
                   {t("bitcoin.strategy")}
                 </Text>
-                <Text ff="Inter|Regular" fontSize={13} color="palette.text.shade100">
+                <Text ff="Inter|Regular" fontSize={13} color="neutral.c100">
                   {item ? item.label : null}
                 </Text>
               </Box>
@@ -152,7 +151,6 @@ const Fields: Props = ({
             onClick={onFeeStrategyClick}
             transaction={transaction}
             account={account}
-            parentAccount={parentAccount}
             suffixPerByte={true}
             mapStrategies={mapStrategies}
             status={status}

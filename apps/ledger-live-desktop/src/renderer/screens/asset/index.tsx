@@ -32,7 +32,7 @@ type Props = {
 };
 export default function AssetPage({ match }: Props) {
   const { t } = useTranslation();
-  const paperColor = useTheme().colors.palette.background.paper;
+  const paperColor = useTheme().colors.background.card;
   const range = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);

@@ -26,16 +26,16 @@ const GlobalStyle = createGlobalStyle`
   }
 
   div#page-scroller::-webkit-scrollbar {
-    width: 10px;    
+    width: 10px;
   }
 
   div#page-scroller::-webkit-scrollbar-thumb {
-    background-color: ${p => p.theme.colors.palette.neutral.c50};
+    background-color: ${p => p.theme.colors.neutral.c50};
     border-radius: 10px;
   }
 
   div#page-scroller::-webkit-scrollbar-track {
-    background: ${p => p.theme.colors.palette.neutral.c20};
+    background: ${p => p.theme.colors.neutral.c20};
     border-radius: 10px;
   }
 `;

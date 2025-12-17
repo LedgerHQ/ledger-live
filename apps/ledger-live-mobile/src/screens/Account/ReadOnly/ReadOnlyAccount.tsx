@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,8 +36,8 @@ function ReadOnlyAccount({ route }: Props) {
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<JSX.Element>) => item, []);
-  const keyExtractor = useCallback((_: JSX.Element, index: number) => String(index), []);
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<React.JSX.Element>) => item, []);
+  const keyExtractor = useCallback((_: React.JSX.Element, index: number) => String(index), []);
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 

@@ -35,6 +35,7 @@ import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { LLMRTKApiState } from "~/context/rtkQueryApi";
 import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import { IdentitiesState } from "@ledgerhq/client-ids/store";
 
 // === ACCOUNT STATE ===
 
@@ -386,6 +387,7 @@ export type State = LLMRTKApiState & {
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;

@@ -22,7 +22,7 @@ import { IconWrapper, WrapperClock } from "../../../shared/shared-styles";
 const Pill = styled(Text)`
   user-select: text;
   border-radius: 4px;
-  background: ${p => p.theme.colors.palette.text.shade10};
+  background: ${p => p.theme.colors.neutral.c30};
   padding: 3px 6px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -30,7 +30,7 @@ const Pill = styled(Text)`
 `;
 const SwapIdWrapper = styled(Box).attrs(p => ({
   ff: "Inter",
-  color: p.color || "palette.text.shade80",
+  color: p.color || "neutral.c80",
   fontSize: 4,
   relative: true,
   maxWidth: "100%",
@@ -49,7 +49,7 @@ const SwapIdWrapper = styled(Box).attrs(p => ({
   }
 
   &:hover ${Pill} {
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => p.theme.colors.neutral.c100};
   }
 }
 `;
@@ -88,7 +88,7 @@ const SwapCompleted = ({
 
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>
-      <Pill color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4} data-testid="swap-id">
+      <Pill color="neutral.c100" ff="Inter|SemiBold" fontSize={4} data-testid="swap-id">
         #{swapId}
       </Pill>
       <GradientHover>
@@ -107,7 +107,7 @@ const SwapCompleted = ({
       </IconWrapper>
       <Text
         mt={4}
-        color="palette.text.shade100"
+        color="neutral.c100"
         data-testid="swap-completed-message"
         ff="Inter|SemiBold"
         fontSize={5}
@@ -117,7 +117,7 @@ const SwapCompleted = ({
       <Text
         mt={13}
         textAlign="center"
-        color="palette.text.shade50"
+        color="neutral.c70"
         data-testid="swap-completed-description"
         ff="Inter|Regular"
         fontSize={4}
@@ -137,7 +137,7 @@ const SwapCompleted = ({
         data-testid="share-your-feedback-link"
         size="medium"
         type="shade"
-        color="palette.text.shade100"
+        color="neutral.c100"
         Icon={() => <Icon name="ExternalLink" />}
         alwaysUnderline
         onClick={openFeedbackFormTrack}

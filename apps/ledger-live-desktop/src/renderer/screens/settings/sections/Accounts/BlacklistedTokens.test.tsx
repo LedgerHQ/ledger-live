@@ -108,10 +108,7 @@ describe("BlacklistedTokens", () => {
 
     // Click to toggle visibility
     const countElement = screen.getByText("1 token");
-    const row = countElement.closest('[class*="sc-cMa-dbN"]'); // Click the row container
-    if (row) {
-      fireEvent.click(row);
-    }
+    fireEvent.click(countElement);
 
     // Verify tokens are now visible
     await waitFor(() => {
@@ -139,10 +136,8 @@ describe("BlacklistedTokens", () => {
 
     // Click to toggle visibility
     const countElement = screen.getByText("2 tokens");
-    const row = countElement.closest('[class*="sc-cMa-dbN"]');
-    if (row) {
-      fireEvent.click(row);
-    }
+
+    fireEvent.click(countElement);
 
     // Verify both tokens are visible under Ethereum
     await waitFor(() => {
@@ -166,10 +161,7 @@ describe("BlacklistedTokens", () => {
 
     // Toggle visibility to show tokens
     const countElement = screen.getByText("1 token");
-    const row = countElement.closest('[class*="sc-cMa-dbN"]');
-    if (row) {
-      fireEvent.click(row);
-    }
+    fireEvent.click(countElement);
 
     // Wait for token to be visible
     await waitFor(() => {
