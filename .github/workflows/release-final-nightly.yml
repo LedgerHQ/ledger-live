@@ -46,10 +46,7 @@ jobs:
           npmrc-location: "$HOME/.npmrc"
 
       - name: Network config
-        run: |
-          sudo sysctl -w net.ipv4.tcp_keepalive_time=60
-          sudo sysctl -w net.ipv4.tcp_keepalive_intvl=30
-          sudo sysctl -w net.ipv4.tcp_keepalive_probes=10
+        run: echo "network-concurrency=4" >> ~/.npmrc
 
       - name: Get checked out commit SHA
         id: get-sha
