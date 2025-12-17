@@ -209,6 +209,7 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
       <PendingTransferProposalsDetails
         isOpen={isDetailsOpen}
         account={account}
+        parentAccount={parentAccount}
         contractId={selectedContractId}
         onOpenModal={handleOpenModal}
         onClose={() => setIsDetailsOpen(false)}

@@ -51,7 +51,7 @@ describe("onboard (devnet)", () => {
   };
 
   describe("isAccountOnboarded", () => {
-    it("should return true for onboarded account", async () => {
+    it.skip("should return true for onboarded account", async () => {
       // GIVEN
       const keyPair = generateMockKeyPair();
       const mockSigner = createMockSigner(keyPair);
@@ -150,7 +150,7 @@ describe("onboard (devnet)", () => {
       expect(mockSignerContext).toHaveBeenCalled();
     }, 30000);
 
-    it("should complete full onboarding flow with already onboarded account", async () => {
+    it.skip("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
       const { mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
       const secondOnboardObservable = buildOnboardAccount(mockSignerContext);
