@@ -740,6 +740,14 @@ export const DEFAULT_FEATURES: Features = {
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
+
+  llmAnimatedSplashScreen: {
+    enabled: true,
+    params: {
+      ios: true,
+      android: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

@@ -287,6 +287,7 @@ export type Features = CurrencyFeatures & {
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
+  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
 };
 
 /**
@@ -745,6 +746,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
+
+export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 
 /**
  * Array of firmware versions that are ignored for the given device model
