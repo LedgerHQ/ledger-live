@@ -130,6 +130,35 @@ describe("trackingWrapper", () => {
   );
 });
 
+describe("trackingWrapper with optional tracking params", () => {
+  test.each([
+    { method: "signTransactionRequested", message: "WalletAPI SignTransaction" },
+    { method: "signTransactionFail", message: "WalletAPI SignTransaction Fail" },
+    { method: "signTransactionSuccess", message: "WalletAPI SignTransaction Success" },
+    { method: "broadcastFail", message: "WalletAPI Broadcast Fail" },
+    { method: "broadcastSuccess", message: "WalletAPI Broadcast Success" },
+  ])("$method includes isEmbeddedSwap and partner when provided", ({ method, message }) => {
+    // Given
+    const appManifest = appManifestFixture();
+    const mockedTrack = jest.fn();
+
+    // When
+    trackingWrapper(mockedTrack)[method](appManifest, true, "uniswap");
+
+    // Then
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith(
+      message,
+      {
+        walletAPI: appManifest.name,
+        isEmbeddedSwap: "true",
+        partner: "uniswap",
+      },
+      null,
+    );
+  });
+});
+
 function appManifestFixture(name = "live-app"): AppManifest {
   return {
     id: "12",
