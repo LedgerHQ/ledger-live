@@ -55,9 +55,9 @@ describe("makeGetAccountShape", () => {
     getTransactionsMock = jest.mocked(getTransactions);
     getDelegationInfoMock = jest.mocked(getDelegationInfo);
     const getNetworkInfoMock = jest.mocked(fetchNetworkInfo);
-    getNetworkInfoMock.mockReturnValue(
-      Promise.resolve({ protocolParams: { lovelacePerUtxoWord: "1" } } as APINetworkInfo),
-    );
+    getNetworkInfoMock.mockResolvedValue({
+      protocolParams: { lovelacePerUtxoWord: "1" },
+    } as APINetworkInfo);
   });
 
   afterEach(() => {
@@ -71,35 +71,29 @@ describe("makeGetAccountShape", () => {
       });
     });
     it("should return 0 balance when there is no utxos", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          transactions: [],
-          externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
-          internalCredentials: [],
-          blockHeight: 0,
-        }),
-      );
+      getTransactionsMock.mockResolvedValue({
+        transactions: [],
+        externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
+        internalCredentials: [],
+        blockHeight: 0,
+      });
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.balance).toEqual(new BigNumber(0));
     });
 
     it("should return the sum of utxos with delegation reward value", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          transactions: [],
-          externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
-          internalCredentials: [
-            {
-              isUsed: true,
-              key: "cred",
-            } as PaymentCredential,
-          ],
-          blockHeight: 0,
-        }),
-      );
-      getDelegationInfoMock.mockReturnValue(
-        Promise.resolve({ rewards: new BigNumber(42) } as CardanoDelegation),
-      );
+      getTransactionsMock.mockResolvedValue({
+        transactions: [],
+        externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
+        internalCredentials: [
+          {
+            isUsed: true,
+            key: "cred",
+          } as PaymentCredential,
+        ],
+        blockHeight: 0,
+      });
+      getDelegationInfoMock.mockResolvedValue({ rewards: new BigNumber(42) } as CardanoDelegation);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.balance).toEqual(new BigNumber(42));
     });
@@ -107,98 +101,88 @@ describe("makeGetAccountShape", () => {
 
   describe("spendableBalance", () => {
     it("should return 0 spendable balance when there is no utxos", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          transactions: [],
-          externalCredentials: [
-            { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
-          ],
-          internalCredentials: [],
-        } as any),
-      );
+      getTransactionsMock.mockResolvedValue({
+        transactions: [],
+        externalCredentials: [
+          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
+        ],
+        internalCredentials: [],
+      } as any);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.spendableBalance).toEqual(new BigNumber(0));
     });
 
     it("should return spendable balance with rewards when delegated to dRep", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          transactions: [
-            {
-              hash: "tx1",
-              fees: "0",
-              timestamp: new Date(),
-              blockHeight: 1,
-              inputs: [],
-              outputs: [
-                {
-                  address: "addr",
-                  value: new BigNumber(5), // 5 lovelace
-                  tokens: [],
-                  paymentKey: "key", // match with external credential key
-                },
-              ],
-              certificate: {
-                stakeRegistrations: [],
-                stakeDeRegistrations: [],
-                stakeDelegations: [],
+      getTransactionsMock.mockResolvedValue({
+        transactions: [
+          {
+            hash: "tx1",
+            fees: "0",
+            timestamp: new Date(),
+            blockHeight: 1,
+            inputs: [],
+            outputs: [
+              {
+                address: "addr",
+                value: new BigNumber(5), // 5 lovelace
+                tokens: [],
+                paymentKey: "key", // match with external credential key
               },
+            ],
+            certificate: {
+              stakeRegistrations: [],
+              stakeDeRegistrations: [],
+              stakeDelegations: [],
             },
-          ],
-          externalCredentials: [
-            { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
-          ],
-          internalCredentials: [],
-        } as any),
-      );
-      getDelegationInfoMock.mockReturnValue(
-        Promise.resolve({
-          rewards: new BigNumber(10), // 10 lovelace
-          dRepHex: "dRepHex", // delegated to dRep
-        } as CardanoDelegation),
-      );
+          },
+        ],
+        externalCredentials: [
+          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
+        ],
+        internalCredentials: [],
+      } as any);
+      getDelegationInfoMock.mockResolvedValue({
+        rewards: new BigNumber(10), // 10 lovelace
+        dRepHex: "dRepHex", // delegated to dRep
+      } as CardanoDelegation);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       // spendable balance = 5 (utxo) + 10 (rewards) = 15 lovelace
       expect(result.spendableBalance).toEqual(new BigNumber(15));
     });
 
     it("should return spendable balance without rewards when not delegated to dRep", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          transactions: [
-            {
-              hash: "tx1",
-              fees: "0",
-              timestamp: new Date(),
-              blockHeight: 1,
-              inputs: [],
-              outputs: [
-                {
-                  address: "addr",
-                  value: new BigNumber(5), // 5 lovelace
-                  tokens: [],
-                  paymentKey: "key", // match with external credential key
-                },
-              ],
-              certificate: {
-                stakeRegistrations: [],
-                stakeDeRegistrations: [],
-                stakeDelegations: [],
+      getTransactionsMock.mockResolvedValue({
+        transactions: [
+          {
+            hash: "tx1",
+            fees: "0",
+            timestamp: new Date(),
+            blockHeight: 1,
+            inputs: [],
+            outputs: [
+              {
+                address: "addr",
+                value: new BigNumber(5), // 5 lovelace
+                tokens: [],
+                paymentKey: "key", // match with external credential key
               },
+            ],
+            certificate: {
+              stakeRegistrations: [],
+              stakeDeRegistrations: [],
+              stakeDelegations: [],
             },
-          ],
-          externalCredentials: [
-            { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
-          ],
-          internalCredentials: [],
-        } as any),
-      );
-      getDelegationInfoMock.mockReturnValue(
-        Promise.resolve({
-          rewards: new BigNumber(10), // 10 lovelace
-          dRepHex: undefined, // not delegated to dRep
-        } as CardanoDelegation),
-      );
+          },
+        ],
+        externalCredentials: [
+          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
+        ],
+        internalCredentials: [],
+      } as any);
+      getDelegationInfoMock.mockResolvedValue({
+        rewards: new BigNumber(10), // 10 lovelace
+        dRepHex: undefined, // not delegated to dRep
+      } as CardanoDelegation);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       // spendable balance = 5 (utxo), rewards should be excluded
       expect(result.spendableBalance).toEqual(new BigNumber(5));
@@ -207,20 +191,16 @@ describe("makeGetAccountShape", () => {
 
   describe("delegation", () => {
     it("should check dRepHex and rewards are available", async () => {
-      getTransactionsMock.mockReturnValue(
-        Promise.resolve({
-          blockHeight: 0,
-          transactions: [],
-          externalCredentials: [{ isUsed: false, key: "0", path: {} } as PaymentCredential],
-          internalCredentials: [],
-        }),
-      );
-      getDelegationInfoMock.mockReturnValue(
-        Promise.resolve({
-          rewards: new BigNumber(10),
-          dRepHex: "dRepHex",
-        } as CardanoDelegation),
-      );
+      getTransactionsMock.mockResolvedValue({
+        blockHeight: 0,
+        transactions: [],
+        externalCredentials: [{ isUsed: false, key: "0", path: {} } as PaymentCredential],
+        internalCredentials: [],
+      });
+      getDelegationInfoMock.mockResolvedValue({
+        rewards: new BigNumber(10),
+        dRepHex: "dRepHex",
+      } as CardanoDelegation);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.cardanoResources?.delegation?.dRepHex).toEqual("dRepHex");
       expect(result.cardanoResources?.delegation?.rewards).toEqual(new BigNumber(10));
