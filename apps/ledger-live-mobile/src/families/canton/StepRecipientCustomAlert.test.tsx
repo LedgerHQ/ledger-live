@@ -8,13 +8,13 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/canton/types";
 import BigNumber from "bignumber.js";
-import SendSelectRecipient from "../SendSelectRecipient";
-import { createMockAccount, createMockNavigation } from "../Onboard/steps/__tests__/test-utils";
+import SendSelectRecipient from "./SendSelectRecipient";
+import { createMockAccount, createMockNavigation } from "./Onboard/steps/__tests__/test-utils";
 import { ScreenName } from "~/const";
 
 const StepRecipientCustomAlert = SendSelectRecipient.StepRecipientCustomAlert;
 
-jest.mock("../TooManyUtxosModal", () => ({
+jest.mock("./TooManyUtxosModal", () => ({
   component: function MockTooManyUtxosModal({
     isOpened,
     onClose: _onClose,
