@@ -5,7 +5,10 @@ const tonConfig: CurrencyLiveConfigDefinition = {
   config_currency_ton: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       infra: {
         API_TON_ENDPOINT: "https://ton.coin.ledger.com/api/v3",
         KNOWN_JETTONS,
