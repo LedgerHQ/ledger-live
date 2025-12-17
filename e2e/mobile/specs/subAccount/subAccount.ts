@@ -2,6 +2,7 @@ import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
@@ -127,7 +128,7 @@ export function runSendSPLAddressValid(
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
-      const addressToCredit = "8nnwXo313DXWcE3kBR54gDKDmcySeGVjYRztbCAPzxev";
+      const addressToCredit = Addresses.SOL_GIGA_2_ATA_ADDRESS;
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });

@@ -13,6 +13,8 @@ import invariant from "invariant";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
 const subAccounts = [
   {
@@ -41,30 +43,6 @@ const subAccountReceive: Array<{
   { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
-
-const liveDataWithParentAddressCommand = (
-  liveDataAccount: Account | TokenAccount,
-  accountToAssign: TokenAccount,
-) => {
-  return async (appjsonPath: string) => {
-    await CLI.liveData({
-      currency: liveDataAccount.currency.speculosApp.name,
-      index: liveDataAccount.index,
-      add: true,
-      appjson: appjsonPath,
-    });
-
-    invariant(accountToAssign.parentAccount, "Parent account is required");
-
-    const { address } = await CLI.getAddress({
-      currency: accountToAssign.parentAccount.currency.id,
-      path: accountToAssign.parentAccount.accountPath,
-    });
-
-    accountToAssign.address = address;
-    return address;
-  };
-};
 
 for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
@@ -295,13 +273,13 @@ const transactionsAddressInvalid = [
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
-    recipient: "PXFuX7GdgVpPnuXwQSkjt3jihZZCjcxy8G5fsQa1NBn", //CLI doesn't allow us to get ATA address
+    recipient: Addresses.SOL_WIF_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This associated token account holds another token",
     xrayTicket: "B2CQA-3083",
   },
   {
     transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
-    recipient: "8nnwXo313DXWcE3kBR54gDKDmcySeGVjYRztbCAPzxev", //CLI doesn't allow us to get ATA address
+    recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This is a token account. Input a regular wallet address",
     xrayTicket: "B2CQA-3084",
   },
@@ -332,12 +310,9 @@ for (const transaction of transactionsAddressInvalid) {
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         async (appjsonPath: string) => {
-          await CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.speculosApp.name,
-            index: transaction.transaction.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
+          await liveDataCommand(transaction.transaction.accountToDebit, { useScheme: false })(
+            appjsonPath,
+          );
           if (transaction.recipient === undefined) {
             const receiveAddress = await CLI.getAddress({
               currency: transaction.transaction.accountToCredit.currency.id,
@@ -440,7 +415,7 @@ for (const transaction of transactionsAddressValid) {
         await app.layout.openSendModalFromSideBar();
         await app.send.selectDebitCurrency(transaction.transaction);
         //CLI doesn't allow us to get ATA address
-        await app.send.fillRecipient("8nnwXo313DXWcE3kBR54gDKDmcySeGVjYRztbCAPzxev");
+        await app.send.fillRecipient(Addresses.SOL_GIGA_2_ATA_ADDRESS);
 
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputWarningMessage(transaction.expectedErrorMessage);

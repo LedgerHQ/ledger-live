@@ -137,9 +137,9 @@ export class Account {
     undefined,
     "speculos.eth",
   );
-  static readonly ETH_2_LOWER_CASE = new Account(Currency.ETH, "Ethereum 2", 1, "44'/60'/1'/0/0"); //enlever et faire un .lowercase()?
+  static readonly ETH_2_LOWER_CASE = new Account(Currency.ETH, "Ethereum 2", 1, "44'/60'/1'/0/0");
   static readonly ETH_3 = new Account(Currency.ETH, "Ethereum 3", 3, "44'/60'/2'/0/0");
-  static readonly SANCTIONED_ETH = new Account(Currency.ETH, "Sanctioned Ethereum", 0, ""); //0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf
+  static readonly SANCTIONED_ETH = new Account(Currency.ETH, "Sanctioned Ethereum", 0, "");
 
   static readonly HEDERA_1 = new Account(Currency.HBAR, "Hedera 1", 0, "44/3030");
 
@@ -215,18 +215,8 @@ export class Account {
   static readonly SUI_1 = new Account(Currency.SUI, "Sui 1", 0, "44'/784'/0'/0'/0'");
   static readonly SUI_2 = new Account(Currency.SUI, "Sui 2", 1, "44'/784'/1'/0'/0'");
 
-  static readonly BASE_1 = new Account(
-    Currency.BASE,
-    "Base 1",
-    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
-    0,
-  );
-  static readonly BASE_2 = new Account(
-    Currency.BASE,
-    "Base 2",
-    "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
-    1,
-  );
+  static readonly BASE_1 = new Account(Currency.BASE, "Base 1", 0, "44'/60'/0'/0/0");
+  static readonly BASE_2 = new Account(Currency.BASE, "Base 2", 1, "44'/60'/1'/0/0");
 
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }

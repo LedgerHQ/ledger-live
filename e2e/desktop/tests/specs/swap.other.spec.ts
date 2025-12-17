@@ -10,7 +10,6 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { CLI } from "tests/utils/cliUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -22,25 +21,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
 const app: AppInfos = AppInfos.EXCHANGE;
-
-const liveDataWithAddressCommand = (account: Account | TokenAccount) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: account.currency.speculosApp.name,
-    index: account.index,
-    add: true,
-    appjson: userdataPath,
-  }).then(async () => {
-    const { address } = await CLI.getAddress({
-      currency: account.currency.speculosApp.name,
-      path: account.accountPath,
-      derivationMode: account.derivationMode,
-    });
-
-    account.address = address;
-    return address;
-  });
 
 test.describe("Swap - Provider redirection", () => {
   const fromAccount = Account.ETH_1;
@@ -461,8 +445,8 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     xrayTicket: "B2CQA-3089",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
-    addressFrom: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
-    addressTo: "DLVArScX1BQEr7gZSSpHMGMq7HKKFKdFF82Cs6PvEKVC",
+    addressFrom: Addresses.ETH_OTHER_SEED,
+    addressTo: Addresses.SOL_OTHER_SEED,
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This receiving account does not belong to the device you have connected. Please change and retry",
@@ -472,16 +456,16 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
     xrayTicket: "B2CQA-3090",
     errorMessage: null,
-    addressFrom: "bc1qcy8hnxctr03mh62cu00y0wphmfpa2gwr7elje5",
-    addressTo: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
+    addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
+    addressTo: Addresses.ETH_OTHER_SEED,
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
     xrayTicket: "B2CQA-3091",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
-    addressFrom: "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",
-    addressTo: "bc1qcy8hnxctr03mh62cu00y0wphmfpa2gwr7elje5",
+    addressFrom: Addresses.ETH_OTHER_SEED,
+    addressTo: Addresses.BTC_NATIVE_SEGWIT_1,
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This sending account does not belong to the device you have connected. Please change and retry",
@@ -1342,8 +1326,8 @@ test.describe("Swap history", () => {
     xrayTicket: "B2CQA-604",
     provider: Provider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",
-    addressFrom: "9MQyG8qo6i616yApRoRVMXYerGV4swwtd2bDETC3RCWB",
-    addressTo: "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
+    addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
+    addressTo: Addresses.SWAP_HISTORY_ETH_TO,
   };
 
   setupEnv(true);

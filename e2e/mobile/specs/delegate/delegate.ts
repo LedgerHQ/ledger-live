@@ -129,8 +129,6 @@ export async function runDelegateTezos(delegation: DelegateType, tmsLinks: strin
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
 
-      console.log("delegation.account.address", delegation.account.address);
-
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();

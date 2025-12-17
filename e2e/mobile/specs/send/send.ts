@@ -179,7 +179,6 @@ export function runSendValidAddressTest(
         ? baseRecipientAddress.toLowerCase()
         : baseRecipientAddress;
       transaction.accountToCredit.address = recipientAddress;
-      console.log("recipientAddress", recipientAddress);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);
       await app.send.expectSendRecipientSuccess(expectedWarningMessage);
       await app.send.recipientContinue(transaction.memoTag);

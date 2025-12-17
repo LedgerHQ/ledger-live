@@ -10,7 +10,7 @@ export class PageScroller {
   async performScroll(
     matcher: NativeMatcher,
     scrollViewId?: string | RegExp,
-    pixels = 350,
+    pixels = 300,
     initialDirection: Direction = "down",
     timeout = ANDROID_SCROLL_DELAY,
   ): Promise<void> {

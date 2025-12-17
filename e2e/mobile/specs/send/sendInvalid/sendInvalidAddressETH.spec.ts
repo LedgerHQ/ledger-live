@@ -1,3 +1,4 @@
+import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 import { runSendInvalidAddressTest } from "../send";
 
 const transaction = new Transaction(
@@ -9,6 +10,6 @@ const transaction = new Transaction(
 runSendInvalidAddressTest(
   transaction,
   "This is not a valid Ethereum address",
-  "bc1q550hm43wj0jq949xwsw67kwzz0t3wy60y3gfax",
+  Addresses.BTC_NATIVE_SEGWIT_1,
   ["B2CQA-2709"],
 );

@@ -5,28 +5,10 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
-
-const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
-  await CLI.liveData({
-    currency: account.currency.speculosApp.name,
-    index: account.index,
-    add: true,
-    appjson: userdataPath,
-  });
-
-  const { address } = await CLI.getAddress({
-    currency: account.currency.speculosApp.name,
-    path: account.accountPath,
-    derivationMode: account.derivationMode,
-  });
-
-  account.address = address;
-  return address;
-};
 
 const swaps = [
   {

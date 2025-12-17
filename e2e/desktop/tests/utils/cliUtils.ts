@@ -249,14 +249,27 @@ export const CLI = {
       cliOpts.push("--verify");
     }
 
-    return runCliCommand(cliOpts.join("+")).then(output => {
-      const lines = output
-        .split("\n")
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
+    const output = await runCliCommand(cliOpts.join("+"));
+    const lines = output
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
 
-      const lastLine = lines[lines.length - 1] ?? "";
-      return JSON.parse(lastLine);
-    });
+    if (lines.length === 0) {
+      throw new Error("CLI getAddress returned empty output");
+    }
+
+    const jsonLine =
+      [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
+
+    if (!jsonLine) {
+      throw new Error("CLI getAddress output does not contain JSON");
+    }
+
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      throw new Error("Failed to parse CLI getAddress output");
+    }
   },
 };
