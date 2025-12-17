@@ -147,7 +147,7 @@ const ActivityIndicatorInner = () => {
   if (!areAllAccountsUpToDate || (isError && error)) {
     return (
       <Tooltip
-        tooltipBg="alertRed"
+        tooltipBg="error-strong"
         content={
           <Box
             fontSize={4}

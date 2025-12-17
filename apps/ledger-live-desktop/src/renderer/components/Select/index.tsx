@@ -164,6 +164,7 @@ class MenuList<
 
     return (
       <List
+        data-testid="select-options-list"
         ref={this.list}
         width="100%"
         style={{

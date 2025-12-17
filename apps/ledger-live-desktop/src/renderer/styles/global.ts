@@ -29,8 +29,8 @@ export const GlobalStyle = createGlobalStyle`
     fill: ${p => p.theme.colors.neutral.c100};
   }
 
-  .tippy-box[data-theme~='ledger'].bg-alertRed > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.alertRed};
+  .tippy-box[data-theme~='ledger'].bg-error-strong > .tippy-svg-arrow {
+    fill: var(--surface-status-error-strong-default);
   }
 
   .tippy-box[data-theme~='ledger'].bg-palette-background-default > .tippy-svg-arrow {
