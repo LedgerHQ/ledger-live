@@ -19,6 +19,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
@@ -31,6 +32,17 @@ export const useDetailedAccounts = (
   const { openAddAccountFlow } = useOpenAssetFlowDialog(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
+  );
+
+  // Wrapper to close the drawer after account selection (from Dialog)
+  const wrappedOnAccountSelected = useCallback(
+    (account: AccountLike, parentAccount?: Account) => {
+      if (onAccountSelected) {
+        onAccountSelected(account, parentAccount);
+        setDrawer();
+      }
+    },
+    [onAccountSelected],
   );
 
   const nestedAccounts = useSelector(accountsSelector);
@@ -72,8 +84,8 @@ export const useDetailedAccounts = (
       button: "Add a new account",
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
-    openAddAccountFlow(asset, false, onAccountSelected);
-  }, [asset, openAddAccountFlow, trackModularDrawerEvent, onAccountSelected]);
+    openAddAccountFlow(asset, false, wrappedOnAccountSelected);
+  }, [asset, openAddAccountFlow, trackModularDrawerEvent, wrappedOnAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };
