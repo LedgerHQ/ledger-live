@@ -166,7 +166,9 @@ describe("PendingTransferProposals", () => {
       render(<PendingTransferProposals account={account} parentAccount={mockAccount} />, {
         initialState: buildInitialState(),
       });
-      fireEvent.click(screen.getByText(`families.canton.pendingTransactions.${action}`));
+      const buttonText =
+        action === "withdraw" ? "common.cancel" : `families.canton.pendingTransactions.${action}`;
+      fireEvent.click(screen.getByText(buttonText));
       fireEvent.click(await screen.findByTestId("modal-confirm"));
 
       await waitFor(() => {

@@ -4,11 +4,10 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/ldls-ui-react";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import IconCheck from "~/renderer/icons/Check";
-import IconCross from "~/renderer/icons/Cross";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import {
   OpDetailsSection,
@@ -17,7 +16,7 @@ import {
   HashContainer,
   GradientHover,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import { SplitAddress } from "~/renderer/components/OperationsList/Address";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -118,7 +117,14 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
   const isIncoming = proposal.sender !== parentAccount.xpub;
 
   return (
-    <Box flow={3} px={20} mt={20}>
+    <Box flow={3} px={20} style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
+      <Box mb={4}>
+        <Text ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100">
+          {isIncoming
+            ? t("families.canton.pendingTransactions.incoming.detailsTitle")
+            : t("families.canton.pendingTransactions.outgoing.detailsTitle")}
+        </Text>
+      </Box>
       <OpDetailsSection>
         <OpDetailsTitle>{t("families.canton.pendingTransactions.amount")}</OpDetailsTitle>
         <OpDetailsData>
@@ -205,40 +211,47 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
 
       <Divider />
 
-      <Box horizontal mt={4} flow={2} justifyContent="center">
+      <Box horizontal mt="auto" pb={20} flow={2} style={{ width: "100%" }}>
         {isIncoming ? (
           <>
-            <Button
-              primary
-              disabled={proposal.isExpired}
-              onClick={() => {
-                if (!proposal.isExpired) {
-                  handleAcceptOffer(proposal.contract_id);
-                }
-              }}
-              style={{ minWidth: "120px", textTransform: "uppercase" }}
-            >
-              <IconCheck size={16} />
-              <Box ml={1}>{t("families.canton.pendingTransactions.accept")}</Box>
-            </Button>
-            <Button
-              outline
-              onClick={() => handleRejectOffer(proposal.contract_id)}
-              style={{ minWidth: "120px", textTransform: "uppercase" }}
-            >
-              <IconCross size={16} />
-              <Box ml={1}>{t("families.canton.pendingTransactions.reject")}</Box>
-            </Button>
+            <Box flex={1}>
+              <Button
+                isFull
+                disabled={proposal.isExpired}
+                onClick={() => {
+                  if (!proposal.isExpired) {
+                    handleAcceptOffer(proposal.contract_id);
+                  }
+                }}
+              >
+                <Box horizontal alignItems="center" style={{ gap: "8px" }}>
+                  {t("families.canton.pendingTransactions.accept")}
+                  <IconCheck size={16} />
+                </Box>
+              </Button>
+            </Box>
+            <Box flex={1}>
+              <Button
+                isFull
+                appearance="no-background"
+                style={{ borderColor: "neutral.c100", borderWidth: 1 }}
+                onClick={() => handleRejectOffer(proposal.contract_id)}
+              >
+                <Box horizontal alignItems="center" style={{ gap: "8px" }}>
+                  {t("families.canton.pendingTransactions.reject")}
+                </Box>
+              </Button>
+            </Box>
           </>
         ) : (
-          <Button
-            primary
-            onClick={() => handleWithdrawOffer(proposal.contract_id)}
-            style={{ minWidth: "120px", textTransform: "uppercase" }}
-          >
-            <IconCheck size={16} />
-            <Box ml={1}>{t("families.canton.pendingTransactions.withdraw")}</Box>
-          </Button>
+          <Box flex={1}>
+            <Button isFull onClick={() => handleWithdrawOffer(proposal.contract_id)}>
+              <Box horizontal alignItems="center" style={{ gap: "8px" }}>
+                {t("families.canton.pendingTransactions.withdraw")}
+                <IconCheck size={16} />
+              </Box>
+            </Button>
+          </Box>
         )}
       </Box>
     </Box>
