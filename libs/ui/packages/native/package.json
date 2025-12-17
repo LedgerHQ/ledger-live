@@ -87,7 +87,7 @@
     "@babel/runtime": "7.27.1",
     "@emotion/core": "^11.0.0",
     "@emotion/native": "^11.0.0",
-    "@expo/cli": "0.24.14",
+    "@expo/cli": "0.24.23",
     "@expo/metro-config": "^0.19.11",
     "@expo/webpack-config": "19.0.1",
     "@react-native-async-storage/async-storage": "2.1.2",
