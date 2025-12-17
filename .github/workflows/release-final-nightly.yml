@@ -100,7 +100,20 @@ jobs:
         continue-on-error: true
         run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
         env:
-          NPM_CONFIG_PROVENANCE: "true"
+          # Registry
+          npm_config_registry: "https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/"
+
+          # Limit parallel HTTP connections from npm
+          npm_config_maxsockets: "5"
+
+          # Make npm/pnpm more tolerant to flaky connections
+          NPM_CONFIG_FETCH_RETRIES: "5"
+          NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "10000"   # 10s
+          NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "60000"   # 60s
+
+          PNPM_FETCH_RETRIES: "5"
+          PNPM_FETCH_RETRY_MINTIMEOUT: "10000"
+          PNPM_FETCH_RETRY_MAXTIMEOUT: "60000"
 
       - name: Pack for signing / Attestation
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
