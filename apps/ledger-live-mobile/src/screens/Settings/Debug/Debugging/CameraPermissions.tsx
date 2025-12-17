@@ -11,6 +11,26 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
   const isFocused = useIsFocused();
   const device = useCameraDevice("back");
 
+  const renderCameraContent = (permissionGranted: boolean | null) => {
+    if (!permissionGranted) {
+      return <Text>waiting for permission (optimistic strategy)</Text>;
+    }
+    if (!isFocused || !device) {
+      return <Text>screen not in focus, camera not mounted</Text>;
+    }
+    return (
+      <Camera
+        device={device}
+        isActive={isFocused}
+        style={{
+          height: 200,
+          width: 200,
+          alignSelf: "center",
+        }}
+      />
+    );
+  };
+
   return (
     <Flex flex={1} p={6}>
       <Switch
@@ -24,25 +44,7 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
       {mounted ? (
         <RequiresCameraPermissions optimisticallyMountChildren={optimistic}>
           <CameraPermissionContext.Consumer>
-            {({ permissionGranted }) => {
-              return permissionGranted ? (
-                isFocused && device ? (
-                  <Camera
-                    device={device}
-                    isActive={isFocused}
-                    style={{
-                      height: 200,
-                      width: 200,
-                      alignSelf: "center",
-                    }}
-                  />
-                ) : (
-                  <Text>screen not in focus, camera not mounted</Text>
-                )
-              ) : (
-                <Text>waiting for permission (optimistic strategy)</Text>
-              );
-            }}
+            {({ permissionGranted }) => renderCameraContent(permissionGranted)}
           </CameraPermissionContext.Consumer>
         </RequiresCameraPermissions>
       ) : (
