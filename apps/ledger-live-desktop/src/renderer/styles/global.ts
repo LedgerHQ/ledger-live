@@ -30,7 +30,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .tippy-box[data-theme~='ledger'].bg-error-strong > .tippy-svg-arrow {
-    fill: var(--surface-status-error-strong-default);
+    fill: ${p => p.theme.colors.error.c50};
   }
 
   .tippy-box[data-theme~='ledger'].bg-palette-background-default > .tippy-svg-arrow {

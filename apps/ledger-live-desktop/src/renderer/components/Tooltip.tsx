@@ -56,10 +56,7 @@ const ToolTip = ({
   containerStyle,
 }: Props) => {
   const colors = useTheme().colors;
-  const bg =
-    tooltipBg === "error-strong"
-      ? "var(--surface-status-error-strong-default)"
-      : colors.neutral.c100;
+  const bg = tooltipBg === "error-strong" ? colors.error.c50 : colors.neutral.c100;
   return (
     <Tippy
       {...defaultTippyOptions}
