@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ethereum-provider",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "private": true,
   "description": "Ledger Live ethereum provider",
   "keywords": [

@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-deeplink-module
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#12938](https://github.com/LedgerHQ/ledger-live/pull/12938) [`48175fa`](https://github.com/LedgerHQ/ledger-live/commit/48175fa38e438fe406595da1df33b82a37b8af61) Thanks [@qperrot](https://github.com/qperrot)! - Support changeAddress on Bitcoin
+
 ## 0.4.0
 
 ### Minor Changes
