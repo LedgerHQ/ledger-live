@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.10.0",
+  "version": "6.10.1",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",

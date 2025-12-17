@@ -5,6 +5,7 @@ import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accou
 import { Account } from "@ledgerhq/types-live";
 import { of, Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
 
 // Needed for receive navigator
 jest.mock("@ledgerhq/live-config/LiveConfig", () => {
@@ -72,6 +73,15 @@ jest.mock("~/hooks/deviceActions", () => ({
     };
   },
 }));
+
+jest.mock("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling", () => {
+  return {
+    ...jest.requireActual("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling"),
+    useIsDeviceLockedPolling: () => {
+      return { type: IsDeviceLockedResultType.unlocked };
+    },
+  };
+});
 
 let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;

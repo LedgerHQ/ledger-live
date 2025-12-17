@@ -23,6 +23,7 @@ const transformIncludePatterns = [
   "@gorhom/bottom-sheet",
   "react-native-safe-area-context",
   "react-native-gesture-handler",
+  "@shopify/flash-list",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

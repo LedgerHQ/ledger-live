@@ -2156,8 +2156,6 @@ PODS:
     - Firebase/RemoteConfig (= 11.12.0)
     - React-Core
     - RNFBApp
-  - RNFlashList (1.6.4):
-    - React-Core
   - RNGestureHandler (2.28.0):
     - DoubleConversion
     - glog
@@ -2602,7 +2600,6 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBRemoteConfig (from `../node_modules/@react-native-firebase/remote-config`)"
-  - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNLocalize (from `../node_modules/react-native-localize`)
@@ -2886,8 +2883,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
     :path: "../node_modules/@react-native-firebase/remote-config"
-  RNFlashList:
-    :path: "../node_modules/@shopify/flash-list"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -3060,7 +3055,6 @@ SPEC CHECKSUMS:
   RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
   RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d
   RNFBRemoteConfig: a8fe6caf8f5ae1c09b2d369ca6b8800115f360cd
-  RNFlashList: 23b2c67aa684179d29c8c2f468c6f5334e609951
   RNGestureHandler: e986a1c140d854f5365945aec56dc95e282ce58b
   RNKeychain: 35beaa17938f7d8e4990d8a38fad5f8a748fc47c
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4

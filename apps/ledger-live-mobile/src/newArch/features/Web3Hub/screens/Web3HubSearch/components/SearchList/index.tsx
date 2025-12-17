@@ -71,7 +71,6 @@ export default function SearchList({ navigation, search, onScroll, pt = 0 }: Pro
             </Box>
           )
         }
-        estimatedItemSize={128}
         data={data}
         extraData={disclaimer.onPressItem}
         onEndReached={onEndReached}

@@ -39,7 +39,6 @@ export default function CategoriesList({ selectedCategory, selectCategory }: Pro
       keyExtractor={identityFn}
       renderItem={renderItem}
       ListEmptyComponent={<Box height={32} />} // Empty box for first height calculation, could be improved
-      estimatedItemSize={50}
       data={data}
       showsHorizontalScrollIndicator={false}
       extraData={extraData}

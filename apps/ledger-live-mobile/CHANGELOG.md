@@ -1,5 +1,105 @@
 # live-mobile
 
+## 3.99.1
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve SelectDevice auto selection
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`4b39033`](https://github.com/LedgerHQ/ledger-live/commit/4b390339106c5cec460dfe6e05e7637c41485ed8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix LIVE-23351 and LIVE-23397 by better estimating network fees
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`eebdb40`](https://github.com/LedgerHQ/ledger-live/commit/eebdb402cfa1368c31cb9e4f347464495d3dcdd5) Thanks [@thesan](https://github.com/thesan)! - migrated @shopify/flash-list to v2
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix a bug in error recognition
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`ec5e52d`](https://github.com/LedgerHQ/ledger-live/commit/ec5e52dc117562a98287b6673dc24f0ebb734ef1) Thanks [@thesan](https://github.com/thesan)! - Detail the startup time in segment and the performance screen
+
+- [#13250](https://github.com/LedgerHQ/ledger-live/pull/13250) [`351b40f`](https://github.com/LedgerHQ/ledger-live/commit/351b40fb07ba9dcd99f77d061bdca4267fe6a661) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Datadog integration to have its own id
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`2c8643c`](https://github.com/LedgerHQ/ledger-live/commit/2c8643c14dd8d7cb0cffc0c7dab84044f9815893) Thanks [@thesan](https://github.com/thesan)! - fix Fabric rendering making unable to open newly added assets after adding a second account
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e), [`e585ca1`](https://github.com/LedgerHQ/ledger-live/commit/e585ca1d5d8d4f883b857582a208fdaa14f17c58)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/live-dmk-mobile@0.16.1
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/coin-canton@0.11.1
+  - @ledgerhq/coin-cosmos@0.20.2
+  - @ledgerhq/coin-evm@2.36.1
+  - @ledgerhq/coin-filecoin@1.15.1
+  - @ledgerhq/coin-multiversx@0.8.2
+  - @ledgerhq/coin-stacks@0.12.2
+  - @ledgerhq/domain-service@1.4.3
+  - @ledgerhq/ledger-key-ring-protocol@0.8.1
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/hw-transport-http@6.31.1
+  - @ledgerhq/react-native-hid@6.33.1
+  - @ledgerhq/react-native-hw-transport-ble@6.35.7
+  - @ledgerhq/live-network@2.1.3
+  - @ledgerhq/live-countervalues@0.10.2
+  - @ledgerhq/live-countervalues-react@0.7.4
+  - @ledgerhq/live-wallet@0.16.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6
+
+## 3.99.1-hotfix.3
+
+### Patch Changes
+
+- [#13250](https://github.com/LedgerHQ/ledger-live/pull/13250) [`351b40f`](https://github.com/LedgerHQ/ledger-live/commit/351b40fb07ba9dcd99f77d061bdca4267fe6a661) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Datadog integration to have its own id
+
+## 3.99.1-hotfix.2
+
+### Patch Changes
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`001760d`](https://github.com/LedgerHQ/ledger-live/commit/001760d084c25e0f7460a1415ae057753486b858) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(live-21109): migrate exchange SDK errors to LLC
+
+- [#13266](https://github.com/LedgerHQ/ledger-live/pull/13266) [`4b39033`](https://github.com/LedgerHQ/ledger-live/commit/4b390339106c5cec460dfe6e05e7637c41485ed8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix LIVE-23351 and LIVE-23397 by better estimating network fees
+
+## 3.99.1-hotfix.1
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`91d1c29`](https://github.com/LedgerHQ/ledger-live/commit/91d1c2971981fd13406cb227c4dd237fe2ccadb0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve SelectDevice auto selection
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix a bug in error recognition
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e), [`e585ca1`](https://github.com/LedgerHQ/ledger-live/commit/e585ca1d5d8d4f883b857582a208fdaa14f17c58)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/live-dmk-mobile@0.16.1-hotfix.0
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-canton@0.11.1-hotfix.0
+  - @ledgerhq/coin-cosmos@0.20.2-hotfix.0
+  - @ledgerhq/coin-evm@2.36.1-hotfix.0
+  - @ledgerhq/coin-filecoin@1.15.1-hotfix.0
+  - @ledgerhq/coin-multiversx@0.8.2-hotfix.0
+  - @ledgerhq/coin-stacks@0.12.2-hotfix.0
+  - @ledgerhq/domain-service@1.4.3-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.8.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/hw-transport-http@6.31.1-hotfix.0
+  - @ledgerhq/react-native-hid@6.33.1-hotfix.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.7-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.10.2-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.7.4-hotfix.0
+  - @ledgerhq/live-wallet@0.16.2-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6-hotfix.0
+
+## 3.99.1-hotfix.0
+
+### Patch Changes
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`eebdb40`](https://github.com/LedgerHQ/ledger-live/commit/eebdb402cfa1368c31cb9e4f347464495d3dcdd5) Thanks [@thesan](https://github.com/thesan)! - migrated @shopify/flash-list to v2
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`ec5e52d`](https://github.com/LedgerHQ/ledger-live/commit/ec5e52dc117562a98287b6673dc24f0ebb734ef1) Thanks [@thesan](https://github.com/thesan)! - Detail the startup time in segment and the performance screen
+
+- [#13255](https://github.com/LedgerHQ/ledger-live/pull/13255) [`2c8643c`](https://github.com/LedgerHQ/ledger-live/commit/2c8643c14dd8d7cb0cffc0c7dab84044f9815893) Thanks [@thesan](https://github.com/thesan)! - fix Fabric rendering making unable to open newly added assets after adding a second account
+
 ## 3.99.0
 
 ### Minor Changes

@@ -56,18 +56,30 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction", getEventData(manifest));
+    signTransactionRequested: (manifest: AppManifest, isEmbeddedSwap?: boolean) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+      };
+      track("WalletAPI SignTransaction", properties);
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction Fail", getEventData(manifest));
+    signTransactionFail: (manifest: AppManifest, isEmbeddedSwap?: boolean) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+      };
+      track("WalletAPI SignTransaction Fail", properties);
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction Success", getEventData(manifest));
+    signTransactionSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+      };
+      track("WalletAPI SignTransaction Success", properties);
     },
 
     // Sign Raw transaction modal open
@@ -116,13 +128,21 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest) => {
-      track("WalletAPI Broadcast Fail", getEventData(manifest));
+    broadcastFail: (manifest: AppManifest, isEmbeddedSwap?: boolean) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+      };
+      track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest) => {
-      track("WalletAPI Broadcast Success", getEventData(manifest));
+    broadcastSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+      };
+      track("WalletAPI Broadcast Success", properties);
     },
 
     // Successfully broadcast a signed transaction

@@ -275,7 +275,6 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      SEED: ${{ secrets.SEED_QAA_B2C }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -467,8 +466,6 @@ jobs:
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
-          CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
           GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
@@ -689,6 +686,7 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+          destination: /
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'

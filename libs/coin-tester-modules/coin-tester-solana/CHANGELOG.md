@@ -1,5 +1,27 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.10.1
+  - @ledgerhq/coin-solana@0.38.1
+  - @ledgerhq/cryptoassets@13.34.1
+  - @ledgerhq/live-signer-solana@0.7.1
+  - @ledgerhq/coin-tester@0.13.1
+
+## 1.7.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.10.1-hotfix.0
+  - @ledgerhq/coin-solana@0.38.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.34.1-hotfix.0
+  - @ledgerhq/live-signer-solana@0.7.1-hotfix.0
+  - @ledgerhq/coin-tester@0.13.1-hotfix.0
+
 ## 1.7.0
 
 ### Minor Changes
