@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/live-dmk-shared": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/live-dmk-shared": minor
 ---
 
 Add deviceId to device actions events
