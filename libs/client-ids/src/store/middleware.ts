@@ -3,8 +3,23 @@ import { IdentitiesState } from "./types";
 import { identitiesSlice } from "./slice";
 import { pushDevicesApi, createPushDevicesRequest } from "../api/api";
 import { getEnv } from "@ledgerhq/live-env";
+import * as rateLimitState from "./rateLimitState";
 
 type Dispatch = (action: any) => any;
+
+const RATE_LIMIT_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Check if we can attempt sync based on rate limit
+ * Returns true if 5 minutes have passed since last failure (at api.ts level, we already have exponential retry mechanism)
+ */
+function canAttemptSync(): boolean {
+  const lastFailureTime = rateLimitState.getLastFailureTime();
+  if (!lastFailureTime) {
+    return true; // No previous failures, can attempt
+  }
+  return Date.now() - lastFailureTime >= RATE_LIMIT_MS;
+}
 
 /**
  * Configuration for the sync middleware
@@ -36,6 +51,11 @@ function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): b
   // Bypass sync if PUSH_DEVICES_SERVICE_URL is not configured
   const pushDevicesServiceUrl = getEnv("PUSH_DEVICES_SERVICE_URL");
   if (!pushDevicesServiceUrl) {
+    return false;
+  }
+
+  // Check rate limit before attempting sync
+  if (!canAttemptSync()) {
     return false;
   }
 
@@ -89,10 +109,13 @@ async function attemptSync<State>(
   if (result && typeof result === "object") {
     // Check if there's an error
     if ("error" in result && result.error) {
+      // Record failure time for rate limiting
+      rateLimitState.setLastFailureTime(Date.now());
       // On error, state remains "unsynced" - RTK Query will retry automatically
       return;
     }
-    // Success (no error) - mark as synced with the endpoint URL used
+    // Success (no error) - clear failure time and mark as synced
+    rateLimitState.clearLastFailureTime();
     dispatch(identitiesSlice.actions.markSyncCompleted(pushDevicesServiceUrl));
   }
 }
