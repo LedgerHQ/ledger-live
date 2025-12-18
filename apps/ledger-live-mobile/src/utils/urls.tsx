@@ -284,4 +284,8 @@ export const urls = {
   },
   nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
   nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };

@@ -144,6 +144,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: { record_sessions_percent: 100 },
   }),
+  llmNanoSDeprecation: DEFAULT_FEATURE,
 
   ptxSwapDetailedView: initFeature({
     enabled: false,

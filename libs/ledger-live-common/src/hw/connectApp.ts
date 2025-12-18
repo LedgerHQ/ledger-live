@@ -26,7 +26,7 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { mustUpgrade, getMinVersion } from "../apps";
+import { mustUpgrade, getMinVersion, getDeprecationConfig } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
@@ -40,6 +40,42 @@ import {
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+/**
+ * Represents the deprecation status of a device.
+ *
+ * @property warningScreenVisible - Whether the generic deprecation warning screen should be shown.
+ * @property clearSigningScreenVisible - Whether the clear signing deprecation warning screen should be shown.
+ * @property errorScreenVisible - Whether the deprecation error screen should be shown (blocking usage).
+ * @property modelId - The modeID of the affected product
+ * @property date - The date when the deprecation becomes effective.
+ * @property warningScreenRules - Optional configuration for the warning screen.
+ * @property clearSigningScreenRules - Optional configuration for the clear signing screen.
+ * @property errorScreenRules - Optional configuration for the error screen.
+ * @property onContinue - Callback invoked when the user chooses to continue or throw an error despite the deprecation warning.
+ */
+export type DeviceDeprecationRules = {
+  warningScreenVisible: boolean;
+  clearSigningScreenVisible: boolean;
+  errorScreenVisible: boolean;
+  modelId: LLDeviceModelId;
+  date: Date;
+  warningScreenRules?: DeviceDeprecationScreenRules;
+  clearSigningScreenRules?: DeviceDeprecationScreenRules;
+  errorScreenRules?: DeviceDeprecationScreenRules;
+  onContinue: (isError?: boolean) => void;
+};
+
+/**
+ * Configuration defining exceptions to device deprecation restrictions.
+ *
+ * @property exeption - List of token or main coin identifiers exempt from the restriction.
+ * @property deprecatedFlow - List of flow identifiers (e.g., send, receive) to restrict.
+ */
+export type DeviceDeprecationScreenRules = {
+  exception?: string[];
+  deprecatedFlow?: string[];
+};
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -100,6 +136,10 @@ export type ConnectAppEvent =
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
+    }
+  | {
+      type: "deprecation";
+      deprecate: DeviceDeprecationRules;
     }
   | {
       type: "some-apps-skipped";
@@ -569,6 +609,7 @@ export default function connectAppFactory(
                 return derivation.address;
               }
             : undefined,
+          deprecationConfig: getDeprecationConfig(appName, dependencies),
         },
       });
       const observable = dmk.executeDeviceAction({

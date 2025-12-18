@@ -46,6 +46,10 @@ import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
 import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
@@ -806,6 +810,7 @@ export const renderError = ({
   learnMoreTextKey,
   Icon,
   stretch,
+  currencyName = "",
 }: {
   error: Error | ErrorConstructor | DmkError;
   t: TFunction;
@@ -827,6 +832,7 @@ export const renderError = ({
   withDescription?: boolean;
   stretch?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => React.JSX.Element;
+  currencyName?: string;
 }) => {
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -844,6 +850,14 @@ export const renderError = ({
     if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if (isDmkError(error) && error._tag === "DeviceDeprecationError") {
+    return (
+      <DeviceDeprecationScreen
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+        coinName={currencyName}
+      />
+    );
   } else if (tmpError instanceof NoSuchAppOnProvider) {
     return (
       <NoSuchAppOnProviderErrorComponent
@@ -943,6 +957,7 @@ export const renderInWrongAppForAccount = ({
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
+  passWarning?: () => void;
 }) =>
   renderError({
     t,

@@ -221,6 +221,10 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };
 
 export const vaultSigner = {
