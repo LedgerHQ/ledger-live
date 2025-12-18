@@ -35,10 +35,10 @@ export const Search = ({
 
   useEffect(() => {
     if (autoFocus) {
-      const timer = setTimeout(() => {
+      const frameId = requestAnimationFrame(() => {
         inputRef.current?.focus({ preventScroll: true });
-      }, 0);
-      return () => clearTimeout(timer);
+      });
+      return () => cancelAnimationFrame(frameId);
     }
   }, [autoFocus]);
 
