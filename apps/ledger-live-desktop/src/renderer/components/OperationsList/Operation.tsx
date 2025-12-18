@@ -71,7 +71,6 @@ function OperationComponent({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   return (
     <OperationRow
-      className="operation-row"
       isOptimistic={isOptimistic}
       onClick={onClickOnOperation}
       data-testid={`operation-row-${operation.id}`}

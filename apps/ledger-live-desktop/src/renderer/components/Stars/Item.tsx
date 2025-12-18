@@ -59,7 +59,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
   }, [account, history]);
   const unit = useAccountUnit(account);
   return (
-    <ItemWrapper className="bookmarked-account-item" active={active} onClick={onAccountClick}>
+    <ItemWrapper active={active} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
         <ParentCryptoCurrencyIconWrapper>
           <ParentCryptoCurrencyIcon currency={getAccountCurrency(account)} />

@@ -197,7 +197,7 @@ const AccountRowItem = (props: Props) => {
     accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
   return (
     <div
-      className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}
+      data-testid="accounts-account-row-item"
       style={{
         position: "relative",
       }}
@@ -215,10 +215,11 @@ const AccountRowItem = (props: Props) => {
         <Row key={mainAccount.id}>
           <RowContent
             disabled={disabled}
-            className="accounts-account-row-item-content"
             isSubAccountsExpanded={showTokensIndicator && expanded}
             onClick={onClickHandler}
-            data-testid={account.type === "Account" && `account-component-${accountName}`}
+            data-testid={
+              account.type === "Account" ? `account-component-${accountName}` : undefined
+            }
           >
             <Header account={account} />
             <Box flex="12%">

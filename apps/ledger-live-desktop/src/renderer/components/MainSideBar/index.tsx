@@ -383,10 +383,7 @@ const MainSideBar = () => {
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar
-            className="unstoppableAnimation"
-            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
-          >
+          <SideBar style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}>
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}

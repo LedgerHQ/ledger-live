@@ -181,7 +181,6 @@ export function SideDrawer({
         >
           {state => (
             <DrawerContainer
-              className="sidedrawer"
               state={state}
               ref={focusTrapElem}
               tabIndex="-1"
