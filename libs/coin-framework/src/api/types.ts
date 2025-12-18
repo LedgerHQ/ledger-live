@@ -30,7 +30,7 @@ export type AssetInfo =
   | {
       type: string; // token, coin, fungible_asset, trc10, trc20, erc20, erc721, erc1155, etc.
       assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
-      assetOwner?: string;
+      assetOwner?: string; // Address of the asset contract deployer/creator
       name?: string; // e.g., token name, or asset name
       unit?: Unit;
     };
