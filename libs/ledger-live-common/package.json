@@ -250,7 +250,6 @@
     "ethers": "catalog:",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
-    "i18next": "20.6.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "catalog:",
     "jotai": "2.12.4",
