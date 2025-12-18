@@ -1,7 +1,7 @@
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { useTranslation } from "react-i18next";
-// import { TrackScreen } from "~/analytics";
+
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 
 type Props = {
@@ -11,12 +11,11 @@ type Props = {
   skipSync: () => void;
 };
 
-function SkipLedgerSyncDrawer({ isOpen, handleClose, openSync, skipSync }: Props) {
+function SkipLedgerSyncDrawer({ isOpen, handleClose, openSync, skipSync }: Readonly<Props>) {
   const { t } = useTranslation();
 
   return (
     <>
-      {/* <TrackScreen  /> */}
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
         <Flex maxHeight={"90%"}>
           <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={22}>
