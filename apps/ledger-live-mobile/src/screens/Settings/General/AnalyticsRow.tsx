@@ -5,7 +5,7 @@ import { Alert, Button, Text, Switch } from "@ledgerhq/native-ui";
 import { GraphGrowAltMedium } from "@ledgerhq/native-ui/assets/icons";
 import { View } from "react-native";
 import SettingsRow from "~/components/SettingsRow";
-import { setAnalytics } from "~/actions/settings";
+import { setAnalytics, setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
 import { analyticsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -61,6 +61,7 @@ const AnalyticsRow = () => {
   const toggleAnalytics = useCallback(
     (value: boolean) => {
       dispatch(setAnalytics(value));
+      dispatch(setHasSeenAnalyticsOptInPrompt(true));
       updateIdentify(undefined, true);
       if (llmAnalyticsOptInPromptFeature?.enabled) {
         track(

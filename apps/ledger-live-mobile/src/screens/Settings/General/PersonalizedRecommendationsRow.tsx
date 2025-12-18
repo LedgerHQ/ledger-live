@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
-import { setPersonalizedRecommendations } from "~/actions/settings";
+import { setPersonalizedRecommendations, setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import { track, updateIdentify } from "~/analytics";
@@ -20,6 +20,7 @@ const PersonalizedRecommendationsRow = () => {
   const togglePersonalizedRecommendations = useCallback(
     (value: boolean) => {
       dispatch(setPersonalizedRecommendations(value));
+      dispatch(setHasSeenAnalyticsOptInPrompt(true));
       updateIdentify(undefined, true);
       if (llmAnalyticsOptInPromptFeature?.enabled) {
         track(
