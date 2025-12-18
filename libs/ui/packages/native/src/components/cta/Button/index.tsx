@@ -41,7 +41,7 @@ const IconContainer = styled.View<{
   iconButton?: boolean;
 }>`
   ${(p) =>
-    p.iconButton ? null : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
+    p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
 export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {

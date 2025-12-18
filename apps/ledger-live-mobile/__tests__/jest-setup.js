@@ -17,7 +17,6 @@ beforeAll(() =>
     onUnhandledRequest: "bypass",
   }),
 );
-
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
