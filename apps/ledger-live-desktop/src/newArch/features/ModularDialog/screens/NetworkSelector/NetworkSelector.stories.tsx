@@ -33,10 +33,11 @@ const store = createStore(() => ({
     ],
   },
   application: { debug: {} },
+  modularDrawer: { flow: "" },
 }));
 
 const meta: Meta<typeof NetworkSelector> = {
-  title: "ModularDrawer/NetworkSelection",
+  title: "ModularDialog/NetworkSelection",
   component: NetworkSelector,
   args: {
     networks,

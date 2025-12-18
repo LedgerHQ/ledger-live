@@ -62,6 +62,7 @@ const defaultStore = {
       },
     ],
   },
+  modularDrawer: { flow: "Modular Account Flow", source: "Accounts" },
 };
 
 const store = createStore(() => defaultStore);
@@ -69,7 +70,7 @@ const store = createStore(() => defaultStore);
 const onAccountSelected = fn();
 
 const meta: Meta<typeof AccountSelector> = {
-  title: "ModularDrawer/AccountSelector",
+  title: "ModularDialog/AccountSelector",
   component: AccountSelector,
   args: {
     asset: bitcoinCurrency,

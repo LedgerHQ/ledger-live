@@ -82,3 +82,5 @@ export enum LoadingStatus {
 }
 
 export { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+
+export const formatCurrencyUnit = () => "100.00";
