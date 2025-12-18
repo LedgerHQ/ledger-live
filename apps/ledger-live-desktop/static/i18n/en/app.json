@@ -5928,10 +5928,12 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming Offers ({{count}})"
+          "title": "Incoming transfer to review ({{count}})",
+          "detailsTitle": "Incoming transfer details"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})"
+          "title": "Outgoing Offers ({{count}})",
+          "detailsTitle": "Outgoing transfer details"
         },
         "pending": "Pending",
         "expired": "Expired",
