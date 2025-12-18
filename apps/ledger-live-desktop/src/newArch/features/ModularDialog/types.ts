@@ -1,6 +1,18 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { ReactNode } from "react";
+
+export type AssetType = {
+  name: string;
+  ticker: string;
+  id: string;
+  leftElement?: ReactNode;
+  rightElement?: ReactNode;
+  numberOfNetworks?: number;
+  assetId?: string;
+  shouldDisplayId?: boolean;
+};
 
 export const NAVIGATION_DIRECTION = {
   FORWARD: "FORWARD",

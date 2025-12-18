@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AssetType } from "../../../../types";
 import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "../../../../components/ListWrapper";
 import SkeletonList from "../../../../components/SkeletonList";
