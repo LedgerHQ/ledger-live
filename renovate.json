@@ -10,7 +10,7 @@
   },
   "packageRules": [
     {
-      "description": "Github Actions (CI)",
+      "description": "GitHub Actions (CI)",
       "matchManagers": ["github-actions"],
       "matchPackagePatterns": ["^LedgerHQ/", "^ledgerhq/"],
       "pinDigests": false,
