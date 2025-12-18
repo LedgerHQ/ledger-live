@@ -248,12 +248,14 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 export const dexProvidersContractAddress: { [key: string]: string } = {
   "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
   "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
+  "0x6a000f20005980200259b80c5102003040001068": "velora",
 };
 
 export const termsOfUse: { [key: string]: string } = {
   paraswap: "https://paraswap.io/tos",
   "1inch": "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
   Uniswap: "https://uniswap.org/terms-of-service",
+  velora: "https://www.velora.xyz/terms/terms-of-use",
 };
 
 export const privacyPolicy: { [key: string]: string } = {
