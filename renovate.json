@@ -18,7 +18,6 @@
       "labels": ["dependencies", "github_actions"],
       "reviewers": ["ledgerhq/wallet-ci"],
       "assignees": ["ledgerhq/wallet-ci"]
-
     },
     {
       "description": "Lumen UI React - version updates",
