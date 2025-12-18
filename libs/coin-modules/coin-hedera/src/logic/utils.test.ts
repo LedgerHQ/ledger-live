@@ -9,6 +9,7 @@ import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
+  OP_TYPES_EXCLUDING_FEES,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -64,6 +65,7 @@ import {
   getOperationDetailsExtraFields,
   calculateAPY,
   analyzeStakingOperation,
+  calculateUncommittedBalanceChange,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -152,14 +154,16 @@ describe("logic utils", () => {
       expect(getOperationValue({ asset: tokenAsset, operation })).toBe(BigInt(0));
     });
 
-    it("should substract fee from value for native OUT operations", () => {
-      const operation = getMockedOperation({
-        type: "OUT",
-        value: BigNumber(1000),
-        fee: BigNumber(100),
-      });
+    it("should subtract fee from native operations that exclude fees", () => {
+      OP_TYPES_EXCLUDING_FEES.forEach(type => {
+        const operation = getMockedOperation({
+          type,
+          value: BigNumber(1000),
+          fee: BigNumber(100),
+        });
 
-      expect(getOperationValue({ asset: nativeAsset, operation })).toBe(BigInt(900));
+        expect(getOperationValue({ asset: nativeAsset, operation })).toBe(BigInt(900));
+      });
     });
 
     it("should return value for other operations", () => {
@@ -970,6 +974,123 @@ describe("logic utils", () => {
     });
   });
 
+  describe("calculateUncommittedBalanceChange", () => {
+    const mockAddress = "0.0.12345";
+    const mockStartTimestamp = "1762202064.065172388";
+    const mockEndTimestamp = "1762202074.065172388";
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return 0 when there are no transactions in the time range", async () => {
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
+
+      const result = await calculateUncommittedBalanceChange({
+        address: mockAddress,
+        startTimestamp: mockStartTimestamp,
+        endTimestamp: mockEndTimestamp,
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+      expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
+      expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+        address: mockAddress,
+        startTimestamp: `gt:${mockStartTimestamp}`,
+        endTimestamp: `lte:${mockEndTimestamp}`,
+      });
+    });
+
+    it("should calculate balance change with mixed incoming and outgoing transfers", async () => {
+      const mockTransactions = [
+        {
+          consensus_timestamp: "1762202065.000000000",
+          transfers: [
+            { account: mockAddress, amount: 2000 },
+            { account: "0.0.98", amount: -2000 },
+          ],
+        },
+        {
+          consensus_timestamp: "1762202070.000000000",
+          transfers: [
+            { account: mockAddress, amount: -500 },
+            { account: "0.0.99", amount: 500 },
+          ],
+        },
+        {
+          consensus_timestamp: "1762202072.000000000",
+          transfers: [
+            { account: mockAddress, amount: 300 },
+            { account: "0.0.100", amount: -300 },
+          ],
+        },
+      ] as HederaMirrorTransaction[];
+
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce(
+        mockTransactions,
+      );
+
+      const result = await calculateUncommittedBalanceChange({
+        address: mockAddress,
+        startTimestamp: mockStartTimestamp,
+        endTimestamp: mockEndTimestamp,
+      });
+
+      expect(result).toEqual(new BigNumber(1800)); // 2000 - 500 + 300
+    });
+
+    it("should ignore transfers for other accounts", async () => {
+      const mockTransactions = [
+        {
+          consensus_timestamp: "1762202065.000000000",
+          transfers: [
+            { account: "0.0.98", amount: 5000 },
+            { account: "0.0.99", amount: -5000 },
+          ],
+        },
+        {
+          consensus_timestamp: "1762202070.000000000",
+          transfers: [
+            { account: mockAddress, amount: 1000 },
+            { account: "0.0.100", amount: -1000 },
+          ],
+        },
+      ] as HederaMirrorTransaction[];
+
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce(
+        mockTransactions,
+      );
+
+      const result = await calculateUncommittedBalanceChange({
+        address: mockAddress,
+        startTimestamp: mockStartTimestamp,
+        endTimestamp: mockEndTimestamp,
+      });
+
+      expect(result).toEqual(new BigNumber(1000));
+    });
+
+    it("should return 0 when timestamps are equal or invalid", async () => {
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
+
+      const [resultEqual, resultInvalid] = await Promise.all([
+        calculateUncommittedBalanceChange({
+          address: mockAddress,
+          startTimestamp: mockStartTimestamp,
+          endTimestamp: mockStartTimestamp,
+        }),
+        calculateUncommittedBalanceChange({
+          address: mockAddress,
+          startTimestamp: mockEndTimestamp,
+          endTimestamp: mockStartTimestamp,
+        }),
+      ]);
+
+      expect(resultEqual).toEqual(new BigNumber(0));
+      expect(resultInvalid).toEqual(new BigNumber(0));
+    });
+  });
+
   describe("analyzeStakingOperation", () => {
     const mockAddress = "0.0.12345";
     const mockTimestamp = "1762202064.065172388";
@@ -979,13 +1100,14 @@ describe("logic utils", () => {
     } as HederaMirrorTransaction;
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      jest.resetAllMocks();
     });
 
     it("detects DELEGATE operation when staking starts", async () => {
       const accountBefore = getMockedMirrorAccount({ staked_node_id: null });
       const accountAfter = getMockedMirrorAccount({ staked_node_id: 5 });
 
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
       (apiClient.getAccount as jest.Mock)
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
@@ -998,6 +1120,7 @@ describe("logic utils", () => {
         targetStakingNodeId: 5,
         stakedAmount: BigInt(1000),
       });
+      expect(apiClient.getAccount).toHaveBeenCalledTimes(2);
       expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `lt:${mockTimestamp}`);
       expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `eq:${mockTimestamp}`);
     });
@@ -1006,6 +1129,7 @@ describe("logic utils", () => {
       const accountBefore = getMockedMirrorAccount({ staked_node_id: 5 });
       const accountAfter = getMockedMirrorAccount({ staked_node_id: null });
 
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
       (apiClient.getAccount as jest.Mock)
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
@@ -1024,6 +1148,7 @@ describe("logic utils", () => {
       const accountBefore = getMockedMirrorAccount({ staked_node_id: 3 });
       const accountAfter = getMockedMirrorAccount({ staked_node_id: 10 });
 
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
       (apiClient.getAccount as jest.Mock)
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
@@ -1035,6 +1160,51 @@ describe("logic utils", () => {
         previousStakingNodeId: 3,
         targetStakingNodeId: 10,
         stakedAmount: BigInt(1000),
+      });
+    });
+
+    it("calculates correct staked amount with uncommitted transactions", async () => {
+      const mockBalance = { balance: 1000000, timestamp: "1762202060.000000000", tokens: [] };
+      const mockAccountBefore = getMockedMirrorAccount({
+        account: mockAddress,
+        staked_node_id: null,
+        balance: mockBalance,
+      });
+      const mockAccountAfter = getMockedMirrorAccount({
+        account: mockAddress,
+        staked_node_id: 5,
+        balance: mockBalance,
+      });
+      const mockTransactionsMissingInBalance = [
+        {
+          consensus_timestamp: `${Math.floor(Number(mockBalance.timestamp)) + 5}.000000000`,
+          transfers: [
+            { account: mockAddress, amount: -100000 },
+            { account: "0.0.98", amount: 100000 },
+          ],
+        },
+      ] as HederaMirrorTransaction[];
+
+      (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce(
+        mockTransactionsMissingInBalance,
+      );
+      (apiClient.getAccount as jest.Mock)
+        .mockResolvedValueOnce(mockAccountBefore)
+        .mockResolvedValueOnce(mockAccountAfter);
+
+      const result = await analyzeStakingOperation(mockAddress, mockTx);
+
+      expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
+      expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+        address: mockAddress,
+        startTimestamp: `gt:${mockAccountBefore.balance.timestamp}`,
+        endTimestamp: `lte:${mockTimestamp}`,
+      });
+      expect(result).toEqual({
+        operationType: "DELEGATE",
+        previousStakingNodeId: null,
+        targetStakingNodeId: 5,
+        stakedAmount: BigInt(900000),
       });
     });
 

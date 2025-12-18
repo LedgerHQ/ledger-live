@@ -262,18 +262,24 @@ async function estimateContractCallGas(
   return new BigNumber(res.data.result);
 }
 
-async function getTransactionsByTimestampRange(
-  startTimestamp: string,
-  endTimestamp: string,
-): Promise<HederaMirrorTransaction[]> {
+async function getTransactionsByTimestampRange({
+  address,
+  startTimestamp,
+  endTimestamp,
+}: {
+  address?: string;
+  startTimestamp: `${string}:${string}`;
+  endTimestamp: `${string}:${string}`;
+}): Promise<HederaMirrorTransaction[]> {
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
     limit: "100",
     order: "desc",
+    ...(address && { "account.id": address }),
   });
 
-  params.append("timestamp", `gte:${startTimestamp}`);
-  params.append("timestamp", `lt:${endTimestamp}`);
+  params.append("timestamp", startTimestamp);
+  params.append("timestamp", endTimestamp);
 
   let nextPath: string | null = `/api/v1/transactions?${params.toString()}`;
 

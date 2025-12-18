@@ -425,14 +425,33 @@ describe("getTransactionsByTimestampRange", () => {
     jest.resetAllMocks();
   });
 
+  it("should include account.id query param if address is provided", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({ transactions: [], links: { next: null } }),
+    );
+
+    await apiClient.getTransactionsByTimestampRange({
+      address: "0.0.1234",
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
+
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    expect(requestUrl).toContain("account.id=0.0.1234");
+  });
+
   it("should include correct query params with timestamp range", async () => {
     mockedNetwork.mockResolvedValueOnce(
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    await apiClient.getTransactionsByTimestampRange("1000.000000000", "2000.000000000");
+    await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    expect(requestUrl).not.toContain("account.id=");
     expect(requestUrl).toContain("timestamp=gte%3A1000.000000000");
     expect(requestUrl).toContain("timestamp=lt%3A2000.000000000");
     expect(requestUrl).toContain("limit=100");
@@ -444,10 +463,10 @@ describe("getTransactionsByTimestampRange", () => {
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     expect(result).toEqual([]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
@@ -464,10 +483,10 @@ describe("getTransactionsByTimestampRange", () => {
       }),
     );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1500.123456789", "1750.987654321"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
@@ -494,10 +513,10 @@ describe("getTransactionsByTimestampRange", () => {
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     expect(result.map(tx => tx.consensus_timestamp)).toEqual([
       "1100.000000000",
@@ -528,10 +547,10 @@ describe("getTransactionsByTimestampRange", () => {
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(3);

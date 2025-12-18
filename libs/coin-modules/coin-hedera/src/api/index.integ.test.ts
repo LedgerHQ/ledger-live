@@ -504,7 +504,7 @@ describe("createApi", () => {
           operationType: "DELEGATE",
           stakedNodeId: 34,
           previousStakedNodeId: null,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083322293),
         },
       ]);
       expect(undelegateOperations).toEqual([
@@ -513,7 +513,7 @@ describe("createApi", () => {
           operationType: "UNDELEGATE",
           stakedNodeId: null,
           previousStakedNodeId: 22,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083441623),
         },
       ]);
       expect(redelegateOperations).toEqual([
@@ -522,7 +522,7 @@ describe("createApi", () => {
           operationType: "REDELEGATE",
           stakedNodeId: 6,
           previousStakedNodeId: 34,
-          stakedAmount: BigInt(21083561014),
+          stakedAmount: BigInt(21083202902),
         },
       ]);
       expect(rewardsTransaction?.operations).toEqual([
@@ -665,21 +665,21 @@ describe("createApi", () => {
       const undelegateOp = ops.find(op => op.type === "UNDELEGATE");
       const redelegateOp = ops.find(op => op.type === "REDELEGATE");
 
-      expect(delegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(delegateOp?.value).toBe(BigInt(0));
       expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(delegateOp?.details).toMatchObject({
         previousStakingNodeId: null,
         targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
       });
-      expect(undelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(undelegateOp?.value).toBe(BigInt(0));
       expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
         targetStakingNodeId: null,
         stakedAmount: expect.any(BigInt),
       });
-      expect(redelegateOp?.value).toBeGreaterThan(BigInt(0));
+      expect(redelegateOp?.value).toBe(BigInt(0));
       expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.details).toMatchObject({
         previousStakingNodeId: expect.any(Number),
@@ -688,6 +688,48 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+    });
+
+    it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
+      const block = await api.lastBlock();
+      const [ops] = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
+        {
+          minHeight: block.height,
+          order: "asc",
+          limit: 10,
+        },
+      );
+
+      const opDelegate1 = ops[2];
+      const opOut1 = ops[3];
+      const opUndelegate = ops[4];
+      const opOut2 = ops[5];
+      const opDelegate2 = ops[6];
+
+      // starting point has known, hardcoded balance
+      const expectedBalanceDelegate1 = BigInt(999834971);
+
+      // after undelegate1 we expect stakedAmount to be initial balance reduced by:
+      // 1. first DELEGATE fee
+      // 2. first OUT value + fee
+      const expectedBalanceUndelegate =
+        expectedBalanceDelegate1 - opDelegate1.tx.fees - opOut1.value - opOut1.tx.fees;
+
+      // after delegate2 we expect stakedAmount to be undelegate1 balance reduced by:
+      // 1. first UNDELEGATE fee
+      // 2. second OUT value + fee
+      const expectedBalanceDelegate2 =
+        expectedBalanceUndelegate - opUndelegate.tx.fees - opOut2.value - opOut2.tx.fees;
+
+      expect(opOut1.type).toBe("OUT");
+      expect(opOut2.type).toBe("OUT");
+      expect(opDelegate1.type).toBe("DELEGATE");
+      expect(opDelegate1.details?.stakedAmount).toBe(expectedBalanceDelegate1);
+      expect(opUndelegate.type).toBe("UNDELEGATE");
+      expect(opUndelegate.details?.stakedAmount).toBe(expectedBalanceUndelegate);
+      expect(opDelegate2.type).toBe("DELEGATE");
+      expect(opDelegate2.details?.stakedAmount).toBe(expectedBalanceDelegate2);
     });
 
     it.each(["desc", "asc"] as const)(
