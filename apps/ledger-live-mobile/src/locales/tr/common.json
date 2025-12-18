@@ -1098,6 +1098,15 @@
       "title" : "EVM adresi doğrulaması gerekiyor",
       "description" : "Onaylamadan önce, Ledger cihazınızda görüntülenen EVM adresini lütfen doğrulayın."
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "Bu düğüme zaten yetki devretmiş durumdasınız"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "Seçili düğüm geçerli değil"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "Alınacak hiçbir ödül yok"
+    },
     "NearNewAccountWarning" : {
       "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
     },
@@ -1563,6 +1572,25 @@
     "cta" : "Ledger'ımı kur",
     "bannerTitle" : "Ledger cihazınız elinize ulaştı mı?",
     "bannerCta" : "Kurulumu başlatın",
+    "continue" : "Devam"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
     "continue" : "Devam"
   },
   "purchaseDevice" : {
@@ -2288,6 +2316,18 @@
     },
     "completionScreen" : {
       "title" : "Artık kontrol sizde"
+    },
+    "secureYourCrypto" : {
+      "title" : "Kriptolarınızı güvende tutun",
+      "subtitle" : "Maksimum güvenlik için ilk kriptolarınızı bir borsadan veya cüzdandan Ledger cihazınıza taşıyın.",
+      "secureCryptoButton" : "Kriptolarınızı güvende tutun",
+      "maybeLater" : "Belki sonra"
+    },
+    "fundSuccess" : {
+      "title" : "Ledger Wallet’ınıza hoş geldiniz",
+      "receiveSuccess" : "Ledger cihazınız hazır. Ledger Wallet’ınıza kripto gönderdiyseniz onu birkaç dakika içinde alacaksınız.",
+      "maybeLater" : "İlk adımınız, ilk kriptonuzu yatırmak olacaktır.",
+      "exploreLedger" : "Ledger Wallet'ı keşfedin"
     }
   },
   "blePairingFlow" : {
@@ -2780,7 +2820,8 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
-      "CONTRACT_CALL" : "Sözleşme çağrısı"
+      "CONTRACT_CALL" : "Sözleşme çağrısı",
+      "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
     }
   },
   "operationDetails" : {
@@ -2848,7 +2889,12 @@
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "stakedAmount" : "Stake edilen miktar",
-      "accountCreationFee" : "Hesap Oluşturma Ücreti"
+      "accountCreationFee" : "Hesap Oluşturma Ücreti",
+      "associatedTokenId" : "İlgili token kimliği",
+      "targetStakingNodeId" : "Hedef düğüm kimliği",
+      "previousStakingNodeId" : "Önceki düğüm kimliği",
+      "gasConsumed" : "Harcanan gas",
+      "gasUsed" : "Kullanılan gas"
     },
     "multipleAddresses" : "Neden birden fazla adres var?"
   },
@@ -2998,6 +3044,7 @@
       }
     },
     "availableBalance" : "Mevcut bakiye",
+    "availableBalanceTooltip" : "Hemen kullanabileceğiniz fonlar.",
     "claimableRewards" : "Alınabilir ödüller",
     "totalSupplied" : "Fonlanan tutar",
     "tronFrozen" : "Donduruldu",
@@ -3008,6 +3055,8 @@
     "delegation" : {
       "sectionLabel" : "Yetki Devirleri",
       "addDelegation" : "Yetki devri ekle",
+      "delegationEarn" : "Artık hesabınızla yetki devrederek {{name}} staking ödülleri kazanabilirsiniz.",
+      "howItWorks" : "Yetki devri nasıl çalışır?",
       "info" : {
         "title" : "Ödüller kazanın",
         "cta" : "Ödüller kazanın"
@@ -3146,6 +3195,7 @@
       "dateFormatDesc" : "Ledger Wallet için tarih formatını ayarlayın",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+      "walletSyncDescription" : "Farklı bilgisayarlar arasında geçiş yaparken veya bir telefon kullanırken portföyünüzün güncel kalmasını sağlayın",
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "password" : "Uygulama kilidi",
@@ -3841,7 +3891,9 @@
         "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
         "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
-        "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "monad_title" : "Ledger Nano S™, Monad takasını desteklemez",
+        "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -4160,7 +4212,8 @@
       "confirm" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
       "button" : {
         "details" : "Ayrıntıları gör",
-        "retry" : "Tekrar dene"
+        "retry" : "Tekrar dene",
+        "abort" : "İptal et"
       }
     },
     "fees" : {
@@ -5072,16 +5125,11 @@
             "warning" : "Hesabınızda boş bir işlem oluşturmanız istenecektir. Bu işlem, mevcut ödüllerinizi, en düşük işlem ücreti maliyetleriyle bakiyenize ekleyecektir.",
             "cta" : "Devam"
           },
-          "verification" : {
+          "confirmation" : {
             "success" : {
               "title" : "Ödüller başarıyla alındı!",
-              "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "cta" : "Hesaplara git"
-            },
-            "pending" : {
-              "title" : "İşlem yayınlanıyor..."
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
+              "text" : "Ödülleriniz mevcut bakiyenize eklendi."
+            }
           }
         }
       }
@@ -7260,6 +7308,158 @@
         }
       }
     },
+    "info" : {
+      "available" : {
+        "title" : "HBAR kullanılabilir durumda",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "delegated" : {
+        "title" : "Yetkisi devredilen varlıklar",
+        "description" : "Hedera’da staking yaparken tüm bakiyeniz ile yetki devredilir ve tüm bakiyeniz likit kalır"
+      },
+      "claimable" : {
+        "title" : "Alınabilir ödüller",
+        "description" : "Ödüller her işlemden sonra otomatik olarak alınacaktır. Dilerseniz ödülleri manuel olarak da alabilirsiniz."
+      }
+    },
+    "delegatedPositions" : {
+      "rewards" : {
+        "title" : "Ödüller",
+        "cta" : "Ödülleri topla"
+      },
+      "details" : {
+        "validatorAddress" : "Doğrulayıcı adresi",
+        "delegatedAccount" : "Yetkisi devredilen hesap",
+        "status" : {
+          "title" : "Durum",
+          "active" : "Aktif",
+          "activeTooltip" : "Yetki devrinde kullanılan tutar üzerinden ödüller kazanırsınız",
+          "inactive" : "Devre Dışı",
+          "inactiveTooltip" : "Doğrulayıcı bulunamadı",
+          "overstaked" : "Çok fazla staking yapılıyor",
+          "overstakedTooltip" : "Bu düğümde çok fazla staking yapılıyor, APY optimum seviyeden düşük"
+        },
+        "rewards" : "Ödüller",
+        "actions" : {
+          "redelegate" : "Yetki devret",
+          "claim-rewards" : "Ödülleri topla",
+          "undelegate" : "Yetki devrini sonlandır"
+        }
+      }
+    },
+    "delegation" : {
+      "nodeName" : "Düğüm {{index}}: {{name}}",
+      "alreadyDelegatedModal" : {
+        "title" : "Zaten Yetki Devredilmiş",
+        "description" : "Tüm bakiyeniz ile zaten yetki devredilmiş"
+      },
+      "stepperHeader" : {
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "steps" : {
+        "summary" : {
+          "delegate" : "Yetkisi devredilecek:",
+          "to" : "alıcı",
+          "alert" : "Hedera’da staking yapılırken tüm bakiyeniz stake edilir. Tüm bakiyeniz tamamen likit kalır ve kilitlenme dönemine veya ceza kesintisi risklerine maruz kalmaz. Staking ödüllerinin başlaması için 48 saat kadar beklemeniz gerekebilir.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "validator" : {
+          "title" : "Doğrulayıcılar",
+          "totalStake" : "Toplam Stake",
+          "rowSubtitlePercentage" : "Maksimumun %{{percentage}} kadarı stake edildi",
+          "rowSubtitleOverstaked" : "Düğümde çok fazla staking yapılıyor",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "Varlıklarınızla yetki devretmeyi tamamladınız",
+            "description" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amount" : "Yetki devri sonlandırılan tutar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "Yetki devri sonlandırıldığında bakiyeniz ve bekleyen ödüller anında hesabınıza geçer. Stake’inizin yetki devrini kısmen sonlandırmanız mümkün değildir.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "Varlıklarınızdaki yetki devrini sonlandırdınız",
+            "description" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
+    "redelegation" : {
+      "stepperHeader" : {
+        "selectValidator" : "Yeni doğrulayıcı seçin",
+        "amountTitle" : "{{from}} → {{to}}",
+        "amountSubtitle" : "Yetkisi devredilecek tutar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "Hedera’da staking yapılırken tüm bakiyeniz stake edilir. Tüm bakiyeniz tamamen likit kalır ve kilitlenme dönemine veya ceza kesintisi risklerine maruz kalmaz. Staking ödüllerinin başlaması için 48 saat kadar beklemeniz gerekebilir.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+            "description" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "selectReward" : "Alınacak ödülü seçin",
+        "claim" : "Ödüllerinizi alın",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "steps" : {
+        "claim" : {
+          "earned" : "Varlıkları şuna tayin ederek",
+          "delegatingTo" : "kazandınız:",
+          "description" : "Bu ödüller şimdi alınacak ve mevcut bakiyenize eklenecektir."
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
+            "description" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
     "operationDetails" : {
       "postAccountSection" : "İlişkilendirilen token",
       "postAlert" : {
@@ -7316,33 +7516,36 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "Sırada, {{productName}} ürününüz ile...",
+      "title" : "Sırada ne mi var?",
       "areAllPostOnboardingActionsCompletedTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
       "skip" : "Daha sonra yapacağım",
       "viewWallet" : "Portföyümü keşfet"
     },
     "entryPointCard" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Yalnızca varlıklarınızı güvenceye almakla kalmayın.",
       "buttonLabel" : "Sırada ne var?"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Ledger cihazınızın kurulumunu yapın"
+      },
       "assetsTransfer" : {
-        "title" : "Varlıklarınızı Ledger’a taşıyın",
+        "title" : "Varlıklarınızı aktarın",
         "titleCompleted" : "Varlıklar Ledger’a taşındı",
-        "description" : "Herhangi bir borsadan veya cüzdandan doğrudan Ledger cihazınıza aktarın.",
+        "description" : "Tüm borsalar ve cüzdanlardan aktarım yapabilirsiniz.",
         "popupLabel" : "Varlıklar aktarıldı"
       },
       "buyCrypto" : {
-        "title" : "Kripto Satın Alın",
+        "title" : "Ledger Wallet ile kripto satın alın",
         "titleCompleted" : "Kripto satın alındı",
-        "description" : "500'ün üzerinde coin ve tercihlerinize uygun en iyi teklifler arasından seçim yapın.",
+        "description" : "500’den fazla coin ve token arasından seçiminizi yapın.",
         "popupLabel" : "Kripto satın alındı"
       },
       "customImage" : {
         "title" : "Kilit ekranını kişiselleştirin",
         "titleCompleted" : "Kilit ekranı kişiselleştirildi",
-        "description" : "{{productName}} cihazınızda kilit ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
+        "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
       "syncAccounts" : {
@@ -7604,6 +7807,10 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "banner" : {
+      "title" : "Cüzdanınız senkronize değil",
+      "description" : "Portföyünüzü güncel tutun"
+    },
     "entryPoints" : {
       "simpleCta" : {
         "title" : "Ledger Sync'i etkinleştirin"
@@ -7620,7 +7827,10 @@
         "description" : "Bu, yeni bir cihaza geçerken bile tüm telefonlarınızdaki ve bilgisayarlarınızdaki kripto hesaplarınızı otomatik olarak senkronize eder.",
         "mainCta" : "Ledger Sync'i Aç",
         "secondCta" : "Zaten açtım",
-        "learnMore" : "Ledger Sync nasıl çalışır?"
+        "learnMore" : "Ledger Sync nasıl çalışır?",
+        "titleModal" : "Cüzdanınızı senkronize edin",
+        "descriptionModal" : "Farklı telefonlar arasında geçiş yaparken veya bir bilgisayar kullanırken portföyünüzün güncel kalmasını sağlayın; tüm portföyünüz Ledger cihazınız tarafından güvenceye alınır.",
+        "cta" : "Devam"
       }
     },
     "deviceSelection" : {
@@ -7639,13 +7849,18 @@
       "sync" : "Senkronizasyon başarılı",
       "syncDesc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Wallet uygulamalarında otomatik olarak görüntülenecektir.",
       "activation" : "Ledger Sync bu telefon için açıldı",
+      "complete" : {
+        "title" : "Senkronizasyon tamamlandı",
+        "description" : "Bundan sonra portföyünüz tüm cihazlarda otomatik olarak senkronize olacak."
+      },
       "syncAnother" : "Başka bir Ledger Wallet uygulamasıyla senkronize et",
       "close" : "Kapat"
     },
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "Başka bir Ledger Wallet uygulamasıyla senkronize et",
-        "description" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin."
+        "description" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
+        "desc" : "Farklı bilgisayarlar arasında geçiş yaparken veya bir telefon kullanırken portföyünüzün güncel kalmasını sağlayın"
       },
       "unauthorizeMember" : {
         "error" : {
@@ -7708,7 +7923,8 @@
         },
         "connectDevice" : {
           "title" : "Ledger cihazımı kullan"
-        }
+        },
+        "description" : "Ledger Wallet’ı başka bir telefonda veya bilgisayarda senkronize ettiyseniz seçin"
       },
       "qrCode" : {
         "title" : "Ledger Wallet uygulamalarını senkronize edin",
@@ -8028,12 +8244,36 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Sona erme süresi",
+      "summaryLabel" : "Teklifin Süresi Doluyor",
+      "threeHours" : "3 saat",
+      "sixHours" : "6 saat",
+      "oneDay" : "1 gün",
+      "oneWeek" : "1 hafta",
+      "oneMonth" : "30 gün"
+    },
+    "account" : {
+      "lockedBalance" : "Kilitli",
+      "lockedBalanceTooltip" : "Fonlarınız, başkalarına gönderdiğiniz tekliflerde kilitlenmiş durumda. Bu teklifleri istediğiniz zaman iptal edebilir veya alıcının kabul etmesini ya da reddetmesini bekleyebilirsiniz.",
+      "withdrawableBalance" : "Çekilebilir bakiye",
+      "withdrawableBalanceTooltip" : "Gönderdiğiniz ve süresi dolmuş tekliflerden geri alabileceğiniz fonlar. Bunları çekip kullanılabilir bakiyenize geri taşıyın."
+    },
     "onboard" : {
       "account" : "Hesap",
       "authorize" : "İzin ver",
       "preapprove" : "Hesap başarıyla eklendi",
       "validator" : "Ledger Doğrulayıcı",
       "title" : "Gelen fonları otomatik olarak kabul edin",
+      "reonboard" : {
+        "title" : "Hesap Güncellemesi Gerekiyor",
+        "account" : "Hesap",
+        "authorize" : "Doğrulayıcıyı Yeniden Yetkilendirin",
+        "warning" : {
+          "title" : "Topoloji Değişimi Tespit Edildi",
+          "description" : "Canton ağında bir topoloji değişimi tespit edildi. Hesabınızı kullanmaya devam edebilmek için kurulumunu lütfen tekrar yapın."
+        }
+      },
       "error429" : "An itibarıyla Canton Network'te bir gün içinde sınırlı sayıda hesap oluşturulabilir. Lütfen daha sonra tekrar deneyin."
     },
     "tooManyUtxos" : {
@@ -8042,6 +8282,50 @@
       "quickFix" : "Hızlı Düzeltme: Birleştirmek için kendinize biraz fon gönderin.",
       "warning" : "Hesabınızda çok sayıda küçük UTXO var. Birleştirmek için kendinize biraz fon gönderin.",
       "consolidate" : "Birleştir"
+    },
+    "pendingTransactions" : {
+      "expired" : "Süresi doldu",
+      "accept" : "Kabul et",
+      "reject" : "Reddet",
+      "review" : "İncele",
+      "withdraw" : "Transferi iptal et",
+      "incoming" : {
+        "title" : "İncelenecek gelen transfer"
+      },
+      "outgoing" : {
+        "title" : "Giden transfer"
+      },
+      "details" : {
+        "incomingTitle" : "Gelen transfer bilgileri",
+        "outgoingTitle" : "Giden transfer bilgileri"
+      },
+      "amount" : "Miktar",
+      "from" : "Gönderici",
+      "to" : "Alıcı",
+      "memo" : "Memo",
+      "expiresAt" : "Süresinin dolacağı zaman:",
+      "expiresIn" : "Süresinin dolmasına kalan süre:",
+      "status" : {
+        "label" : "Durum"
+      },
+      "deviceAppModal" : {
+        "contractId" : "Sözleşme Kimliği",
+        "processing" : "İşleniyor...",
+        "success" : {
+          "accept" : {
+            "title" : "Transfer kabul edildi",
+            "description" : "Gelen transfer başarıyla kabul edildi."
+          },
+          "reject" : {
+            "title" : "Transfer reddedildi",
+            "description" : "Gelen transfer başarıyla reddedildi."
+          },
+          "withdraw" : {
+            "title" : "Transfer reddedildi",
+            "description" : "Giden transfer başarıyla reddedildi."
+          }
+        }
+      }
     }
   }
 }
