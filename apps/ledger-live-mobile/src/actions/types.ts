@@ -320,6 +320,7 @@ export enum SettingsActionTypes {
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
+  DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;

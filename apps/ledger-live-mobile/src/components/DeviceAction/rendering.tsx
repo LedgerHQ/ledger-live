@@ -63,6 +63,10 @@ import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -526,6 +530,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  currencyName = "",
   hasExportLogButton,
 }: RawProps & {
   navigation?: NativeStackNavigationProp<RootStackParamList>;
@@ -535,6 +540,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  currencyName?: string;
   hasExportLogButton?: boolean;
 }) {
   if (error instanceof LockedDeviceError) {
@@ -546,6 +552,14 @@ export function renderError({
       <Flex flex={1}>
         <BleForgetDeviceIllustration productName={productName} onRetry={() => onRetry?.()} />
       </Flex>
+    );
+  } else if (error.message === "device-deprecation") {
+    return (
+      <DeviceDeprecationScreen
+        coinName={currencyName}
+        productName={getDeviceModel(device!.modelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+      />
     );
   } else {
     const renderErrorButtons = (error: Error, managerAppName?: string) => {
