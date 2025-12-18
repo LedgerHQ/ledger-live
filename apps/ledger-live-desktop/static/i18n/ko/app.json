@@ -207,7 +207,8 @@
       "SENDING" : "보내기",
       "BURN" : "소각됨",
       "ASSOCIATE_TOKEN" : "토큰 연동",
-      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)"
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)",
+      "UPDATE_ACCOUNT" : "업데이트된 계정"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -479,7 +480,9 @@
       "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
       "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
-      "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
+      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -844,7 +847,7 @@
     "stake" : "스테이킹",
     "delegatedAssets" : "위임된 자산",
     "undelegating" : "위임 해제",
-    "availableBalanceTooltip" : "가처분 금액입니다.",
+    "availableBalanceTooltip" : "지금 바로 사용 가능한 자산입니다.",
     "frozenAssetsTooltip" : "트론 투표 과정에 동결 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
     "bandwidthTooltip" : "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip" : "자산을 동결하여 에너지를 확보합니다",
@@ -1423,7 +1426,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "다음으로 {{productName}}를 사용해... ",
+      "title" : "이제 다음 단계는?",
       "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 포트폴리오를 살펴보세요.",
       "exploreCTA" : "내 포트폴리오 살펴보기"
     },
@@ -1432,19 +1435,22 @@
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}}의 다음 단계는 무엇인가요?",
-      "description" : "거래소나 지갑에서 자산을 전송하고, 암호화폐를 구매하고, 잠금 화면을 맞춤 설정하거나 Ledger Recover를 구독하세요.",
+      "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
       "link" : "다음 단계를 확인하세요",
       "dismiss" : "다음에 결정하기"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Ledger 장치 설정하기"
+      },
       "buyCrypto" : {
-        "title" : "암호화폐 구매",
-        "description" : "500가지 이상의 코인과 최고의 견적을 살펴보고 선호에 맞게 선택하세요.",
+        "title" : "Ledger Wallet을 통한 암호화폐 매수",
+        "description" : "500가지 이상의 코인과 토큰을 자유롭게 거래해 보세요.",
         "actionCompletedPopupLabel" : "구매한 암호화폐"
       },
       "assetsTransfer" : {
-        "title" : "자산을 Ledger로 이체하세요",
-        "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
+        "title" : "자산 이체",
+        "description" : "거래소나 지갑에서 자산을 이체하세요.",
         "actionCompletedPopupLabel" : "자산 이체 완료"
       },
       "syncAccounts" : {
@@ -1615,6 +1621,25 @@
         "all" : "년"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
   },
   "currentAddress" : {
     "title" : "현재 주소",
@@ -1864,7 +1889,13 @@
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
       "version" : "버전",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "associatedTokenId" : "연동된 토큰 ID",
+      "targetStakingNodeId" : "대상 노드 ID",
+      "previousStakingNodeId" : "이전 노드 ID",
+      "gasConsumed" : "소모된 가스비",
+      "gasUsed" : "사용된 가스비",
+      "gasLimit" : "가스 한도"
     }
   },
   "operationList" : {
@@ -4494,6 +4525,7 @@
       "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
       "walletSync" : "Ledger 동기화",
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
+      "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
@@ -4528,6 +4560,10 @@
       "analyticsConsole" : {
         "title" : "분석 콘솔 허용",
         "desc" : "분석 콘솔 열기를 표시하고 허용합니다."
+      },
+      "themeConsole" : {
+        "title" : "테마 토글",
+        "desc" : "테마를 빠르게 전환할 수 있도록 플로팅 오버레이를 표시합니다."
       },
       "brazeTools" : {
         "title" : "브레이즈 도구",
@@ -5475,7 +5511,7 @@
           },
           "welcomeToWalletWithFunds" : {
             "title" : "모든 준비 완료",
-            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. Ledger Wallet에 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
             "buttons" : {
               "next" : "계속"
             }
@@ -5817,10 +5853,32 @@
     "canton" : {
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트",
+      "expiryDuration" : {
+        "label" : "만료 기간",
+        "summaryLabel" : "기간 한정 요청",
+        "threeHours" : "3시간",
+        "sixHours" : "6시간",
+        "oneDay" : "1일",
+        "oneWeek" : "1주",
+        "oneMonth" : "30일"
+      },
+      "account" : {
+        "lockedBalance" : "잠금",
+        "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",
+        "withdrawableBalance" : "출금 가능",
+        "withdrawableBalanceTooltip" : "기한이 만료된 제안에서 회수 가능한 자산입니다. 인출하여 가용 수량으로 되돌릴 수 있습니다."
+      },
       "addAccount" : {
         "title" : "Canton 계정 추가",
+        "reonboard" : {
+          "title" : "계정 업데이트 필요",
+          "init" : "캔톤(Canton) 네트워크에서 토폴로지 변경이 감지되었습니다 계속해서 사용하려면 계정을 다시 등록하세요.",
+          "success" : "계정 업데이트 완료",
+          "successDescription" : "이제 계정을 계속 사용하실 수 있습니다."
+        },
         "onboard" : {
           "title" : "온보딩",
+          "account" : "계정",
           "newAccount" : "새 계정",
           "init" : "계속을 클릭해 새 Canton 계정을 설정합니다",
           "onboarded" : "온보딩한 계정",
@@ -5837,6 +5895,9 @@
           "title" : "승인",
           "validator" : "승인",
           "hint" : "이 계정으로 자금을 받으면 자동으로 승인합니다.",
+          "reonboard" : {
+            "hint" : "토폴로지 변경이 감지되었습니다. 계속해서 자금을 자동 수신하려면 Ledger 검증인을 다시 승인하세요."
+          },
           "error" : "승인에 실패했습니다. 다시 시도해 주세요.",
           "validatorLabel" : "Ledger 검증인",
           "validatorDescription" : "자동 자금 수락"
@@ -5844,6 +5905,9 @@
         "finish" : {
           "title" : "확인"
         }
+      },
+      "topologyChangeError" : {
+        "message" : "토폴로지 변경이 감지되었습니다. 재등록이 필요합니다."
       },
       "tooManyUtxos" : {
         "title" : "조치 필요: 다수의 UTXO가 감지됨",
@@ -6879,6 +6943,15 @@
       "title" : "EVM 주소 인증 필요",
       "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "이미 이 노드에 위임 중입니다"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "선택한 노드는 유효한 검증인이 아닙니다"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "수령할 보상이 없습니다"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
       "description" : "다른 이미지로 재시도해보세요."
@@ -7207,6 +7280,152 @@
         }
       }
     },
+    "account" : {
+      "header" : {
+        "actions" : {
+          "stake" : {
+            "alreadyDelegatedTooltip" : "이미 전체 수량이 위임되었습니다"
+          }
+        }
+      },
+      "balanceFooter" : {
+        "delegated" : {
+          "tooltip" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 자동 위임되며 잠기지 않은 유동적인 상태를 유지합니다."
+        },
+        "claimable" : {
+          "tooltip" : "보상은 매번 트랜잭션 후 자동으로 수령되지만, 직접 신청할 수도 있습니다."
+        }
+      },
+      "bodyHeader" : {
+        "delegatedPositions" : {
+          "header" : "위임",
+          "button" : "보상 수령",
+          "columns" : {
+            "inactiveTooltip" : "검증인을 찾을 수 없습니다",
+            "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다",
+            "activeTooltip" : "위임된 수량이 보상을 생성합니다",
+            "delegated" : "위임됨",
+            "rewards" : "보상"
+          },
+          "actions" : {
+            "redelegation" : "재위임",
+            "undelegation" : "위임 해제",
+            "claimRewards" : "보상 수령"
+          }
+        }
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "validator" : {
+            "title" : "검증인",
+            "rowTitle" : "Node {{index}}: {{name}}",
+            "rowSubtitlePercentage" : "최대 스테이킹 가능 수량의 {{percentage}}%가 스테이킹됨",
+            "rowSubtitleOverstaked" : "노드가 한도를 초과하여 스테이킹되었습니다"
+          },
+          "amount" : {
+            "title" : "수량",
+            "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "flow" : {
+        "title" : "위임 해제 자산",
+        "steps" : {
+          "summary" : {
+            "title" : "수량",
+            "validatorLabel" : "검증인",
+            "amountLabel" : "위임 해제 수량",
+            "alert" : "위임을 해제하면, 스테이킹한 수량과 보류 중인 보상이 즉시 지급됩니다. 자금의 일부만 위임 해제할 수는 없습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임 해제했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "자산 재위임",
+        "steps" : {
+          "validators" : {
+            "title" : "검증인",
+            "currentValidatorLabel" : "현재 위임",
+            "newValidatorLabel" : "새로운 위임",
+            "newValidatorSelectPlaceholder" : "검증인 선택",
+            "removedValidatorSelectPlaceholder" : "이전에 선택한 검증인을 더 이상 이용할 수 없습니다.",
+            "newValidatorSelectNoOption" : "'{{validatorName}}'와/과 일치하는 검증인이 없습니다",
+            "amountLabel" : "재위임할 금액",
+            "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+              "text" : "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "보상 수령",
+        "steps" : {
+          "rewards" : {
+            "title" : "보상",
+            "description" : "아래 검증인으로부터 <0>{{formattedClaimableRewards}}</0>의 수익을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 이용 가능 잔액에 자동 추가됩니다.",
+            "currentValidatorLabel" : "위임"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "보상을 성공적으로 수령했습니다.",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "메모(선택)",
@@ -7278,7 +7497,7 @@
     },
     "postOnboarding" : {
       "title" : "잠금화면을 취향대로 꾸며보세요",
-      "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
+      "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
       "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
     "customImageSet" : "잠금화면 꾸미기 완료",
@@ -7401,12 +7620,20 @@
   "walletSync" : {
     "title" : "Ledger 동기화",
     "close" : "닫기",
+    "banner" : {
+      "title" : "지갑이 동기화되지 않았습니다",
+      "description" : "새 휴대폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요",
+      "cta" : "지갑 동기화"
+    },
     "activate" : {
       "title" : "이 컴퓨터에서 Ledger 동기화를 켜시겠습니까?",
       "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
       "cta" : "Ledger 동기화 켜기",
       "alreadySync" : "장치를 이미 켰습니다",
-      "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+      "learnMore" : "Ledger 동기화는 어떤 원리인가요?",
+      "titleModal" : "지갑 동기화",
+      "descriptionModal" : "휴대폰과 컴퓨터를 번갈아 사용하더라도 항상 Ledger 장치의 확실한 보안은 물론, 최신 상태로 업데이트된 포트폴리오를 확인할 수 있습니다.",
+      "ctaModal" : "계속"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7483,6 +7710,11 @@
         "title" : "동기화 성공",
         "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대폰과 컴퓨터의 Ledger Wallet 앱에 자동으로 표시됩니다. "
       },
+      "complete" : {
+        "title" : "동기화 완료",
+        "description" : "이제부터 모든 장치에서 포트폴리오가 자동으로 동기화됩니다.",
+        "syncAnother" : "모바일에서 Ledger를 사용하시나요? QR 코드를 스캔하세요 "
+      },
       "synchAnother" : "다른 Ledger Wallet 앱과 동기화",
       "close" : "닫기"
     },
@@ -7494,7 +7726,7 @@
         "cancel" : "동기화 유지"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ledger Wallet 앱이 더 이상 동기화되지 않습니다",
+        "title" : "Ledger Wallet 앱 동기화가 해제되었습니다",
         "description" : "언제든지 동기화를 다시 켤 수 있습니다."
       },
       "deleteBackupError" : {
@@ -7512,7 +7744,8 @@
         "connectDevice" : {
           "title" : "Ledger 장치를 사용하세요",
           "description" : "Ledger 장치에 서명하여 동기화합니다"
-        }
+        },
+        "descriptionModal" : "다른 휴대폰에서 Ledger Wallet 앱이 동기화되어 있는 경우 선택하세요"
       },
       "qrCode" : {
         "title" : "Ledger Wallet 앱 동기화",
@@ -7650,6 +7883,17 @@
       "title" : "네트워크 오류가 발생했습니다",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서로 문의하세요.",
       "cta" : "다시 시도"
+    },
+    "errors" : {
+      "network" : {
+        "title" : "연결에 실패했습니다",
+        "description" : "인터넷에 연결되지 않았습니다. 다시 시도해 주세요"
+      },
+      "backend" : {
+        "title" : "연결에 실패했습니다",
+        "description" : "문제가 발생했습니다. 나중에 다시 시도해 주세요"
+      },
+      "cta" : "다시 시도하세요"
     }
   },
   "nftEntryPoint" : {
