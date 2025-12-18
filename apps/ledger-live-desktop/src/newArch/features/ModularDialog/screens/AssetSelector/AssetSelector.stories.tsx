@@ -43,12 +43,15 @@ const defaultStore = {
     ],
   },
   application: { debug: {} },
+  modularDrawer: {
+    searchedValue: "",
+  },
 };
 
 const store = createStore(() => defaultStore);
 
 const meta: Meta<typeof AssetSelector> = {
-  title: "ModularDrawer/AssetSelection",
+  title: "ModularDialog/AssetSelection",
   component: AssetSelector,
   args: {
     assetsToDisplay,
@@ -72,10 +75,6 @@ export default meta;
 type Story = StoryObj<typeof AssetSelector>;
 
 export const Default: Story = {};
-
-export const WithDefaultSearchValue: Story = {
-  args: {},
-};
 
 export const WithBalanceAndApy: Story = {
   args: {
