@@ -1,6 +1,5 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
-import { killSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 
 const cwd = __dirname;
 
@@ -17,7 +16,7 @@ const ensureEnv = () => {
   }
 };
 
-export const spawnAnvil = async (rpc: string): Promise<void> => {
+export const spawnAnvil = async (rpc: string, seed: string): Promise<void> => {
   ensureEnv();
   console.log("Starting anvil...");
   await compose.upOne("anvil", {
@@ -26,6 +25,7 @@ export const spawnAnvil = async (rpc: string): Promise<void> => {
     env: {
       ...process.env,
       RPC: rpc,
+      SEED: seed,
     },
   });
 
@@ -62,6 +62,6 @@ export const killAnvil = async (): Promise<void> => {
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
-    await Promise.all([killAnvil(), killSpeculos()]);
+    await killAnvil();
   }),
 );

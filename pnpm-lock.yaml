@@ -4957,6 +4957,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bip39:
+        specifier: ^3.1.0
+        version: 3.1.0
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
@@ -5018,9 +5021,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/hw-app-polkadot':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-polkadot
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -5088,9 +5088,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/live-signer-solana':
-        specifier: workspace:^
-        version: link:../../live-signer-solana
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -5106,9 +5103,15 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bip39:
+        specifier: ^3.1.0
+        version: 3.1.0
       docker-compose:
         specifier: ^1
         version: 1.1.0
+      ed25519-hd-key:
+        specifier: ^1.3.0
+        version: 1.3.0
       msw:
         specifier: ^2
         version: 2.7.3(typescript@5.8.3)
@@ -15545,10 +15548,6 @@ packages:
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
     engines: {node: '>= 16'}
 
-  '@noble/hashes@1.5.0':
-    resolution: {integrity: sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==}
-    engines: {node: ^14.21.3 || >=16}
-
   '@noble/hashes@1.7.1':
     resolution: {integrity: sha512-B8XBPsn4vT/KJAGqDzbwztd+6Yte3P4V7iafm24bxgDe/mlRuK6xmWPuCNrKt2vDafZ8MfJLlchDG/vYafQEjQ==}
     engines: {node: ^14.21.3 || >=16}
@@ -25188,6 +25187,9 @@ packages:
 
   ed25519-hd-key@1.1.2:
     resolution: {integrity: sha512-/0y9y6N7vM6Kj5ASr9J9wcMVDTtygxSOvYX+PJiMD7VcxCx2G03V5bLRl8Dug9EgkLFsLhGqBtQWQRcElEeWTA==}
+
+  ed25519-hd-key@1.3.0:
+    resolution: {integrity: sha512-IWwAyiiuJQhgu3L8NaHb68eJxTu2pgCwxIBdgpLJdKpYZM46+AXePSVTr7fkNKaUOfOL4IrjEUaQvyVRIDP7fg==}
 
   ed2curve@0.3.0:
     resolution: {integrity: sha512-8w2fmmq3hv9rCrcI7g9hms2pMunQr1JINfcjwR9tAyZqhtyaMN991lF/ZfHfr5tzZQ8c7y7aBgZbjfbd0fjFwQ==}
@@ -47447,8 +47449,6 @@ snapshots:
 
   '@noble/hashes@1.4.0': {}
 
-  '@noble/hashes@1.5.0': {}
-
   '@noble/hashes@1.7.1': {}
 
   '@noble/hashes@1.8.0': {}
@@ -53283,7 +53283,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.5
       '@ndelangen/get-tarball': 3.0.9
       '@storybook/codemod': 7.6.20
       '@storybook/core-common': 7.6.20
@@ -58377,7 +58377,7 @@ snapshots:
 
   bip39@3.1.0:
     dependencies:
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.8.0
 
   bip66@1.1.5:
     dependencies:
@@ -61407,6 +61407,11 @@ snapshots:
   ed25519-hd-key@1.1.2:
     dependencies:
       bip39: 3.0.2
+      create-hmac: 1.1.7
+      tweetnacl: 1.0.3
+
+  ed25519-hd-key@1.3.0:
+    dependencies:
       create-hmac: 1.1.7
       tweetnacl: 1.0.3
 
