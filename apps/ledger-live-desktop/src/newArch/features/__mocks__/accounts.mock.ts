@@ -21,11 +21,48 @@ export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
   ],
 }));
 export const getPortfolioCount: Mock = fn(() => 0);
-export const useCountervaluesState: Mock = fn(() => ({ cache: { "USD arbitrum": "" } }));
+const mockCountervaluesCache: Record<string, { map: Map<string, number>; stats: object }> = {
+  "USD ethereum": {
+    map: new Map([["latest", 2500]]),
+    stats: {
+      oldest: "2024-09-12",
+      earliest: "2025-10-02T13",
+      oldestDate: new Date(),
+      earliestDate: new Date(),
+      earliestStableDate: new Date(),
+    },
+  },
+  "USD arbitrum": {
+    map: new Map([["latest", 1.25]]),
+    stats: {
+      oldest: "2024-09-12",
+      earliest: "2025-10-02T13",
+      oldestDate: new Date(),
+      earliestDate: new Date(),
+      earliestStableDate: new Date(),
+    },
+  },
+  "USD bitcoin": {
+    map: new Map([["latest", 45000]]),
+    stats: {
+      oldest: "2024-09-12",
+      earliest: "2025-10-02T13",
+      oldestDate: new Date(),
+      earliestDate: new Date(),
+      earliestStableDate: new Date(),
+    },
+  },
+};
+
+export const useCountervaluesState: Mock = fn(() => ({
+  cache: mockCountervaluesCache,
+  data: {},
+  status: {},
+}));
 export const accountsSelector: Mock = fn(state => state.accounts);
-export const counterValueCurrencySelector: Mock = fn(state => state.currency);
-export const discreetModeSelector: Mock = fn(state => state.discreet);
-export const localeSelector: Mock = fn(state => state.locale);
+export const counterValueCurrencySelector = (state: { currency: unknown }) => state.currency;
+export const discreetModeSelector = (state: { discreet: boolean }) => state.discreet;
+export const localeSelector = (state: { locale: string }) => state.locale;
 
 export const MOCKED_ARB_ACCOUNT = {
   type: "Account",
