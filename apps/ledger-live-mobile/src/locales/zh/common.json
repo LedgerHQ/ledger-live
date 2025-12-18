@@ -1098,6 +1098,15 @@
       "title" : "需要核实以太坊虚拟机 (EVM) 地址",
       "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "您已委托给该节点"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "所选节点无效"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "暂无可领取的奖励"
+    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -1563,6 +1572,25 @@
     "cta" : "设置我的 Ledger 设备",
     "bannerTitle" : "已收到您的 Ledger 设备？",
     "bannerCta" : "开始设置",
+    "continue" : "继续"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
     "continue" : "继续"
   },
   "purchaseDevice" : {
@@ -2288,6 +2316,18 @@
     },
     "completionScreen" : {
       "title" : "现在一切在您掌控之中"
+    },
+    "secureYourCrypto" : {
+      "title" : "保护您的加密货币",
+      "subtitle" : "开始将您的加密货币从交易所或钱包转移到 Ledger 悦签宝，以确保最大程度的安全性。",
+      "secureCryptoButton" : "保护我的加密货币",
+      "maybeLater" : "以后再说"
+    },
+    "fundSuccess" : {
+      "title" : "欢迎使用 Ledger Wallet",
+      "receiveSuccess" : "您的 Ledger 设备已经就绪。如果您已发送加密货币到 Ledger Wallet，几分钟内就会收到。",
+      "maybeLater" : "第一步是存入您的第一笔加密货币",
+      "exploreLedger" : "浏览 Ledger Wallet "
     }
   },
   "blePairingFlow" : {
@@ -2780,7 +2820,8 @@
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
       "ASSOCIATE_TOKEN" : "关联代币",
-      "CONTRACT_CALL" : "合约调用"
+      "CONTRACT_CALL" : "合约调用",
+      "UPDATE_ACCOUNT" : "已更新的账户"
     }
   },
   "operationDetails" : {
@@ -2848,7 +2889,12 @@
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
       "stakedAmount" : "权益质押数额",
-      "accountCreationFee" : "账户创建费"
+      "accountCreationFee" : "账户创建费",
+      "associatedTokenId" : "关联代币 ID",
+      "targetStakingNodeId" : "目标节点 ID",
+      "previousStakingNodeId" : "前一节点 ID",
+      "gasConsumed" : "Gas 消耗量",
+      "gasUsed" : "Gas 使用量"
     },
     "multipleAddresses" : "为什么有多个地址？"
   },
@@ -2998,6 +3044,7 @@
       }
     },
     "availableBalance" : "可用余额",
+    "availableBalanceTooltip" : "您现在就可以使用的资金。",
     "claimableRewards" : "可领取的奖励",
     "totalSupplied" : "已存金额",
     "tronFrozen" : "已冻结",
@@ -3008,6 +3055,8 @@
     "delegation" : {
       "sectionLabel" : "委托",
       "addDelegation" : "添加委托",
+      "delegationEarn" : "您现在可以将您的账户委托出去，以赚取 {{name}} 权益质押奖励。",
+      "howItWorks" : "委托机制如何运作",
       "info" : {
         "title" : "赚取奖励",
         "cta" : "赚取奖励"
@@ -3146,6 +3195,7 @@
       "dateFormatDesc" : "设置 Ledger Wallet 的日期格式",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Wallet 加密货币账户。",
+      "walletSyncDescription" : "在您换用电脑或使用手机时，及时更新自己的资产组合",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "应用程序锁",
@@ -3841,7 +3891,9 @@
         "kaspa_title" : "Ledger Nano S™ 不支持互换 Kaspa",
         "kaspa_description" : "要互换 Kaspa，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "celo_title" : "Ledger Nano S™ 不支持互换 Celo",
-        "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+        "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "monad_title" : "Ledger Nano S™ 不支持互换 Monad",
+        "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -4160,7 +4212,8 @@
       "confirm" : "交易一经网络确认，您的账户余额就会更新。",
       "button" : {
         "details" : "查看详情",
-        "retry" : "重试"
+        "retry" : "重试",
+        "abort" : "中止"
       }
     },
     "fees" : {
@@ -5072,16 +5125,11 @@
             "warning" : "您将根据提示向您的账户发出空白交易。通过这种操作，能够以最低的交易费将目前奖励添加到您的余额中。",
             "cta" : "继续"
           },
-          "verification" : {
+          "confirmation" : {
             "success" : {
               "title" : "已成功申请奖励！",
-              "text" : "您的奖励已经添加进您的可用余额中。",
-              "cta" : "前往账户"
-            },
-            "pending" : {
-              "title" : "正在播送交易……"
-            },
-            "broadcastError" : "您的交易可能已失败。请在几分钟后查看并在确保您的交易的确没有通过后，才再次重试。"
+              "text" : "您的奖励已经添加进您的可用余额中。"
+            }
           }
         }
       }
@@ -7260,6 +7308,158 @@
         }
       }
     },
+    "info" : {
+      "available" : {
+        "title" : "可用 HBAR",
+        "description" : "该数额可自由支配。"
+      },
+      "delegated" : {
+        "title" : "已委托资产",
+        "description" : "在 Hedera 上质押时，您的全部余额将被委托，但仍保持流动性"
+      },
+      "claimable" : {
+        "title" : "可领取的奖励",
+        "description" : "每笔交易后将自动领取奖励。您也可以手动领取。"
+      }
+    },
+    "delegatedPositions" : {
+      "rewards" : {
+        "title" : "奖励",
+        "cta" : "声明"
+      },
+      "details" : {
+        "validatorAddress" : "验证者地址",
+        "delegatedAccount" : "已委托账户",
+        "status" : {
+          "title" : "状态",
+          "active" : "活跃",
+          "activeTooltip" : "已委托的数额会生成奖励",
+          "inactive" : "不活跃",
+          "inactiveTooltip" : "未找到验证者",
+          "overstaked" : "超额质押",
+          "overstakedTooltip" : "该节点已超额质押，年收益率低于最佳水平"
+        },
+        "rewards" : "奖励",
+        "actions" : {
+          "redelegate" : "重新委托",
+          "claim-rewards" : "收集奖励",
+          "undelegate" : "解除委托"
+        }
+      }
+    },
+    "delegation" : {
+      "nodeName" : "节点 {{index}}：{{name}}",
+      "alreadyDelegatedModal" : {
+        "title" : "已委托",
+        "description" : "您的全部余额已委托"
+      },
+      "stepperHeader" : {
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "steps" : {
+        "summary" : {
+          "delegate" : "我委托",
+          "to" : "到",
+          "alert" : "在 Hedera 上质押时，您的全部余额将被质押。您的资产保持完全流动性，不受锁定期或削减风险的影响。可能需要最多 48 小时才会开始产生质押奖励。",
+          "learnMore" : "了解更多"
+        },
+        "validator" : {
+          "title" : "验证者",
+          "totalStake" : "质押总额",
+          "rowSubtitlePercentage" : "已质押最大数额的 {{percentage}}%",
+          "rowSubtitleOverstaked" : "节点已超额质押",
+          "learnMore" : "了解更多"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "您的资产已经成功委托。",
+            "description" : "该交易一经区块链确认，就会更新您的账户余额。"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amount" : "要解除委托的数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "解除委托后，您的余额和待领取奖励将立即兑现。无法部分解除委托您的质押。",
+          "learnMore" : "了解更多"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "您已经将资产成功解除委托",
+            "description" : "该交易一经区块链确认，就会更新您的账户余额。"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
+    "redelegation" : {
+      "stepperHeader" : {
+        "selectValidator" : "选择新的验证者",
+        "amountTitle" : "{{from}} → {{to}}",
+        "amountSubtitle" : "要重新委托的数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "steps" : {
+        "amount" : {
+          "alert" : "在 Hedera 上质押时，您的全部余额将被质押。您的资产保持完全流动性，不受锁定期或削减风险的影响。可能需要最多 48 小时才会开始产生质押奖励。",
+          "learnMore" : "了解更多"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "您的资产已成功重新委托",
+            "description" : "该交易一经区块链确认，就会更新您的账户余额。"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "selectReward" : "选择要收集的奖励",
+        "claim" : "申领奖励",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "steps" : {
+        "claim" : {
+          "earned" : "您赚取了",
+          "delegatingTo" : "通过将资产委托给",
+          "description" : "它们现在将被申领并被添加到您的可用余额。"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+            "description" : "该交易一经区块链确认，就会更新您的账户余额。"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
     "operationDetails" : {
       "postAccountSection" : "已关联代币",
       "postAlert" : {
@@ -7316,33 +7516,36 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "接下来，使用您的 {{productName}}...",
+      "title" : "接下来呢？",
       "areAllPostOnboardingActionsCompletedTitle" : "一切准备就绪！继续探索您的资产组合",
       "skip" : "以后再说",
       "viewWallet" : "探索我的资产组合"
     },
     "entryPointCard" : {
       "title" : "使用 {{productName}} 的下一步操作是什么？",
-      "description" : "从任何交易所或钱包转移资产，购买加密货币，自定义锁屏或订阅 Ledger Recover。",
+      "description" : "保护您的资产，探索更多可能。",
       "buttonLabel" : "查看后续步骤"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "设置您的 Ledger 设备"
+      },
       "assetsTransfer" : {
-        "title" : "将您的资产转移至 Ledger",
+        "title" : "转移您的资产",
         "titleCompleted" : "资产已转入 Ledger",
-        "description" : "从任何交易所或钱包直接转入您的 Ledger。",
+        "description" : "从任意交易所或钱包转移资产。",
         "popupLabel" : "资产已转移"
       },
       "buyCrypto" : {
-        "title" : "购买加密货币",
+        "title" : "通过 Ledger Wallet 买入加密货币",
         "titleCompleted" : "已购买的加密货币",
-        "description" : "根据您的偏好，从 500 多种币和最佳报价中进行选择。",
+        "description" : "500 多种币和代币任您自由选择。",
         "popupLabel" : "已购买的加密货币"
       },
       "customImage" : {
         "title" : "自定义锁屏界面",
         "titleCompleted" : "已自定义锁屏界面",
-        "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
+        "description" : "将您最喜欢的数字艺术或照片设置为设备锁屏界面。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
       "syncAccounts" : {
@@ -7604,6 +7807,10 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "banner" : {
+      "title" : "您的钱包未同步",
+      "description" : "及时更新您的资产组合"
+    },
     "entryPoints" : {
       "simpleCta" : {
         "title" : "激活 Ledger Sync"
@@ -7620,7 +7827,10 @@
         "description" : "此操作会自动同步您所有手机和电脑上的加密货币账户，即使换用新设备也会自动同步。",
         "mainCta" : "开启 Ledger Sync",
         "secondCta" : "我已经开启了",
-        "learnMore" : "Ledger Sync 如何运作？"
+        "learnMore" : "Ledger Sync 如何运作？",
+        "titleModal" : "同步您的钱包",
+        "descriptionModal" : "在您换用手机或使用电脑时，及时更新自己的资产组合——Ledger 设备为您保驾护航。",
+        "cta" : "继续"
       }
     },
     "deviceSelection" : {
@@ -7639,13 +7849,18 @@
       "sync" : "同步成功",
       "syncDesc" : "您的加密货币账户更改将自动显示在已同步手机和电脑上的 Ledger Wallet 应用程序中。",
       "activation" : "该手机已开启 Ledger Sync",
+      "complete" : {
+        "title" : "同步完成",
+        "description" : "从现在起，您的资产组合将在所有设备上自动保持同步。"
+      },
       "syncAnother" : "与另一个 Ledger Wallet 钱包应用程序同步",
       "close" : "关闭"
     },
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "与另一个 Ledger Wallet 钱包应用程序同步",
-        "description" : "在不同的手机和电脑上同步您的 Ledger Wallet 加密货币账户。"
+        "description" : "在不同的手机和电脑上同步您的 Ledger Wallet 加密货币账户。",
+        "desc" : "在您换用电脑或使用手机时，及时更新自己的资产组合"
       },
       "unauthorizeMember" : {
         "error" : {
@@ -7708,7 +7923,8 @@
         },
         "connectDevice" : {
           "title" : "使用我的 Ledger 设备"
-        }
+        },
+        "description" : "请选择您是否已在另一部手机或电脑上同步了 Ledger Wallet"
       },
       "qrCode" : {
         "title" : "同步 Ledger Wallet 钱包应用程序",
@@ -8028,12 +8244,36 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "有效期时长",
+      "summaryLabel" : "要约有效期",
+      "threeHours" : "3 小时",
+      "sixHours" : "6 小时",
+      "oneDay" : "1 天",
+      "oneWeek" : "1 周",
+      "oneMonth" : "30 天"
+    },
+    "account" : {
+      "lockedBalance" : "已锁定",
+      "lockedBalanceTooltip" : "您的资金锁定在您发送给他人的要约中。您可以随时取消这些要约，或者等待接收方接受或拒绝。",
+      "withdrawableBalance" : "可提取",
+      "withdrawableBalanceTooltip" : "您可以从过期要约中收回的资金。提取即可将这些资金转回您的可用余额。"
+    },
     "onboard" : {
       "account" : "账户",
       "authorize" : "授权",
       "preapprove" : "账户添加成功",
       "validator" : "Ledger 验证者",
       "title" : "自动接收汇入资金",
+      "reonboard" : {
+        "title" : "需要更新账户",
+        "account" : "账户",
+        "authorize" : "重新授权验证者",
+        "warning" : {
+          "title" : "检测到拓扑变化",
+          "description" : "检测到 Canton 网络发生拓扑变化。请重新接入您的账户以继续使用。"
+        }
+      },
       "error429" : "Canton Network 目前每天支持的账户创建数量有限。请稍后重试。"
     },
     "tooManyUtxos" : {
@@ -8042,6 +8282,50 @@
       "quickFix" : "快速解决方案：向自己发送一些资金进行合并。",
       "warning" : "您的账户中有过多小额 UTXO。向自己发送一些资金进行合并。",
       "consolidate" : "合并"
+    },
+    "pendingTransactions" : {
+      "expired" : "已逾期",
+      "accept" : "接受",
+      "reject" : "拒绝",
+      "review" : "审核",
+      "withdraw" : "取消转账",
+      "incoming" : {
+        "title" : "待审核的转账转入"
+      },
+      "outgoing" : {
+        "title" : "转账转出"
+      },
+      "details" : {
+        "incomingTitle" : "转账转入详情",
+        "outgoingTitle" : "转账转出详情"
+      },
+      "amount" : "数额",
+      "from" : "从",
+      "to" : "到",
+      "memo" : "备注",
+      "expiresAt" : "到期时间",
+      "expiresIn" : "剩余时间",
+      "status" : {
+        "label" : "状态"
+      },
+      "deviceAppModal" : {
+        "contractId" : "合约 ID",
+        "processing" : "处理中...",
+        "success" : {
+          "accept" : {
+            "title" : "转账已接受",
+            "description" : "转账转入已成功接受。"
+          },
+          "reject" : {
+            "title" : "转账已拒绝",
+            "description" : "转账转入已成功拒绝。"
+          },
+          "withdraw" : {
+            "title" : "转账已拒绝",
+            "description" : "转账转出已成功拒绝。"
+          }
+        }
+      }
     }
   }
 }
