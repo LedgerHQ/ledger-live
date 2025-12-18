@@ -232,6 +232,10 @@ export const urls = {
     appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
     playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
   },
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };
 
 export const vaultSigner = {
