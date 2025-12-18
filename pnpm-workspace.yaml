@@ -36,7 +36,7 @@ catalog:
   "@types/bs58": ^4.0.1
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
-  axios: 1.12.2
+  axios: 1.13.2
   bs58: ^4.0.1
   electron: 38.2.0
   ethers: 6.15.0
