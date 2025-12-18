@@ -168,7 +168,7 @@ jobs:
         shell: bash
 
       - name: Set test environment variables
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/qaa-release-change-swap-api
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}

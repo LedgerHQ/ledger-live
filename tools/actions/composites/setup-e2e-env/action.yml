@@ -27,7 +27,7 @@ runs:
       id: set-envs
       shell: bash
       run: |
-        if [[ "${{ inputs.build_type }}" == "js" ]]; then
+        if [[ "${{ inputs.build_type }}" != "js" ]]; then
           echo "SWAP_API_BASE=https://swap.ledger.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=PROD" >> $GITHUB_ENV
         else
