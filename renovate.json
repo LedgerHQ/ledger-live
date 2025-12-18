@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard"],
+  "extends": ["config:recommended", ":dependencyDashboard", "helpers:pinGithubActionDigests"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
@@ -9,6 +9,17 @@
     "labels": ["security"]
   },
   "packageRules": [
+    {
+      "description": "Github Actions (CI)",
+      "matchManagers": ["github-actions"],
+      "matchPackagePatterns": ["^LedgerHQ/", "^ledgerhq/"],
+      "pinDigests": false,
+      "minimumReleaseAge": "15 days",
+      "labels": ["dependencies", "github_actions"],
+      "reviewers": ["ledgerhq/wallet-ci"],
+      "assignees": ["ledgerhq/wallet-ci"]
+
+    },
     {
       "description": "Lumen UI React - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-react"],
