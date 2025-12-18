@@ -149,9 +149,9 @@ test.describe("Swap - 1inch flow", () => {
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
       await app.swap.selectSpecificProvider(provider, electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExchangeButton(electronApp);
       await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExecuteSwapButton(electronApp);
       await app.swap.clickContinueButton();
       //ToDo: when B2CA-2384 is fixed the flow could be finished
     },
@@ -364,9 +364,9 @@ test.describe("Swap - Rejected on device", () => {
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
 
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.clickExchangeButton(electronApp);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -1310,10 +1310,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         await app.swap.clickSwapMax(electronApp);
 
         const amountToSend = await app.swap.getAmountToSend(electronApp);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -1473,8 +1473,8 @@ test.describe("Swap - Block blacklisted addresses", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.clickExchangeButton(electronApp);
 
       await app.swapDrawer.checkErrorMessage(
         `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
