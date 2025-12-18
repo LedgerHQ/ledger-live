@@ -8232,6 +8232,15 @@
     }
   },
   "canton": {
+    "expiryDuration": {
+      "label": "Expiry duration",
+      "summaryLabel": "Expiry Offer",
+      "threeHours": "3 hours",
+      "sixHours": "6 hours",
+      "oneDay": "1 day",
+      "oneWeek": "1 week",
+      "oneMonth": "30 days"
+    },
     "account": {
       "lockedBalance": "Locked",
       "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
