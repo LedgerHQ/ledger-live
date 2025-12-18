@@ -7,7 +7,7 @@ import { Camera } from "react-native-vision-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
-import { useQRScanner } from "~/hooks/useQRScanner";
+import { useQRScanner } from "LLM/hooks/useQRScanner";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;

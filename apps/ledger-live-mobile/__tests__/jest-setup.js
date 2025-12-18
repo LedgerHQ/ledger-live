@@ -67,6 +67,7 @@ jest.mock("react-native-share", () => ({
 }));
 
 export const mockSimulateBarcodeScanned = jest.fn();
+export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
 
 jest.mock("react-native-vision-camera", () => {
   const CameraMock = jest.fn(({ codeScanner }) => {
@@ -77,7 +78,7 @@ jest.mock("react-native-vision-camera", () => {
     }
     return null;
   });
-  CameraMock.getCameraPermissionStatus = jest.fn(() => Promise.resolve("granted"));
+  CameraMock.getCameraPermissionStatus = mockGetCameraPermissionStatus;
 
   return {
     Camera: CameraMock,

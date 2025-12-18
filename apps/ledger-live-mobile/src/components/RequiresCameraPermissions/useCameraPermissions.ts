@@ -14,7 +14,7 @@ export default function useCameraPermissions() {
   const isMounted = useIsMounted();
 
   const checkPermission = useCallback(async () => {
-    const status = await Camera.getCameraPermissionStatus();
+    const status = Camera.getCameraPermissionStatus();
     if (isMounted()) {
       setPermissionStatus({
         granted: status === "granted",

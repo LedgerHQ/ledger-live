@@ -1,28 +1,12 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import CameraPermissions from "../CameraPermissions";
-import { Camera } from "react-native-vision-camera";
+import { Camera, useCameraDevice } from "react-native-vision-camera";
+import { useIsFocused } from "@react-navigation/native";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useIsFocused: jest.fn(() => true),
-}));
-
-jest.mock("react-native-vision-camera", () => ({
-  Camera: jest.fn(() => null),
-  useCameraDevice: jest.fn(() => ({ id: "mock-device", position: "back" })),
-}));
-
-jest.mock("~/components/RequiresCameraPermissions", () => {
-  return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-});
-
-jest.mock("~/components/RequiresCameraPermissions/CameraPermissionContext", () => ({
-  Consumer: ({
-    children,
-  }: {
-    children: (value: { permissionGranted: boolean | null }) => React.ReactNode;
-  }) => children({ permissionGranted: true }),
 }));
 
 describe("CameraPermissions", () => {
@@ -45,8 +29,7 @@ describe("CameraPermissions", () => {
   });
 
   it("should show not focused message when screen not in focus", async () => {
-    const { useIsFocused } = require("@react-navigation/native");
-    useIsFocused.mockReturnValue(false);
+    jest.mocked(useIsFocused).mockReturnValue(false);
 
     const { user } = render(<CameraPermissions />);
     const mountButton = await screen.findByText(/Mount a camera requiring component/i);
@@ -56,10 +39,8 @@ describe("CameraPermissions", () => {
   });
 
   it("should show not focused message when device is null", async () => {
-    const { useCameraDevice } = require("react-native-vision-camera");
-    const { useIsFocused } = require("@react-navigation/native");
-    useIsFocused.mockReturnValue(true);
-    useCameraDevice.mockReturnValue(null);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    jest.mocked(useCameraDevice).mockReturnValue(undefined);
 
     const { user } = render(<CameraPermissions />);
     const mountButton = await screen.findByText(/Mount a camera requiring component/i);

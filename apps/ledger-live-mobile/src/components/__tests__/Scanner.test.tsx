@@ -2,18 +2,12 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import ScanQrCode from "../Scanner";
 
-jest.mock("~/hooks/useQRScanner", () => ({
+jest.mock("~/newArch/hooks/useQRScanner", () => ({
   useQRScanner: jest.fn(() => ({
     device: { id: "mock-device", position: "back" },
     codeScanner: { codeTypes: ["qr"], onCodeScanned: jest.fn() },
   })),
 }));
-
-jest.mock("../CameraScreen/ScanTargetSvg", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return () => <View testID="scan-target-svg" />;
-});
 
 describe("Scanner", () => {
   const mockOnResult = jest.fn();

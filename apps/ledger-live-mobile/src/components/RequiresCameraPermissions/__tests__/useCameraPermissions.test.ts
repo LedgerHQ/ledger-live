@@ -1,34 +1,10 @@
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { AppState, Linking } from "react-native";
+import { renderHook, act, waitFor } from "@tests/test-renderer";
+import { AppState, Linking, AppStateStatus } from "react-native";
 import { useCameraPermission, Camera } from "react-native-vision-camera";
 import useCameraPermissions from "../useCameraPermissions";
 
-type AppStateCallback = (state: string) => void;
-let appStateCallback: AppStateCallback | null = null;
+let appStateCallback: ((state: AppStateStatus) => void) | null = null;
 const mockRemove = jest.fn();
-
-jest.mock("react-native", () => ({
-  AppState: {
-    currentState: "active",
-    addEventListener: jest.fn((event: string, callback: AppStateCallback) => {
-      appStateCallback = callback;
-      return { remove: mockRemove };
-    }),
-  },
-  Linking: {
-    openSettings: jest.fn(),
-  },
-}));
-
-jest.mock("react-native-vision-camera", () => ({
-  useCameraPermission: jest.fn(() => ({
-    hasPermission: true,
-    requestPermission: jest.fn(() => Promise.resolve(true)),
-  })),
-  Camera: {
-    getCameraPermissionStatus: jest.fn(() => Promise.resolve("granted")),
-  },
-}));
 
 jest.mock("@ledgerhq/live-common/hooks/useIsMounted", () => ({
   __esModule: true,
@@ -39,12 +15,21 @@ describe("useCameraPermissions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     appStateCallback = null;
-    (AppState as unknown as { currentState: string }).currentState = "active";
-    (useCameraPermission as jest.Mock).mockReturnValue({
+    Object.defineProperty(AppState, "currentState", {
+      value: "active",
+      configurable: true,
+      writable: true,
+    });
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_event, callback) => {
+      appStateCallback = callback;
+      return { remove: mockRemove };
+    });
+    jest.spyOn(Linking, "openSettings").mockResolvedValue();
+    jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: true,
       requestPermission: jest.fn(() => Promise.resolve(true)),
     });
-    (Camera.getCameraPermissionStatus as jest.Mock).mockResolvedValue("granted");
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("granted");
   });
 
   it("should request permission on mount", async () => {
@@ -102,7 +87,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should handle denied permission status from checkPermission", async () => {
-    (Camera.getCameraPermissionStatus as jest.Mock).mockResolvedValue("denied");
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("denied");
 
     const { result } = renderHook(() => useCameraPermissions());
 
@@ -119,7 +104,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should handle not-determined permission status with canAskAgain true", async () => {
-    (Camera.getCameraPermissionStatus as jest.Mock).mockResolvedValue("not-determined");
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("not-determined");
 
     const { result } = renderHook(() => useCameraPermissions());
 
@@ -136,7 +121,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should handle permission denied on request", async () => {
-    (useCameraPermission as jest.Mock).mockReturnValue({
+    jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => Promise.resolve(false)),
     });
@@ -163,19 +148,23 @@ describe("useCameraPermissions", () => {
 
     expect(appStateCallback).toBeDefined();
 
-    (AppState as unknown as { currentState: string }).currentState = "background";
+    Object.defineProperty(AppState, "currentState", {
+      value: "background",
+      configurable: true,
+      writable: true,
+    });
     act(() => {
       appStateCallback?.("background");
     });
 
-    (Camera.getCameraPermissionStatus as jest.Mock).mockClear();
-    (Camera.getCameraPermissionStatus as jest.Mock).mockResolvedValue("granted");
+    jest.mocked(Camera.getCameraPermissionStatus).mockClear();
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("granted");
 
     await act(async () => {
       appStateCallback?.("active");
     });
 
-    expect(Camera.getCameraPermissionStatus).toHaveBeenCalled();
+    expect(jest.mocked(Camera.getCameraPermissionStatus)).toHaveBeenCalled();
   });
 
   it("should NOT check permission on resume if settings were not opened", async () => {
@@ -185,9 +174,13 @@ describe("useCameraPermissions", () => {
       expect(appStateCallback).toBeDefined();
     });
 
-    (Camera.getCameraPermissionStatus as jest.Mock).mockClear();
+    jest.mocked(Camera.getCameraPermissionStatus).mockClear();
 
-    (AppState as unknown as { currentState: string }).currentState = "background";
+    Object.defineProperty(AppState, "currentState", {
+      value: "background",
+      configurable: true,
+      writable: true,
+    });
     act(() => {
       appStateCallback?.("background");
     });
@@ -196,7 +189,7 @@ describe("useCameraPermissions", () => {
       appStateCallback?.("active");
     });
 
-    expect(Camera.getCameraPermissionStatus).not.toHaveBeenCalled();
+    expect(jest.mocked(Camera.getCameraPermissionStatus)).not.toHaveBeenCalled();
   });
 
   it("should cleanup subscription on unmount", async () => {
@@ -212,7 +205,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should use hasPermission fallback when permissionStatus is null initially", () => {
-    (useCameraPermission as jest.Mock).mockReturnValue({
+    jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => new Promise(() => {})),
     });
@@ -224,7 +217,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should return contextValue with null permissionGranted when permission is false", async () => {
-    (useCameraPermission as jest.Mock).mockReturnValue({
+    jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => Promise.resolve(false)),
     });

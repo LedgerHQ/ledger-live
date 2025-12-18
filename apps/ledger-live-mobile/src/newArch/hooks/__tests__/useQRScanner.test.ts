@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-native";
+import { renderHook } from "@tests/test-renderer";
 import { useQRScanner } from "../useQRScanner";
 import { Code } from "react-native-vision-camera";
 
