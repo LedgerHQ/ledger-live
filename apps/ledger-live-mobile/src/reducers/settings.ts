@@ -169,6 +169,7 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
+  deprecationDoNotRemind: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -627,6 +628,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
+
+  [SettingsActionTypes.DEPRECATION_DO_NOT_REMIND]: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload as string],
+    };
+  },
 
   [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
     ...state,

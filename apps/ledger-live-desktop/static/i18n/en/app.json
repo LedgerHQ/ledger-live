@@ -1622,6 +1622,26 @@
       }
     }
   },
+  "deviceDeprecation": {
+      "warning": {
+        "title": "{{device}}™ can not Clear Sign this transaction",
+        "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
+        "continue": "Proceed at your own risk"
+  
+      },
+      "info": {
+        "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
+        "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+        "reminder": "Do not remind me again"
+      },
+      "error": {
+        "title": "{{device}}™ does not support this feature",
+        "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+      },
+      "update": "Discover your Upgrade Program",
+      "learnMore": "Learn more",
+      "continue": "Continue"
+    },
   "currentAddress": {
     "title": "Current address",
     "for": "Address for <1><0>{{name}}</0></1>",
