@@ -16,6 +16,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
 import { handleTopologyChangeError, TopologyChangeError } from "./hooks/topologyChangeError";
 import CommentField from "./CommentField";
+import ExpiryDurationField from "./ExpiryDurationField";
 
 const Root = (props: {
   account: Account;
@@ -91,6 +92,9 @@ const Root = (props: {
         <Box grow={1} maxWidth={"100%"}>
           <CommentField {...props} />
         </Box>
+      </Box>
+      <Box mb={15}>
+        <ExpiryDurationField {...props} />
       </Box>
       {tooManyUtxosWarning && (
         <Alert type="warning">

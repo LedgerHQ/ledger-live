@@ -77,6 +77,105 @@ describe("buildSignOperation", () => {
     memo: "Test transaction",
   };
 
+  it("should use default expireInSeconds (1 day) when not provided in transaction", async () => {
+    // GIVEN
+    const mockSigner = new MockCantonSigner();
+    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
+      return await callback(mockSigner);
+    });
+
+    mockCraftTransaction.mockResolvedValue({
+      nativeTransaction: {
+        // @ts-expect-error fix types
+        transaction: prepareTransferMock.transaction,
+        metadata: prepareTransferMock.metadata,
+      },
+      serializedTransaction: "serialized-transaction",
+      hash: "mock-hash",
+    });
+
+    const signOperation = buildSignOperation(mockSignerContext);
+    const transactionWithoutExpiry: Transaction = {
+      ...mockTransaction,
+      expireInSeconds: undefined,
+    };
+
+    // WHEN
+    await new Promise((resolve, reject) => {
+      signOperation({
+        account: mockAccount,
+        deviceId: mockDeviceId,
+        transaction: transactionWithoutExpiry,
+      }).subscribe({
+        next: value => {
+          if (value.type === "signed") {
+            resolve(value);
+          }
+        },
+        error: reject,
+      });
+    });
+
+    // THEN
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
+      mockAccount.currency,
+      expect.any(Object),
+      expect.objectContaining({
+        expireInSeconds: 24 * 60 * 60, // Default 1 day
+      }),
+    );
+  });
+
+  it("should use custom expireInSeconds when provided in transaction", async () => {
+    // GIVEN
+    const mockSigner = new MockCantonSigner();
+    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
+      return await callback(mockSigner);
+    });
+
+    mockCraftTransaction.mockResolvedValue({
+      nativeTransaction: {
+        // @ts-expect-error fix types
+        transaction: prepareTransferMock.transaction,
+        metadata: prepareTransferMock.metadata,
+      },
+      serializedTransaction: "serialized-transaction",
+      hash: "mock-hash",
+    });
+
+    const signOperation = buildSignOperation(mockSignerContext);
+    const customExpireSeconds = 3 * 60 * 60; // 3 hours
+    const transactionWithExpiry: Transaction = {
+      ...mockTransaction,
+      expireInSeconds: customExpireSeconds,
+    };
+
+    // WHEN
+    await new Promise((resolve, reject) => {
+      signOperation({
+        account: mockAccount,
+        deviceId: mockDeviceId,
+        transaction: transactionWithExpiry,
+      }).subscribe({
+        next: value => {
+          if (value.type === "signed") {
+            resolve(value);
+          }
+        },
+        error: reject,
+      });
+    });
+
+    // THEN
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
+      mockAccount.currency,
+      expect.any(Object),
+      expect.objectContaining({
+        expireInSeconds: customExpireSeconds,
+      }),
+    );
+  });
+
   it("should handle prepared transaction signing", async () => {
     // GIVEN
     const mockSigner = new MockCantonSigner();

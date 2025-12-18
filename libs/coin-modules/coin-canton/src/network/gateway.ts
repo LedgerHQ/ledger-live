@@ -63,15 +63,17 @@ export type PrepareTransferResponse = {
   serialized: string;
 };
 
-export type PrepareTransferRequest = {
+type BaseTransferRequest = {
   type: "token-transfer-request";
   amount: string;
   recipient: string;
-  execute_before_secs: number;
   instrument_id: string;
   instrument_admin?: string;
   reason?: string;
 };
+
+export type PrepareTransferRequest = BaseTransferRequest &
+  ({ execute_before_secs: number } | { execute_before: string });
 
 export type PrepareTransferInstructionRequest = {
   type:
