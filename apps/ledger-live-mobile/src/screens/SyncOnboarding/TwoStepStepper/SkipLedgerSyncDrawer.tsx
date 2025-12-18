@@ -1,7 +1,8 @@
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { useTranslation } from "react-i18next";
-
+import { SeedOriginType } from "@ledgerhq/types-live";
+import { TrackScreen } from "~/analytics";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 
 type Props = {
@@ -9,14 +10,26 @@ type Props = {
   handleClose: () => void;
   openSync: () => void;
   skipSync: () => void;
+  seedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
 };
 
-function SkipLedgerSyncDrawer({ isOpen, handleClose, openSync, skipSync }: Readonly<Props>) {
+function SkipLedgerSyncDrawer({
+  isOpen,
+  handleClose,
+  openSync,
+  skipSync,
+  seedConfiguration,
+}: Props) {
   const { t } = useTranslation();
 
   return (
     <>
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
+        <TrackScreen
+          category="Drawer : Skip Ledger sync confirmation"
+          flow="onboarding"
+          seedConfiguration={seedConfiguration}
+        />
         <Flex maxHeight={"90%"}>
           <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={22}>
             <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={6}>

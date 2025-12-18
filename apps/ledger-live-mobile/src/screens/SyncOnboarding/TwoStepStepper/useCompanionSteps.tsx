@@ -13,6 +13,7 @@ import { SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 import LedgerSyncActivationStep from "./LedgerSyncActivationStep";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "~/context/store";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const { BodyText } = VerticalTimeline;
 
@@ -35,6 +36,7 @@ interface UseCompanionStepsProps {
   productName: string;
   seedPathStatus: SeedPathStatus;
   deviceOnboardingState: OnboardingState | null;
+  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
 }
 
 interface UseCompanionStepsReturn {
@@ -50,6 +52,7 @@ const useCompanionSteps = ({
   productName,
   seedPathStatus,
   deviceOnboardingState,
+  analyticsSeedConfiguration,
 }: UseCompanionStepsProps): UseCompanionStepsReturn => {
   const { t } = useTranslation();
   const llmOnboardingEnableSync = useFeature("llmOnboardingEnableSync");
@@ -150,6 +153,7 @@ const useCompanionSteps = ({
             handleContinue={() => setCompanionStepKey(FirstStepCompanionStepKey.Ready)}
             isLedgerSyncActive={isLedgerSyncActive}
             device={device}
+            analyticsSeedConfiguration={analyticsSeedConfiguration}
           />
         ),
       });
@@ -174,6 +178,7 @@ const useCompanionSteps = ({
     t,
     isLedgerSyncActive,
     hasSyncStep,
+    analyticsSeedConfiguration,
   ]);
 
   return {
