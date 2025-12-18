@@ -280,6 +280,7 @@ export type Features = CurrencyFeatures & {
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
     }>;
   };
+  llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;

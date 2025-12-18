@@ -223,6 +223,10 @@ export const urls = {
   aleo: {
     viewKeyLearnMore: "", // TODO: waiting for https://ledgerhq.atlassian.net/browse/LIVE-26269
   },
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };
 
 export const vaultSigner = {

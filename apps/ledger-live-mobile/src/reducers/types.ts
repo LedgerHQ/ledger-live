@@ -290,6 +290,7 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  deprecationDoNotRemind: string[];
 };
 
 export type NotificationsSettings = {
