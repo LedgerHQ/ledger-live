@@ -43,7 +43,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: !!process.env.CI,
+      shutdownDevice: false,
     },
     extends: "detox-allure2-adapter/preset-detox",
   },
