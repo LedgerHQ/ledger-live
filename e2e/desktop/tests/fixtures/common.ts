@@ -15,6 +15,7 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import fs from "fs";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -200,6 +201,81 @@ export const test = base.extend<TestFixtures>({
         console.log(txt);
       }
       safeAppendFile(logFile, `${txt}\n`);
+    });
+
+    function appendFileErrorHandler(e: Error | null) {
+      if (e) console.error("couldn't append file", e);
+    }
+
+    // log SWAP_API_BASE network responses to artifacts/networkResponses.log
+    const swapApiBase = process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5";
+
+    const attachResponseListener = (targetPage: Page) => {
+      targetPage.on("response", async response => {
+        const request = response.request();
+        const url = request.url();
+
+        // Only log requests to SWAP_API_BASE
+        if (!url.includes("swap") && !url.startsWith(swapApiBase)) return;
+
+        const status = response.status();
+        const timestamp = new Date().toISOString();
+        const method = request.method();
+        const requestHeaders = JSON.stringify(request.headers(), null, 2);
+        const responseHeaders = JSON.stringify(response.headers(), null, 2);
+
+        let responseBody = "";
+        try {
+          const rawBody = await response.text();
+          try {
+            responseBody = JSON.stringify(JSON.parse(rawBody), null, 2);
+          } catch {
+            responseBody = rawBody;
+          }
+        } catch {
+          responseBody = "[Could not read response body]";
+        }
+
+        let requestBody = "";
+        try {
+          const rawRequest = request.postData() || "[No request body]";
+          try {
+            requestBody = JSON.stringify(JSON.parse(rawRequest), null, 2);
+          } catch {
+            requestBody = rawRequest;
+          }
+        } catch {
+          requestBody = "[Could not read request body]";
+        }
+
+        const logEntry = [
+          `\n${"=".repeat(80)}`,
+          `[${timestamp}] SWAP API REQUEST`,
+          `${"=".repeat(80)}`,
+          `Method: ${method}`,
+          `URL: ${url}`,
+          `Status: ${status} ${response.statusText()}`,
+          `\nRequest Headers:\n${requestHeaders}`,
+          `\nRequest Body:\n${requestBody}`,
+          `\nResponse Headers:\n${responseHeaders}`,
+          `\nResponse Body:\n${responseBody}`,
+          `${"=".repeat(80)}\n`,
+        ].join("\n");
+
+        fs.appendFile(
+          path.join(__dirname, "../../allure-results/networkResponses.log"),
+          logEntry,
+          appendFileErrorHandler,
+        );
+      });
+    };
+
+    // Attach to main page
+    attachResponseListener(page);
+
+    // Attach to any new windows (webviews)
+    electronApp.on("window", newWindow => {
+      attachResponseListener(newWindow);
     });
 
     // app is loaded
