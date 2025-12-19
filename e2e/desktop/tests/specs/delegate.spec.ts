@@ -532,7 +532,7 @@ test.describe("Staking flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToMarket();
-      await app.market.search(delegateAccount.account.currency.name);
+      await app.market.search(delegateAccount.account.currency.ticker);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
       const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
