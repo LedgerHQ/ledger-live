@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "tests/testSetup";
 import { balanceItem } from "../Balance";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -21,18 +21,19 @@ jest.mock("~/renderer/components/FormattedVal", () => ({
 const mockCurrency = getCryptoCurrencyById("bitcoin");
 
 describe("balanceItem", () => {
-  it("should render balance when balance is greater than 0", () => {
+  it("should render balance when balance is greater than 0 and fiatValue is positive", () => {
     const balanceUI = {
       currency: mockCurrency,
       balance: new BigNumber(100000000),
+      fiatValue: 1000,
     };
 
     const result = balanceItem(balanceUI);
 
     render(<>{result}</>);
 
-    expect(screen.getByTestId("counter-value")).toBeInTheDocument();
-    expect(screen.getByTestId("formatted-val")).toBeInTheDocument();
+    expect(screen.getByTestId("counter-value")).toBeVisible();
+    expect(screen.getByTestId("formatted-val")).toBeVisible();
     expect(screen.getByTestId("counter-value")).toHaveTextContent("100000000");
     expect(screen.getByTestId("formatted-val")).toHaveTextContent("100000000");
   });
@@ -41,6 +42,19 @@ describe("balanceItem", () => {
     const balanceUI = {
       currency: mockCurrency,
       balance: new BigNumber(0),
+      fiatValue: 0,
+    };
+
+    const result = balanceItem(balanceUI);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when fiatValue is 0 even if balance is not zero", () => {
+    const balanceUI = {
+      currency: mockCurrency,
+      balance: new BigNumber(1), // dust amount
+      fiatValue: 0,
     };
 
     const result = balanceItem(balanceUI);

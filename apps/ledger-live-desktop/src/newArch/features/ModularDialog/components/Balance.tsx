@@ -4,9 +4,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export const balanceItem = (balanceUI: BalanceUI) => {
-  const { currency, balance } = balanceUI;
-
-  if (balance.isZero()) {
+  const { currency, balance, fiatValue } = balanceUI;
+  if (balance.isZero() || !fiatValue) {
     return null;
   }
 

@@ -489,4 +489,22 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
     expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
   });
+
+  it("should auto focus on search input when autoFocus is true", async () => {
+    render(
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAccountSelected={mockOnAccountSelected}
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          modularDrawer: { isOpen: true },
+        },
+      },
+    );
+
+    await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
+    await waitFor(() => expect(screen.getByRole("textbox")).toHaveFocus());
+  });
 });

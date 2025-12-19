@@ -16,7 +16,6 @@ const SearchInputContainer = () => {
         value={displayedValue ?? ""}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
         debounceTime={modularDrawer?.params?.searchDebounceTime}
-        autoFocus={false}
         onChange={handleSearch}
         onDebouncedChange={handleDebouncedChange}
         data-testid="modular-asset-drawer-search-input"
