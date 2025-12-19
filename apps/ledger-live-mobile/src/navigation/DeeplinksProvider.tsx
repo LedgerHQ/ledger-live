@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/store";
-import { Platform, Linking } from "react-native";
+import { Platform, Linking, View, StyleSheet } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import {
   getStateFromPath,
@@ -29,11 +29,10 @@ import {
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
+import { LAST_STARTUP_EVENTS, logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
-import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import {
   validateEarnAction,
   validateEarnInfoModal,
@@ -42,7 +41,6 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
-import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
@@ -52,6 +50,18 @@ const themes: {
   light: lightTheme,
   dark: darkTheme,
 };
+
+const SPLASH_SCREEN_BACKGROUND_COLOR = "#18171A";
+const styles = StyleSheet.create({
+  appBackground: {
+    flex: 1,
+    backgroundColor: SPLASH_SCREEN_BACKGROUND_COLOR,
+  },
+});
+
+function handleStartComplete() {
+  logLastStartupEvents(LAST_STARTUP_EVENTS.NAV_READY);
+}
 
 function isWalletConnectUrl(url: string) {
   return url.startsWith("wc:");
@@ -722,6 +732,8 @@ export const DeeplinksProvider = ({
     [],
   );
 
+  useEffect(() => SplashScreen.hide(), []);
+
   const animSplash = useFeature("llmAnimatedSplashScreen");
   const showAnimatedSplashScreen = useRef(
     (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
@@ -733,36 +745,22 @@ export const DeeplinksProvider = ({
   );
 
   return (
-    <SplashScreenComponent.current isNavigationReady={isReady} onAppReady={handleAppFullyStarted}>
-      {isReady ? (
-        <NavigationContainer
-          theme={theme}
-          linking={linking}
-          ref={navigationRef}
-          onReady={() => {
-            isReadyRef.current = true;
-            setTimeout(() => {
-              SplashScreen.hide();
-              if (!showAnimatedSplashScreen.current) handleAppFullyStarted();
-            }, 300);
-          }}
-        >
-          {children}
-        </NavigationContainer>
-      ) : null}
-    </SplashScreenComponent.current>
+    <View style={styles.appBackground}>
+      <SplashScreenComponent.current isNavigationReady={isReady} onAppReady={handleStartComplete}>
+        {isReady ? (
+          <NavigationContainer
+            theme={theme}
+            linking={linking}
+            ref={navigationRef}
+            onReady={() => {
+              isReadyRef.current = true;
+              if (!showAnimatedSplashScreen.current) handleStartComplete();
+            }}
+          >
+            {children}
+          </NavigationContainer>
+        ) : null}
+      </SplashScreenComponent.current>
+    </View>
   );
 };
-
-async function handleAppFullyStarted() {
-  try {
-    DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
-
-    logStartupEvent(STARTUP_EVENTS.STARTED);
-    const events = await resolveStartupEvents();
-    const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
-    await track("app_startup_events", { appStartupTime, events });
-  } catch (error) {
-    console.error("Error during app startup tracking:", error);
-  }
-}

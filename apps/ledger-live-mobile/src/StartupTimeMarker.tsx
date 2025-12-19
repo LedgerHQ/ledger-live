@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
+import { LAST_STARTUP_EVENTS, logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 
 let nativeMethodInvokedOnce = false;
 
@@ -10,7 +9,7 @@ export const StartupTimeMarker = ({ children }: { children: React.ReactNode }) =
   const onLayout = React.useCallback(() => {
     if (!nativeMethodInvokedOnce) {
       nativeMethodInvokedOnce = true;
-      logStartupEvent(STARTUP_EVENTS.LEGACY_STARTED);
+      logLastStartupEvents(LAST_STARTUP_EVENTS.APP_STARTED);
     }
   }, []);
   return (
