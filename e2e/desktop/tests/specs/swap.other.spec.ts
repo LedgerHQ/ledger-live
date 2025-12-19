@@ -153,7 +153,7 @@ test.describe("Swap - 1inch flow", () => {
       await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
       await app.swap.clickExecuteSwapButton(electronApp);
       await app.swap.clickContinueButton();
-      //ToDo: when B2CA-2384 is fixed the flow could be finished
+      //TODO: when B2CA-2384 is fixed the flow could be finished
     },
   );
 });
