@@ -74,7 +74,7 @@ export const NetworkSelectorContent = ({
   };
 
   return (
-    <ListWrapper>
+    <ListWrapper customHeight="100%">
       <NetworkVirtualList networks={formattedNetworks} onClick={onClick} />
     </ListWrapper>
   );

@@ -113,7 +113,7 @@ const ModularDialogFlowManager = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="pb-0">
         <ModularDialogContent
           currentStep={currentStep}
           navigationDirection={navigationDirection}
