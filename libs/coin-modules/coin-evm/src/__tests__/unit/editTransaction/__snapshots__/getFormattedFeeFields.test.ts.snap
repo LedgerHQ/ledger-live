@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for 0G unit 1`] = `
 {

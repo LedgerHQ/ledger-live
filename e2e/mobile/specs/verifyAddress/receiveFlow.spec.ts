@@ -1,3 +1,5 @@
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ReceiveFundsOptions } from "@ledgerhq/live-common/lib/e2e/enum/ReceiveFundsOptions";
 
 describe("Receive Flow", () => {

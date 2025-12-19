@@ -56,7 +56,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "icon-sdk-js": "1.5.2",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
@@ -66,13 +66,14 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
-    "coverage": "jest --coverage",
+    "coverage": "jest --coverage --passWithNoTests",
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",

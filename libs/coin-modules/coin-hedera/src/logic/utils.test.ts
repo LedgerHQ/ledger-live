@@ -14,7 +14,16 @@ import {
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
 import { rpcClient } from "../network/rpc";
+
+// Mock preloadData module before importing
+jest.mock("../preload-data", () => ({
+  ...jest.requireActual("../preload-data"),
+  getCurrentHederaPreloadData: jest.fn(),
+}));
+
 import * as preloadData from "../preload-data";
+
+const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import {
   getMockedERC20TokenCurrency,
@@ -798,7 +807,7 @@ describe("logic utils", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      jest.spyOn(preloadData, "getCurrentHederaPreloadData").mockReturnValueOnce(mockPreload);
+      mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
     });
 
     it("returns validator matching delegation nodeId", () => {

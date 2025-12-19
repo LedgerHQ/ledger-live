@@ -1,20 +1,40 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import * as account from "@ledgerhq/coin-framework/account";
 import { PolkadotAccount, Transaction } from "../types";
-import * as getEstimatedFees from "./getFeesForTransaction";
 import BigNumber from "bignumber.js";
-import * as utils from "./utils";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import type { AccountLike } from "@ledgerhq/types-live";
 
+// Module-level mocks
+const mockGetMainAccount = jest.fn();
+jest.mock("@ledgerhq/coin-framework/account", () => ({
+  ...jest.requireActual("@ledgerhq/coin-framework/account"),
+  getMainAccount: (...args: unknown[]) => mockGetMainAccount(...args),
+}));
+
+const mockGetEstimatedFees = jest.fn();
+jest.mock("./getFeesForTransaction", () => ({
+  __esModule: true,
+  default: (...args: unknown[]) => mockGetEstimatedFees(...args),
+}));
+
+const mockCalculateAmount = jest.fn();
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  calculateAmount: (...args: unknown[]) => mockCalculateAmount(...args),
+}));
+
 describe("estimateMaxSpendable", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should return the maximum spendable for a transaction", async () => {
-    jest.spyOn(account, "getMainAccount").mockReturnValue({} as PolkadotAccount);
-    jest.spyOn(getEstimatedFees, "default").mockResolvedValueOnce(new BigNumber(1));
+    mockGetMainAccount.mockReturnValue({} as PolkadotAccount);
+    mockGetEstimatedFees.mockResolvedValueOnce(new BigNumber(1));
 
     const computedAmount = new BigNumber(2);
-    jest.spyOn(utils, "calculateAmount").mockReturnValueOnce(computedAmount);
+    mockCalculateAmount.mockReturnValueOnce(computedAmount);
 
     const transaction = {} as Transaction;
     const maximumSpendable = await estimateMaxSpendable({

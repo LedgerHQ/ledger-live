@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 import { runSendInvalidAddressTest } from "../send";
 

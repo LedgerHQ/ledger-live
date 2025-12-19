@@ -22,6 +22,12 @@
       "~/*": [
         "../../apps/ledger-live-mobile/src/*"
       ],
+      "@ledgerhq/live-common/e2e/*": [
+        "../../libs/ledger-live-common/src/e2e/*"
+      ],
+      "@ledgerhq/live-common/lib/e2e/*": [
+        "../../libs/ledger-live-common/src/e2e/*"
+      ],
       "@ledgerhq/live-common/hw/index": [
         "../../libs/ledger-live-common/src/hw/index"
       ],

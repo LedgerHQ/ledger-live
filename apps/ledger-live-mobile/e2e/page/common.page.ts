@@ -1,5 +1,6 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import { expect } from "detox";
+import { Step } from "jest-allure2-reporter/api";
 import DeviceAction from "../models/DeviceAction";
 import { open, addDevicesBT, addDevicesUSB } from "../bridge/server";
 import { delay } from "../helpers/commonHelpers";

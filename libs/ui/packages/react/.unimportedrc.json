@@ -20,6 +20,9 @@
     "src/pre-ldls/types.ts"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@emotion/is-prop-valid",
     "@emotion/stylis",
     "@emotion/unitless",

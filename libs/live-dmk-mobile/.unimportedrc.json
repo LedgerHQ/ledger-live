@@ -11,6 +11,9 @@
   ],
   "ignoreUnimported": [],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@ledgerhq/device-transport-kit-react-native-hid"
   ]
 }

@@ -16,6 +16,12 @@ import * as Bridge from "..";
 import { useBridgeSync, useBridgeSyncState } from "./context";
 import type { Sync, BridgeSyncState } from "./types";
 
+// Mock the bridge implementation module
+jest.mock("../impl", () => ({
+  ...jest.requireActual("../impl"),
+  getAccountBridge: jest.fn(),
+}));
+
 jest.setTimeout(30000);
 
 const defaultsBridgeSyncOpts = {
@@ -50,23 +56,31 @@ const renderBridgeSync = (props: BridgeSyncRenderProps = {}, children: React.Rea
 
 type AccountUpdater = (arg0: Account) => Account;
 
-const baseGetAccountBridge = Bridge.getAccountBridge;
+// Import the mocked getAccountBridge from impl
+import * as BridgeImpl from "../impl";
+const mockedGetAccountBridge = jest.mocked(BridgeImpl.getAccountBridge);
+
+// Store the original implementation
+const originalGetAccountBridge = jest.requireActual<typeof BridgeImpl>("../impl").getAccountBridge;
 
 const withMockedAccountBridge = (
   account: Account,
   syncFactory: () => Observable<AccountUpdater>,
 ) => {
-  const originalBridge = baseGetAccountBridge(account);
+  const originalBridge = originalGetAccountBridge(account);
   const mockBridge = {
     ...originalBridge,
     sync: syncFactory,
   };
-  return jest.spyOn(Bridge, "getAccountBridge").mockImplementation(acc => {
+
+  mockedGetAccountBridge.mockImplementation(acc => {
     if (acc.id === account.id) {
       return mockBridge;
     }
-    return baseGetAccountBridge(acc);
+    return originalGetAccountBridge(acc);
   });
+
+  return mockedGetAccountBridge;
 };
 
 const mockBridgeSync = (
@@ -83,6 +97,12 @@ const mockBridgeSync = (
   );
 
 describe("BridgeSync", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Reset to actual implementation by default
+    mockedGetAccountBridge.mockImplementation(originalGetAccountBridge);
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
     resetStates();

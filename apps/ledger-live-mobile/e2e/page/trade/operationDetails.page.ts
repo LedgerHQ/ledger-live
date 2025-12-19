@@ -1,4 +1,5 @@
 import { expect } from "detox";
+import { Step } from "jest-allure2-reporter/api";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";

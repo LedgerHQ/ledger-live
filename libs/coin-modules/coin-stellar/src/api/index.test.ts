@@ -139,7 +139,7 @@ describe("Testing transaction loading functions", () => {
   });
 
   it("throw expected error when deserializing an invalid transaction", async () => {
-    expect(() => envelopeFromAnyXDR("lulz", "base64")).toThrowError(
+    expect(() => envelopeFromAnyXDR("lulz", "base64")).toThrow(
       "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
         " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
         " buffer)",

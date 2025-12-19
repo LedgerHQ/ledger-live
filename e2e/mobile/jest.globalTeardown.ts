@@ -1,3 +1,12 @@
+import { register } from "tsconfig-paths";
+
+// Register path mappings explicitly with the correct tsconfig
+const tsConfig = require("./tsconfig.json");
+register({
+  baseUrl: __dirname,
+  paths: tsConfig.compilerOptions.paths,
+});
+
 import { globalTeardown } from "detox/runners/jest";
 import { promises as fs } from "fs";
 import { close as closeBridge, getEnvs, getFlags, loadConfig } from "./bridge/server";

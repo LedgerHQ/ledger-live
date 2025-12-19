@@ -21,7 +21,7 @@ const getAndroidTestBinary = type =>
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
-    $0: "ts-jest",
+    $0: "jest",
     args: {
       config: "jest.config.ts",
     },

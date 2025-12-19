@@ -1,9 +1,15 @@
-import "tsconfig-paths/register";
+import { register } from "tsconfig-paths";
+
+const tsConfig = require("./tsconfig.json");
+register({
+  baseUrl: __dirname,
+  paths: tsConfig.compilerOptions.paths,
+});
+
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
-
-import fs from "fs/promises";
-import path from "path";
+import * as fs from "fs/promises";
+import * as path from "path";
 import { exec } from "child_process";
 import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/lib/e2e/speculosCI";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
@@ -11,7 +17,6 @@ import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
 
 export default async function setup(): Promise<void> {
-  // Validate .env.mock file
   const envFileName = process.env.ENV_FILE || ".env.mock";
   const envFile = path.join(__dirname, "../../apps/ledger-live-mobile", envFileName);
   try {
@@ -23,6 +28,7 @@ export default async function setup(): Promise<void> {
 
   setupSpeculosCleanupHandlers();
   await cleanupPreviousNanoAppJsonFile();
+
   await globalSetup();
 }
 

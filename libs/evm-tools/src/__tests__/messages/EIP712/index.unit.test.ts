@@ -11,7 +11,12 @@ import messageInCAL from "../../fixtures/messages/2.json";
 
 const CAL = jest.requireActual("../../fixtures/CAL").default;
 
-jest.mock("axios");
+jest.mock("axios", () => ({
+  ...jest.requireActual("axios"),
+  get: jest.fn(),
+}));
+
+const mockedAxiosGet = jest.mocked(axios.get);
 
 describe("evm-tools", () => {
   describe("message", () => {
@@ -72,7 +77,7 @@ describe("evm-tools", () => {
             },
           ];
 
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: dynamicCALWithMultipleItems,
           });
 
@@ -92,7 +97,7 @@ describe("evm-tools", () => {
             },
           ];
 
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: dynamicCALWithEmptyItems,
           });
 
@@ -106,7 +111,7 @@ describe("evm-tools", () => {
             { eip712_signatures: { "0xcontract2": { hash2: "wrong2" } } },
           ];
 
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: dynamicCALWithNoMatch,
           });
 
@@ -183,7 +188,7 @@ describe("evm-tools", () => {
 
       describe("getFiltersForMessage", () => {
         it("should find the filters for a message from dynamic CAL", async () => {
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: dynamicCAL,
           });
 
@@ -192,7 +197,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message in static CAL if the message is not in dynamic CAL return", async () => {
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: [],
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
@@ -215,7 +220,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message not in dynamic CAL if in static CAL", async () => {
-          (axios.get as jest.Mock).mockRejectedValue(new Error());
+          mockedAxiosGet.mockRejectedValue(new Error());
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
           const result = await getFiltersForMessage(
@@ -232,7 +237,7 @@ describe("evm-tools", () => {
       describe("getEIP712FieldsDisplayedOnNano", () => {
         beforeEach(() => {
           jest.resetAllMocks();
-          (axios.get as jest.Mock).mockReturnValueOnce({
+          mockedAxiosGet.mockReturnValueOnce({
             data: {},
           });
         });

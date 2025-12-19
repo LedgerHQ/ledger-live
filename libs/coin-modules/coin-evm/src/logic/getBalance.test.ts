@@ -1,11 +1,31 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as nodeModule from "../network/node";
-import * as explorerModule from "../network/explorer";
-import * as getStakesModule from "./getStakes";
+import { getNodeApi } from "../network/node";
+import { getExplorerApi } from "../network/explorer";
+import { getStakes } from "./getStakes";
 import { getBalance } from ".";
 
+jest.mock("../network/node", () => ({
+  getNodeApi: jest.fn(),
+}));
+
+jest.mock("../network/explorer", () => ({
+  getExplorerApi: jest.fn(),
+}));
+
+jest.mock("./getStakes", () => ({
+  getStakes: jest.fn(),
+}));
+
+const mockGetNodeApi = getNodeApi as jest.Mock;
+const mockGetExplorerApi = getExplorerApi as jest.Mock;
+const mockGetStakes = getStakes as jest.Mock;
+
 describe("getBalance", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it.each([
     [
       "native balance only", // test description
@@ -68,17 +88,17 @@ describe("getBalance", () => {
         return new BigNumber((tokenBalances as any)[contractAddress] || "0");
       });
 
-    jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
+    mockGetNodeApi.mockReturnValue({
       getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("10000000000000000000000")),
       getTokenBalance: mockGetTokenBalance,
-    } as any);
+    });
 
-    jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
+    mockGetExplorerApi.mockReturnValue({
       getLastOperations: jest.fn().mockResolvedValue(operations),
-    } as any);
+    });
 
     // Mock getStakes to return the expected stake data
-    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+    mockGetStakes.mockResolvedValue({
       items: [
         {
           uid: "address",
@@ -94,7 +114,7 @@ describe("getBalance", () => {
   });
 
   it("is resilient when failing to fetch token balances", async () => {
-    jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
+    mockGetNodeApi.mockReturnValue({
       getCoinBalance: () => new BigNumber(10),
       getTokenBalance: (_currency: string, _address: string, contract: string) => {
         if (contract === "contract2") {
@@ -102,8 +122,8 @@ describe("getBalance", () => {
         }
         return new BigNumber(2);
       },
-    } as any);
-    jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
+    });
+    mockGetExplorerApi.mockReturnValue({
       getLastOperations: () => ({
         lastTokenOperations: [
           { contract: "contract1" },
@@ -111,8 +131,8 @@ describe("getBalance", () => {
           { contract: "contract2" },
         ],
       }),
-    } as any);
-    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+    });
+    mockGetStakes.mockResolvedValue({
       items: [],
     });
 
@@ -132,16 +152,16 @@ describe("getBalance", () => {
   });
 
   it("returns empty stake when balance is zero", async () => {
-    jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
+    mockGetNodeApi.mockReturnValue({
       getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("0")),
-    } as any);
+    });
 
-    jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
+    mockGetExplorerApi.mockReturnValue({
       getLastOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
-    } as any);
+    });
 
     // Mock getStakes to return empty stakes
-    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+    mockGetStakes.mockResolvedValue({
       items: [],
     });
 

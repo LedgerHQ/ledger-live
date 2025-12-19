@@ -828,65 +828,65 @@ export const expectValidAddressDevice = withDeviceController(
 );
 
 export async function signSendTransaction(tx: Transaction) {
-  const currencyName = tx.accountToDebit.currency;
-  switch (currencyName) {
-    case Currency.sepETH:
-    case Currency.BASE:
-    case Currency.POL:
-    case Currency.ETH:
-    case Currency.ETH_USDT:
+  const currencyId = tx.accountToDebit.currency.id;
+  switch (currencyId) {
+    case Currency.sepETH.id:
+    case Currency.BASE.id:
+    case Currency.POL.id:
+    case Currency.ETH.id:
+    case Currency.ETH_USDT.id:
       await sendEVM(tx);
       break;
-    case Currency.BTC:
+    case Currency.BTC.id:
       await sendBTC(tx);
       break;
-    case Currency.DOGE:
-    case Currency.BCH:
+    case Currency.DOGE.id:
+    case Currency.BCH.id:
       await sendBTCBasedCoin(tx);
       break;
-    case Currency.DOT:
+    case Currency.DOT.id:
       await sendPolkadot(tx);
       break;
-    case Currency.ALGO:
+    case Currency.ALGO.id:
       await sendAlgorand(tx);
       break;
-    case Currency.SOL:
-    case Currency.SOL_GIGA:
+    case Currency.SOL.id:
+    case Currency.SOL_GIGA.id:
       await sendSolana(tx);
       break;
-    case Currency.TRX:
+    case Currency.TRX.id:
       await sendTron(tx);
       break;
-    case Currency.XLM:
+    case Currency.XLM.id:
       await sendStellar(tx);
       break;
-    case Currency.ATOM:
+    case Currency.ATOM.id:
       await sendCosmos(tx);
       break;
-    case Currency.ADA:
+    case Currency.ADA.id:
       await sendCardano(tx);
       break;
-    case Currency.XRP:
+    case Currency.XRP.id:
       await sendXRP(tx);
       break;
-    case Currency.APT:
+    case Currency.APT.id:
       await sendAptos(tx);
       break;
-    case Currency.KAS:
+    case Currency.KAS.id:
       await sendKaspa(tx);
       break;
-    case Currency.HBAR:
+    case Currency.HBAR.id:
       await sendHedera();
       break;
-    case Currency.SUI:
-    case Currency.SUI_USDC:
+    case Currency.SUI.id:
+    case Currency.SUI_USDC.id:
       await sendSui(tx);
       break;
-    case Currency.VET:
+    case Currency.VET.id:
       await sendVechain(tx);
       break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+      throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
   }
 }
 

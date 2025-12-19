@@ -1,20 +1,37 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as externalNode from "../network/node/rpc.common";
+import { getBlockByHeight as externalGetBlockByHeight } from "../network/node/rpc.common";
 import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { getBlockInfo } from "./getBlockInfo";
 
+jest.mock("../network/node/rpc.common", () => ({
+  getBlockByHeight: jest.fn(),
+}));
+
+jest.mock("../network/node/ledger", () => ({
+  __esModule: true,
+  default: {
+    getBlockByHeight: jest.fn(),
+  },
+}));
+
+const mockExternalGetBlockByHeight = externalGetBlockByHeight as jest.Mock;
+const mockLedgerGetBlockByHeight = ledgerNode.getBlockByHeight as jest.Mock;
+
 describe("getBlockInfo", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe.each([
-    ["an external node", "external", externalNode],
-    ["a ledger node", "ledger", ledgerNode],
-  ])("using %s", (_, type, node) => {
+    ["an external node", "external", mockExternalGetBlockByHeight],
+    ["a ledger node", "ledger", mockLedgerGetBlockByHeight],
+  ])("using %s", (_, type, mockGetBlockByHeight) => {
     beforeEach(() => {
       setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
     });
 
     it("returns block info", async () => {
-      const mockGetBlockByHeight = jest.spyOn(node, "getBlockByHeight");
       mockGetBlockByHeight.mockResolvedValueOnce({
         hash: "0xdef456",
         height: 99999,
@@ -39,7 +56,7 @@ describe("getBlockInfo", () => {
     });
 
     it("returns block info without parent for genesis block", async () => {
-      jest.spyOn(node, "getBlockByHeight").mockResolvedValue({
+      mockGetBlockByHeight.mockResolvedValue({
         hash: "0xgenesis",
         height: 0,
         timestamp: new Date("2015-07-30T00:00:00Z").getTime(),
@@ -53,7 +70,6 @@ describe("getBlockInfo", () => {
     });
 
     it("returns block info with parent for height 1", async () => {
-      const mockGetBlockByHeight = jest.spyOn(node, "getBlockByHeight");
       mockGetBlockByHeight.mockResolvedValueOnce({
         hash: "0xblock1",
         height: 1,
@@ -81,7 +97,6 @@ describe("getBlockInfo", () => {
     });
 
     it("ensures parent block height is one less than current block", async () => {
-      const mockGetBlockByHeight = jest.spyOn(node, "getBlockByHeight");
       const currentHeight = 12345;
       mockGetBlockByHeight.mockResolvedValueOnce({
         hash: "0xcurrent",
@@ -102,7 +117,6 @@ describe("getBlockInfo", () => {
     });
 
     it("ensures parent block time is before current block time", async () => {
-      const mockGetBlockByHeight = jest.spyOn(node, "getBlockByHeight");
       mockGetBlockByHeight.mockResolvedValueOnce({
         hash: "0xcurrent",
         height: 100,
