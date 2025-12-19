@@ -31,7 +31,7 @@ import {
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
-import type { EstimateFeesResult, HederaPreloadData } from "../types";
+import type { EstimateFeesResult, HederaPreloadData, Transaction } from "../types";
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
@@ -152,52 +152,59 @@ describe("getTransactionStatus", () => {
     expect(result.errors.memo).toBeUndefined();
   });
 
-  it("adds error for too long memo", async () => {
-    const mockTokenHTS = getMockedHTSTokenCurrency();
-    const mockTokenERC20 = getMockedERC20TokenCurrency();
-    const mockedTokenAccountHTS = getMockedTokenAccount(mockTokenHTS, { id: "hts-id" });
-    const mockedTokenAccountERC20 = getMockedTokenAccount(mockTokenERC20, { id: "erc20-id" });
-
-    jest
-      .spyOn(accountHelpers, "findSubAccountById")
-      .mockImplementation((_account, subAccountId) => {
-        if (subAccountId === mockedTokenAccountHTS.id) return mockedTokenAccountHTS;
-        if (subAccountId === mockedTokenAccountERC20.id) return mockedTokenAccountERC20;
-        return undefined;
-      });
-
-    const mockedAccount = getMockedAccount();
+  it.each([
+    {
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      description: "delegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      description: "undelegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Redelegate,
+      description: "redelegate",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      description: "claim rewards",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send native",
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send hts token",
+      subAccount: getMockedTokenAccount(getMockedHTSTokenCurrency(), { id: "hts-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.Send,
+      description: "send erc20 token",
+      subAccount: getMockedTokenAccount(getMockedERC20TokenCurrency(), { id: "erc20-id" }),
+    },
+    {
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      description: "token associate",
+      properties: { token: getMockedHTSTokenCurrency() },
+    },
+  ])("adds error for too long memo - $description", async ({ mode, subAccount, properties }) => {
     const tooLongMemo = "a".repeat(MEMO_CHARACTER_LIMIT + 1);
-    const mockTransactions = [
-      getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.Delegate, memo: tooLongMemo }),
-      getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.Undelegate, memo: tooLongMemo }),
-      getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.Redelegate, memo: tooLongMemo }),
-      getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.ClaimRewards, memo: tooLongMemo }),
-      getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.Send, memo: tooLongMemo }),
-      getMockedTransaction({
-        mode: HEDERA_TRANSACTION_MODES.Send,
-        memo: tooLongMemo,
-        subAccountId: mockedTokenAccountHTS.id,
-      }),
-      getMockedTransaction({
-        mode: HEDERA_TRANSACTION_MODES.Send,
-        memo: tooLongMemo,
-        subAccountId: mockedTokenAccountERC20.id,
-      }),
-      getMockedTransaction({
-        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-        memo: tooLongMemo,
-        properties: { token: mockTokenHTS },
-      }),
-    ];
+    const mockedAccount = getMockedAccount();
+    const mockedTransaction = getMockedTransaction({
+      mode,
+      memo: tooLongMemo,
+      ...(subAccount && { subAccountId: subAccount.id }),
+      ...(properties && { properties }),
+    } as Transaction);
 
-    const results = await Promise.all(
-      mockTransactions.map(tx => getTransactionStatus(mockedAccount, tx)),
-    );
-
-    results.forEach(result => {
-      expect(result.errors.memo).toBeInstanceOf(HederaMemoIsTooLong);
+    jest.spyOn(accountHelpers, "findSubAccountById").mockImplementation(() => {
+      return subAccount;
     });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.memo).toBeInstanceOf(HederaMemoIsTooLong);
   });
 
   it("adds error for invalid recipient address", async () => {
