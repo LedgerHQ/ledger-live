@@ -71,6 +71,7 @@ import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
+import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -317,13 +318,15 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   }, [deviceModelId, useCase]);
   const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
-  const [syncDrawerOpen, setSyncDrawerOpen] = useState(false);
+  const syncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector)
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
-  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+  const trustchain = useSelector(trustchainSelector)
+  const isLedgerSyncActive = Boolean(trustchain?.rootId);
   const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
   const nanoOnboardingEnableSyncFeature = useFeature("onboardingEnableSync")?.params?.nanos;
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
+  const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const recoverFF = useFeature("protectServicesDesktop");
@@ -373,7 +376,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const { openDrawer, closeDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.onboarding,
     needEligibleDevice: true,
-    skipFirstScreen: true,
+    onboardingNewDevice: true,
   });
 
   const completeOnboarding = useCallback(() => {
@@ -654,7 +657,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
             if (nanoOnboardingFundWalletFeature) {
-              if (nanoOnboardingEnableSyncFeature && !isLedgerSyncActive) {
+              if (hasSyncStep) {
                 history.push(`${path}/${ScreenId.enableSync}`);
                 return;
               } else {
@@ -687,7 +690,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         next: () => {
           track("Onboarding - Enable sync", trackProperties);
           openDrawer();
-          setSyncDrawerOpen(true);
         },
         nextSecondary: () => history.push(`${path}/${ScreenId.secureYourCrypto}`),
         previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
@@ -711,7 +713,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           history.push(`${path}/${ScreenId.welcomeToWalletWithoutFunds}`);
         },
         previous: () => {
-          if (nanoOnboardingEnableSyncFeature) {
+          if (hasSyncStep) {
             history.push(`${path}/${ScreenId.enableSync}`);
             return;
           }
@@ -733,7 +735,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     ];
 
     if (nanoOnboardingFundWalletFeature) {
-      if (nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current) {
+      if (hasSyncStep) {
         return unfilteredScreens;
       } else {
         return unfilteredScreens.filter(({ id }) => id !== ScreenId.enableSync);
@@ -755,9 +757,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     dispatch,
     fromRecover,
     history,
-    initialIsLedgerSyncActive,
-    isLedgerSyncActive,
-    nanoOnboardingEnableSyncFeature,
     nanoOnboardingFundWalletFeature,
     openAssetFlow,
     openDrawer,
@@ -767,6 +766,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     useCase,
     userChosePinCodeHimself,
     userUnderstandConsequences,
+    hasSyncStep,
   ]);
 
   const steps = useMemo(() => {
@@ -811,7 +811,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     }
 
     if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature) {
-      if (nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current) {
+      if (hasSyncStep) {
         stepList.push({
           name: "enableSync",
           screens: [ScreenId.enableSync],
@@ -828,12 +828,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     }
 
     return stepList;
-  }, [
-    nanoOnboardingEnableSyncFeature,
-    nanoOnboardingFundWalletFeature,
-    useCase,
-    initialIsLedgerSyncActive,
-  ]);
+  }, [nanoOnboardingFundWalletFeature, useCase, hasSyncStep]);
 
   const currentScreenIndex = useMemo(
     () => screens.findIndex(s => s.id === currentStep),
@@ -944,8 +939,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   ]);
 
   useEffect(() => {
-    if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen)
+    if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen) {
       history.push(`${path}/${ScreenId.secureYourCrypto}`);
+    }
   }, [isLedgerSyncActive, history, path, currentStep, syncDrawerOpen]);
 
   return (
@@ -1005,7 +1001,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       <WalletSyncDrawer
         currentPage={AnalyticsPage.Onboarding}
         onClose={() => {
-          setSyncDrawerOpen(false);
           closeDrawer();
         }}
       />

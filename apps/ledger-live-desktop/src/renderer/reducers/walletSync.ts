@@ -59,6 +59,7 @@ export type WalletSyncState = {
   hasBeenfaked: boolean;
   qrCodeUrl: string | null;
   qrCodePinCode: string | null;
+  onboardingNewDevice: boolean;
 };
 
 export const initialStateWalletSync: WalletSyncState = {
@@ -71,6 +72,7 @@ export const initialStateWalletSync: WalletSyncState = {
   hasBeenfaked: false,
   qrCodePinCode: null,
   qrCodeUrl: null,
+  onboardingNewDevice: false,
 };
 
 export type ChangeFlowPayload = {
@@ -78,6 +80,7 @@ export type ChangeFlowPayload = {
   step: Step;
   nextStep?: Step | null;
   hasTrustchainBeenCreated?: boolean | null;
+  onboardingNewDevice?: boolean
 };
 
 type HandlersPayloads = {
@@ -103,18 +106,20 @@ const handlers: WalletSyncHandlers = {
   ) => ({
     ...state,
     isDrawerOpen: payload,
+    onboardingNewDevice: !payload ? false : state.onboardingNewDevice,
   }),
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
     {
-      payload: { flow, step, nextStep = null, hasTrustchainBeenCreated = null },
+      payload: { flow, step, nextStep = null, hasTrustchainBeenCreated = null, onboardingNewDevice },
     }: { payload: ChangeFlowPayload },
-  ) => ({
+  ) =>  ({
     ...state,
     flow,
     step,
     nextStep,
     hasTrustchainBeenCreated,
+    onboardingNewDevice: onboardingNewDevice === undefined ? state.onboardingNewDevice : onboardingNewDevice
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,
@@ -157,7 +162,8 @@ export const walletSyncNextStepSelector = (state: { walletSync: WalletSyncState 
   state.walletSync.nextStep;
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
-
+export const walletSyncOnboardingNewDeviceSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.onboardingNewDevice;
 export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
 

@@ -162,7 +162,6 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
-  onboardingEnableSync: Feature_OnboardingEnableSync;
   nanoOnboardingFundWallet: DefaultFeature;
   mixpanelAnalytics: DefaultFeature;
   welcomeScreenVideoCarousel: DefaultFeature;
@@ -292,6 +291,7 @@ export type Features = CurrencyFeatures & {
   lifiSolana: DefaultFeature;
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lldOnboardingEnableSync: Feature_OnboardingEnableSync;
 };
 
 /**
@@ -382,11 +382,6 @@ export type Feature_ReferralProgramDesktopSidebar = Feature<{
   path: string;
   isNew: boolean;
   amount: string;
-}>;
-
-export type Feature_OnboardingEnableSync = Feature<{
-  nanos: boolean;
-  touchscreens: boolean;
 }>;
 
 export type Feature_BrazePushNotifications = Feature<{

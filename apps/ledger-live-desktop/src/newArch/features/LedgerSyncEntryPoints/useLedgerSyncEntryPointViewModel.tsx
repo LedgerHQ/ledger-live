@@ -6,15 +6,15 @@ export default function useLedgerSyncEntryPointViewModel({
   entryPoint,
   needEligibleDevice,
   onPress,
-  skipFirstScreen,
+  onboardingNewDevice,
 }: {
   entryPoint: EntryPoint;
   needEligibleDevice?: boolean;
   onPress?: () => void;
-  skipFirstScreen?: boolean;
+  onboardingNewDevice?: boolean;
 }) {
   const { shouldDisplayEntryPoint, entryPointData } = useEntryPoint(entryPoint, needEligibleDevice);
-  const { openDrawer, closeDrawer } = useActivationDrawer(skipFirstScreen);
+  const { openDrawer, closeDrawer } = useActivationDrawer(onboardingNewDevice);
 
   return {
     shouldDisplayEntryPoint,
