@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
@@ -14,16 +13,10 @@ import {
   closeDialog,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
-import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-
-const TranslationKeyMap: Record<ModularDrawerStep, string> = {
-  [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
-  [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
-  [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
-};
+import { ModularDialogContent } from "./ModularDialogContent";
 
 const ModularDialogFlowManager = ({
   currencies,
@@ -39,8 +32,6 @@ const ModularDialogFlowManager = ({
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const flow = useSelector(modularDrawerFlowSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
-
-  const { t } = useTranslation();
 
   const handleClose = () => {
     track("button_clicked", {
@@ -123,21 +114,13 @@ const ModularDialogFlowManager = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
-        <DialogHeader
-          appearance="extended"
-          title={t(TranslationKeyMap[currentStep])}
-          onClose={handleClose}
-          onBack={handleBack}
+        <ModularDialogContent
+          currentStep={currentStep}
+          navigationDirection={navigationDirection}
+          handleClose={handleClose}
+          handleBack={handleBack}
+          renderStepContent={renderStepContent}
         />
-        <div className="h-[480px] overflow-hidden">
-          <AnimatedScreenWrapper
-            key={`${currentStep}-${navigationDirection}`}
-            screenKey={currentStep}
-            direction={navigationDirection}
-          >
-            {renderStepContent(currentStep)}
-          </AnimatedScreenWrapper>
-        </div>
       </DialogContent>
     </Dialog>
   );
