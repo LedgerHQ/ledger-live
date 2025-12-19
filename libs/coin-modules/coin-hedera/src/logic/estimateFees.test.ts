@@ -98,7 +98,7 @@ describe("getEstimatedFees", () => {
 
     (apiClient.getAccount as jest.Mock).mockImplementation(address => ({
       address,
-      evm_address: `0x0000000000000000000000000000000000012345`,
+      evm_address: "0x0000000000000000000000000000000000012345",
     }));
 
     (apiClient.getNetworkFees as jest.Mock).mockResolvedValueOnce({
