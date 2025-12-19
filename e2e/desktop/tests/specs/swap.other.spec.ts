@@ -1442,7 +1442,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
       ],
       annotation: {
         type: "TMS",
-        description: "B2CQA-3539",
+        description: "B2CQA-3655",
       },
     },
     async ({ app, electronApp }) => {
