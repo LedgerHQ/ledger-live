@@ -38,6 +38,7 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
+// comment
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
   if (asset1.type !== asset2.type) return false;
