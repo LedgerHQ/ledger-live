@@ -8,7 +8,7 @@ import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../compon
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import GenericEmptyList from "LLD/components/GenericEmptyList";
+import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
@@ -110,7 +110,11 @@ export const AssetSelectorContent = ({
   }
 
   if (shouldDisplayEmptyState) {
-    return <GenericEmptyList />;
+    return (
+      <ListWrapper>
+        <EmptyList />
+      </ListWrapper>
+    );
   }
 
   return (
