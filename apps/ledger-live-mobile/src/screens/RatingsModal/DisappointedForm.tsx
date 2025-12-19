@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
@@ -64,11 +64,12 @@ const StyledWebview = styled(WebView)`
 `;
 
 type Props = {
-  setStep: (t: string) => void;
+  setStep: (step: "disappointedDone") => void;
   equipmentId: string | null;
+  closeModal: () => void;
 };
 
-const DisappointedForm = ({ setStep, equipmentId }: Props) => {
+const DisappointedForm = ({ setStep, equipmentId, closeModal }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
   const { language } = useSettings();
   const devices = useSelector(bleDevicesSelector);
@@ -103,7 +104,9 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
           break;
         }
         default: {
-          console.warn("Unknown form event:", data);
+          if (__DEV__) {
+            console.warn("Unknown form event:", data);
+          }
           break;
         }
       }
@@ -113,16 +116,18 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
 
   const formUrl = useMemo(() => {
     if (!ratingsFeatureParams?.typeform_url) {
-      throw new Error(`Typeform URL is required, please set one in the ratings feature params`);
+      console.error(`Typeform URL is required, please set one in the ratings feature params`);
+      return null;
     }
 
     let url: URL;
     try {
       url = new URL(ratingsFeatureParams.typeform_url);
     } catch {
-      throw new Error(
-        `Typeform URL is an invalid URL, Currently having: ${ratingsFeatureParams?.typeform_url}`,
+      console.error(
+        `Typeform URL is an invalid URL, Currently having: ${ratingsFeatureParams.typeform_url}`,
       );
+      return null;
     }
 
     url.hash = `app_version=${appVersion}`;
@@ -154,6 +159,13 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
     notifications,
   ]);
 
+  useEffect(() => {
+    if (!formUrl) {
+      closeModal();
+      return;
+    }
+  }, [formUrl, closeModal]);
+
   return (
     <Flex flex={1} height={height * (4 / 5)}>
       <TrackScreen
@@ -165,13 +177,15 @@ const DisappointedForm = ({ setStep, equipmentId }: Props) => {
         params={ratingsFeatureParams}
       />
       <Flex flex={1} borderRadius={16} overflow="hidden">
-        <StyledWebview
-          source={{ uri: formUrl }}
-          originWhitelist={["https://form.typeform.com"]}
-          injectedJavaScript={formInjectedJavaScript}
-          onLoadEnd={onLoadEnd}
-          onMessage={onMessage}
-        />
+        {formUrl ? (
+          <StyledWebview
+            source={{ uri: formUrl }}
+            originWhitelist={["https://*.typeform.com"]}
+            injectedJavaScript={formInjectedJavaScript}
+            onLoadEnd={onLoadEnd}
+            onMessage={onMessage}
+          />
+        ) : null}
       </Flex>
     </Flex>
   );
