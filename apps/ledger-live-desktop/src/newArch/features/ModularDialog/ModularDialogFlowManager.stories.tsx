@@ -145,7 +145,7 @@ const meta: Meta<StoryArgs> = {
 
 export default meta;
 
-export const CustomDrawerConfig: StoryObj<StoryArgs> = {
+export const CustomDialogConfig: StoryObj<StoryArgs> = {
   parameters: {
     controls: {
       exclude: [
@@ -167,7 +167,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
       networksRightElement,
     } = args;
 
-    const drawerConfiguration = {
+    const dialogConfiguration = {
       assets: {
         leftElement: assetsLeftElement === "default" ? undefined : assetsLeftElement,
         rightElement: assetsRightElement === "default" ? undefined : assetsRightElement,
@@ -184,33 +184,33 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
         <div style={{ color: "#333", backgroundColor: "#f9f9f9", padding: "5px" }}>
           <p style={{ fontSize: "16px", marginBottom: "8px" }}>
             Use the storybook controls below to alter the{" "}
-            <span style={{ fontWeight: 600 }}>drawerConfiguration</span> parameters and feature
+            <span style={{ fontWeight: 600 }}>dialogConfiguration</span> parameters and feature
             flags:
           </p>
           <p style={{ fontSize: "14px", marginBottom: "16px", color: "#555" }}>
             &quot;undefined&quot; represents no element shown, &quot;default&quot; represents the
-            default element if the parameter is not provided in the drawerConfiguration object.
+            default element if the parameter is not provided in the dialogConfiguration object.
           </p>
           <ul style={{ paddingLeft: "20px", fontSize: "14px", marginBottom: "16px" }}>
             <li>
               <span style={{ fontWeight: 600 }}>assetsFilter:</span> Element to display at the top
-              of the drawer to filter assets.
+              of the dialog to filter assets.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsLeftElement:</span> Element to display on the
-              left side of the assets drawer. Defaults to undefined.
+              left side of the assets dialog. Defaults to undefined.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsRightElement:</span> Element to display on the
-              right side of the assets drawer. Defaults to balance.
+              right side of the assets dialog. Defaults to balance.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>networksLeftElement:</span> Element to display on
-              the left side of the networks drawer. Defaults to undefined.
+              the left side of the networks dialog. Defaults to undefined.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>networksRightElement:</span> Element to display on
-              the right side of the networks drawer. Defaults to undefined.
+              the right side of the networks dialog. Defaults to undefined.
             </li>
           </ul>
           <pre
@@ -222,7 +222,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
               fontSize: "13px",
             }}
           >
-            {JSON.stringify({ drawerConfiguration }, null, 2)}
+            {JSON.stringify({ dialogConfiguration }, null, 2)}
           </pre>
         </div>
         <div
@@ -240,8 +240,8 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
             areCurrenciesFiltered={false}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
-            drawerConfiguration={drawerConfiguration}
-            // Changing drawerConfiguration may alter which hooks are called.
+            drawerConfiguration={dialogConfiguration}
+            // Changing dialogConfiguration may alter which hooks are called.
             // The dynamic key ensures the component is remounted to avoid hook order violations
             key={JSON.stringify(args)}
           />

@@ -106,7 +106,7 @@ const createMockState = () => ({
 
 const initialMockState = createMockState();
 
-const createStore = (options?: { discreet?: boolean; withMockedData?: boolean }) =>
+const createStore = (options?: { discreet?: boolean }) =>
   configureStore({
     reducer: {
       accounts: (state = initialMockState.accounts) => state,

@@ -83,12 +83,12 @@ const createMockState = () => ({
 
 const initialMockState = createMockState();
 
-const createStore = (options?: { discreet?: boolean; withMockedData?: boolean }) =>
+const createStore = () =>
   configureStore({
     reducer: {
       accounts: (state = initialMockState.accounts) => state,
       wallet: (state = initialMockState.wallet) => state,
-      discreet: () => options?.discreet ?? false,
+      discreet: () => false,
       locale: (state = initialMockState.locale) => state,
       currency: (state = initialMockState.currency) => state,
       application: (state = initialMockState.application) => state,
