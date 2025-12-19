@@ -15,7 +15,7 @@ type Props = {
  * Sanitizes SVG content by removing elements unsupported by react-native-svg.
  * Common issues: XML declarations, DOCTYPE, comments, and Adobe Illustrator artifacts.
  */
-const sanitizeSvg = (svg: string): string =>
+export const sanitizeSvg = (svg: string): string =>
   svg
     .replace(/<\?xml[^?]*\?>/g, "")
     .replace(/<!DOCTYPE[^>]*>/g, "")
@@ -24,7 +24,7 @@ const sanitizeSvg = (svg: string): string =>
     .replace(/xml:space="[^"]*"/g, "")
     .trim();
 
-const isSvgUrl = (url: string): boolean => {
+export const isSvgUrl = (url: string): boolean => {
   try {
     return new URL(url).pathname.toLowerCase().endsWith(".svg");
   } catch {
