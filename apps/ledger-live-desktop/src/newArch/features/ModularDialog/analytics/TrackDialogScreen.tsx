@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ModularDrawerEventName } from "./modularDrawer.types";
+import { ModularDrawerEventName } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "react-redux";

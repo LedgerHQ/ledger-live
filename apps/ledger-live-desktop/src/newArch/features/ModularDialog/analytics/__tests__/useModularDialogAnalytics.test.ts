@@ -1,8 +1,8 @@
 import { renderHook } from "tests/testSetup";
-import { useModularDrawerAnalytics } from "../useModularDrawerAnalytics";
+import { useModularDrawerAnalytics } from "../useModularDialogAnalytics";
 import { track } from "~/renderer/analytics/segment";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { EVENTS_NAME } from "../modularDrawer.types";
+import { EVENTS_NAME } from "../modularDialog.types";
 
 describe("useModularDrawerAnalytics", () => {
   it("tracks event with default params", () => {

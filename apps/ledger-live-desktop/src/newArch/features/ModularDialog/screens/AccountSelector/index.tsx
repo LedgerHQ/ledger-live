@@ -5,11 +5,11 @@ import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
-import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
+import TrackDrawerScreen from "../../analytics/TrackDialogScreen";
 import {
   MODULAR_DRAWER_PAGE_NAME,
   ModularDrawerEventName,
-} from "../../analytics/modularDrawer.types";
+} from "../../analytics/modularDialog.types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;

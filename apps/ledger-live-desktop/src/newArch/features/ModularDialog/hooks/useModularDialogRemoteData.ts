@@ -1,7 +1,7 @@
 import { ModularDrawerFlowManagerProps, ModularDrawerStep } from "../types";
-import { useModularDrawerData } from "./useModularDrawerData";
-import { useModularDrawerFlowState } from "./useModularDrawerFlowState";
-import { useModularDrawerBackButton } from "./useModularDrawerBackButton";
+import { useModularDrawerData } from "./useModularDialogData";
+import { useModularDrawerFlowState } from "./useModularDialogFlowState";
+import { useModularDrawerBackButton } from "./useModularDialogBackButton";
 import { useMemo, useState } from "react";
 import { useAssetSelection } from "./useAssetSelection";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";

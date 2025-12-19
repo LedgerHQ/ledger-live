@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "../../../../types";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
+import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import { ListWrapper } from "../../../../components/ListWrapper";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDrawer.types";
+import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "react-redux";

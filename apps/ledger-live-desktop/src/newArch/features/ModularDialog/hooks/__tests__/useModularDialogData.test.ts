@@ -1,4 +1,4 @@
-import { useModularDrawerData } from "../useModularDrawerData";
+import { useModularDrawerData } from "../useModularDialogData";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { renderHook, waitFor } from "tests/testSetup";
 import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
