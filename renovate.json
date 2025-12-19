@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "configMigration": true,
   "extends": ["config:recommended", ":dependencyDashboard", "helpers:pinGithubActionDigests"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
@@ -12,7 +13,7 @@
     {
       "description": "GitHub Actions (CI)",
       "matchManagers": ["github-actions"],
-      "matchPackagePatterns": ["^LedgerHQ/", "^ledgerhq/"],
+      "matchPackageNames": ["/^LedgerHQ/", "/^ledgerhq/"],
       "pinDigests": false,
       "minimumReleaseAge": "15 days",
       "labels": ["dependencies", "github_actions"],
