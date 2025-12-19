@@ -1,7 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { renderHook } from "tests/testSetup";
 import { bitcoinCurrency, ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
-import { useModularDrawerFlowState } from "../useModularDrawerFlowState";
+import { useModularDrawerFlowState } from "../useModularDialogFlowState";
 
 const mockGoToStep = jest.fn();
 const mockSetNetworksToDisplay = jest.fn();

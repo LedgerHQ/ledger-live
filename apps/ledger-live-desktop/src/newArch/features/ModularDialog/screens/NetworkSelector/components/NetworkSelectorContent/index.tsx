@@ -1,8 +1,8 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ListWrapper } from "../../../../components/ListWrapper";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDrawer.types";
+import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { balanceItem } from "../../../../components/Balance";

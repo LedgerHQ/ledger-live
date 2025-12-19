@@ -1,5 +1,5 @@
 import { renderHook } from "tests/testSetup";
-import { useModularDrawerNavigation } from "../useModularDrawerNavigation";
+import { useModularDrawerNavigation } from "../useModularDialogNavigation";
 import { act } from "react-dom/test-utils";
 
 describe("useModularDrawerNavigation", () => {

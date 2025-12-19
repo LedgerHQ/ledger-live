@@ -5,8 +5,8 @@ import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep }
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
 import { AccountSelector } from "./screens/AccountSelector";
-import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
-import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
+import { useModularDrawerNavigation } from "./hooks/useModularDialogNavigation";
+import { useModularDrawerRemoteData } from "./hooks/useModularDialogRemoteData";
 import {
   resetModularDrawerState,
   modularDrawerFlowSelector,

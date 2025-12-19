@@ -10,7 +10,7 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
+import { useModularDrawerAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {

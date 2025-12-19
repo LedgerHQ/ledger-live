@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { getAssetByCurrency } from "../utils/getAssetByCurrency";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ModularDrawerStep } from "../types";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
+import { useModularDrawerAnalytics } from "../analytics/useModularDialogAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDialog.types";
 import uniqWith from "lodash/uniqWith";
 
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";

@@ -1,8 +1,8 @@
 import React from "react";
 import { render } from "tests/testSetup";
-import TrackDrawerScreen from "../TrackDrawerScreen";
+import TrackDrawerScreen from "../TrackDialogScreen";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { MODULAR_DRAWER_PAGE_NAME } from "../modularDrawer.types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../modularDialog.types";
 import { trackPage } from "~/renderer/analytics/segment";
 
 describe("TrackDrawerScreen", () => {
