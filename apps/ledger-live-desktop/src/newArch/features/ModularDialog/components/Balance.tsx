@@ -5,6 +5,11 @@ import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export const balanceItem = (balanceUI: BalanceUI) => {
   const { currency, balance } = balanceUI;
+
+  if (balance.isZero()) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col items-end gap-4">
       <span className="body-2-semi-bold">
