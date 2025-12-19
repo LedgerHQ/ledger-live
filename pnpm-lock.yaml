@@ -137,14 +137,13 @@ overrides:
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
   use-latest-callback: 0.1.9
-  '@sentry/react-native>metro': 0.81.5
   ethers: 6.15.0
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.3
 
 packageExtensionsChecksum: sha256-kGDwpo9L2TH59KV352tDEqaWp+PiDaawn/wSTqp0h4A=
 
-pnpmfileChecksum: sha256-TEOvCrMlfIAcoClXnDiaNgtaCrwZdU9QIP+MH8MbUH0=
+pnpmfileChecksum: sha256-fLNC0tdYYXJ7hehQQ+dFF/gcWYeM1CyHq7+BtFetUro=
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
