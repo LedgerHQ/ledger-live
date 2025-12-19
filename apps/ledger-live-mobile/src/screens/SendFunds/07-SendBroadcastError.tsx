@@ -146,7 +146,11 @@ function InformativeBanner({
   );
 }
 
-const InformativeBannerButton = styled(Button).attrs({
+type InformativeBannerButtonProps = {
+  activeOpacity?: number;
+};
+
+const InformativeBannerButton = styled(Button).attrs<InformativeBannerButtonProps>({
   isNewIcon: true,
   iconPosition: "left",
   size: "small",

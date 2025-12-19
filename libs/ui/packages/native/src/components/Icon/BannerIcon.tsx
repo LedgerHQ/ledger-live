@@ -92,7 +92,9 @@ function VGradient({ id, gradient }: VGradientProps) {
   );
 }
 
-const IconBg = styled(Svg).attrs({ xmlns: "http://www.w3.org/2000/svg" })`
+const IconBg = styled(Svg).attrs<{ xmlns: string }>({ xmlns: "http://www.w3.org/2000/svg" })<{
+  xmlns?: string;
+}>`
   position: absolute;
   inset: 0;
 `;

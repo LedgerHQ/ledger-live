@@ -55,6 +55,9 @@ catalog:
   rxjs: 7.8.2
   tailwindcss: ^3.4.0
   ws: 8.18.3
+  "styled-components": 6.1.19
+  "styled-system": 5.1.5
+  "stylis": 4.0.0
 
 overrides:
   node-abi: ^4.9.0

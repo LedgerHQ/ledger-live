@@ -58,7 +58,8 @@
     "react-tooltip": "^5.26.4",
     "rxjs": "catalog:",
     "semver": "^7.5.4",
-    "styled-components": "^6.0.7",
+    "styled-components": "catalog:",
+    "stylis": "catalog:",
     "typescript": "5.2.2",
     "utf-8-validate": "^6.0.3"
   },
