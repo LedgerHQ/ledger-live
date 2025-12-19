@@ -47,14 +47,15 @@ export const AccountSelectorContent = ({
               locale,
             })
           : "",
-      fiatValue:
-        account.fiatValue !== undefined && account.fiatValue !== null
-          ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(account.fiatValue), {
-              showCode: true,
-              discreet,
-              locale,
-            })
-          : "",
+      fiatValue: formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        new BigNumber(account.fiatValue),
+        {
+          showCode: true,
+          discreet,
+          locale,
+        },
+      ),
     }));
   }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
