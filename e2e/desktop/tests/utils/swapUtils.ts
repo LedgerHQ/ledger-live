@@ -58,48 +58,16 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 
-async function selectAssetToAndAccount(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  const networkName = swap.accountToCredit.parentAccount?.currency.name;
-  await app.swap.selectAsset(swap.accountToCredit.currency.name, networkName);
-  await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
-}
-
-async function selectAssetFromAndAccount(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  const networkName = swap.accountToDebit.parentAccount?.currency.name;
-  await app.swap.selectAsset(swap.accountToDebit.currency.name, networkName);
-  await app.swapDrawer.selectAccountByName(swap.accountToDebit);
-  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
-}
-
 async function selectAccountFrom(app: Application, electronApp: ElectronApplication, swap: Swap) {
   await app.swap.selectFromAccountCoinSelector(electronApp);
-  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-  if (isModularDrawer) {
-    await selectAccountMAD(app, swap.accountToDebit);
-    await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
-  } else {
-    await selectAssetFromAndAccount(app, electronApp, swap);
-  }
+  await selectAccountMAD(app, swap.accountToDebit);
+  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
 }
 
 async function selectAccountTo(app: Application, electronApp: ElectronApplication, swap: Swap) {
   await app.swap.selectToAccountCoinSelector(electronApp);
-  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-  if (isModularDrawer) {
-    await selectAccountMAD(app, swap.accountToCredit);
-    await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
-  } else {
-    await selectAssetToAndAccount(app, electronApp, swap);
-  }
+  await selectAccountMAD(app, swap.accountToCredit);
+  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
 }
 
 export async function selectAccountMAD(app: Application, account: Account) {

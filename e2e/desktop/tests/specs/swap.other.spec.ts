@@ -706,35 +706,20 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-        await app.modularDrawer.selectNetwork(account1.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
+      await app.modularDrawer.selectNetwork(account1.currency);
+      await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.scanAccountsDrawer.selectFirstAccount();
-        await app.scanAccountsDrawer.clickContinueButton();
+      await app.scanAccountsDrawer.selectFirstAccount();
+      await app.scanAccountsDrawer.clickContinueButton();
 
-        await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-        await app.modularDrawer.selectNetwork(account2.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      await app.swap.selectToAccountCoinSelector(electronApp);
+      await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
+      await app.modularDrawer.selectNetwork(account2.currency);
+      await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.scanAccountsDrawer.selectFirstAccount();
-        await app.scanAccountsDrawer.clickContinueButton();
-      } else {
-        await app.swap.selectAsset(account1.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account1);
-
-        await app.swap.selectAssetTo(electronApp, account2.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account2);
-      }
+      await app.scanAccountsDrawer.selectFirstAccount();
+      await app.scanAccountsDrawer.clickContinueButton();
       await app.swap.checkAssetFrom(electronApp, account1.currency.name);
       await app.swap.checkAssetTo(electronApp, account2.currency.name);
     },
