@@ -54,6 +54,16 @@ jest.mock("./DeviceAppModal", () => ({
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: jest.fn(() => ({ code: "AMU", magnitude: 18, name: "Amulet" })),
 }));
+jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+  __esModule: true,
+  default: () => <div data-testid="address-cell" />,
+  splitAddress: (value: string) => ({ left: value.slice(0, 5), right: value.slice(5) }),
+  SplitAddress: ({ value }: { value: string }) => (
+    <span data-testid={`address-${value}`}>{value}</span>
+  ),
+  Address: ({ value }: { value: string }) => <span data-testid={`address-${value}`}>{value}</span>,
+  Cell: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 jest.mock("./PendingTransferProposalsDetails", () => ({
   __esModule: true,
   default: ({ account, contractId, onOpenModal }: any) => (
@@ -166,7 +176,9 @@ describe("PendingTransferProposals", () => {
       render(<PendingTransferProposals account={account} parentAccount={mockAccount} />, {
         initialState: buildInitialState(),
       });
-      fireEvent.click(screen.getByText(`families.canton.pendingTransactions.${action}`));
+      const buttonText =
+        action === "withdraw" ? "common.cancel" : `families.canton.pendingTransactions.${action}`;
+      fireEvent.click(screen.getByText(buttonText));
       fireEvent.click(await screen.findByTestId("modal-confirm"));
 
       await waitFor(() => {
