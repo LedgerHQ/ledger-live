@@ -365,16 +365,17 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
 };
 
 /**
- * Converts a Hedera account ID (e.g. "0.0.1234") into its corresponding EVM address in hexadecimal format.
- * If the conversion fails, it returns null.
+ * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
+ * It returns null if the fetch fails.
  *
  * @param address - Hedera account ID in the format `shard.realm.num`
- * @returns the long-zero EVM address (`0x...`) or null if conversion fails
+ * @returns EVM address (`0x...`) or null if fetch fails
  */
-export const toEVMAddress = (accountId: string) => {
+export const toEVMAddress = async (accountId: string): Promise<string | null> => {
   try {
-    const evmAddress = "0x" + AccountId.fromString(accountId).toEvmAddress();
-    return evmAddress;
+    const account = await apiClient.getAccount(accountId);
+
+    return account.evm_address;
   } catch {
     return null;
   }

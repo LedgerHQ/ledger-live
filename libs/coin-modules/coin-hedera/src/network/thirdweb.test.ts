@@ -1,10 +1,13 @@
 import { pad } from "viem";
 import network from "@ledgerhq/live-network";
+import { apiClient } from "./api";
 import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
 import { getMockResponse } from "../test/fixtures/common.fixture";
 import { thirdwebClient } from "./thirdweb";
 
 jest.mock("@ledgerhq/live-network");
+jest.mock("./api");
+
 const mockedNetwork = jest.mocked(network);
 
 const mockedERC20Transaction = getMockedThirdwebTransaction();
@@ -130,6 +133,11 @@ describe("fetchERC20Transactions", () => {
 describe("getERC20TransactionsForAccount", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    (apiClient.getAccount as jest.Mock).mockImplementation(address => ({
+      address,
+      evm_address: "0x0000000000000000000000000000000000012345",
+    }));
   });
 
   it("should return empty array without balance tokens list", async () => {
