@@ -7465,6 +7465,11 @@
       }
     }
   },
+  "dialogs": {
+    "selectAccount": {
+      "addAccount": "Add new"
+    }
+  },
   "drawers": {
     "selectCurrency": {
       "title": "choose asset"

@@ -114,7 +114,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await user.click(arbitrumNetwork);
 
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
-    expect(screen.getByText(/add new or existing account/i)).toBeVisible();
+    expect(screen.getByText(/add new/i)).toBeVisible();
     expect(screen.getByText(/ethereum 2/i)).toBeVisible();
     expect(screen.getByText(/1 eth/i)).toBeVisible();
   });
@@ -203,7 +203,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add new or existing account/i)).toBeVisible();
+    expect(screen.getByText(/add new/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
   });
 
@@ -225,8 +225,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add new or existing account/i)).toBeVisible();
-    await user.click(screen.getByText(/add new or existing account/i));
+    expect(screen.getByText(/add new/i)).toBeVisible();
+    await user.click(screen.getByText(/add new/i));
     expect(mockDispatch).toHaveBeenCalledWith({
       payload: {
         data: {
