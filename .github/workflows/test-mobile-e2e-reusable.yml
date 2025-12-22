@@ -487,15 +487,15 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
+      AVD_API: 34
       AVD_ARCH: x86_64
       AVD_PROFILE: pixel_7_pro
       AVD_TARGET: google_apis
       AVD_NAME: "Android_Emulator"
       AVD_NAME_2: "Android_Emulator_2"
-      AVD_CORES: 4
+      AVD_CORES: 2
       AVD_RAM_SIZE: 4096M
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save -feature -Vulkan
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -635,21 +635,22 @@ jobs:
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: false
 
-      - name: Download android emulator
-        timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        id: detox-avd
-        with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
-          destination: /
+      # - name: Download android emulator
+      #   continue-on-error: true
+      #   timeout-minutes: 10
+      #   uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      #   id: detox-avd
+      #   with:
+      #     key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+      #     accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+      #     secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+      #     bucket: ledger-live-cache
+      #     endpoint: ${{ secrets.R2_ENDPOINT }}
+      #     region: auto
+      #     destination: /
 
       - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
+        # if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         id: create-avd
         with:
@@ -665,37 +666,37 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
 
-      - name: create second AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd-2
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME_2 }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
+      # - name: create second AVD and generate snapshot for caching
+      #   # if: steps.detox-avd.outputs.cache-hit != 'true'
+      #   uses: reactivecircus/android-emulator-runner@v2
+      #   id: create-avd-2
+      #   with:
+      #     api-level: ${{ env.AVD_API }}
+      #     arch: ${{ env.AVD_ARCH }}
+      #     profile: ${{ env.AVD_PROFILE }}
+      #     target: ${{ env.AVD_TARGET }}
+      #     avd-name: ${{ env.AVD_NAME_2 }}
+      #     force-avd-creation: true
+      #     cores: ${{ env.AVD_CORES }}
+      #     ram-size: ${{ env.AVD_RAM_SIZE }}
+      #     disable-linux-hw-accel: false
+      #     emulator-options: ${{ env.AVD_OPTIONS }}
+      #     script: ./tools/scripts/wait_emulator_idle.sh
 
-      - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        with:
-          path: |
-            /home/runner/.android/
-            /usr/local/lib/android/sdk/emulator/
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
+      # - name: Cache android emulator
+      #   uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      #   if: steps.detox-avd.outputs.cache-hit != 'true'
+      #   with:
+      #     path: |
+      #       /home/runner/.android/
+      #       /usr/local/lib/android/sdk/emulator/
+      #       /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
+      #     key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+      #     accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+      #     secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+      #     bucket: ledger-live-cache
+      #     endpoint: ${{ secrets.R2_ENDPOINT }}
+      #     region: auto
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
@@ -719,6 +720,10 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
+      - name: Start Background Logcat
+        run: |
+          $ANDROID_HOME/platform-tools/adb logcat -v time > adb_logcat.txt &
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -737,6 +742,22 @@ jobs:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+
+      - name: Check for OOM Kills
+        if: always()
+        run: |
+          echo "Checking dmesg for OOM kills..."
+          sudo dmesg | grep -i "kill" > oom_killer_logs.txt || echo "No OOM kills found"
+          sudo dmesg | grep -i "segfault" >> oom_killer_logs.txt || echo "No segfaults found"
+
+      - name: Upload Debug Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-debug-logs
+          path: |
+            adb_logcat.txt
+            oom_killer_logs.txt
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

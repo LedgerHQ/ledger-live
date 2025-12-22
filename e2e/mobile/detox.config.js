@@ -108,14 +108,14 @@ module.exports = {
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,
     },
-    emulator2: {
-      type: "android.emulator",
-      device: {
-        avdName: "Android_Emulator_2",
-      },
-      gpuMode: "swiftshader_indirect",
-      headless: !!process.env.CI,
-    },
+    // emulator2: {
+    //   type: "android.emulator",
+    //   device: {
+    //     avdName: "Android_Emulator_2",
+    //   },
+    //   gpuMode: "swiftshader_indirect",
+    //   headless: !!process.env.CI,
+    // },
   },
   configurations: {
     "ios.sim.debug": {
