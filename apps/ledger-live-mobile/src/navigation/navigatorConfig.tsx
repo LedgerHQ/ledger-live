@@ -7,6 +7,7 @@ import { Theme } from "../colors";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomNavigationHeader from "LLM/components/CustomNavigationHeader";
+import { DETOX_ENABLED } from "~/utils/constants";
 
 export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerStyle: styles.header,
@@ -17,6 +18,7 @@ export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerShadowVisible: false,
   headerBackVisible: false,
   header: props => <CustomNavigationHeader {...props} />,
+  animation: DETOX_ENABLED ? "none" : "default",
 };
 
 type ColorV2 = Theme["colors"];
