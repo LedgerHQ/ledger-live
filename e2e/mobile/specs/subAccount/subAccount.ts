@@ -10,6 +10,7 @@ async function navigateToSubAccount(account: AccountType) {
   await app.account.openViaDeeplink();
   await app.account.goToAccountByName(getParentAccountName(account));
   await app.account.navigateToTokenInAccount(account);
+  await waitForElement(app.account.accountGraph(app.account.subAccountId(account)));
 }
 
 async function checkOperationInfos(
