@@ -3,7 +3,7 @@ import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/nati
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/coin-framework/lib/account/helpers";

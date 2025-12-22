@@ -3,7 +3,7 @@
 exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
 [
   {
-    "balance": "1000003",
+    "balance": "1000004",
     "currencyId": "babylon",
     "derivationMode": "",
     "freshAddress": "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
@@ -12,7 +12,7 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
-    "spendableBalance": "1000003",
+    "spendableBalance": "1000004",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

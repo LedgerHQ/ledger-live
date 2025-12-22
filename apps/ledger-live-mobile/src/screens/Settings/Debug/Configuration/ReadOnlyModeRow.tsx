@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import SettingsRow from "~/components/SettingsRow";
 import { setReadOnlyMode } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";

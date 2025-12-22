@@ -1,8 +1,11 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import { getCurrencyBridge } from "../../bridge";
-import { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
+import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
+import BigNumber from "bignumber.js";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
   currency: CryptoCurrency;
@@ -58,13 +61,18 @@ export const getRemainingTime = (diff: number): string => {
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  let format = "";
-  if (days > 0) format += `${days}d `;
-  if (hours > 0) format += `${hours}h `;
-  if (minutes > 0) format += `${minutes}m `;
-  format += `${seconds}s`;
+  const startIndex = days > 0 ? 0 : hours > 0 ? 1 : minutes > 0 ? 2 : 3;
+  const units = [
+    [days, "d"],
+    [hours, "h"],
+    [minutes, "m"],
+    [seconds, "s"],
+  ] as const;
 
-  return format.trim();
+  return units
+    .slice(startIndex)
+    .map(([value, suffix]) => `${value.toString().padStart(2, "0")}${suffix}`)
+    .join(" ");
 };
 
 export const useTimeRemaining = (expiresAtMicros = 0, isExpired = false): string => {
@@ -91,4 +99,51 @@ export const useTimeRemaining = (expiresAtMicros = 0, isExpired = false): string
   }, [expiresAtMicros, isExpired]);
 
   return timeRemaining;
+};
+
+type TransferProposal = {
+  sender: string;
+  amount: string;
+  expires_at_micros: number;
+};
+
+type CantonTokenAccountLike = AccountLike & {
+  cantonResources?: { pendingTransferProposals?: TransferProposal[] };
+};
+
+const hasCantonResources = (
+  account: AccountLike,
+): account is CantonAccount | CantonTokenAccountLike => {
+  if (account.type === "Account") {
+    return isCantonAccount(account);
+  }
+
+  return "cantonResources" in account && !!account.cantonResources;
+};
+
+/**
+ * Hook to calculate withdrawable balance from expired outgoing offers.
+ * Withdrawable balance is the sum of amounts from offers the user sent that have expired.
+ */
+export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]): BigNumber => {
+  return useMemo(() => {
+    if (!hasCantonResources(account)) return new BigNumber(0);
+
+    const proposals = account.cantonResources?.pendingTransferProposals ?? [];
+
+    // For token accounts, use parent account's xpub; for main accounts, use account's xpub
+    const parentAccount = getParentAccount(account, accounts);
+    const mainAccount = parentAccount ?? account;
+    const accountXpub = "xpub" in mainAccount ? (mainAccount.xpub as string) ?? "" : "";
+    const currentTime = Date.now();
+
+    return proposals.reduce((sum, proposal) => {
+      const isOutgoing = proposal.sender === accountXpub;
+      const isExpired = currentTime > proposal.expires_at_micros / 1000;
+      if (isOutgoing && isExpired) {
+        return sum.plus(new BigNumber(proposal.amount));
+      }
+      return sum;
+    }, new BigNumber(0));
+  }, [account, accounts]);
 };

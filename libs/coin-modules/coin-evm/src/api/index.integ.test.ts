@@ -87,7 +87,6 @@ describe.each([
     it("returns block info with parent for a block with height > 0", async () => {
       const result = await module.getBlockInfo(20000000);
 
-      expect(result.parent).toBeDefined();
       expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.parent?.height).toBe(19999999);
       expect(result.parent?.height).toBe(result.height - 1);
@@ -107,7 +106,6 @@ describe.each([
     it("ensures parent block structure is correct", async () => {
       const result = await module.getBlockInfo(20000000);
 
-      expect(result.parent).toBeDefined();
       if (result.parent) {
         expect(result.parent.height).toBeGreaterThanOrEqual(0);
         expect(result.parent.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
@@ -135,7 +133,7 @@ describe.each([
         tx.operations.forEach(op => {
           expect(op.type).toBe("transfer");
           expect(op.address).toMatch(/^0x[A-Fa-f0-9]{40}$/);
-          expect(op.asset).toBeDefined();
+          expect(op.asset).toEqual(expect.objectContaining({ type: expect.any(String) }));
           expect(typeof op.amount).toBe("bigint");
         });
       });
@@ -155,7 +153,6 @@ describe.each([
     it("returns block with parent for a block with height > 0", async () => {
       const result = await module.getBlock(20000000);
 
-      expect(result.info.parent).toBeDefined();
       expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.parent?.height).toBe(19999999);
       expect(result.info.parent?.height).toBe(result.info.height - 1);
@@ -436,7 +433,7 @@ describe("EVM Api (SEI Network)", () => {
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
       },
     };
-    module = createApi(config as EvmConfig, "sei_network_evm");
+    module = createApi(config as EvmConfig, "sei_evm");
   });
 
   describe.each([

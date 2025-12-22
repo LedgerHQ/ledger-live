@@ -20,6 +20,8 @@ import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { validateAddress } from "../../../bridge/validateAddress";
+
 const receive = makeAccountBridgeReceive();
 const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
 
@@ -135,6 +137,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

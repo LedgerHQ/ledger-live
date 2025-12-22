@@ -3,16 +3,15 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { VITALIK, callMyDealer, getBridges, sonic } from "../helpers";
-import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BRIDGED_USDC_ON_SONIC } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -60,17 +59,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
 export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Sonic/app_${defaultNanoApp.version}.elf`, {
-        libraries: [
-          {
-            name: "Ethereum",
-            endpoint: "/2.4.2/Ethereum/app_1.17.0.elf",
-          },
-        ],
-      }),
-      spawnAnvil("https://sonic-rpc.publicnode.com"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://sonic-rpc.publicnode.com", signer.exportMnemonic());
 
     setCoinConfig(() => ({
       info: {
@@ -110,8 +100,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(sonic).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "sonic");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("sonic", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: sonic,
@@ -138,7 +127,6 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
     };
   },
   beforeAll: account => {
@@ -160,6 +148,6 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

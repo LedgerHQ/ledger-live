@@ -17,7 +17,7 @@ const Container = styled(Box).attrs<{
 }>(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{
   shouldSpace?: boolean;
 }>`

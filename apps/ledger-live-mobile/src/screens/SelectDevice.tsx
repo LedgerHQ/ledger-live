@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useDispatch as useReduxDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
@@ -10,6 +9,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
 import SelectDevice from "~/components/SelectDevice2";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
+import { useDispatch } from "~/context/store";
 
 // Called from a bunch of different navigators with different params…
 export default function SelectDeviceScreen({
@@ -17,7 +17,7 @@ export default function SelectDeviceScreen({
   route,
 }: NativeStackScreenProps<{ [key: string]: object }>) {
   const { colors } = useTheme();
-  const dispatchRedux = useReduxDispatch();
+  const dispatch = useDispatch();
   const onNavigate = useCallback(
     (device: Device) => {
       // Assumes that it will always navigate to a "ConnectDevice"
@@ -32,11 +32,11 @@ export default function SelectDeviceScreen({
 
   const onSelect = useCallback(
     (device: Device) => {
-      dispatchRedux(setLastConnectedDevice(device));
-      dispatchRedux(setReadOnlyMode(false));
+      dispatch(setLastConnectedDevice(device));
+      dispatch(setReadOnlyMode(false));
       onNavigate(device);
     },
-    [dispatchRedux, onNavigate],
+    [dispatch, onNavigate],
   );
 
   // Does not react to an header update request: too many flows use this screen.

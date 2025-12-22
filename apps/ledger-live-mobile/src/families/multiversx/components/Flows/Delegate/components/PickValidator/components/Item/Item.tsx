@@ -15,7 +15,7 @@ import LedgerLogo from "~/icons/LiveLogo";
 import type { ItemPropsType } from "./types";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

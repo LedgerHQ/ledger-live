@@ -27,6 +27,8 @@ export class SwapPage extends AppPage {
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private swapBtn = "execute-button";
+  private executeSwapBtn = "execute-swap-button-step-approval";
   private continueBtn = this.page.locator("#sign-summary-continue-button");
 
   // Exchange Drawer Components
@@ -98,7 +100,10 @@ export class SwapPage extends AppPage {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await webview
+      .getByTestId(baseProviderLocator + "amount-label")
+      .first()
+      .click();
     await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
@@ -268,12 +273,21 @@ export class SwapPage extends AppPage {
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
+  async clickExchangeButton(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    const swapButton = webview.getByTestId(this.swapBtn);
     await expect(swapButton).toBeVisible();
     await expect(swapButton).toBeEnabled();
     await swapButton.click();
+  }
+
+  @step("Click Execute Swap button")
+  async clickExecuteSwapButton(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
+    await expect(executeSwapButton).toBeVisible();
+    await expect(executeSwapButton).toBeEnabled();
+    await executeSwapButton.click();
   }
 
   @step("Go to provider live app")
@@ -535,7 +549,7 @@ export class SwapPage extends AppPage {
 
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
     const amount = await getMinimumSwapAmount(accountFrom, accountTo);
-    return amount ? parseFloat(amount.toFixed(6)).toString() : "";
+    return amount ? Number.parseFloat(amount.toFixed(6)).toString() : "";
   }
 
   @step("Click on swap max")

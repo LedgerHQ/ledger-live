@@ -34,7 +34,7 @@ const Column = styled(TableLine).attrs<{
   strong?: boolean;
 }>(p => ({
   ff: "Inter|SemiBold",
-  color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
+  color: p.strong ? "neutral.c100" : "neutral.c80",
   fontSize: 3,
 }))<{
   clickable?: boolean;
@@ -45,7 +45,7 @@ const Column = styled(TableLine).attrs<{
     p.clickable
       ? `
     &:hover {
-      color: ${p.theme.colors.palette.primary.main};
+      color: ${p.theme.colors.primary.c80};
     }
     `
       : ``}
@@ -104,7 +104,7 @@ const DelegationStatus = ({ status }: { status: HEDERA_DELEGATION_STATUS }) => {
 
   if (status === HEDERA_DELEGATION_STATUS.Overstaked) {
     return (
-      <Box color="warning" pl={2}>
+      <Box color="legacyWarning" pl={2}>
         <ToolTip
           content={
             <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.overstakedTooltip" />

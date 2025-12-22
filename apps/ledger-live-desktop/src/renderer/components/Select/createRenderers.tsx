@@ -20,7 +20,7 @@ import { rgba } from "~/renderer/styles/helpers";
 
 const InputWrapper = styled(Box)`
   & input::placeholder {
-    color: ${p => p.theme.colors.palette.text.shade30};
+    color: ${p => p.theme.colors.neutral.c40};
   }
 `;
 
@@ -105,7 +105,7 @@ const STYLES_OVERRIDE = {
     const { selectProps } = props;
     const { isSearchable, menuIsOpen } = selectProps;
     return menuIsOpen && isSearchable ? (
-      <InputWrapper color={"palette.text.shade40"} alignItems="center" horizontal pr={3}>
+      <InputWrapper color={"neutral.c60"} alignItems="center" horizontal pr={3}>
         <SearchIcon size={16} />
         <components.Input
           {...props}
@@ -136,5 +136,5 @@ const InformativeContainer = styled(Box).attrs(() => ({
   right: 0;
   bottom: 0;
   width: 10px;
-  color: ${p => (p.disabled ? rgba(p.theme.colors.palette.secondary.main, 0.5) : null)};
+  color: ${p => (p.disabled ? rgba(p.theme.colors.neutral.c100, 0.5) : null)};
 `;

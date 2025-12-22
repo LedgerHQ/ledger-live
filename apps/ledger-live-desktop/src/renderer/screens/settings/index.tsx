@@ -104,13 +104,7 @@ const Settings = () => {
   }, [match, history, location, items, activeTabIndex]);
   return (
     <Box pb={4} selectable>
-      <Box
-        ff="Inter|SemiBold"
-        color="palette.text.shade100"
-        fontSize={7}
-        mb={5}
-        data-e2e="settings_title"
-      >
+      <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
         {t("settings.title")}
       </Box>
       {ledgerSyncOptimisationFlag?.enabled && (

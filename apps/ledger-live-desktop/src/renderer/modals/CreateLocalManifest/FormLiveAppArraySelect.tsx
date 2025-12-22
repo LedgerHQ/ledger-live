@@ -88,7 +88,7 @@ function FormLiveAppArraySelect({
           onKeyDown={e => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const target = e.target as HTMLTextAreaElement;
-            if (e.keyCode === 13 && target.value !== "") {
+            if (e.key === "Enter" && target.value !== "") {
               e.preventDefault();
               handleOnEnter(target.value);
               target.blur();

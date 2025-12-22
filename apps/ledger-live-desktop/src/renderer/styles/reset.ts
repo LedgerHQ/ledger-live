@@ -63,6 +63,6 @@ em {
 }
 
 .currentTicker {
-  background: palette.background.paper;
+  background: background.card;
   z-index: 11 !important;
 }`;

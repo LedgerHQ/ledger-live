@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { useEffect } from "react";
 import { Observable } from "rxjs";
 import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";

@@ -30,38 +30,41 @@ describe("hedera/react", () => {
 
   beforeAll(() => {
     LiveConfig.setConfig(liveConfig);
-    jest.spyOn(apiClient, "getNodes").mockResolvedValue([
-      {
-        description: "Hosted by LG | Seoul, South Korea",
-        node_id: 0,
-        node_account_id: "0.0.3",
-        stake: 45000000000000000,
-        stake_rewarded: 86596417100000000,
-        min_stake: 0,
-        max_stake: 45000000000000000,
-        reward_rate_start: 3500,
-      },
-      {
-        description: "Hosted by Swirlds | Iowa, USA",
-        node_id: 1,
-        node_account_id: "0.0.4",
-        stake: 45000000000000000,
-        stake_rewarded: 88990261300000000,
-        min_stake: 0,
-        max_stake: 45000000000000000,
-        reward_rate_start: 4000,
-      },
-      {
-        description: "Hosted for Wipro | Amsterdam, Netherlands",
-        node_id: 3,
-        node_account_id: "0.0.6",
-        stake: 45000000000000000,
-        stake_rewarded: 21477855400000000,
-        min_stake: 0,
-        max_stake: 45000000000000000,
-        reward_rate_start: 5000,
-      },
-    ]);
+    jest.spyOn(apiClient, "getNodes").mockResolvedValue({
+      nodes: [
+        {
+          description: "Hosted by LG | Seoul, South Korea",
+          node_id: 0,
+          node_account_id: "0.0.3",
+          stake: 45000000000000000,
+          stake_rewarded: 86596417100000000,
+          min_stake: 0,
+          max_stake: 45000000000000000,
+          reward_rate_start: 3500,
+        },
+        {
+          description: "Hosted by Swirlds | Iowa, USA",
+          node_id: 1,
+          node_account_id: "0.0.4",
+          stake: 45000000000000000,
+          stake_rewarded: 88990261300000000,
+          min_stake: 0,
+          max_stake: 45000000000000000,
+          reward_rate_start: 4000,
+        },
+        {
+          description: "Hosted for Wipro | Amsterdam, Netherlands",
+          node_id: 3,
+          node_account_id: "0.0.6",
+          stake: 45000000000000000,
+          stake_rewarded: 21477855400000000,
+          min_stake: 0,
+          max_stake: 45000000000000000,
+          reward_rate_start: 5000,
+        },
+      ],
+      nextCursor: null,
+    });
   });
 
   describe("useHederaPreloadData", () => {

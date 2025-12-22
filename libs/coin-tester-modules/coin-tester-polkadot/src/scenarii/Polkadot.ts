@@ -1,14 +1,11 @@
 import BigNumber from "bignumber.js";
-import Polkadot from "@ledgerhq/hw-app-polkadot";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
-import { defaultNanoApp } from "../constants";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";
@@ -19,6 +16,7 @@ import {
   PolkadotOperationExtra,
   Transaction as PolkadotTransaction,
 } from "@ledgerhq/coin-polkadot/types/bridge";
+import { buildSigner } from "../signer";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
 
@@ -89,20 +87,11 @@ const coinConfig: PolkadotCoinConfig = {
   },
 };
 
-const subscriptions: any[] = [];
-
 export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Ledger Live transactions",
 
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(
-        `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
-      ),
-      spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml"),
-    ]);
-
-    const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
+    await spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml");
 
     await cryptoWaitReady();
     await wsProvider.connect();
@@ -111,7 +100,8 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     const keyring = new Keyring({ type: "sr25519" });
     keyring.setSS58Format(0);
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
+    const signer = await buildSigner();
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
 
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
 
@@ -147,7 +137,6 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       currencyBridge,
       address: polkadotScenarioAccountPair.address,
       account,
-      onSignerConfirmation,
     };
   },
   getTransactions,
@@ -251,8 +240,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     unsubscribeNewBlockListener();
   },
   teardown: async () => {
-    subscriptions.forEach(unsub => unsub());
     await wsProvider.disconnect();
-    await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
+    await killChopsticksAndSidecar();
   },
 };

@@ -152,6 +152,8 @@ export type CurrencyFeatures = {
   currencyMonadTestnet: DefaultFeature;
   currencySomnia: DefaultFeature;
   currencyZeroGravity: DefaultFeature;
+  currencyConcordium: DefaultFeature;
+  currencyConcordiumTestnet: DefaultFeature;
 };
 
 /**
@@ -284,6 +286,8 @@ export type Features = CurrencyFeatures & {
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
+  lifiSolana: DefaultFeature;
+  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
 };
 
 /**
@@ -684,6 +688,7 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+  enableDialogDesktop?: boolean;
 }>;
 
 export type Feature_Noah = Feature<{
@@ -741,6 +746,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
+
+export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 
 /**
  * Array of firmware versions that are ignored for the given device model

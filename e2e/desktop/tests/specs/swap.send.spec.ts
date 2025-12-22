@@ -66,7 +66,6 @@ const swaps = [
       "@Stax",
       "@Flex",
       "@NanoGen5",
-      "@smoke",
       "@swapSmoke",
       "@ethereum",
       "@family-evm",
@@ -276,9 +275,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },

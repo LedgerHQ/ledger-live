@@ -1,4 +1,4 @@
-import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
@@ -147,7 +147,6 @@ export default class SwapPage {
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 
   @Step("Verify amounts and accept swap for different seed")
@@ -157,23 +156,18 @@ export default class SwapPage {
     errorMessage: string | null,
   ) {
     await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
-    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 
   @Step("Verify the amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
-  }
-
-  @Step("Verify device action loading is not visible")
-  async verifyDeviceActionLoadingNotVisible() {
-    await detoxExpect(getElementById(this.deviceActionLoading)).not.toBeVisible();
   }
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId);
+    await waitForElementById(this.swapSuccessTitleId, 60000, {
+      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
+    });
     await tapById(app.common.proceedButtonId);
   }
 }

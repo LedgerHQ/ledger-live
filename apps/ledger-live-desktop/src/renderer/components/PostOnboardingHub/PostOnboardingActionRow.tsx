@@ -82,14 +82,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         protectId,
         openActivationDrawer,
       });
-      buttonLabelForAnalyticsEvent &&
+      if (buttonLabelForAnalyticsEvent) {
         track("button_clicked2", {
           button: buttonLabelForAnalyticsEvent,
           deviceModelId,
           flow: "post-onboarding",
         });
+      }
     }
-    shouldCompleteOnStart && completeAction(id);
+    if (shouldCompleteOnStart) completeAction(id);
   }, [
     props,
     dispatch,

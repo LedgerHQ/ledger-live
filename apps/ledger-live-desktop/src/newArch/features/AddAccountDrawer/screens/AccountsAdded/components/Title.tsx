@@ -14,7 +14,7 @@ export const Title = ({ accountsCount }: Props) => {
       fontSize={24}
       textAlign="center"
       fontWeight="semiBold"
-      color="palette.text.shade100"
+      color="neutral.c100"
       data-testid="accounts-added-title"
     >
       {t("modularAssetDrawer.accountsAdded.title", { count: accountsCount })}

@@ -6,7 +6,7 @@ import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIcon
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 
 const size = 40;
 const ManagerAppIconContainer = styled.div`
@@ -14,7 +14,7 @@ const ManagerAppIconContainer = styled.div`
   top: 0;
   left: 0;
   transition: opacity 0.2s ease-out;
-  color: ${p => p.theme.colors.palette.text.shade20};
+  color: ${p => p.theme.colors.neutral.c40};
 `;
 const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
   width: ${p => p.size}px;
@@ -45,9 +45,7 @@ function AppIcon({ app }: Readonly<Props>) {
     const ticker = currency.ticker;
     const validSize = getValidCryptoIconSize(size);
 
-    return (
-      <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} overridesRadius="12px" />
-    );
+    return <SquaredCryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />;
   }
 
   // Fallback to manager icon for non-crypto apps

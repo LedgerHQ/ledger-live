@@ -41,7 +41,7 @@ export function TranslatedError({
   field = "title",
   noLink,
   dataTestId,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const { t } = useTranslation();
 
   const errorName = error?.name;

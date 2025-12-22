@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Flex, Text, Button, Box } from "@ledgerhq/native-ui";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
@@ -26,6 +26,7 @@ type PendingProposal = {
 
 type Props = {
   account: Account;
+  parentAccount: Account;
   contractId: string;
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
   isOpen: boolean;
@@ -34,6 +35,7 @@ type Props = {
 
 const PendingTransferProposalsDetails: React.FC<Props> = ({
   account,
+  parentAccount,
   contractId,
   onOpenModal,
   isOpen,
@@ -94,7 +96,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
     );
   }
 
-  const isIncoming = proposal.sender !== account.xpub;
+  const isIncoming = proposal.sender !== parentAccount.xpub;
 
   return (
     <QueuedDrawer

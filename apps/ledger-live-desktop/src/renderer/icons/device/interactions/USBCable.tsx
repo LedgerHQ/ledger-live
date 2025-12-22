@@ -56,7 +56,7 @@ type Props = {
   vertical?: boolean;
 } & React.ComponentProps<typeof USBCableSvg>;
 const UsbCable = ({ active, state, vertical, ...props }: Props) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return (
     <USBCableSvg {...props} width="126" height="23">
       <defs>

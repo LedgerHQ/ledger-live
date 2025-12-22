@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
@@ -24,14 +23,13 @@ import Touchable from "~/components/Touchable";
 import { urls } from "~/utils/urls";
 import Info from "~/icons/Info";
 import ExternalLink from "~/icons/ExternalLink";
-import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
-import type { State } from "~/reducers/types";
 import Title from "./Title";
 import FormatDate from "~/components/DateFormat/FormatDate";
 import type {
@@ -40,7 +38,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type HelpLinkProps = {
   event: string;
@@ -101,11 +99,7 @@ export default function Content({
     setIsModalOpened(false);
   }, []);
 
-  const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s.settings, {
-      account: mainAccount,
-    }),
-  );
+  const currencySettings = useCurrencySettingsForAccount(mainAccount);
 
   const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);

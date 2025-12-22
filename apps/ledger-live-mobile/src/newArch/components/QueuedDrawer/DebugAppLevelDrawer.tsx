@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Alert } from "@ledgerhq/native-ui";
 import QueuedDrawer from ".";
 import { setDebugAppLevelDrawerOpened } from "~/actions/settings";

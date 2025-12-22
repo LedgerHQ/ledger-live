@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import RequiresBLE from "../RequiresBLE";

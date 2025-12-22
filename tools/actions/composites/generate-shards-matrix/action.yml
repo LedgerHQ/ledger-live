@@ -12,6 +12,9 @@ inputs:
   event_name:
     description: "GitHub event name (workflow_dispatch or schedule)"
     required: true
+  ref:
+    description: "Branch ref"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -33,7 +36,7 @@ runs:
         if [ "${{ github.event_name }}" = "schedule" ]; then
           SHARD_COUNT_IOS=12
           SHARD_COUNT_ANDROID=12
-        elif [[ "${{ github.ref }}" == *"release"* ]]; then
+        elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
           SHARD_COUNT_IOS=6
           SHARD_COUNT_ANDROID=12
         else

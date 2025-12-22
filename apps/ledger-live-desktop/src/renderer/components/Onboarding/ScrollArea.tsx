@@ -40,7 +40,7 @@ const ScrollHint = styled.div.attrs<{
   width: 30px;
   height: 50px;
   border-radius: 25px;
-  box-shadow: inset 0 0 0 1px ${p => p.theme.colors.palette.text.shade80};
+  box-shadow: inset 0 0 0 1px ${p => p.theme.colors.neutral.c80};
   position: absolute;
   bottom: 40px;
   right: 40px;
@@ -52,7 +52,7 @@ const ScrollHint = styled.div.attrs<{
     width: 4px;
     height: 8px;
     margin-left: -2px;
-    background-color: ${p => p.theme.colors.palette.text.shade80};
+    background-color: ${p => p.theme.colors.neutral.c80};
     position: absolute;
     left: 50%;
     top: 8px;

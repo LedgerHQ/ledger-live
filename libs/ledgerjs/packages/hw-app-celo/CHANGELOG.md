@@ -1,5 +1,37 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.35.5
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/hw-app-eth@7.0.1
+  - @ledgerhq/hw-transport@6.31.14
+
+## 6.35.5-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/hw-app-eth@7.0.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+
+## 6.35.4
+
+### Patch Changes
+
+- Updated dependencies [[`a9e22b3`](https://github.com/LedgerHQ/ledger-live/commit/a9e22b31ce036537237a3f216a943b07ab4caf72)]:
+  - @ledgerhq/hw-app-eth@7.0.0
+
+## 6.35.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a9e22b3`](https://github.com/LedgerHQ/ledger-live/commit/a9e22b31ce036537237a3f216a943b07ab4caf72)]:
+  - @ledgerhq/hw-app-eth@7.0.0-next.0
+
 ## 6.35.3
 
 ### Patch Changes

@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import invariant from "invariant";
-import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,10 +18,10 @@ import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import { ScreenName } from "~/const";
 import { useAccountUnit } from "~/hooks";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { urls } from "~/utils/urls";
 import type { HederaUndelegationFlowParamList } from "./types";
 import ReadonlyAmountRatio from "../shared/ReadonlyAmountRatio";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaUndelegationFlowParamList,
@@ -31,7 +30,7 @@ type Props = StackNavigatorProps<
 
 function UndelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");

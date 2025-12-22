@@ -62,6 +62,7 @@ export type Transaction = TransactionCommon & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -70,7 +71,16 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
+
+export enum DurationEnum {
+  ONE_DAY = "1d",
+  THREE_HOURS = "3h",
+  SIX_HOURS = "6h",
+  ONE_WEEK = "1w",
+  ONE_MONTH = "1m",
+}
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -39,7 +39,7 @@ const FullscreenWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 20;
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
 `;
 
 export default function RecoverPlayer({
@@ -54,7 +54,7 @@ export default function RecoverPlayer({
   const localManifest = useLocalLiveAppManifest(params.appId);
   const remoteManifest = useRemoteLiveAppManifest(params.appId);
   const manifest = localManifest || remoteManifest;
-  const theme = useTheme().colors.palette.type;
+  const theme = useTheme().theme;
   const history = useHistory();
   const onClose = useCallback(() => history.goBack(), [history]);
   const recoverConfig = useFeature("protectServicesDesktop");

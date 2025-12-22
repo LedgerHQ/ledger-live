@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require("path");
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -87,6 +90,7 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "tailwindcss/no-custom-classname": "error",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -119,10 +123,24 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn",
       },
     },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
   ],
   settings: {
     react: {
       version: "detect",
+    },
+    tailwindcss: {
+      config: path.join(__dirname, "./tailwind.config.ts"),
+      callees: ["cn"],
     },
   },
 };

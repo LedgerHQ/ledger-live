@@ -31,7 +31,7 @@ export const Separator = styled.div`
   &::after {
     content: "";
     font-size: 13px;
-    color: ${p => p.theme.colors.palette.divider};
+    color: ${p => p.theme.colors.neutral.c40};
     padding: 0 15px;
   }
 `;
@@ -44,7 +44,7 @@ const Receive1ShareAddress = ({ name, address }: { name: string; address: string
             flex: 1,
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           {name ? (
@@ -102,7 +102,7 @@ const VerifyOnDevice = ({
   useEffect(() => {
     confirmAddress();
   }, [confirmAddress]);
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return device || skipDevice ? (
     <>
       <Receive1ShareAddress name={name} address={address} />
@@ -115,7 +115,7 @@ const VerifyOnDevice = ({
                 flexShrink: "unset",
               }}
               ff="Inter|SemiBold"
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={4}
             >
               <span
@@ -163,7 +163,7 @@ type Props = {
 };
 type PropsFooter = {
   onClose: () => void;
-  onSkipDevice: Function;
+  onSkipDevice: (skip: boolean) => void;
   data: DataProp;
 };
 const Root = ({ data, onClose, skipDevice, flow }: Props) => {

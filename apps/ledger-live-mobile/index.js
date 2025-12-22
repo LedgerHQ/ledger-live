@@ -18,16 +18,9 @@ import "text-encoding-polyfill";
 // Initialize MSW for mocking API calls
 import "./src/mocks/init";
 
-
 import { AppRegistry } from "react-native";
-import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App from "./src";
 import logReport from "./src/log-report";
-import { withSentry } from "./src/sentry";
-
 logReport.logReportInit();
 
-const Root = withSentry(App);
-
-AppRegistry.registerComponent("ledgerlivemobile", () => Root);
-AppRegistry.registerHeadlessTask("BackgroundRunnerService", () => BackgroundRunnerService);
+AppRegistry.registerComponent("ledgerlivemobile", () => App);

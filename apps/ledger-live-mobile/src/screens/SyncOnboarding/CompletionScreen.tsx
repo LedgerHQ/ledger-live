@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Pressable, StyleSheet } from "react-native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
 import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
@@ -22,16 +22,10 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
-import { StyleSheet } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-// import { useTheme } from "@react-navigation/native";
-import {
-  Trans,
-  /*useTranslation */
-} from "react-i18next";
+import { Trans } from "react-i18next";
 import { TrackScreen, track } from "~/analytics";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
-// import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
 
 const CTAWrapper = styled(Box)`
   position: absolute;
@@ -175,7 +169,7 @@ const CompletionScreen = ({ route }: Props) => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={redirectToMainScreen}>
+    <Pressable onPress={redirectToMainScreen}>
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
         <TrackScreen
           category="End of onboarding"
@@ -184,7 +178,7 @@ const CompletionScreen = ({ route }: Props) => {
         />
         {onboardingSuccessView(false, redirectToMainScreen)}
       </Flex>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 };
 

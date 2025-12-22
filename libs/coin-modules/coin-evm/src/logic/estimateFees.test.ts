@@ -409,7 +409,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
     expect(result).toEqual({
@@ -446,7 +446,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
     expect(result).toEqual({

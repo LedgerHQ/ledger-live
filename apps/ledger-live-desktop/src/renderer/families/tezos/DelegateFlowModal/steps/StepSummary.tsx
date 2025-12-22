@@ -34,7 +34,7 @@ const Container = styled(Box)`
   width: 148px;
   min-height: 170px;
   padding: 24px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
   align-items: center;
   justify-content: center;
@@ -82,7 +82,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
         undelegation={transaction.mode === "undelegate"}
         left={
           <Box>
-            <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
+            <Text ff="Inter|Medium" color="neutral.c70" fontSize={3}>
               <Trans
                 i18nKey={`delegation.flow.steps.summary.${
                   transaction.mode === "delegate" ? "toDelegate" : "toUndelegate"
@@ -92,12 +92,12 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
             <Container mt={1}>
               <CryptoCurrencyIcon size={44} currency={currency} />
               <Ellipsis>
-                <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+                <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
                   {accountName}
                 </Text>
               </Ellipsis>
               <FormattedVal
-                color={"palette.text.shade60"}
+                color={"neutral.c70"}
                 disableRounding
                 unit={unit}
                 val={account.balance}
@@ -112,12 +112,12 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
           transaction.mode === "delegate" ? (
             <Box>
               <Box horizontal justifyContent="space-between">
-                <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
+                <Text ff="Inter|Medium" color="neutral.c70" fontSize={3}>
                   <Trans i18nKey="delegation.flow.steps.summary.validator" />
                 </Text>
                 <Text
                   ff="Inter|SemiBold"
-                  color="palette.primary.main"
+                  color="primary.c80"
                   fontSize={3}
                   onClick={() => transitionTo("validator")}
                   style={{
@@ -133,7 +133,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                   <Text
                     data-testid="validator-name-tezos"
                     ff="Inter|SemiBold"
-                    color="palette.text.shade100"
+                    color="neutral.c100"
                     fontSize={3}
                   >
                     {getBakerName(baker, transaction.recipient)}
@@ -148,20 +148,15 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                       onClick={() => openURL(urlDelegationHelp)}
                       horizontal
                       flow={1}
-                      color="warning"
+                      color="legacyWarning"
                     >
-                      <Text textAlign="center" ff="Inter|Medium" color="warning" fontSize={3}>
+                      <Text textAlign="center" ff="Inter|Medium" color="legacyWarning" fontSize={3}>
                         <Trans i18nKey="delegation.overdelegated" />
                       </Text>
                       <InfoCircle size={16} />
                     </Box>
                   ) : (
-                    <Text
-                      textAlign="center"
-                      ff="Inter|Medium"
-                      color="palette.text.shade60"
-                      fontSize={3}
-                    >
+                    <Text textAlign="center" ff="Inter|Medium" color="neutral.c70" fontSize={3}>
                       <Trans
                         i18nKey="delegation.flow.steps.summary.yield"
                         values={{
@@ -179,26 +174,21 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
             isDelegation && (
               <Box>
                 <Box horizontal justifyContent="space-between">
-                  <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
+                  <Text ff="Inter|Medium" color="neutral.c70" fontSize={3}>
                     <Trans i18nKey="delegation.flow.steps.summary.validator" />
                   </Text>
                 </Box>
                 <Container my={1}>
                   <BakerImage size={32} baker={delegation?.baker} />
                   <Ellipsis>
-                    <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+                    <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
                       {delegation
                         ? getBakerName(delegation.baker, delegation.address)
                         : stakingPositions[0].delegate}
                     </Text>
                   </Ellipsis>
                   {delegation?.baker && (
-                    <Text
-                      textAlign="center"
-                      ff="Inter|Medium"
-                      color="palette.text.shade60"
-                      fontSize={3}
-                    >
+                    <Text textAlign="center" ff="Inter|Medium" color="neutral.c70" fontSize={3}>
                       <Trans
                         i18nKey="delegation.flow.steps.summary.yield"
                         values={{

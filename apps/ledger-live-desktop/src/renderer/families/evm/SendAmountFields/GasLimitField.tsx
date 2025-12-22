@@ -62,7 +62,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
         </Box>
       ) : (
         <Box horizontal justifyContent="left">
-          <Label color="p.theme.colors.palette.text.shade100">{gasLimit.toString()}</Label>
+          <Label color="p.theme.colors.neutral.c100">{gasLimit.toString()}</Label>
           {!disableEditGasLimit && (
             <Button
               borderRadius={4}

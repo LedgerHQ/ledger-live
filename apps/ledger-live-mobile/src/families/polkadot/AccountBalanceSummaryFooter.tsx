@@ -16,7 +16,7 @@ import BondedIcon from "~/icons/LinkIcon";
 import UnbondingIcon from "~/icons/Clock";
 import Unbonded from "~/icons/Undelegate";
 import WarningIcon from "~/icons/Warning";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: PolkadotAccount;

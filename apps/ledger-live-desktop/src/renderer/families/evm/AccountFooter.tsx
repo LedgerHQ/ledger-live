@@ -53,14 +53,14 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
                 width: "auto",
                 lineHeight: "15px",
               }}
-              color="palette.text.shade100"
+              color="neutral.c100"
               val={status.totalFees}
               unit={feesUnit}
               showCode
               alwaysShowValue
             />
             <CounterValue
-              color="palette.text.shade60"
+              color="neutral.c70"
               fontSize={2}
               horizontal
               style={{

@@ -3,7 +3,7 @@ import logger from "~/renderer/logger";
 import RenderError from "./RenderError";
 type Props = {
   children: React.ReactNode;
-  onError?: Function;
+  onError?: (error: Error) => void;
 };
 type State = {
   error: Error | undefined | null;

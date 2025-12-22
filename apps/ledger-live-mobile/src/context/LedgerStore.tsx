@@ -17,6 +17,7 @@ import {
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
+  getIdentities,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -34,6 +35,7 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 interface Props {
   onInitFinished: () => void;
@@ -82,6 +84,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         initialCountervalues,
         largeMoverState,
         cryptoAssetsCache,
+        persistedIdentities,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -94,6 +97,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
+        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -148,6 +152,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeMoverState) {
         store.dispatch(importLargeMoverState(largeMoverState));
+      }
+
+      // Load persisted identities
+      if (persistedIdentities) {
+        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
       }
 
       setInitialCountervalues(initialCountervalues);

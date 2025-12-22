@@ -113,11 +113,6 @@ function readPackage(pkg, context) {
       }),
       addDependencies("allure-playwright", { "@playwright/test": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
-      addDependencies("@sentry/react-native", {
-        tslib: "*",
-        promise: "*",
-        metro: "*",
-      }),
       addDependencies("react-native-text-input-mask", {
         tslib: "*",
       }),

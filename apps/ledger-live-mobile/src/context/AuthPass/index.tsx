@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { StyleSheet, View, AppState } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "~/context/store";
 import { privacySelector } from "~/reducers/settings";
 import { setPrivacy as setPrivacyAction } from "~/actions/settings";
 import { isPasswordLockBlocked as isPasswordLockBlockedState } from "~/reducers/appstate";
@@ -21,7 +21,7 @@ import {
 } from "~/actions/auth";
 
 type OwnProps = {
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 const AuthPass: React.FC<OwnProps> = ({ children }) => {

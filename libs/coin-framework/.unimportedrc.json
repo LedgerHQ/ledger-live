@@ -36,7 +36,9 @@
     "src/bot/specs.ts",
     "src/bot/types.ts",
     "src/bridge/getAddressWrapper.ts",
+    "src/bridge/index.ts",
     "src/bridge/jsHelpers.ts",
+    "src/bridge/validateAddress.ts",
     "src/config.ts",
     "src/currencies/BigNumberToLocaleString.ts",
     "src/currencies/CurrencyURIScheme.ts",
@@ -57,14 +59,21 @@
     "src/nft/types.ts",
     "src/sanction/errors.ts",
     "src/sanction/index.ts",
+    "src/setup.ts",
     "src/signer.ts",
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts",
     "src/transaction/common.ts",
     "src/utils.ts",
-    "src/setup.ts"
+    "src/features/types.ts"
   ],
-  "ignoreUnresolved": ["@ledgerhq/live-dmk-speculos"],
+  "ignoreUnresolved": [
+    "@ledgerhq/live-dmk-speculos",
+    "src/utils.ts",
+    "src/uiConfig/types.ts",
+    "src/setup.ts",
+    "src/features/types.ts"
+  ],
   "ignoreUnused": [
     "@ledgerhq/devices",
     "@ledgerhq/live-config",

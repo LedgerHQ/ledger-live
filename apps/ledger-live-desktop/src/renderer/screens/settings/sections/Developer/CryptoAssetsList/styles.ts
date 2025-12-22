@@ -12,16 +12,16 @@ export const DrawerContainer: ReturnType<typeof styled.div> = styled(Flex)`
 export const HeaderSection: ReturnType<typeof styled.div> = styled(Flex)`
   flex-direction: column;
   padding: 32px 24px 24px;
-  background: ${p => p.theme.colors.palette.background.default};
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.background.default};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 export const ConfigSection: ReturnType<typeof styled.div> = styled(Flex)`
   flex-direction: column;
   row-gap: 16px;
   padding: 20px 24px;
-  background: ${p => p.theme.colors.palette.background.main};
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.background.main};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 export const TokenListSection: ReturnType<typeof styled.div> = styled(Flex)`
@@ -29,7 +29,7 @@ export const TokenListSection: ReturnType<typeof styled.div> = styled(Flex)`
   flex: 1;
   overflow-y: auto;
   padding: 24px;
-  background: ${p => p.theme.colors.palette.background.main};
+  background: ${p => p.theme.colors.background.main};
 `;
 
 // ==================== Collapsible Styled Components ====================
@@ -42,8 +42,8 @@ export const CollapsibleHeader: ReturnType<
   collapsed?: boolean;
 }>`
   padding: 10px 12px;
-  background: ${p => p.theme.colors.palette.background.default};
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.background.default};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 8px;
   align-items: center;
   justify-content: space-between;
@@ -52,8 +52,8 @@ export const CollapsibleHeader: ReturnType<
   margin-bottom: ${p => (p.collapsed ? "0" : "12px")};
 
   &:hover {
-    background: ${p => p.theme.colors.palette.action.hover};
-    border-color: ${p => p.theme.colors.palette.primary.c60};
+    background: ${p => p.theme.colors.opacityDefault.c10};
+    border-color: ${p => p.theme.colors.primary.c60};
   }
 `;
 
@@ -86,7 +86,7 @@ export const StyledCheckbox: ReturnType<typeof styled.div> = styled(Flex)`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${p => p.theme.colors.palette.action.hover};
+    background-color: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;
 
@@ -96,9 +96,9 @@ export const MultiSelectContainer: ReturnType<typeof styled.div> = styled(Flex)`
   max-height: 180px;
   overflow-y: auto;
   padding: 6px;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 8px;
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.background.default};
 
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -110,12 +110,12 @@ export const MultiSelectContainer: ReturnType<typeof styled.div> = styled(Flex)`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${p => p.theme.colors.palette.divider};
+    background: ${p => p.theme.colors.neutral.c40};
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: ${p => p.theme.colors.palette.text.shade40};
+    background: ${p => p.theme.colors.neutral.c60};
   }
 `;
 
@@ -125,16 +125,16 @@ export const TokenItem: ReturnType<typeof styled.div<{ isExpanded?: boolean }>> 
   isExpanded?: boolean;
 }>`
   padding: 14px 16px;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 10px;
   flex-direction: column;
   margin-bottom: 10px;
   transition: all 0.2s ease;
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.background.default};
   cursor: pointer;
 
   &:hover {
-    border-color: ${p => p.theme.colors.palette.primary.c70};
+    border-color: ${p => p.theme.colors.primary.c70};
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
   }
@@ -176,7 +176,7 @@ export const TokenTicker = styled.span`
 export const TokenTag: ReturnType<typeof styled.div> = styled(Flex)`
   padding: 4px 8px;
   border-radius: 4px;
-  background: ${p => p.theme.colors.palette.error.c10};
+  background: ${p => p.theme.colors.error.c10};
   align-items: center;
 `;
 
@@ -185,7 +185,7 @@ export const TokenDetails: ReturnType<typeof styled.div> = styled(Flex)`
   row-gap: 12px;
   padding-top: 12px;
   margin-top: 12px;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 export const DetailRow: ReturnType<typeof styled.div> = styled(Flex)`
@@ -211,7 +211,7 @@ export const ParameterGrid: ReturnType<typeof styled.div> = styled.div`
 
 export const SectionDivider = styled.div`
   height: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.neutral.c40};
   margin: 4px 0;
   opacity: 0.6;
 `;

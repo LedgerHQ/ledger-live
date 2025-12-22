@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
 import { FeatureFlags } from "./FeatureFlags";
 import { DrawerConfiguration } from "./DrawerConfiguration";
@@ -16,16 +16,14 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDrawer";
-import { Button } from "@ledgerhq/ldls-ui-react";
-import { openAssetAndAccountDialog } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { useDialog } from "LLD/components/Dialog";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
   const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
   const dispatch = useDispatch();
-  const { openDialog, closeDialog } = useDialog();
 
   const {
     assetsLeftElement,
@@ -39,7 +37,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     drawerConfiguration,
   } = useDrawerConfiguration();
 
-  const { openAssetFlow } = useOpenAssetFlow(
+  const { openAssetFlow } = useOpenAssetFlowDrawer(
     location.value === ModularDrawerLocation.LIVE_APP
       ? { location: location.value, liveAppId: liveApp.value }
       : { location: location.value },
@@ -76,12 +74,14 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     [ModularDrawerLocation.SEND_FLOW]: () => {},
   };
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount(true);
+
   const openDrawerFunctionsDialog: Record<ModularDrawerLocation, () => void> = {
-    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration), // needs to call handleClose
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration),
     [ModularDrawerLocation.LIVE_APP]: () => {
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
-      openAssetAndAccountDialog({ drawerConfiguration, openDialog, closeDialog });
+      openAssetAndAccount({ drawerConfiguration });
     },
     [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
     [ModularDrawerLocation.SEND_FLOW]: () => {},

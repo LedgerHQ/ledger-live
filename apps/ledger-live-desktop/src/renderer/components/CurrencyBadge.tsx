@@ -9,7 +9,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
 import Spinner from "./Spinner";
 import { BoxProps } from "./Box/Box";
-import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type CryptoIconWrapperProps = {
@@ -35,7 +35,7 @@ const CryptoIconWrapper = styled(Box).attrs<CryptoIconWrapperProps>(p => ({
   }
 `;
 const SpinnerWrapper = styled.div`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 100%;
   padding: 2px;
   width: 24px;
@@ -43,7 +43,7 @@ const SpinnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid ${p => p.theme.colors.palette.background.paper};
+  border: 2px solid ${p => p.theme.colors.background.card};
 `;
 
 /**
@@ -62,8 +62,7 @@ export function CurrencyCircleIcon({
   showSpinner?: boolean;
   showCheckmark?: boolean;
 }) {
-  const theme = useTheme();
-  const bgColor = theme.colors.palette.background.paper;
+  const bgColor = useTheme().colors.background.card;
   const cryptoColor = useMemo(
     () => (currency.type === "CryptoCurrency" ? ensureContrast(currency.color, bgColor) : ""),
     [currency, bgColor],
@@ -88,7 +87,7 @@ export function CurrencyCircleIcon({
       )}
       {showSpinner && (
         <SpinnerWrapper>
-          <Spinner color="palette.text.shade60" size={14} />
+          <Spinner color="neutral.c70" size={14} />
         </SpinnerWrapper>
       )}
     </CryptoIconWrapper>
@@ -101,7 +100,7 @@ function CurrencyBadge({ currency }: { currency: CryptoCurrency | TokenCurrency 
       <Box ml={2} maxWidth="fit-content">
         <Box
           ff="Inter|SemiBold"
-          color="palette.text.shade50"
+          color="neutral.c70"
           fontSize={2}
           style={{
             letterSpacing: 1,
@@ -109,7 +108,7 @@ function CurrencyBadge({ currency }: { currency: CryptoCurrency | TokenCurrency 
         >
           {currency.ticker}
         </Box>
-        <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
           {currency.name}
         </Box>
       </Box>

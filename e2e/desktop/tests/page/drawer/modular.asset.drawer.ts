@@ -10,6 +10,7 @@ export class ModularAssetDrawer extends Drawer {
   private searchInput = this.page.getByTestId(this.searchInputTestId);
   private drawerCloseButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
+  private firstAssetRow = this.page.locator('[data-testid^="asset-item-name-"]').first();
   private assetItemTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
   private assetItemName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
@@ -41,8 +42,11 @@ export class ModularAssetDrawer extends Drawer {
 
   @step("Select asset by ticker and name")
   async selectAssetByTickerAndName(currency: Currency) {
+    await this.firstAssetRow.waitFor({ state: "visible" });
     await this.searchInput.waitFor();
+    await this.firstAssetRow.waitFor({ state: "visible" });
     await this.searchInput.fill(currency.ticker);
+    await this.firstAssetRow.waitFor({ state: "visible" });
     await this.assetRow(currency.name, currency.ticker).first().click();
   }
 

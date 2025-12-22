@@ -21,5 +21,3 @@ export function LedgerSyncBanner({ onPress }: Readonly<{ onPress: () => void }>)
     />
   );
 }
-
-export default LedgerSyncBanner;

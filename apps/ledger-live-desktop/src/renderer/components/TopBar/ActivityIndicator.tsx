@@ -123,10 +123,10 @@ const ActivityIndicatorInner = () => {
           isError
             ? "alertRed"
             : isRotating
-              ? "palette.text.shade60"
+              ? "neutral.c70"
               : areAllAccountsUpToDate
                 ? "positiveGreen"
-                : "palette.text.shade60"
+                : "neutral.c70"
         }
       >
         {getIcon()}
@@ -147,7 +147,7 @@ const ActivityIndicatorInner = () => {
   if (!areAllAccountsUpToDate || (isError && error)) {
     return (
       <Tooltip
-        tooltipBg="alertRed"
+        tooltipBg="error-strong"
         content={
           <Box
             fontSize={4}

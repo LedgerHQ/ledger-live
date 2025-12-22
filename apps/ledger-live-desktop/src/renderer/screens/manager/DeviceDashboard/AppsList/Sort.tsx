@@ -6,36 +6,39 @@ import BoldToggle from "~/renderer/components/BoldToggle";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import IconAngleUp from "~/renderer/icons/AngleUp";
+import { SortOptions } from "@ledgerhq/live-common/apps/filtering";
+
 type Props = {
-  onSortChange: Function;
-  sort: {
-    type?: string;
-    order?: string;
-  };
+  onSortChange: (sort: SortOptions) => void;
+  sort: SortOptions;
 };
 const Sort = ({ onSortChange, sort }: Props) => {
-  const sortItems = [
+  const sortItems: Array<{
+    key: string;
+    sort: SortOptions;
+    label: React.JSX.Element;
+  }> = [
     {
       key: "marketcap_desc",
       sort: {
-        type: "marketcap",
-        order: "desc",
+        type: "marketcap" as const,
+        order: "desc" as const,
       },
       label: <Trans i18nKey="manager.applist.sort.marketcap_desc" />,
     },
     {
       key: "name_asc",
       sort: {
-        type: "name",
-        order: "asc",
+        type: "name" as const,
+        order: "asc" as const,
       },
       label: <Trans i18nKey="manager.applist.sort.name_asc" />,
     },
     {
       key: "name_desc",
       sort: {
-        type: "name",
-        order: "desc",
+        type: "name" as const,
+        order: "desc" as const,
       },
       label: <Trans i18nKey="manager.applist.sort.name_desc" />,
     },
@@ -78,7 +81,7 @@ const Sort = ({ onSortChange, sort }: Props) => {
       {({ isOpen, value }) =>
         value ? (
           <Box horizontal flow={1}>
-            <Text color="palette.text.shade60" ff="Inter|SemiBold" fontSize={4}>
+            <Text color="neutral.c70" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey="manager.applist.sort.title" />
             </Text>
             <Box

@@ -13,7 +13,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { Fragment, memo, useMemo } from "react";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -72,7 +72,6 @@ function Earn({ route }: Props) {
   );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
-    // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
   }
 

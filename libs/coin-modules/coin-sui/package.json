@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.18.0",
+  "version": "0.18.2",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -105,6 +105,10 @@
     "./constants": {
       "require": "./lib/constants.js",
       "default": "./lib-es/constants.js"
+    },
+    "./uiConfig": {
+      "require": "./lib/uiConfig.js",
+      "default": "./lib-es/uiConfig.js"
     },
     ".": {
       "require": "./lib/index.js",

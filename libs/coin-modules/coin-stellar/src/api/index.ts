@@ -34,6 +34,7 @@ import {
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarBurnAddressError, StellarMemo } from "../types";
 import { fetchSequence } from "../network";
+
 export function createApi(config: StellarConfig): Api<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 

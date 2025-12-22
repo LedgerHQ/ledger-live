@@ -9,5 +9,6 @@ export type CantonFamily = LLDCoinFamily<Account, Transaction, TransactionStatus
   TooManyUtxosModal: React.ComponentType<{ account: Account }>;
   PendingTransferProposals: React.ComponentType<{
     account: Account;
+    parentAccount: Account;
   }>;
 };

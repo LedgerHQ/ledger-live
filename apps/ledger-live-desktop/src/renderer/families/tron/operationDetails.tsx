@@ -151,7 +151,7 @@ const OperationDetailsExtra = ({
                 unit={unit}
                 showCode
                 fontSize={4}
-                color="palette.text.shade60"
+                color="neutral.c70"
               />
             </Box>
           </OpDetailsData>
@@ -170,7 +170,7 @@ const OperationDetailsExtra = ({
                 unit={unit}
                 showCode
                 fontSize={4}
-                color="palette.text.shade60"
+                color="neutral.c70"
               />
             </Box>
           </OpDetailsData>
@@ -190,7 +190,7 @@ const OperationDetailsExtra = ({
                   unit={unit}
                   showCode
                   fontSize={4}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                 />
               </Box>
             </OpDetailsData>
@@ -222,7 +222,7 @@ const OperationDetailsExtra = ({
                 unit={unit}
                 showCode
                 fontSize={4}
-                color="palette.text.shade60"
+                color="neutral.c70"
               />
             </Box>
           </OpDetailsData>
@@ -242,10 +242,10 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = operation.extra?.frozenAmount;
   return amount && !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}
@@ -259,10 +259,10 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = operation.extra?.unfreezeAmount;
   return amount && !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}

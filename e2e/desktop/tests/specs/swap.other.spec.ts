@@ -149,11 +149,11 @@ test.describe("Swap - 1inch flow", () => {
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
       await app.swap.selectSpecificProvider(provider, electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExchangeButton(electronApp);
       await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExecuteSwapButton(electronApp);
       await app.swap.clickContinueButton();
-      //ToDo: when B2CA-2384 is fixed the flow could be finished
+      //TODO: when B2CA-2384 is fixed the flow could be finished
     },
   );
 });
@@ -364,9 +364,9 @@ test.describe("Swap - Rejected on device", () => {
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
 
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.clickExchangeButton(electronApp);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -504,7 +504,6 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
           ...(familyDebit ? [`@family-${familyDebit}`] : []),
           `@${swap.accountToCredit.currency.id}`,
           ...(familyCredit ? [`@family-${familyCredit}`] : []),
-          ...(swap.accountToDebit === Account.BTC_NATIVE_SEGWIT_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: xrayTicket },
       },
@@ -707,35 +706,20 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-        await app.modularDrawer.selectNetwork(account1.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
+      await app.modularDrawer.selectNetwork(account1.currency);
+      await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.scanAccountsDrawer.selectFirstAccount();
-        await app.scanAccountsDrawer.clickContinueButton();
+      await app.scanAccountsDrawer.selectFirstAccount();
+      await app.scanAccountsDrawer.clickContinueButton();
 
-        await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-        await app.modularDrawer.selectNetwork(account2.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      await app.swap.selectToAccountCoinSelector(electronApp);
+      await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
+      await app.modularDrawer.selectNetwork(account2.currency);
+      await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
-        await app.scanAccountsDrawer.selectFirstAccount();
-        await app.scanAccountsDrawer.clickContinueButton();
-      } else {
-        await app.swap.selectAsset(account1.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account1);
-
-        await app.swap.selectAssetTo(electronApp, account2.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account2);
-      }
+      await app.scanAccountsDrawer.selectFirstAccount();
+      await app.scanAccountsDrawer.clickContinueButton();
       await app.swap.checkAssetFrom(electronApp, account1.currency.name);
       await app.swap.checkAssetTo(electronApp, account2.currency.name);
     },
@@ -1165,7 +1149,6 @@ test.describe("Swap flow from different entry point", () => {
         "@Stax",
         "@Flex",
         "@NanoGen5",
-        "@smoke",
         "@ethereum",
         "@family-evm",
         "@bitcoin",
@@ -1312,10 +1295,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         await app.swap.clickSwapMax(electronApp);
 
         const amountToSend = await app.swap.getAmountToSend(electronApp);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -1459,7 +1442,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
       ],
       annotation: {
         type: "TMS",
-        description: "B2CQA-3539",
+        description: "B2CQA-3655",
       },
     },
     async ({ app, electronApp }) => {
@@ -1475,8 +1458,8 @@ test.describe("Swap - Block blacklisted addresses", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.clickExchangeButton(electronApp);
 
       await app.swapDrawer.checkErrorMessage(
         `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,

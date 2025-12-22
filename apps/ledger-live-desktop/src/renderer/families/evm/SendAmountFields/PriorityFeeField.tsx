@@ -32,7 +32,7 @@ const ErrorDisplay = styled(Box)`
 `;
 
 const WarningDisplay = styled(Box)`
-  color: ${p => p.theme.colors.warning};
+  color: ${p => p.theme.colors.legacyWarning};
 `;
 
 const FeesValues = styled.span`

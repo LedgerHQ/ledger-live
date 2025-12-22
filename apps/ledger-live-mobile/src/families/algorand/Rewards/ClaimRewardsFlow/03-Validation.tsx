@@ -1,13 +1,12 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import { useSignWithDevice } from "~/logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateOnDevice from "~/components/ValidateOnDevice";
@@ -15,6 +14,7 @@ import SkipLock from "~/components/behaviour/SkipLock";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
 import { ScreenName } from "~/const";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -23,7 +23,7 @@ type Props = StackNavigatorProps<
 
 export default function Validation({ route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account is required");
   const dispatch = useDispatch();
   const [signing, signed] = useSignWithDevice({

@@ -6,7 +6,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProviderIcon from "~/components/ProviderIcon";
@@ -14,8 +14,7 @@ import { Item } from "./Item";
 import { Banner } from "../Banner";
 import { NavigatorName, ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { rateExpirationSelector, rateSelector } from "~/actions/swap";
-import { CountdownTimer } from "./CountdownTimer";
+import { rateSelector } from "~/actions/swap";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import {
   BaseComposite,
@@ -28,7 +27,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 interface Props {
@@ -48,7 +47,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
   const { t } = useTranslation();
 
   const exchangeRate = useSelector(rateSelector);
-  const ratesExpiration = useSelector(rateExpirationSelector);
   const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
@@ -189,13 +187,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
       </Item>
 
       <Item title={t("transfer.swap2.form.details.label.rate")}>
-        {ratesExpiration &&
-          exchangeRate.tradeMethod === "fixed" &&
-          ratesExpiration.getTime() > Date.now() && (
-            <Flex paddingX={2}>
-              <CountdownTimer end={ratesExpiration} callback={swap.refetchRates} />
-            </Flex>
-          )}
         <Icon name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"} color="neutral.c70" />
         <Text marginLeft={2}>
           <CurrencyUnitValue

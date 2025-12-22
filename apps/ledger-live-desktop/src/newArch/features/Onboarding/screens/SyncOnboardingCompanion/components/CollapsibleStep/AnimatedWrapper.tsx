@@ -40,7 +40,7 @@ const AnimatedWrapper = ({ children, isCollapsed, hasSubtitle }: AnimatedWrapper
         borderRadius: "12px",
         overflow: "hidden",
         flexDirection: "column",
-        backgroundColor: theme.colors.palette.neutral.c20,
+        backgroundColor: theme.colors.neutral.c20,
         border: `1px solid ${theme.colors.opacityDefault.c05}`,
       }}
     >

@@ -138,12 +138,11 @@ class MenuList<
       return <components.NoOptionsMessage {...this.props} innerProps={{}} />;
     }
 
-    children.length &&
-      children.map(key => {
-        delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
-        delete key.props.innerProps.onMouseOver;
-        return null;
-      });
+    children.map(key => {
+      delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
+      delete key.props.innerProps.onMouseOver;
+      return null;
+    });
 
     const handleScroll = ({
       scrollOffset,
@@ -165,7 +164,7 @@ class MenuList<
 
     return (
       <List
-        className={"select-options-list"}
+        data-testid="select-options-list"
         ref={this.list}
         width="100%"
         style={{
@@ -179,7 +178,7 @@ class MenuList<
         onScroll={handleScroll}
       >
         {({ index, style }) => (
-          <Row className={"option"} style={style}>
+          <Row style={style}>
             {/* @ts-expect-error I have no idea what's up here */}
             {children[index]}
           </Row>
@@ -215,7 +214,7 @@ class Select<
 
   resizeHandler = debounce(
     () => {
-      this.ref && this.ref.blur();
+      if (this.ref) this.ref.blur();
     },
     200,
     {
@@ -284,7 +283,7 @@ class Select<
       ...baseStyles,
       placeholder: (base: React.CSSProperties) => ({
         ...base,
-        color: theme?.colors.palette.text.shade40,
+        color: theme?.colors.neutral.c60,
       }),
     };
 

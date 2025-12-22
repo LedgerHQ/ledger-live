@@ -64,8 +64,8 @@ const TopBar = () => {
     }
   }, [history, location]);
   return (
-    <Container color="palette.text.shade80">
-      <Inner bg="palette.background.default">
+    <Container color="neutral.c80">
+      <Inner backgroundColor="background.default">
         <Box grow horizontal justifyContent="space-between">
           <Breadcrumb />
           <Box horizontal>

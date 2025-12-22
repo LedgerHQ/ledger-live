@@ -161,7 +161,7 @@ const CustomImage: React.FC<Props> = props => {
     }, []);
 
   const handleStepTransferResult = useCallback(() => {
-    setHasCustomLockScreen && setHasCustomLockScreen(true);
+    setHasCustomLockScreen?.(true);
     setTransferDone(true);
   }, [setHasCustomLockScreen]);
 
@@ -186,7 +186,7 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    error?.name && track("button_clicked2", { button: "Retry" });
+    if (error?.name) track("button_clicked2", { button: "Retry" });
     setStepWrapper(Step.chooseImage);
   }, [error?.name, setStepWrapper, track]);
 

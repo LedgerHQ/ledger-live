@@ -17,6 +17,15 @@ function isNftCoreOp(operation: Operation): boolean {
   );
 }
 
+function isIncomingCoreOp(operation: Operation): boolean {
+  const type =
+    typeof operation.details?.ledgerOpType === "string"
+      ? operation.details.ledgerOpType
+      : operation.type;
+
+  return type === "IN";
+}
+
 function isInternalLiveOp(operation: OperationCommon): boolean {
   return !!operation.extra?.internal;
 }
@@ -69,7 +78,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const [newCoreOps] = await alpacaApi.listOperations(address, paginationParams);
     const newOps = newCoreOps
-      .filter(op => !isNftCoreOp(op))
+      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
       .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
 
     const newAssetOperations = newOps.filter(
@@ -102,10 +111,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           internalOperations,
         });
       });
-    // Try to refresh known pending operations (if not already updated)
+    // Try to refresh known pending and broadcasted operations (if not already updated)
     // Useful for integrations without explorers
     const operationsToRefresh = initialAccount?.pendingOperations.filter(
-      pendingOp => !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash),
+      pendingOp =>
+        pendingOp.hash && // operation has been broadcasted
+        !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
     );
     const confirmedOperations =
       alpacaApi.refreshOperations && operationsToRefresh?.length

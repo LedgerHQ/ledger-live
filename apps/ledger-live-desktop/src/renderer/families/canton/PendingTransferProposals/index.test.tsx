@@ -54,6 +54,16 @@ jest.mock("./DeviceAppModal", () => ({
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: jest.fn(() => ({ code: "AMU", magnitude: 18, name: "Amulet" })),
 }));
+jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+  __esModule: true,
+  default: () => <div data-testid="address-cell" />,
+  splitAddress: (value: string) => ({ left: value.slice(0, 5), right: value.slice(5) }),
+  SplitAddress: ({ value }: { value: string }) => (
+    <span data-testid={`address-${value}`}>{value}</span>
+  ),
+  Address: ({ value }: { value: string }) => <span data-testid={`address-${value}`}>{value}</span>,
+  Cell: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 jest.mock("./PendingTransferProposalsDetails", () => ({
   __esModule: true,
   default: ({ account, contractId, onOpenModal }: any) => (
@@ -129,7 +139,7 @@ describe("PendingTransferProposals", () => {
   it("should sync account after successful action", async () => {
     mockPerformTransferInstruction.mockResolvedValue(undefined);
 
-    render(<PendingTransferProposals account={mockAccount} />, {
+    render(<PendingTransferProposals account={mockAccount} parentAccount={mockAccount} />, {
       initialState: buildInitialState(),
     });
     fireEvent.click(screen.getByText("families.canton.pendingTransactions.accept"));
@@ -163,20 +173,22 @@ describe("PendingTransferProposals", () => {
         new TopologyChangeError("Topology change detected"),
       );
 
-      render(<PendingTransferProposals account={account} />, {
+      render(<PendingTransferProposals account={account} parentAccount={mockAccount} />, {
         initialState: buildInitialState(),
       });
-      fireEvent.click(screen.getByText(`families.canton.pendingTransactions.${action}`));
+      const buttonText =
+        action === "withdraw" ? "common.cancel" : `families.canton.pendingTransactions.${action}`;
+      fireEvent.click(screen.getByText(buttonText));
       fireEvent.click(await screen.findByTestId("modal-confirm"));
 
       await waitFor(() => {
         expect(mockHandleTopologyChangeError).toHaveBeenCalledWith(
           mockDispatch,
           expect.objectContaining({
-            currency: account.currency,
+            currency: mockAccount.currency,
             device: mockDevice,
             accounts: [],
-            mainAccount: account,
+            mainAccount: mockAccount,
             navigationSnapshot: expect.objectContaining({
               type: "transfer-proposal",
               handler: expect.any(Function),
@@ -197,7 +209,7 @@ describe("PendingTransferProposals", () => {
       );
       mockGetCurrentDevice.mockReturnValue(null);
 
-      render(<PendingTransferProposals account={mockAccount} />, {
+      render(<PendingTransferProposals account={mockAccount} parentAccount={mockAccount} />, {
         initialState: buildInitialState({
           devices: {
             currentDevice: null,

@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";
-import { Switch } from "@ledgerhq/ldls-ui-react";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";
@@ -62,7 +62,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
         <Row flex={1} onClick={() => setFocusedGroupName(focused ? undefined : groupName)}>
           <Flex flex={1} mr={3} alignItems="center">
             <Box
-              bg={allEnabled ? "success.c50" : someEnabled ? "palette.warning.c50" : "error.c50"}
+              bg={allEnabled ? "success.c50" : someEnabled ? "warning.c50" : "error.c50"}
               height={10}
               width={10}
               mr={2}

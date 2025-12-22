@@ -17,7 +17,7 @@ import { FieldComponentProps } from "../types";
 
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   mt: 6,
   mb: 4,
   px: 5,
@@ -27,7 +27,7 @@ const Info = styled(Box).attrs(() => ({
 const AddressText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;

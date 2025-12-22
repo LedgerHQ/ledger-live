@@ -122,6 +122,7 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+    enableDialogDesktop: madFeatureFlag?.params?.enableDialogDesktop ?? false,
   };
 };
 

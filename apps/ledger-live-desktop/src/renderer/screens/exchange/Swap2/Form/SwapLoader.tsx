@@ -17,7 +17,7 @@ interface SwapLoaderProps {
   isLoading: boolean;
 }
 
-export function SwapLoader({ isLoading }: SwapLoaderProps) {
+export function SwapLoader({ isLoading }: Readonly<SwapLoaderProps>) {
   if (!isLoading) return null;
 
   return (

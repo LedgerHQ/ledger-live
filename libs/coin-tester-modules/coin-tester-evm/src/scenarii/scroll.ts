@@ -3,15 +3,14 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, scroll, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type ScrollScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -61,10 +60,8 @@ const makeScenarioTransactions = ({
 export const scenarioScroll: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.scroll.io"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://rpc.scroll.io", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
@@ -90,8 +87,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     }));
     initMswHandlers(getCoinConfig(scroll).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "scroll");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("scroll", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: scroll,
@@ -111,7 +107,6 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
       retryLimit: 0,
     };
   },
@@ -134,7 +129,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     expect(account.operations.length).toBe(3);
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
     resetIndexer();
   },
 };

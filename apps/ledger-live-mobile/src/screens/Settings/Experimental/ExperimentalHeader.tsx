@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
 import { Flex } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useExperimental } from "../../../experimental";
 import LText from "~/components/LText";
 import ExperimentalIcon from "~/icons/Experimental";

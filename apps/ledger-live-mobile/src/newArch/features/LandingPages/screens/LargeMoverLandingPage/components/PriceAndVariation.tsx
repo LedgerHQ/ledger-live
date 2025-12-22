@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Delta from "~/components/Delta";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";

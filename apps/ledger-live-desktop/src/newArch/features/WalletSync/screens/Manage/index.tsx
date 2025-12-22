@@ -14,6 +14,7 @@ import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSync
 import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
 import { AlertError } from "../../components/AlertError";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -55,11 +56,14 @@ const WalletSyncManage = ({ currentPage }: Props) => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
     onClickTrack({ button: "Manage Instances", page: currentPage });
   };
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
 
   const Options: OptionProps[] = [
     {
       label: t("walletSync.manage.synchronize.label"),
-      description: t("walletSync.manage.synchronize.description"),
+      description: ledgerSyncOptimisationFlag?.enabled
+        ? t("settings.display.walletSyncDescription")
+        : t("walletSync.manage.synchronize.description"),
       onClick: goToSync,
       testId: "walletSync-synchronize",
     },

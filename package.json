@@ -85,6 +85,7 @@
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:casper": "pnpm --filter coin-casper",
     "coin:celo": "pnpm --filter coin-celo",
+    "coin:concordium": "pnpm --filter coin-concordium",
     "coin:cosmos": "pnpm --filter coin-cosmos",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
@@ -121,6 +122,7 @@
     "common": "pnpm --filter live-common",
     "device-core": "pnpm --filter device-core",
     "device-react": "pnpm --filter device-react",
+    "client-ids": "pnpm --filter client-ids",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     "wallet": "pnpm --filter live-wallet",
@@ -232,7 +234,7 @@
     "nyc": "15.1.0",
     "prettier": "3.2.5",
     "rimraf": "4.4.1",
-    "turbo": "2.1.2",
+    "turbo": "2.1.3",
     "typescript": "5.4.3",
     "unimported": "1.30.0",
     "zx": "8.4.1"
@@ -250,7 +252,6 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5",
       "ethers": "6.15.0",
       "bignumber.js": "9.1.2",
       "@radix-ui/react-slot": "^1.2.3"

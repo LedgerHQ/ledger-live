@@ -7,16 +7,23 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { TrackScreen } from "~/analytics";
 import styled from "styled-components/native";
 import { HookResult, useGeneralLandingPage } from "./useGeneralLandingPageViewModel";
+import { useWindowDimensions } from "react-native";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<LandingPagesNavigatorParamList, ScreenName.GenericLandingPage>
 >;
 
+const STICKY_CTA_HEIGHT = 64;
+
 export const GenericView = (props: HookResult) => {
   const { useCase, isLoading, landingStickyCTA, openLink } = props;
+  const useCaseHeight = useWindowDimensions().height;
 
   return (
-    <Container height="100%" justifyContent={isLoading ? "center" : "normal"}>
+    <Container
+      height={useCaseHeight - STICKY_CTA_HEIGHT * 2}
+      justifyContent={isLoading ? "center" : "normal"}
+    >
       <TrackScreen name="Landing Page" useCase={useCase} />
       {isLoading ? (
         <InfiniteLoader />
@@ -28,8 +35,8 @@ export const GenericView = (props: HookResult) => {
             bottomSpacing={32}
           />
           {!!landingStickyCTA && (
-            <StickyContainer alignItems="center" justifyContent="center" width="100%">
-              <Button onPress={() => openLink(landingStickyCTA)} type="main">
+            <StickyContainer alignItems="center" justifyContent="center">
+              <Button onPressIn={() => openLink(landingStickyCTA)} type="main">
                 <Text color="neutral.c00" variant="large" fontWeight="semiBold">
                   {landingStickyCTA.cta}
                 </Text>
@@ -54,5 +61,7 @@ const Container = styled(Flex)`
 
 const StickyContainer = styled(Flex)`
   position: absolute;
-  bottom: 35px;
+  bottom: 0;
+  width: 100%;
+  height: ${STICKY_CTA_HEIGHT}px;
 `;

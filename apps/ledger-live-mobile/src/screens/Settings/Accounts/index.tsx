@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { loadBlacklistedTokenSections as loadBlacklistedTokenSectionsBase } from "@ledgerhq/live-common/account/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

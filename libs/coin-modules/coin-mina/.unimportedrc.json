@@ -15,7 +15,8 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnimported": [
-    "src/test/fixtures.ts"
+    "src/test/fixtures.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": [

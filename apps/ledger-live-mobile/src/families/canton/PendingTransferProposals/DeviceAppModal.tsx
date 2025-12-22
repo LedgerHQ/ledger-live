@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect, FC } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Flex, Text, InfiniteLoader, IconBox, IconsLegacy } from "@ledgerhq/native-ui";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useAppDeviceAction } from "~/hooks/deviceActions";

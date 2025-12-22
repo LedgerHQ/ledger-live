@@ -81,7 +81,7 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
             <Button
               id={"account-delegate-button"}
               mr={2}
-              color="palette.primary.main"
+              color="primary.c80"
               small
               onClick={onDelegate}
             >
@@ -127,7 +127,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
           maxWidth: "65%",
         }}
       >
-        <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+        <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
           <Trans
             i18nKey="solana.delegation.emptyState.description"
             values={{

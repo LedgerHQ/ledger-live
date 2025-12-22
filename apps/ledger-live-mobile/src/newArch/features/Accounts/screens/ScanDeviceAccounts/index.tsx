@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Trans, useTranslation } from "react-i18next";
 import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";
@@ -29,7 +29,7 @@ const StyledPressable = styled(Pressable)`
   border-style: dotted;
   border-color: ${({ theme }) => theme.colors.opacityDefault.c10};
   padding: 16px;
-  margin-vertical: 8px;
+  margin: 8px 0;
   border-radius: 12px;
   display: flex;
   flex-direction: row;
@@ -94,7 +94,7 @@ function ScanDeviceAccounts() {
     >
       <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-      {scanning || !scannedAccounts.length ? (
+      {scanning || scannedAccounts.length === 0 ? (
         <Flex px={6} style={styles.headerTitle}>
           <Text
             variant="h4"
@@ -106,16 +106,19 @@ function ScanDeviceAccounts() {
           </Text>
         </Flex>
       ) : (
-        <Flex px={6} style={styles.headerTitle}>
-          <Text
-            variant="h4"
-            testID="receive-header-step2-title"
-            fontSize="24px"
-            color="neutral.c100"
-          >
-            <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
-          </Text>
-        </Flex>
+        <>
+          <Flex px={6} style={styles.headerTitle}>
+            <Text
+              variant="h4"
+              testID="receive-header-step2-title"
+              fontSize="24px"
+              color="neutral.c100"
+            >
+              <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
+            </Text>
+          </Flex>
+          <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
+        </>
       )}
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>

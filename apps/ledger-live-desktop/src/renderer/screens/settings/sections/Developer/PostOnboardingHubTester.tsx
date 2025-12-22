@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { Flex } from "@ledgerhq/react-ui";
 
 const PostOnboardingHubTester = () => {

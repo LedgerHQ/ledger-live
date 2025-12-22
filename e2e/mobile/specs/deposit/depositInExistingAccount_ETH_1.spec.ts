@@ -5,7 +5,7 @@ const testConfig = {
   account: Account.ETH_1,
   networkName: "ethereum",
   tmsLinks: ["B2CQA-1898"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runDepositInExistingAccountTest(

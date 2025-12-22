@@ -37,10 +37,6 @@ jest.mock("../useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: () => jest.fn(() => false),
 }));
 
-jest.mock("~/renderer/drawers/Provider", () => ({
-  setDrawer: jest.fn(),
-}));
-
 const mockOpenAddAccountFlow = jest.fn();
 const mockOpenAssetFlow = jest.fn();
 

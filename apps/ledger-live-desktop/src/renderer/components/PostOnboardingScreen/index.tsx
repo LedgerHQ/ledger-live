@@ -1,7 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
@@ -54,9 +53,7 @@ const PostOnboardingScreen = () => {
         >
           {areAllPostOnboardingActionsCompleted
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
-            : t("postOnboarding.postOnboardingScreen.title", {
-                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
-              })}
+            : t("postOnboarding.postOnboardingScreen.title")}
         </Text>
       </Flex>
       <Flex flex={1} paddingRight={100} paddingLeft={50} paddingTop={50} overflow="auto">

@@ -12,7 +12,7 @@ import AppProgressButton from "../AppsList/AppProgressButton";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 type HeaderProps = {
-  illustration: JSX.Element;
+  illustration: React.JSX.Element;
 };
 
 const Header = ({ illustration }: HeaderProps) => (
@@ -79,7 +79,7 @@ type Props = {
   state: State;
   dispatch: (_: Action) => void;
   appList?: App[];
-  illustration: JSX.Element;
+  illustration: React.JSX.Element;
   deviceInfo: DeviceInfo;
 };
 

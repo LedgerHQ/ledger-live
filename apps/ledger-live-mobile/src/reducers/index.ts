@@ -1,7 +1,7 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
-import { combineReducers, Store } from "redux";
+import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
-import { ActionsPayload } from "../actions/types";
+import type { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -21,10 +21,11 @@ import settings from "./settings";
 import swap from "./swap";
 import toasts from "./toast";
 import trustchain from "./trustchain";
-import { State } from "./types";
+import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 export type AppStore = Store<State>;
 
@@ -36,6 +37,7 @@ const appReducer = combineReducers({
   countervalues,
   dynamicContent,
   earn,
+  identities: identitiesSlice.reducer,
   inView,
   largeMover,
   market,

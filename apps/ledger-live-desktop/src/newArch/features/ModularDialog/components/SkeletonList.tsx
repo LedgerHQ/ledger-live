@@ -1,13 +1,12 @@
-import { Flex } from "@ledgerhq/react-ui/index";
-import { Skeleton } from "LLD/components/Skeleton";
 import React from "react";
+import { Skeleton } from "@ledgerhq/lumen-ui-react";
 
 const SkeletonList = () => (
-  <Flex flexDirection="column" flex="1 1 auto" overflow="hidden" rowGap="8px">
+  <div className="flex flex-1 flex-col overflow-hidden px-4">
     {Array.from({ length: 10 }, (_, index) => (
-      <Skeleton key={index} barHeight={64} minHeight={64} />
+      <Skeleton key={index} component="list-item" />
     ))}
-  </Flex>
+  </div>
 );
 
 export default SkeletonList;

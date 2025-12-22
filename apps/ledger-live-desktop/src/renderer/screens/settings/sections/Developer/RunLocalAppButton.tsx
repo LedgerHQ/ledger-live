@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import React, { useCallback } from "react";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { readFile, writeFile } from "fs";
 import { SettingsSectionRow as Row } from "../../SettingsSection";

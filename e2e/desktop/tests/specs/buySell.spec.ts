@@ -113,7 +113,7 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToMarket();
-        await app.market.search(crypto.currency.name);
+        await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
 
         await app.layout.verifyBuySellSideBarIsSelected();

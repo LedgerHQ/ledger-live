@@ -5,7 +5,7 @@ const swapTestConfig = {
   tmsLinks: ["B2CQA-3090"],
   userData: "speculos-x-other-account",
   errorMessage: null,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSwapWithDifferentSeedTest(

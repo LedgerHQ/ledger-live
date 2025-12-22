@@ -1,3 +1,4 @@
+import ReactNative from "react-native";
 import { act, renderHook } from "@testing-library/react-native";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 
@@ -10,11 +11,20 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
 }));
 
-// Mock react redux's useSelector
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useSelector: jest.fn().mockImplementation((selector: () => unknown) => selector()),
-}));
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const mockUseSelector = jest
+    .fn()
+    .mockImplementation((selector: () => unknown) => selector()) as jest.Mock & {
+    withTypes: () => jest.Mock;
+  };
+  mockUseSelector.withTypes = () => mockUseSelector;
+  return {
+    ...actual,
+    useSelector: mockUseSelector,
+  };
+});
 
 // Mock the selectors
 jest.mock("~/reducers/settings", () => ({
@@ -44,13 +54,10 @@ const { useLatestFirmware } = jest.requireMock(
 // Mock isFirmwareUpdateSupported
 jest.mock("../../utils/isFirmwareUpdateSupported", () => ({
   ...jest.requireActual("../../utils/isFirmwareUpdateSupported"),
-  isOldFirmwareUpdateUxSupported: jest.fn().mockImplementation(() => ({
-    updateSupported: true,
-    updateSupportedButDeviceNotWired: false,
-  })),
-  isNewFirmwareUpdateUxSupported: jest.fn().mockImplementation(() => ({ updateSupported: true })),
+  isNewFirmwareUpdateUxSupported: jest.fn(),
+  isBleUpdateSupported: jest.fn(),
 }));
-const { isOldFirmwareUpdateUxSupported, isNewFirmwareUpdateUxSupported } = jest.requireMock(
+const { isNewFirmwareUpdateUxSupported, isBleUpdateSupported } = jest.requireMock(
   "../../utils/isFirmwareUpdateSupported",
 );
 
@@ -58,17 +65,15 @@ const { isOldFirmwareUpdateUxSupported, isNewFirmwareUpdateUxSupported } = jest.
 jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
   navigateToNewUpdateFlow: jest.fn(),
 }));
-jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
-  navigateToOldUpdateFlow: jest.fn(),
-}));
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
-const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
 /** TESTS */
 
 describe("useUpdateBannerViewModel", () => {
+  let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     jest.restoreAllMocks();
+    PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
   });
 
   it("should return bannerVisible: true if conditions are fulfilled", () => {
@@ -131,36 +136,42 @@ describe("useUpdateBannerViewModel", () => {
     expect(result.current.bannerVisible).toBe(false);
   });
 
-  it("should return the correct values of isUpdateSupportedButDeviceNotWired", () => {
+  it("should return isUpdateSupportedButDeviceNotWired: true if the update is supported only on USB and the device is not wired, on iOS", () => {
     hasConnectedDeviceSelector.mockReturnValue(true);
     hasCompletedOnboardingSelector.mockReturnValue(true);
     useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+    lastConnectedDeviceSelector.mockReturnValue({ modelId: "nanoX", wired: false });
+    isNewFirmwareUpdateUxSupported.mockReturnValue(true);
+    isBleUpdateSupported.mockReturnValue(false);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "ios" });
 
-    // true
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: true,
-    });
-
-    const { result: res1 } = renderHook(() =>
+    const { result } = renderHook(() =>
       useUpdateBannerViewModel({
         onBackFromUpdate: jest.fn(),
       }),
     );
-    expect(res1.current.isUpdateSupportedButDeviceNotWired).toBe(true);
 
-    // false
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
+    const { isUpdateSupportedButDeviceNotWired } = result.current;
+    expect(isUpdateSupportedButDeviceNotWired).toBe(false);
+  });
 
-    const { result: res2 } = renderHook(() =>
+  it("should return isUpdateSupportedButDeviceNotWired: true if the update is supported only on USB and the device is not wired, on Android", () => {
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+    lastConnectedDeviceSelector.mockReturnValue({ modelId: "nanoX", wired: false });
+    isNewFirmwareUpdateUxSupported.mockReturnValue(true);
+    isBleUpdateSupported.mockReturnValue(false);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
+
+    const { result } = renderHook(() =>
       useUpdateBannerViewModel({
         onBackFromUpdate: jest.fn(),
       }),
     );
-    expect(res2.current.isUpdateSupportedButDeviceNotWired).toBe(false);
+
+    const { isUpdateSupportedButDeviceNotWired } = result.current;
+    expect(isUpdateSupportedButDeviceNotWired).toBe(true);
   });
 
   it("should not call startFirmwareUpdateFlow when onClickUpdate is called if update flow is not supported", () => {
@@ -168,10 +179,6 @@ describe("useUpdateBannerViewModel", () => {
     hasCompletedOnboardingSelector.mockReturnValue(true);
     useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
 
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
     isNewFirmwareUpdateUxSupported.mockReturnValue(false);
 
     const { result } = renderHook(() =>
@@ -188,29 +195,6 @@ describe("useUpdateBannerViewModel", () => {
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
   });
 
-  it("should not call startFirmwareUpdateFlow when onClickUpdate is called if old update flow is supported", () => {
-    hasConnectedDeviceSelector.mockReturnValue(true);
-    hasCompletedOnboardingSelector.mockReturnValue(true);
-    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
-
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: true,
-      updateSupportedButDeviceNotWired: false,
-    });
-    isNewFirmwareUpdateUxSupported.mockReturnValue(false);
-
-    const { result } = renderHook(() =>
-      useUpdateBannerViewModel({
-        onBackFromUpdate: jest.fn(),
-      }),
-    );
-
-    act(() => result.current.onClickUpdate());
-
-    expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
-    expect(navigateToOldUpdateFlow).toHaveBeenCalled();
-  });
-
   it("should not call startFirmwareUpdateFlow when onClickUpdate is called for a bluetooth Nano X update with version < 2.4.0", () => {
     hasConnectedDeviceSelector.mockReturnValue(true);
     hasCompletedOnboardingSelector.mockReturnValue(true);
@@ -218,10 +202,6 @@ describe("useUpdateBannerViewModel", () => {
     lastConnectedDeviceSelector.mockReturnValue({ modelId: "nanoX", wired: false });
     lastSeenDeviceSelector.mockReturnValue({ modelId: "nanoX", deviceInfo: { version: "2.3.9" } });
 
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
     isNewFirmwareUpdateUxSupported.mockReturnValue(true);
 
     const { result } = renderHook(() =>
@@ -241,11 +221,8 @@ describe("useUpdateBannerViewModel", () => {
     useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
     lastSeenDeviceSelector.mockReturnValue({ modelId: "mockId", deviceInfo: { version: "3.0.0" } });
 
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
     isNewFirmwareUpdateUxSupported.mockReturnValue(true);
+    isBleUpdateSupported.mockReturnValue(true);
 
     const { result } = renderHook(() =>
       useUpdateBannerViewModel({
@@ -269,10 +246,7 @@ describe("useUpdateBannerViewModel", () => {
     });
     lastSeenDeviceSelector.mockReturnValue({ modelId: "nanoX", deviceInfo: { version: "2.4.0" } });
 
-    isOldFirmwareUpdateUxSupported.mockReturnValue({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
+    isBleUpdateSupported.mockReturnValue(true);
     isNewFirmwareUpdateUxSupported.mockReturnValue(true);
 
     const { result } = renderHook(() =>

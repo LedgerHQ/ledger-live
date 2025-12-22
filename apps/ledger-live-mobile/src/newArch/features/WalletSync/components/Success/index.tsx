@@ -4,6 +4,7 @@ import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 type Props = {
   title: string;
   desc?: string;
@@ -23,6 +24,7 @@ type Props = {
 
 export function Success({ title, desc, mainButton, secondaryButton, analyticsPage }: Props) {
   const { colors } = useTheme();
+  const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <PreventNativeBack />
@@ -40,6 +42,8 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
           justifyContent="center"
           rowGap={16}
           testID="walletsync-success"
+          flex={ledgerSyncOptimisationFlag?.enabled ? 1 : undefined}
+          mb={ledgerSyncOptimisationFlag?.enabled ? 80 : undefined}
         >
           <Container borderRadius={50}>
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />

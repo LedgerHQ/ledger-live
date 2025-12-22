@@ -58,7 +58,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
         px={5}
         ff="Inter"
         fontSize={4}
-        color="palette.text.shade80"
+        color="neutral.c80"
         pt={5}
         style={{
           overflow: "visible",
@@ -104,15 +104,15 @@ function Tooltip({
       <FormattedVal
         alwaysShowSign={false}
         fontSize={5}
-        color="palette.text.shade100"
+        color="neutral.c100"
         showCode
         unit={counterValue.units[0]}
         val={data.value}
       />
-      <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
+      <Box ff="Inter|Regular" color="neutral.c70" fontSize={3} mt={2}>
         {dayFormatter(data.date)}
       </Box>
-      <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+      <Box ff="Inter|Regular" color="neutral.c70" fontSize={3}>
         {hourFormatter(data.date)}
       </Box>
     </>

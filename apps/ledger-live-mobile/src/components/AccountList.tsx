@@ -16,7 +16,7 @@ type Props = {
   onAddAccount?: () => void;
 };
 
-const AccountList = ({ list, showAddAccount, onPress, onAddAccount }: Props): JSX.Element => {
+const AccountList = ({ list, showAddAccount, onPress, onAddAccount }: Props): React.JSX.Element => {
   const keyExtractor = (item: SearchResult) => item.account.id;
   const { colors } = useTheme();
 

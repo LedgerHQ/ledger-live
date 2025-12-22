@@ -7,7 +7,7 @@ import {
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";
@@ -87,7 +87,7 @@ const PostOnboardingHub = () => {
           <Text variant="h1Inter" fontWeight="semiBold">
             {areAllPostOnboardingActionsCompleted
               ? t("postOnboarding.hub.areAllPostOnboardingActionsCompletedTitle")
-              : t("postOnboarding.hub.title", { productName })}
+              : t("postOnboarding.hub.title")}
           </Text>
         </Flex>
         <ScrollContainer

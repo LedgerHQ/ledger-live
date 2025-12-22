@@ -35,7 +35,7 @@ const beforeAllFunction = async (transaction: TransactionType) => {
 export function runSendTest(
   transaction: TransactionType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -76,7 +76,7 @@ export function runSendInvalidAddressTest(
   transaction: TransactionType,
   expectedErrorMessage: string,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   accountName?: string,
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -98,7 +98,7 @@ export function runSendValidAddressTest(
   transaction: TransactionType,
   tmsLinks: string[],
   testName: string,
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
@@ -129,7 +129,7 @@ export function runSendInvalidAmountTest(
   transaction: TransactionType,
   expectedErrorMessage: string,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -154,7 +154,7 @@ export function runSendInvalidTokenAmountTest(
   transaction: TransactionType,
   expectedErrorMessage: RegExp | string,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -188,7 +188,7 @@ export function runSendInvalidTokenAmountTest(
 export function runSendMaxTest(
   transaction: TransactionType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 ) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -217,7 +217,7 @@ export function runSendMaxTest(
 export function runSendENSTest(
   transaction: TransactionType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 ) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

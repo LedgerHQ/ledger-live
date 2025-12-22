@@ -39,6 +39,10 @@ import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
+
+const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
+const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
+
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
   style: {
     opacity: p.collapsed ? 1 : 0,
@@ -59,14 +63,14 @@ const Tag = styled(Link)`
   padding: 0 12px;
   border-radius: 8px;
   margin: 0px 16px 12px;
-  color: ${p => p.theme.colors.palette.text.shade100};
-  background-color: ${p => p.theme.colors.palette.opacityPurple.c10};
+  color: ${p => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.opacityPurple.c10};
   text-decoration: none;
   cursor: pointer;
   border: solid 1px rgba(0, 0, 0, 0);
 
   &:hover {
-    background-color: ${p => darken(p.theme.colors.palette.action.hover, 0.05)};
+    background-color: ${p => darken(p.theme.colors.opacityDefault.c10, 0.05)};
     border-color: ${p => p.theme.colors.wallet};
   }
 `;
@@ -95,21 +99,21 @@ const Collapser = styled(Box).attrs(() => ({
   cursor: pointer;
   border-radius: 50%;
   background: linear-gradient(
-      ${p => p.theme.colors.palette.opacityDefault.c05} 0%,
-      ${p => p.theme.colors.palette.opacityDefault.c05} 100%
+      ${p => p.theme.colors.opacityDefault.c05} 0%,
+      ${p => p.theme.colors.opacityDefault.c05} 100%
     ),
-    ${p => p.theme.colors.palette.background.default};
+    ${p => p.theme.colors.background.default};
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid ${p => p.theme.colors.palette.opacityDefault.c05};
+  border: 1px solid ${p => p.theme.colors.opacityDefault.c05};
   transition: all 0.5s;
   z-index: 100;
 
   &:hover {
     background: linear-gradient(
-        ${p => p.theme.colors.palette.opacityDefault.c10} 0%,
-        ${p => p.theme.colors.palette.opacityDefault.c10} 100%
+        ${p => p.theme.colors.opacityDefault.c10} 0%,
+        ${p => p.theme.colors.opacityDefault.c10} 100%
       ),
-      ${p => p.theme.colors.palette.background.default};
+      ${p => p.theme.colors.background.default};
   }
 
   & > * {
@@ -122,7 +126,7 @@ const Separator = styled(Box).attrs(() => ({
   mx: 4,
 }))`
   height: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.neutral.c40};
 `;
 const sideBarTransitionStyles = {
   entering: {
@@ -153,10 +157,10 @@ const SideBar = styled(Box).attrs(() => ({
   flex: 0 0 auto;
   width: auto;
   background: linear-gradient(
-      ${p => p.theme.colors.palette.opacityDefault.c05} 0%,
-      ${p => p.theme.colors.palette.opacityDefault.c05} 100%
+      ${p => p.theme.colors.opacityDefault.c05} 0%,
+      ${p => p.theme.colors.opacityDefault.c05} 100%
     ),
-    ${p => p.theme.colors.palette.background.default};
+    ${p => p.theme.colors.background.default};
   transition: flex ${sideBarTransitionSpeed}ms;
   will-change: flex;
   transform: translate3d(0, 0, 10);
@@ -222,11 +226,6 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 
-// WebHID is now the default transport, no need for warning tag
-const TagContainerLDMK = ({ collapsed: _collapsed }: { collapsed: boolean }) => {
-  return null;
-};
-
 // Check if the selected tab is a Live-App under discovery tab
 const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
   liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
@@ -245,7 +244,7 @@ const MainSideBar = () => {
   const collapsed = useSelector(sidebarCollapsedSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const noAccounts = useSelector(accountsSelector).length === 0;
-  const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
+  const totalStarredAccounts = useSelector(starredAccountsSelector).length;
   const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
@@ -360,6 +359,18 @@ const MainSideBar = () => {
     ].filter((path): path is string => !!path), // Filter undefined values,
   );
 
+  const getMinHeightForStarredAccountsList = () => {
+    if (totalStarredAccounts === 0) {
+      return "max-content"; // let it take the full height of the placeholder
+    }
+
+    const minHeight =
+      Math.min(totalStarredAccounts, MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN) *
+      STARRED_ACCOUNT_ITEM_HEIGHT;
+
+    return minHeight + "px";
+  };
+
   return (
     <Transition
       in={!collapsed}
@@ -372,10 +383,7 @@ const MainSideBar = () => {
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar
-            className="unstoppableAnimation"
-            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
-          >
+          <SideBar style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}>
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
@@ -530,25 +538,27 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
               </SideBarList>
-              <Box>
-                <Space grow of={30} />
-                <Hide visible={secondAnim && hasStarredAccounts} mb={"-8px"}>
-                  <Separator />
-                </Hide>
-                <SideBarList
-                  scroll
-                  flex="1 1 40%"
-                  title={t("sidebar.stars")}
-                  collapsed={secondAnim}
-                >
-                  <Stars pathname={location.pathname} collapsed={secondAnim} />
-                </SideBarList>
-              </Box>
+
+              <Space grow of={30} />
+              <Hide visible={secondAnim && totalStarredAccounts > 0} mb={"-8px"}>
+                <Separator />
+              </Hide>
+              <SideBarList
+                style={{
+                  maxHeight: "max-content",
+                  minHeight: getMinHeightForStarredAccountsList(),
+                }}
+                scroll
+                title={t("sidebar.stars")}
+                collapsed={secondAnim}
+              >
+                <Stars pathname={location.pathname} collapsed={secondAnim} />
+              </SideBarList>
             </SideBarScrollContainer>
+
             <Box pt={4}>
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
-              <TagContainerLDMK collapsed={!secondAnim} />
             </Box>
           </SideBar>
         );

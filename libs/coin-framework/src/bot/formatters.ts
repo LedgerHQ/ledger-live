@@ -11,7 +11,7 @@ export function formatError(e: unknown, longform = false): string {
   } else {
     try {
       out = "raw object: " + JSON.stringify(e);
-    } catch (_e) {
+    } catch {
       out = String(e);
     }
   }

@@ -9,3 +9,4 @@ export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { getAssetFromToken } from "./getAssetFromToken";
 export { getTokenFromAsset } from "./getTokenFromAsset";
+export { getValidators } from "./getValidators";

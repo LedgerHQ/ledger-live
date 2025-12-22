@@ -10,19 +10,15 @@ import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
-import { UnsupportedFirmwareDAError } from "@ledgerhq/device-management-kit";
 
 type Props = {
   error: LedgerError;
   onClose: () => void;
   onRetry?: () => void;
 };
-
-const isFirmwareUnsupportedError = (error: unknown): boolean =>
-  error instanceof LatestFirmwareVersionRequired || error instanceof UnsupportedFirmwareDAError;
 
 function ValidateError({ error, onClose, onRetry }: Props) {
   const navigation = useNavigation<BaseNavigation>();
@@ -64,8 +60,8 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        {isFirmwareUnsupportedError(error) && lastConnectedDevice ? (
-          <RequiredFirmwareUpdate t={t} navigation={navigation} device={lastConnectedDevice} />
+        {error instanceof LatestFirmwareVersionRequired && lastConnectedDevice ? (
+          <RequiredFirmwareUpdate navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>
             <GenericErrorView error={error} hasExportLogButton={!managerAppName} />

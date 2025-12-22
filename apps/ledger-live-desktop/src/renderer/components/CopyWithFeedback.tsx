@@ -30,7 +30,7 @@ class CopyWithFeedback extends PureComponent<Props, State> {
   _isUnmounted = false;
   handleCopy = () => {
     const { text } = this.props;
-    clipboard && clipboard.writeText(text);
+    if (clipboard) clipboard.writeText(text);
     this.setState({
       isCopied: true,
     });

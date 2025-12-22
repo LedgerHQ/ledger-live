@@ -66,7 +66,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
                     ff="Inter|SemiBold"
                     fontSize={13}
                     textAlign="center"
-                    color="palette.text.shade80"
+                    color="neutral.c80"
                     style={{
                       lineHeight: 1.57,
                     }}
@@ -84,7 +84,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
                           lineHeight: 1.57,
                           flex: 1,
                         }}
-                        color="palette.text.shade100"
+                        color="neutral.c100"
                         fontSize={13}
                       >
                         {val}

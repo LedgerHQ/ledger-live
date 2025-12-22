@@ -1,29 +1,22 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AnimatePresence } from "framer-motion";
-import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
-import AssetSelection from "./screens/AssetSelection";
-import { NetworkSelection } from "./screens/NetworkSelection";
-import { AccountSelection } from "./screens/AccountSelection";
-import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
-import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
+import AssetSelector from "./screens/AssetSelector";
+import { NetworkSelector } from "./screens/NetworkSelector";
+import { AccountSelector } from "./screens/AccountSelector";
+import { useModularDrawerNavigation } from "./hooks/useModularDialogNavigation";
+import { useModularDrawerRemoteData } from "./hooks/useModularDialogRemoteData";
 import {
   resetModularDrawerState,
   modularDrawerFlowSelector,
+  modularDialogIsOpenSelector,
+  closeDialog,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
-import { DialogHeader } from "@ledgerhq/ldls-ui-react";
-import { useDialog } from "LLD/components/Dialog";
-import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-
-const TranslationKeyMap: Record<ModularDrawerStep, string> = {
-  [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
-  [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
-  [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
-};
+import { ModularDialogContent } from "./ModularDialogContent";
 
 const ModularDialogFlowManager = ({
   currencies,
@@ -37,10 +30,8 @@ const ModularDialogFlowManager = ({
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
-  const { closeDialog } = useDialog();
   const flow = useSelector(modularDrawerFlowSelector);
-
-  const { t } = useTranslation();
+  const isOpen = useSelector(modularDialogIsOpenSelector);
 
   const handleClose = () => {
     track("button_clicked", {
@@ -48,8 +39,8 @@ const ModularDialogFlowManager = ({
       flow,
       page: currentRouteNameRef.current,
     });
+    dispatch(closeDialog());
     onClose?.();
-    closeDialog();
   };
 
   useEffect(() => {
@@ -59,7 +50,7 @@ const ModularDialogFlowManager = ({
   }, [dispatch]);
 
   const {
-    error,
+    errorInfo,
     refetch,
     loadingStatus,
     assetsToDisplay,
@@ -90,20 +81,20 @@ const ModularDialogFlowManager = ({
     switch (step) {
       case MODULAR_DRAWER_STEP.ASSET_SELECTION:
         return (
-          <AssetSelection
+          <AssetSelector
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
             assetsConfiguration={assetsConfiguration}
             onAssetSelected={handleAssetSelected}
             loadNext={loadNext}
-            error={!!error}
+            errorInfo={errorInfo}
             refetch={refetch}
             assetsSorted={assetsSorted}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
         return (
-          <NetworkSelection
+          <NetworkSelector
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
             onNetworkSelected={handleNetworkSelected}
@@ -112,7 +103,7 @@ const ModularDialogFlowManager = ({
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelection asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
         }
         return null;
       default:
@@ -121,25 +112,17 @@ const ModularDialogFlowManager = ({
   };
 
   return (
-    <>
-      <DialogHeader
-        appearance="extended"
-        title={t(TranslationKeyMap[currentStep])}
-        onClose={handleClose}
-        onBack={handleBack}
-      />
-      <div style={{ height: "480px", overflow: "hidden" }}>
-        <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
-          <AnimatedScreenWrapper
-            key={currentStep}
-            screenKey={currentStep}
-            direction={navigationDirection}
-          >
-            {renderStepContent(currentStep)}
-          </AnimatedScreenWrapper>
-        </AnimatePresence>
-      </div>
-    </>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="pb-0">
+        <ModularDialogContent
+          currentStep={currentStep}
+          navigationDirection={navigationDirection}
+          handleClose={handleClose}
+          handleBack={handleBack}
+          renderStepContent={renderStepContent}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 

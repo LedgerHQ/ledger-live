@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import Activation from ".";
 import ActivationModal from "./ActivationModal";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -82,7 +82,7 @@ const ActivationFlow = ({
           <>
             <TrackScreen category={AnalyticsPage.ActivateLedgerSync} />
             {lwmLedgerSyncOptimisation?.enabled ? (
-              <ActivationModal onSyncMethodPress={onCreateKey} />
+              <ActivationModal onSyncMethodPress={navigateToChooseSyncMethod} />
             ) : (
               <Activation
                 onSyncMethodPress={onCreateKey}

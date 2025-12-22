@@ -135,7 +135,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
   babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
   hyperevm: EVM_DEAD_ADDRESS,
-  sei_network_evm: EVM_DEAD_ADDRESS,
+  sei_evm: EVM_DEAD_ADDRESS,
   berachain: EVM_DEAD_ADDRESS,
   canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",

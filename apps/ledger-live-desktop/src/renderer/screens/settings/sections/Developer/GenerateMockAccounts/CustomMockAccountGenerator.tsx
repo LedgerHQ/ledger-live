@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import { Button } from "@ledgerhq/ldls-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import { generateAccountsForCurrencies, injectMockAccounts, getSupportedCurrencies } from "./utils";
@@ -63,7 +63,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
         </Box>
 
         <Box flex={1}>
-          <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade100" mb={2}>
+          <Text ff="Inter|Medium" fontSize={3} color="neutral.c100" mb={2}>
             {t("settings.developer.mockAccounts.tokenIds.label")}
           </Text>
           <Input

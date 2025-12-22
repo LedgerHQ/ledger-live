@@ -36,12 +36,12 @@ const ContextMenu = ({ account }: Props) => {
     {
       key: "redelegate",
       label: (
-        <Box color="palette.text.shade100">
+        <Box color="neutral.c100">
           <Trans i18nKey="cardano.delegation.changeDelegation" />
         </Box>
       ),
       icon: (
-        <Box color="palette.text.shade100">
+        <Box color="neutral.c100">
           <UserEdit size={16} />
         </Box>
       ),
@@ -101,7 +101,7 @@ const ContextMenu = ({ account }: Props) => {
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.neutral.c70} />
           </Box>
         </Container>
       )}

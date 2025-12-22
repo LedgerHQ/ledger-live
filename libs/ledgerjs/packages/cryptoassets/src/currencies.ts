@@ -1751,7 +1751,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         name: "KAS",
         code: "KAS",
         magnitude: 8,
-        showAllDigits: true,
       },
       {
         name: "Sompis",
@@ -4363,11 +4362,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  sei_network_evm: {
+  sei_evm: {
     type: "CryptoCurrency",
-    id: "sei_network_evm",
+    id: "sei_evm",
     coinType: CoinType.ETH,
-    name: "SEI Network EVM",
+    name: "SEI Network (EVM)",
     managerAppName: "Ethereum",
     ticker: "SEI",
     scheme: "sei",

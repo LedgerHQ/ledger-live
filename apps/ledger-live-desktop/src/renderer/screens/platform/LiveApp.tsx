@@ -72,7 +72,7 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
 
     history.push(returnTo || `/platform`);
   }, [history, returnTo, appId, swapTrackingProperties, track]);
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,

@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard"],
+  "configMigration": true,
+  "extends": ["config:recommended", ":dependencyDashboard", "helpers:pinGithubActionDigests"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
@@ -10,25 +11,35 @@
   },
   "packageRules": [
     {
-      "description": "LDLS UI React - version updates",
-      "matchPackageNames": ["@ledgerhq/ldls-ui-react"],
+      "description": "GitHub Actions (CI)",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["/^LedgerHQ/", "/^ledgerhq/"],
+      "pinDigests": false,
+      "minimumReleaseAge": "15 days",
+      "labels": ["dependencies", "github_actions"],
+      "reviewers": ["ledgerhq/wallet-ci"],
+      "assignees": ["ledgerhq/wallet-ci"]
+    },
+    {
+      "description": "Lumen UI React - version updates",
+      "matchPackageNames": ["@ledgerhq/lumen-ui-react"],
       "matchFileNames": ["apps/ledger-live-desktop/package.json"],
       "commitMessagePrefix": "chore(desktop):",
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",
-      "labels": ["dependencies", "ui", "ldls"],
+      "labels": ["dependencies", "ui", "lumen"],
       "reviewers": ["ledgerhq/live-hub"],
       "assignees": ["ledgerhq/live-hub"],
       "prPriority": 10
     },
     {
-      "description": "LDLS Design Core - Catalog updates",
-      "matchPackageNames": ["@ledgerhq/ldls-design-core"],
+      "description": "Lumen Design Core - Catalog updates",
+      "matchPackageNames": ["@ledgerhq/lumen-design-core"],
       "matchFileNames": ["pnpm-workspace.yaml"],
       "commitMessagePrefix": "chore:",
       "commitMessageTopic": "update {{depName}} catalog",
       "commitMessageExtra": "to {{newVersion}}",
-      "labels": ["dependencies", "ui", "ldls", "catalog"],
+      "labels": ["dependencies", "ui", "lumen", "catalog"],
       "reviewers": ["ledgerhq/live-hub"],
       "assignees": ["ledgerhq/live-hub"],
       "prPriority": 10

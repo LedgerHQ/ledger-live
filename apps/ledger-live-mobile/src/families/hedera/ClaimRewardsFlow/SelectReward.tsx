@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
@@ -9,9 +8,9 @@ import type { HederaEnrichedDelegation } from "@ledgerhq/live-common/families/he
 import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DelegationRow from "../shared/DelegationRow";
 import type { HederaClaimRewardsFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   HederaClaimRewardsFlowParamList,
@@ -20,7 +19,7 @@ type Props = StackNavigatorProps<
 
 function ClaimRewardsSelectReward({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");

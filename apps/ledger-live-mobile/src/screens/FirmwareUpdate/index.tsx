@@ -29,7 +29,7 @@ import {
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Observable } from "rxjs";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import {

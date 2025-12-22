@@ -3,6 +3,7 @@ import { Flex } from "@ledgerhq/react-ui/index";
 import { FC } from "react";
 import styled from "styled-components";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Props extends Omit<FlexBoxProps, "marginBottom" | "paddingBottom"> {}
 
 export const ScrollContainer: FC<Props> = styled(Flex)<Props>(_ => {

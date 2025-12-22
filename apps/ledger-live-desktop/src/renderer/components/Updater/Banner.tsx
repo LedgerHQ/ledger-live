@@ -75,7 +75,7 @@ const UpdaterTopBanner: React.FC = () => {
     <TopBanner
       testId="layout-app-update-banner"
       content={content}
-      status={context?.status === "error" ? "alertRed" : "warning"}
+      status={context?.status === "error" ? "alertRed" : "legacyWarning"}
     />
   );
 };

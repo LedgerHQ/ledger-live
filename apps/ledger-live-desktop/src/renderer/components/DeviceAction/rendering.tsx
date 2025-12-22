@@ -1,56 +1,16 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import React, { Fragment, useCallback, useContext, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
-import { TFunction } from "i18next";
-import { Trans, useTranslation } from "react-i18next";
-import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { connect, useDispatch } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
+import { BigNumber } from "bignumber.js";
+
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import ProviderIcon from "~/renderer/components/ProviderIcon";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  FirmwareNotRecognized,
-  LockedDeviceError,
-  UpdateYourApp,
-  LatestFirmwareVersionRequired,
-  WrongDeviceForAccount,
-  DisconnectedDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  NoSuchAppOnProvider,
-  TransactionRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { closeAllModal } from "~/renderer/actions/modals";
-import Animation from "~/renderer/animations";
-import Button, { Base as ButtonBase } from "~/renderer/components/Button";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import Box from "~/renderer/components/Box";
-import Alert from "~/renderer/components/Alert";
-import ConnectTroubleshooting from "~/renderer/components/ConnectTroubleshooting";
-import ExportLogsButton from "~/renderer/components/ExportLogsButton";
-import { getDeviceAnimation } from "./animations";
-import { DeviceBlocker } from "./DeviceBlocker";
-import ErrorIcon from "~/renderer/components/ErrorIcon";
-import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import { urls } from "~/config/urls";
-import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
-import ExternalLinkButton from "../ExternalLinkButton";
-import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { Rotating } from "~/renderer/components/Spinner";
-import ProgressCircle from "~/renderer/components/ProgressCircle";
-import CrossCircle from "~/renderer/icons/CrossCircle";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { context, setDrawer } from "~/renderer/drawers/Provider";
-import { track } from "~/renderer/analytics/segment";
-import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import {
   Button as ButtonV3,
   Flex,
@@ -60,24 +20,70 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import {
+  FirmwareNotRecognized,
+  LockedDeviceError,
+  UpdateYourApp,
+  LatestFirmwareVersionRequired,
+  WrongDeviceForAccount,
+  DisconnectedDevice,
+  UnsupportedFeatureError,
+} from "@ledgerhq/errors";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  DeviceNotOnboarded,
+  NoSuchAppOnProvider,
+  TransactionRefusedOnDevice,
+} from "@ledgerhq/live-common/errors";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
+import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
+import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
+import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
+
+import { urls } from "~/config/urls";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { track } from "~/renderer/analytics/segment";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import Animation from "~/renderer/animations";
+import Button, { Base as ButtonBase } from "~/renderer/components/Button";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Box from "~/renderer/components/Box";
+import Alert from "~/renderer/components/Alert";
+import ConnectTroubleshooting from "~/renderer/components/ConnectTroubleshooting";
+import ExportLogsButton from "~/renderer/components/ExportLogsButton";
+import ErrorIcon from "~/renderer/components/ErrorIcon";
+import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
+import { Rotating } from "~/renderer/components/Spinner";
+import ProgressCircle from "~/renderer/components/ProgressCircle";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
-import { Account } from "@ledgerhq/types-live";
-import { openURL } from "~/renderer/linking";
-import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
+import Image from "~/renderer/components/Image";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
+import ExternalLinkButton from "../ExternalLinkButton";
 import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
-import { closePlatformAppDrawer } from "~/renderer/actions/UI";
-import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
-import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
-import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
-import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
-import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
-import Image from "~/renderer/components/Image";
+import { context, setDrawer } from "~/renderer/drawers/Provider";
+import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
+import CrossCircle from "~/renderer/icons/CrossCircle";
 import Nano from "~/renderer/images/nanoS.v4.svg";
-import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-desktop";
-import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
-import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
+import { openURL } from "~/renderer/linking";
+import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
+import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
+import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+
+import { getDeviceAnimation } from "./animations";
+import { DeviceBlocker } from "./DeviceBlocker";
+import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
+import { UnsupportedFeatureErrorComponent } from "./UnsupportedFeatureErrorComponent";
 
 export const AnimationWrapper = styled.div`
   max-width: 600px;
@@ -107,7 +113,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   min-height: 260px;
   max-width: 100%;
-  margin: auto ${p => p.theme.space[5]}px;
+  margin: auto;
 `;
 
 export const ConfirmWrapper = styled.div`
@@ -126,9 +132,9 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
   justify-content: center;
   color: ${p =>
     p.info
-      ? p.theme.colors.palette.primary.main
+      ? p.theme.colors.primary.c80
       : p.warning
-        ? p.theme.colors.warning
+        ? p.theme.colors.legacyWarning
         : p.theme.colors.alertRed};
 `;
 
@@ -152,7 +158,7 @@ export const Footer = styled.div`
 
 export const Title = styled(Text).attrs({
   fontWeight: "semiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 6,
 })`
@@ -168,7 +174,7 @@ const BulletText = styled(Text).attrs({
 
 export const SubTitle = styled(Text).attrs({
   variant: "paragraph",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 3,
 })`
@@ -182,7 +188,7 @@ export const SubTitle = styled(Text).attrs({
 const ErrorTitle = styled(Text).attrs({
   variant: "paragraph",
   fontWeight: "semiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 6,
 })`
@@ -197,7 +203,7 @@ const ErrorTitle = styled(Text).attrs({
  * */
 const ErrorDescription = styled(Text).attrs({
   variant: "paragraph",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   textAlign: "center",
   fontSize: 4,
   whiteSpace: "pre-wrap",
@@ -246,7 +252,7 @@ const Circle = styled(Flex)`
 const Separator = styled.div`
   width: calc(100% + 60px);
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  background-color: ${({ theme }) => theme.colors.neutral.c30};
   margin: 24px -30px;
 `;
 
@@ -259,7 +265,7 @@ const DeviceSwapSummaryStyled = styled.section`
 
 const DeviceSwapSummaryValueStyled = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  color: ${({ theme }) => theme.colors.palette.text.shade100};
+  color: ${({ theme }) => theme.colors.neutral.c100};
   font-size: 14px;
   justify-self: flex-end;
   max-width: 100%;
@@ -820,7 +826,7 @@ export const renderError = ({
   inlineRetry?: boolean;
   withDescription?: boolean;
   stretch?: boolean;
-  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => React.JSX.Element;
 }) => {
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -847,15 +853,19 @@ export const renderError = ({
         learnMoreTextKey={learnMoreTextKey}
       />
     );
+  } else if (tmpError instanceof UnsupportedFeatureError) {
+    return <UnsupportedFeatureErrorComponent />;
   } else if (isDisconnectedWhileSendingApduError(tmpError)) {
     tmpError = new DisconnectedDevice();
   }
-  // if no supportLink is provided, we fallback on the related url linked to
-  // tmpError name, if any
+
   const supportLinkUrl = supportLink ?? urls.errors[isDmkError(error) ? error._tag : error?.name];
 
   return (
     <Wrapper id={`error-${isDmkError(error) ? error._tag : error.name}`}>
+      {requireFirmwareUpdate ? (
+        <TrackPage category="Firmware Update" name="Error: App Unavailable Update Firmware" />
+      ) : null}
       <ErrorBody
         Icon={
           Icon
@@ -1016,10 +1026,10 @@ export const HardwareUpdate = ({
       <Image resource={Nano} alt="NanoS" mb="40px"></Image>
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
-      <Title variant="body" color="palette.text.shade100">
+      <Title variant="body" color="neutral.c100">
         <Trans i18nKey={i18nKeyTitle} values={i18nKeyValues} />
       </Title>
-      <Text variant="body" color="palette.text.shade60" textAlign="center">
+      <Text variant="body" color="neutral.c70" textAlign="center">
         <Trans i18nKey={i18nKeyDescription} values={i18nKeyValues} />
       </Text>
     </Flex>
@@ -1066,7 +1076,7 @@ const renderFirmwareUpdatingBase = ({
         <Flex alignItems="flex-start" flexDirection="column">
           <Flex alignItems="center">
             <Circle mr={6}>
-              <Text color="palette.text.shade100" variant="body">
+              <Text color="neutral.c100" variant="body">
                 {"1"}
               </Text>
             </Circle>
@@ -1079,7 +1089,7 @@ const renderFirmwareUpdatingBase = ({
           </Flex>
           <Flex alignItems="center" mt={6}>
             <Circle mr={6}>
-              <Text color="palette.text.shade100" variant="body">
+              <Text color="neutral.c100" variant="body">
                 {"2"}
               </Text>
             </Circle>
@@ -1137,7 +1147,7 @@ const SwapConfirmationDetailedView: React.FC<{
     <DeviceSwapSummaryStyled data-testid="device-swap-summary">
       {deviceSwapSummaryFields.map(([key, value]) => (
         <Fragment key={key}>
-          <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
+          <Text fontWeight="medium" color="neutral.c60" fontSize="14px">
             <Trans i18nKey={`DeviceAction.swap2.${key}`} />
           </Text>
           <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
@@ -1158,7 +1168,7 @@ const SwapConfirmationSimpleView: React.FC<{
     <Text fontSize="24px" fontWeight="semiBold" textAlign="center">
       <Trans i18nKey="DeviceAction.swap.confirmSwap" />
     </Text>
-    <Text color="palette.text.shade60" fontSize="14px" textAlign="center">
+    <Text color="neutral.c70" fontSize="14px" textAlign="center">
       <Trans i18nKey={`DeviceAction.swap.simpleViewNotice.${noticeType.message}`} />
     </Text>
   </DeviceSwapSummaryContainer>
@@ -1333,7 +1343,7 @@ export const renderSecureTransferDeviceConfirmation = ({
     </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
-      <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
+      <Text textAlign="center" fontWeight="semiBold" color="neutral.c100" fontSize={5}>
         <Trans i18nKey={`DeviceAction.${exchangeType}.confirm`} />
       </Text>
     </Box>

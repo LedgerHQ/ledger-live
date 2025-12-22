@@ -6,7 +6,7 @@ const testConfig = {
   networks: assetAvailableNetworks.USDT.networks,
   withAccount: true,
   tmsLinks: ["B2CQA-1857"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSelectCryptoNetworkTest(

@@ -18,6 +18,7 @@ import PendingTransferProposalsDetails from "./PendingTransferProposalsDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SectionTitle from "~/renderer/components/OperationsList/SectionTitle";
 import OperationDate from "~/renderer/components/OperationsList/OperationDate";
+import { Address } from "~/renderer/components/OperationsList/AddressCell";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconCross from "~/renderer/icons/Cross";
@@ -35,6 +36,7 @@ import type { TransferProposalAction } from "./types";
 
 type Props = {
   account: Account;
+  parentAccount: Account;
 };
 
 type Modal = {
@@ -49,32 +51,33 @@ const INSTRUCTION_TYPE_MAP: Record<TransferProposalAction, TransferInstructionTy
   withdraw: "withdraw-transfer-instruction",
 };
 
-const PendingTransferProposals: React.FC<Props> = ({ account }) => {
+const initialValues = {
+  groupedIncoming: [],
+  groupedOutgoing: [],
+  incomingCount: 0,
+  outgoingCount: 0,
+};
+
+const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const unit = useAccountUnit(account);
   const sync = useBridgeSync();
   const [modal, setModal] = useState<Modal>({ isOpen: false, action: "accept", contractId: "" });
 
-  const cantonAccount = isCantonAccount(account) ? account : null;
-  const accountXpub = account.xpub ?? "";
+  const cantonAccount = isCantonAccount(parentAccount) ? parentAccount : null;
+  const accountXpub = parentAccount.xpub ?? "";
 
   const performTransferInstruction = useCantonAcceptOrRejectOffer({
-    currency: account.currency,
-    account,
+    currency: parentAccount.currency,
+    account: parentAccount,
     partyId: accountXpub,
   });
 
   const { groupedIncoming, groupedOutgoing, incomingCount, outgoingCount } = useMemo(() => {
-    const pendingTransferProposals = cantonAccount?.cantonResources?.pendingTransferProposals;
-    if (!pendingTransferProposals || pendingTransferProposals.length === 0) {
-      return {
-        groupedIncoming: [],
-        groupedOutgoing: [],
-        incomingCount: 0,
-        outgoingCount: 0,
-      };
-    }
+    if (!isCantonAccount(account)) return initialValues;
+
+    const pendingTransferProposals = account.cantonResources?.pendingTransferProposals ?? [];
 
     const { incoming, outgoing } = processTransferProposals(pendingTransferProposals, accountXpub);
 
@@ -84,7 +87,7 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
       incomingCount: incoming.length,
       outgoingCount: outgoing.length,
     };
-  }, [cantonAccount, accountXpub]);
+  }, [account, accountXpub]);
 
   const handleOpenModal = useCallback((contractId: string, action: TransferProposalAction) => {
     setModal({ isOpen: true, action, contractId });
@@ -96,10 +99,9 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
         const instructionType = INSTRUCTION_TYPE_MAP[action];
         await performTransferInstruction({ contractId, deviceId, reason: "" }, instructionType);
 
-        // Request account sync after action completes
         sync({
           type: "SYNC_ONE_ACCOUNT",
-          accountId: account.id,
+          accountId: parentAccount.id,
           priority: 10,
           reason: "canton-pending-transaction-action",
         });
@@ -108,10 +110,10 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
           // Topology changed - need to reonboard before continuing
           setModal(prev => ({ ...prev, isOpen: false }));
           handleTopologyChangeError(dispatch, {
-            currency: account.currency,
+            currency: parentAccount.currency,
             device,
             accounts: [],
-            mainAccount: account,
+            mainAccount: parentAccount,
             navigationSnapshot: {
               type: "transfer-proposal",
               handler: handleOpenModal,
@@ -123,7 +125,7 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
         throw error;
       }
     },
-    [performTransferInstruction, sync, account, dispatch, device, handleOpenModal],
+    [performTransferInstruction, sync, parentAccount, dispatch, device, handleOpenModal],
   );
 
   const handleDeviceConfirm = useCallback(
@@ -137,11 +139,12 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
     (contractId: string) => {
       setDrawer(PendingTransferProposalsDetails, {
         account,
+        parentAccount,
         contractId,
         onOpenModal: handleOpenModal,
       });
     },
-    [account, handleOpenModal],
+    [account, parentAccount, handleOpenModal],
   );
 
   if (incomingCount === 0 && outgoingCount === 0) {
@@ -155,7 +158,7 @@ const PendingTransferProposals: React.FC<Props> = ({ account }) => {
         onConfirm={handleDeviceConfirm}
         action={modal.action}
         onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
-        appName={cantonAccount?.currency.managerAppName ?? account.currency.managerAppName}
+        appName={cantonAccount?.currency.managerAppName ?? parentAccount.currency.managerAppName}
       />
       <ProposalsTable
         proposals={groupedIncoming}
@@ -284,12 +287,12 @@ const groupByDay = (proposals: ProcessedProposal[]): GroupedProposals => {
 
 // Child components
 const TableRow = styled(BaseTableRow)`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 const TableHeaderRow = styled(Box)`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.background.main};
   padding: 12px 0;
 `;
 
@@ -311,6 +314,12 @@ type ExpiresInDisplayProps = {
   t: (key: string) => string;
 };
 
+const MonospaceText = styled(Text)`
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: 0;
+`;
+
 const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAtMicros, isExpired, t }) => {
   const timeRemaining = useTimeRemaining(expiresAtMicros, isExpired);
 
@@ -323,9 +332,9 @@ const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAtMicros, is
   }
 
   return (
-    <Text fontSize={3} color="palette.text.shade80" ff="Inter">
+    <MonospaceText fontSize={3} color="neutral.c80" ff="Inter">
       {timeRemaining || "-"}
-    </Text>
+    </MonospaceText>
   );
 };
 
@@ -411,10 +420,15 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
           </Box>
         </Box>
 
-        <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
-          <Text fontSize={3} color="palette.text.shade80" ff="Inter">
-            {addressToShow}
-          </Text>
+        <Box
+          px={4}
+          horizontal={true}
+          alignItems="center"
+          style={{ flex: 1, minWidth: 0, overflow: "hidden" }}
+        >
+          <Box style={{ width: "100%", minWidth: 0, overflow: "hidden" }}>
+            <Address value={addressToShow} />
+          </Box>
         </Box>
 
         <Box
@@ -448,7 +462,7 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
             showCode
             fontSize={4}
             alwaysShowSign
-            color={isIncoming ? undefined : "palette.text.shade80"}
+            color={isIncoming ? undefined : "neutral.c80"}
           />
         </Box>
 
@@ -458,38 +472,34 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
           alignItems="center"
           style={{
             flex: "0 0 auto",
-            gap: "4px",
+            gap: "8px",
             minWidth: "150px",
           }}
         >
           {isIncoming ? (
             <>
+              {!isExpired && (
+                <Button size="sm" onClick={handleAcceptClick}>
+                  {t("families.canton.pendingTransactions.accept")}
+                </Button>
+              )}
               <Button
-                small
-                primary
-                disabled={isExpired}
-                onClick={handleAcceptClick}
-                style={{ minWidth: "auto", padding: "4px 8px" }}
-              >
-                {t("families.canton.pendingTransactions.accept")}
-              </Button>
-              <Button
-                small
-                outline
+                size="sm"
+                appearance="no-background"
+                style={{ borderColor: "neutral.c100", borderWidth: 1 }}
                 onClick={handleRejectClick}
-                style={{ minWidth: "auto", padding: "4px 8px" }}
               >
                 {t("families.canton.pendingTransactions.reject")}
               </Button>
             </>
           ) : (
             <Button
-              small
-              outline
+              size="sm"
+              appearance="no-background"
+              style={{ borderColor: "neutral.c100", borderWidth: 1 }}
               onClick={handleWithdrawClick}
-              style={{ minWidth: "auto", padding: "4px 8px" }}
             >
-              {t("families.canton.pendingTransactions.withdraw")}
+              {t("common.cancel")}
             </Button>
           )}
         </Box>
@@ -535,13 +545,13 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
         <Box horizontal alignItems="center" flex={1} style={{ height: "28px" }} px={4}>
           <Box px={3} horizontal={true} alignItems="center" style={{ minWidth: "120px" }}>
             <Box horizontal={false}>
-              <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+              <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">
                 {t("families.canton.pendingTransactions.date")}
               </Text>
             </Box>
           </Box>
           <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
-            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+            <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">
               {isIncomingTable
                 ? t("families.canton.pendingTransactions.from")
                 : t("families.canton.pendingTransactions.to")}
@@ -555,7 +565,7 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
               minWidth: "120px",
             }}
           >
-            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+            <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">
               {t("families.canton.pendingTransactions.expiresIn")}
             </Text>
           </Box>
@@ -569,7 +579,7 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
               minWidth: "150px",
             }}
           >
-            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+            <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">
               {t("families.canton.pendingTransactions.amount")}
             </Text>
           </Box>
@@ -583,7 +593,7 @@ const ProposalsTable: React.FC<ProposalsTableProps> = ({
               minWidth: "150px",
             }}
           >
-            <Text fontSize={3} color="palette.text.shade60" ff="Inter|SemiBold">
+            <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">
               {t("families.canton.pendingTransactions.action")}
             </Text>
           </Box>

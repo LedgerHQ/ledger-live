@@ -8,6 +8,9 @@ import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
+import getOrCreateUser from "~/user";
+import { trackingEnabledSelector } from "~/reducers/settings";
+import { useSelector } from "~/context/store";
 
 const RatingsModal = () => {
   const {
@@ -50,17 +53,33 @@ const RatingsModal = () => {
     closeModal();
   }, [handleInitNotNow, closeModal]);
 
+  const [equipmentId, setEquipmentId] = useState<string | null>(null);
+
+  const trackingEnabled = useSelector(trackingEnabledSelector);
+
+  useEffect(() => {
+    if (trackingEnabled) {
+      getOrCreateUser().then(({ user }) => {
+        setEquipmentId(user.id);
+      });
+    } else {
+      setEquipmentId(null);
+    }
+  }, [trackingEnabled]);
+
   const component = useMemo(() => {
     const components = {
       init: <Init closeModal={closeModal} setStep={setStep} />,
       enjoy: <Enjoy closeModal={closeModal} />,
       disappointed: <Disappointed closeModal={closeModal} setStep={setStep} />,
-      disappointedForm: <DisappointedForm setStep={setStep} />,
+      disappointedForm: (
+        <DisappointedForm setStep={setStep} equipmentId={equipmentId} closeModal={closeModal} />
+      ),
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 
     return components[step as keyof typeof components];
-  }, [closeModal, setStep, step]);
+  }, [closeModal, setStep, step, equipmentId]);
 
   return (
     <QueuedDrawer

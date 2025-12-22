@@ -110,6 +110,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMonadTestnet: DEFAULT_FEATURE,
   currencySomnia: DEFAULT_FEATURE,
   currencyZeroGravity: DEFAULT_FEATURE,
+  currencyConcordium: DEFAULT_FEATURE,
+  currencyConcordiumTestnet: DEFAULT_FEATURE,
 };
 
 /**
@@ -658,6 +660,7 @@ export const DEFAULT_FEATURES: Features = {
       enableModularization: false,
       searchDebounceTime: 500,
       backendEnvironment: "PROD",
+      enableDialogDesktop: false,
     },
   },
   llmModularDrawer: {
@@ -736,6 +739,15 @@ export const DEFAULT_FEATURES: Features = {
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
+  lifiSolana: DEFAULT_FEATURE,
+
+  llmAnimatedSplashScreen: {
+    enabled: true,
+    params: {
+      ios: true,
+      android: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

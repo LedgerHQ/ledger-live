@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.11.0",
+  "version": "1.11.2",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -68,6 +68,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bluebird": "^3.7.2",
+    "bip39": "^3.1.0",
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
     "ethers": "catalog:",

@@ -145,7 +145,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               onChangeText={onChangeText}
               maxLength={maxDeviceName}
               selectTextOnFocus
-              blurOnSubmit={true}
+              submitBehavior="blurAndSubmit"
               clearButtonMode="always"
               placeholder="Satoshi Nakamoto"
             />

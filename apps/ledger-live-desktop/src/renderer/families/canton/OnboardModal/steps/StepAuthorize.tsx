@@ -46,7 +46,7 @@ const StepAuthorize = ({
               <Box
                 horizontal
                 ff="Inter|Bold"
-                color="palette.text.shade100"
+                color="neutral.c100"
                 fontSize={2}
                 textTransform="uppercase"
                 mb={3}
@@ -66,7 +66,7 @@ const StepAuthorize = ({
               <Box
                 horizontal
                 ff="Inter|Bold"
-                color="palette.text.shade100"
+                color="neutral.c100"
                 fontSize={2}
                 textTransform="uppercase"
                 mb={3}

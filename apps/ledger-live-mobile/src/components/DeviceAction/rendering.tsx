@@ -1,3 +1,14 @@
+import React, { useEffect, useState } from "react";
+import type { TFunction } from "i18next";
+import { Image, Linking, ScrollView } from "react-native";
+import Config from "react-native-config";
+import { useSelector } from "~/context/store";
+import styled, { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
+
+import { ParamListBase, T } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   BluetoothRequired,
@@ -5,6 +16,8 @@ import {
   PeerRemovedPairing,
   WrongDeviceForAccount,
   FirmwareNotRecognized,
+  UnsupportedFeatureError,
+  NanoSNotSupported,
 } from "@ledgerhq/errors";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -12,6 +25,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
@@ -19,6 +33,7 @@ import {
   Icons,
   IconsLegacy,
   InfiniteLoader,
+  Link,
   Log,
   Tag,
   Text,
@@ -27,14 +42,7 @@ import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { ParamListBase, T } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import type { TFunction } from "i18next";
-import { Image, Linking, ScrollView } from "react-native";
-import Config from "react-native-config";
-import { useSelector } from "react-redux";
-import styled, { useTheme } from "styled-components/native";
+
 import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
@@ -54,8 +62,7 @@ import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
-import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
-import { useTranslation } from "react-i18next";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -484,7 +491,6 @@ export function renderLockedDeviceError({
             iconColor="primary.c80"
           />
         </Flex>
-
         <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
           {t("errors.LockedDeviceError.title")}
         </Text>
@@ -624,6 +630,9 @@ export function renderError({
     };
     return (
       <Wrapper>
+        {error instanceof UnsupportedFeatureError ? (
+          <TrackScreen category="Unsupported Feature" name="Error: App Unavailable" />
+        ) : null}
         <GenericErrorView
           error={error}
           withDescription
@@ -638,23 +647,86 @@ export function renderError({
   }
 }
 
+export function UnsupportedFeatureComponent({ error }: { readonly error: Error }) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const contactSupportUrl = useLocalizedUrl(urls.contact);
+
+  return (
+    <Wrapper>
+      <TrackScreen category="Unsupported Feature" name="Error: App Unavailable" />
+      <GenericErrorView
+        error={error}
+        withDescription
+        Icon={Icons.DeleteCircleFill}
+        iconColor={colors.error.c60}
+        hasExportLogButton={false}
+      >
+        <Flex alignSelf="stretch" mb={20} mt={8}>
+          <StyledButton
+            type="main"
+            size="large"
+            outline={false}
+            title={t("errors.UnsupportedFeatureError.ctaLabel")}
+            onPress={() => Linking.openURL(contactSupportUrl)}
+          />
+        </Flex>
+      </GenericErrorView>
+    </Wrapper>
+  );
+}
+
+export function NanoSNotSupportedComponent() {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const nanoSUpgradeProgramUrl = useLocalizedUrl(urls.nanoSUpgradeProgram);
+  const nanoSLimitationsUrl = useLocalizedUrl(urls.nanoSLimitations);
+
+  return (
+    <Wrapper>
+      <TrackScreen category="LNS Upsell Ledger Sync" />
+      <GenericErrorView
+        error={new NanoSNotSupported()}
+        withDescription
+        Icon={Icons.DeleteCircleFill}
+        iconColor={colors.error.c60}
+        hasExportLogButton={false}
+      >
+        <Flex alignSelf="stretch" mb={20} mt={8}>
+          <StyledButton
+            type="main"
+            size="large"
+            title={t("errors.NanoSNotSupported.upsellCtaLabel")}
+            onPress={() => Linking.openURL(nanoSUpgradeProgramUrl)}
+          />
+          <Link
+            type="shade"
+            size="large"
+            style={{ marginTop: 20 }}
+            onPress={() => Linking.openURL(nanoSLimitationsUrl)}
+          >
+            {t("common.learnMore")}
+          </Link>
+        </Flex>
+      </GenericErrorView>
+    </Wrapper>
+  );
+}
+
 export function RequiredFirmwareUpdate({
-  t,
   device,
   navigation,
-}: RawProps & {
+}: Omit<RawProps, "t"> & {
   navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
 }) {
+  const { t } = useTranslation();
+  const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
   const usbFwUpdateActivated = !!lastSeenDevice;
-
   const deviceName = getDeviceModel(device.modelId).productName;
-
   const isDeviceConnectedViaUSB = device.wired;
-
-  const track = useTrack();
 
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
@@ -698,6 +770,7 @@ export function RequiredFirmwareUpdate({
   return (
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
+        <TrackScreen category="Firmware Update" name="Error: App Unavailable Update Firmware" />
         <Flex mb={5}>
           <BoxedIcon size={64} Icon={DownloadMedium} iconSize={24} iconColor="neutral.c100" />
         </Flex>

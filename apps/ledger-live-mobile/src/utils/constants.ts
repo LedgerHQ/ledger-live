@@ -9,7 +9,7 @@ export const LEDGER_APPLE_WARNING_EXPLAINER_LINK =
   "https://support.ledger.com/hc/article/12309873917853-zd?docs=true";
 export const PTX_SERVICES_TOAST_ID = "PTX_SERVICES_TOAST_ID";
 
-// --- Exclusion lists for Datadog (Sentry FF on) ---
+// --- Exclusion lists for Datadog ---
 // Exclude errors related to user environment or conditions not fixable by us
 export const EXCLUDED_LOGS_ERROR_NAME = [
   // networking conditions

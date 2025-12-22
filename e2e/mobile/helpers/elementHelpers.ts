@@ -4,6 +4,7 @@ import { by, element, expect as detoxExpect, waitFor, web } from "detox";
 import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
+import { checkForErrorElement } from "./errorHelpers";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
@@ -30,22 +31,87 @@ const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
 
+export type WaitForElementOptions = {
+  errorCheckTimeout?: number;
+  errorElementId?: string;
+};
+
 export const NativeElementHelpers = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expect(element: any) {
     return detoxExpect(element);
   },
 
-  waitForElement(nativeElement: NativeElement, timeout: number = DEFAULT_TIMEOUT) {
-    return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+  /**
+   * Waits for a native element to become visible, with optional error checking.
+   * When errorElementId is provided, polls for both the expected element and error elements,
+   * providing fail-fast behavior if errors are detected.
+   *
+   * @param nativeElement - The Detox native element to wait for
+   * @param timeout - Maximum time to wait for the element (in ms)
+   * @param options - Optional configuration
+   * @param options.errorCheckTimeout - Polling frequency for error checks (default: 500ms)
+   * @param options.errorElementId - Test ID of error element to check for fail-fast behavior
+   * @throws {Error} If error element detected or timeout reached
+   *
+   * @example
+   * // Basic usage
+   * await waitForElement(myElement);
+   *
+   * @example
+   * // With error checking
+   * await waitForElement(myElement, 60000, {
+   *   errorElementId: "error-description-deviceAction"
+   * });
+   */
+  async waitForElement(
+    nativeElement: NativeElement,
+    timeout: number = DEFAULT_TIMEOUT,
+    options?: WaitForElementOptions,
+  ) {
+    const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
+
+    if (!options?.errorElementId) {
+      return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+    }
+
+    const startTime = Date.now();
+    let lastWaitError: Error | null = null;
+
+    while (Date.now() - startTime < timeout) {
+      try {
+        await waitFor(nativeElement).toBeVisible().withTimeout(errorCheckTimeout);
+        return;
+      } catch (error) {
+        lastWaitError = error instanceof Error ? error : new Error(String(error));
+      }
+
+      await checkForErrorElement(options.errorElementId, errorCheckTimeout);
+
+      await delay(200);
+    }
+
+    throw new Error(
+      lastWaitError
+        ? `Timeout waiting for element after ${timeout}ms. Wait error: ${lastWaitError.message}`
+        : `Timeout waiting for element after ${timeout}ms`,
+    );
   },
 
-  waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return NativeElementHelpers.waitForElement(element(by.id(id)), timeout);
+  async waitForElementById(
+    id: string | RegExp,
+    timeout: number = DEFAULT_TIMEOUT,
+    options?: WaitForElementOptions,
+  ) {
+    return NativeElementHelpers.waitForElement(element(by.id(id)), timeout, options);
   },
 
-  waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-    return NativeElementHelpers.waitForElement(element(by.text(text)), timeout);
+  async waitForElementByText(
+    text: string | RegExp,
+    timeout: number = DEFAULT_TIMEOUT,
+    options?: WaitForElementOptions,
+  ) {
+    return NativeElementHelpers.waitForElement(element(by.text(text)), timeout, options);
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
@@ -364,14 +430,20 @@ export const WebElementHelpers = {
     return currentUrl;
   },
 
-    async waitForWebElementToMatchRegex(webElementId: string, regexPattern: RegExp, timeout = 10000): Promise<string> {
+  async waitForWebElementToMatchRegex(
+    webElementId: string,
+    regexPattern: RegExp,
+    timeout = 10000,
+  ): Promise<string> {
     let webElementText = "";
     await retryUntilTimeout(async () => {
-      webElementText = await WebElementHelpers.getWebElementText(webElementId)
+      webElementText = await WebElementHelpers.getWebElementText(webElementId);
       if (new RegExp(regexPattern).test(webElementText)) {
         return webElementText;
       }
-      throw new Error(`Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`);
+      throw new Error(
+        `Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`,
+      );
     }, timeout);
     return webElementText;
   },

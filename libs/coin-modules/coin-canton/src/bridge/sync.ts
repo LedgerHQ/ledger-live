@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -9,18 +10,25 @@ import {
   getOperations,
   type OperationInfo,
   getPendingTransferProposals,
+  getEnabledInstrumentsCached,
+  getCalTokensCached,
+  getKey,
+  SEPARATOR,
 } from "../network/gateway";
-import { getBalance, type CantonBalance } from "../common-logic/account/getBalance";
+import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
 import { isAccountOnboarded } from "./onboard";
 import { isCantonAccountEmpty } from "../helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { buildSubAccounts } from "./buildSubAccounts";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
   (txInfo: OperationInfo): Operation => {
     const {
+      asset: { instrumentId, instrumentAdmin },
       transaction_hash,
       uid,
       block: { height, hash },
@@ -73,6 +81,8 @@ const txInfoToOperationAdapter =
       extra: {
         uid,
         memo,
+        instrumentId,
+        instrumentAdmin,
       },
     };
 
@@ -86,6 +96,27 @@ const filterOperations = (
 ): Operation[] => {
   return transactions.map(txInfoToOperationAdapter(accountId, partyId));
 };
+
+export async function filterDisabledTokenAccounts(
+  currency: CryptoCurrency,
+  subAccounts: TokenAccount[] | undefined,
+  calTokens: Map<string, string>,
+): Promise<TokenAccount[]> {
+  if (!subAccounts || subAccounts.length === 0) {
+    return [];
+  }
+
+  const enabledInstruments = await getEnabledInstrumentsCached(currency);
+  return subAccounts.filter(subAccount => {
+    const instrumentId = calTokens.get(subAccount.token.id);
+    const adminId = subAccount.token.contractAddress;
+    if (!instrumentId || !adminId) {
+      return false;
+    }
+
+    return enabledInstruments.has(getKey(instrumentId, adminId));
+  });
+}
 
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
@@ -129,30 +160,95 @@ export function makeGetAccountShape(
       ? await getPendingTransferProposals(currency, xpubOrAddress)
       : [];
 
-    const balancesData = (balances || []).reduce(
-      (acc, balance) => {
-        if (balance.locked) {
-          acc[`Locked${balance.instrumentId}`] = balance;
-        } else {
-          acc[balance.instrumentId] = balance;
-        }
-        return acc;
-      },
-      {} as Record<string, CantonBalance>,
-    );
+    // Aggregate all balances by instrument (unlocked + locked)
+    const aggregatedBalances = new Map<
+      string,
+      {
+        unlockedBalance: bigint;
+        lockedBalance: bigint;
+        utxoCount: number;
+        token: TokenCurrency | null;
+        adminId: string;
+      }
+    >();
 
-    const unlockedAmount = new BigNumber(balancesData[nativeInstrumentId]?.value.toString() || "0");
-    const lockedAmount = new BigNumber(
-      balancesData[`Locked${nativeInstrumentId}`]?.value.toString() || "0",
+    const proposalInstrumentKeys = new Set(
+      pendingTransferProposals.map(proposal =>
+        getKey(proposal.instrument_id, proposal.instrument_admin),
+      ),
     );
+    for (const key of proposalInstrumentKeys) {
+      if (aggregatedBalances.has(key)) continue;
+
+      const [instrumentId, adminId] = key.split(SEPARATOR);
+      balances.push({
+        value: 0n,
+        locked: 0n,
+        utxoCount: 0,
+        instrumentId,
+        adminId,
+        asset: { type: "token", assetReference: instrumentId },
+      });
+    }
+
+    const tokensByKey = new Map<string, TokenCurrency>();
+    for await (const balance of balances) {
+      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        balance.adminId,
+        currency.id,
+      );
+      if (!token) continue;
+      tokensByKey.set(getKey(balance.instrumentId, balance.adminId), token);
+    }
+
+    for await (const balance of balances) {
+      const isNative = balance.instrumentId === nativeInstrumentId;
+      // Use just instrumentId for native (no admin), composite key for tokens
+      const balanceKey = isNative
+        ? nativeInstrumentId
+        : getKey(balance.instrumentId, balance.adminId);
+      const token: TokenCurrency | null = isNative ? null : tokensByKey.get(balanceKey) ?? null;
+
+      const existing = aggregatedBalances.get(balanceKey);
+      if (existing) {
+        if (balance.locked) {
+          existing.lockedBalance += balance.value;
+        } else {
+          existing.unlockedBalance += balance.value;
+        }
+        existing.utxoCount += balance.utxoCount;
+      } else {
+        aggregatedBalances.set(balanceKey, {
+          unlockedBalance: balance.locked ? 0n : balance.value,
+          lockedBalance: balance.locked ? balance.value : 0n,
+          utxoCount: balance.utxoCount,
+          token,
+          adminId: balance.adminId,
+        });
+      }
+    }
+
+    // Find native balance (token is null for native)
+    const nativeBalance = Array.from(aggregatedBalances.values()).find(data => data.token === null);
+    const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
+    const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
     const totalBalance = unlockedAmount.plus(lockedAmount);
     const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
-    const spendableBalance = BigNumber.max(0, totalBalance.minus(reserveMin));
+    const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
     const instrumentUtxoCounts: Record<string, number> = {};
-    for (const [instrumentId, balance] of Object.entries(balancesData)) {
-      instrumentUtxoCounts[instrumentId] = balance.utxoCount;
+    for (const [key, data] of aggregatedBalances) {
+      instrumentUtxoCounts[key] = data.utxoCount;
     }
+
+    const tokenBalances = Array.from(aggregatedBalances.entries())
+      .filter(([, data]) => data.token !== null)
+      .map(([, { unlockedBalance, lockedBalance, token, adminId }]) => ({
+        totalBalance: unlockedBalance + lockedBalance,
+        spendableBalance: unlockedBalance,
+        token: token!,
+        adminId,
+      }));
 
     let operations: Operation[] = [];
     if (xpubOrAddress) {
@@ -166,26 +262,49 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
+    // Filter main account operations (native instrument only)
+    const mainAccountOperations = operations.filter(op => {
+      const extra = op.extra as { instrumentId?: string };
+      return extra?.instrumentId === nativeInstrumentId;
+    });
+
+    // Build sub-accounts for tokens with their filtered operations
+
+    const calTokens = await getCalTokensCached(currency);
+
+    const subAccounts = buildSubAccounts({
+      accountId,
+      tokenBalances,
+      existingSubAccounts: initialAccount?.subAccounts ?? [],
+      allOperations: operations,
+      pendingTransferProposals,
+      calTokens,
+    });
+
     const cantonResources: CantonResources = {
       isOnboarded,
       instrumentUtxoCounts,
-      pendingTransferProposals,
+      pendingTransferProposals: pendingTransferProposals.filter(
+        proposal => proposal.instrument_id === nativeInstrumentId,
+      ),
       ...(publicKey && { publicKey }),
       xpub: xpubOrAddress,
     };
 
+    const filteredSubAccounts = await filterDisabledTokenAccounts(currency, subAccounts, calTokens);
+
     const used = !isCantonAccountEmpty({
-      operationsCount: operations.length,
+      operationsCount: mainAccountOperations.length,
       balance: totalBalance,
-      subAccounts: initialAccount?.subAccounts ?? [],
+      subAccounts: filteredSubAccounts,
       cantonResources,
     });
 
     const blockHeight = await getLedgerEnd(currency);
 
     const creationDate =
-      operations.length > 0
-        ? new Date(Math.min(...operations.map(op => op.date.getTime())))
+      mainAccountOperations.length > 0
+        ? new Date(Math.min(...mainAccountOperations.map(op => op.date.getTime())))
         : new Date();
 
     const shape = {
@@ -197,9 +316,10 @@ export function makeGetAccountShape(
       lastSyncDate: new Date(),
       freshAddress: address,
       seedIdentifier: address,
-      operations,
-      operationsCount: operations.length,
+      operations: mainAccountOperations,
+      operationsCount: mainAccountOperations.length,
       spendableBalance,
+      subAccounts: filteredSubAccounts,
       xpub: xpubOrAddress,
       used,
       cantonResources,

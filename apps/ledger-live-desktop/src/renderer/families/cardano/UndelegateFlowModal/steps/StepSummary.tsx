@@ -20,7 +20,7 @@ import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnsta
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
   height: 1px;
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
   margin: 15px 0;
 `;
@@ -46,7 +46,7 @@ function StepSummary(props: StepProps) {
         <Box>
           <Box horizontal alignItems="center">
             <Box flex={1}>
-              <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
+              <Text ff="Inter" color="neutral.c100" fontSize={4} ml={2}>
                 <Trans i18nKey="cardano.unDelegation.message" />
               </Text>
             </Box>
@@ -55,12 +55,12 @@ function StepSummary(props: StepProps) {
         <Separator />
 
         <Box horizontal justifyContent="space-between" mt={1}>
-          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="cardano.unDelegation.refund" />
           </Text>
           <Box>
             <FormattedVal
-              color={"palette.text.shade80"}
+              color={"neutral.c80"}
               disableRounding
               unit={accountUnit}
               alwaysShowValue
@@ -73,12 +73,12 @@ function StepSummary(props: StepProps) {
         </Box>
         <Separator />
         <Box horizontal justifyContent="space-between">
-          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="send.steps.details.fees" />
           </Text>
           <Box>
             <FormattedVal
-              color={feeTooHigh ? "warning" : "palette.text.shade80"}
+              color={feeTooHigh ? "legacyWarning" : "neutral.c80"}
               disableRounding
               unit={accountUnit}
               alwaysShowValue
@@ -89,7 +89,7 @@ function StepSummary(props: StepProps) {
             />
             <Box textAlign="right">
               <CounterValue
-                color={feeTooHigh ? "warning" : "palette.text.shade60"}
+                color={feeTooHigh ? "legacyWarning" : "neutral.c70"}
                 fontSize={3}
                 currency={feesCurrency}
                 value={estimatedFees}
@@ -100,7 +100,7 @@ function StepSummary(props: StepProps) {
           </Box>
         </Box>
         {feeTooHigh ? (
-          <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+          <Box horizontal justifyContent="flex-end" alignItems="center" color="legacyWarning">
             <IconExclamationCircle size={10} />
             <Text
               ff="Inter|Medium"
