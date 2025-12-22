@@ -15,9 +15,6 @@ const INITIAL_STATE = {
       ...state.settings,
       readOnlyModeEnabled: false,
       overriddenFeatureFlags: {
-        llmAccountListUI: {
-          enabled: true,
-        },
         llmWalletSync: {
           enabled: true,
           params: {

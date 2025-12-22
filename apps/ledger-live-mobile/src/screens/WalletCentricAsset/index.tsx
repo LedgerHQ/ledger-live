@@ -148,7 +148,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
             currencyName: currency.ticker,
             count: cryptoAccounts.length,
           })}
-          seeMoreText={t("addAccounts.addNew")}
         />
         <AccountsSection
           accounts={accounts}

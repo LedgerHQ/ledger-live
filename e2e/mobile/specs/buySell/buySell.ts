@@ -54,7 +54,6 @@ export async function runNavigateToBuyFromPortfolioPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-
       });
     });
 
@@ -81,10 +80,6 @@ export async function runNavigateToBuyFromAccountPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-        featureFlags: {
-          // Forcing FF while LIVE-24337 is not fixed
-          llmAccountListUI: { enabled: true },
-        },
       });
     });
 
