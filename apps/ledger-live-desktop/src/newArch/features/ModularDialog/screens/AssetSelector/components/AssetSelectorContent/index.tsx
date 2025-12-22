@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "../../../../types";
 import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
-import { ListWrapper } from "../../../../components/ListWrapper";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
@@ -110,23 +109,17 @@ export const AssetSelectorContent = ({
   }
 
   if (shouldDisplayEmptyState) {
-    return (
-      <ListWrapper>
-        <EmptyList />
-      </ListWrapper>
-    );
+    return <EmptyList />;
   }
 
   return (
-    <ListWrapper data-testid="asset-selector-list-container">
-      <AssetVirtualList
-        scrollToTop={scrollToTop}
-        assets={formattedAssets}
-        onClick={onClick}
-        onVisibleItemsScrollEnd={loadNext}
-        hasNextPage={!!loadNext}
-        isDebuggingDuplicates={isDebuggingDuplicates}
-      />
-    </ListWrapper>
+    <AssetVirtualList
+      scrollToTop={scrollToTop}
+      assets={formattedAssets}
+      onClick={onClick}
+      onVisibleItemsScrollEnd={loadNext}
+      hasNextPage={!!loadNext}
+      isDebuggingDuplicates={isDebuggingDuplicates}
+    />
   );
 };
