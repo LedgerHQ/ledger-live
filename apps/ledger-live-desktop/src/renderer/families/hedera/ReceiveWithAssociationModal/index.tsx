@@ -84,7 +84,9 @@ const ReceiveWithAssociationModal = () => {
 
   if (!hasAccounts) return null;
 
-  const isModalLocked = stepId === "receive" && isAddressVerified === null;
+  const isAssociationLock = ["associationDevice", "associationConfirmation"].includes(stepId);
+  const isReceiveLock = stepId === "receive" && isAddressVerified === null;
+  const isModalLocked = isAssociationLock || isReceiveLock;
 
   return (
     <Modal
