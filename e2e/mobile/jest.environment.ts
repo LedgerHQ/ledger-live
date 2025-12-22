@@ -15,6 +15,7 @@ import { $TmsLink, Step, $Tag } from "jest-allure2-reporter/api";
 import { Subject } from "rxjs";
 import expect from "expect";
 import detox from "detox/internals";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 setupEnvironment();
 
@@ -163,7 +164,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       // Force garbage collection
       global.gc?.();
     } catch (error) {
-      console.info("Error during environment teardown :", error);
+      console.info("Error during environment teardown :", sanitizeError(error));
     }
 
     await super.teardown();

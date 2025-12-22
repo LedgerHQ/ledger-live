@@ -1,6 +1,7 @@
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class BuySellPage {
   cryptoCurrencySelector = "crypto-amount-option-button";
@@ -147,7 +148,7 @@ export default class BuySellPage {
       jestExpect(currentUrl.toLowerCase()).toContain(paymentMethod.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(buySell.amount.toString().toLowerCase());
     } catch (error) {
-      throw new Error(`Provider page verification failed: ${error}`);
+      throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
     }
   }
 }

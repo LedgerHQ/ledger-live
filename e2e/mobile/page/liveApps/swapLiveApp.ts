@@ -3,6 +3,7 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -227,7 +228,7 @@ export default class SwapLiveAppPage {
       );
       jestExpect(bestOffer?.quote).toContain("Best Offer");
     } catch (error) {
-      console.error("Error checking Best offer:", error);
+      console.error("Error checking Best offer:", sanitizeError(error));
     }
   }
 

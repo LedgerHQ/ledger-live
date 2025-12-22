@@ -1,6 +1,7 @@
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class AccountsPage extends CommonPage {
   private readonly baseLink = "accounts";
@@ -27,7 +28,7 @@ export default class AccountsPage extends CommonPage {
         const testData = JSON.parse(testDataJson);
         expectedAccountIds = testData.accounts.map((account: { id: string }) => account.id);
       } catch (error) {
-        log.error("Failed to parse test data JSON:", error);
+        log.error("Failed to parse test data JSON:", sanitizeError(error));
       }
     }
 

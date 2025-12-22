@@ -5,6 +5,7 @@ import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
@@ -395,7 +396,7 @@ export const WebElementHelpers = {
       await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
     } catch (error) {
       throw new Error(
-        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${error}`,
+        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${sanitizeError(error)}`,
       );
     }
   },

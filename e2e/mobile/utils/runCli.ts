@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
 import path from "path";
 import type { LiveDataOpts } from "./cliUtils";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -56,7 +57,7 @@ export function runCliCommand(command: string): Promise<string> {
     });
 
     child.on("error", error => {
-      reject(new Error(`Error executing CLI command: ${error.message}`));
+      reject(new Error(`Error executing CLI command: ${sanitizeError(error)}`));
     });
   });
 }
@@ -81,7 +82,7 @@ export async function runCliCommandWithRetry(
       const willRetry = attempt < retries;
 
       if (!willRetry) {
-        throw err;
+        throw sanitizeError(err);
       }
 
       console.warn(
@@ -90,5 +91,5 @@ export async function runCliCommandWithRetry(
       await sleep(delayMs);
     }
   }
-  throw lastError!;
+  throw sanitizeError(lastError);
 }

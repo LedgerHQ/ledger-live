@@ -16,6 +16,7 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 let transport: TransportModule;
 
@@ -63,10 +64,12 @@ export async function startProxy(
           }
         },
         error: err => {
-          console.error("Error:", err);
-          reject(err);
+          console.error("Error:", sanitizeError(err));
+          reject(sanitizeError(err));
         },
-        complete: () => console.warn("Proxy stopped."),
+        complete: () => {
+          console.warn("Proxy stopped.");
+        },
       }),
     });
   });

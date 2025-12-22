@@ -9,6 +9,7 @@ import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/lib/e2e/speculosC
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default async function setup(): Promise<void> {
   // Validate .env.mock file
@@ -43,7 +44,7 @@ async function cleanupAllSpeculos() {
 
     await fs.unlink(SPECULOS_TRACKING_FILE).catch(() => {});
   } catch (error) {
-    log.error("Speculos cleanup failed:", error);
+    log.error("Speculos cleanup failed:", sanitizeError(error));
   }
 }
 
@@ -57,7 +58,7 @@ function setupSpeculosCleanupHandlers() {
     try {
       await cleanupAllSpeculos();
     } catch (error) {
-      log.error(`Cleanup failed (${signal}):`, error);
+      log.error(`Cleanup failed (${signal}):`, sanitizeError(error));
     }
 
     setTimeout(() => process.exit(0), 100);

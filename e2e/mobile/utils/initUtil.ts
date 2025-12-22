@@ -12,6 +12,7 @@ import {
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 type CliCommand = (
   userdataPath?: string,
@@ -51,9 +52,9 @@ async function executeCliCommand(
     } else {
       result = resultOrPromise;
     }
-  } catch (err) {
-    log.error("[CLI] ❌ Error executing command:", err);
-    throw err;
+  } catch (error) {
+    log.error("[CLI] ❌ Error executing command:", sanitizeError(error));
+    throw sanitizeError(error);
   }
 
   log.info("[CLI] 🎉 Final result:", result);
@@ -133,7 +134,7 @@ async function executeCliCommandsOnApp(
 
     if (lastError) {
       throw new Error(
-        `❌ [${app.name}] Failed to setup account after ${maxRetries} attempts: ${lastError}`,
+        `❌ [${app.name}] Failed to setup account after ${maxRetries} attempts: ${sanitizeError(lastError).message}`,
       );
     }
 
@@ -190,7 +191,7 @@ async function setupMainSpeculosApp(
 
   if (lastError) {
     throw new Error(
-      `❌ [${speculosApp.name}] Failed to setup main Speculos app after ${maxRetries} attempts: ${lastError}`,
+      `❌ [${speculosApp.name}] Failed to setup main Speculos app after ${maxRetries} attempts: ${sanitizeError(lastError).message}`,
     );
   }
 }
@@ -243,7 +244,7 @@ async function executeCliCommands(
 
   if (lastError) {
     throw new Error(
-      `❌ [Global CLI] Full run failed after ${maxRetries} attempts (with Speculos re-setup): ${lastError}`,
+      `❌ [Global CLI] Full run failed after ${maxRetries} attempts (with Speculos re-setup): ${sanitizeError(lastError).message}`,
     );
   }
 }

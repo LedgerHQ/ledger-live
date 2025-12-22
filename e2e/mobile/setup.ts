@@ -21,9 +21,6 @@ beforeAll(
 );
 
 afterAll(async () => {
-  if (IS_FAILED && process.env.CI) {
-    await allure.attachment("App logs", await getLogs(), "application/json");
-  }
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
   closeProxy();

@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export class FileUtils {
   @Step("get app.json size")
@@ -19,9 +20,8 @@ export class FileUtils {
       try {
         await fs.access(filePath);
         return true;
-      } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
-        console.error("Error in waitForFileToExist:", errorMessage);
+      } catch (error) {
+        console.error("Error in waitForFileToExist:", sanitizeError(error));
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
@@ -35,24 +35,24 @@ export class FileUtils {
       const base64Content = await fs.readFile(filePath, "utf8");
       const decodedContent = this.decodeBase64Content(base64Content);
       return this.parseJsonString(decodedContent);
-    } catch (err) {
-      throw new Error(`Error reading or processing file at ${filePath}: ${err}`);
+    } catch (error) {
+      throw new Error(`Error reading or processing file at ${filePath}: ${sanitizeError(error)}`);
     }
   }
 
   static decodeBase64Content(base64Content: string): string {
     try {
       return Buffer.from(base64Content, "base64").toString("utf8");
-    } catch (err) {
-      throw new Error(`Failed to decode base64 content: ${err}`);
+    } catch (error) {
+      throw new Error(`Failed to decode base64 content: ${sanitizeError(error)}`);
     }
   }
 
   static parseJsonString(jsonString: string): string {
     try {
       return JSON.parse(jsonString);
-    } catch (err) {
-      throw new Error(`Failed to parse content JSON: ${err}`);
+    } catch (error) {
+      throw new Error(`Failed to parse content JSON: ${sanitizeError(error)}`);
     }
   }
 }

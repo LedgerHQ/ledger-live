@@ -9,6 +9,7 @@ import { glob } from "glob";
 import { log } from "detox";
 import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -36,20 +37,20 @@ export default async () => {
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(ARTIFACT_ENV_PATH, flagsData + envsData);
     } catch (err) {
-      log.error("Error during CI global teardown:", err);
+      log.error("Error during CI global teardown:", sanitizeError(err));
     } finally {
       try {
         closeBridge();
         await cleanupDetox();
       } catch (cleanupErr) {
-        log.warn("Error during cleanup:", cleanupErr);
+        log.warn("Error during cleanup:", sanitizeError(cleanupErr));
       }
     }
   } else if (process.env.CI) {
     try {
       await fs.unlink(ARTIFACT_ENV_PATH);
     } catch (err) {
-      log.warn(`Failed to delete environment.properties:`, err);
+      log.warn(`Failed to delete environment.properties:`, sanitizeError(err));
     }
   }
 
@@ -95,6 +96,6 @@ async function cleanupUserdata() {
     await Promise.all(files.map(file => fs.unlink(file)));
     log.info(`Cleaned up ${files.length} temp‑userdata files`);
   } catch (error) {
-    log.warn("Failed to cleanup temp‑userdata files:", error);
+    log.warn("Failed to cleanup temp‑userdata files:", sanitizeError(error));
   }
 }

@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/speculos-transport";
 import { SpeculosDevice } from "./speculos";
 import https from "https";
+import { sanitizeError } from "./index";
 
 const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
@@ -58,11 +59,8 @@ async function githubApiRequest<T = unknown>({
     });
     return response.data;
   } catch (error) {
-    console.warn(
-      `API Request failed: ${method} ${url}`,
-      axios.isAxiosError(error) ? error.response?.data : (error as Error).message,
-    );
-    throw error;
+    console.warn(`API Request failed: ${method} ${url}`, sanitizeError(error));
+    throw sanitizeError(error);
   }
 }
 
@@ -171,9 +169,10 @@ export async function createSpeculosDeviceCI(
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
     };
-  } catch (e: unknown) {
+  } catch (error) {
     console.warn(
-      `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
+      `Failed to create remote Speculos ${deviceParams.appName}:${deviceParams.appVersion}:`,
+      sanitizeError(error),
     );
     return {
       id: runId,
@@ -191,5 +190,9 @@ export async function releaseSpeculosDeviceCI(runId: string) {
       run_id: runId.toString(),
     },
   };
-  await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  try {
+    await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  } catch (error) {
+    console.warn(`Failed to release remote Speculos ${runId}:`, sanitizeError(error));
+  }
 }
