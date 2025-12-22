@@ -56,8 +56,13 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
 
-  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
-    useStake();
+  const {
+    getCanStakeUsingLedgerLive,
+    getCanStakeUsingPlatformApp,
+    getRouteParamsForPlatformApp,
+    enabledCurrencies,
+    partnerSupportedAssets,
+  } = useStake();
   const canStakeCurrencyUsingLedgerLive = !currency
     ? false
     : getCanStakeUsingLedgerLive(currency?.id);
@@ -75,8 +80,17 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
+  const whitelistedCurrencies = useMemo(
+    () => Array.from(new Set([...enabledCurrencies, ...partnerSupportedAssets])),
+    [enabledCurrencies, partnerSupportedAssets],
+  );
+
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({
-    currencies: currency ? [currency.id] : undefined,
+    currencies: currency
+      ? [currency.id]
+      : whitelistedCurrencies.length > 0
+        ? whitelistedCurrencies
+        : undefined,
     sourceScreenName: route.name,
   });
 
