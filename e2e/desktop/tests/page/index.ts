@@ -30,6 +30,7 @@ import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
+import { ModularDialog } from "./dialog/modular.dialog";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -49,6 +50,7 @@ export class Application extends PageHolder {
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
   public modularDrawer = new ModularDrawer(this.page);
+  public modularDialog = new ModularDialog(this.page);
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);

@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -117,9 +118,9 @@ test.describe("Inline Add Account", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.clickOnAddAndExistingAccount();
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
       } else {

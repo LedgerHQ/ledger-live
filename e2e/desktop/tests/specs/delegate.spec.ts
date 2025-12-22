@@ -7,6 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -493,12 +494,12 @@ test.describe("Staking flow from different entry point", () => {
       await app.layout.goToPortfolio();
       await app.portfolio.startStakeFlow();
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.validateAssetsDrawerItems();
-        await app.modularDrawer.selectAssetByTickerAndName(delegateAccount.account.currency);
-        await app.modularDrawer.selectNetwork(delegateAccount.account.currency);
-        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.validateItems();
+        await selector.selectAsset(delegateAccount.account.currency);
+        await selector.selectNetwork(delegateAccount.account.currency);
+        await selector.selectAccountByName(delegateAccount.account);
       } else {
         await app.portfolio.expectChooseAssetToBeVisible();
         await app.assetDrawer.selectAsset(delegateAccount.account.currency);
@@ -535,9 +536,9 @@ test.describe("Staking flow from different entry point", () => {
       await app.market.search(delegateAccount.account.currency.ticker);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.selectAccount(delegateAccount.account);
       } else {
         await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
       }

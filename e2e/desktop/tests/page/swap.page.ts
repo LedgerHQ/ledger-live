@@ -356,7 +356,17 @@ export class SwapPage extends AppPage {
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
+
+    const amountInput = webview.getByTestId(this.fromAccountAmountInput);
+
+    // Wait for input to be fully interactive after dialog closes
+    await expect(amountInput).toBeVisible();
+    await expect(amountInput).toBeEnabled();
+
+    // Click to focus the input before filling
+    await amountInput.click();
+    await amountInput.fill(amount);
+
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
   }
