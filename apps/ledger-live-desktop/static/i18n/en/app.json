@@ -6963,6 +6963,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
