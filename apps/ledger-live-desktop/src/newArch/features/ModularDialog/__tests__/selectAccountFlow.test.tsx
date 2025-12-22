@@ -505,6 +505,6 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
-    expect(screen.getByRole("textbox")).toHaveFocus();
+    await waitFor(() => expect(screen.getByRole("textbox")).toHaveFocus());
   });
 });
