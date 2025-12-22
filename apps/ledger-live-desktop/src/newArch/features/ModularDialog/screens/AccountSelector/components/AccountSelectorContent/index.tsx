@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountVirtualList } from "../AccountVirtualList";
-import { ListWrapper } from "../../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
@@ -21,9 +20,6 @@ type AccountSelectorContentProps = {
   detailedAccounts: BaseRawDetailedAccount[];
   bottomComponent: React.ReactNode;
 };
-
-const TITLE_HEIGHT = 52;
-const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
 
 export const AccountSelectorContent = ({
   detailedAccounts,
@@ -82,12 +78,10 @@ export const AccountSelectorContent = ({
   };
 
   return (
-    <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountVirtualList
-        bottomComponent={bottomComponent}
-        accounts={formattedAccounts}
-        onClick={onAccountClick}
-      />
-    </ListWrapper>
+    <AccountVirtualList
+      bottomComponent={bottomComponent}
+      accounts={formattedAccounts}
+      onClick={onAccountClick}
+    />
   );
 };

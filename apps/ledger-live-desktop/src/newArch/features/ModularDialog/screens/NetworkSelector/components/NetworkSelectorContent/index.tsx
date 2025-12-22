@@ -1,6 +1,5 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ListWrapper } from "../../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -73,9 +72,5 @@ export const NetworkSelectorContent = ({
     onNetworkSelected(network);
   };
 
-  return (
-    <ListWrapper customHeight="100%">
-      <NetworkVirtualList networks={formattedNetworks} onClick={onClick} />
-    </ListWrapper>
-  );
+  return <NetworkVirtualList networks={formattedNetworks} onClick={onClick} />;
 };

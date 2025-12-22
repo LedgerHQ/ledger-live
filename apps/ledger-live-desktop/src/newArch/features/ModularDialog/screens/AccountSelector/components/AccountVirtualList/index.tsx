@@ -19,7 +19,7 @@ export const AccountVirtualList = ({
   return (
     <VirtualList
       items={accounts}
-      itemHeight={76}
+      itemHeight={64}
       bottomComponent={bottomComponent}
       renderItem={renderAccountListItem}
     />

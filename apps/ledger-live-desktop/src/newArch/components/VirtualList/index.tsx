@@ -69,6 +69,10 @@ type VirtualListProps<T> = {
    * React component or node to display at the bottom of the list, after all items.
    */
   bottomComponent?: React.ReactNode;
+  /**
+   * Optional test ID for the container element.
+   */
+  testId?: string;
 };
 
 const DefaultLoadingComponent = () => (
@@ -94,6 +98,7 @@ export const VirtualList = <T,>({
   scrollToTop = false,
   bottomComponent,
   threshold = 5,
+  testId,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -174,7 +179,12 @@ export const VirtualList = <T,>({
   );
 
   return (
-    <div ref={parentRef} className="size-full overflow-auto" style={{ scrollbarWidth: "none" }}>
+    <div
+      ref={parentRef}
+      className="size-full overflow-auto"
+      style={{ scrollbarWidth: "none" }}
+      data-testid={testId}
+    >
       <div
         className="relative flex w-full flex-col"
         style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
