@@ -215,6 +215,7 @@ function mapTxToAccountOperation(
 
   let operationValue = accountChange.ada;
 
+  // pre-conway era stake registrations
   if (tx.certificate.stakeRegistrations.length) {
     const walletRegistration = tx.certificate.stakeRegistrations.find(
       c =>
@@ -233,6 +234,24 @@ function mapTxToAccountOperation(
     }
   }
 
+  // conway era stake registrations
+  if (tx.certificate.stakeRegsConway?.length) {
+    const walletRegistration = tx.certificate.stakeRegsConway.find(
+      w => stakeCredential.key === w.stakeHex.slice(2),
+    );
+    if (walletRegistration) {
+      extra.deposit = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(walletRegistration.deposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  // pre-conway era stake de-registrations
   if (tx.certificate.stakeDeRegistrations.length) {
     const walletDeRegistration = tx.certificate.stakeDeRegistrations.find(
       c =>
@@ -244,6 +263,24 @@ function mapTxToAccountOperation(
       extra.refund = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  // conway era stake de-registrations
+  if (tx.certificate.stakeDeRegsConway?.length) {
+    const walletDeRegistration = tx.certificate.stakeDeRegsConway.find(
+      w => stakeCredential.key === w.stakeHex.slice(2),
+    );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(walletDeRegistration.deposit);
+      extra.refund = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(walletDeRegistration.deposit),
         {
           showCode: true,
           disableRounding: true,
