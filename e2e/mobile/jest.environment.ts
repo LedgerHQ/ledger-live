@@ -3,6 +3,7 @@ import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
 import * as detox from "detox/internals";
 import { Subject } from "rxjs";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -166,7 +167,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
       global.gc?.();
     } catch (error) {
-      console.info("Error during environment teardown :", error);
+      console.info("Error during environment teardown :", sanitizeError(error));
     }
 
     await super.teardown();
