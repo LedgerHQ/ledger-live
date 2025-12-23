@@ -10,6 +10,7 @@ export class ModularScanAccountsDrawer extends Drawer {
   private deselectAllButton = this.page.getByText("Deselect all");
   private checkbox = this.page.getByTestId("right-element-checkbox").first();
   private successAddLabel = this.page.getByTestId("accounts-added-title");
+  private loadingOverlay = this.page.locator('[data-testid="loading-overlay"]');
 
   @step("Validate modular scan accounts drawer is visible")
   async isModularScanAccountsDrawerVisible(): Promise<boolean> {
@@ -34,7 +35,16 @@ export class ModularScanAccountsDrawer extends Drawer {
 
   @step("Select first account")
   async selectFirstAccount() {
-    await this.confirmButton.waitFor({ state: "visible" });
+    // Wait for scanning to complete - the loading overlay should disappear
+    // This is especially important for slow chains like Cardano (ADA)
+    try {
+      await this.loadingOverlay.waitFor({ state: "detached", timeout: 60000 });
+    } catch {
+      // Loading overlay might not appear for fast scans, continue anyway
+    }
+    
+    // Wait for Confirm button to appear after scanning completes
+    await this.confirmButton.waitFor({ state: "visible", timeout: 60000 });
     if (await this.deselectAllButton.isVisible()) {
       await this.deselectAllButton.click();
       await this.checkbox.click();
