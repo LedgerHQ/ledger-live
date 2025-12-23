@@ -14,7 +14,7 @@ import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNa
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { getAccountCurrency, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -119,8 +119,14 @@ export default function NoFunds({ route }: Readonly<Props>) {
       button: "buy",
       page,
     });
-    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
-  }, [onNavigate, page, track]);
+    onNavigate(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+      params: {
+        defaultAccountId: isTokenAccount(account) ? parentAccount?.id : account.id,
+        defaultCurrencyId: currency.id,
+      },
+    });
+  }, [track, page, onNavigate, account, parentAccount, currency.id]);
 
   const buttonsList: ButtonItem[] = [
     {

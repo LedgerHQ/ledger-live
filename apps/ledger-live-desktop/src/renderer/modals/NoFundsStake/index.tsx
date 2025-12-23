@@ -75,11 +75,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     history.push({
       pathname: "/exchange",
       state: {
+        account: isTokenAccount(account) ? parentAccount?.id : account.id,
         currency: currency.id,
         mode: "buy",
       },
     });
-  }, [currency, history, dispatch]);
+  }, [history, dispatch, account, parentAccount?.id, currency.id]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
