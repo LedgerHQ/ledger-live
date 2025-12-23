@@ -4,11 +4,14 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   AmountRequired,
+  RecommendUndelegation,
 } from "@ledgerhq/errors";
 import invariant from "invariant";
 import type { CosmosAccount, Transaction } from "@ledgerhq/coin-cosmos/types/index";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
+import { CosmosTooManyRedelegations } from "@ledgerhq/coin-cosmos/errors";
+import { COSMOS_MAX_REDELEGATIONS } from "@ledgerhq/coin-cosmos/logic";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
@@ -99,15 +102,26 @@ const dataset: CurrenciesData<Transaction> = {
             memo: null,
             mode: "send",
           }),
-          expectedStatus: account => {
+          expectedStatus: (account, t) => {
             const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources) throw new Error("Should exist because it's cosmos");
-            const totalSpent = account.balance.minus(
+            const estimatedFees = t.fees || new BigNumber(0);
+            const spendableBalance = account.balance.minus(
               cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
+            const amount = BigNumber.max(0, spendableBalance.minus(estimatedFees));
+            const totalSpent = amount.plus(estimatedFees);
+            const errors: Record<string, Error> = {};
+            const warnings: Record<string, Error> = {};
+            if (amount.lte(0)) {
+              errors.amount = new NotEnoughBalance();
+            }
+            if (cosmosResources.delegations.length > 0) {
+              warnings.amount = new RecommendUndelegation();
+            }
             return {
-              errors: {},
-              warnings: {},
+              errors,
+              warnings,
               totalSpent,
             };
           },
@@ -131,12 +145,23 @@ const dataset: CurrenciesData<Transaction> = {
             const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources) throw new Error("Should exist because it's cosmos");
             invariant(t.memo === "test", "Should have a memo");
-            const totalSpent = account.balance.minus(
+            const estimatedFees = t.fees || new BigNumber(0);
+            const spendableBalance = account.balance.minus(
               cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
+            const amount = BigNumber.max(0, spendableBalance.minus(estimatedFees));
+            const totalSpent = amount.plus(estimatedFees);
+            const errors: Record<string, Error> = {};
+            const warnings: Record<string, Error> = {};
+            if (amount.lte(0)) {
+              errors.amount = new NotEnoughBalance();
+            }
+            if (cosmosResources.delegations.length > 0) {
+              warnings.amount = new RecommendUndelegation();
+            }
             return {
-              errors: {},
-              warnings: {},
+              errors,
+              warnings,
               totalSpent,
             };
           },
@@ -171,8 +196,16 @@ const dataset: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (a, t) => {
             invariant(t.memo === "Ledger Live", "Should have a memo");
+            const { cosmosResources } = a as CosmosAccount;
+            const errors: Record<string, Error> = {};
+            if (
+              cosmosResources &&
+              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+            ) {
+              errors.redelegation = new CosmosTooManyRedelegations();
+            }
             return {
-              errors: {},
+              errors,
               warnings: {},
             };
           },
@@ -190,11 +223,21 @@ const dataset: CurrenciesData<Transaction> = {
             ],
             sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
-          expectedStatus: {
-            errors: {
-              amount: new AmountRequired(),
-            },
-            warnings: {},
+          expectedStatus: a => {
+            const { cosmosResources } = a as CosmosAccount;
+            const errors: Record<string, Error> = {};
+            if (
+              cosmosResources &&
+              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+            ) {
+              errors.redelegation = new CosmosTooManyRedelegations();
+            } else {
+              errors.amount = new AmountRequired();
+            }
+            return {
+              errors,
+              warnings: {},
+            };
           },
         },
         {
@@ -210,11 +253,21 @@ const dataset: CurrenciesData<Transaction> = {
             ],
             sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
-          expectedStatus: {
-            errors: {
-              redelegation: new InvalidAddressBecauseDestinationIsAlsoSource(),
-            },
-            warnings: {},
+          expectedStatus: a => {
+            const { cosmosResources } = a as CosmosAccount;
+            const errors: Record<string, Error> = {};
+            if (
+              cosmosResources &&
+              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+            ) {
+              errors.redelegation = new CosmosTooManyRedelegations();
+            } else {
+              errors.redelegation = new InvalidAddressBecauseDestinationIsAlsoSource();
+            }
+            return {
+              errors,
+              warnings: {},
+            };
           },
         },
         {

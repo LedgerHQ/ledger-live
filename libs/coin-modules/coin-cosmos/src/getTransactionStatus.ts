@@ -17,6 +17,7 @@ import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
   CosmosRedelegationInProgress,
+  CosmosTooManyRedelegations,
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
 } from "./errors";
@@ -259,10 +260,9 @@ export class CosmosTransactionStatusManager {
   ) => {
     if (account.cosmosResources) {
       const redelegations = account.cosmosResources.redelegations;
-      invariant(
-        redelegations.length < COSMOS_MAX_REDELEGATIONS,
-        "redelegation should not have more than 6 entries",
-      );
+      if (redelegations.length >= COSMOS_MAX_REDELEGATIONS) {
+        return new CosmosTooManyRedelegations();
+      }
 
       if (
         redelegations.some(redelegation => {
