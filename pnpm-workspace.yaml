@@ -40,11 +40,11 @@ catalog:
   bs58: ^4.0.1
   electron: 38.2.0
   ethers: 6.15.0
-  i18next: 23.10.1
+  i18next: 25.7.3
   isomorphic-ws: 5.0.0
   react: 18.3.1
   react-dom: 18.3.1
-  react-i18next: 13.5.0
+  react-i18next: 16.5.0
   react-native: 0.77.3
   react-native-config: 1.5.3
   react-native-reanimated: 3.16.7
