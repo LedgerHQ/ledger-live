@@ -178,10 +178,10 @@ export const LiveAppManifestSchema = z
     visibility: z.enum(["complete", "searchable", "deep"]),
     highlight: z.boolean().optional(),
     content: z.object({
-      cta: z.record(z.string()).optional(),
-      subtitle: z.record(z.string()).optional(),
-      shortDescription: z.record(z.string().trim().min(1)),
-      description: z.record(z.string().trim().min(1)),
+      cta: z.record(z.string(), z.string()).optional(),
+      subtitle: z.record(z.string(), z.string()).optional(),
+      shortDescription: z.record(z.string(), z.string().trim().min(1)),
+      description: z.record(z.string(), z.string().trim().min(1)),
     }),
   })
   .strict();

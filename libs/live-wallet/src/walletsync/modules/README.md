@@ -7,7 +7,7 @@ import { WalletSyncDataManager } from "../types";
 import { z } from "zod";
 
 // schema of the distant data. IMPORTANT: Once the module is written, the schema must not change over time – if you still want to change the schema, only do it by adding optional fields and make sure that any module implementation (from v1) was keeping the unknown properties = the schema must be backward compatible.
-const schema = z.record(z.string());
+const schema = z.record(z.string(), z.string());
 
 const manager: WalletSyncDataManager<
   {

@@ -31,9 +31,10 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
 
       // Aggregate all diffs from each module
       const nextState = mapValues<Mods, DistantState>(modules, (m, k) => {
+        const latestStateTyped = latestState as Record<string, unknown> | null;
         const diff = m.diffLocalToDistant(
           localData[k],
-          latestState && latestState[k] ? latestState[k] : null,
+          latestStateTyped && latestStateTyped[k as string] ? latestStateTyped[k as string] : null,
         );
         delete unknownRest[k as string];
         if (diff.hasChanges) {
@@ -58,14 +59,16 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
         [K in keyof Mods]: Promise<UpdateDiff<ExtractUpdateEvent<Mods[K]>>>;
       };
 
-      const resolved = mapValues<Mods, Resolved>(modules, (m, k) =>
-        m.resolveIncrementalUpdate(
+      const resolved = mapValues<Mods, Resolved>(modules, (m, k) => {
+        const latestStateTyped = latestState as Record<string, unknown> | null;
+        const incomingStateTyped = incomingState as Record<string, unknown> | null;
+        return m.resolveIncrementalUpdate(
           ctx,
           localData[k],
-          latestState && latestState[k] ? latestState[k] : null,
-          (incomingState && incomingState[k]) || null,
-        ),
-      );
+          latestStateTyped && latestStateTyped[k as string] ? latestStateTyped[k as string] : null,
+          (incomingStateTyped && incomingStateTyped[k as string]) || null,
+        );
+      });
 
       // wait for all promises
       const results = await Promise.all(Object.values(resolved));
@@ -89,13 +92,13 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
   return root;
 }
 
-export function mapValues<T extends object, U extends { [K in keyof T]: unknown }>(
+export function mapValues<T extends object, U>(
   obj: T,
-  fn: <K extends keyof T>(value: T[K], key: K) => any, // U[K], // should be the actual type...
+  fn: <K extends keyof T>(value: T[K], key: K) => unknown,
 ): U {
-  const result: Partial<U> = {};
+  const result: Record<string, unknown> = {};
   for (const key in obj) {
-    result[key as keyof T] = fn(obj[key], key as keyof T);
+    result[key] = fn(obj[key], key as keyof T);
   }
   return result as U;
 }

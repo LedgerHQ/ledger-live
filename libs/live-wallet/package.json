@@ -36,7 +36,7 @@
     "lodash": "4",
     "pako": "^2.0.4",
     "rxjs": "catalog:",
-    "zod": "^3.22.4"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
