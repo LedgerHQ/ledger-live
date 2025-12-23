@@ -1098,6 +1098,15 @@
       "title": "จำเป็นต้องมีการตรวจสอบ EVM Address",
       "description": "โปรดตรวจสอบ EVM Address ที่ปรากฏบนอุปกรณ์ Ledger ของคุณก่อนยืนยัน"
     },
+    "HederaRedundantStakingNodeIdError": {
+      "title": "คุณ Delegate โหนดนี้เรียบร้อยแล้ว"
+    },
+    "HederaInvalidStakingNodeIdError": {
+      "title": "โหนดที่เลือกไม่ถูกต้อง"
+    },
+    "HederaNoStakingRewardsError": {
+      "title": "ไม่มี Reward ให้เคลม"
+    },
     "NearNewAccountWarning": {
       "title": "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -2288,6 +2297,18 @@
     },
     "completionScreen": {
       "title": "ทุกการควบคุมอยู่ในมือคุณแล้วตอนนี้"
+    },
+    "secureYourCrypto": {
+      "title": "ปกป้องคริปโตของคุณ",
+      "subtitle": "โอนคริปโตแรกของคุณจาก Exchange หรือวอลเล็ตไปยังอุปกรณ์ Ledger ของคุณเพื่อความปลอดภัยสูงสุด",
+      "secureCryptoButton": "ปกป้องคริปโตของฉัน",
+      "maybeLater": "ไว้ทีหลัง"
+    },
+    "fundSuccess": {
+      "title": "ยินดีต้อนรับสู่แอป Ledger Wallet",
+      "receiveSuccess": "อุปกรณ์ Ledger ของคุณพร้อมแล้ว หากคุณส่งคริปโตไปยังแอป Ledger Wallet คุณจะได้รับในอีกไม่กี่นาที",
+      "maybeLater": "เริ่มต้นด้วยการฝากคริปโตตัวแรกของคุณ",
+      "exploreLedger": "สำรวจแอป Ledger Wallet"
     }
   },
   "blePairingFlow": {
@@ -2488,6 +2509,20 @@
       "doneTitle": "ชุด PIN",
       "description": "PIN ช่วยให้คุณปลดล็อก {{productName}} ของคุณและป้องกันการเข้าถึงที่ไม่พึงประสงค์ เช่นเดียวกับรหัสผ่านหรือรหัสยืนยัน",
       "continueOnDevice": "ตั้งค่า PIN ของคุณบน {{productName}}"
+    },
+    "syncStep": {
+      "title": "การซิงโครไนซ์",
+      "doneTitle": "วอลเล็ตที่ซิงค์แล้ว",
+      "descriptionTitle": "ซิงค์วอลเล็ตของคุณ",
+      "description": "พอร์ตของคุณจะอัปเดตอยู่เสมอ ไม่ว่าจะสลับไปใช้งานบนมือถือหรือคอมพิวเตอร์",
+      "skipCta": "ทำภายหลัง",
+      "skip": {
+        "title": "คุณแน่ใจหรือไม่?",
+        "description": "หากคุณข้ามขั้นตอนนี้ คุณจะต้องเพิ่มบัญชี ยอดคงเหลือในบัญชี และประวัติธุรกรรมใหม่ทั้งหมดด้วยตัวเอง หากคุณเปลี่ยนไปใช้โทรศัพท์หรือคอมพิวเตอร์เครื่องใหม่",
+        "descriptionEmphasis": "คุณสามารถปิดการใช้งานได้ตลอดเวลาในเมนูการตั้งค่า",
+        "skipCTA": "ใช่! ข้ามขั้นตอนนี้",
+        "syncCTA": "ไม่! ซิงค์วอลเล็ตของฉัน"
+      }
     },
     "seedStep": {
       "title": "การติดตั้งและสำรองข้อมูล",
@@ -2780,7 +2815,8 @@
       "UNSTAKE": "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED": "ถอนแล้ว",
       "ASSOCIATE_TOKEN": "เชื่อมโยงโทเคน",
-      "CONTRACT_CALL": "การเรียกใช้สัญญา"
+      "CONTRACT_CALL": "การเรียกใช้สัญญา",
+      "UPDATE_ACCOUNT": "บัญชีที่อัปเดต"
     }
   },
   "operationDetails": {
@@ -2848,7 +2884,12 @@
       "id": "Id",
       "autoClaimedRewards": "Reward ที่เคลมโดยอัตโนมัติ",
       "stakedAmount": "จำนวนที่ Stake แล้ว",
-      "accountCreationFee": "ค่าธรรมเนียมการสร้างบัญชี"
+      "accountCreationFee": "ค่าธรรมเนียมการสร้างบัญชี",
+      "associatedTokenId": "ID โทเคนที่เชื่อมโยง",
+      "targetStakingNodeId": "ID โหนดเป้าหมาย",
+      "previousStakingNodeId": "ID โหนดก่อนหน้า",
+      "gasConsumed": "ค่าแก๊สที่ใช้หมดไป",
+      "gasUsed": "ค่าแก๊สที่ใช้ไป"
     },
     "multipleAddresses": "ทำไมต้องหลาย Address?"
   },
@@ -2998,6 +3039,8 @@
       }
     },
     "availableBalance": "ยอดคงเหลือในบัญชีที่ใช้ได้",
+    "availableBalanceTooltip": "เงินทุนที่คุณสามารถใช้ได้ในตอนนี้",
+
     "claimableRewards": "Reward ที่สามารถขอรับได้",
     "totalSupplied": "จำนวนที่ฝาก",
     "tronFrozen": "ถูก Freeze",
@@ -3008,6 +3051,8 @@
     "delegation": {
       "sectionLabel": "การ Delegate",
       "addDelegation": "เพิ่มการ Delegate",
+      "delegationEarn": "คุณสามารถรับ Reward จากการ Staking {{name}} ได้แล้วในตอนนี้ด้วยการ Delegate บัญชีของคุณ",
+      "howItWorks": "วิธีใช้งานการ Delegate",
       "info": {
         "title": "รับ Reward",
         "cta": "รับ Reward"
@@ -3146,6 +3191,7 @@
       "dateFormatDesc": "กำหนดรูปแบบวันที่สำหรับแอป Ledger Wallet",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "ซิงค์บัญชีคริปโตบนแอป Ledger Wallet ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
+      "walletSyncDescription": "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ",
       "region": "ภูมิภาค",
       "regionDesc": "เลือกภูมิภาคของคุณเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
       "password": "ล็อกแอป",
@@ -3766,7 +3812,7 @@
         },
         "notAvailable": {
           "title": "Swap ยังไม่พรัอมให้บริการในพื้นที่ของคุณ",
-          "content": "โปรดอดทนอีกนิด\nฟีเจอร์ใหม่นี้จะเปิดตัวในไม่ช้า"
+          "content": "โปรดอดทนอีกนิด ฟีเจอร์ใหม่นี้จะเปิดตัวในไม่ช้า"
         },
         "amount": {
           "useMax": "ใช้สูงสุด"
@@ -3841,7 +3887,9 @@
         "kaspa_title": "Ledger Nano S™ ไม่รองรับการสวอป Kaspa",
         "kaspa_description": "เพื่อสวอป Kaspa ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "celo_title": "Ledger Nano S™ ไม่รองรับการสวอป Celo",
-        "celo_description": "ในการสวอป Celo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+        "celo_description": "ในการสวอป Celo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "monad_title": "Ledger Nano S™ ไม่รองรับการสวอป Monad",
+        "monad_description": "หากต้องการสวอป Monad ให้ใช้อุปกรณ์ Ledger ที่รองรับรุ่นอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
       }
     },
     "lending": {
@@ -4160,7 +4208,8 @@
       "confirm": "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
       "button": {
         "details": "ดูรายละเอียด",
-        "retry": "ลองใหม่"
+        "retry": "ลองใหม่",
+        "abort": "ยกเลิก"
       }
     },
     "fees": {
@@ -5070,16 +5119,11 @@
             "warning": "คุณจะได้รับแจ้งให้สร้างธุรกรรมเปล่าในบัญชีของคุณ ซึ่งจะเพิ่ม Reward ปัจจุบันของคุณไปยังยอดคงเหลือโดยมีค่าธรรมเนียมธุรกรรมเพียงเล็กน้อย",
             "cta": "ดำเนินการต่อ"
           },
-          "verification": {
+          "confirmation": {
             "success": {
               "title": "เคลม Reward เรียบร้อยแล้ว!",
-              "text": "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือในบัญชีที่คุณใช้ได้แล้ว",
-              "cta": "ไปที่บัญชี"
-            },
-            "pending": {
-              "title": "กำลังประกาศธุรกรรม..."
-            },
-            "broadcastError": "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่สำเร็จ ก่อนที่จะลองอีกครั้ง"
+              "text": "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือในบัญชีที่คุณใช้ได้แล้ว"
+            }
           }
         }
       }
@@ -7266,6 +7310,158 @@
         }
       }
     },
+    "info": {
+      "available": {
+        "title": "HBAR พร้อมเสตคแล้ว",
+        "description": "จำนวนที่สามารถใช้จ่ายได้"
+      },
+      "delegated": {
+        "title": "สินทรัพย์ที่ Delegate",
+        "description": "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูก Delegate และยังคงสภาพคล่องไว้"
+      },
+      "claimable": {
+        "title": "Reward ที่สามารถขอรับได้",
+        "description": "จะมีการเคลม Reward โดยอัตโนมัติหลังจากเสร็จสิ้นแต่ละธุรกรรม คุณยังสามารถเคลมได้ด้วยตัวเองอีกด้วย"
+      }
+    },
+    "delegatedPositions": {
+      "rewards": {
+        "title": "Reward",
+        "cta": "เคลม"
+      },
+      "details": {
+        "validatorAddress": "Address ผู้ตรวจสอบ",
+        "delegatedAccount": "บัญชีที่ได้รับการ Delegate",
+        "status": {
+          "title": "สถานะ",
+          "active": "ใช้งานอยู่",
+          "activeTooltip": "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
+          "inactive": "ไม่ได้เปิดใช้งาน",
+          "inactiveTooltip": "ไม่พบผู้ตรวจสอบ",
+          "overstaked": "สเตคมากเกินไป",
+          "overstakedTooltip": "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม"
+        },
+        "rewards": "Reward",
+        "actions": {
+          "redelegate": "Redelegate",
+          "claim-rewards": "เก็บ Reward",
+          "undelegate": "Undelegate"
+        }
+      }
+    },
+    "delegation": {
+      "nodeName": "โหนด {{index}}: {{name}}",
+      "alreadyDelegatedModal": {
+        "title": "Delegate แล้ว",
+        "description": "มีการ Delegate ยอดคงเหลือในบัญชีทั้งหมดเรียบร้อยแล้ว"
+      },
+      "stepperHeader": {
+        "selectDevice": "เลือกอุปกรณ์",
+        "connectDevice": "เชื่อมต่อกับอุปกรณ์",
+        "stepRange": "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps": {
+        "summary": {
+          "delegate": "ฉันได้ Delegate",
+          "to": "จาก",
+          "alert": "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
+          "learnMore": "เรียนรู้เพิ่มเติม"
+        },
+        "validator": {
+          "title": "ผู้ตรวจสอบ",
+          "totalStake": "จำนวนที่สเตคแล้วทั้งหมด",
+          "rowSubtitlePercentage": "สเตคแล้ว {{percentage}}% ของจำนวนสูงสุด",
+          "rowSubtitleOverstaked": "โหนดมีการสเตกมากเกินไป",
+          "learnMore": "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice": {
+          "title": "อุปกรณ์"
+        },
+        "confirmation": {
+          "success": {
+            "title": "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
+            "description": "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError": "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "undelegation": {
+      "stepperHeader": {
+        "amount": "จำนวนที่จะ Undelegate",
+        "selectDevice": "เลือกอุปกรณ์",
+        "connectDevice": "เชื่อมต่อกับอุปกรณ์",
+        "stepRange": "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "alert": "เมื่อ Undelegate แล้ว ยอดและ Reward ที่ค้างอยู่ของคุณจะถูกแปลงเป็นเงินในทันที ทั้งนี้ คุณไม่สามารถ Undelegate ยอดสเตคเพียงบางส่วนได้",
+          "learnMore": "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice": {
+          "title": "อุปกรณ์"
+        },
+        "confirmation": {
+          "success": {
+            "title": "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+            "description": "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError": "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "redelegation": {
+      "stepperHeader": {
+        "selectValidator": "เลือกผู้ตรวจสอบใหม่",
+        "amountTitle": "{{from}} → {{to}}",
+        "amountSubtitle": "จำนวนที่จะ Redelegate",
+        "selectDevice": "เลือกอุปกรณ์",
+        "connectDevice": "เชื่อมต่อกับอุปกรณ์",
+        "stepRange": "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "alert": "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
+          "learnMore": "เรียนรู้เพิ่มเติม"
+        },
+        "connectDevice": {
+          "title": "อุปกรณ์"
+        },
+        "confirmation": {
+          "success": {
+            "title": "คุณได้ Redelegate สินทรัพย์ของคุณใหม่เรียบร้อยแล้ว",
+            "description": "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError": "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
+    "claimRewards": {
+      "stepperHeader": {
+        "selectReward": "เลือก Reward ที่จะเก็บ",
+        "claim": "เคลม Reward",
+        "selectDevice": "เลือกอุปกรณ์",
+        "connectDevice": "เชื่อมต่อกับอุปกรณ์",
+        "stepRange": "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "steps": {
+        "claim": {
+          "earned": "คุณได้รับ",
+          "delegatingTo": "โดยการ Delegate สินทรัพย์ให้กับ",
+          "description": "ระบบจะรับให้ตอนนี้และเพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณ"
+        },
+        "connectDevice": {
+          "title": "อุปกรณ์"
+        },
+        "confirmation": {
+          "success": {
+            "title": "คุณได้รับรางวัลเรียบร้อยแล้ว ระบบได้เพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
+            "description": "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว"
+          },
+          "broadcastError": "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
     "operationDetails": {
       "postAccountSection": "โทเคนที่เชื่อมโยงแล้ว",
       "postAlert": {
@@ -7322,33 +7518,36 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "ขั้นต่อไป ใช้ {{productName}} ของคุณเพื่อ...",
+      "title": "ขั้นตอนถัดไปคืออะไร?",
       "areAllPostOnboardingActionsCompletedTitle": "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
       "skip": "ฉันจะดำเนินการในภายหลัง",
       "viewWallet": "สำรวจพอร์ตโฟลิโอของฉัน"
     },
     "entryPointCard": {
       "title": "ขั้นตอนต่อไปสำหรับ {{productName}} ของคุณคืออะไร?",
-      "description": "โอนสินทรัพย์ของคุณจาก Exchange หรือ Wallet, ซื้อคริปโต, ปรับแต่งหน้าจอล็อกสกรีน หรือสมัครใช้งาน Ledger Recover",
+      "description": "รักษาสินทรัพย์ของคุณให้ปลอดภัยและไปต่อ",
       "buttonLabel": "ดูว่ามีอะไรอีกบ้าง"
     },
     "actions": {
+      "deviceOnboarded": {
+        "titleCompleted": "ตั้งค่าอุปกรณ์ Ledger ของคุณ"
+      },
       "assetsTransfer": {
-        "title": "โอนสินทรัพย์ของคุณไปยัง Ledger",
+        "title": "โอนสินทรัพย์ของคุณ",
         "titleCompleted": "สินทรัพย์ที่โอนไปยัง Ledger",
-        "description": "จาก Exchange หรือ Wallet ต่าง ๆ ไปยังบัญชี Ledger ของคุณโดยตรง",
+        "description": "โอนจาก Exchange หรือวอลเล็ตใด ๆ ก็ได้",
         "popupLabel": "สินทรัพย์ที่โอน"
       },
       "buyCrypto": {
-        "title": "ซื้อคริปโต",
+        "title": "ซื้อคริปโตผ่านแอป Ledger Wallet",
         "titleCompleted": "คริปโตที่ซื้อ",
-        "description": "เลือกจากกว่า 500 เหรียญและได้ราคาที่ดีที่สุด ที่เหมาะกับความต้องการของคุณ",
+        "description": "เลือกเหรียญและโทเคนได้จากกว่า 500 รายการ",
         "popupLabel": "คริปโตที่ซื้อ"
       },
       "customImage": {
         "title": "ปรับแต่งหน้าจอล็อค",
         "titleCompleted": "หน้าจอล็อคที่ปรับแต่ง",
-        "description": "เลือกศิลปะดิจิทัลหรือภาพเพื่อตั้งค่าเป็นหน้าจอล็อคของ {{productName}} ของคุณ",
+        "description": "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์",
         "popupLabel": "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
       "syncAccounts": {
@@ -7610,6 +7809,10 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "banner": {
+      "title": "วอลเล็ตของคุณยังไม่ซิงค์",
+      "description": "อัปเดตพอร์ตโฟลิโอของคุณอยู่เสมอ"
+    },
     "entryPoints": {
       "simpleCta": {
         "title": "เปิด Ledger Sync"
@@ -7626,7 +7829,10 @@
         "description": "เป็นการซิงค์บัญชีคริปโตของคุณโดยอัตโนมัติในโทรศัพท์และคอมพิวเตอร์ทั้งหมดของคุณ แม้ว่าจะเปลี่ยนไปใช้อุปกรณ์ใหม่ก็ตาม",
         "mainCta": "เปิด Ledger Sync",
         "secondCta": "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
-        "learnMore": "Ledger Sync ทำงานอย่างไร?"
+        "learnMore": "Ledger Sync ทำงานอย่างไร?",
+        "titleModal": "ซิงค์วอลเล็ตของคุณ",
+        "descriptionModal": "อัปเดตพอร์ตให้คุณเสมอแม้จะเปลี่ยนคอมพิวเตอร์หรือใช้โทรศัพท์ โดยทั้งหมดจะปลอดภัยโดยอุปกรณ์ Ledger ของคุณ",
+        "cta": "ดำเนินการต่อ"
       }
     },
     "deviceSelection": {
@@ -7645,13 +7851,18 @@
       "sync": "ซิงค์เรียบร้อย!",
       "syncDesc": "การเปลี่ยนแปลงในบัญชีคริปโตของคุณจะปรากฏโดยอัตโนมัติในแอป Ledger Wallet บนโทรศัพท์และคอมพิวเตอร์ที่ซิงค์ไว้",
       "activation": "ได้เปิด Ledger Sync สำหรับโทรศัพท์เครื่องนี้แล้ว",
+      "complete" : {
+        "title": "ซิงค์เสร็จสมบูรณ์",
+        "description": "ต่อไป พอร์ตโฟลิโอของคุณจะซิงค์ข้อมูลสินทรัพย์ของคุณบนทุกอุปกรณ์โดยอัตโนมัติ"
+      },
       "syncAnother": "ซิงค์ข้อมูลกับแอป Ledger Wallet บนอุปกรณ์อื่น",
       "close": "ปิด"
     },
     "walletSyncActivated": {
       "synchronize": {
         "title": "ซิงค์ข้อมูลกับแอป Ledger Wallet บนอุปกรณ์อื่น",
-        "description": "ซิงค์บัญชีคริปโตของแอป Ledger Wallet ระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ ของคุณ"
+        "description": "ซิงค์บัญชีคริปโตของแอป Ledger Wallet ระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ ของคุณ",
+        "desc": "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ"
       },
       "unauthorizeMember": {
         "error": {
@@ -7663,7 +7874,7 @@
       "manageKey": {
         "title": "ลบการซิงค์",
         "description": "บัญชีคริปโตของคุณในโทรศัพท์และคอมพิวเตอร์แต่ละเครื่องจะหยุดการซิงค์กัน",
-        "success": "หยุดซิงค์แอป Ledger Wallet ของคุณแล้ว",
+        "success": "แอป Ledger Wallet ของคุณไม่ได้ซิงค์กับระบบแล้ว",
         "successHint": "คุณสามารถเปิดการซิงค์อีกครั้งได้ตลอดเวลา",
         "confirm": {
           "delete": "ใช่ ลบการซิงค์",
@@ -7714,7 +7925,8 @@
         },
         "connectDevice": {
           "title": "ใช้อุปกรณ์ Ledger ของฉัน"
-        }
+        },
+        "description": "เลือกว่าคุณได้ซิงค์แอป Ledger Wallet บนโทรศัพท์หรือคอมพิวเตอร์อีกเครื่องหนึ่งหรือไม่"
       },
       "qrCode": {
         "title": "ซิงค์กับแอป Ledger Wallet",
@@ -8034,12 +8246,36 @@
     }
   },
   "canton": {
+    "expiryDuration": {
+      "label": "ช่วงเวลาหมดอายุ",
+      "summaryLabel": "ข้อเสนอใกล้หมดอายุ",
+      "threeHours": "3 ชั่วโมง",
+      "sixHours": "6 ชั่วโมง",
+      "oneDay": "1 วัน",
+      "oneWeek": "1 สัปดาห์",
+      "oneMonth": "30 วัน"
+    },
+    "account": {
+      "lockedBalance": "ถูกล็อก",
+      "lockedBalanceTooltip": "มีการล็อกเงินทุนของคุณไว้ในข้อเสนอที่คุณส่งให้บุคคลอื่น คุณสามารถยกเลิกข้อเสนอเหล่านี้ได้ทุกเมื่อ หรือรอให้ผู้รับยอมรับหรือปฏิเสธ",
+      "withdrawableBalance": "สามารถถอนได้",
+      "withdrawableBalanceTooltip": "เงินทุนที่คุณสามารถเรียกคืนจากข้อเสนอที่ส่งซึ่งหมดอายุแล้ว ถอนเพื่อย้ายเงินทุนเหล่านี้กลับไปยังยอดคงเหลือในบัญชีที่ใช้ได้"
+    },
     "onboard": {
       "account": "บัญชี",
       "authorize": "อนุญาต",
       "preapprove": "เพิ่มบัญชีสำเร็จ",
       "validator": "ผู้ตรวจสอบ Ledger",
       "title": "รับเงินทุนโดยอัตโนมัติ",
+      "reonboard": {
+        "title": "จำเป็นต้องอัปเดตบัญชี",
+        "account": "บัญชี",
+        "authorize": "อนุญาตผู้ตรวจสอบใหม่",
+        "warning": {
+          "title": "ตรวจพบการเปลี่ยนแปลง Topology",
+          "description": "ตรวจพบการเปลี่ยนแปลง Topology ในเครือข่าย Canton โปรดออนบอร์ดบัญชีของคุณใหม่เพื่อใช้งานต่อไป"
+        }
+      },
       "error429": "ปัจจุบัน Canton Network รองรับการสร้างบัญชีจำนวนจำกัดต่อวัน โปรดลองอีกครั้งในภายหลัง"
     },
     "tooManyUtxos": {
@@ -8048,6 +8284,50 @@
       "quickFix": "การแก้ไขด่วน: ส่งเงินทุนบางส่วนให้กับตัวเองเพื่อรวมเข้าด้วยกัน",
       "warning": "บัญชีของคุณมี UTXO ขนาดเล็กมากเกินไป ส่งเงินทุนบางส่วนให้กับตัวเอง เพื่อรวม UTXO ที่เหลือเข้าด้วยกัน",
       "consolidate": "รวมเข้าด้วยกัน"
+    },
+    "pendingTransactions": {
+      "expired": "หมดอายุแล้ว",
+      "accept": "ยอมรับ",
+      "reject": "ปฏิเสธ",
+      "review": "ตรวจสอบ",
+      "withdraw": "ยกเลิกการโอน",
+      "incoming": {
+        "title": "การโอนเข้าที่รอตรวจสอบ"
+      },
+      "outgoing": {
+        "title": "การโอนออก"
+      },
+      "details": {
+        "incomingTitle": "รายละเอียดการโอนเข้า",
+        "outgoingTitle": "รายละเอียดการโอนออก"
+      },
+      "amount": "จำนวน",
+      "from": "จาก",
+      "to": "ไปยัง",
+      "memo": "Memo",
+      "expiresAt": "หมดอายุเมื่อ",
+      "expiresIn": "หมดอายุเมื่อ",
+      "status": {
+        "label": "สถานะ"
+      },
+      "deviceAppModal": {
+        "contractId": "ID สัญญา",
+        "processing": "กำลังประมวลผล...",
+        "success": {
+          "accept": {
+            "title": "การโอนที่ยอมรับ",
+            "description": "ได้รับข้อเสนอการโอนเข้าเรียบร้อยแล้ว"
+          },
+          "reject": {
+            "title": "การโอนที่ปฏิเสธ",
+            "description": "ได้ปฏิเสธการโอนเข้าเรียบร้อยแล้ว"
+          },
+          "withdraw": {
+            "title": "การโอนที่ปฏิเสธ",
+            "description": "ปฏิเสธการโอนออกสำเร็จ"
+          }
+        }
+      }
     }
   }
 }
