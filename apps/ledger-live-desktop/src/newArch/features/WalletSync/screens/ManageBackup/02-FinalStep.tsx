@@ -32,6 +32,7 @@ export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {
           withClose
           onClose={onClose}
           analyticsPage={AnalyticsPage.BackupDeleted}
+          testId="walletsync-delete-backup-success-title"
         />
       ) : (
         <Error

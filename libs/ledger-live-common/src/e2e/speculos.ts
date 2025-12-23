@@ -639,7 +639,7 @@ export const removeMemberLedgerSync = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.CONNECT_WITH);
+      await waitFor(DeviceLabels.CONNECT_TO);
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONNECT);
@@ -648,17 +648,22 @@ export const removeMemberLedgerSync = withDeviceController(
         await waitFor(DeviceLabels.CONFIRM_CHANGE);
         await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-        await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+        const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+        await pressAndRelease(
+          DeviceLabels.TURN_ON_SYNC,
+          turnOnSyncCoordinates.x,
+          turnOnSyncCoordinates.y,
+        );
       } else {
-        await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+        await pressUntilTextFound(DeviceLabels.CONNECT, true);
         await buttons.both();
-        await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-        await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
+        await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+        await pressUntilTextFound(DeviceLabels.REMOVE, true);
         await buttons.both();
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
         await buttons.both();
       }
@@ -667,19 +672,25 @@ export const removeMemberLedgerSync = withDeviceController(
 
 export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
-  await waitFor(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
 
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
+    await pressAndRelease(DeviceLabels.CONNECT);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
+    await buttons.right();
     await buttons.both();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+    const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+    await pressAndRelease(
+      DeviceLabels.TURN_ON_SYNC,
+      turnOnSyncCoordinates.x,
+      turnOnSyncCoordinates.y,
+    );
   } else {
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await buttons.both();
   }
@@ -712,6 +723,21 @@ const getSettingsCogwheelCoordinates = () => {
       return { x: 253, y: 58 };
     default:
       return { x: 400, y: 80 };
+  }
+};
+
+const getTurnOnSyncCoordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 121, y: 532 };
+    case DeviceModelId.europa:
+      return { x: 151, y: 446 };
+    case DeviceModelId.apex:
+      return { x: 90, y: 301 };
+    default:
+      return { x: 147, y: 548 };
   }
 };
 
