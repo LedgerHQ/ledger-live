@@ -63,6 +63,9 @@ catalogs:
     '@types/bs58':
       specifier: ^4.0.1
       version: 4.0.4
+    '@types/bs58check':
+      specifier: ^2.1.2
+      version: 2.1.2
     '@typescript-eslint/eslint-plugin':
       specifier: 8.48.1
       version: 8.48.1
@@ -75,6 +78,9 @@ catalogs:
     bs58:
       specifier: ^4.0.1
       version: 4.0.1
+    bs58check:
+      specifier: ^2.1.2
+      version: 2.1.2
     electron:
       specifier: 38.2.0
       version: 38.2.0
@@ -2624,7 +2630,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       cashaddrjs:
         specifier: ^0.4.4
@@ -2664,7 +2670,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       '@types/bs58check':
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/cashaddrjs':
         specifier: ^0.3.3
@@ -3726,7 +3732,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       expect:
         specifier: ^27.4.6
@@ -3745,7 +3751,7 @@ importers:
         specifier: workspace:^
         version: link:../../disable-network-setup
       '@types/bs58check':
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
@@ -4619,7 +4625,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       expect:
         specifier: ^27.4.6
@@ -4644,7 +4650,7 @@ importers:
         specifier: workspace:^
         version: link:../../disable-network-setup
       '@types/bs58check':
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
@@ -6436,7 +6442,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       invariant:
         specifier: ^2.2.4
@@ -7199,7 +7205,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       invariant:
         specifier: ^2.2.4
@@ -25909,25 +25915,6 @@ packages:
   expo-asset@8.10.1:
     resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
     peerDependencies:
-      expo-constants: '*'
-      expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      expo-constants:
-        optional: true
-      expo-modules-core:
-        optional: true
-      react:
-        optional: true
-      react-native:
-        optional: true
-
-  expo-atlas@0.4.3:
-    resolution: {integrity: sha512-nN2bouxFvMsqZqLl0ka+eI9Ofida0PcuoE4v+7fHlgyp95X2cCL8Acf0nRKXmmIBEYazdw0d7BAOZfC0b41oxA==}
-    hasBin: true
-    peerDependencies:
-      expo: '*'
       expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
@@ -62794,28 +62781,6 @@ snapshots:
       react-native: 0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
     transitivePeerDependencies:
       - expo
-
-  expo-atlas@0.4.3(expo-modules-core@2.2.3(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(da95d96e6b14ca1108c91786bbc295f9))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@expo/server': 0.5.3
-      arg: 5.0.2
-      chalk: 4.1.2
-      compression: 1.7.4
-      connect: 3.7.0
-      expo: 52.0.46(da95d96e6b14ca1108c91786bbc295f9)
-      express: 4.22.0
-      freeport-async: 2.0.0
-      getenv: 2.0.0
-      morgan: 1.10.0
-      open: 8.4.2
-      serve-static: 1.16.2
-      stream-json: 1.8.0
-    optionalDependencies:
-      expo-modules-core: 2.2.3(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-native: 0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-    transitivePeerDependencies:
-      - supports-color
 
   expo-constants@17.0.8(expo-modules-core@2.2.3(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(da95d96e6b14ca1108c91786bbc295f9))(react-native@0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
