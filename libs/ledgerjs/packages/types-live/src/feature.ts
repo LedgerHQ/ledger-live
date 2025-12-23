@@ -236,6 +236,8 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
+  lwmOptimizeOptInNotificationsToOptOutUsers: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;

@@ -601,6 +601,8 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwmNewWordingOptInNotificationsDrawer: DEFAULT_FEATURE,
+  lwmOptimizeOptInNotificationsToOptOutUsers: DEFAULT_FEATURE,
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
