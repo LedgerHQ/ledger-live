@@ -85,12 +85,18 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     [enabledCurrencies, partnerSupportedAssets],
   );
 
+  const stakeDrawerCurrencies = useMemo(() => {
+    if (currency) {
+      return [currency.id];
+    }
+    if (whitelistedCurrencies.length > 0) {
+      return whitelistedCurrencies;
+    }
+    return undefined;
+  }, [currency, whitelistedCurrencies]);
+
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({
-    currencies: currency
-      ? [currency.id]
-      : whitelistedCurrencies.length > 0
-        ? whitelistedCurrencies
-        : undefined,
+    currencies: stakeDrawerCurrencies,
     sourceScreenName: route.name,
   });
 
