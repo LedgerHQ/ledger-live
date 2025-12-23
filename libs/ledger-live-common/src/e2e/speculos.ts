@@ -349,6 +349,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Base: {
+    currency: getCryptoCurrencyById("base"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -814,6 +822,7 @@ export async function signSendTransaction(tx: Transaction) {
   const currencyName = tx.accountToDebit.currency;
   switch (currencyName) {
     case Currency.sepETH:
+    case Currency.BASE:
     case Currency.POL:
     case Currency.ETH:
       await sendEVM(tx);

@@ -523,6 +523,19 @@ export class Account {
     1,
   );
 
+  static readonly BASE_1 = new Account(
+    Currency.BASE,
+    "Base 1",
+    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
+    0,
+  );
+  static readonly BASE_2 = new Account(
+    Currency.BASE,
+    "Base 2",
+    "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
+    1,
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 
