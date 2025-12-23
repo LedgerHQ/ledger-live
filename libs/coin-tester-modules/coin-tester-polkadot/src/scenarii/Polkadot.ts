@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { createApiPromise } from "../api";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
@@ -95,7 +96,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
 
     await cryptoWaitReady();
     await wsProvider.connect();
-    api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
+    api = await createApiPromise(wsProvider);
 
     const keyring = new Keyring({ type: "sr25519" });
     keyring.setSS58Format(0);

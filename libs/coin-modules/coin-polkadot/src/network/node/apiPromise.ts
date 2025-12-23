@@ -26,8 +26,9 @@ export default async function (currency?: CryptoCurrency) {
       throw new Error("[Polkadot] Invalid node URL");
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     api = await ApiPromise.create({
-      provider,
+      provider: provider as any,
       noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
     });
   }
