@@ -14,6 +14,9 @@ import { withDeviceController } from "../deviceInteraction/DeviceController";
 type ActionType = "both" | "right" | "tap" | "swipe" | "confirm" | "hold";
 
 function validateTransactionData(tx: Transaction, events: string[]) {
+  if (!tx.accountToCredit.address) {
+    throw new Error("Recipient address is not set");
+  }
   const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
   expect(isAddressCorrect).toBeTruthy();
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
