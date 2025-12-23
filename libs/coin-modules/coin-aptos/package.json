@@ -112,7 +112,7 @@
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.14",
-    "@types/semver": "^7.5.8",
+    "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "^29.7.0",
     "react": "catalog:",

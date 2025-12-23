@@ -36,9 +36,9 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@noble/hashes": "^1.8.0",
-    "@types/semver": "^7",
+    "@types/semver": "catalog:",
     "purify-ts": "^2.1.0",
-    "semver": "^7",
+    "semver": "catalog:",
     "xstate": "^5.19.2"
   },
   "devDependencies": {

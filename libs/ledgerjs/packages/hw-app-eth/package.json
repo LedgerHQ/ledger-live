@@ -38,7 +38,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "semver": "^7.3.5"
+    "semver": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
