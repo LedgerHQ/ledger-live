@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { DesyncOverlay } from "../components/DesyncOverlay";
