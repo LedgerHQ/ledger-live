@@ -23,12 +23,12 @@ import {
   setNotificationPermissionStatus,
 } from "~/actions/notifications";
 import { setRatingsModalLocked } from "~/actions/ratings";
-import { track } from "~/analytics";
+import { track, updateIdentify } from "~/analytics";
 import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
-import { getNotificationPermissionStatus } from "./getNotifPermissions";
+import { getNotificationPermissionStatus } from "./getNotificationPermissionStatus";
 import { useNavigation } from "@react-navigation/core";
 
 export type DataOfUser = {
@@ -67,12 +67,13 @@ export async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOf
 }
 
 const useNotifications = () => {
-  const pushNotificationsFeature = useFeature("brazePushNotifications");
+  const featureBrazePushNotifications = useFeature("brazePushNotifications");
+  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
   const notifications = useSelector(notificationsSelector);
   const permissionStatus = useSelector(notificationsPermissionStatusSelector);
-  const actionEvents = pushNotificationsFeature?.params?.action_events;
-  const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
+  const actionEvents = featureBrazePushNotifications?.params?.action_events;
+  const repromptSchedule = featureBrazePushNotifications?.params?.reprompt_schedule;
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
@@ -86,7 +87,7 @@ const useNotifications = () => {
 
   const hiddenNotificationCategories = useMemo(() => {
     const hiddenCategories = [];
-    const categoriesToHide = pushNotificationsFeature?.params?.notificationsCategories ?? [];
+    const categoriesToHide = featureBrazePushNotifications?.params?.notificationsCategories ?? [];
 
     for (const notificationsCategory of categoriesToHide) {
       if (!notificationsCategory?.displayed) {
@@ -95,7 +96,7 @@ const useNotifications = () => {
     }
 
     return hiddenCategories;
-  }, [pushNotificationsFeature?.params?.notificationsCategories]);
+  }, [featureBrazePushNotifications?.params?.notificationsCategories]);
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
     (dataOfUserUpdated: DataOfUser) => {
@@ -168,6 +169,7 @@ const useNotifications = () => {
         // User previously opted out → check if they've fully re-enabled notifications
         if (isAuthorized && notifications.areNotificationsAllowed) {
           // Both OS and app notifications enabled → clear opt-out state
+          updateIdentify();
           return resetOptOutState();
         }
 
@@ -179,6 +181,7 @@ const useNotifications = () => {
       // User was marked as opted in but somehow now has denied OS permissions.
       if (!isOptOut && isDenied) {
         // Mark as opted out to track dismissal for reprompt scheduling
+        updateIdentify();
         return optOutOfNotifications();
       }
 
@@ -282,6 +285,7 @@ const useNotifications = () => {
     if (permissionStatus === AuthorizationStatus.NOT_DETERMINED) {
       const permission = await requestPermission();
       dispatch(setNotificationPermissionStatus(permission));
+      updateIdentify();
       return permission;
     }
 
@@ -392,7 +396,7 @@ const useNotifications = () => {
         dispatch(setRatingsModalLocked(false));
       }
 
-      const triggerEvents = pushNotificationsFeature?.params?.trigger_events ?? [];
+      const triggerEvents = featureBrazePushNotifications?.params?.trigger_events ?? [];
 
       for (const eventTrigger of triggerEvents) {
         const isEntering = eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute;
@@ -415,7 +419,7 @@ const useNotifications = () => {
     },
     [
       pushNotificationsEventTriggered?.timeout,
-      pushNotificationsFeature?.params?.trigger_events,
+      featureBrazePushNotifications?.params?.trigger_events,
       dispatch,
       pushNotificationsOldRoute,
       shouldPromptOptInDrawerCallback,
@@ -425,7 +429,11 @@ const useNotifications = () => {
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
     (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
-      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked || !actionEvents) {
+      if (
+        !featureBrazePushNotifications?.enabled ||
+        isPushNotificationsModalLocked ||
+        !actionEvents
+      ) {
         return;
       }
 
@@ -440,7 +448,9 @@ const useNotifications = () => {
           if (!onboardingParams?.enabled) {
             return;
           }
+
           // requestAnimationFrame is needed here for onboarding. Otherwise it won't open the drawer
+          // it might be because there is a navigation animation that is not finished yet which we can't control
           requestAnimationFrame(() => {
             openDrawer("onboarding", ScreenName.Portfolio, onboardingParams?.timer);
           });
@@ -453,15 +463,6 @@ const useNotifications = () => {
           }
 
           openDrawer("add_favorite_coin", ScreenName.MarketDetail, addFavoriteCoinParams?.timer);
-          break;
-        }
-        case "buy": {
-          const buyParams = actionEvents?.buy;
-          if (!buyParams?.enabled) {
-            return;
-          }
-
-          openDrawer("buy", ScreenName.ExchangeBuy, buyParams?.timer);
           break;
         }
         case "send": {
@@ -507,7 +508,7 @@ const useNotifications = () => {
       }
     },
     [
-      pushNotificationsFeature?.enabled,
+      featureBrazePushNotifications?.enabled,
       isPushNotificationsModalLocked,
       actionEvents,
       shouldPromptOptInDrawerCallback,
@@ -517,16 +518,25 @@ const useNotifications = () => {
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
+      const canShowVariant =
+        drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
+
       track("button_clicked", {
         button: eventName,
         page: "Drawer push notification opt-in",
         source: drawerSource,
         repromptDelay: getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList),
         dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
-        // variant: "A" || "B",
+        variant: canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined,
       });
     },
-    [drawerSource, getRepromptDelay, pushNotificationsDataOfUser?.dismissedOptInDrawerAtList],
+    [
+      drawerSource,
+      featureNewWordingNotificationsDrawer?.enabled,
+      featureNewWordingNotificationsDrawer?.params?.variant,
+      getRepromptDelay,
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+    ],
   );
 
   const handleDelayLaterPress = useCallback(() => {

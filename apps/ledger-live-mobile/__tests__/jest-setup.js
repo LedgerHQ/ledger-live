@@ -152,6 +152,7 @@ require("react-native-reanimated").setUpTests();
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
+  updateIdentify: jest.fn(),
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({

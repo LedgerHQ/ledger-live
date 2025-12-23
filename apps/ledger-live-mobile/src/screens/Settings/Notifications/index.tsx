@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
@@ -62,14 +62,21 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
         toggle: `Toggle_${capitalizedKey === "Allowed" ? "Allow" : capitalizedKey}`,
         enabled: value,
       });
+
+      updateIdentify();
+      updateUserPreferences({
+        ...notifications,
+        [notificationKey]: value,
+      });
     },
     [
-      capitalizedKey,
       dispatch,
       notificationKey,
+      capitalizedKey,
+      notifications,
+      optOutOfNotifications,
       permissionStatus,
       resetOptOutState,
-      optOutOfNotifications,
     ],
   );
 
@@ -105,13 +112,6 @@ function NotificationsSettings() {
   }, [pushNotificationsOldRoute, requestPushNotificationsPermission]);
 
   const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
-
-  // Refresh user properties and send them to Segment when notifications preferences are updated
-  // Also send user notifications preferences to Braze when updated
-  useEffect(() => {
-    updateIdentify();
-    updateUserPreferences(notifications);
-  }, [notifications]);
 
   const disableSubSettings = !notifications.areNotificationsAllowed;
 

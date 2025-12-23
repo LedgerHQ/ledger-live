@@ -2,6 +2,8 @@ import { act, renderHook } from "@tests/test-renderer";
 import { setPushNotificationsDataOfUserInStorage, useNotifications } from "../notifications";
 import storage from "LLM/storage";
 import { add, sub, type Duration } from "date-fns";
+import * as analytics from "~/analytics";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const AuthorizationStatus = {
   NOT_DETERMINED: -1,
@@ -135,7 +137,16 @@ jest.mock("@ledgerhq/live-common/featureFlags/useFeature", () => {
       };
     }
 
-    console.error(`Unhandled feature flag: ${name}`);
+    if (name === "lwmNewWordingOptInNotificationsDrawer") {
+      return {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+        },
+      };
+    }
+
+    console.warn(`Unhandled feature flag: ${name}`);
 
     return {
       enabled: true,
@@ -144,6 +155,10 @@ jest.mock("@ledgerhq/live-common/featureFlags/useFeature", () => {
 });
 
 describe("Push Notification Drawer", () => {
+  const mockUpdateIdentify = jest
+    .spyOn(analytics, "updateIdentify")
+    .mockImplementation(() => Promise.resolve());
+
   beforeEach(async () => {
     jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
 
@@ -154,8 +169,11 @@ describe("Push Notification Drawer", () => {
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
     jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    mockUpdateIdentify.mockRestore();
   });
 
   const advanceTime = (duration: Duration) => {
@@ -209,6 +227,7 @@ describe("Push Notification Drawer", () => {
         // Should prompt after reprompt delay
         advanceTime(REPROMPT_SCHEDULE[0]);
         expect(result.current.shouldPromptOptInDrawerCallback()).toBe(true);
+        expect(mockUpdateIdentify).toHaveBeenCalled();
       });
 
       it("app === true => should not prompt immediately, then prompt after delay", async () => {
@@ -223,6 +242,7 @@ describe("Push Notification Drawer", () => {
         // Should prompt after reprompt delay
         advanceTime(REPROMPT_SCHEDULE[0]);
         expect(result.current.shouldPromptOptInDrawerCallback()).toBe(true);
+        expect(mockUpdateIdentify).toHaveBeenCalled();
       });
     });
 
@@ -389,6 +409,7 @@ describe("Push Notification Drawer", () => {
       await act(async () => {
         await result.current.initPushNotificationsData();
       });
+      expect(mockUpdateIdentify).toHaveBeenCalled();
 
       expect(result.current.shouldPromptOptInDrawerCallback()).toBe(false);
 
@@ -517,6 +538,21 @@ describe("Push Notification Drawer", () => {
         advanceTime(REPROMPT_SCHEDULE[0]);
         expect(result.current.shouldPromptOptInDrawerCallback()).toBe(true);
       });
+    });
+  });
+
+  describe("request push notifications permission", () => {
+    it("should update identify when request push notifications permission is called", async () => {
+      const { result } = await setupHook({
+        osPermission: AuthorizationStatus.NOT_DETERMINED,
+        appNotifications: true,
+      });
+
+      await act(async () => {
+        await result.current.requestPushNotificationsPermission();
+      });
+
+      expect(mockUpdateIdentify).toHaveBeenCalled();
     });
   });
 });

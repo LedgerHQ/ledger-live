@@ -5,6 +5,8 @@ import { useNotifications } from "~/logic/notifications";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
 import { TrackScreen } from "~/analytics";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
@@ -24,6 +26,13 @@ const PushNotificationsModal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
+
+  const canShowVariant =
+    drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
+  const isVariantB =
+    featureNewWordingNotificationsDrawer?.params?.variant === ABTestingVariants.variantB;
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isPushNotificationsModalOpen}
@@ -37,7 +46,7 @@ const PushNotificationsModal = () => {
           getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList) ?? undefined
         }
         dismissedCount={pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0}
-        // variant="A | B"
+        variant={canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined}
       />
 
       <Flex mb={4}>
@@ -45,8 +54,11 @@ const PushNotificationsModal = () => {
           <PushNotificationsModalIllustration type={drawerSource} />
 
           <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
-            {t("notifications.prompt.title")}
+            {canShowVariant && isVariantB
+              ? t("notifications.prompt.titleVariantB")
+              : t("notifications.prompt.title")}
           </Text>
+
           <Text
             variant="bodyLineHeight"
             fontWeight="medium"
@@ -54,7 +66,9 @@ const PushNotificationsModal = () => {
             textAlign="center"
             mt={3}
           >
-            {t("notifications.prompt.desc")}
+            {canShowVariant && isVariantB
+              ? t("notifications.prompt.descVariantB")
+              : t("notifications.prompt.desc")}
           </Text>
         </Flex>
         <Button

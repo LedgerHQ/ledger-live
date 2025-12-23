@@ -237,7 +237,7 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
-  lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -832,6 +832,9 @@ export type Feature_LwdWallet40 = Feature<
     //  Add specific LWD params
   } & Feature_Wallet40_Params
 >;
+export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
+  variant: ABTestingVariants;
+}>;
 
 /**
  * Utils types.

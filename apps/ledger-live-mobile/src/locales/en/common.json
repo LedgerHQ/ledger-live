@@ -3475,7 +3475,9 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
+      "titleVariantB": "Get the most of Ledger Wallet",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
+      "descVariantB": "We'll send you personalized tips, setup guides and relevant market news.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
@@ -7855,7 +7857,7 @@
       "sync": "Sync successful",
       "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers.",
       "activation": "Ledger Sync turned on for this phone",
-      "complete" : {
+      "complete": {
         "title": "Sync complete",
         "description": "From now on, your portfolio will automatically stay sync across all your devices."
       },
