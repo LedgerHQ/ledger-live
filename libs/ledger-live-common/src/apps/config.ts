@@ -81,6 +81,12 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "1.9.0",
     },
   },
+  config_nanoapp_sui: {
+    type: "object",
+    default: {
+      minVersion: "1.3.0",
+    },
+  },
 };
 
 export { appConfig };
