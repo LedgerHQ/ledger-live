@@ -10,7 +10,7 @@ export class ModularScanAccountsDrawer extends Drawer {
   private deselectAllButton = this.page.getByText("Deselect all");
   private checkbox = this.page.getByTestId("right-element-checkbox").first();
   private successAddLabel = this.page.getByTestId("accounts-added-title");
-  private loadingOverlay = this.page.locator('[data-testid="loading-overlay"]');
+  private loadingOverlay = this.page.getByTestId("loading-overlay");
 
   @step("Validate modular scan accounts drawer is visible")
   async isModularScanAccountsDrawerVisible(): Promise<boolean> {
