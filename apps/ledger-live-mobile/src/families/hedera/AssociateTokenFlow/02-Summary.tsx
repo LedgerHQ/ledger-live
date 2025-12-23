@@ -5,7 +5,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -31,12 +30,9 @@ type Props = BaseComposite<
 export default function Summary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
-
-  const { tokenAddress } = route.params;
-  const { token } = useTokenByAddressInCurrency(tokenAddress || "", "hedera");
+  const { token } = route.params;
 
   invariant(account, "hedera: account is required");
-  invariant(token, `hedera: token with address ${tokenAddress} is not available`);
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
