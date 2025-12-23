@@ -85,7 +85,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const data = {
           provider,
           amountFrom: apiAmount.toString(),
-          amountFromInSmallestDenomination: amount.toNumber(),
+          amountFromInSmallestDenomination: amount.toString(), // to string to avoid rounding issues
           from: refundCurrency.id,
           to: payoutCurrency.id,
           address: payoutAccount.freshAddress,
@@ -258,7 +258,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (swapResult.binaryPayload) {
           const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
           amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
-          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toString())
             throw new Error("AmountFrom received from partner's payload mismatch user input");
         }
 
