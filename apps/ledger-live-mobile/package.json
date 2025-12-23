@@ -278,7 +278,7 @@
     "@types/ws": "8.5.10",
     "babel-jest": "29.7.0",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
-    "body-parser": "1.20.3",
+    "body-parser": "1.20.4",
     "cors": "2.8.5",
     "detox-allure2-adapter": "1.0.0-alpha.42",
     "detox": "20.46.0",
