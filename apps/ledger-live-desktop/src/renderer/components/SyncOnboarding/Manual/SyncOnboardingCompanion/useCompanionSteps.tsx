@@ -7,15 +7,17 @@ import { SeedOriginType } from "@ledgerhq/types-live";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import SeedStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/SeedStep";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
 import { analyticsFlowName, StepText } from "../shared";
-import OnboardingAppInstallStep from "../../../OnboardingAppInstall";
 import BackupBackground from "../assets/BackupBackground";
 import SetupBackground from "../assets/SetupBackground";
 import ContinueOnStax from "../assets/ContinueOnStax";
 import ContinueOnEuropa from "../assets/ContinueOnEuropa";
 import ContinueOnApex from "../assets/ContinueOnApex";
-import SeedStep, { SeedPathStatus } from "./SeedStep";
+import OnboardingAppInstallStep from "../../../OnboardingAppInstall";
+
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import useTheme from "~/renderer/hooks/useTheme";
 

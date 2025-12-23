@@ -14,7 +14,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
-import { SeedPathStatus } from "./SeedStep";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { analyticsFlowName } from "../shared";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
