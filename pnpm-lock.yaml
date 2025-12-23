@@ -63,6 +63,9 @@ catalogs:
     '@types/bs58':
       specifier: ^4.0.1
       version: 4.0.4
+    '@types/bs58check':
+      specifier: ^2.1.2
+      version: 2.1.2
     '@typescript-eslint/eslint-plugin':
       specifier: 8.48.1
       version: 8.48.1
@@ -75,6 +78,9 @@ catalogs:
     bs58:
       specifier: ^4.0.1
       version: 4.0.1
+    bs58check:
+      specifier: ^2.1.2
+      version: 2.1.2
     electron:
       specifier: 38.2.0
       version: 38.2.0
@@ -2621,7 +2627,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       cashaddrjs:
         specifier: ^0.4.4
@@ -2661,7 +2667,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       '@types/bs58check':
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/cashaddrjs':
         specifier: ^0.3.3
@@ -3723,7 +3729,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       expect:
         specifier: ^27.4.6
@@ -3742,7 +3748,7 @@ importers:
         specifier: workspace:^
         version: link:../../disable-network-setup
       '@types/bs58check':
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
@@ -4616,7 +4622,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       expect:
         specifier: ^27.4.6
@@ -4641,7 +4647,7 @@ importers:
         specifier: workspace:^
         version: link:../../disable-network-setup
       '@types/bs58check':
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
@@ -6433,7 +6439,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       invariant:
         specifier: ^2.2.4
@@ -7196,7 +7202,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       bs58check:
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       invariant:
         specifier: ^2.2.4
