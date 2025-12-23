@@ -288,6 +288,7 @@ export type Features = CurrencyFeatures & {
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
+  llmOnboardingEnableSync: Feature_OnboardingEnableSync;
 };
 
 /**
@@ -649,6 +650,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  onboarding: boolean;
   postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
@@ -748,6 +750,11 @@ export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
 
 export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
+
+export type Feature_OnboardingEnableSync = Feature<{
+  nanos: boolean;
+  touchscreens: boolean;
+}>;
 
 /**
  * Array of firmware versions that are ignored for the given device model
