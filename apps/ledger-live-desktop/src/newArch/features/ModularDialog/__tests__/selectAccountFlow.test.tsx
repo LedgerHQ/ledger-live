@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import React from "react";
-import * as reactRedux from "react-redux";
+import * as reduxHooks from "LLD/hooks/redux";
 import { render, screen, waitFor } from "tests/testSetup";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -26,6 +26,15 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+
+const actualUseDispatch = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux").useDispatch;
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: jest.fn(() => actual.useDispatch()),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -208,7 +217,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   });
 
   it("should trigger add account with corresponding currency", async () => {
-    const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+    const useDispatchMock = jest.mocked(reduxHooks.useDispatch);
+    useDispatchMock.mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDialogFlowManager
@@ -237,7 +247,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       type: "MODAL_OPEN",
     });
 
-    useDispatchSpy.mockRestore();
+    useDispatchMock.mockImplementation(actualUseDispatch);
   });
 
   it("should go back to AssetSelection step when clicking on back button", async () => {

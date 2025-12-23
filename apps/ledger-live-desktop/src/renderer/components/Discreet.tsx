@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 export const useDiscreetMode = () => useSelector(discreetModeSelector);
 

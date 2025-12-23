@@ -3,7 +3,8 @@ import getUser from "~/helpers/user";
 import { getStoreValue } from "~/renderer/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { saveSettings } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useLocation } from "react-router-dom";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";

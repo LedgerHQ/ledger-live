@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { color } from "styled-system";
 import { Transition, TransitionStatus } from "react-transition-group";

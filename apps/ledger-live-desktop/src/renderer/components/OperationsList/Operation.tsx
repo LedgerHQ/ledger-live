@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";

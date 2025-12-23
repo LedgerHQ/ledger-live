@@ -8,7 +8,7 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";

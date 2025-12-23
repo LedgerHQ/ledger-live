@@ -2,7 +2,7 @@ import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";

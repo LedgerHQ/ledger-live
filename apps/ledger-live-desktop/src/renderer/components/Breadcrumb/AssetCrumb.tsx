@@ -14,7 +14,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 
 type ItemShape = {
   key: string;

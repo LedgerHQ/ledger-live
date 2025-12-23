@@ -1,8 +1,8 @@
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
+import { useSelector } from "LLD/hooks/redux";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 

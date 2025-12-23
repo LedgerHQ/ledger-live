@@ -6,7 +6,7 @@ import { WARNING_REASON } from "../../domain";
 import { ActionButtons, IconContainer } from "./components";
 import { AccountsWarningProps } from "./types";
 import { useWarningConfig } from "./useWarningConfig";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 const AccountsWarning = ({

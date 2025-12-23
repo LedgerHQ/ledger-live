@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useHistory } from "react-router-dom";
 import { useTheme } from "styled-components";
 import { getEnv } from "@ledgerhq/live-env";

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { setCounterValue } from "~/renderer/actions/settings";
 import {
   SupportedCountervaluesData,

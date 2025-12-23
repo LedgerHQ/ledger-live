@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountTuplesForCurrency } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";

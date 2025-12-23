@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";

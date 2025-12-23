@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useMarketcapIds, useTrackingPairsForTopCoins } from "@ledgerhq/live-countervalues-react";
 import { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {

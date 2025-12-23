@@ -20,6 +20,7 @@ import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -40,7 +41,7 @@ export type State = LLDRTKApiState & {
   walletSync: WalletSyncState;
 };
 
-export default combineReducers({
+const appReducer = combineReducers({
   accounts,
   application,
   countervalues,
@@ -58,5 +59,11 @@ export default combineReducers({
   walletSync,
   trustchain,
   ...lldRTKApiReducers,
-  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_, action) => action }),
+  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });
+
+const rootReducer = (state: State | undefined, action: UnknownAction) => {
+  return appReducer(state, action);
+};
+
+export default rootReducer;

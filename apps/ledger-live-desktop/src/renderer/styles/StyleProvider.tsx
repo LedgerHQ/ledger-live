@@ -7,7 +7,7 @@ import {
   defaultTheme as V3dDfaultTheme,
   palettes as V3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "../actions/general";
 type Props = {
   children: React.ReactNode;

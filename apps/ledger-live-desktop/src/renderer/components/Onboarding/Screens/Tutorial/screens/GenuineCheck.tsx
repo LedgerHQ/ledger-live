@@ -3,7 +3,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import connectNano from "../assets/connectNano.png";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";

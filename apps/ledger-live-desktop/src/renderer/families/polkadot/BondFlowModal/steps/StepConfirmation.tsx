@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import React, { useCallback, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";

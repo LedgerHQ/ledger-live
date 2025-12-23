@@ -10,7 +10,7 @@ import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import {
   setIsDebuggingDuplicates,
   setFlowValue,

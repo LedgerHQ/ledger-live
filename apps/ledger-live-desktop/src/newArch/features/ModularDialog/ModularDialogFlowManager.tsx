@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { MODULAR_DIALOG_STEP, ModularDialogFlowManagerProps, ModularDialogStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";

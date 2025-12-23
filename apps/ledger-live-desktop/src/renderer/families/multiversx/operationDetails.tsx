@@ -14,7 +14,7 @@ import {
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";

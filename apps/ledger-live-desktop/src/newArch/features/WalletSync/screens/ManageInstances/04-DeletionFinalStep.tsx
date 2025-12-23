@@ -8,7 +8,7 @@ import {
   useLedgerSyncAnalytics,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 
 export default function DeletionFinalStep({ instance }: FinalStepProps) {
   const { t } = useTranslation();

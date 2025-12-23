@@ -1,13 +1,13 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import IconCoins from "~/renderer/icons/Coins";
 import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
 import { useStake } from "LLD/hooks/useStake";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import IconCoins from "~/renderer/icons/Coins";
+
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {

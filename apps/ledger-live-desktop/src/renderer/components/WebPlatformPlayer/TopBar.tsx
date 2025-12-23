@@ -9,7 +9,8 @@ import IconClose from "~/renderer/icons/Cross";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";

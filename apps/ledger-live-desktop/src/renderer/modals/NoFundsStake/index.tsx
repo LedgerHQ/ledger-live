@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";

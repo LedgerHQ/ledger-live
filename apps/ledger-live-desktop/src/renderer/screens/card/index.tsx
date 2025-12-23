@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, RouteComponentProps } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
   developerModeSelector,

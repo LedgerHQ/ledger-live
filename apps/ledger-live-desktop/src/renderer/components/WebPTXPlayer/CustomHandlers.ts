@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";

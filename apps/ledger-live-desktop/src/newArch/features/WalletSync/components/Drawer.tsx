@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   walletSyncDrawerVisibilitySelector,
   walletSyncStepSelector,

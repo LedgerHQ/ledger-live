@@ -8,7 +8,7 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
 import TestImage from "~/renderer/components/CustomImage/TestImage";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";

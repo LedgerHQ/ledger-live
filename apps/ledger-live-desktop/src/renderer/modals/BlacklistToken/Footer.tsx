@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import Button from "~/renderer/components/Button";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { blacklistToken } from "~/renderer/actions/settings";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 

@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "../reducers/settings";
 import { useSupportedLanguages } from "./useSupportedLanguages";
 import { DEFAULT_LANGUAGE } from "~/config/languages";

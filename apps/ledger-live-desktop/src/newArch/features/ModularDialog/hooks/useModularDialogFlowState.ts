@@ -7,7 +7,7 @@ import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
 import uniqWith from "lodash/uniqWith";
 
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";

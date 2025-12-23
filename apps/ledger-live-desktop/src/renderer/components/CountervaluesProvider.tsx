@@ -6,7 +6,7 @@ import {
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { CounterValuesStateRaw, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import React, { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
 import { setKey } from "~/renderer/storage";
 import { countervaluesActions } from "../actions/countervalues";

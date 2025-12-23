@@ -5,7 +5,7 @@ import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Languages, Language } from "~/config/languages";
 import { firstValueFrom, from } from "rxjs";
 import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";

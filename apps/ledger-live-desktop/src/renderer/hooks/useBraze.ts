@@ -3,7 +3,8 @@ import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { getBrazeConfig } from "~/braze-setup";
 import getUser from "~/helpers/user";
 import {

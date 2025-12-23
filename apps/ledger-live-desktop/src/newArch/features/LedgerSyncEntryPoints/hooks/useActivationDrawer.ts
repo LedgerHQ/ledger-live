@@ -5,7 +5,7 @@ import {
   useLedgerSyncAnalytics,
 } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../../WalletSync/hooks/useFlows";
 

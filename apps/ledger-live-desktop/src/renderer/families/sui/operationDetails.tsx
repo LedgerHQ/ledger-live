@@ -17,7 +17,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BigNumber from "bignumber.js";
 import { useGetExtraDetails } from "@ledgerhq/live-common/families/sui/react";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { Divider } from "@ledgerhq/react-ui/index";
 
