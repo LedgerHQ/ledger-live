@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { add, isBefore, parseISO } from "date-fns";
@@ -84,9 +84,19 @@ const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
 
-  const notificationsCategoriesHidden = pushNotificationsFeature?.params?.notificationsCategories
-    ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory?.displayed)
-    .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
+  const hiddenNotificationCategories = useMemo(() => {
+    const hiddenCategories = [];
+    const categoriesToHide = pushNotificationsFeature?.params?.notificationsCategories ?? [];
+
+    for (const notificationsCategory of categoriesToHide) {
+      if (!notificationsCategory?.displayed) {
+        hiddenCategories.push(notificationsCategory?.category || "");
+      }
+    }
+
+    return hiddenCategories;
+  }, [pushNotificationsFeature?.params?.notificationsCategories]);
+
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
   const neverClickedOnAllowNotificationsButton = useSelector(
@@ -100,7 +110,7 @@ const useNotifications = () => {
 
   const dispatch = useDispatch();
 
-  const handlePushNotificationsPermission = useCallback(async () => {
+  const requestPushNotificationsPermission = useCallback(async () => {
     if (Platform.OS === "android") {
       // Braze.requestPushPermission() is a no-op on Android 12 and below so we only call it on Android 13 and above
       if (neverClickedOnAllowNotificationsButton && Platform.Version >= 33) {
@@ -336,39 +346,14 @@ const useNotifications = () => {
   const triggerPushNotificationModalAfterSwapAction = useCallback(() => {}, []);
   const triggerPushNotificationModalAfterStakeAction = useCallback(() => {}, []);
 
-  const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
-      if (delay !== null && delay !== undefined) {
-        const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
-        updatePushNotificationsDataOfUserInStateAndStore({
-          ...pushNotificationsDataOfUser,
-          ...additionalParams,
-        });
-      }
-    },
-    [pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore],
-  );
+  const optOutOfNotifications = useCallback(() => {
+    const today = new Date();
 
-  const handleAllowNotificationsPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Allow",
-      page: pushNotificationsOldRoute,
-      drawer: "Notif",
+    updatePushNotificationsDataOfUserInStateAndStore({
+      ...pushNotificationsDataOfUser,
+      optedOutOfNotificationsAt: today,
     });
-    setPushNotificationsModalOpenCallback(false);
-    handlePushNotificationsPermission();
-    if (pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts) {
-      handleSetDateOfNextAllowedRequest(
-        pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-      );
-    }
-  }, [
-    pushNotificationsOldRoute,
-    setPushNotificationsModalOpenCallback,
-    handlePushNotificationsPermission,
-    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-    handleSetDateOfNextAllowedRequest,
-  ]);
+  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
 
   const handleDelayLaterPress = useCallback(() => {
     track("button_clicked", {
@@ -377,28 +362,41 @@ const useNotifications = () => {
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
-    if (pushNotificationsDataOfUser?.alreadyDelayedToLater) {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        ...pushNotificationsDataOfUser,
-        doNotAskAgain: true,
-      });
-    } else {
-      handleSetDateOfNextAllowedRequest(
-        pushNotificationsFeature?.params?.conditions?.maybe_later_delay ||
-          pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-        {
-          alreadyDelayedToLater: true,
-        },
-      );
-    }
+
+    optOutOfNotifications();
+  }, [pushNotificationsOldRoute, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+
+  const handleCloseFromBackdropPress = useCallback(() => {
+    track("TODO: update when rebasing master");
+
+    setPushNotificationsModalOpenCallback(false);
+
+    optOutOfNotifications();
+  }, [setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+
+  const resetOptOutState = useCallback(() => {
+    updatePushNotificationsDataOfUserInStateAndStore({
+      ...pushNotificationsDataOfUser,
+      optedOutOfNotificationsAt: null,
+      dismissedOptInPromptAtList: [],
+    });
+  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
+  const handleAllowNotificationsPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Allow",
+      page: pushNotificationsOldRoute,
+      drawer: "Notif",
+    });
+    setPushNotificationsModalOpenCallback(false);
+    requestPushNotificationsPermission();
+
+    resetOptOutState();
   }, [
     pushNotificationsOldRoute,
-    handleSetDateOfNextAllowedRequest,
-    pushNotificationsDataOfUser,
-    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-    pushNotificationsFeature?.params?.conditions?.maybe_later_delay,
     setPushNotificationsModalOpenCallback,
-    updatePushNotificationsDataOfUserInStateAndStore,
+    requestPushNotificationsPermission,
+    resetOptOutState,
   ]);
 
   return {
@@ -407,13 +405,14 @@ const useNotifications = () => {
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
-    notificationsCategoriesHidden,
+
+    hiddenNotificationCategories,
+
     getIsNotifEnabled,
-    handlePushNotificationsPermission,
 
-    handleAllowNotificationsPress,
-    handleDelayLaterPress,
+    requestPushNotificationsPermission,
 
+    // Actions to trigger (display) the push notifications modal
     triggerPushNotificationModalAfterFinishingOnboardingNewDevice,
     triggerPushNotificationModalAfterMarketStarredAction,
     triggerPushNotificationModalAfterSendAction,
@@ -421,6 +420,11 @@ const useNotifications = () => {
     triggerPushNotificationModalAfterBuyAction,
     triggerPushNotificationModalAfterSwapAction,
     triggerPushNotificationModalAfterStakeAction,
+
+    // Actions to handle the push notifications modal
+    handleAllowNotificationsPress,
+    handleDelayLaterPress,
+    handleCloseFromBackdropPress,
   };
 };
 

@@ -70,7 +70,7 @@ function NotificationsSettings() {
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     pushNotificationsOldRoute,
-    notificationsCategoriesHidden,
+    hiddenNotificationCategories,
   } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<boolean | undefined>();
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
@@ -159,23 +159,23 @@ function NotificationsSettings() {
           <Box
             opacity={isNotifPermissionEnabled && notifications.areNotificationsAllowed ? 1 : 0.2}
           >
-            {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+            {!hiddenNotificationCategories ||
+            !hiddenNotificationCategories.includes("announcementsCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"announcementsCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}
-            {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+            {!hiddenNotificationCategories ||
+            !hiddenNotificationCategories.includes("largeMoverCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"largeMoverCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}
             {featureTransactionsAlerts?.enabled &&
-            (!notificationsCategoriesHidden ||
-              !notificationsCategoriesHidden.includes("transactionsAlertsCategory")) ? (
+            (!hiddenNotificationCategories ||
+              !hiddenNotificationCategories.includes("transactionsAlertsCategory")) ? (
               <NotificationSettingsRow
                 notificationKey={"transactionsAlertsCategory"}
                 disabled={disableSubSettings}
