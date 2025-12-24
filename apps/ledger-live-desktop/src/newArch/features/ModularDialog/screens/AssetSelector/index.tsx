@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDialog.types";
 import TrackDrawerScreen from "../../analytics/TrackDialogScreen";
@@ -58,7 +57,6 @@ const AssetSelector = ({
           formatAssetConfig
         />
       )}
-      <SearchInputContainer />
       {errorInfo?.hasError ? (
         <GenericError onClick={refetch} type={errorInfo.isNetworkError ? "network" : "backend"} />
       ) : (

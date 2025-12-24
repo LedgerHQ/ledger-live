@@ -11,7 +11,7 @@ const SearchInputContainer = () => {
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch();
 
   return (
-    <div className="mb-12 flex-1 px-8 pt-4">
+    <div className="mt-4">
       <Search
         value={displayedValue ?? ""}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
