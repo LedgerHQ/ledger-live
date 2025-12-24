@@ -12,7 +12,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import type { AddAccountContextType, NetworkBasedAddAccountNavigator } from "../AddAccount/types";
+import type { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { StepContent } from "./components/StepContent";
 import { getOnboardingBridge, getOnboardingConfig } from "./registry";
 import { AccountsOnboardParams, DynamicStepProps, StableStepProps } from "./types";
