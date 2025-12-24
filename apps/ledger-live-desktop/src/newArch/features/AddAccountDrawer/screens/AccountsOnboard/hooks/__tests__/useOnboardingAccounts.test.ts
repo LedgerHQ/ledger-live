@@ -4,12 +4,18 @@ import { renderHook } from "@testing-library/react";
 import { createMockAccount as createMockCantonAccount } from "~/renderer/families/canton/__tests__/testUtils";
 import { useOnboardingAccounts } from "../useOnboardingAccounts";
 
-const createMockAccount = (id: string, currencyId: string, used: boolean = false): Account => {
+const createMockAccount = (
+  id: string,
+  currencyId: string,
+  used: boolean = false,
+  overrides: Partial<Account> = {},
+): Account => {
   const currency = getCryptoCurrencyById(currencyId);
   return createMockCantonAccount({
     id,
     currency,
     used,
+    ...overrides,
   });
 };
 
@@ -57,7 +63,15 @@ describe("useOnboardingAccounts", () => {
   });
 
   it("should return true when creatable accounts are selected", () => {
-    const scannedAccounts: Account[] = [createMockAccount("1", "canton_network", false)];
+    const scannedAccounts: Account[] = [
+      createMockAccount("1", "canton_network", false, {
+        cantonResources: {
+          isOnboarded: false,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      }),
+    ];
     const selectedIds = ["1"];
 
     const { result } = renderHook(() =>
@@ -84,8 +98,20 @@ describe("useOnboardingAccounts", () => {
 
   it("should return both importable and creatable accounts when selected", () => {
     const scannedAccounts: Account[] = [
-      createMockAccount("1", "canton_network", true), // importable
-      createMockAccount("2", "canton_network", false), // creatable
+      createMockAccount("1", "canton_network", true, {
+        cantonResources: {
+          isOnboarded: true,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      }), // importable
+      createMockAccount("2", "canton_network", false, {
+        cantonResources: {
+          isOnboarded: false,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      }), // creatable
     ];
     const selectedIds = ["1", "2"];
 
@@ -99,7 +125,15 @@ describe("useOnboardingAccounts", () => {
   });
 
   it("should update results when props change", () => {
-    const initialScannedAccounts: Account[] = [createMockAccount("1", "canton_network", false)];
+    const initialScannedAccounts: Account[] = [
+      createMockAccount("1", "canton_network", false, {
+        cantonResources: {
+          isOnboarded: false,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      }),
+    ];
     const initialSelectedIds = ["1"];
 
     const { result, rerender } = renderHook(

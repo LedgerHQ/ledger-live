@@ -106,6 +106,7 @@ describe("Footers", () => {
       importableAccounts: [],
       onboardingResult: undefined,
       isReonboarding: false,
+      isProcessing: false,
     };
 
     beforeEach(() => {
@@ -113,13 +114,15 @@ describe("Footers", () => {
     });
 
     it("should render done button for normal onboarding", () => {
-      const { getByText } = render(<StepFinishFooter {...mockProps} />);
+      const { getByText } = render(<StepFinishFooter {...mockProps} isProcessing={false} />);
       const button = getByText("common.done");
       expect(button).toBeDefined();
     });
 
     it("should render continue button for reonboarding", () => {
-      const { getByText } = render(<StepFinishFooter {...mockProps} isReonboarding={true} />);
+      const { getByText } = render(
+        <StepFinishFooter {...mockProps} isReonboarding={true} isProcessing={false} />,
+      );
       const button = getByText("common.continue");
       expect(button).toBeDefined();
     });
@@ -131,7 +134,11 @@ describe("Footers", () => {
       ] as any[];
 
       const { getByText } = render(
-        <StepFinishFooter {...mockProps} importableAccounts={importableAccounts} />,
+        <StepFinishFooter
+          {...mockProps}
+          importableAccounts={importableAccounts}
+          isProcessing={false}
+        />,
       );
       const button = getByText("common.done");
       fireEvent.press(button);
@@ -148,6 +155,7 @@ describe("Footers", () => {
           {...mockProps}
           importableAccounts={importableAccounts}
           onboardingResult={{ completedAccount }}
+          isProcessing={false}
         />,
       );
       const button = getByText("common.done");

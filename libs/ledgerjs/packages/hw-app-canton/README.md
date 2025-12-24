@@ -32,6 +32,17 @@ For a smooth and quick integration:
   - [signTransaction](#signtransaction)
     - [Parameters](#parameters-2)
   - [getAppConfiguration](#getappconfiguration)
+- [encodeDamlTransaction](#encodedamltransaction)
+  - [Parameters](#parameters-3)
+- [encodeInputContract](#encodeinputcontract)
+  - [Parameters](#parameters-4)
+- [encodeMetadata](#encodemetadata)
+  - [Parameters](#parameters-5)
+- [encodeNode](#encodenode)
+  - [Parameters](#parameters-6)
+- [splitTransaction](#splittransaction)
+  - [Parameters](#parameters-7)
+- [CantonTransactionJson](#cantontransactionjson)
 
 ### Canton
 
@@ -70,6 +81,65 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 Get the app configuration.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<AppConfig>** the app configuration including version
+
+### encodeDamlTransaction
+
+Encode DAML transaction to protobuf bytes
+
+#### Parameters
+
+- `data` **CantonTransactionData**&#x20;
+
+Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+### encodeInputContract
+
+Encode input contract to protobuf bytes
+
+#### Parameters
+
+- `contract` **CantonInputContract**&#x20;
+
+Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+### encodeMetadata
+
+Encode metadata to protobuf bytes
+
+#### Parameters
+
+- `data` **CantonTransactionMetadata**&#x20;
+- `inputContractsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+### encodeNode
+
+Encode transaction node to protobuf bytes
+
+#### Parameters
+
+- `node` **CantonTransactionNode**&#x20;
+
+Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+### splitTransaction
+
+Splits a Canton transaction into components for prepared transaction signing.
+Converts protobuf transaction data into structured components that can be
+sent to the Ledger device for signing.
+
+#### Parameters
+
+- `transaction` **[CantonTransactionJson](#cantontransactionjson)** The transaction JSON structure from the Gateway API
+
+Returns **CantonPreparedTransaction** Prepared transaction components ready for device signing
+
+### CantonTransactionJson
+
+Type definitions for Canton transaction JSON structure
+These types represent the structure of transaction data from the Gateway API
+that needs to be split into device-compatible components.
 
 ## Integration tests
 

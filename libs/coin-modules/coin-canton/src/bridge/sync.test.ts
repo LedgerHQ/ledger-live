@@ -22,7 +22,19 @@ import * as onboard from "./onboard";
 import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 
 jest.mock("../config");
-jest.mock("../network/gateway");
+jest.mock("../network/gateway", () => {
+  const actual = jest.requireActual<typeof import("../network/gateway")>("../network/gateway");
+  return {
+    getKey: actual.getKey,
+    SEPARATOR: actual.SEPARATOR,
+    getBalance: jest.fn(),
+    getLedgerEnd: jest.fn(),
+    getOperations: jest.fn(),
+    getPendingTransferProposals: jest.fn(),
+    getEnabledInstrumentsCached: jest.fn(),
+    getCalTokensCached: jest.fn().mockResolvedValue(new Map()),
+  };
+});
 jest.mock("../signer");
 jest.mock("./onboard");
 jest.mock("@ledgerhq/cryptoassets/state", () => {
@@ -38,8 +50,8 @@ const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
 const mockedGetBalance = gateway.getBalance as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
-const mockedGetEnabledInstrumentsCached =
-  gateway.getEnabledInstrumentsCached as unknown as jest.Mock;
+const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
+const mockedGetEnabledInstrumentsCached = gateway.getEnabledInstrumentsCached as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
 const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
 const mockedResolver = resolver as jest.Mock;
@@ -73,8 +85,8 @@ const createMockOperationView = (overrides: Partial<OperationView> = {}): Operat
     transaction_timestamp: new Date().toISOString(),
     status: "Success" as OperationStatusView,
     type: "Send" as OperationTypeView,
-    senders: ["test-party-id-1"],
-    recipients: ["test-party-id-2"],
+    senders: ["test-party-id-sender"],
+    recipients: ["test-party-id"],
     transfers: [createMockTransferView()],
     block: {
       height: 1,
@@ -89,6 +101,11 @@ const createMockOperationView = (overrides: Partial<OperationView> = {}): Operat
         instrumentId,
       },
       details: {},
+    },
+    asset: {
+      type: "native",
+      instrumentAdmin,
+      instrumentId,
     },
     details: {
       metadata: {
@@ -124,6 +141,7 @@ describe("makeGetAccountShape", () => {
       useGateway: true,
     });
     mockedGetLedgerEnd.mockResolvedValue(12345);
+    mockedGetPendingTransferProposals.mockResolvedValue([]);
     mockedIsAuthorized.mockResolvedValue(true);
     mockedIsOnboarded.mockResolvedValue({ isOnboarded: true, partyId: "test-party-id" });
     mockedResolver.mockReturnValue(async () => ({ publicKey: "test-public-key" }));
@@ -368,6 +386,11 @@ describe("makeGetAccountShape", () => {
 
 describe("filterDisabledTokenAccounts", () => {
   const currency = createMockCantonCurrency();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
+  });
 
   const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
     type: "TokenAccount",

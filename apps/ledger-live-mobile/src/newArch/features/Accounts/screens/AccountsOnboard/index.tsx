@@ -7,7 +7,7 @@ import {
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "~/context/store";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";

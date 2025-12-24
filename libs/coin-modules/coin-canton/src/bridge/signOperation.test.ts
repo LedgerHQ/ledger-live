@@ -34,19 +34,15 @@ describe("buildSignOperation", () => {
 
   it("should use default expireInSeconds (1 day) when not provided in transaction", async () => {
     // GIVEN
-    const mockSigner = new MockCantonSigner();
+    const mockSigner = createMockCantonSigner();
     const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
       return await callback(mockSigner);
     });
 
     mockCraftTransaction.mockResolvedValue({
-      nativeTransaction: {
-        // @ts-expect-error fix types
-        transaction: prepareTransferMock.transaction,
-        metadata: prepareTransferMock.metadata,
-      },
-      serializedTransaction: "serialized-transaction",
-      hash: "mock-hash",
+      nativeTransaction: prepareTransferMock.json,
+      serializedTransaction: prepareTransferMock.serialized,
+      hash: prepareTransferMock.hash,
     });
 
     const signOperation = buildSignOperation(mockSignerContext);
@@ -83,19 +79,15 @@ describe("buildSignOperation", () => {
 
   it("should use custom expireInSeconds when provided in transaction", async () => {
     // GIVEN
-    const mockSigner = new MockCantonSigner();
+    const mockSigner = createMockCantonSigner();
     const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
       return await callback(mockSigner);
     });
 
     mockCraftTransaction.mockResolvedValue({
-      nativeTransaction: {
-        // @ts-expect-error fix types
-        transaction: prepareTransferMock.transaction,
-        metadata: prepareTransferMock.metadata,
-      },
-      serializedTransaction: "serialized-transaction",
-      hash: "mock-hash",
+      nativeTransaction: prepareTransferMock.json,
+      serializedTransaction: prepareTransferMock.serialized,
+      hash: prepareTransferMock.hash,
     });
 
     const signOperation = buildSignOperation(mockSignerContext);

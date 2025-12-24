@@ -16,7 +16,11 @@ export const onboardingBridgeFactories: Record<
     if (!cantonBridge) {
       return null;
     }
-    return createCantonOnboardingBridge(cantonBridge);
+    const cantonOnboardingBridge = createCantonOnboardingBridge(cantonBridge);
+    // Type assertion: CantonAccount extends Account, so this is safe
+    // The bridge will only be used with Canton accounts in practice
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return cantonOnboardingBridge as unknown as OnboardingBridge;
   },
 };
 

@@ -56,6 +56,7 @@ describe("getBalance", () => {
         asset: { type: "native" },
         utxoCount: 1,
         instrumentId: "native-id",
+        adminId: "AmuletAdmin",
       },
       {
         value: BigInt(5000),
@@ -63,6 +64,7 @@ describe("getBalance", () => {
         asset: { type: "token", assetReference: "token-123" },
         utxoCount: 1,
         instrumentId: "token-123",
+        adminId: "AmuletAdmin",
       },
     ]);
   });

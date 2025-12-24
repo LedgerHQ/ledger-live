@@ -19,7 +19,7 @@ type PendingProposal = {
   sender: string;
   receiver: string;
   amount: BigNumber;
-  memo: string;
+  memo?: string;
   expires_at_micros: number;
   isExpired: boolean;
 };

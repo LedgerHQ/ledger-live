@@ -206,8 +206,6 @@ export function useScanAccounts({
     accountsToImport,
     existingAccounts,
     onComplete,
-    currency,
-    device,
     hasOnboardingCreatableAccounts,
     selectedOnboardingAccounts,
     filteredSelectedIds,

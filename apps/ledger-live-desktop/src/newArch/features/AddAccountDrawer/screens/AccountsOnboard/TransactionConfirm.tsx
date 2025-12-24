@@ -6,10 +6,10 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { TransactionConfirmComponent } from "./types";
 
 const TransactionConfirm: TransactionConfirmComponent = ({ device }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
   return (
     <>
-      {renderVerifyUnwrapped({ modelId: device.modelId, type: colors.palette.type })}
+      {renderVerifyUnwrapped({ modelId: device.modelId, type: theme.theme })}
       <Box px={20}>
         <Text ff={"Inter|Medium"} textAlign={"center"} fontSize={22}>
           <Trans i18nKey="sign.description" />
