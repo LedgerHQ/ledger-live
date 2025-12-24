@@ -12,7 +12,8 @@ jest.mock("@ledgerhq/native-ui", () => {
     React.createElement(View, { testID, ...props }, children);
   return {
     Flex: mockViewComponentFn,
-    Text: mockViewComponentFn,
+    Text: ({ children, testID, ...props }: any) =>
+      React.createElement(Text, { testID, ...props }, children),
     IconBox: ({ Icon: _Icon, testID, ...props }: any) =>
       React.createElement(View, { testID: testID || "icon-box", ...props }, "Icon"),
   };

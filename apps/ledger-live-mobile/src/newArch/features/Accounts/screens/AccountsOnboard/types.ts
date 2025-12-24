@@ -13,6 +13,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
 import type { NavigationSnapshot } from "~/families/canton/utils/navigationSnapshot";
+import type { AddAccountContextType } from "../AddAccount/types";
 
 export { AccountOnboardStatus, StepId };
 export type { OnboardProgress, OnboardResult, OnboardingBridge, OnboardingResult };
@@ -71,4 +72,5 @@ export type AccountsOnboardParams = {
   accountToReonboard?: Account;
   restoreState?: NavigationSnapshot;
   editedNames?: { [accountId: string]: string };
+  context?: AddAccountContextType;
 };

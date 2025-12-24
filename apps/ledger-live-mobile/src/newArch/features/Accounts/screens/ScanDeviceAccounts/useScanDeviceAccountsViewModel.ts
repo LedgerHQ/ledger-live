@@ -26,7 +26,7 @@ import { track } from "~/analytics";
 const isNoAssociatedAccountsFamily = (
   family: string,
 ): family is keyof typeof noAssociatedAccountsByFamily =>
-  Object.hasOwn(noAssociatedAccountsByFamily, family);
+  Object.prototype.hasOwnProperty.call(noAssociatedAccountsByFamily, family);
 
 const getCustomNoAssociatedAccounts = (currency: CryptoOrTokenCurrency) => {
   if (currency.type !== "CryptoCurrency") return null;
