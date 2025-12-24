@@ -1,25 +1,25 @@
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
+import { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import SeedStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/SeedStep";
 import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
-import { analyticsFlowName, StepText } from "../shared";
+import StepText from "LLD/features/Onboarding/components/StepText";
 import BackupBackground from "../assets/BackupBackground";
 import SetupBackground from "../assets/SetupBackground";
 import ContinueOnStax from "../assets/ContinueOnStax";
 import ContinueOnEuropa from "../assets/ContinueOnEuropa";
 import ContinueOnApex from "../assets/ContinueOnApex";
-import OnboardingAppInstallStep from "../../../OnboardingAppInstall";
-
-import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import useTheme from "~/renderer/hooks/useTheme";
+import { analyticsFlowName } from "../utils/constants/analytics";
 
 export const READY_REDIRECT_DELAY_MS = 2000;
 
@@ -81,7 +81,7 @@ const useCompanionSteps = ({
   seedConfiguration,
 }: UseCompanionStepsProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
+  const { colors } = useTheme();
   const [hasAppLoader, setHasAppLoader] = useState<boolean>(false);
 
   const deviceToRestore = useSelector(lastSeenDeviceSelector);
@@ -103,7 +103,7 @@ const useCompanionSteps = ({
     }
   }, [device.modelId]);
 
-  const activeBackground = isTwoStep ? theme.colors.opacityDefault.c05 : undefined;
+  const activeBackground = isTwoStep ? colors.opacityDefault.c05 : undefined;
 
   const defaultSteps: Step[] = useMemo(
     () => [
