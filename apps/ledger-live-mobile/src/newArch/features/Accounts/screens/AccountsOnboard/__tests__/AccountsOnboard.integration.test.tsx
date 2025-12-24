@@ -7,17 +7,15 @@ import AccountsOnboard from "../index";
 import { ScreenName } from "~/const";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { View, Text } from "react-native";
 import * as registryModule from "../registry";
 import { StepId } from "../types";
-
-const mockUseOnboardingFlow = jest.fn();
-const mockUseOnboardingAccountData = jest.fn();
-const mockPrepareAccountsForAdding = jest.fn();
+import * as useAccountOnboardingModule from "@ledgerhq/live-common/hooks/useAccountOnboarding";
 
 jest.mock("@ledgerhq/live-common/hooks/useAccountOnboarding", () => ({
-  useOnboardingFlow: mockUseOnboardingFlow,
-  useOnboardingAccountData: mockUseOnboardingAccountData,
-  prepareAccountsForAdding: mockPrepareAccountsForAdding,
+  useOnboardingFlow: jest.fn(),
+  useOnboardingAccountData: jest.fn(),
+  prepareAccountsForAdding: jest.fn(),
   AccountOnboardStatus: {
     INIT: "INIT",
     PREPARE: "PREPARE",
@@ -62,14 +60,21 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("../components/StepContent", () => ({
-  StepContent: ({ stepId }: { stepId: string }) => (
-    <div data-testid={`step-${stepId}`}>Step {stepId}</div>
-  ),
+  StepContent: ({ stepId }: { stepId: string }) =>
+    React.createElement(
+      View,
+      { testID: `step-${stepId}` },
+      React.createElement(Text, {}, `Step ${stepId}`),
+    ),
 }));
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  Flex: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
+jest.mock("@ledgerhq/native-ui", () => {
+  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
+    React.createElement(View, { testID, ...props }, children);
+  return {
+    Flex: mockViewComponentFn,
+  };
+});
 
 const mockCurrency = {
   id: "canton_network",
@@ -138,13 +143,17 @@ describe("AccountsOnboard Integration", () => {
     });
     mockUseDispatch.mockReturnValue(jest.fn());
 
-    mockUseOnboardingAccountData.mockReturnValue({
+    const { useOnboardingAccountData, useOnboardingFlow, prepareAccountsForAdding } = jest.mocked(
+      useAccountOnboardingModule,
+    );
+
+    useOnboardingAccountData.mockReturnValue({
       importableAccounts: [],
       creatableAccount: mockAccount,
       accountName: "Test Account",
     });
 
-    mockUseOnboardingFlow.mockReturnValue({
+    useOnboardingFlow.mockReturnValue({
       error: null,
       isProcessing: false,
       onboardingResult: undefined,
@@ -155,7 +164,7 @@ describe("AccountsOnboard Integration", () => {
       handleRetryOnboardAccount: jest.fn(),
     });
 
-    mockPrepareAccountsForAdding.mockReturnValue({
+    prepareAccountsForAdding.mockReturnValue({
       accounts: [mockAccount],
       renamings: {},
     });
@@ -179,8 +188,9 @@ describe("AccountsOnboard Integration", () => {
 
   it("should transition to FINISH step on success", async () => {
     const transitionTo = jest.fn();
+    const { useOnboardingFlow } = jest.mocked(useAccountOnboardingModule);
 
-    mockUseOnboardingFlow.mockReturnValue({
+    useOnboardingFlow.mockReturnValue({
       error: null,
       isProcessing: false,
       onboardingResult: { completedAccount: mockAccount },
@@ -209,7 +219,8 @@ describe("AccountsOnboard Integration", () => {
   });
 
   it("should handle error state", () => {
-    mockUseOnboardingFlow.mockReturnValue({
+    const { useOnboardingFlow } = jest.mocked(useAccountOnboardingModule);
+    useOnboardingFlow.mockReturnValue({
       error: new Error("Test error"),
       isProcessing: false,
       onboardingResult: undefined,
@@ -255,7 +266,8 @@ describe("AccountsOnboard Integration", () => {
   });
 
   it("should handle reonboarding flow", () => {
-    mockUseOnboardingAccountData.mockReturnValue({
+    const { useOnboardingAccountData } = jest.mocked(useAccountOnboardingModule);
+    useOnboardingAccountData.mockReturnValue({
       importableAccounts: [],
       creatableAccount: mockAccount,
       accountName: "Reonboard Account",

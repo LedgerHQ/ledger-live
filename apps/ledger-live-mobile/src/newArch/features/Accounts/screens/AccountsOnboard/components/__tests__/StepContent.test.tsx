@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { View, Text } from "react-native";
 import { render } from "@testing-library/react-native";
 import { StepContent } from "../StepContent";
 import { StepId, OnboardingConfig } from "../../types";
@@ -9,8 +10,12 @@ import { AccountOnboardStatus } from "@ledgerhq/types-live";
 
 const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-const MockStepOnboard = jest.fn(() => <div data-testid="step-onboard">Onboard</div>);
-const MockStepFinish = jest.fn(() => <div data-testid="step-finish">Finish</div>);
+const MockStepOnboard = jest.fn(() =>
+  React.createElement(View, { testID: "step-onboard" }, React.createElement(Text, {}, "Onboard")),
+);
+const MockStepFinish = jest.fn(() =>
+  React.createElement(View, { testID: "step-finish" }, React.createElement(Text, {}, "Finish")),
+);
 
 const mockOnboardingConfig: OnboardingConfig = {
   stepComponents: {

@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { View, Text } from "react-native";
 import { render } from "@testing-library/react-native";
 import StepFinish from "../StepFinish";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  Flex: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Text: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
-  IconBox: ({ Icon: _Icon }: { Icon: React.ComponentType }) => (
-    <div data-testid="icon-box">Icon</div>
-  ),
-}));
+jest.mock("@ledgerhq/native-ui", () => {
+  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
+    React.createElement(View, { testID, ...props }, children);
+  return {
+    Flex: mockViewComponentFn,
+    Text: mockViewComponentFn,
+    IconBox: ({ Icon: _Icon, testID, ...props }: any) =>
+      React.createElement(View, { testID: testID || "icon-box", ...props }, "Icon"),
+  };
+});
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -23,11 +27,12 @@ jest.mock("react-i18next", () => ({
       return key;
     },
   }),
+  Trans: ({ i18nKey }: { i18nKey: string }) => React.createElement(Text, {}, i18nKey),
 }));
 
 jest.mock("~/icons/Ledger", () => ({
   __esModule: true,
-  default: () => <div>LedgerIcon</div>,
+  default: () => React.createElement(View, {}, React.createElement(Text, {}, "LedgerIcon")),
 }));
 
 const mockCurrency = {

@@ -1,28 +1,28 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { TouchableOpacity, View, Text } from "react-native";
 import { render, fireEvent } from "@testing-library/react-native";
 import { StepOnboardFooter, StepFinishFooter } from "../footers";
 import { AccountOnboardStatus, StepId } from "../types";
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  Button: ({
-    children,
-    onPress,
-    disabled,
-  }: {
-    children: React.ReactNode;
-    onPress?: () => void;
-    disabled?: boolean;
-  }) => (
-    <button onClick={onPress} disabled={disabled}>
-      {children}
-    </button>
-  ),
-}));
+jest.mock("@ledgerhq/native-ui", () => {
+  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
+    React.createElement(View, { testID, ...props }, children);
+  return {
+    Button: ({ children, onPress, testID, disabled, ...props }: any) =>
+      React.createElement(
+        TouchableOpacity,
+        { testID, onPress: disabled ? undefined : onPress, disabled, ...props },
+        children,
+      ),
+    Flex: mockViewComponentFn,
+    InfiniteLoader: () => React.createElement(View, { testID: "infinite-loader" }),
+  };
+});
 
 jest.mock("react-i18next", () => ({
-  Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
+  Trans: ({ i18nKey }: { i18nKey: string }) => React.createElement(Text, {}, i18nKey),
 }));
 
 describe("Footers", () => {
@@ -47,7 +47,8 @@ describe("Footers", () => {
 
     it("should call onOnboardAccount when continue button is pressed", () => {
       const { getByText } = render(<StepOnboardFooter {...mockProps} />);
-      const button = getByText("common.continue");
+      const text = getByText("common.continue");
+      const button = text.parent as any;
       fireEvent.press(button);
       expect(mockProps.onOnboardAccount).toHaveBeenCalledTimes(1);
     });
@@ -71,7 +72,8 @@ describe("Footers", () => {
       const { getByText } = render(
         <StepOnboardFooter {...mockProps} onboardingStatus={AccountOnboardStatus.SUCCESS} />,
       );
-      const button = getByText("common.continue");
+      const text = getByText("common.continue");
+      const button = text.parent as any;
       fireEvent.press(button);
       expect(mockProps.transitionTo).toHaveBeenCalledWith(StepId.FINISH);
     });
@@ -88,14 +90,16 @@ describe("Footers", () => {
       const { getByText } = render(
         <StepOnboardFooter {...mockProps} onboardingStatus={AccountOnboardStatus.ERROR} />,
       );
-      const button = getByText("common.tryAgain");
+      const text = getByText("common.tryAgain");
+      const button = text.parent as any;
       fireEvent.press(button);
       expect(mockProps.onRetryOnboardAccount).toHaveBeenCalledTimes(1);
     });
 
     it("should disable button when isProcessing is true", () => {
       const { getByText } = render(<StepOnboardFooter {...mockProps} isProcessing={true} />);
-      const button = getByText("common.continue");
+      const text = getByText("common.continue");
+      const button = text.parent as any;
       expect(button.props.disabled).toBe(true);
     });
   });
@@ -140,7 +144,8 @@ describe("Footers", () => {
           isProcessing={false}
         />,
       );
-      const button = getByText("common.done");
+      const text = getByText("common.done");
+      const button = text.parent as any;
       fireEvent.press(button);
 
       expect(mockProps.onAddAccounts).toHaveBeenCalledWith(importableAccounts);
@@ -158,7 +163,8 @@ describe("Footers", () => {
           isProcessing={false}
         />,
       );
-      const button = getByText("common.done");
+      const text = getByText("common.done");
+      const button = text.parent as any;
       fireEvent.press(button);
 
       expect(mockProps.onAddAccounts).toHaveBeenCalledWith([

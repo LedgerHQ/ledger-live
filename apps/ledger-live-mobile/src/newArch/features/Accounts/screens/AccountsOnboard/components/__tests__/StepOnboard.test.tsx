@@ -1,22 +1,27 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { View, Text } from "react-native";
 import { render } from "@testing-library/react-native";
 import StepOnboard from "../StepOnboard";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { StepId } from "../../types";
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  Flex: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Text: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
-  Alert: ({ children, type }: { children: React.ReactNode; type: string }) => (
-    <div data-type={type}>{children}</div>
-  ),
-}));
+jest.mock("@ledgerhq/native-ui", () => {
+  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
+    React.createElement(View, { testID, ...props }, children);
+  return {
+    Flex: mockViewComponentFn,
+    Text: mockViewComponentFn,
+    Alert: ({ children, type, testID, ...props }: any) =>
+      React.createElement(View, { testID, "data-type": type, ...props }, children),
+    InfiniteLoader: () => React.createElement(View, { testID: "infinite-loader" }),
+  };
+});
 
 jest.mock("react-i18next", () => ({
-  Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
+  Trans: ({ i18nKey }: { i18nKey: string }) => React.createElement(Text, {}, i18nKey),
 }));
 
 jest.mock("react-native", () => ({
@@ -27,9 +32,12 @@ jest.mock("react-native", () => ({
 
 jest.mock("~/components/SelectableAccountsList", () => ({
   __esModule: true,
-  default: ({ accounts }: { accounts: unknown[] }) => (
-    <div data-testid="accounts-list">{accounts.length} accounts</div>
-  ),
+  default: ({ accounts }: { accounts: unknown[] }) =>
+    React.createElement(
+      View,
+      { testID: "accounts-list" },
+      React.createElement(Text, {}, `${accounts.length} accounts`),
+    ),
 }));
 
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({
