@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useContext } from "react";
+import React, { useCallback, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/native-ui";
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
@@ -24,6 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
+import { useNotifications } from "~/logic/notifications";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -61,44 +62,39 @@ const Item = ({
   const { t } = useTranslation();
   const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
-  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        page: screenName,
+        page: `Reborn Story Step ${currentIndex}`,
       });
     },
-    [screenName],
+    [currentIndex],
   );
 
-  const buyLedger = useCallback(() => {
-    onClick("Buy a Ledger");
-    navigateToRebornFlow();
-  }, [navigateToRebornFlow, onClick]);
+  const pressExplore = useCallback(() => {
+    onClick("Explore without a device");
 
-  const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
-    onClick("Explore without a device");
 
     navigation.reset({
       index: 0,
       routes: [{ name: NavigatorName.Base } as never],
     });
-  }, [dispatch, navigation, onClick]);
 
-  const pressExplore = useCallback(() => {
-    exploreLedger();
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
-    onClick("Explore without a device");
-  }, [dispatch, exploreLedger, onClick]);
+
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, onClick, navigation, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {
-    buyLedger();
-  }, [buyLedger]);
+    onClick("Buy a Ledger");
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow, onClick]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`} accessible={true}>

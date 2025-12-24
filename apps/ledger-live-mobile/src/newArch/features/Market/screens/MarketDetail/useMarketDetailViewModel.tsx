@@ -4,7 +4,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 
@@ -42,7 +42,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   );
 
   const dispatch = useDispatch();
-  const { triggerMarketPushNotificationModal } = useNotifications();
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { starredMarketCoins, updateMarketParams } = useMarket();
@@ -99,8 +99,8 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
 
-    if (!isStarred) triggerMarketPushNotificationModal();
-  }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
+    if (!isStarred) tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
+  }, [dispatch, isStarred, currencyId, tryTriggerPushNotificationDrawerAfterAction]);
 
   return {
     defaultAccount,

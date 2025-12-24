@@ -392,6 +392,45 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
+  reprompt_schedule: Array<{
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
+  action_events: {
+    complete_onboarding: {
+      enabled: boolean;
+      timer: number;
+    };
+    send: {
+      enabled: boolean;
+      timer: number;
+    };
+    receive: {
+      enabled: boolean;
+      timer: number;
+    };
+    buy: {
+      enabled: boolean;
+      timer: number;
+    };
+    swap: {
+      enabled: boolean;
+      timer: number;
+    };
+    stake: {
+      enabled: boolean;
+      timer: number;
+    };
+    add_favorite_coin: {
+      enabled: boolean;
+      timer: number;
+    };
+  };
+
+  // Legacy fields kept for backward compatibility with existing configurations.
   marketCoinStarred: {
     enabled: boolean;
     timer: number;

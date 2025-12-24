@@ -1,259 +1,102 @@
-import { useCallback } from "react";
-import { Linking, Platform } from "react-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { AppState, Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { add, isBefore, parseISO } from "date-fns";
+import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
-import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   notificationsModalOpenSelector,
-  notificationsModalTypeSelector,
+  drawerSourceSelector,
   notificationsCurrentRouteNameSelector,
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
   notificationsModalLockedSelector,
+  notificationPermissionStatus,
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
-  setNotificationsModalType,
+  setNotificationsDrawerSource,
   setNotificationsCurrentRouteName,
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
+  setNotificationPermissionStatus,
 } from "~/actions/notifications";
 import { setRatingsModalLocked } from "~/actions/ratings";
 import { track } from "~/analytics";
-import {
-  notificationsSelector,
-  INITIAL_STATE as settingsInitialState,
-  neverClickedOnAllowNotificationsButtonSelector,
-} from "~/reducers/settings";
-import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
-import { NotificationsSettings } from "~/reducers/types";
-import Braze from "@braze/react-native-sdk";
-import { getIsNotifEnabled } from "./getNotifPermissions";
+import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
+import { NavigatorName, ScreenName } from "~/const/navigation";
+import { setNotifications } from "~/actions/settings";
+import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
+import { getNotificationPermissionStatus } from "./getNotifPermissions";
+import { useNavigation } from "@react-navigation/core";
+import { DRAWER_PAGE_NAME_TRACK_EVENT } from "~/screens/PushNotificationsModal";
+
+export type DataOfUser = {
+  // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
+  dismissedOptInDrawerAtList?: number[];
+
+  // This old logic is helpful to know if the user has already opted out of notifications
+  /** If set, we will not prompt the push notification modal again before this date unless the user triggers it manually from the settings */
+  dateOfNextAllowedRequest?: Date;
+  /** Whether or not the user clicked on the "Maybe later" cta */
+  alreadyDelayedToLater?: boolean;
+};
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
-  /** Name of the route that will trigger the push notification modal */
-  // camelcase perhaps it should
-  // eslint-disable-next-line camelcase
-  route_name: string;
+  /** Name of the current screen route that will maybe trigger the push notification modal */
+  routeName: ScreenName;
   /** In milliseconds, delay before triggering the push notification modal */
   timer: number;
   /** Whether the push notification modal is triggered when entering or when leaving the screen */
   type?: "on_enter" | "on_leave";
 };
 
-export type DataOfUser = {
-  /** Date of the first time the user oppened the app */
-  appFirstStartDate?: Date;
-  /** Number of times the user oppened the application */
-  numberOfAppStarts?: number;
-  /** If set, we will not prompt the push notification modal again before this date unless the user triggers it manually from the settings */
-  dateOfNextAllowedRequest?: Date;
-  /** Whether or not the user clicked on the "Maybe later" cta */
-  alreadyDelayedToLater?: boolean;
-  /** If true, we will not prompt the push notification modal again unless the user triggers it manually from the settings */
-  doNotAskAgain?: boolean;
-};
-
-export type NotificationCategory = {
-  /** Whether or not the category is displayed in the Ledger Wallet notifications settings */
-  displayed?: boolean;
-  /** The key of the category */
-  category?: string;
-};
-
-const pushNotificationsDataOfUserAsyncStorageKey = "pushNotificationsDataOfUser";
+const pushNotificationsDataOfUserStorageKey = "pushNotificationsDataOfUser";
 
 async function getPushNotificationsDataOfUserFromStorage() {
-  const dataOfUser = await storage.get<DataOfUser>(pushNotificationsDataOfUserAsyncStorageKey);
+  const dataOfUser = await storage.get<DataOfUser>(pushNotificationsDataOfUserStorageKey);
 
   if (!dataOfUser || Array.isArray(dataOfUser)) return null;
 
   return dataOfUser;
 }
 
-async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
-  await storage.save(pushNotificationsDataOfUserAsyncStorageKey, dataOfUser);
+export async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
+  return storage.save(pushNotificationsDataOfUserStorageKey, dataOfUser);
 }
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
-  const notifications = useSelector(notificationsSelector);
 
-  const notificationsCategoriesHidden = pushNotificationsFeature?.params?.notificationsCategories
-    ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory?.displayed)
-    .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
+  const notifications = useSelector(notificationsSelector);
+  const permissionStatus = useSelector(notificationPermissionStatus);
+  const actionEvents = pushNotificationsFeature?.params?.action_events;
+  const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
+
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
-  const neverClickedOnAllowNotificationsButton = useSelector(
-    neverClickedOnAllowNotificationsButtonSelector,
-  );
-  const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
+  const drawerSource = useSelector(drawerSourceSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
-  const accountsWithAmountCount = useSelector(accountsWithPositiveBalanceCountSelector);
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  const handlePushNotificationsPermission = useCallback(async () => {
-    if (Platform.OS === "android") {
-      // Braze.requestPushPermission() is a no-op on Android 12 and below so we only call it on Android 13 and above
-      if (neverClickedOnAllowNotificationsButton && Platform.Version >= 33) {
-        Braze.requestPushPermission();
-      } else {
-        Linking.openSettings();
-      }
-    } else {
-      const permission = await getMessaging().hasPermission();
+  const hiddenNotificationCategories = useMemo(() => {
+    const hiddenCategories = [];
+    const categoriesToHide = pushNotificationsFeature?.params?.notificationsCategories ?? [];
 
-      if (permission === AuthorizationStatus.DENIED) {
-        Linking.openSettings();
-      } else if (
-        permission === AuthorizationStatus.NOT_DETERMINED ||
-        permission === AuthorizationStatus.PROVISIONAL
-      ) {
-        Braze.requestPushPermission();
+    for (const notificationsCategory of categoriesToHide) {
+      if (!notificationsCategory?.displayed) {
+        hiddenCategories.push(notificationsCategory?.category || "");
       }
     }
-    if (neverClickedOnAllowNotificationsButton) {
-      dispatch(setNeverClickedOnAllowNotificationsButton(false));
-    }
-  }, [neverClickedOnAllowNotificationsButton, dispatch]);
 
-  const setPushNotificationsModalOpenCallback = useCallback(
-    (isModalOpen: boolean) => {
-      if (!isModalOpen) {
-        dispatch(setNotificationsModalType("generic"));
-        dispatch(setNotificationsModalOpen(isModalOpen));
-        dispatch(setRatingsModalLocked(false));
-      } else if (!isPushNotificationsModalLocked) {
-        getIsNotifEnabled().then(isNotifEnabled => {
-          if (!isNotifEnabled) {
-            dispatch(setNotificationsModalOpen(isModalOpen));
-            dispatch(setRatingsModalLocked(true));
-          }
-        });
-      }
-    },
-    [dispatch, isPushNotificationsModalLocked],
-  );
-
-  const areConditionsMet = useCallback(() => {
-    if (!pushNotificationsDataOfUser) return false;
-
-    // criterias depending on last answer to the push notifications modal
-    if (pushNotificationsDataOfUser.doNotAskAgain) return false;
-
-    if (
-      pushNotificationsDataOfUser.dateOfNextAllowedRequest &&
-      isBefore(
-        Date.now(),
-        typeof pushNotificationsDataOfUser.dateOfNextAllowedRequest === "string"
-          ? parseISO(pushNotificationsDataOfUser.dateOfNextAllowedRequest)
-          : pushNotificationsDataOfUser.dateOfNextAllowedRequest,
-      )
-    ) {
-      return false;
-    }
-
-    // minimum accounts number criteria
-    // @ts-expect-error TYPINGS
-    const minimumAccountsNumber: number =
-      pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number;
-    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
-      return false;
-    }
-
-    // minimum app start number criteria
-    // @ts-expect-error TYPINGS
-    const minimumAppStartsNumber: number =
-      pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
-    if (
-      pushNotificationsDataOfUser.numberOfAppStarts &&
-      pushNotificationsDataOfUser.numberOfAppStarts < minimumAppStartsNumber
-    ) {
-      return false;
-    }
-
-    // duration since first app start long enough criteria
-    // @ts-expect-error TYPINGS
-    const minimumDurationSinceAppFirstStart: Duration =
-      pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
-    if (
-      pushNotificationsDataOfUser.appFirstStartDate &&
-      isBefore(
-        Date.now(),
-        add(
-          pushNotificationsDataOfUser.appFirstStartDate
-            ? new Date(pushNotificationsDataOfUser.appFirstStartDate)
-            : new Date(),
-          minimumDurationSinceAppFirstStart,
-        ),
-      )
-    ) {
-      return false;
-    }
-
-    return true;
-  }, [
-    pushNotificationsDataOfUser,
-    pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number,
-    pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number,
-    pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
-    accountsWithAmountCount,
-  ]);
-
-  const isEventTriggered = useCallback(
-    (eventTrigger: EventTrigger, newRoute?: string) =>
-      (eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute) ||
-      (eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute),
-    [pushNotificationsOldRoute],
-  );
-
-  const onPushNotificationsRouteChange = useCallback(
-    (newRoute: string, isOtherModalOpened = false) => {
-      if (pushNotificationsEventTriggered?.timeout) {
-        clearTimeout(pushNotificationsEventTriggered?.timeout);
-        dispatch(setRatingsModalLocked(false));
-      }
-
-      if (isOtherModalOpened || !areConditionsMet()) return false;
-
-      // @ts-expect-error TYPINGS
-      for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
-        // @ts-expect-error TYPINGS
-        if (isEventTriggered(eventTrigger, newRoute)) {
-          dispatch(setRatingsModalLocked(true));
-          const timeout = setTimeout(() => {
-            setPushNotificationsModalOpenCallback(true);
-          }, eventTrigger.timer);
-          dispatch(
-            // @ts-expect-error TYPINGS
-            setNotificationsEventTriggered({
-              ...eventTrigger,
-              timeout,
-            }),
-          );
-          dispatch(setNotificationsCurrentRouteName(newRoute));
-          return true;
-        }
-      }
-      dispatch(setNotificationsCurrentRouteName(newRoute));
-      return false;
-    },
-    [
-      areConditionsMet,
-      pushNotificationsEventTriggered?.timeout,
-      dispatch,
-      pushNotificationsFeature?.params?.trigger_events,
-      isEventTriggered,
-      setPushNotificationsModalOpenCallback,
-    ],
-  );
+    return hiddenCategories;
+  }, [pushNotificationsFeature?.params?.notificationsCategories]);
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
     (dataOfUserUpdated: DataOfUser) => {
@@ -263,156 +106,492 @@ const useNotifications = () => {
     [dispatch],
   );
 
-  const initPushNotificationsData = useCallback(() => {
-    if (notifications && notifications.areNotificationsAllowed === undefined) {
-      dispatch(setNotifications(settingsInitialState.notifications));
-    } else {
-      const newNotificationsState = { ...notifications };
-      for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
-        if (notifications[key as keyof NotificationsSettings] === undefined) {
-          newNotificationsState[key as keyof NotificationsSettings] = value;
-        }
-      }
-      dispatch(setNotifications(newNotificationsState));
-    }
-    getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        ...dataOfUser,
-        appFirstStartDate: dataOfUser?.appFirstStartDate ?? new Date(Date.now()),
-        numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
-      });
+  const resetOptOutState = useCallback(() => {
+    updatePushNotificationsDataOfUserInStateAndStore({
+      dismissedOptInDrawerAtList: undefined,
     });
-  }, [dispatch, notifications, updatePushNotificationsDataOfUserInStateAndStore]);
+  }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
-  const triggerMarketPushNotificationModal = useCallback(() => {
-    if (pushNotificationsDataOfUser?.doNotAskAgain || isPushNotificationsModalLocked) return;
-    const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
-    if (marketCoinStarredParams?.enabled) {
-      dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market"));
-        setPushNotificationsModalOpenCallback(true);
-      }, marketCoinStarredParams?.timer);
-      dispatch(
-        setNotificationsEventTriggered({
-          route_name: "MarketDetail",
-          timer: marketCoinStarredParams?.timer,
-          timeout,
-        }),
-      );
+  const optOutOfNotifications = useCallback(() => {
+    const now = Date.now();
+
+    let dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
+
+    if (dismissedOptInDrawerAtList === undefined) {
+      // First time the user is opting out of notifications
+      dismissedOptInDrawerAtList = [now];
+    } else {
+      dismissedOptInDrawerAtList = [...dismissedOptInDrawerAtList, now];
     }
-  }, [
-    dispatch,
-    isPushNotificationsModalLocked,
-    pushNotificationsDataOfUser?.doNotAskAgain,
-    pushNotificationsFeature?.params?.marketCoinStarred,
-    setPushNotificationsModalOpenCallback,
-  ]);
 
-  const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-    const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
-    if (justFinishedOnboardingParams?.enabled) {
-      dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true);
-      }, justFinishedOnboardingParams?.timer);
-      dispatch(
-        setNotificationsEventTriggered({
-          route_name: "Portfolio",
-          timer: justFinishedOnboardingParams?.timer,
-          timeout,
-        }),
-      );
+    updatePushNotificationsDataOfUserInStateAndStore({
+      dismissedOptInDrawerAtList,
+    });
+  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
+  const initializeNotificationSettingsState = useCallback(() => {
+    if (notifications.areNotificationsAllowed === undefined) {
+      dispatch(setNotifications(settingsInitialState.notifications));
+      return;
     }
-  }, [
-    pushNotificationsFeature?.enabled,
-    isPushNotificationsModalLocked,
-    dispatch,
-    pushNotificationsFeature?.params?.justFinishedOnboarding,
-    setPushNotificationsModalOpenCallback,
-  ]);
 
-  const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
-      if (delay !== null && delay !== undefined) {
-        const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
-        updatePushNotificationsDataOfUserInStateAndStore({
-          ...pushNotificationsDataOfUser,
-          dateOfNextAllowedRequest,
-          ...additionalParams,
-        });
+    const newNotificationsState = { ...notifications };
+    for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
+      if (notifications[key as keyof NotificationsSettings] === undefined) {
+        newNotificationsState[key as keyof NotificationsSettings] = value;
       }
+    }
+    dispatch(setNotifications(newNotificationsState));
+  }, [dispatch, notifications]);
+
+  const syncOptOutState = useCallback(
+    (
+      osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus],
+      storedUserData: DataOfUser | null,
+    ) => {
+      const isAuthorized = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
+
+      // Handle legacy users who opted out before the new drawer system
+      const hasLegacyOptOutData =
+        storedUserData?.alreadyDelayedToLater || storedUserData?.dateOfNextAllowedRequest;
+      if (hasLegacyOptOutData) {
+        if (isAuthorized && notifications.areNotificationsAllowed) {
+          // User is already opted in; prevent re-prompting the opt-in drawer
+          return resetOptOutState();
+        }
+        // User is opted out; mark them for reprompting after the configured delay
+        return optOutOfNotifications();
+      }
+
+      const isOptOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
+
+      if (isOptOut) {
+        // User previously opted out → check if they've fully re-enabled notifications
+        if (isAuthorized && notifications.areNotificationsAllowed) {
+          // Both OS and app notifications enabled → clear opt-out state
+          return resetOptOutState();
+        }
+
+        // Still opted out or partially enabled → maintain opt-out state for reprompting
+        return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+      }
+
+      const isDenied = osPermissionStatus === AuthorizationStatus.DENIED;
+      // User was marked as opted in but somehow now has denied OS permissions.
+      if (!isOptOut && isDenied) {
+        // Mark as opted out to track dismissal for reprompt scheduling
+        return optOutOfNotifications();
+      }
+
+      // Explicitly handle remaining authorization states:
+      // - NOT_DETERMINED: user has not yet made a choice
+      // - PROVISIONAL / EPHEMERAL: limited/temporary permissions
+      if (
+        osPermissionStatus === AuthorizationStatus.NOT_DETERMINED ||
+        osPermissionStatus === AuthorizationStatus.PROVISIONAL ||
+        osPermissionStatus === AuthorizationStatus.EPHEMERAL
+      ) {
+        // For these intermediate states, keep user data in sync without changing opt-out logic
+        return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+      }
+
+      // Fallback: for any unexpected status values, keep behavior consistent with the default path.
+      return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
     },
-    [pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore],
+    [
+      notifications.areNotificationsAllowed,
+      resetOptOutState,
+      updatePushNotificationsDataOfUserInStateAndStore,
+      optOutOfNotifications,
+    ],
   );
 
-  const modalAllowNotifications = useCallback(() => {
-    track("button_clicked", {
-      button: "Allow",
-      page: pushNotificationsOldRoute,
-      drawer: "Notif",
-    });
-    setPushNotificationsModalOpenCallback(false);
-    handlePushNotificationsPermission();
-    if (pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts) {
-      handleSetDateOfNextAllowedRequest(
-        pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+  const initPushNotificationsData = useCallback(async () => {
+    initializeNotificationSettingsState();
+
+    const [permission, dataOfUserFromStorage] = await Promise.allSettled([
+      getNotificationPermissionStatus(),
+      getPushNotificationsDataOfUserFromStorage(),
+    ]);
+
+    if (permission.status === "rejected") {
+      console.error("Failed to get notification permission status:", permission.reason);
+    }
+
+    if (dataOfUserFromStorage.status === "rejected") {
+      console.error(
+        "Failed to get push notifications user data from storage:",
+        dataOfUserFromStorage.reason,
       );
     }
+
+    if (dataOfUserFromStorage.status === "fulfilled") {
+      const storedUserData = dataOfUserFromStorage.value;
+
+      if (permission.status === "fulfilled") {
+        const osPermissionStatus = permission.value;
+
+        dispatch(setNotificationPermissionStatus(osPermissionStatus));
+
+        return syncOptOutState(osPermissionStatus, storedUserData);
+      }
+
+      if (permission.status === "rejected") {
+        return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+      }
+    }
   }, [
-    pushNotificationsOldRoute,
-    setPushNotificationsModalOpenCallback,
-    handlePushNotificationsPermission,
-    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-    handleSetDateOfNextAllowedRequest,
+    initializeNotificationSettingsState,
+    syncOptOutState,
+    dispatch,
+    updatePushNotificationsDataOfUserInStateAndStore,
   ]);
 
-  const modalDelayLater = useCallback(() => {
-    track("button_clicked", {
-      button: "Maybe Later",
-      page: pushNotificationsOldRoute,
-      drawer: "Notif",
+  useEffect(() => {
+    // When user is redirected to the os settings to allow notifications, we need to re-initialize the push notifications data
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        initPushNotificationsData();
+      }
     });
-    setPushNotificationsModalOpenCallback(false);
-    if (pushNotificationsDataOfUser?.alreadyDelayedToLater) {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        ...pushNotificationsDataOfUser,
-        doNotAskAgain: true,
-      });
-    } else {
-      handleSetDateOfNextAllowedRequest(
-        pushNotificationsFeature?.params?.conditions?.maybe_later_delay ||
-          pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-        {
-          alreadyDelayedToLater: true,
-        },
+
+    return () => {
+      subscription.remove();
+    };
+  }, [initPushNotificationsData]);
+
+  const requestPushNotificationsPermission = useCallback(async () => {
+    const { requestPermission } = getMessaging();
+
+    if (permissionStatus === AuthorizationStatus.NOT_DETERMINED) {
+      const permission = await requestPermission();
+      dispatch(setNotificationPermissionStatus(permission));
+      return permission;
+    }
+
+    if (permissionStatus === AuthorizationStatus.DENIED) {
+      return Linking.openSettings();
+    }
+
+    return permissionStatus;
+  }, [dispatch, permissionStatus]);
+
+  const setPushNotificationsModalOpenCallback = useCallback(
+    (isOpen: boolean, drawerSource: NotificationsState["drawerSource"] = "generic") => {
+      dispatch(setNotificationsModalOpen(isOpen));
+
+      if (isOpen) {
+        dispatch(setNotificationsDrawerSource(drawerSource));
+        if (!isPushNotificationsModalLocked) {
+          dispatch(setRatingsModalLocked(true));
+        }
+      }
+
+      if (!isOpen) {
+        dispatch(setRatingsModalLocked(false));
+      }
+    },
+    [dispatch, isPushNotificationsModalLocked],
+  );
+
+  const getRepromptDelay = useCallback(
+    (dismissedOptInDrawerAtList?: number[]) => {
+      if (!repromptSchedule || !dismissedOptInDrawerAtList) {
+        return null;
+      }
+
+      if (repromptSchedule.length === 0) {
+        return null;
+      }
+
+      const dismissalCount = dismissedOptInDrawerAtList.length;
+      let scheduleIndex = dismissalCount - 1;
+
+      const lastScheduleIndex = repromptSchedule.length - 1;
+      if (scheduleIndex > lastScheduleIndex) {
+        // If user has dismissed more than the schedule length, keep using the last delay.
+        scheduleIndex = lastScheduleIndex;
+      }
+
+      return repromptSchedule[scheduleIndex];
+    },
+    [repromptSchedule],
+  );
+
+  const verifyShouldPromptOptInDrawer = useCallback(() => {
+    const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
+    if (isOsPermissionAuthorized && notifications.areNotificationsAllowed) {
+      return false;
+    }
+
+    const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
+
+    const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList === undefined;
+    if (hasNeverSeenOptInPromptDrawer) {
+      return true;
+    }
+
+    const dismissalCount = dismissedOptInDrawerAtList.length;
+    const repromptDelay = getRepromptDelay(dismissedOptInDrawerAtList);
+    if (!repromptDelay) {
+      return false;
+    }
+
+    const lastDismissedAt = dismissedOptInDrawerAtList[dismissalCount - 1];
+    const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
+    const now = Date.now();
+    if (isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now)) {
+      return true;
+    }
+
+    return false;
+  }, [
+    permissionStatus,
+    notifications.areNotificationsAllowed,
+    pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+    getRepromptDelay,
+  ]);
+
+  const openDrawer = useCallback(
+    (drawerSource: NotificationsState["drawerSource"], routeName: ScreenName, timer = 0) => {
+      dispatch(setRatingsModalLocked(true));
+      const timeout = setTimeout(() => {
+        setPushNotificationsModalOpenCallback(true, drawerSource);
+      }, timer);
+      dispatch(
+        setNotificationsEventTriggered({
+          routeName,
+          timer,
+          timeout,
+        }),
       );
+    },
+    [dispatch, setPushNotificationsModalOpenCallback],
+  );
+
+  const handleRouteChangePushNotification = useCallback(
+    (newRoute: ScreenName, isOtherModalOpened = false): boolean => {
+      if (pushNotificationsEventTriggered?.timeout) {
+        clearTimeout(pushNotificationsEventTriggered?.timeout);
+        dispatch(setRatingsModalLocked(false));
+      }
+
+      if (isOtherModalOpened) return false;
+
+      const triggerEvents = pushNotificationsFeature?.params?.trigger_events ?? [];
+
+      for (const eventTrigger of triggerEvents) {
+        const isEntering = eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute;
+        const isLeaving =
+          eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute;
+
+        if (isEntering || isLeaving) {
+          const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
+          if (!shouldPromptOptInDrawer) {
+            return false;
+          }
+
+          openDrawer("generic", newRoute, eventTrigger.timer);
+          return true;
+        }
+      }
+
+      dispatch(setNotificationsCurrentRouteName(newRoute));
+      return false;
+    },
+    [
+      pushNotificationsEventTriggered?.timeout,
+      pushNotificationsFeature?.params?.trigger_events,
+      dispatch,
+      pushNotificationsOldRoute,
+      verifyShouldPromptOptInDrawer,
+      openDrawer,
+    ],
+  );
+
+  const tryTriggerPushNotificationDrawerAfterAction = useCallback(
+    (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
+      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
+
+      const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
+      if (!shouldPromptOptInDrawer) {
+        return;
+      }
+
+      switch (actionSource) {
+        case "onboarding": {
+          const onboardingParams = actionEvents?.complete_onboarding;
+          if (!onboardingParams?.enabled) {
+            return;
+          }
+          // requestAnimationFrame is needed here for onboarding. Otherwise it won't open the drawer
+          requestAnimationFrame(() => {
+            openDrawer("onboarding", ScreenName.Portfolio, onboardingParams?.timer);
+          });
+          break;
+        }
+        case "add_favorite_coin": {
+          const addFavoriteCoinParams = actionEvents?.add_favorite_coin;
+          if (!addFavoriteCoinParams?.enabled) {
+            return;
+          }
+
+          openDrawer("add_favorite_coin", ScreenName.MarketDetail, addFavoriteCoinParams?.timer);
+          break;
+        }
+        case "buy": {
+          const buyParams = actionEvents?.buy;
+          if (!buyParams?.enabled) {
+            return;
+          }
+
+          openDrawer("buy", ScreenName.ExchangeBuy, buyParams?.timer);
+          break;
+        }
+        case "send": {
+          const sendParams = actionEvents?.send;
+          if (!sendParams?.enabled) {
+            return;
+          }
+
+          openDrawer("send", ScreenName.SendCoin, sendParams?.timer);
+          break;
+        }
+        case "receive": {
+          const receiveParams = actionEvents?.receive;
+          if (!receiveParams?.enabled) {
+            return;
+          }
+
+          openDrawer("receive", ScreenName.ReceiveConfirmation, receiveParams?.timer);
+          break;
+        }
+
+        case "swap": {
+          const swapParams = actionEvents?.swap;
+          if (!swapParams?.enabled) {
+            return;
+          }
+
+          openDrawer("swap", ScreenName.Swap, swapParams?.timer);
+          break;
+        }
+        case "stake": {
+          const stakeParams = actionEvents?.stake;
+          if (!stakeParams?.enabled) {
+            return;
+          }
+          openDrawer("stake", ScreenName.Stake, stakeParams?.timer);
+          break;
+        }
+        default: {
+          console.error(`Unknown action source: ${actionSource}`);
+          break;
+        }
+      }
+    },
+    [
+      verifyShouldPromptOptInDrawer,
+      isPushNotificationsModalLocked,
+      openDrawer,
+      pushNotificationsFeature?.enabled,
+      actionEvents?.add_favorite_coin,
+      actionEvents?.buy,
+      actionEvents?.receive,
+      actionEvents?.send,
+      actionEvents?.stake,
+      actionEvents?.swap,
+      actionEvents?.complete_onboarding,
+    ],
+  );
+
+  const trackButtonClicked = useCallback(
+    (eventName: string) => {
+      track("button_clicked", {
+        button: eventName,
+        page: DRAWER_PAGE_NAME_TRACK_EVENT,
+        source: drawerSource,
+        repromptDelay: getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList),
+        dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
+        // variant: "A" || "B",
+      });
+    },
+    [drawerSource, getRepromptDelay, pushNotificationsDataOfUser?.dismissedOptInDrawerAtList],
+  );
+
+  const handleDelayLaterPress = useCallback(() => {
+    trackButtonClicked("maybe later");
+    setPushNotificationsModalOpenCallback(false);
+
+    optOutOfNotifications();
+  }, [trackButtonClicked, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+
+  const handleCloseFromBackdropPress = useCallback(() => {
+    trackButtonClicked("backdrop");
+
+    setPushNotificationsModalOpenCallback(false);
+
+    optOutOfNotifications();
+  }, [trackButtonClicked, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+
+  const handleAllowNotificationsPress = useCallback(async () => {
+    trackButtonClicked("allow notifications");
+    setPushNotificationsModalOpenCallback(false);
+
+    if (permissionStatus !== AuthorizationStatus.AUTHORIZED) {
+      const permission = await requestPushNotificationsPermission();
+      if (permission === AuthorizationStatus.DENIED) {
+        trackButtonClicked("os_notifications_deny");
+        optOutOfNotifications();
+      } else if (permission === AuthorizationStatus.AUTHORIZED) {
+        trackButtonClicked("os_notifications_allow");
+        resetOptOutState();
+      }
+    }
+
+    if (!notifications.areNotificationsAllowed) {
+      navigation.navigate(NavigatorName.Settings, {
+        screen: ScreenName.NotificationsSettings,
+      });
     }
   }, [
-    pushNotificationsOldRoute,
-    handleSetDateOfNextAllowedRequest,
-    pushNotificationsDataOfUser,
-    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
-    pushNotificationsFeature?.params?.conditions?.maybe_later_delay,
+    trackButtonClicked,
     setPushNotificationsModalOpenCallback,
-    updatePushNotificationsDataOfUserInStateAndStore,
+    permissionStatus,
+    notifications.areNotificationsAllowed,
+    requestPushNotificationsPermission,
+    optOutOfNotifications,
+    resetOptOutState,
+    navigation,
   ]);
 
   return {
     initPushNotificationsData,
-    onPushNotificationsRouteChange,
+
+    permissionStatus,
+    handleRouteChangePushNotification,
     pushNotificationsOldRoute,
-    pushNotificationsModalType,
+
+    drawerSource,
+
+    getRepromptDelay,
+    pushNotificationsDataOfUser,
+
     isPushNotificationsModalOpen,
-    notificationsCategoriesHidden,
-    getIsNotifEnabled,
-    handlePushNotificationsPermission,
-    triggerMarketPushNotificationModal,
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    modalAllowNotifications,
-    modalDelayLater,
+
+    hiddenNotificationCategories,
+
+    requestPushNotificationsPermission,
+
+    tryTriggerPushNotificationDrawerAfterAction,
+
+    resetOptOutState,
+    optOutOfNotifications,
+
+    handleAllowNotificationsPress,
+    handleDelayLaterPress,
+    handleCloseFromBackdropPress,
   };
 };
 
-export default useNotifications;
+export { useNotifications };
