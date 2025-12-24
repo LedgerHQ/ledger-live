@@ -103,6 +103,16 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
+  # Android AVD configuration
+  AVD_API: 35
+  AVD_ARCH: x86_64
+  AVD_PROFILE: pixel_7_pro
+  AVD_TARGET: google_apis
+  AVD_NAME: "Android_Emulator"
+  AVD_CORES: 3
+  AVD_RAM_SIZE: 5120M
+  AVD_HEAP_SIZE: 1024M
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
 
 jobs:
   determine-builds:
@@ -124,6 +134,8 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+      avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+      avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
     steps:
       - name: generate token
         id: generate-token
@@ -166,6 +178,7 @@ jobs:
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_3-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -223,6 +236,43 @@ jobs:
           use-fallback: false
           lookup-only: true
 
+      - name: Check if Android AVD cache exists
+        id: check-avd
+        if: ${{ inputs.tests_type != 'iOS Only' }}
+        shell: bash
+        run: |
+          CACHE_KEY="${{ steps.cache-keys.outputs.avd_cache_key }}"
+          echo "🔍 Checking for cache key: $CACHE_KEY"
+
+          # Install AWS CLI if not available
+          if ! command -v aws &> /dev/null; then
+            echo "📦 Installing AWS CLI..."
+            curl -sS "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -q awscliv2.zip
+            sudo ./aws/install --update
+            rm -rf awscliv2.zip aws
+          fi
+
+          # Use aws s3 ls to check if cache exists (more compatible with R2)
+          echo "🔎 Running: aws s3 ls s3://ledger-live-cache/${CACHE_KEY}/"
+          RESULT=$(aws s3 ls "s3://ledger-live-cache/${CACHE_KEY}/" \
+            --endpoint-url "https://${{ secrets.R2_ENDPOINT }}" \
+            --region auto 2>&1) || true
+
+          echo "📋 Result: $RESULT"
+
+          if echo "$RESULT" | grep -q "cache.tzst"; then
+            echo "cache-hit=true" >> $GITHUB_OUTPUT
+            echo "✅ AVD cache found"
+          else
+            echo "cache-hit=false" >> $GITHUB_OUTPUT
+            echo "❌ AVD cache not found (key: ${CACHE_KEY}/cache.tzst)"
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ""
+
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
@@ -253,6 +303,29 @@ jobs:
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
       production_firebase: ${{ inputs.production_firebase || false }}
     secrets: inherit
+
+  setup-android-avd:
+    name: "Setup Android AVD"
+    needs: [determine-builds]
+    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.outputs.avd_exists != 'true' }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    steps:
+      - name: Setup Android AVDs
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          avd_api: ${{ env.AVD_API }}
+          avd_arch: ${{ env.AVD_ARCH }}
+          avd_profile: ${{ env.AVD_PROFILE }}
+          avd_target: ${{ env.AVD_TARGET }}
+          avd_name: ${{ env.AVD_NAME }}
+          avd_cores: ${{ env.AVD_CORES }}
+          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
+          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
+          avd_options: ${{ env.AVD_OPTIONS }}
+          cache_key: ${{ needs.determine-builds.outputs.avd_cache_key }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
   detox-tests-ios:
     name: iOS E2E Tests
@@ -484,24 +557,14 @@ jobs:
 
   detox-tests-android:
     name: Android E2E Tests
-    needs: [build-android, determine-builds]
-    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    needs: [build-android, determine-builds, setup-android-avd]
+    if: ${{ always() && !failure() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
-      AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_7_pro
-      AVD_TARGET: google_apis
-      AVD_NAME: "Android_Emulator"
-      AVD_NAME_2: "Android_Emulator_2"
-      AVD_NAME_3: "Android_Emulator_3"
-      AVD_CORES: 2
-      AVD_RAM_SIZE: 5120M
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -564,16 +627,8 @@ jobs:
           echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "17"
-
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v3.2.2
-        with:
-          packages: "tools platform-tools"
+      - name: Setup Android Environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -617,15 +672,6 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: Enable Hardware Acceleration
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Fix emulator directory permissions
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
-
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
@@ -646,79 +692,13 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_3 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-r2-v8
+          key: ${{ needs.determine-builds.outputs.avd_cache_key }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
           destination: /
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
-
-      - name: create second AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd-2
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME_2 }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
-
-      - name: create third AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd-3
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME_3 }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
-
-      - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        with:
-          path: |
-            /home/runner/.android/
-            /usr/local/lib/android/sdk/emulator/
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_3 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-r2-v8
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
 
       - name: Boot Android Emulators in Background
         run: |
@@ -729,9 +709,9 @@ jobs:
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
 
             log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim 2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME_2 }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME_3 }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim 2>&1 | ts "EMU3" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none 2>&1 | ts "EMU1" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME_2 }} -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none 2>&1 | ts "EMU2" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME_3 }} -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none 2>&1 | ts "EMU3" &
 
             log "⏳ Waiting for 3 emulators to connect..."
             while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done

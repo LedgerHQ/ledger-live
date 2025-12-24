@@ -1,0 +1,130 @@
+name: "Setup Android AVD"
+description: "Setup Android Virtual Devices for E2E testing with caching support"
+inputs:
+  avd_api:
+    description: "Android API level"
+    required: true
+  avd_arch:
+    description: "CPU architecture"
+    required: true
+  avd_profile:
+    description: "Device profile"
+    required: true
+  avd_target:
+    description: "System image target"
+    required: true
+  avd_name:
+    description: "Name for the first AVD"
+    required: true
+  avd_cores:
+    description: "Number of CPU cores for AVD 1 and 2"
+    required: true
+  avd_ram_size:
+    description: "RAM size for AVDs"
+    required: true
+  avd_heap_size:
+    description: "Heap size for AVDs"
+    required: true
+  avd_options:
+    description: "Emulator options"
+    required: true
+  cache_key:
+    description: "Cache key for storing the AVDs"
+    required: true
+  r2_access_key:
+    description: "R2 access key for cache upload"
+    required: true
+  r2_secret_key:
+    description: "R2 secret key for cache upload"
+    required: true
+  r2_endpoint:
+    description: "R2 endpoint for cache upload"
+    required: true
+  wait_script_path:
+    description: "Path to the wait_emulator_idle.sh script"
+    required: false
+    default: "./tools/scripts/wait_emulator_idle.sh"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref || github.sha }}
+        repository: LedgerHQ/ledger-live
+        persist-credentials: false
+        sparse-checkout: |
+          tools/scripts
+          tools/actions
+
+    - name: Setup Android Environment
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+
+    - name: Create .android directory
+      shell: bash
+      run: mkdir /home/runner/.android/
+
+    - name: Create first AVD and generate snapshot
+      uses: reactivecircus/android-emulator-runner@v2
+      id: create-avd-1
+      with:
+        api-level: ${{ inputs.avd_api }}
+        arch: ${{ inputs.avd_arch }}
+        profile: ${{ inputs.avd_profile }}
+        target: ${{ inputs.avd_target }}
+        avd-name: ${{ inputs.avd_name }}
+        force-avd-creation: true
+        cores: ${{ inputs.avd_cores }}
+        ram-size: ${{ inputs.avd_ram_size }}
+        disable-linux-hw-accel: false
+        emulator-options: ${{ inputs.avd_options }}
+        heap-size: ${{ inputs.avd_heap_size }}
+        script: ${{ inputs.wait_script_path }}
+
+    - name: Create second AVD and generate snapshot
+      uses: reactivecircus/android-emulator-runner@v2
+      id: create-avd-2
+      with:
+        api-level: ${{ inputs.avd_api }}
+        arch: ${{ inputs.avd_arch }}
+        profile: ${{ inputs.avd_profile }}
+        target: ${{ inputs.avd_target }}
+        avd-name: ${{ inputs.avd_name }}_2
+        force-avd-creation: true
+        cores: ${{ inputs.avd_cores }}
+        ram-size: ${{ inputs.avd_ram_size }}
+        disable-linux-hw-accel: false
+        emulator-options: ${{ inputs.avd_options }}
+        heap-size: ${{ inputs.avd_heap_size }}
+        script: ${{ inputs.wait_script_path }}
+
+    - name: Create third AVD and generate snapshot
+      uses: reactivecircus/android-emulator-runner@v2
+      id: create-avd-3
+      with:
+        api-level: ${{ inputs.avd_api }}
+        arch: ${{ inputs.avd_arch }}
+        profile: ${{ inputs.avd_profile }}
+        target: ${{ inputs.avd_target }}
+        avd-name: ${{ inputs.avd_name }}_3
+        force-avd-creation: true
+        cores: ${{ inputs.avd_cores }}
+        ram-size: ${{ inputs.avd_ram_size }}
+        disable-linux-hw-accel: false
+        emulator-options: ${{ inputs.avd_options }}
+        heap-size: ${{ inputs.avd_heap_size }}
+        script: ${{ inputs.wait_script_path }}
+
+    - name: Cache android emulator
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      with:
+        path: |
+          /home/runner/.android/
+          /usr/local/lib/android/sdk/emulator/
+          /usr/local/lib/android/sdk/system-images/android-${{ inputs.avd_api }}/${{ inputs.avd_target }}/${{ inputs.avd_arch }}/
+        key: ${{ inputs.cache_key }}
+        accessKey: ${{ inputs.r2_access_key }}
+        secretKey: ${{ inputs.r2_secret_key }}
+        bucket: ledger-live-cache
+        endpoint: ${{ inputs.r2_endpoint }}
+        region: auto
