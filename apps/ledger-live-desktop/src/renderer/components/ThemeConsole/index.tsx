@@ -108,9 +108,9 @@ const ThemeConsole = () => {
       className="pointer-events-auto fixed z-[9999999999]"
       style={{ left: position.x, top: position.y, opacity: isDragging ? 0.8 : 1 }}
     >
-      <div className="flex select-none flex-row gap-8 rounded-[8px] bg-muted-transparent p-8 shadow-xl">
+      <div className="flex select-none flex-row gap-8 rounded-[8px] p-8 shadow-xl">
         <div
-          className="flex cursor-grab items-center justify-center px-2 text-muted active:cursor-grabbing"
+          className="flex cursor-grab items-center justify-center px-2 active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           title="Drag to move"
         >
