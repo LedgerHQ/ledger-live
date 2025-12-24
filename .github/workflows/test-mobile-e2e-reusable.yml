@@ -311,7 +311,7 @@ jobs:
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/qaa_850_e2e_tests_parallel_3
         with:
           avd_api: ${{ env.AVD_API }}
           avd_arch: ${{ env.AVD_ARCH }}
@@ -623,7 +623,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@support/qaa_850_e2e_tests_parallel_3
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
