@@ -50,12 +50,13 @@ export type DataOfUser = {
   appFirstStartDate?: Date;
   /** Number of times the user oppened the application */
   numberOfAppStarts?: number;
-  /** If set, we will not prompt the push notification modal again before this date unless the user triggers it manually from the settings */
-  dateOfNextAllowedRequest?: Date;
-  /** Whether or not the user clicked on the "Maybe later" cta */
-  alreadyDelayedToLater?: boolean;
-  /** If true, we will not prompt the push notification modal again unless the user triggers it manually from the settings */
-  doNotAskAgain?: boolean;
+
+  optedOutOfNotificationsAt?: Date | null;
+
+  // dates the user dismissed the opt in prompt
+  // we will check the last entry in the array
+  // but we will also need to check the previous entries to compute the duration between the dismissals
+  dismissedOptInPromptAtList?: Date[] | null;
 };
 
 export type NotificationCategory = {
@@ -76,7 +77,7 @@ async function getPushNotificationsDataOfUserFromStorage() {
 }
 
 async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
-  await storage.save(pushNotificationsDataOfUserStorageKey, dataOfUser);
+  return storage.save(pushNotificationsDataOfUserStorageKey, dataOfUser);
 }
 
 const useNotifications = () => {
@@ -144,9 +145,6 @@ const useNotifications = () => {
 
   const areConditionsMet = useCallback(() => {
     if (!pushNotificationsDataOfUser) return false;
-
-    // criterias depending on last answer to the push notifications modal
-    if (pushNotificationsDataOfUser.doNotAskAgain) return false;
 
     if (
       pushNotificationsDataOfUser.dateOfNextAllowedRequest &&
@@ -284,13 +282,13 @@ const useNotifications = () => {
     });
   }, [dispatch, notifications, updatePushNotificationsDataOfUserInStateAndStore]);
 
-  const triggerMarketPushNotificationModal = useCallback(() => {
-    if (pushNotificationsDataOfUser?.doNotAskAgain || isPushNotificationsModalLocked) return;
+  const triggerPushNotificationModalAfterMarketStarredAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
     const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market"));
+        dispatch(setNotificationsModalType("market_starred"));
         setPushNotificationsModalOpenCallback(true);
       }, marketCoinStarredParams?.timer);
       dispatch(
@@ -304,12 +302,11 @@ const useNotifications = () => {
   }, [
     dispatch,
     isPushNotificationsModalLocked,
-    pushNotificationsDataOfUser?.doNotAskAgain,
     pushNotificationsFeature?.params?.marketCoinStarred,
     setPushNotificationsModalOpenCallback,
   ]);
 
-  const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
+  const triggerPushNotificationModalAfterFinishingOnboardingNewDevice = useCallback(() => {
     if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
     const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
     if (justFinishedOnboardingParams?.enabled) {
@@ -333,13 +330,18 @@ const useNotifications = () => {
     setPushNotificationsModalOpenCallback,
   ]);
 
+  const triggerPushNotificationModalAfterSendAction = useCallback(() => {}, []);
+  const triggerPushNotificationModalAfterReceiveAction = useCallback(() => {}, []);
+  const triggerPushNotificationModalAfterBuyAction = useCallback(() => {}, []);
+  const triggerPushNotificationModalAfterSwapAction = useCallback(() => {}, []);
+  const triggerPushNotificationModalAfterStakeAction = useCallback(() => {}, []);
+
   const handleSetDateOfNextAllowedRequest = useCallback(
     (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({
           ...pushNotificationsDataOfUser,
-          dateOfNextAllowedRequest,
           ...additionalParams,
         });
       }
@@ -347,7 +349,7 @@ const useNotifications = () => {
     [pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore],
   );
 
-  const modalAllowNotifications = useCallback(() => {
+  const handleAllowNotificationsPress = useCallback(() => {
     track("button_clicked", {
       button: "Allow",
       page: pushNotificationsOldRoute,
@@ -368,7 +370,7 @@ const useNotifications = () => {
     handleSetDateOfNextAllowedRequest,
   ]);
 
-  const modalDelayLater = useCallback(() => {
+  const handleDelayLaterPress = useCallback(() => {
     track("button_clicked", {
       button: "Maybe Later",
       page: pushNotificationsOldRoute,
@@ -408,10 +410,17 @@ const useNotifications = () => {
     notificationsCategoriesHidden,
     getIsNotifEnabled,
     handlePushNotificationsPermission,
-    triggerMarketPushNotificationModal,
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    modalAllowNotifications,
-    modalDelayLater,
+
+    handleAllowNotificationsPress,
+    handleDelayLaterPress,
+
+    triggerPushNotificationModalAfterFinishingOnboardingNewDevice,
+    triggerPushNotificationModalAfterMarketStarredAction,
+    triggerPushNotificationModalAfterSendAction,
+    triggerPushNotificationModalAfterReceiveAction,
+    triggerPushNotificationModalAfterBuyAction,
+    triggerPushNotificationModalAfterSwapAction,
+    triggerPushNotificationModalAfterStakeAction,
   };
 };
 

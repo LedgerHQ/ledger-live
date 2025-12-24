@@ -42,7 +42,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   );
 
   const dispatch = useDispatch();
-  const { triggerMarketPushNotificationModal } = useNotifications();
+  const { triggerPushNotificationModalAfterMarketStarredAction } = useNotifications();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { starredMarketCoins, updateMarketParams } = useMarket();
@@ -99,8 +99,8 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
 
-    if (!isStarred) triggerMarketPushNotificationModal();
-  }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
+    if (!isStarred) triggerPushNotificationModalAfterMarketStarredAction();
+  }, [dispatch, isStarred, currencyId, triggerPushNotificationModalAfterMarketStarredAction]);
 
   return {
     defaultAccount,

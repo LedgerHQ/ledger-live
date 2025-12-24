@@ -2,13 +2,9 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import useNotifications from "~/logic/notifications";
-import Illustration from "~/images/illustration/Illustration";
-import PromptNotifGenericDark from "~/images/illustration/Dark/_PromptNotifGeneric.webp";
-import PromptNotifGenericLight from "~/images/illustration/Light/_PromptNotifGeneric.webp";
-import PromptNotifMarketDark from "~/images/illustration/Dark/_PromptNotifMarket.webp";
-import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMarket.webp";
-import { TrackScreen } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
+import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
+import { PushNotificationsModalTrackScreen } from "./PushNotificationsModalTrackScreen";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
@@ -16,9 +12,8 @@ const PushNotificationsModal = () => {
     initPushNotificationsData,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
-    modalAllowNotifications,
-    modalDelayLater,
-    pushNotificationsOldRoute,
+    handleAllowNotificationsPress,
+    handleDelayLaterPress,
   } = useNotifications();
 
   useEffect(() => {
@@ -26,37 +21,14 @@ const PushNotificationsModal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const NotifIllustration = () =>
-    pushNotificationsModalType === "market" ? (
-      <Illustration
-        lightSource={PromptNotifMarketLight}
-        darkSource={PromptNotifMarketDark}
-        width={300}
-        height={141}
-      />
-    ) : (
-      <Illustration
-        lightSource={PromptNotifGenericLight}
-        darkSource={PromptNotifGenericDark}
-        width={300}
-        height={141}
-      />
-    );
   return (
     <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
-      <TrackScreen
-        category="Notification Prompt"
-        name={
-          pushNotificationsModalType === "generic"
-            ? "Notification Prompt 1 - Notif"
-            : "Notification Prompt 2 - Graph"
-        }
-        source={pushNotificationsOldRoute}
-        type={"drawer"}
-      />
+      <PushNotificationsModalTrackScreen type={pushNotificationsModalType} />
+
       <Flex mb={4}>
         <Flex alignItems={"center"}>
-          <NotifIllustration />
+          <PushNotificationsModalIllustration type={pushNotificationsModalType} />
+
           <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
             {t("notifications.prompt.title")}
           </Text>
@@ -70,10 +42,14 @@ const PushNotificationsModal = () => {
             {t("notifications.prompt.desc")}
           </Text>
         </Flex>
-        <Button type={"main"} mt={8} mb={7} onPressIn={modalAllowNotifications}>
+        <Button type={"main"} mt={8} mb={7} onPressIn={handleAllowNotificationsPress}>
           {t("notifications.prompt.allow")}
         </Button>
-        <TextLink type={"shade"} onPressIn={modalDelayLater} testID="notifications-prompt-later">
+        <TextLink
+          type={"shade"}
+          onPressIn={handleDelayLaterPress}
+          testID="notifications-prompt-later"
+        >
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>

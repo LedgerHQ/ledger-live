@@ -115,7 +115,14 @@ export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
+  notificationsModalType:
+    | "generic"
+    | "send"
+    | "receive"
+    | "buy"
+    | "swap"
+    | "stake"
+    | "market_starred";
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string;
   /** The event that triggered the oppening of the push notifications modal */

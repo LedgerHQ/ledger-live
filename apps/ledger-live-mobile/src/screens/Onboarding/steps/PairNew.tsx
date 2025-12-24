@@ -80,7 +80,7 @@ export default memo(function () {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
+  const { triggerPushNotificationModalAfterFinishingOnboardingNewDevice } = useNotifications();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
     route.params;
@@ -140,7 +140,7 @@ export default memo(function () {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal();
+    triggerPushNotificationModalAfterFinishingOnboardingNewDevice();
   }, [
     isProtectFlow,
     deviceModelId,
@@ -148,7 +148,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    triggerPushNotificationModalAfterFinishingOnboardingNewDevice,
     isFundWalletNewSetup,
     seedConfiguration,
   ]);
