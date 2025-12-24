@@ -2,10 +2,8 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
-import { act } from "@testing-library/react";
 import { Observable, of, throwError } from "rxjs";
-import { renderHook } from "tests/testSetup";
-import logger from "~/renderer/logger";
+import { act, renderHook } from "tests/testSetup";
 import {
   OnboardingBridge,
   OnboardingConfig,
@@ -15,13 +13,7 @@ import {
 } from "../../types";
 import { useOnboardingFlow } from "../useOnboardingFlow";
 
-jest.mock("~/renderer/logger", () => ({
-  __esModule: true,
-  default: {
-    error: jest.fn(),
-    onReduxAction: jest.fn(),
-  },
-}));
+const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
 describe("useOnboardingFlow", () => {
   const mockCurrency = {
@@ -75,6 +67,11 @@ describe("useOnboardingFlow", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy.mockClear();
+  });
+
+  afterAll(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should initialize with correct default state", () => {
@@ -251,7 +248,7 @@ describe("useOnboardingFlow", () => {
     expect(result.current.onboardingStatus).toBe(AccountOnboardStatus.ERROR);
     expect(result.current.isProcessing).toBe(false);
     expect(result.current.error).toBe(testError);
-    expect(logger.error).toHaveBeenCalledWith("[handleOnboardAccount] failed", testError);
+    expect(consoleErrorSpy).toHaveBeenCalledWith("[handleOnboardAccount] failed", testError);
   });
 
   it("should cleanup previous subscription when called multiple times", () => {
@@ -429,7 +426,9 @@ describe("useOnboardingFlow", () => {
     });
 
     expect(result.current.stepId).toBe(initialStepId);
-    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining("Invalid step transition"));
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Invalid step transition"),
+    );
   });
 
   it("should cleanup subscription on unmount", () => {

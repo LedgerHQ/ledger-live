@@ -1,10 +1,32 @@
-import type {
-  OnboardingBridge,
-  OnboardProgress,
-  OnboardResult,
-} from "@ledgerhq/live-common/hooks/useAccountOnboarding";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import type { CantonCurrencyBridge, CantonOnboardProgress, CantonOnboardResult } from "../types";
+import type {
+  CantonAccount,
+  CantonCurrencyBridge,
+  CantonOnboardProgress,
+  CantonOnboardResult,
+} from "../types";
+
+// Types for the generic onboarding bridge interface
+export type OnboardProgress = {
+  status: string;
+};
+
+export type OnboardResult = {
+  account: CantonAccount;
+  metadata: {
+    partyId: string;
+  };
+};
+
+export type OnboardingBridge = {
+  onboardAccount: (
+    currency: CryptoCurrency,
+    deviceId: string,
+    creatableAccount: CantonAccount,
+  ) => Observable<OnboardProgress | OnboardResult>;
+};
 
 /**
  * Type guard to check if a bridge is a CantonCurrencyBridge
@@ -38,7 +60,7 @@ export function createCantonOnboardingBridge(cantonBridge: CantonCurrencyBridge)
             }
             if ("account" in data && "partyId" in data) {
               return {
-                account: data.account,
+                account: data.account as CantonAccount,
                 metadata: { partyId: data.partyId },
               };
             }

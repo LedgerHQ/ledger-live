@@ -57,6 +57,10 @@
       "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
     },
+    "./hooks/useAccountOnboarding": {
+      "require": "./lib/hooks/useAccountOnboarding/index.js",
+      "default": "./lib-es/hooks/useAccountOnboarding/index.js"
+    },
     "./e2e": {
       "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"

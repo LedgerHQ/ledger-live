@@ -17,7 +17,7 @@ import { splitTransaction } from "./splitTransaction";
 import prepareTransferMockSerialized from "../tests/fixtures/prepare-transfer-serialized.json";
 import prepareTransferMock from "../tests/fixtures/prepare-transfer.json";
 
-const fixturePath = path.join(__dirname, "fixtures", "prepare-transfer.apdus");
+const fixturePath = path.join(__dirname, "..", "tests", "fixtures", "prepare-transfer.apdus");
 
 class APDURecordingTransport extends Transport {
   recordStore: RecordStore;
