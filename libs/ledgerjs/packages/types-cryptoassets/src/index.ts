@@ -5,6 +5,7 @@ export type CryptoCurrencyId = string;
 export type LedgerExplorerId =
   | "btc"
   | "btc_testnet"
+  | "btc_testnet4"
   | "bch"
   | "btg"
   | "club"
