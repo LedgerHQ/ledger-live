@@ -38,7 +38,9 @@ export const createMockCantonBridge = () => ({
   authorizePreapproval: jest.fn(),
 });
 
-type ObservableValue = { error?: Error } | { status: number; account?: Account; partyId?: string };
+type ObservableValue =
+  | { error?: Error }
+  | { status: AccountOnboardStatus | number; account?: Account; partyId?: string };
 
 export const createMockObservable = (values: ObservableValue[], delay: number = 0) => ({
   subscribe: jest.fn(

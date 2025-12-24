@@ -17,7 +17,7 @@ export function useOnboardingFlow({
   device: Device;
   onboardingBridge: OnboardingBridge;
   onboardingConfig: OnboardingConfig;
-}) {
+}): ReturnType<typeof useOnboardingFlowShared> {
   return useOnboardingFlowShared({
     creatableAccount,
     currency,

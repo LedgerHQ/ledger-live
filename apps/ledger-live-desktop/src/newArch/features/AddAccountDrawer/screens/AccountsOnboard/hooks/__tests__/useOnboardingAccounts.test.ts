@@ -8,7 +8,7 @@ const createMockAccount = (
   id: string,
   currencyId: string,
   used: boolean = false,
-  overrides: Partial<Account> = {},
+  overrides: Partial<Account & { cantonResources?: unknown }> = {},
 ): Account => {
   const currency = getCryptoCurrencyById(currencyId);
   return createMockCantonAccount({
@@ -16,7 +16,7 @@ const createMockAccount = (
     currency,
     used,
     ...overrides,
-  });
+  }) as Account;
 };
 
 describe("useOnboardingAccounts", () => {

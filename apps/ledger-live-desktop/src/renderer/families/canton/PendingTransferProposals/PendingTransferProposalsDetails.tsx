@@ -28,7 +28,7 @@ type PendingProposal = {
   sender: string;
   receiver: string;
   amount: BigNumber;
-  memo: string;
+  memo?: string;
   expires_at_micros: number;
   isExpired: boolean;
 };
@@ -63,6 +63,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
       ...found,
       isExpired,
       amount: new BigNumber(found.amount),
+      memo: found.memo,
     };
   }, [cantonAccount, contractId]);
 
