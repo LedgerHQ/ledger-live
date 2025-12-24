@@ -23,6 +23,7 @@ import type {
 import {
   type CantonTestKeyPair,
   createMockSigner as createCantonMockSigner,
+  generateMockKeyPair,
 } from "./cantonTestUtils";
 
 const DEFAULT_VALUES = {
@@ -291,5 +292,5 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   update_id: "test-update-id",
 });
 
-export { generateMockKeyPair } from "./cantonTestUtils";
+export { generateMockKeyPair };
 export type { CantonTestKeyPair } from "./cantonTestUtils";
