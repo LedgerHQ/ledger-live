@@ -174,6 +174,24 @@ function Delegations({ account }: Props) {
           </Text>
         ),
       },
+      ...(stake.activation.inactive > 0
+        ? [
+            {
+              label: t("solana.delegation.inactiveStake"),
+              Component: (
+                <Text
+                  numberOfLines={1}
+                  fontWeight="semiBold"
+                  ellipsizeMode="middle"
+                  style={[styles.valueText]}
+                  color="live"
+                >
+                  {formatAmount(stake.activation.inactive)}
+                </Text>
+              ),
+            },
+          ]
+        : []),
       {
         label: t("solana.delegation.stakeAvailableBalance"),
         Component: (

@@ -64,6 +64,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const _delegatedBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + (s.delegation?.stake ?? 0), 0),
   );
+  const _inactiveStake = new BigNumber(stakes.reduce((sum, s) => sum + s.activation.inactive, 0));
   const _delegatedWithdrawableBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + s.withdrawable, 0),
   );
@@ -76,6 +77,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   };
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
   const delegatedBalance = formatCurrencyUnit(unit, _delegatedBalance, formatConfig);
+  const inactiveStake = formatCurrencyUnit(unit, _inactiveStake, formatConfig);
   const delegatedWithdrawableBalance = formatCurrencyUnit(
     unit,
     _delegatedWithdrawableBalance,
@@ -109,6 +111,21 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <Discreet>{delegatedBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
+      {_inactiveStake.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="solana.delegation.inactiveStakeTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="solana.delegation.inactiveStakeTitle" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{inactiveStake}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
       {_delegatedWithdrawableBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip content={<Trans i18nKey="solana.delegation.withdrawableInfoTooltip" />}>
