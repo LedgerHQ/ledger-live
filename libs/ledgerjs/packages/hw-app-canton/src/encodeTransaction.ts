@@ -28,12 +28,26 @@ function replaceReservedWords(obj: unknown): unknown {
   if (obj === null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(replaceReservedWords);
 
-  const transformed = {};
+  const transformed: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
     const transformedKey = RESERVED_WORDS[key] ?? key;
     transformed[transformedKey] = replaceReservedWords(value);
   }
   return transformed;
+}
+
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj !== null && typeof obj === "object" && !Array.isArray(obj);
+}
+
+function replaceReservedWordsInObject<T extends Record<string, unknown>>(
+  obj: T,
+): Record<string, unknown> {
+  const result = replaceReservedWords(obj);
+  if (!isRecord(result)) {
+    throw new Error("Expected object result from replaceReservedWords");
+  }
+  return result;
 }
 
 /**
@@ -57,7 +71,9 @@ export function encodeDamlTransaction(data: CantonTransactionData): Uint8Array {
  */
 export function encodeInputContract(contract: CantonInputContract): Uint8Array {
   const { eventBlob, ...contractWithoutBlob } = contract;
-  const contractPb = InputContractType.fromObject(replaceReservedWords(contractWithoutBlob));
+  const contractPb = InputContractType.fromObject(
+    replaceReservedWordsInObject(contractWithoutBlob),
+  );
   return InputContractType.encode(contractPb).finish();
 }
 
@@ -89,6 +105,6 @@ export function encodeMetadata(
  * Encode transaction node to protobuf bytes
  */
 export function encodeNode(node: CantonTransactionNode): Uint8Array {
-  const nodePb = NodeType.fromObject(replaceReservedWords(node));
+  const nodePb = NodeType.fromObject(replaceReservedWordsInObject(node));
   return NodeType.encode(nodePb).finish();
 }
