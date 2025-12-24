@@ -6,7 +6,7 @@ import { cn } from "LLD/utils/cn";
 const AnimatedScreenWrapper = ({
   children,
   screenKey,
-  direction,
+  direction: _direction,
 }: {
   children: React.ReactNode;
   screenKey: ModularDialogStep | ModularDrawerAddAccountStep;

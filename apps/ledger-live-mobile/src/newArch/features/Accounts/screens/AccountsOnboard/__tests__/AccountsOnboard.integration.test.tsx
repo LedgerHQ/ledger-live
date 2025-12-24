@@ -143,7 +143,7 @@ describe("AccountsOnboard Integration", () => {
       <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard}
+          component={AccountsOnboard as any}
           initialParams={mockRoute.params}
         />
       </Stack.Navigator>
@@ -172,7 +172,7 @@ describe("AccountsOnboard Integration", () => {
       <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard}
+          component={AccountsOnboard as any}
           initialParams={mockRoute.params}
         />
       </Stack.Navigator>
@@ -201,7 +201,7 @@ describe("AccountsOnboard Integration", () => {
       <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard}
+          component={AccountsOnboard as any}
           initialParams={mockRoute.params}
         />
       </Stack.Navigator>
@@ -221,7 +221,7 @@ describe("AccountsOnboard Integration", () => {
       <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard}
+          component={AccountsOnboard as any}
           initialParams={mockRoute.params}
         />
       </Stack.Navigator>
@@ -251,7 +251,7 @@ describe("AccountsOnboard Integration", () => {
       <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard}
+          component={AccountsOnboard as any}
           initialParams={reonboardRoute.params}
         />
       </Stack.Navigator>

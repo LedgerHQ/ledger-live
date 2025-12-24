@@ -177,9 +177,11 @@ export default function useScanDeviceAccountsViewModel({
       // Check if modular drawer is enabled
       if (llmModularDrawer?.enabled) {
         // Use new AccountsOnboard screen in modular drawer flow
+        // Extract parent currency if it's a token currency
+        const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
         navigation.replace(ScreenName.AccountsOnboard, {
           accountsToAdd,
-          currency,
+          currency: cryptoCurrency,
           editedNames: {},
         });
         return;

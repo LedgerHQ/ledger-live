@@ -57,7 +57,7 @@ export function useScanAccounts({
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
-  const device = useSelector(getCurrentDevice);
+  const _device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();

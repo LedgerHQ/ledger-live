@@ -20,9 +20,7 @@ export const MarketPriceIndicator = ({ percent, price }: { percent: number; pric
 
   return (
     <div data-testid="market-price-indicator" className="flex flex-col items-end">
-      <span data-testid="market-price-indicator-value">
-        {price}
-      </span>
+      <span data-testid="market-price-indicator-value">{price}</span>
       <span data-testid="market-price-indicator-percent" className={percentStyles({ variant })}>
         {percentText}
       </span>
