@@ -65,10 +65,10 @@ export type NotificationCategory = {
   category?: string;
 };
 
-const pushNotificationsDataOfUserAsyncStorageKey = "pushNotificationsDataOfUser";
+const pushNotificationsDataOfUserStorageKey = "pushNotificationsDataOfUser";
 
 async function getPushNotificationsDataOfUserFromStorage() {
-  const dataOfUser = await storage.get<DataOfUser>(pushNotificationsDataOfUserAsyncStorageKey);
+  const dataOfUser = await storage.get<DataOfUser>(pushNotificationsDataOfUserStorageKey);
 
   if (!dataOfUser || Array.isArray(dataOfUser)) return null;
 
@@ -76,7 +76,7 @@ async function getPushNotificationsDataOfUserFromStorage() {
 }
 
 async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
-  await storage.save(pushNotificationsDataOfUserAsyncStorageKey, dataOfUser);
+  await storage.save(pushNotificationsDataOfUserStorageKey, dataOfUser);
 }
 
 const useNotifications = () => {
