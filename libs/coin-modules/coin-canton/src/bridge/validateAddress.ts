@@ -1,9 +1,8 @@
 import { isRecipientValid } from "../common-logic";
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
 
-export async function validateAddress(
+export const validateAddress = async (
   address: string,
-  _parameters: Partial<AddressValidationCurrencyParameters>,
-): Promise<boolean> {
+  _parameters: Partial<Record<string, unknown>>,
+): Promise<boolean> => {
   return isRecipientValid(address);
-}
+};

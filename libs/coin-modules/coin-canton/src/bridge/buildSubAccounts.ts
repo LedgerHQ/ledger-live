@@ -5,7 +5,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { type TransferProposal } from "../network/gateway";
+import { type TransferProposal } from "../types/gateway";
 
 export type CantonTokenAccount = TokenAccount & {
   cantonResources: { pendingTransferProposals: TransferProposal[] };
