@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
