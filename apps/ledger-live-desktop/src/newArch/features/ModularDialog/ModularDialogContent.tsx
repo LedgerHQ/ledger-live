@@ -1,5 +1,5 @@
 import React from "react";
-import { DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerStep, NavigationDirection } from "./types";
@@ -35,7 +35,8 @@ export const ModularDialogContent = ({
         onClose={handleClose}
         onBack={handleBack}
       />
-      <div className="h-[480px] overflow-hidden">
+      {/* The shrink-0 must stay until we got a fix from lumen team for the DialogBody (because of the flex-1) */}
+      <DialogBody className="shrink-0 !px-16">
         <AnimatedScreenWrapper
           key={`${currentStep}-${navigationDirection}`}
           screenKey={currentStep}
@@ -43,7 +44,7 @@ export const ModularDialogContent = ({
         >
           {renderStepContent(currentStep)}
         </AnimatedScreenWrapper>
-      </div>
+      </DialogBody>
     </>
   );
 };
