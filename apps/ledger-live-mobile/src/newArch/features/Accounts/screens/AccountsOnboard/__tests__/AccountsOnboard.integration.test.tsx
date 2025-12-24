@@ -8,7 +8,6 @@ import { ScreenName } from "~/const";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as registryModule from "../registry";
-import * as reactRedux from "react-redux";
 import { StepId } from "../types";
 
 const mockUseOnboardingFlow = jest.fn();
@@ -34,9 +33,25 @@ jest.mock("../registry", () => ({
   getOnboardingBridge: jest.fn(),
 }));
 
-jest.mock("react-redux", () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(() => jest.fn()),
+const mockUseSelector = jest.fn((selector: any) => {
+  const selectorStr = selector?.toString() || "";
+  if (selectorStr.includes("lastConnectedDeviceSelector")) {
+    return { deviceId: "device-1" };
+  }
+  if (selectorStr.includes("accountsSelector")) {
+    return [];
+  }
+  return null;
+});
+
+const mockUseDispatch = jest.fn(() => jest.fn());
+
+(mockUseSelector as any).withTypes = () => mockUseSelector;
+(mockUseDispatch as any).withTypes = () => mockUseDispatch;
+
+jest.mock("~/context/store", () => ({
+  useSelector: mockUseSelector,
+  useDispatch: mockUseDispatch,
 }));
 
 jest.mock("@react-navigation/native", () => ({
@@ -107,12 +122,21 @@ describe("AccountsOnboard Integration", () => {
     jest.clearAllMocks();
 
     const { getOnboardingConfig, getOnboardingBridge } = jest.mocked(registryModule);
-    const { useSelector, useDispatch } = jest.mocked(reactRedux);
 
     getOnboardingConfig.mockReturnValue(mockOnboardingConfig);
     getOnboardingBridge.mockReturnValue(mockOnboardingBridge);
-    useSelector.mockReturnValue({ deviceId: "device-1" });
-    useDispatch.mockReturnValue(jest.fn());
+
+    mockUseSelector.mockImplementation((selector: any) => {
+      const selectorStr = selector?.toString() || "";
+      if (selectorStr.includes("lastConnectedDeviceSelector")) {
+        return { deviceId: "device-1" };
+      }
+      if (selectorStr.includes("accountsSelector")) {
+        return [];
+      }
+      return null;
+    });
+    mockUseDispatch.mockReturnValue(jest.fn());
 
     mockUseOnboardingAccountData.mockReturnValue({
       importableAccounts: [],

@@ -78,7 +78,12 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
   const { groupedIncoming, groupedOutgoing, incomingCount, outgoingCount } = useMemo(() => {
     if (!isCantonAccount(account)) return initialValues;
 
-    const pendingTransferProposals = account.cantonResources?.pendingTransferProposals ?? [];
+    // TypeScript doesn't narrow the type properly, so we need to assert
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const cantonAccount = account as Parameters<typeof isCantonAccount>[0] & {
+      cantonResources: { pendingTransferProposals?: RawTransferProposal[] };
+    };
+    const pendingTransferProposals = cantonAccount.cantonResources?.pendingTransferProposals ?? [];
 
     const { incoming, outgoing } = processTransferProposals(pendingTransferProposals, accountXpub);
 
