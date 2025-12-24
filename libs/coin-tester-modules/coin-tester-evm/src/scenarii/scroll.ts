@@ -9,6 +9,7 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transact
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, scroll, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
 import { buildSigner } from "../signer";
 
@@ -79,12 +80,31 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
           uri: "http://127.0.0.1:8545",
         },
         explorer: {
-          type: "etherscan",
-          uri: "https://api.scrollscan.com/api",
+          type: "blockscout",
+          uri: "https://scroll.blockscout.com/api",
         },
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_scroll: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "blockscout",
+            uri: "https://scroll.blockscout.com/api",
+          },
+          showNfts: true,
+        },
+      },
+    });
     initMswHandlers(getCoinConfig(scroll).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges("scroll", signer);

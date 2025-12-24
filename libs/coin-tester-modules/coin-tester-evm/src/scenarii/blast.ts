@@ -9,6 +9,7 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transact
 import { makeAccount } from "../fixtures";
 import { blast, callMyDealer, getBridges, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { MIM_ON_BLAST } from "../tokenFixtures";
 import { buildSigner } from "../signer";
 
@@ -76,11 +77,30 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "etherscan",
-          uri: "https://api.blastscan.io/api",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
         },
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_blast: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
+          },
+          showNfts: true,
+        },
+      },
+    });
     initMswHandlers(getCoinConfig(blast).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges("blast", signer);
