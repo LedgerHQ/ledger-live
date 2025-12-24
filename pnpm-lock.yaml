@@ -31,8 +31,8 @@ catalogs:
       specifier: 1.2.2
       version: 1.2.2
     '@ledgerhq/lumen-design-core':
-      specifier: 0.0.35
-      version: 0.0.35
+      specifier: 0.0.36
+      version: 0.0.36
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.1
       version: 0.2.1
@@ -584,7 +584,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.0.35(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+        version: 0.0.36(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       '@ledgerhq/lumen-ui-react':
         specifier: 0.0.57
         version: 0.0.57(e17c1f4f71171860e7268885e247ad1a)
@@ -15182,8 +15182,8 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/lumen-design-core@0.0.35':
-    resolution: {integrity: sha512-qQ9j9y5S7XZ+W3YagTw1uQgWj5t825yHj3Ih4+/DWvpxT+ZQVgnszcQlpIdEbm4tiIJhl4Rwbanb7ecJDIVVtg==}
+  '@ledgerhq/lumen-design-core@0.0.36':
+    resolution: {integrity: sha512-vcAKK3+1HDU4nKRWxMXcqYPVDZrY8tAH8QeZ3S+pBNXV1DZJU5faRkKOtUt9CPk99H5FR83jWnEYZ2YFtjoAFA==}
 
   '@ledgerhq/lumen-ui-react@0.0.57':
     resolution: {integrity: sha512-WaMOuglf0KXxyMHGFTtQge1Zl8kuCR3zraK4scsULKrXCl9aCZPcun82HUVp/ZdDbgMXF9uOB7OphjplVW8Gkw==}
@@ -46839,7 +46839,7 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/lumen-design-core@0.0.35(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))':
+  '@ledgerhq/lumen-design-core@0.0.36(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))':
     dependencies:
       tailwindcss: 3.4.3(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       tslib: 2.6.2
