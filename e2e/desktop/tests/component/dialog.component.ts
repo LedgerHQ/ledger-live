@@ -7,7 +7,7 @@ export class Dialog extends Component {
   readonly content = this.page.getByRole("dialog");
   readonly dialogOverlay = this.page.locator("[data-slot='dialog-overlay']");
   readonly closeButton = this.page.locator('[aria-label="Close"]').first();
-  private addAccountButton = this.page.getByRole("button", { name: "Add new or existing account" });
+  private addAccountButton = this.page.getByRole("button", { name: "Add new" });
 
   @step("Wait for dialog to be visible")
   async waitForDialogToBeVisible() {
