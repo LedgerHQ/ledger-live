@@ -16,7 +16,6 @@ interface ModularDialogContentProps {
   handleClose: () => void;
   handleBack?: () => void;
   renderStepContent: (step: ModularDrawerStep) => React.ReactNode;
-  renderHeaderDescription?: (step: ModularDrawerStep) => React.ReactNode;
 }
 
 export const ModularDialogContent = ({
@@ -25,7 +24,6 @@ export const ModularDialogContent = ({
   handleClose,
   handleBack,
   renderStepContent,
-  renderHeaderDescription,
 }: ModularDialogContentProps) => {
   const { t } = useTranslation();
 
@@ -34,13 +32,6 @@ export const ModularDialogContent = ({
       <DialogHeader
         appearance="extended"
         title={t(TranslationKeyMap[currentStep])}
-        description={
-          // We need this because the description prop is not typed as React.ReactNode for the moment it wil change in the next lumen version
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          renderHeaderDescription?.(currentStep) as React.ComponentProps<
-            typeof DialogHeader
-          >["description"]
-        }
         onClose={handleClose}
         onBack={handleBack}
       />

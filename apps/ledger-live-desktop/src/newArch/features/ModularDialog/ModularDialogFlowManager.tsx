@@ -17,7 +17,6 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { ModularDialogContent } from "./ModularDialogContent";
-import SearchInputContainer from "./screens/AssetSelector/components/SearchInputContainer";
 
 const ModularDialogFlowManager = ({
   currencies,
@@ -78,13 +77,6 @@ const ModularDialogFlowManager = ({
     drawerConfiguration,
   );
 
-  const renderHeaderDescription = (step: ModularDrawerStep) => {
-    if (step === MODULAR_DRAWER_STEP.ASSET_SELECTION) {
-      return <SearchInputContainer />;
-    }
-    return null;
-  };
-
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case MODULAR_DRAWER_STEP.ASSET_SELECTION:
@@ -128,7 +120,6 @@ const ModularDialogFlowManager = ({
           handleClose={handleClose}
           handleBack={handleBack}
           renderStepContent={renderStepContent}
-          renderHeaderDescription={renderHeaderDescription}
         />
       </DialogContent>
     </Dialog>
