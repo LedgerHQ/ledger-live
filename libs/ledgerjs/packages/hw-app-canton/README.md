@@ -8,7 +8,7 @@
 
 Ledger Hardware Wallet Canton JavaScript bindings.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -16,8 +16,8 @@ You may be using this package to communicate with the Canton Nano App.
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ## API
 
@@ -25,24 +25,24 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-- [Canton](#canton)
-  - [Parameters](#parameters)
-  - [getAddress](#getaddress)
-    - [Parameters](#parameters-1)
-  - [signTransaction](#signtransaction)
-    - [Parameters](#parameters-2)
-  - [getAppConfiguration](#getappconfiguration)
-- [encodeDamlTransaction](#encodedamltransaction)
-  - [Parameters](#parameters-3)
-- [encodeInputContract](#encodeinputcontract)
-  - [Parameters](#parameters-4)
-- [encodeMetadata](#encodemetadata)
-  - [Parameters](#parameters-5)
-- [encodeNode](#encodenode)
-  - [Parameters](#parameters-6)
-- [splitTransaction](#splittransaction)
-  - [Parameters](#parameters-7)
-- [CantonTransactionJson](#cantontransactionjson)
+*   [Canton](#canton)
+    *   [Parameters](#parameters)
+    *   [getAddress](#getaddress)
+        *   [Parameters](#parameters-1)
+    *   [signTransaction](#signtransaction)
+        *   [Parameters](#parameters-2)
+    *   [getAppConfiguration](#getappconfiguration)
+*   [encodeDamlTransaction](#encodedamltransaction)
+    *   [Parameters](#parameters-3)
+*   [encodeInputContract](#encodeinputcontract)
+    *   [Parameters](#parameters-4)
+*   [encodeMetadata](#encodemetadata)
+    *   [Parameters](#parameters-5)
+*   [encodeNode](#encodenode)
+    *   [Parameters](#parameters-6)
+*   [splitTransaction](#splittransaction)
+    *   [Parameters](#parameters-7)
+*   [CantonTransactionJson](#cantontransactionjson)
 
 ### Canton
 
@@ -50,8 +50,8 @@ Canton BOLOS API
 
 #### Parameters
 
-- `transport` **Transport**&#x20;
-- `scrambleKey` (optional, default `"canton_default_scramble_key"`)
+*   `transport` **Transport**&#x20;
+*   `scrambleKey`   (optional, default `"canton_default_scramble_key"`)
 
 #### getAddress
 
@@ -59,8 +59,8 @@ Get a Canton address for a given BIP-32 path.
 
 ##### Parameters
 
-- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
-- `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to display the address on the device (optional, default `false`)
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
+*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to display the address on the device (optional, default `false`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CantonAddress>** the address and public key
 
@@ -71,8 +71,8 @@ using the appropriate signing method based on transaction type.
 
 ##### Parameters
 
-- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
-- `data` **(CantonPreparedTransaction | CantonUntypedVersionedMessage | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** either prepared transaction components, untyped versioned message, or txHash string (backwards compatibility)
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
+*   `data` **(CantonPreparedTransaction | CantonUntypedVersionedMessage | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** either prepared transaction components, untyped versioned message, or txHash string (backwards compatibility)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CantonSignature>** the signature
 
@@ -88,7 +88,7 @@ Encode DAML transaction to protobuf bytes
 
 #### Parameters
 
-- `data` **CantonTransactionData**&#x20;
+*   `data` **CantonTransactionData**&#x20;
 
 Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
@@ -98,7 +98,7 @@ Encode input contract to protobuf bytes
 
 #### Parameters
 
-- `contract` **CantonInputContract**&#x20;
+*   `contract` **CantonInputContract**&#x20;
 
 Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
@@ -108,8 +108,8 @@ Encode metadata to protobuf bytes
 
 #### Parameters
 
-- `data` **CantonTransactionMetadata**&#x20;
-- `inputContractsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `data` **CantonTransactionMetadata**&#x20;
+*   `inputContractsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
@@ -119,7 +119,7 @@ Encode transaction node to protobuf bytes
 
 #### Parameters
 
-- `node` **CantonTransactionNode**&#x20;
+*   `node` **CantonTransactionNode**&#x20;
 
 Returns **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
@@ -131,7 +131,7 @@ sent to the Ledger device for signing.
 
 #### Parameters
 
-- `transaction` **[CantonTransactionJson](#cantontransactionjson)** The transaction JSON structure from the Gateway API
+*   `transaction` **[CantonTransactionJson](#cantontransactionjson)** The transaction JSON structure from the Gateway API
 
 Returns **CantonPreparedTransaction** Prepared transaction components ready for device signing
 
@@ -188,14 +188,14 @@ You can take a look at [Speculos UI](http://127.0.0.1:5000/)
 The Canton hardware app uses a binary protocol for all communication between Ledger Live and Ledger hardware devices.
 It leverages Protocol Buffers (protobuf) to split complex DAML data structures into a compact binary format that the device can process efficiently.
 Compared to JSON, this binary format significantly reduces data transfer size and processing time while preserving type safety and data integrity.
-Get more info: [APDU](https://github.com/LedgerHQ/app-canton/blob/develop/doc/APDU.md), [SPLIT_TRANSACTION](https://github.com/LedgerHQ/app-canton/blob/develop/doc/SPLIT_TRANSACTION.md)
+Get more info: [APDU](https://github.com/LedgerHQ/app-canton/blob/develop/doc/APDU.md), [SPLIT\_TRANSACTION](https://github.com/LedgerHQ/app-canton/blob/develop/doc/SPLIT_TRANSACTION.md)
 
 ### When to Use
 
 After updating protobuf definitions in:
 
-- [gateway](https://github.com/LedgerHQ/canton-protos-scala)
-- [app-canton](https://github.com/LedgerHQ/app-canton)
+*   [gateway](https://github.com/LedgerHQ/canton-protos-scala)
+*   [app-canton](https://github.com/LedgerHQ/app-canton)
 
 you must regenerate the TypeScript bindings.
 
@@ -210,34 +210,34 @@ The generate-proto script temporarily downloads `.proto` files and processes the
 
 The compiled definitions are saved to:
 
-- `src/types/transaction-proto.json` - JSON bindings for runtime use
+*   `src/types/transaction-proto.json` - JSON bindings for runtime use
 
 ### Key Protobuf Files
 
 #### Core Device Communication
 
-- **`device.proto`** - Primary device communication protocol
-  - Defines the main interface for Ledger device communication
-  - Contains message types for transaction signing and address derivation
-  - Handles device-specific operations and responses
+*   **`device.proto`** - Primary device communication protocol
+    *   Defines the main interface for Ledger device communication
+    *   Contains message types for transaction signing and address derivation
+    *   Handles device-specific operations and responses
 
 #### DAML Value System
 
-- **`value.proto`** - DAML value types and structures
+*   **`value.proto`** - DAML value types and structures
 
-  - Defines all DAML data types (Unit, Bool, Int64, Date, Timestamp, Numeric, Party, Text, ContractId, Optional, List, TextMap, GenMap, Record, Variant, Enum)
-  - Handles DAML's type system for smart contract data
+    *   Defines all DAML data types (Unit, Bool, Int64, Date, Timestamp, Numeric, Party, Text, ContractId, Optional, List, TextMap, GenMap, Record, Variant, Enum)
+    *   Handles DAML's type system for smart contract data
 
-- **`value_cb.proto`** - Canton Bridge value types
-  - Canton-specific extensions to DAML value types
-  - Additional types for Canton's privacy-preserving features
-  - Bridge-specific data structures and metadata
+*   **`value_cb.proto`** - Canton Bridge value types
+    *   Canton-specific extensions to DAML value types
+    *   Additional types for Canton's privacy-preserving features
+    *   Bridge-specific data structures and metadata
 
 #### Interactive Transaction Submission
 
-- **`interactive_submission_common_data.proto`** - Common submission data structures and metadata
-- **`interactive_submission_data.proto`** - Transaction submission structure with versioning
-- **`interactive_submission_data_cb.proto`** - Canton Bridge extensions for consensus mechanism
+*   **`interactive_submission_common_data.proto`** - Common submission data structures and metadata
+*   **`interactive_submission_data.proto`** - Transaction submission structure with versioning
+*   **`interactive_submission_data_cb.proto`** - Canton Bridge extensions for consensus mechanism
 
 #### Google Protobuf Standard Types
 
@@ -255,8 +255,8 @@ These tests validate protobuf serialization, and the logic that splits DAML tran
 
 Test data is stored in:
 
-- `tests/fixtures/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
-- `tests/fixtures/prepare-transfer-serialized.json` — the expected serialized output, generated using [split_tx_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
-- `prepare-transfer.apdus` - APDU command sequences recorded when signing prepare-transfer reponse
+*   `tests/fixtures/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
+*   `tests/fixtures/prepare-transfer-serialized.json` — the expected serialized output, generated using [split\_tx\_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
+*   `prepare-transfer.apdus` - APDU command sequences recorded when signing prepare-transfer reponse
 
 After updating protobuf bindings, make sure both files are refreshed with the latest Gateway data and serialized output.
