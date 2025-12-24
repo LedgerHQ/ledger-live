@@ -14,7 +14,7 @@ import {
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
-import { default as coinConfig } from "../config";
+import coinConfig from "../config";
 import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   CantonAccount,

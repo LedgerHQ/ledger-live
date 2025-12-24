@@ -23,7 +23,6 @@ import type {
 import {
   type CantonTestKeyPair,
   createMockSigner as createCantonMockSigner,
-  generateMockKeyPair,
 } from "./cantonTestUtils";
 
 const DEFAULT_VALUES = {
@@ -110,7 +109,8 @@ export const createMockCantonAccount = (
     ...overrides,
   };
 
-  const cantonResourcesFromOverrides = (overrides as Partial<CantonAccount>).cantonResources;
+  const cantonResourcesFromOverrides =
+    "cantonResources" in overrides ? overrides.cantonResources : undefined;
   if (cantonResourcesFromOverrides || partialCantonResources) {
     return {
       ...baseAccount,
@@ -125,8 +125,8 @@ export const createMockCantonAccount = (
 };
 
 class MockCantonSigner implements CantonSigner {
-  private keyPair: CantonTestKeyPair;
-  private mockSigner: ReturnType<typeof createCantonMockSigner>;
+  private readonly keyPair: CantonTestKeyPair;
+  private readonly mockSigner: ReturnType<typeof createCantonMockSigner>;
 
   constructor(keyPair?: CantonTestKeyPair) {
     this.keyPair = keyPair || generateMockKeyPair();
@@ -291,4 +291,5 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   update_id: "test-update-id",
 });
 
-export { generateMockKeyPair, type CantonTestKeyPair };
+export { generateMockKeyPair } from "./cantonTestUtils";
+export type { CantonTestKeyPair } from "./cantonTestUtils";

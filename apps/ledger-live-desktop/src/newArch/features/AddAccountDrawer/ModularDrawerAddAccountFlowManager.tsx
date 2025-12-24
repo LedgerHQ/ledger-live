@@ -147,14 +147,15 @@ const ModularDrawerAddAccountFlowManager = ({
 
         // Get onboarding config for translation keys
         const onboardingConfig = getOnboardingConfig(cryptoCurrency);
-        const titleKey = onboardingConfig
-          ? accountsOnboardState.isReonboarding
+        let titleKey: string | null = null;
+        if (onboardingConfig) {
+          titleKey = accountsOnboardState.isReonboarding
             ? onboardingConfig.translationKeys.reonboardTitle
-            : onboardingConfig.translationKeys.title
-          : null;
+            : onboardingConfig.translationKeys.title;
+        }
 
         if (!titleKey) {
-          // Fallback if no config found (should not happen if flow is correct)
+          // should not happen if flow is correct
           return null;
         }
 

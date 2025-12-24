@@ -8,12 +8,10 @@
  * Parties
  */
 
-export type TopologyTransaction = unknown;
-
 export type TopologyTransactionData = {
   serialized: string;
   hash: string;
-  transaction: TopologyTransaction;
+  transaction: unknown;
 };
 
 export type TopologyTransactions = {
@@ -158,7 +156,7 @@ export type OperationView = {
   block: BlockView;
   fee: FeesView;
   asset?: AssetView;
-  details: unknown & {
+  details: {
     operationType?: OperationType;
     metadata?: {
       reason?: string;
@@ -291,8 +289,6 @@ export type CantonIdentifier = {
   module_name: string;
   entity_name: string;
 };
-
-export type Timestamp = CantonTimestamp;
 
 export type BaseEvent = {
   type: string;

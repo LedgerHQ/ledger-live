@@ -1,7 +1,7 @@
-import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import type { TransferStep } from "./gateway";
 
-export { AccountOnboardStatus };
+export { AccountOnboardStatus } from "@ledgerhq/types-live";
 
 export enum AuthorizeStatus {
   INIT,

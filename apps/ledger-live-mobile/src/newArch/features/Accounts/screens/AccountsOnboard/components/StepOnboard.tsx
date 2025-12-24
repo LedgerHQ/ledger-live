@@ -32,6 +32,16 @@ export default function StepOnboard({
 
   const selectedIds = useMemo(() => accountsToDisplay.map(a => a.id), [accountsToDisplay]);
 
+  const statusTranslationKey = useMemo(() => {
+    if (onboardingStatus === AccountOnboardStatus.PREPARE) {
+      return onboardingConfig?.translationKeys.statusPrepare;
+    }
+    if (onboardingStatus === AccountOnboardStatus.SUBMIT) {
+      return onboardingConfig?.translationKeys.statusSubmit;
+    }
+    return onboardingConfig?.translationKeys.statusDefault;
+  }, [onboardingStatus, onboardingConfig?.translationKeys]);
+
   const isSuccess = onboardingStatus === AccountOnboardStatus.SUCCESS;
   const isError = onboardingStatus === AccountOnboardStatus.ERROR;
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -109,15 +119,7 @@ export default function StepOnboard({
             </Flex>
           )}
           <Text color="neutral.c70" flex={1}>
-            <Trans
-              i18nKey={
-                onboardingStatus === AccountOnboardStatus.PREPARE
-                  ? onboardingConfig?.translationKeys.statusPrepare
-                  : onboardingStatus === AccountOnboardStatus.SUBMIT
-                    ? onboardingConfig?.translationKeys.statusSubmit
-                    : onboardingConfig?.translationKeys.statusDefault
-              }
-            />
+            <Trans i18nKey={statusTranslationKey} />
           </Text>
         </Flex>
       )}

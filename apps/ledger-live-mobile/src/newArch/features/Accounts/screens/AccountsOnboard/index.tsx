@@ -34,15 +34,7 @@ export default function AccountsOnboard({ navigation, route }: Props) {
   const accountsToAdd = useMemo(() => routeAccountsToAdd, [routeAccountsToAdd]);
   const editedNames = useMemo(() => routeEditedNames, [routeEditedNames]);
 
-  const commonParams = useMemo(
-    () =>
-      route.params as typeof route.params & {
-        context?: AddAccountContextType;
-        onCloseNavigation?: () => void;
-        sourceScreenName?: string;
-      },
-    [route],
-  );
+  const commonParams = useMemo(() => route.params, [route]);
 
   const device = useSelector(lastConnectedDeviceSelector);
   const existingAccounts = useSelector(accountsSelector);

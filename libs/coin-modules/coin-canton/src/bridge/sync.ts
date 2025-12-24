@@ -5,7 +5,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import { default as BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
 import { isCantonAccountEmpty } from "../helpers";
@@ -64,7 +64,7 @@ function extractMemo(details: unknown) {
   if (!metadata || typeof metadata !== "object") return undefined;
 
   const reason = "reason" in metadata ? metadata.reason : undefined;
-  return reason !== undefined ? String(reason) : undefined;
+  return typeof reason === "string" ? reason : undefined;
 }
 
 const txInfoToOperationAdapter =

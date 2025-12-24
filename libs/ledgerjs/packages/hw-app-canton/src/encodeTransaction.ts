@@ -24,7 +24,7 @@ const RESERVED_WORDS: Record<string, string> = {
   constructor: "constructor_",
 };
 
-function replaceReservedWords(obj: Omit<CantonInputContract, "eventBlob"> | unknown) {
+function replaceReservedWords(obj: unknown): unknown {
   if (obj === null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(replaceReservedWords);
 

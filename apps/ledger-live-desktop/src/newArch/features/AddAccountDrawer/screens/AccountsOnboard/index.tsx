@@ -47,7 +47,7 @@ export default function AccountsOnboard({
   accountToReonboard,
   isReonboarding = false,
   onComplete,
-}: AccountsOnboardProps) {
+}: Readonly<AccountsOnboardProps>) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const currentTheme = useSelector(userThemeSelector);

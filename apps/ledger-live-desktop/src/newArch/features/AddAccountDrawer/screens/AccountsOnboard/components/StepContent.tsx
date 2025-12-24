@@ -21,5 +21,5 @@ export const StepContent = ({
     return null;
   }
 
-  <StepComponent {...stableProps} {...dynamicProps} />;
+  return <StepComponent {...stableProps} {...dynamicProps} />;
 };

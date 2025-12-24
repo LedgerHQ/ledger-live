@@ -16,7 +16,7 @@ export async function signTransaction(
 
   // Check if it's an OnboardingPrepareResponse (has transactions property)
   if ("transactions" in transactionData && transactionData.transactions) {
-    const challenge = getTransactionChallenge(transactionData as OnboardingPrepareResponse);
+    const challenge = getTransactionChallenge(transactionData);
 
     const transactions = [
       transactionData.transactions.namespace_transaction.serialized,
@@ -33,7 +33,7 @@ export async function signTransaction(
     const components = splitTransaction(transactionData.json);
     signature = await signer.signTransaction(derivationPath, components);
   } else {
-    // Assume it's already the JSON transaction object itself (from craftTransaction)
+    // It's a JSON transaction object (from craftTransaction)
     const components = splitTransaction(transactionData as any);
     signature = await signer.signTransaction(derivationPath, components);
   }
