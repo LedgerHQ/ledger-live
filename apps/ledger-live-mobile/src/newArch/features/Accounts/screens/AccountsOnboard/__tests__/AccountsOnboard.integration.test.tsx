@@ -3,6 +3,7 @@
 import React from "react";
 import { render, waitFor } from "@testing-library/react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
 import AccountsOnboard from "../index";
 import { ScreenName } from "~/const";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
@@ -11,6 +12,7 @@ import { View, Text } from "react-native";
 import * as registryModule from "../registry";
 import { StepId } from "../types";
 import * as useAccountOnboardingModule from "@ledgerhq/live-common/hooks/useAccountOnboarding";
+import * as storeModule from "~/context/store";
 
 jest.mock("@ledgerhq/live-common/hooks/useAccountOnboarding", () => ({
   useOnboardingFlow: jest.fn(),
@@ -24,6 +26,10 @@ jest.mock("@ledgerhq/live-common/hooks/useAccountOnboarding", () => ({
     SUCCESS: "SUCCESS",
     ERROR: "ERROR",
   },
+  StepId: {
+    ONBOARD: "ONBOARD",
+    FINISH: "FINISH",
+  },
 }));
 
 jest.mock("../registry", () => ({
@@ -31,26 +37,28 @@ jest.mock("../registry", () => ({
   getOnboardingBridge: jest.fn(),
 }));
 
-const mockUseSelector = jest.fn((selector: any) => {
-  const selectorStr = selector?.toString() || "";
-  if (selectorStr.includes("lastConnectedDeviceSelector")) {
-    return { deviceId: "device-1" };
-  }
-  if (selectorStr.includes("accountsSelector")) {
-    return [];
-  }
-  return null;
+jest.mock("~/context/store", () => {
+  const mockUseSelectorFn = jest.fn((selector: any) => {
+    const selectorStr = selector?.toString() || "";
+    if (selectorStr.includes("lastConnectedDeviceSelector")) {
+      return { deviceId: "device-1" };
+    }
+    if (selectorStr.includes("accountsSelector")) {
+      return [];
+    }
+    return null;
+  });
+
+  const mockUseDispatchFn = jest.fn(() => jest.fn());
+
+  (mockUseSelectorFn as any).withTypes = () => mockUseSelectorFn;
+  (mockUseDispatchFn as any).withTypes = () => mockUseDispatchFn;
+
+  return {
+    useSelector: mockUseSelectorFn,
+    useDispatch: mockUseDispatchFn,
+  };
 });
-
-const mockUseDispatch = jest.fn(() => jest.fn());
-
-(mockUseSelector as any).withTypes = () => mockUseSelector;
-(mockUseDispatch as any).withTypes = () => mockUseDispatch;
-
-jest.mock("~/context/store", () => ({
-  useSelector: mockUseSelector,
-  useDispatch: mockUseDispatch,
-}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -67,14 +75,6 @@ jest.mock("../components/StepContent", () => ({
       React.createElement(Text, {}, `Step ${stepId}`),
     ),
 }));
-
-jest.mock("@ledgerhq/native-ui", () => {
-  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
-    React.createElement(View, { testID, ...props }, children);
-  return {
-    Flex: mockViewComponentFn,
-  };
-});
 
 const mockCurrency = {
   id: "canton_network",
@@ -131,7 +131,8 @@ describe("AccountsOnboard Integration", () => {
     getOnboardingConfig.mockReturnValue(mockOnboardingConfig);
     getOnboardingBridge.mockReturnValue(mockOnboardingBridge);
 
-    mockUseSelector.mockImplementation((selector: any) => {
+    const { useSelector, useDispatch } = jest.mocked(storeModule);
+    useSelector.mockImplementation((selector: any) => {
       const selectorStr = selector?.toString() || "";
       if (selectorStr.includes("lastConnectedDeviceSelector")) {
         return { deviceId: "device-1" };
@@ -141,7 +142,7 @@ describe("AccountsOnboard Integration", () => {
       }
       return null;
     });
-    mockUseDispatch.mockReturnValue(jest.fn());
+    useDispatch.mockReturnValue(jest.fn());
 
     const { useOnboardingAccountData, useOnboardingFlow, prepareAccountsForAdding } = jest.mocked(
       useAccountOnboardingModule,
@@ -173,13 +174,15 @@ describe("AccountsOnboard Integration", () => {
   it("should render onboarding step initially", () => {
     const Stack = createNativeStackNavigator();
     const TestNavigator = () => (
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard as any}
-          initialParams={mockRoute.params}
-        />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={ScreenName.AccountsOnboard}
+            component={AccountsOnboard as any}
+            initialParams={mockRoute.params}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
 
     const { getByTestId } = render(<TestNavigator />);
@@ -203,13 +206,15 @@ describe("AccountsOnboard Integration", () => {
 
     const Stack = createNativeStackNavigator();
     const TestNavigator = () => (
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard as any}
-          initialParams={mockRoute.params}
-        />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={ScreenName.AccountsOnboard}
+            component={AccountsOnboard as any}
+            initialParams={mockRoute.params}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
 
     const { getByTestId } = render(<TestNavigator />);
@@ -233,13 +238,15 @@ describe("AccountsOnboard Integration", () => {
 
     const Stack = createNativeStackNavigator();
     const TestNavigator = () => (
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard as any}
-          initialParams={mockRoute.params}
-        />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={ScreenName.AccountsOnboard}
+            component={AccountsOnboard as any}
+            initialParams={mockRoute.params}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
 
     const { getByTestId } = render(<TestNavigator />);
@@ -253,13 +260,15 @@ describe("AccountsOnboard Integration", () => {
 
     const Stack = createNativeStackNavigator();
     const TestNavigator = () => (
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard as any}
-          initialParams={mockRoute.params}
-        />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={ScreenName.AccountsOnboard}
+            component={AccountsOnboard as any}
+            initialParams={mockRoute.params}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
 
     expect(() => render(<TestNavigator />)).toThrow("No onboarding support");
@@ -284,13 +293,15 @@ describe("AccountsOnboard Integration", () => {
 
     const Stack = createNativeStackNavigator();
     const TestNavigator = () => (
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsOnboard}
-          component={AccountsOnboard as any}
-          initialParams={reonboardRoute.params}
-        />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={ScreenName.AccountsOnboard}
+            component={AccountsOnboard as any}
+            initialParams={reonboardRoute.params}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
 
     const { getByTestId } = render(<TestNavigator />);

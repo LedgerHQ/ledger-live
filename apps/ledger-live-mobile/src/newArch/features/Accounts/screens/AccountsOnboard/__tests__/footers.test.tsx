@@ -1,25 +1,10 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { TouchableOpacity, View, Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { render, fireEvent } from "@testing-library/react-native";
 import { StepOnboardFooter, StepFinishFooter } from "../footers";
 import { AccountOnboardStatus, StepId } from "../types";
-
-jest.mock("@ledgerhq/native-ui", () => {
-  const mockViewComponentFn = ({ children, testID, ...props }: any) =>
-    React.createElement(View, { testID, ...props }, children);
-  return {
-    Button: ({ children, onPress, testID, disabled, ...props }: any) =>
-      React.createElement(
-        TouchableOpacity,
-        { testID, onPress: disabled ? undefined : onPress, disabled, ...props },
-        children,
-      ),
-    Flex: mockViewComponentFn,
-    InfiniteLoader: () => React.createElement(View, { testID: "infinite-loader" }),
-  };
-});
 
 jest.mock("react-i18next", () => ({
   Trans: ({ i18nKey }: { i18nKey: string }) => React.createElement(Text, {}, i18nKey),
@@ -99,8 +84,13 @@ describe("Footers", () => {
     it("should disable button when isProcessing is true", () => {
       const { getByText } = render(<StepOnboardFooter {...mockProps} isProcessing={true} />);
       const text = getByText("common.continue");
-      const button = text.parent as any;
-      expect(button.props.disabled).toBe(true);
+      let button = text.parent as any;
+      while (button && button.type !== TouchableOpacity) {
+        button = button.parent;
+      }
+      expect(button).toBeDefined();
+      expect(button?.props.disabled).toBe(true);
+      expect(button?.props.onPress).toBeUndefined();
     });
   });
 
