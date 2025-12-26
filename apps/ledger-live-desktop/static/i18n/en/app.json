@@ -152,7 +152,8 @@
     "quote": "Quote",
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
-    }
+    },
+    "memo": "Memo"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -5795,11 +5796,13 @@
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient",
+      "memo": "Transfer ID (Memo)"
     },
     "ton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment"
+      "comment": "Comment",
+      "memo": "Comment"
     },
     "canton": {
       "commentPlaceholder": "Optional",
@@ -5957,6 +5960,9 @@
     },
     "mina": {
       "memoPlaceholder": "Optional Memo"
+    },
+    "xrp": {
+      "memo": "Tag"
     }
   },
   "errors": {
