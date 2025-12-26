@@ -29,7 +29,7 @@ import {
   neverClickedOnAllowNotificationsButtonSelector,
 } from "~/reducers/settings";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
-import { NotificationsSettings } from "~/reducers/types";
+import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
 import { getIsNotifEnabled } from "./getNotifPermissions";
 
@@ -57,6 +57,13 @@ export type DataOfUser = {
   // we will check the last entry in the array
   // but we will also need to check the previous entries to compute the duration between the dismissals
   dismissedOptInPromptAtList?: Date[] | null;
+
+  // TODO: to remove them once we have the new logic in place.
+  // This old logic is helpful to know if the user has already opted out of notifications
+  /** If set, we will not prompt the push notification modal again before this date unless the user triggers it manually from the settings */
+  dateOfNextAllowedRequest?: Date;
+  /** Whether or not the user clicked on the "Maybe later" cta */
+  alreadyDelayedToLater?: boolean;
 };
 
 export type NotificationCategory = {
@@ -136,9 +143,9 @@ const useNotifications = () => {
   }, [neverClickedOnAllowNotificationsButton, dispatch]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
-    (isModalOpen: boolean) => {
+    (isModalOpen: boolean, modalType: NotificationsState["notificationsModalType"] = "generic") => {
       if (!isModalOpen) {
-        dispatch(setNotificationsModalType("generic"));
+        dispatch(setNotificationsModalType(modalType));
         dispatch(setNotificationsModalOpen(isModalOpen));
         dispatch(setRatingsModalLocked(false));
       } else if (!isPushNotificationsModalLocked) {
@@ -237,7 +244,7 @@ const useNotifications = () => {
         if (isEventTriggered(eventTrigger, newRoute)) {
           dispatch(setRatingsModalLocked(true));
           const timeout = setTimeout(() => {
-            setPushNotificationsModalOpenCallback(true);
+            setPushNotificationsModalOpenCallback(true, "generic");
           }, eventTrigger.timer);
           dispatch(
             // @ts-expect-error TYPINGS
@@ -272,7 +279,7 @@ const useNotifications = () => {
   );
 
   const initPushNotificationsData = useCallback(() => {
-    if (notifications && notifications.areNotificationsAllowed === undefined) {
+    if (notifications.areNotificationsAllowed === undefined) {
       dispatch(setNotifications(settingsInitialState.notifications));
     } else {
       const newNotificationsState = { ...notifications };
@@ -283,6 +290,9 @@ const useNotifications = () => {
       }
       dispatch(setNotifications(newNotificationsState));
     }
+
+    // TODO: handle when the user has opted out of notifications from the system settings
+
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...dataOfUser,
@@ -298,8 +308,7 @@ const useNotifications = () => {
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market_starred"));
-        setPushNotificationsModalOpenCallback(true);
+        setPushNotificationsModalOpenCallback(true, "market_starred");
       }, marketCoinStarredParams?.timer);
       dispatch(
         setNotificationsEventTriggered({
@@ -322,7 +331,7 @@ const useNotifications = () => {
     if (justFinishedOnboardingParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true);
+        setPushNotificationsModalOpenCallback(true, "generic");
       }, justFinishedOnboardingParams?.timer);
       dispatch(
         setNotificationsEventTriggered({
@@ -340,11 +349,35 @@ const useNotifications = () => {
     setPushNotificationsModalOpenCallback,
   ]);
 
-  const triggerPushNotificationModalAfterSendAction = useCallback(() => {}, []);
-  const triggerPushNotificationModalAfterReceiveAction = useCallback(() => {}, []);
-  const triggerPushNotificationModalAfterBuyAction = useCallback(() => {}, []);
-  const triggerPushNotificationModalAfterSwapAction = useCallback(() => {}, []);
-  const triggerPushNotificationModalAfterStakeAction = useCallback(() => {}, []);
+  const triggerPushNotificationModalAfterSendAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
+
+    setPushNotificationsModalOpenCallback(true, "send");
+  }, [isPushNotificationsModalLocked, setPushNotificationsModalOpenCallback]);
+
+  const triggerPushNotificationModalAfterReceiveAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
+
+    setPushNotificationsModalOpenCallback(true, "receive");
+  }, [isPushNotificationsModalLocked, setPushNotificationsModalOpenCallback]);
+
+  const triggerPushNotificationModalAfterBuyAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
+
+    setPushNotificationsModalOpenCallback(true, "buy");
+  }, [isPushNotificationsModalLocked, setPushNotificationsModalOpenCallback]);
+
+  const triggerPushNotificationModalAfterSwapAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
+
+    setPushNotificationsModalOpenCallback(true, "swap");
+  }, [isPushNotificationsModalLocked, setPushNotificationsModalOpenCallback]);
+
+  const triggerPushNotificationModalAfterStakeAction = useCallback(() => {
+    if (isPushNotificationsModalLocked) return;
+
+    setPushNotificationsModalOpenCallback(true, "stake");
+  }, [isPushNotificationsModalLocked, setPushNotificationsModalOpenCallback]);
 
   const optOutOfNotifications = useCallback(() => {
     const today = new Date();
