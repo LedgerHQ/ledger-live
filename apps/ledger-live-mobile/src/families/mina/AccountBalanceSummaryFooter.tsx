@@ -1,14 +1,13 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import invariant from "invariant";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import { TFunction } from "i18next";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TFunction } from "i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 
@@ -19,12 +18,10 @@ type InfoName = "delegatedTo" | "stakedBalance" | "producerAddress";
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("mina");
-  const MinaIcon = getCryptoCurrencyIcon(currency);
-  invariant(MinaIcon, "Icon is expected");
   return {
     delegatedTo: [
       {
-        Icon: () => <MinaIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={16} />,
         title: t("mina.summaryFooter.delegatedTo"),
         description: t("mina.summaryFooter.delegatedToTooltip"),
       },
