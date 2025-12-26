@@ -108,7 +108,7 @@ runs:
         target: ${{ inputs.avd_target }}
         avd-name: ${{ inputs.avd_name }}_3
         force-avd-creation: true
-        cores: 2
+        cores: 1
         ram-size: ${{ inputs.avd_ram_size }}
         disable-linux-hw-accel: false
         emulator-options: ${{ inputs.avd_options }}
