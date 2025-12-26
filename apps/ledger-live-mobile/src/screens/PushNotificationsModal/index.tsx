@@ -14,6 +14,7 @@ const PushNotificationsModal = () => {
     isPushNotificationsModalOpen,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
+    handleCloseFromBackdropPress,
   } = useNotifications();
 
   useEffect(() => {
@@ -22,7 +23,11 @@ const PushNotificationsModal = () => {
   }, []);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
+    <QueuedDrawer
+      isRequestingToBeOpened={isPushNotificationsModalOpen}
+      noCloseButton
+      onBackdropPress={handleCloseFromBackdropPress}
+    >
       <PushNotificationsModalTrackScreen type={pushNotificationsModalType} />
 
       <Flex mb={4}>

@@ -158,12 +158,15 @@ const QueuedDrawerNative = ({
 
   const onBackdropPress = useCallback(() => {
     if (!enablePanDownToClose) return;
+
+    _onBackdropPress?.();
+
     closeAnim(() => {
       requestAnimationFrame(() => {
         handleDismiss();
       });
     });
-  }, [enablePanDownToClose, closeAnim, handleDismiss]);
+  }, [enablePanDownToClose, closeAnim, handleDismiss, _onBackdropPress]);
 
   const shouldShowHeader = useMemo(
     () => CustomHeader || title || hasBackButton || (!noCloseButton && !areDrawersLocked),
