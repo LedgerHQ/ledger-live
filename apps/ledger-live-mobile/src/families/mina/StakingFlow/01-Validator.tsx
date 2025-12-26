@@ -3,6 +3,7 @@ import { MinaAccount, ValidatorInfo } from "@ledgerhq/live-common/families/mina/
 import { Text } from "@ledgerhq/native-ui";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
@@ -13,10 +14,9 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import ValidatorRow from "./ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { MinaStakingFlowParamList } from "./types";
+import ValidatorRow from "./ValidatorRow";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<MinaStakingFlowParamList, ScreenName.MinaStakingValidator>,
