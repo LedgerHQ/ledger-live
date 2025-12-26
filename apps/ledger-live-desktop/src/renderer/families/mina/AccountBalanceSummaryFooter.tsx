@@ -17,7 +17,7 @@ const Wrapper = styled(Box).attrs(() => ({
   vertical: true,
   mt: 4,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
 const DetailsWrapper = styled(Box).attrs(() => ({
@@ -42,7 +42,7 @@ const TitleWrapper = styled(Box).attrs(() => ({
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))`
   line-height: ${p => p.theme.space[4]}px;
   margin-right: ${p => p.theme.space[1]}px;
