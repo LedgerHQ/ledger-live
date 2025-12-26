@@ -3,33 +3,32 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
-import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
+import Config from "react-native-config";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
-import { rgba } from "../../../colors";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import Touchable from "~/components/Touchable";
-import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
-import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { ValidatorImage } from "./ValidatorRow";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MinaStakingFlowParamList } from "./types";
+import Touchable from "~/components/Touchable";
 import TranslatedError from "~/components/TranslatedError";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
-import Config from "react-native-config";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { rgba } from "../../../colors";
+import DelegatingContainer from "../../tezos/DelegatingContainer";
+import { MinaStakingFlowParamList } from "./types";
+import { ValidatorImage } from "./ValidatorRow";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<MinaStakingFlowParamList, ScreenName.MinaStakingSummary>,
@@ -323,7 +322,7 @@ const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-      <Icon size={13} name="edit-2" color={colors.background} />
+      <Icons.PenEdit size="XS" color={colors.white} />
     </Circle>
   );
 };
@@ -374,7 +373,7 @@ const Selectable = ({
       </Text>
       {readOnly ? null : (
         <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-          <Icon size={16} name="edit-2" color={colors.background} />
+          <Icons.PenEdit size="XS" color={colors.background} />
         </View>
       )}
     </View>

@@ -173,7 +173,7 @@ const SearchInputWrapper = styled.div`
 `;
 
 const ValidatorsFieldContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 
@@ -182,7 +182,7 @@ const SeeAllButton = styled.div<{ expanded: boolean }>`
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 40px;
   cursor: pointer;
 
@@ -202,15 +202,16 @@ const StyledValidatorRow = styled(ValidatorRow)`
 `;
 
 const ChosenMark = styled(Check).attrs<{ active?: boolean }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{ active?: boolean }>``;
 
-const TotalStakeTitle = styled(Text)`
+const TotalStakeTitle = styled(Text).attrs(() => ({
+  color: "neutral.c70",
+}))`
   font-size: 11px;
   font-weight: 500;
   text-align: right;
-  color: ${p => p.theme.colors.palette.text.shade60};
 `;
 
 export default ValidatorList;
