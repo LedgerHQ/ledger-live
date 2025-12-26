@@ -20,4 +20,6 @@ module.exports = {
     "src/types",
   ],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  testEnvironment: "node",
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
 };
