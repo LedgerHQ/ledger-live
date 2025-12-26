@@ -195,7 +195,7 @@ export const makeGetAccountShape =
     };
   };
 
-function mapTxToAccountOperation(
+export function mapTxToAccountOperation(
   tx: APITransaction,
   accountId: string,
   accountCredentialsMap: Record<string, PaymentCredential>,
