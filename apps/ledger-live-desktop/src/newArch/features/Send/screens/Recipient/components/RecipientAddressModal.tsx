@@ -10,7 +10,7 @@ type RecipientAddressModalProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 

@@ -17,7 +17,7 @@ type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -90,6 +90,8 @@ export function useRecipientAddressModalViewModel({
   const hasUserAccounts = userAccountsForCurrency.length > 0;
   const showInitialEmptyState = showInitialState && !hasRecentAddresses && !hasUserAccounts;
 
+  const hasMemo = sendFeatures.hasMemo(currency);
+
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   }, []);
@@ -100,23 +102,23 @@ export function useRecipientAddressModalViewModel({
 
   const handleRecentAddressSelect = useCallback(
     (address: RecentAddress) => {
-      onAddressSelected(address.address, address.ensName);
+      onAddressSelected(address.address, address.ensName, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected],
   );
 
   const handleAccountSelect = useCallback(
     (selectedAccount: Account) => {
-      onAddressSelected(selectedAccount.freshAddress);
+      onAddressSelected(selectedAccount.freshAddress, undefined, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected],
   );
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName);
+      onAddressSelected(address, ensName, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected],
   );
 
   const handleRemoveAddress = useCallback(
@@ -223,5 +225,6 @@ export function useRecipientAddressModalViewModel({
     handleAccountSelect,
     handleAddressSelect,
     handleRemoveAddress,
+    hasMemo,
   };
 }
