@@ -60,7 +60,7 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  it.skip("scenario scroll", async () => {
+  it("scenario scroll", async () => {
     try {
       await executeScenario(scenarioScroll);
     } catch (e) {
@@ -71,7 +71,7 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  it.skip("scenario blast", async () => {
+  it("scenario blast", async () => {
     try {
       await executeScenario(scenarioBlast);
     } catch (e) {
