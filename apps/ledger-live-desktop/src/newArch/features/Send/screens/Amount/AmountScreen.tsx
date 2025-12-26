@@ -23,10 +23,10 @@ export function AmountScreen() {
   if (!account || !transaction || !status) return null;
 
   return (
-    <div className="flex flex-col h-full justify-between p-6">
+    <div className="flex flex-col justify-between p-6">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t("send.steps.details.amount")}</label>
+          <label className="text-base body-2-semi-bold">{t("send.steps.details.amount")}</label>
           <AmountInput
             value={amount.isZero() ? "" : amount.toString()}
             onChange={onAmountChange}
@@ -37,7 +37,7 @@ export function AmountScreen() {
             aria-invalid={!!errors.amount}
           />
           {errors.amount && (
-            <p className="text-sm text-red-500">
+            <p className="text-error body-2">
               {errors.amount.message || t("errors.generic.title")}
             </p>
           )}

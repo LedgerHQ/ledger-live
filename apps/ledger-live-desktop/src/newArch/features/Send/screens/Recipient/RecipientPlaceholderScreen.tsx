@@ -24,7 +24,7 @@ export function RecipientPlaceholderScreen() {
   }, [navigation]);
 
   return (
-    <div className="flex flex-col h-full justify-between p-16">
+    <div className="flex flex-col justify-between p-16">
       <div className="flex flex-col gap-6">
         <div>
           <AddressInput
@@ -33,7 +33,7 @@ export function RecipientPlaceholderScreen() {
             placeholder="Enter recipient address"
             autoFocus
           />
-          <p className="text-xs text-neutral-c70 mt-2">Placeholder screen: No validation checks.</p>
+          <p className="mt-2 text-muted body-2">Placeholder screen: No validation checks.</p>
         </div>
       </div>
 

@@ -1,66 +1,64 @@
-import React, { useCallback } from "react";
-import { DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { useSendFlowContext } from "../../context/SendFlowContext";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { ConfirmationStatus } from "./types";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
+import { useConfirmationViewModel } from "./useConfirmationViewModel";
 import { SuccessContent } from "./components/SuccessContent";
-import { RefusedContent } from "./components/RefusedContent";
 import { ErrorContent } from "./components/ErrorContent";
-import { SendFlowOperationResult } from "../../types";
-
-function getConfirmationStatus(operation: SendFlowOperationResult): ConfirmationStatus {
-  const { signed, optimisticOperation, transactionError } = operation;
-
-  if (signed && optimisticOperation) {
-    return "success";
-  }
-
-  if (!signed && transactionError?.name === "TransactionRefusedOnDevice") {
-    return "refused";
-  }
-
-  if (!signed && transactionError) {
-    return "error";
-  }
-
-  return "idle";
-}
+import { InfoContent } from "./components/InfoContent";
 
 export function ConfirmationScreen() {
-  const { close, state, navigation } = useSendFlowContext();
-  const { account, parentAccount } = state.account;
-
-  const status = getConfirmationStatus(state.operation);
-
-  const optimisticOperation = state.operation.optimisticOperation;
-  const concernedOperation = optimisticOperation?.subOperations?.[0] ?? optimisticOperation ?? null;
-
-  const onViewDetails = useCallback(() => {
-    close();
-    if (account && concernedOperation) {
-      setDrawer(OperationDetails, {
-        operationId: concernedOperation.id,
-        accountId: account.id,
-        parentId: parentAccount?.id,
-      });
-    }
-  }, [close, account, concernedOperation, parentAccount]);
+  const { t } = useTranslation();
+  const { status, transactionError, onViewDetails, onRetry, onClose } = useConfirmationViewModel();
 
   return (
-    <DialogContent>
-      <DialogHeader appearance="compact" onClose={close} className="relative" />
-      {status === "success" && <SuccessContent onViewDetails={onViewDetails} onClose={close} />}
-      {status === "refused" && (
-        <RefusedContent onRetry={() => navigation.goToStep("SIGNATURE")} onClose={close} />
-      )}
-      {status === "error" && (
-        <ErrorContent
-          onRetry={() => navigation.goToStep("SIGNATURE")}
-          onClose={close}
-          message={state.operation.transactionError?.message}
-        />
-      )}
-    </DialogContent>
+    <>
+      <DialogBody>
+        <div className="flex flex-col items-center gap-24 overflow-hidden">
+          {status === "success" && <SuccessContent />}
+          {status === "refused" && (
+            <InfoContent
+              titleKey="errors.UserRefusedOnDevice.title"
+              descriptionKey="errors.UserRefusedOnDevice.description"
+            />
+          )}
+          {status === "error" && <ErrorContent error={transactionError} />}
+        </div>
+      </DialogBody>
+
+      <DialogFooter>
+        {status === "success" && (
+          <>
+            <Button className="mb-16" appearance="gray" size="lg" isFull onClick={onViewDetails}>
+              {t("send.steps.confirmation.success.cta")}
+            </Button>
+            <Button appearance="base" size="lg" isFull onClick={onClose}>
+              {t("common.close")}
+            </Button>
+          </>
+        )}
+
+        {status === "refused" && (
+          <>
+            <Button className="mb-16" appearance="gray" size="lg" isFull onClick={onRetry}>
+              {t("common.tryAgain")}
+            </Button>
+            <Button appearance="base" size="lg" isFull onClick={onClose}>
+              {t("common.close")}
+            </Button>
+          </>
+        )}
+
+        {status === "error" && (
+          <>
+            <Button className="mb-16" appearance="gray" size="lg" isFull onClick={onClose}>
+              {t("common.close")}
+            </Button>
+            <Button appearance="base" size="lg" isFull onClick={onRetry}>
+              {t("common.tryAgain")}
+            </Button>
+          </>
+        )}
+      </DialogFooter>
+    </>
   );
 }
