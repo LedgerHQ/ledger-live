@@ -109,7 +109,7 @@ env:
   AVD_PROFILE: pixel_7_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 3
+  AVD_CORES: 4
   AVD_RAM_SIZE: 5120M
   AVD_HEAP_SIZE: 1023M
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
