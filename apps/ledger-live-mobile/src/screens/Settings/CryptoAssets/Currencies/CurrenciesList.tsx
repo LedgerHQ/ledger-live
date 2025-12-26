@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
@@ -17,8 +16,8 @@ type Props = {
   currencies: CryptoCurrency[];
 };
 
-const mapStateToProps = createStructuredSelector<State, { currencies: CryptoCurrency[] }>({
-  currencies: cryptoCurrenciesSelector,
+const mapStateToProps = (state: State) => ({
+  currencies: cryptoCurrenciesSelector(state),
 });
 
 function CurrenciesList({

@@ -9,7 +9,6 @@ import {
   getAccountContractExplorer,
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/explorers";
-import { createStructuredSelector } from "reselect";
 import { useNavigation } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { blacklistToken } from "~/actions/settings";
@@ -156,12 +155,8 @@ const TokenContextualModal = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { account?: TokenAccount },
-  { parentAccount: Account | undefined }
->({
-  parentAccount: parentAccountSelector,
+const mapStateToProps = (state: State, ownProps: { account?: TokenAccount }) => ({
+  parentAccount: parentAccountSelector(state, ownProps),
 });
 
 export default connect(

@@ -2,7 +2,6 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { useSelector } from "~/context/store";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -100,14 +99,11 @@ const AccountCv = ({ children }: { children?: React.ReactNode }) => (
   </Text>
 );
 
-const mapStateToProps = createStructuredSelector<
-  RootState,
-  { accountId?: string; parentAccount?: Account },
-  {
-    parentAccount: Account | undefined;
-  }
->({
-  parentAccount: accountSelector,
+const mapStateToProps = (
+  state: RootState,
+  ownProps: { accountId?: string; parentAccount?: Account },
+) => ({
+  parentAccount: accountSelector(state, ownProps),
 });
 
 const SubAccountRowComponent = connect(mapStateToProps)(SubAccountRow);

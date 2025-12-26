@@ -115,7 +115,7 @@
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
     "react-redux": "catalog:",
-    "redux-actions": "2.6.5"
+    "redux-actions": "catalog:"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -231,7 +231,6 @@
     "@types/bchaddrjs": "^0.4.0",
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
-    "@types/redux-actions": "^2.6.2",
     "@xstate/react": "^5.0.2",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
@@ -261,7 +260,7 @@
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
     "qs": "^6.10.1",
-    "reselect": "^4.1.5",
+    "reselect": "catalog:",
     "rlp": "^3.0.0",
     "rxjs": "catalog:",
     "semver": "^7.3.5",
@@ -315,7 +314,7 @@
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
-    "redux-actions": "2.6.5",
+    "redux-actions": "catalog:",
     "timemachine": "^0.3.2",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
